@@ -1,0 +1,20 @@
+// Forward declarations for tdme.tools.shared.views
+#pragma once
+
+
+namespace tdme {
+namespace tools {
+namespace shared {
+namespace views {
+				class CameraRotationInputHandler;
+				class EntityBaseView;
+				class EntityBoundingVolumeView;
+				class EntityDisplayView;
+				class PopUps;
+				class SharedModelViewerView;
+				class SharedParticleSystemView;
+				struct View;
+}  // namespace views
+}  // namespace shared
+}  // namespace tools
+}  // namespace tdme

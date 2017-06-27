@@ -1,0 +1,153 @@
+// Generated from /tdme/src/tdme/tools/leveleditor/logic/Level.java
+
+#pragma once
+
+#include <fwd-tdme.h>
+#include <java/lang/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
+#include <tdme/tools/leveleditor/logic/fwd-tdme.h>
+#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <java/lang/Object.h>
+
+using java::lang::Object;
+using java::lang::String;
+using tdme::engine::Engine;
+using tdme::engine::Entity;
+using tdme::engine::Transformations;
+using tdme::engine::physics::World;
+using tdme::math::Vector3;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::utils::MutableString;
+using tdme::utils::_ArrayList;
+
+
+struct default_init_tag;
+
+/** 
+ * Level Editor Level Logic
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class tdme::tools::leveleditor::logic::Level
+	: public virtual Object
+{
+
+public:
+	typedef Object super;
+	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
+	static constexpr int32_t RIGIDBODY_TYPEID_PLAYER { 2 };
+
+private:
+	static MutableString* compareMutableString;
+	static Transformations* transformations;
+
+public:
+
+	/** 
+	 * Set lights from level
+	 * @param engine
+	 * @param level
+	 * @param translation
+	 */
+	static void setLight(Engine* engine, LevelEditorLevel* level, Vector3* translation);
+
+	/** 
+	 * Create particle system
+	 * @param level editor entity particle system
+	 * @param id
+	 * @param enable dynamic shadows
+	 * @return engine particle system entity
+	 */
+	static Entity* createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, String* id, bool enableDynamicShadows);
+
+	/** 
+	 * Add level to engine
+	 * @param engine
+	 * @param level
+	 * @param add empties
+	 * @param add trigger
+	 * @param dynamic shadowing 
+	 * @param pickable
+	 * @param translation
+	 */
+	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation);
+
+	/** 
+	 * Add level to engine
+	 * @param engine
+	 * @param level
+	 * @param add empties
+	 * @param add trigger
+	 * @param dynamic shadowing 
+	 * @param pickable
+	 * @param translation
+	 * @param enable
+	 */
+	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation, bool enable);
+
+	/** 
+	 * Add level to physics world
+	 * @param world
+	 * @param level
+	 * @param rigid bodies (will be filled by logic)
+	 * @param translation
+	 */
+	static void addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation);
+
+	/** 
+	 * Add level to physics world
+	 * @param world
+	 * @param level
+	 * @param rigid bodies (will be filled by logic)
+	 * @param translation
+	 */
+	static void addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation, bool enable);
+
+	/** 
+	 * Disable level in engine
+	 * @param engine
+	 * @param level
+	 */
+	static void disableLevel(Engine* engine, LevelEditorLevel* level);
+
+	/** 
+	 * Disable level in physics world
+	 * @param world
+	 * @param rigid bodies
+	 */
+	static void disableLevel(World* world, _ArrayList* rigidBodies);
+
+	/** 
+	 * Enable disabled level in engine
+	 * @param engine
+	 * @param level
+	 * @param translation
+	 */
+	static void enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* translation);
+
+	/** 
+	 * Enable disabled level in physics world
+	 * @param world
+	 * @param level
+	 * @param rigid bodies
+	 * @param translation
+	 */
+	static void enableLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation);
+
+	// Generated
+	Level();
+protected:
+	Level(const ::default_init_tag&);
+
+
+public:
+	static ::java::lang::Class *class_();
+	static void clinit();
+
+private:
+	virtual ::java::lang::Class* getClass0();
+};

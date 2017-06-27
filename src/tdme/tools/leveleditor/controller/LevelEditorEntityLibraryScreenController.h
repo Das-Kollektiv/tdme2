@@ -1,0 +1,125 @@
+// Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.java
+
+#pragma once
+
+#include <fwd-tdme.h>
+#include <java/lang/fwd-tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/tools/leveleditor/controller/fwd-tdme.h>
+#include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/tools/shared/controller/ScreenController.h>
+#include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
+
+using tdme::tools::shared::controller::ScreenController;
+using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIChangeListener;
+using java::lang::String;
+using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::tools::shared::views::PopUps;
+using tdme::utils::MutableString;
+
+
+struct default_init_tag;
+
+/** 
+ * Level editor model library screen controller
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController
+	: public ScreenController
+	, public virtual GUIActionListener
+	, public virtual GUIChangeListener
+{
+
+public:
+	typedef ScreenController super;
+
+private:
+	GUIScreenNode* screenNode {  };
+	GUIElementNode* entityLibraryListBox {  };
+	GUIElementNode* buttonEntityPlace {  };
+	GUIElementNode* buttonLevelEdit {  };
+	MutableString* entityLibraryListBoxSelection {  };
+	MutableString* dropdownEntityActionReset {  };
+	PopUps* popUps {  };
+	String* modelPath {  };
+protected:
+
+	/** 
+	 * Public constructor
+	 */
+	void ctor(PopUps* popUps);
+
+public:
+	GUIScreenNode* getScreenNode() override;
+
+	/** 
+	 * @return model path
+	 */
+	virtual String* getModelPath();
+
+	/** 
+	 * Set model path
+	 * @param model path
+	 */
+	virtual void setModelPath(String* modelPath);
+	void initialize() override;
+	void dispose() override;
+
+	/** 
+	 * Select entity by entity id
+	 * @param entity id
+	 */
+	virtual void selectEntity(int32_t entityId);
+
+	/** 
+	 * Set up complete entity library
+	 */
+	virtual void setEntityLibrary();
+
+	/** 
+	 * On entity selection changed
+	 */
+	virtual void onEntitySelectionChanged();
+
+	/** 
+	 * On edit entity
+	 */
+	virtual void onEditEntity();
+
+	/** 
+	 * On edit level
+	 */
+	virtual void onEditLevel();
+
+	/** 
+	 * place object button clicked
+	 */
+	virtual void onPlaceEntity();
+
+	/** 
+	 * place model entity clicked
+	 */
+	virtual void onDeleteEntity();
+	void onValueChanged(GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+
+	// Generated
+	LevelEditorEntityLibraryScreenController(PopUps* popUps);
+protected:
+	LevelEditorEntityLibraryScreenController(const ::default_init_tag&);
+
+
+public:
+	static ::java::lang::Class *class_();
+
+private:
+	virtual ::java::lang::Class* getClass0();
+	friend class LevelEditorEntityLibraryScreenController_onValueChanged_1;
+};

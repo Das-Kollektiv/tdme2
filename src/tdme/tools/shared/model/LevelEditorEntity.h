@@ -1,0 +1,183 @@
+// Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntity.java
+
+#pragma once
+
+#include <fwd-tdme.h>
+#include <java/lang/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
+#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/tools/shared/model/ModelProperties.h>
+
+using tdme::tools::shared::model::ModelProperties;
+using java::lang::String;
+using tdme::engine::model::Model;
+using tdme::math::Vector3;
+using tdme::tools::shared::model::LevelEditorEntity_EntityType;
+using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::utils::_ArrayList;
+
+
+struct default_init_tag;
+
+/** 
+ * Level Editor Model
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class tdme::tools::shared::model::LevelEditorEntity final
+	: public ModelProperties
+{
+
+public:
+	typedef ModelProperties super;
+	static constexpr int32_t ID_NONE { -1 };
+
+public: /* protected */
+	int32_t id {  };
+	LevelEditorEntity_EntityType* type {  };
+	String* name {  };
+	String* description {  };
+	String* entityFileName {  };
+	String* fileName {  };
+	String* thumbnail {  };
+	Model* model {  };
+	Vector3* pivot {  };
+	LevelEditorEntityParticleSystem* particleSystem {  };
+	_ArrayList* boundingVolumes {  };
+protected:
+
+	/** 
+	 * Creates a level editor model
+	 * @param id
+	 * @param entity type
+	 * @param name
+	 * @param description
+	 * @param entity file name
+	 * @param file name
+	 * @param thumbnail
+	 * @param model
+	 * @param pivot
+	 */
+	void ctor(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot);
+
+public:
+
+	/** 
+	 * @return id
+	 */
+	int32_t getId();
+
+	/** 
+	 * @return entity type
+	 */
+	LevelEditorEntity_EntityType* getType();
+
+	/** 
+	 * @return name
+	 */
+	String* getName();
+
+	/** 
+	 * Set up model name
+	 * @param name
+	 */
+	void setName(String* name);
+
+	/** 
+	 * @return description
+	 */
+	String* getDescription();
+
+	/** 
+	 * Set up model description
+	 * @param description
+	 */
+	void setDescription(String* description);
+
+	/** 
+	 * @return entity file name
+	 */
+	String* getEntityFileName();
+
+	/** 
+	 * Set entity file name
+	 * @param entity file name
+	 */
+	void setEntityFileName(String* entityFileName);
+
+	/** 
+	 * @return file name
+	 */
+	String* getFileName();
+
+	/** 
+	 * @return thumbnail
+	 */
+	String* getThumbnail();
+
+	/** 
+	 * @return model
+	 */
+	Model* getModel();
+
+public: /* protected */
+
+	/** 
+	 * @return bounding volumes
+	 */
+	_ArrayList* getBoundingVolumes();
+
+public:
+
+	/** 
+	 * @return pivot
+	 */
+	Vector3* getPivot();
+
+	/** 
+	 * @return bounding volume count
+	 */
+	int32_t getBoundingVolumeCount();
+
+	/** 
+	 * Get bounding volume at
+	 * @param idx
+	 * @return level editor object bounding volume
+	 */
+	LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx);
+
+	/** 
+	 * Add bounding volume
+	 * @param idx
+	 * @param level editor entity bounding volume
+	 * @return level editor bounding volume
+	 */
+	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
+
+	/** 
+	 * Set default (up to 8) bounding volumes, to be used with LevelEditor
+	 */
+	void setDefaultBoundingVolumes();
+
+	/** 
+	 * @return level editor entity particle system
+	 */
+	LevelEditorEntityParticleSystem* getParticleSystem();
+	String* toString() override;
+
+	// Generated
+	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot);
+protected:
+	LevelEditorEntity(const ::default_init_tag&);
+
+
+public:
+	static ::java::lang::Class *class_();
+
+private:
+	virtual ::java::lang::Class* getClass0();
+	friend class LevelEditorEntity_EntityType;
+};
