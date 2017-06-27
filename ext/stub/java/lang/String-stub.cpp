@@ -1,5 +1,9 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+#include <string>
+
 #include <java/lang/String.h>
+
+using namespace std;
 
 using java::lang::String;
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -636,6 +640,10 @@ String* String::valueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2)
 	clinit();
 	unimplemented_(u"String* String::valueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2)");
 	return 0;
+}
+
+wstring& String::getCPPWString() {
+	return cppwstring;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

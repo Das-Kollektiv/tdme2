@@ -1,9 +1,15 @@
 // Generated from /tdme/src/tdme/utils/_Console.java
+#include <iostream>
+#include <string>
+
 #include <tdme/utils/_Console.h>
 
 #include <java/io/PrintStream.h>
 #include <java/lang/Object.h>
 #include <java/lang/System.h>
+#include <java/lang/String.h>
+
+using namespace std;
 
 using tdme::utils::_Console;
 using java::io::PrintStream;
@@ -25,115 +31,115 @@ _Console::_Console()
 void _Console::println(Object* object)
 {
 	clinit();
-	System::out->println(object->toString());
+	wcout << object->toString()->getCPPWString() << endl;
 }
 
 void _Console::println(int8_t value)
 {
 	clinit();
-	System::out->println(static_cast< int32_t >(value));
+	wcout << value << endl;
 }
 
 void _Console::println(int16_t value)
 {
 	clinit();
-	System::out->println(static_cast< int32_t >(value));
+	wcout << value << endl;
 }
 
 void _Console::println(int32_t value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::println(int64_t value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::println(float value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::println(double value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::println(bool value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::println(char16_t value)
 {
 	clinit();
-	System::out->println(value);
+	wcout << value << endl;
 }
 
 void _Console::print(Object* object)
 {
 	clinit();
-	System::out->print(object->toString());
+	wcout << object->toString()->getCPPWString() << endl;
 }
 
 void _Console::print(int8_t value)
 {
 	clinit();
-	System::out->print(static_cast< int32_t >(value));
+	wcout << value << endl;
 }
 
 void _Console::print(int16_t value)
 {
 	clinit();
-	System::out->print(static_cast< int32_t >(value));
+	wcout << value << endl;
 }
 
 void _Console::print(int32_t value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::print(int64_t value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::print(float value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::print(double value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::print(bool value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::print(char16_t value)
 {
 	clinit();
-	System::out->print(value);
+	wcout << value << endl;
 }
 
 void _Console::println()
 {
 	clinit();
-	System::out->println();
+	wcout << endl;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

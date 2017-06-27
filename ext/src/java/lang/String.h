@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <stddef.h>
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/CharSequence.h>
+
+using namespace std;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -68,6 +72,7 @@ private:
 	static ObjectStreamFieldArray* serialPersistentFields;
 	static constexpr int64_t serialVersionUID { -6849794470754667710LL };
 	char16_tArray* value {  };
+	wstring cppwstring { };
 
 protected:
 	void ctor();
@@ -198,6 +203,9 @@ protected:
 public:
 	static ::java::lang::Class *class_();
 	virtual int32_t compareTo(Object* o) override;
+
+public:
+	wstring& getCPPWString();
 
 private:
 	virtual ::java::lang::Class* getClass0();

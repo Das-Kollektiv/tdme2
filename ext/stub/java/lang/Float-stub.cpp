@@ -1,4 +1,6 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+#include <cmath>
+
 #include <java/lang/Float.h>
 
 using java::lang::Float;
@@ -140,8 +142,7 @@ bool Float::isNaN()
 bool Float::isNaN(float arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"bool Float::isNaN(float arg0)");
-	return 0;
+	return isnan(arg0) != 0;
 }
 
 int64_t Float::longValue()
