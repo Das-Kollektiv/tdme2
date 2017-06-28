@@ -85,13 +85,13 @@ void EmptyView::setEntity(LevelEditorEntity* entity)
 	initModelRequested = true;
 }
 
-void EmptyView::initModel(GLAutoDrawable* drawable)
+void EmptyView::initModel()
 {
 	if (entity == nullptr)
 		return;
 
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
-	Tools::oseThumbnail(drawable, entity);
+	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto model = engine->getEntity(u"model"_j);
 	auto ground = engine->getEntity(u"ground"_j);
@@ -109,10 +109,10 @@ void EmptyView::handleInputEvents()
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void EmptyView::display(GLAutoDrawable* drawable)
+void EmptyView::display()
 {
 	if (initModelRequested == true) {
-		initModel(drawable);
+		initModel();
 		cameraRotationInputHandler->reset();
 		initModelRequested = false;
 	}

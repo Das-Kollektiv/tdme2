@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/audio/Audio.java
 #include <tdme/audio/Audio.h>
 
-#include <com/jogamp/openal/AL.h>
-#include <com/jogamp/openal/ALFactory.h>
-#include <com/jogamp/openal/util/ALut.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
@@ -23,9 +20,6 @@
 #include <Array.h>
 
 using tdme::audio::Audio;
-using com::jogamp::openal::AL;
-using com::jogamp::openal::ALFactory;
-using com::jogamp::openal::util::ALut;
 using java::lang::ClassCastException;
 using java::lang::NullPointerException;
 using java::lang::Object;
@@ -81,7 +75,7 @@ Audio* Audio::instance;
 
 _HashMap* Audio::audioEntities;
 
-AL* Audio::al;
+// AL* Audio::al;
 
 Audio* Audio::getInstance()
 {
@@ -96,8 +90,10 @@ void Audio::ctor()
 {
 	super::ctor();
 	init();
+	/*
 	ALut::alutInit();
 	al = ALFactory::getAL();
+	*/
 	update();
 }
 
@@ -184,7 +180,7 @@ void Audio::reset()
 void Audio::shutdown()
 {
 	reset();
-	ALut::alutExit();
+	// ALut::alutExit();
 }
 
 void Audio::update()
@@ -195,8 +191,10 @@ void Audio::update()
 			audioEntity->update();
 		}
 	}
+	/*
 	al->alListenerfv(AL::AL_POSITION, listenerPosition->getArray(), 0);
 	al->alListenerfv(AL::AL_VELOCITY, listenerVelocity->getArray(), 0);
+	*/
 	auto listenerOrientationAtArray = listenerOrientationAt->getArray();
 	auto listenerOrientationUpArray = listenerOrientationUp->getArray();
 	auto listenerOrientation = new floatArray({
@@ -207,7 +205,9 @@ void Audio::update()
 		(*listenerOrientationUpArray)[1],
 		(*listenerOrientationUpArray)[2]
 	});
+	/*
 	al->alListenerfv(AL::AL_ORIENTATION, listenerOrientation, 0);
+	*/
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
@@ -225,9 +225,9 @@ void Audio::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		instance = nullptr;
-		audioEntities = new _HashMap();
-		al = nullptr;
+			instance = nullptr;
+			audioEntities = new _HashMap();
+		//al = nullptr;
 		}
 	};
 

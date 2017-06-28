@@ -33,8 +33,6 @@ SRCS = \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/Engine_AnimationProcessingTarget.cpp \
 	src/tdme/engine/Engine_initialize_1.cpp \
-	src/tdme/engine/Engine_initialize_2.cpp \
-	src/tdme/engine/Engine_initialize_3.cpp \
 	src/tdme/engine/Entity.cpp \
 	src/tdme/engine/EntityPickingFilter.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
@@ -162,9 +160,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
-	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer_Light.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer_Material.cpp \
@@ -375,6 +371,10 @@ SRCS = \
 	src/tdme/utils/_HashMap_Pair.cpp \
 	src/tdme/utils/_HashMap_ValuesIterator.cpp \
 
+#	src/tdme/engine/Engine_initialize_2.cpp \
+#	src/tdme/engine/Engine_initialize_3.cpp \
+#	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+#	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
 STUB_SRCS = \
 
@@ -386,35 +386,6 @@ EXT_SRCS = \
 
 
 EXT_STUB_SRCS = \
-	ext/stub/com/jogamp/common/nio/Buffers-stub.cpp \
-	ext/stub/com/jogamp/nativewindow/Capabilities-stub.cpp \
-	ext/stub/com/jogamp/nativewindow/VisualIDHolder_VIDComparator-stub.cpp \
-	ext/stub/com/jogamp/nativewindow/VisualIDHolder_VIDType-stub.cpp \
-	ext/stub/com/jogamp/nativewindow/WindowClosingProtocol_WindowClosingMode-stub.cpp \
-	ext/stub/com/jogamp/newt/Window_ReparentOperation-stub.cpp \
-	ext/stub/com/jogamp/newt/event/InputEvent-stub.cpp \
-	ext/stub/com/jogamp/newt/event/KeyEvent-stub.cpp \
-	ext/stub/com/jogamp/newt/event/KeyEvent_NonPrintableRange-stub.cpp \
-	ext/stub/com/jogamp/newt/event/MouseEvent-stub.cpp \
-	ext/stub/com/jogamp/newt/event/MouseEvent_PointerClass-stub.cpp \
-	ext/stub/com/jogamp/newt/event/MouseEvent_PointerType-stub.cpp \
-	ext/stub/com/jogamp/newt/event/NEWTEvent-stub.cpp \
-	ext/stub/com/jogamp/newt/opengl/GLWindow-stub.cpp \
-	ext/stub/com/jogamp/newt/opengl/GLWindow_GLLifecycleHook-stub.cpp \
-	ext/stub/com/jogamp/openal/ALFactory-stub.cpp \
-	ext/stub/com/jogamp/openal/util/ALut-stub.cpp \
-	ext/stub/com/jogamp/opengl/DebugGL2-stub.cpp \
-	ext/stub/com/jogamp/opengl/DebugGL3-stub.cpp \
-	ext/stub/com/jogamp/opengl/DebugGL4bc-stub.cpp \
-	ext/stub/com/jogamp/opengl/DebugGLES2-stub.cpp \
-	ext/stub/com/jogamp/opengl/DebugGLES3-stub.cpp \
-	ext/stub/com/jogamp/opengl/GLCapabilities-stub.cpp \
-	ext/stub/com/jogamp/opengl/GLContext-stub.cpp \
-	ext/stub/com/jogamp/opengl/GLProfile-stub.cpp \
-	ext/stub/com/jogamp/opengl/util/AnimatorBase-stub.cpp \
-	ext/stub/com/jogamp/opengl/util/AnimatorBase_UncaughtAnimatorException-stub.cpp \
-	ext/stub/com/jogamp/opengl/util/FPSAnimator-stub.cpp \
-	ext/stub/com/jogamp/opengl/util/FPSAnimator_MainTask-stub.cpp \
 	ext/stub/java/io/BufferedReader-stub.cpp \
 	ext/stub/java/io/ByteArrayInputStream-stub.cpp \
 	ext/stub/java/io/DataInputStream-stub.cpp \
@@ -536,7 +507,6 @@ EXT_STUB_SRCS = \
 	ext/stub/java/util/zip/ZipInputStream-stub.cpp \
 	ext/stub/javax/xml/parsers/DocumentBuilder-stub.cpp \
 	ext/stub/javax/xml/parsers/DocumentBuilderFactory-stub.cpp \
-	ext/stub/jogamp/opengl/GLAutoDrawableBase-stub.cpp \
 	ext/stub/org/json/JSONArray-stub.cpp \
 	ext/stub/org/json/JSONException-stub.cpp \
 	ext/stub/org/json/JSONObject-stub.cpp \

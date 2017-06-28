@@ -1,14 +1,6 @@
 // Generated from /tdme/src/tdme/tests/PhysicsTest3.java
 #include <tdme/tests/PhysicsTest3.h>
 
-#include <com/jogamp/newt/event/KeyEvent.h>
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GL.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Object.h>
@@ -43,14 +35,6 @@
 #include <tdme/utils/_HashMap.h>
 
 using tdme::tests::PhysicsTest3;
-using com::jogamp::newt::event::KeyEvent;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::ClassCastException;
 using java::lang::Exception;
 using java::lang::Object;
@@ -131,21 +115,7 @@ constexpr int32_t PhysicsTest3::SPHERE_COUNT;
 void PhysicsTest3::main(StringArray* args)
 {
 	clinit();
-	Logger::getLogger(u""_j)->setLevel(Level::WARNING);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(u"PhysicsTest3"_j);
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
 	auto physicsTest3 = new PhysicsTest3();
-	glWindow->addGLEventListener(physicsTest3);
-	glWindow->setSize(800, 600);
-	glWindow->setVisible(true);
-	glWindow->addKeyListener(physicsTest3);
-	glWindow->addMouseListener(physicsTest3);
-	glWindow->addWindowListener(physicsTest3);
-	animator->setUpdateFPSFrames(3, nullptr);
-	animator->start();
 }
 
 void PhysicsTest3::ctor()
@@ -159,7 +129,7 @@ void PhysicsTest3::ctor()
 	world = new World();
 }
 
-void PhysicsTest3::display(GLAutoDrawable* drawable)
+void PhysicsTest3::display()
 {
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		auto body = world->getRigidBody(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString());
@@ -201,21 +171,20 @@ void PhysicsTest3::display(GLAutoDrawable* drawable)
 	auto fps = 60.0f;
 	world->update(1.0f / fps);
 	world->synch(engine);
-	engine->display(drawable);
+	engine->display();
 	auto end = System::currentTimeMillis();
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"PhysicsTest::display::"_j)->append((end - start))
 		->append(u"ms"_j)->toString()));
 }
 
-void PhysicsTest3::dispose(GLAutoDrawable* drawable)
+void PhysicsTest3::dispose()
 {
-	engine->dispose(drawable);
+	engine->dispose();
 }
 
-void PhysicsTest3::init_(GLAutoDrawable* drawable)
+void PhysicsTest3::init_()
 {
-	drawable->getGL()->setSwapInterval(0);
-	engine->initialize(drawable);
+	engine->initialize();
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
@@ -408,39 +377,12 @@ void PhysicsTest3::init_(GLAutoDrawable* drawable)
 	}
 }
 
-void PhysicsTest3::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void PhysicsTest3::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
+	engine->reshape(x, y, width, height);
 }
 
-void PhysicsTest3::mouseClicked(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mouseEntered(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mouseExited(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mousePressed(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mouseReleased(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mouseDragged(MouseEvent* e)
-{
-}
-
-void PhysicsTest3::mouseMoved(MouseEvent* e)
-{
-}
-
+/*
 void PhysicsTest3::keyPressed(KeyEvent* e)
 {
 	int32_t keyCode = e->getKeyCode();
@@ -498,39 +440,7 @@ void PhysicsTest3::keyReleased(KeyEvent* e)
 		keyS = false;
 
 }
-
-void PhysicsTest3::mouseWheelMoved(MouseEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void PhysicsTest3::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowMoved(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void PhysicsTest3::windowResized(WindowEvent* arg0)
-{
-}
+*/
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 

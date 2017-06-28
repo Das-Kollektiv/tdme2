@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -12,8 +11,6 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using tdme::engine::subsystems::renderer::GLRenderer;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLES2;
 using java::lang::String;
 using java::nio::ByteBuffer;
 using java::nio::FloatBuffer;
@@ -36,8 +33,6 @@ class tdme::engine::subsystems::renderer::GLES2Renderer
 public:
 	typedef GLRenderer super;
 
-private:
-	GLES2* gl {  };
 protected:
 
 	/** 
@@ -46,7 +41,6 @@ protected:
 	void ctor();
 
 public:
-	void setGL(GL* gl) override;
 	String* getGLVersion() override;
 	void initialize() override;
 	void initializeFrame() override;

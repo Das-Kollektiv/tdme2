@@ -89,13 +89,13 @@ void TriggerView::setEntity(LevelEditorEntity* entity)
 	initModelRequested = true;
 }
 
-void TriggerView::initModel(GLAutoDrawable* drawable)
+void TriggerView::initModel()
 {
 	if (entity == nullptr)
 		return;
 
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
-	Tools::oseThumbnail(drawable, entity);
+	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto model = engine->getEntity(u"model"_j);
 	auto ground = engine->getEntity(u"ground"_j);
@@ -113,10 +113,10 @@ void TriggerView::handleInputEvents()
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void TriggerView::display(GLAutoDrawable* drawable)
+void TriggerView::display()
 {
 	if (initModelRequested == true) {
-		initModel(drawable);
+		initModel();
 		cameraRotationInputHandler->reset();
 		initModelRequested = false;
 	}

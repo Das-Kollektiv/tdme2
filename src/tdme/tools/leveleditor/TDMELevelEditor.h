@@ -3,10 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/newt/event/fwd-tdme.h>
-#include <com/jogamp/newt/opengl/fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
-#include <com/jogamp/opengl/util/fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -16,17 +12,8 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <java/lang/Object.h>
-#include <com/jogamp/opengl/GLEventListener.h>
-#include <com/jogamp/newt/event/WindowListener.h>
 
 using java::lang::Object;
-using com::jogamp::opengl::GLEventListener;
-using com::jogamp::newt::event::WindowListener;
-using com::jogamp::newt::event::WindowEvent;
-using com::jogamp::newt::event::WindowUpdateEvent;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -71,8 +58,6 @@ struct default_init_tag;
  */
 class tdme::tools::leveleditor::TDMELevelEditor final
 	: public virtual Object
-	, public GLEventListener
-	, public WindowListener
 {
 
 public:
@@ -82,8 +67,6 @@ private:
 	static String* VERSION;
 	static TDMELevelEditor* instance;
 	Engine* engine {  };
-	GLWindow* glWindow {  };
-	FPSAnimator* animator {  };
 	View* view {  };
 	bool quitRequested {  };
 	LevelEditorLevel* level {  };
@@ -105,11 +88,8 @@ protected:
 
 	/** 
 	 * Public constructor
-	 * @param gl window
-	 * @param animator
-	 * @param model file name
 	 */
-	void ctor(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName);
+	void ctor();
 
 public:
 
@@ -152,22 +132,22 @@ public:
 	/** 
 	 * Renders the scene 
 	 */
-	void display(GLAutoDrawable* drawable) override;
+	void display();
 
 	/** 
 	 * Shutdown tdme viewer
 	 */
-	void dispose(GLAutoDrawable* drawable) override;
+	void dispose();
 
 	/** 
 	 * Initialize tdme level editor
 	 */
-	void init_(GLAutoDrawable* drawable) override;
+	void init_();
 
 	/** 
 	 * reshape tdme level editor
 	 */
-	void reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height) override;
+	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
 
 	/** 
 	 * Switch to level editor
@@ -193,16 +173,9 @@ public:
 	 * Switch to particle system view
 	 */
 	void switchToParticleSystemView();
-	void windowDestroyNotify(WindowEvent* arg0) override;
-	void windowDestroyed(WindowEvent* arg0) override;
-	void windowGainedFocus(WindowEvent* arg0) override;
-	void windowLostFocus(WindowEvent* arg0) override;
-	void windowMoved(WindowEvent* arg0) override;
-	void windowRepaint(WindowUpdateEvent* arg0) override;
-	void windowResized(WindowEvent* arg0) override;
 
 	// Generated
-	TDMELevelEditor(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName);
+	TDMELevelEditor();
 protected:
 	TDMELevelEditor(const ::default_init_tag&);
 

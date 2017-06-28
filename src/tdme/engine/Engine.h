@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -22,8 +21,6 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLProfile;
 using java::io::InputStream;
 using java::lang::String;
 using tdme::engine::Camera;
@@ -167,22 +164,12 @@ public:
 	 * Note:
 	 * - the root engine must have been initialized before
 	 * - the created offscreen engine must not be initialized
+	 * @param width
+	 * @param height
 	 * @return off screen engine
 	 */
-	static Engine* createOffScreenInstance(GLAutoDrawable* drawable, int32_t width, int32_t height);
+	static Engine* createOffScreenInstance(int32_t width, int32_t height);
 
-	/** 
-	 * @return supported GL profile
-	 */
-	static GLProfile* getProfile();
-
-private:
-
-	/** 
-	 * Updates the renderer with given drawable
-	 * @param drawable
-	 */
-	void updateRenderer(GLAutoDrawable* drawable);
 protected:
 
 	/** 
@@ -336,49 +323,43 @@ public:
 
 	/** 
 	 * Initialize render engine
-	 * @param drawable
 	 */
-	void initialize(GLAutoDrawable* drawable);
+	void initialize();
 
 	/** 
 	 * Initialize render engine
-	 * @param drawable
 	 * @param debug
 	 */
-	void initialize(GLAutoDrawable* drawable, bool debug);
+	void initialize(bool debug);
 
 	/** 
 	 * Reshape
-	 * @param drawable
 	 * @param x
 	 * @param y
 	 * @param width
 	 * @param height
 	 */
-	void reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height);
+	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
 
 private:
 
 	/** 
 	 * Initiates the rendering process
 	 * updates timing, updates camera
-	 * @param drawable
 	 */
-	void initRendering(GLAutoDrawable* drawable);
+	void initRendering();
 
 public:
 
 	/** 
 	 * Computes visibility and transformations
-	 * @param drawable
 	 */
-	void computeTransformations(GLAutoDrawable* drawable);
+	void computeTransformations();
 
 	/** 
 	 * Renders the scene
-	 * @param drawable
 	 */
-	void display(GLAutoDrawable* drawable);
+	void display();
 
 	/** 
 	 * Compute world coordinate from mouse position and z value
@@ -425,9 +406,8 @@ public:
 
 	/** 
 	 * Shutdown the engine
-	 * @param drawable
 	 */
-	void dispose(GLAutoDrawable* drawable);
+	void dispose();
 
 	/** 
 	 * Set up GUI mode rendering

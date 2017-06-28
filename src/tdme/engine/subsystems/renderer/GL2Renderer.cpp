@@ -1,10 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GL2Renderer.java
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 
-#include <com/jogamp/common/nio/Buffers.h>
-#include <com/jogamp/opengl/GL2.h>
-#include <com/jogamp/opengl/GL.h>
-#include <com/jogamp/opengl/GLContext.h>
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
 #include <java/io/IOException.h>
@@ -33,10 +29,6 @@
 #include <ObjectArray.h>
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using com::jogamp::common::nio::Buffers;
-using com::jogamp::opengl::GL2;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLContext;
 using java::io::BufferedReader;
 using java::io::DataInputStream;
 using java::io::IOException;
@@ -120,6 +112,7 @@ GL2Renderer::GL2Renderer()
 void GL2Renderer::ctor()
 {
 	super::ctor();
+	/*
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL2::GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GL2::GL_COLOR_BUFFER_BIT;
@@ -136,11 +129,7 @@ void GL2Renderer::ctor()
 	DEPTHFUNCTION_LESSEQUAL = GL2::GL_LEQUAL;
 	DEPTHFUNCTION_EQUAL = GL2::GL_EQUAL;
 	bufferObjectsAvailable = false;
-}
-
-void GL2Renderer::setGL(GL* gl)
-{
-	this->gl = java_cast< GL2* >(gl);
+	*/
 }
 
 String* GL2Renderer::getGLVersion()

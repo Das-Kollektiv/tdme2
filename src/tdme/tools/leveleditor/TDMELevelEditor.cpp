@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/TDMELevelEditor.java
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -31,12 +25,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::leveleditor::TDMELevelEditor;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -79,10 +67,10 @@ TDMELevelEditor::TDMELevelEditor(const ::default_init_tag&)
 	clinit();
 }
 
-TDMELevelEditor::TDMELevelEditor(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName) 
+TDMELevelEditor::TDMELevelEditor()
 	: TDMELevelEditor(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(glWindow,animator,modelFileName);
+	ctor();
 }
 
 void TDMELevelEditor::init()
@@ -101,28 +89,13 @@ void TDMELevelEditor::main(StringArray* args)
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMELevelEditor "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
-	Logger::getLogger(u""_j)->setLevel(Level::SEVERE);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	_Console::println(static_cast< Object* >(glp));
-	_Console::println(static_cast< Object* >(caps));
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(::java::lang::StringBuilder().append(u"TDMELevelEditor "_j)->append(VERSION)->toString());
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
-	auto tdmeLevelEditor = new TDMELevelEditor(glWindow, animator, modelFileName);
-	glWindow->addWindowListener(tdmeLevelEditor);
-	glWindow->addGLEventListener(tdmeLevelEditor);
-	glWindow->setSize(1024, 600);
-	glWindow->setVisible(true);
-	animator->start();
+	auto tdmeLevelEditor = new TDMELevelEditor();
 }
 
-void TDMELevelEditor::ctor(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName)
+void TDMELevelEditor::ctor()
 {
 	super::ctor();
 	init();
-	this->glWindow = glWindow;
-	this->animator = animator;
 	TDMELevelEditor::instance = this;
 	level = new LevelEditorLevel();
 	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(level);
@@ -173,23 +146,21 @@ void TDMELevelEditor::quit()
 	quitRequested = true;
 }
 
-void TDMELevelEditor::display(GLAutoDrawable* drawable)
+void TDMELevelEditor::display()
 {
-	engine->display(drawable);
+	engine->display();
 	Engine::getInstance()->initGUIMode();
 	if (view != nullptr)
-		view->display(drawable);
+		view->display();
 
 	Engine::getInstance()->doneGUIMode();
 	if (quitRequested == true) {
-		dispose(drawable);
-		animator->stop();
-		glWindow->setVisible(false);
+		dispose();
 		System::exit(0);
 	}
 }
 
-void TDMELevelEditor::dispose(GLAutoDrawable* drawable)
+void TDMELevelEditor::dispose()
 {
 	if (view != nullptr)
 		view->deactivate();
@@ -199,16 +170,14 @@ void TDMELevelEditor::dispose(GLAutoDrawable* drawable)
 	triggerView->dispose();
 	emptyView->dispose();
 	particleSystemView->dispose();
-	engine->dispose(drawable);
-	Tools::oseDispose(drawable);
+	engine->dispose();
+	Tools::oseDispose();
 }
 
-void TDMELevelEditor::init_(GLAutoDrawable* drawable)
+void TDMELevelEditor::init_()
 {
-	engine->initialize(drawable);
-	glWindow->addMouseListener(engine->getGUI());
-	glWindow->addKeyListener(engine->getGUI());
-	Tools::oseInit(drawable);
+	engine->initialize();
+	Tools::oseInit();
 	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
 	levelEditorEntityLibraryScreenController->initialize();
 	engine->getGUI()->addScreen(levelEditorEntityLibraryScreenController->getScreenNode()->getId(), levelEditorEntityLibraryScreenController->getScreenNode());
@@ -226,9 +195,9 @@ void TDMELevelEditor::init_(GLAutoDrawable* drawable)
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMELevelEditor::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
+	engine->reshape(x, y, width, height);
 }
 
 void TDMELevelEditor::switchToLevelEditor()
@@ -254,35 +223,6 @@ void TDMELevelEditor::switchToEmptyView()
 void TDMELevelEditor::switchToParticleSystemView()
 {
 	setView(particleSystemView);
-}
-
-void TDMELevelEditor::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void TDMELevelEditor::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void TDMELevelEditor::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void TDMELevelEditor::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void TDMELevelEditor::windowMoved(WindowEvent* arg0)
-{
-}
-
-void TDMELevelEditor::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void TDMELevelEditor::windowResized(WindowEvent* arg0)
-{
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

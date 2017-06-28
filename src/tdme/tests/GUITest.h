@@ -3,24 +3,13 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/newt/event/fwd-tdme.h>
-#include <com/jogamp/newt/opengl/fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <java/lang/Object.h>
-#include <com/jogamp/opengl/GLEventListener.h>
-#include <com/jogamp/newt/event/WindowListener.h>
 
 using java::lang::Object;
-using com::jogamp::opengl::GLEventListener;
-using com::jogamp::newt::event::WindowListener;
-using com::jogamp::newt::event::WindowEvent;
-using com::jogamp::newt::event::WindowUpdateEvent;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -55,35 +44,25 @@ struct default_init_tag;
  */
 class tdme::tests::GUITest
 	: public virtual Object
-	, public virtual GLEventListener
-	, public virtual WindowListener
 {
 
 public:
 	typedef Object super;
 
 private:
-	GLWindow* glWindow {  };
 	Engine* engine {  };
 protected:
 
 	/** 
 	 * Public constructor
 	 */
-	void ctor(GLWindow* glWindow);
+	void ctor();
 
 public:
-	void init_(GLAutoDrawable* drawable) override;
-	void dispose(GLAutoDrawable* drawable) override;
-	void reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height) override;
-	void display(GLAutoDrawable* drawable) override;
-	void windowDestroyNotify(WindowEvent* arg0) override;
-	void windowDestroyed(WindowEvent* arg0) override;
-	void windowGainedFocus(WindowEvent* arg0) override;
-	void windowLostFocus(WindowEvent* arg0) override;
-	void windowMoved(WindowEvent* arg0) override;
-	void windowRepaint(WindowUpdateEvent* arg0) override;
-	void windowResized(WindowEvent* arg0) override;
+	void init_();
+	void dispose();
+	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
+	void display();
 
 	/** 
 	 * @param args
@@ -91,7 +70,7 @@ public:
 	static void main(StringArray* args);
 
 	// Generated
-	GUITest(GLWindow* glWindow);
+	GUITest();
 protected:
 	GUITest(const ::default_init_tag&);
 

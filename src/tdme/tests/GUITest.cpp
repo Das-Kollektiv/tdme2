@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tests/GUITest.java
 #include <tdme/tests/GUITest.h>
 
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -25,12 +19,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tests::GUITest;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::Exception;
 using java::lang::Object;
 using java::lang::String;
@@ -67,24 +55,21 @@ GUITest::GUITest(const ::default_init_tag&)
 	clinit();
 }
 
-GUITest::GUITest(GLWindow* glWindow) 
+GUITest::GUITest()
 	: GUITest(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(glWindow);
+	ctor();
 }
 
-void GUITest::ctor(GLWindow* glWindow)
+void GUITest::ctor()
 {
 	super::ctor();
-	this->glWindow = glWindow;
 	this->engine = Engine::getInstance();
 }
 
-void GUITest::init_(GLAutoDrawable* drawable)
+void GUITest::init_()
 {
-	engine->initialize(drawable);
-	glWindow->addMouseListener(engine->getGUI());
-	glWindow->addKeyListener(engine->getGUI());
+	engine->initialize();
 	try {
 		engine->getGUI()->addScreen(u"test"_j, GUIParser::parse(u"resources/tests/gui"_j, u"test.xml"_j));
 		engine->getGUI()->getScreen(u"test"_j)->setScreenSize(640, 480);
@@ -109,73 +94,27 @@ void GUITest::init_(GLAutoDrawable* drawable)
 	}
 }
 
-void GUITest::dispose(GLAutoDrawable* drawable)
+void GUITest::dispose()
 {
-	engine->dispose(drawable);
+	engine->dispose();
 }
 
-void GUITest::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void GUITest::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
+	engine->reshape(x, y, width, height);
 }
 
-void GUITest::display(GLAutoDrawable* drawable)
+void GUITest::display()
 {
-	engine->display(drawable);
+	engine->display();
 	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
-}
-
-void GUITest::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void GUITest::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void GUITest::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void GUITest::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void GUITest::windowMoved(WindowEvent* arg0)
-{
-}
-
-void GUITest::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void GUITest::windowResized(WindowEvent* arg0)
-{
 }
 
 void GUITest::main(StringArray* args)
 {
 	clinit();
-	Logger::getLogger(u""_j)->setLevel(Level::WARNING);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	caps->setBackgroundOpaque(true);
-	caps->setDepthBits(16);
-	caps->setDoubleBuffered(true);
-	_Console::println(static_cast< Object* >(glp));
-	_Console::println(static_cast< Object* >(caps));
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(u"GUI Test"_j);
-	glWindow->setSize(800, 600);
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
-	animator->setUpdateFPSFrames(3, nullptr);
-	auto guiTest = new GUITest(glWindow);
-	glWindow->addGLEventListener(guiTest);
-	glWindow->addWindowListener(guiTest);
-	glWindow->setVisible(true);
-	animator->start();
+	auto guiTest = new GUITest();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

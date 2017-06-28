@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/audio/AudioStream.java
 #include <tdme/audio/AudioStream.h>
 
-#include <com/jogamp/openal/AL.h>
 #include <java/io/IOException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -15,7 +14,6 @@
 #include <Array.h>
 
 using tdme::audio::AudioStream;
-using com::jogamp::openal::AL;
 using java::io::IOException;
 using java::lang::Object;
 using java::lang::String;
@@ -64,9 +62,12 @@ void AudioStream::ctor(String* id, String* pathName, String* fileName)
 
 bool AudioStream::isPlaying()
 {
+	/*
 	auto state = new int32_tArray(1);
 	Audio::al->alGetSourcei(alSourceId, AL::AL_SOURCE_STATE, state, 0);
 	return ((*state)[0] == AL::AL_PLAYING);
+	*/
+	return false;
 }
 
 void AudioStream::rewind()
@@ -113,13 +114,16 @@ void AudioStream::play()
 				->append(u"': "_j)
 				->append(ade->getMessage())->toString()));
 		}
+		/*
 		Audio::al->alBufferData((*alBufferIds)[i], format, data, data->remaining(), frequency);
 		if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 				->append(u"': Could not upload buffer"_j)->toString()));
 		}
 		buffersToPlay++;
+		*/
 	}
+	/*
 	Audio::al->alSourceQueueBuffers(alSourceId, buffersToPlay, alBufferIds, 0);
 	if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
@@ -130,6 +134,7 @@ void AudioStream::play()
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 			->append(u"': Could not play source"_j)->toString()));
 	}
+	*/
 }
 
 void AudioStream::pause()
@@ -137,11 +142,13 @@ void AudioStream::pause()
 	if (initiated == false)
 		return;
 
+	/*
 	Audio::al->alSourcePause(alSourceId);
 	if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio sound: '"_j)->append(id)
 			->append(u"': Could not pause"_j)->toString()));
 	}
+	*/
 }
 
 void AudioStream::stop()
@@ -149,6 +156,7 @@ void AudioStream::stop()
 	if (initiated == false)
 		return;
 
+	/*
 	Audio::al->alSourceStop(alSourceId);
 	if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio sound: '"_j)->append(id)
@@ -169,6 +177,7 @@ void AudioStream::stop()
 				->append(u"': Could not unqueue buffers"_j)->toString()));
 		}
 	}
+	*/
 }
 
 bool AudioStream::initialize()
@@ -176,6 +185,7 @@ bool AudioStream::initialize()
 	if (true == true)
 		return false;
 
+	/*
 	alBufferIds = new int32_tArray(BUFFER_COUNT);
 	Audio::al->alGenBuffers(alBufferIds->length, alBufferIds, 0);
 	if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
@@ -192,6 +202,7 @@ bool AudioStream::initialize()
 		return false;
 	}
 	alSourceId = (*sourceIds)[0];
+	*/
 	updateProperties();
 	data = ByteBuffer::allocateDirect(BUFFER_SIZE);
 	initiated = true;
@@ -203,6 +214,7 @@ void AudioStream::update()
 	if (initiated == false)
 		return;
 
+	/*
 	auto processedBuffersArray = new int32_tArray(1);
 	Audio::al->alGetSourcei(alSourceId, AL::AL_BUFFERS_PROCESSED, processedBuffersArray, 0);
 	if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
@@ -251,11 +263,13 @@ void AudioStream::update()
 			processedBuffers--;
 		}
 	}
+	*/
 	updateProperties();
 }
 
 void AudioStream::updateProperties()
 {
+	/*
 	Audio::al->alSourcef(alSourceId, AL::AL_PITCH, pitch);
 	Audio::al->alSourcef(alSourceId, AL::AL_GAIN, gain);
 	Audio::al->alSourcefv(alSourceId, AL::AL_POSITION, sourcePosition->getArray(), 0);
@@ -268,10 +282,12 @@ void AudioStream::updateProperties()
 		Audio::al->alSourcef(alSourceId, AL::AL_ROLLOFF_FACTOR, 1.0f);
 		Audio::al->alSourcei(alSourceId, AL::AL_SOURCE_RELATIVE, AL::AL_FALSE);
 	}
+	*/
 }
 
 void AudioStream::dispose()
 {
+	/*
 	if (alSourceId != Audio::ALSOURCEID_NONE) {
 		Audio::al->alDeleteSources(1, new int32_tArray({alSourceId}), 0);
 		if (Audio::al->alGetError() != AL::AL_NO_ERROR) {
@@ -288,6 +304,7 @@ void AudioStream::dispose()
 		}
 		alBufferIds = nullptr;
 	}
+	*/
 	if (decoder != nullptr)
 		decoder->close();
 

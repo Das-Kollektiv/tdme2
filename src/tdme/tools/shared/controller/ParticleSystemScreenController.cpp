@@ -428,7 +428,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 end_switch0:;
 	}
 
-	view->initParticleSystem();
+	view->initParticleSystemRequest();
 }
 
 void ParticleSystemScreenController::onParticleSystemTypeDataApply()
@@ -467,7 +467,7 @@ end_switch1:;
 	} catch (NumberFormatException* exception) {
 		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
 	}
-	view->initParticleSystem();
+	view->initParticleSystemRequest();
 }
 
 void ParticleSystemScreenController::onParticleSystemTypeApply()
@@ -486,7 +486,7 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 			->append(u"'"_j)->toString()));
 	}
 	setParticleSystemType();
-	view->initParticleSystem();
+	view->initParticleSystemRequest();
 }
 
 void ParticleSystemScreenController::onParticleSystemEmitterApply()
@@ -637,7 +637,7 @@ end_switch2:;
 	} catch (NumberFormatException* exception) {
 		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
 	}
-	view->initParticleSystem();
+	view->initParticleSystemRequest();
 }
 
 void ParticleSystemScreenController::setParticleSystemEmitter()
@@ -769,7 +769,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 end_switch3:;
 	}
 
-	view->initParticleSystem();
+	view->initParticleSystemRequest();
 }
 
 void ParticleSystemScreenController::onParticleSystemLoad()

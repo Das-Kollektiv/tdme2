@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/viewer/TDMEViewer.java
 #include <tdme/tools/viewer/TDMEViewer.h>
 
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -22,12 +16,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::viewer::TDMEViewer;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -61,10 +49,10 @@ TDMEViewer::TDMEViewer(const ::default_init_tag&)
 	clinit();
 }
 
-TDMEViewer::TDMEViewer(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName) 
+TDMEViewer::TDMEViewer()
 	: TDMEViewer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(glWindow,animator,modelFileName);
+	ctor();
 }
 
 void TDMEViewer::init()
@@ -83,28 +71,13 @@ void TDMEViewer::main(StringArray* args)
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEViewer "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
-	Logger::getLogger(u""_j)->setLevel(Level::SEVERE);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	_Console::println(static_cast< Object* >(glp));
-	_Console::println(static_cast< Object* >(caps));
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(::java::lang::StringBuilder().append(u"TDMEViewer "_j)->append(VERSION)->toString());
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
-	auto tdmeLevelEditor = new TDMEViewer(glWindow, animator, modelFileName);
-	glWindow->addWindowListener(tdmeLevelEditor);
-	glWindow->addGLEventListener(tdmeLevelEditor);
-	glWindow->setSize(800, 600);
-	glWindow->setVisible(true);
-	animator->start();
+	auto tdmeLevelEditor = new TDMEViewer();
 }
 
-void TDMEViewer::ctor(GLWindow* glWindow, FPSAnimator* animator, String* modelFileName)
+void TDMEViewer::ctor()
 {
 	super::ctor();
 	init();
-	this->glWindow = glWindow;
-	this->animator = animator;
 	TDMEViewer::instance = this;
 	engine = Engine::getInstance();
 	view = nullptr;
@@ -134,7 +107,7 @@ void TDMEViewer::quit()
 	quitRequested = true;
 }
 
-void TDMEViewer::display(GLAutoDrawable* drawable)
+void TDMEViewer::display()
 {
 	if (viewNew != nullptr) {
 		if (view != nullptr && viewInitialized == true) {
@@ -151,74 +124,41 @@ void TDMEViewer::display(GLAutoDrawable* drawable)
 			view->activate();
 			viewInitialized = true;
 		}
-		view->display(drawable);
+		view->display();
 	}
-	engine->display(drawable);
-	view->display(drawable);
+	engine->display();
+	view->display();
 	if (quitRequested == true) {
 		if (view != nullptr) {
 			view->deactivate();
 			view->dispose();
 		}
-		animator->stop();
-		glWindow->setVisible(false);
 		System::exit(0);
 	}
 }
 
-void TDMEViewer::dispose(GLAutoDrawable* drawable)
+void TDMEViewer::dispose()
 {
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
 		view->dispose();
 		view = nullptr;
 	}
-	engine->dispose(drawable);
-	Tools::oseDispose(drawable);
+	engine->dispose();
+	Tools::oseDispose();
 }
 
-void TDMEViewer::init_(GLAutoDrawable* drawable)
+void TDMEViewer::init_()
 {
-	engine->initialize(drawable);
-	glWindow->addMouseListener(engine->getGUI());
-	glWindow->addKeyListener(engine->getGUI());
-	Tools::oseInit(drawable);
+	engine->initialize();
+	Tools::oseInit();
 	popUps->initialize();
 	setView(new SharedModelViewerView(popUps));
 }
 
-void TDMEViewer::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMEViewer::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
-}
-
-void TDMEViewer::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void TDMEViewer::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void TDMEViewer::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void TDMEViewer::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void TDMEViewer::windowMoved(WindowEvent* arg0)
-{
-}
-
-void TDMEViewer::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void TDMEViewer::windowResized(WindowEvent* arg0)
-{
+	engine->reshape(x, y, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

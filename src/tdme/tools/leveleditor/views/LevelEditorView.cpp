@@ -546,14 +546,14 @@ void LevelEditorView::handleInputEvents()
 	}
 }
 
-void LevelEditorView::display(GLAutoDrawable* drawable)
+void LevelEditorView::display()
 {
 	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
 		auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 			selectedEntity = entityLibrary->getEntityAt(i);
-			Tools::oseThumbnail(drawable, selectedEntity);
+			Tools::oseThumbnail(selectedEntity);
 		}
 		reloadEntityLibrary = false;
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();

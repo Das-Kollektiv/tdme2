@@ -137,14 +137,14 @@ void SharedModelViewerView::setEntity(LevelEditorEntity* entity)
 	initModelRequested = true;
 }
 
-void SharedModelViewerView::initModel(GLAutoDrawable* drawable)
+void SharedModelViewerView::initModel()
 {
 	if (entity == nullptr)
 		return;
 
 	modelFile = new File(entity->getEntityFileName() != nullptr ? entity->getEntityFileName() : entity->getFileName());
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
-	Tools::oseThumbnail(drawable, entity);
+	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto stats = ModelUtilities::computeModelStatistics(entity->getModel());
 	modelViewerScreenController->setStatistics(stats->getOpaqueFaceCount(), stats->getTransparentFaceCount(), stats->getMaterialCount());
@@ -188,7 +188,7 @@ void SharedModelViewerView::handleInputEvents()
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void SharedModelViewerView::display(GLAutoDrawable* drawable)
+void SharedModelViewerView::display()
 {
 	if (loadModelRequested == true) {
 		initModelRequested = true;
@@ -198,7 +198,7 @@ void SharedModelViewerView::display(GLAutoDrawable* drawable)
 	}
 	if (initModelRequested == true) {
 		engine->reset();
-		initModel(drawable);
+		initModel();
 		initModelRequested = false;
 	}
 	entityDisplayView->display(entity);

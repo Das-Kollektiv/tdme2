@@ -56,7 +56,7 @@ public:
     {
         if(&rhs != this) {
             if(length != rhs.length) {
-                delete p;
+                delete [] p;
                 const_cast<pointer_type&>(p) = 0;
                 const_cast<size_type&>(length) = rhs.length;
                 const_cast<pointer_type&>(p) = new value_type[length];
@@ -72,7 +72,7 @@ public:
     Array &operator=(Array &&rhs)
     {
         if(&rhs != this) {
-            delete p;
+            delete [] p;
             const_cast<size_type&>(length) = rhs.length;
             const_cast<pointer_type&>(p) = rhs.p;
             const_cast<pointer_type&>(rhs.p) = 0;
@@ -81,7 +81,7 @@ public:
     	return *this;
     }
 
-    virtual ~Array() { delete p; }
+    virtual ~Array() { delete [] p; }
 
     Array* clone() override { return new Array(*this); }
 

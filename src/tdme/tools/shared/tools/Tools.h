@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -14,7 +13,6 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using com::jogamp::opengl::GLAutoDrawable;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -127,22 +125,19 @@ public:
 
 	/** 
 	 * Init off screen engine for making thumbails
-	 * @param drawable
 	 */
-	static void oseInit(GLAutoDrawable* drawable);
+	static void oseInit();
 
 	/** 
 	 * Dispose off screen engine
-	 * @param drawable
 	 */
-	static void oseDispose(GLAutoDrawable* drawable);
+	static void oseDispose();
 
 	/** 
 	 * Make a thumbnail of given model with off screen engine
-	 * @param drawable
 	 * @param model
 	 */
-	static void oseThumbnail(GLAutoDrawable* drawable, LevelEditorEntity* model);
+	static void oseThumbnail(LevelEditorEntity* model);
 
 	/** 
 	 * Compute max axis dimension b given bounding box

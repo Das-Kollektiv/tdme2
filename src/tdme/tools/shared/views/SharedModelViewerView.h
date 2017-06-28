@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -18,7 +17,6 @@
 using java::lang::Object;
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
-using com::jogamp::opengl::GLAutoDrawable;
 using java::io::File;
 using java::lang::String;
 using tdme::engine::Engine;
@@ -90,7 +88,7 @@ public: /* protected */
 	/** 
 	 * Init model
 	 */
-	virtual void initModel(GLAutoDrawable* drawable);
+	virtual void initModel();
 
 public:
 
@@ -126,7 +124,7 @@ public:
 	/** 
 	 * Renders the scene 
 	 */
-	void display(GLAutoDrawable* drawable) override;
+	void display() override;
 
 	/** 
 	 * Init GUI elements

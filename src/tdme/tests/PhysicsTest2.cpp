@@ -1,13 +1,6 @@
 // Generated from /tdme/src/tdme/tests/PhysicsTest2.java
 #include <tdme/tests/PhysicsTest2.h>
 
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GL.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -31,13 +24,6 @@
 #include <tdme/utils/_HashMap.h>
 
 using tdme::tests::PhysicsTest2;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
@@ -101,21 +87,7 @@ constexpr int32_t PhysicsTest2::BOX_COUNT;
 void PhysicsTest2::main(StringArray* args)
 {
 	clinit();
-	Logger::getLogger(u""_j)->setLevel(Level::WARNING);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(u"PhysicsTest2"_j);
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
 	auto physicsTest2 = new PhysicsTest2();
-	glWindow->addGLEventListener(physicsTest2);
-	glWindow->setSize(800, 600);
-	glWindow->setVisible(true);
-	glWindow->addKeyListener(physicsTest2);
-	glWindow->addMouseListener(physicsTest2);
-	glWindow->addWindowListener(physicsTest2);
-	animator->setUpdateFPSFrames(3, nullptr);
-	animator->start();
 }
 
 void PhysicsTest2::ctor()
@@ -125,25 +97,24 @@ void PhysicsTest2::ctor()
 	world = new World();
 }
 
-void PhysicsTest2::display(GLAutoDrawable* drawable)
+void PhysicsTest2::display()
 {
 	auto fps = 60.0f;
 	auto start = System::currentTimeMillis();
 	world->update(1.0f / fps);
 	world->synch(engine);
 	auto end = System::currentTimeMillis();
-	engine->display(drawable);
+	engine->display();
 }
 
-void PhysicsTest2::dispose(GLAutoDrawable* drawable)
+void PhysicsTest2::dispose()
 {
-	engine->dispose(drawable);
+	engine->dispose();
 }
 
-void PhysicsTest2::init_(GLAutoDrawable* drawable)
+void PhysicsTest2::init_()
 {
-	drawable->getGL()->setSwapInterval(0);
-	engine->initialize(drawable);
+	engine->initialize();
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
@@ -185,78 +156,9 @@ void PhysicsTest2::init_(GLAutoDrawable* drawable)
 	}
 }
 
-void PhysicsTest2::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void PhysicsTest2::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
-}
-
-void PhysicsTest2::mouseClicked(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mouseEntered(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mouseExited(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mousePressed(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mouseReleased(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mouseDragged(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::mouseMoved(MouseEvent* e)
-{
-}
-
-void PhysicsTest2::keyPressed(KeyEvent* e)
-{
-}
-
-void PhysicsTest2::keyReleased(KeyEvent* e)
-{
-}
-
-void PhysicsTest2::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest2::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void PhysicsTest2::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest2::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest2::windowMoved(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest2::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void PhysicsTest2::windowResized(WindowEvent* arg0)
-{
-}
-
-void PhysicsTest2::mouseWheelMoved(MouseEvent* arg0)
-{
+	engine->reshape(x, y, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

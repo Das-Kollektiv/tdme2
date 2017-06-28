@@ -2,14 +2,10 @@
 
 #pragma once
 
-#include <com/jogamp/opengl/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using com::jogamp::opengl::GLAutoDrawable;
-
-
 
 /** 
  * View interface, this combines application logic, regarding a application view, with screen controllers
@@ -33,7 +29,7 @@ struct tdme::tools::shared::views::View
 	/** 
 	 * Renders the view
 	 */
-	virtual void display(GLAutoDrawable* drawable) = 0;
+	virtual void display() = 0;
 
 	/** 
 	 * Deactivate view

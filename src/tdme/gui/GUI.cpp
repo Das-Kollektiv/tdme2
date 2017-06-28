@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/gui/GUI.java
 #include <tdme/gui/GUI.h>
 
-#include <com/jogamp/newt/event/KeyEvent.h>
-#include <com/jogamp/newt/event/MouseEvent.h>
 #include <java/io/File.h>
 #include <java/io/IOException.h>
 #include <java/lang/ClassCastException.h>
@@ -39,8 +37,6 @@
 #include <Array.h>
 
 using tdme::gui::GUI;
-using com::jogamp::newt::event::KeyEvent;
-using com::jogamp::newt::event::MouseEvent;
 using java::io::File;
 using java::io::IOException;
 using java::lang::ClassCastException;
@@ -508,6 +504,7 @@ void GUI::handleEvents()
 	unlockEvents();
 }
 
+/*
 void GUI::mouseClicked(MouseEvent* event)
 {
 }
@@ -658,6 +655,7 @@ void GUI::keyReleased(KeyEvent* event)
 	keyboardEvents->add(guiKeyboardEvent);
 	unlockEvents();
 }
+*/
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 

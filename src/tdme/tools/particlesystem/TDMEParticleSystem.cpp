@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/particlesystem/TDMEParticleSystem.java
 #include <tdme/tools/particlesystem/TDMEParticleSystem.h>
 
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -22,12 +16,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::particlesystem::TDMEParticleSystem;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -61,10 +49,10 @@ TDMEParticleSystem::TDMEParticleSystem(const ::default_init_tag&)
 	clinit();
 }
 
-TDMEParticleSystem::TDMEParticleSystem(GLWindow* glWindow, FPSAnimator* animator) 
+TDMEParticleSystem::TDMEParticleSystem()
 	: TDMEParticleSystem(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(glWindow,animator);
+	ctor();
 }
 
 void TDMEParticleSystem::init()
@@ -82,28 +70,13 @@ void TDMEParticleSystem::main(StringArray* args)
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEParticleSystem "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
-	Logger::getLogger(u""_j)->setLevel(Level::SEVERE);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	_Console::println(static_cast< Object* >(glp));
-	_Console::println(static_cast< Object* >(caps));
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(::java::lang::StringBuilder().append(u"TDMEParticleSystem "_j)->append(VERSION)->toString());
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
-	auto tdmeLevelEditor = new TDMEParticleSystem(glWindow, animator);
-	glWindow->addWindowListener(tdmeLevelEditor);
-	glWindow->addGLEventListener(tdmeLevelEditor);
-	glWindow->setSize(800, 600);
-	glWindow->setVisible(true);
-	animator->start();
+	auto tdmeParticleSystem = new TDMEParticleSystem();
 }
 
-void TDMEParticleSystem::ctor(GLWindow* glWindow, FPSAnimator* animator)
+void TDMEParticleSystem::ctor()
 {
 	super::ctor();
 	init();
-	this->glWindow = glWindow;
-	this->animator = animator;
 	TDMEParticleSystem::instance = this;
 	engine = Engine::getInstance();
 	view = nullptr;
@@ -133,7 +106,7 @@ void TDMEParticleSystem::quit()
 	quitRequested = true;
 }
 
-void TDMEParticleSystem::display(GLAutoDrawable* drawable)
+void TDMEParticleSystem::display()
 {
 	if (viewNew != nullptr) {
 		if (view != nullptr && viewInitialized == true) {
@@ -150,74 +123,41 @@ void TDMEParticleSystem::display(GLAutoDrawable* drawable)
 			view->activate();
 			viewInitialized = true;
 		}
-		view->display(drawable);
+		view->display();
 	}
-	engine->display(drawable);
-	view->display(drawable);
+	engine->display();
+	view->display();
 	if (quitRequested == true) {
 		if (view != nullptr) {
 			view->deactivate();
 			view->dispose();
 		}
-		animator->stop();
-		glWindow->setVisible(false);
 		System::exit(0);
 	}
 }
 
-void TDMEParticleSystem::dispose(GLAutoDrawable* drawable)
+void TDMEParticleSystem::dispose()
 {
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
 		view->dispose();
 		view = nullptr;
 	}
-	engine->dispose(drawable);
-	Tools::oseDispose(drawable);
+	engine->dispose();
+	Tools::oseDispose();
 }
 
-void TDMEParticleSystem::init_(GLAutoDrawable* drawable)
+void TDMEParticleSystem::init_()
 {
-	engine->initialize(drawable);
-	glWindow->addMouseListener(engine->getGUI());
-	glWindow->addKeyListener(engine->getGUI());
-	Tools::oseInit(drawable);
+	engine->initialize();
+	Tools::oseInit();
 	popUps->initialize();
 	setView(new SharedParticleSystemView(popUps));
 }
 
-void TDMEParticleSystem::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMEParticleSystem::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
-}
-
-void TDMEParticleSystem::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void TDMEParticleSystem::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void TDMEParticleSystem::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void TDMEParticleSystem::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void TDMEParticleSystem::windowMoved(WindowEvent* arg0)
-{
-}
-
-void TDMEParticleSystem::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void TDMEParticleSystem::windowResized(WindowEvent* arg0)
-{
+	engine->reshape(x, y, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

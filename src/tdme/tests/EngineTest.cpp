@@ -1,14 +1,6 @@
 // Generated from /tdme/src/tdme/tests/EngineTest.java
 #include <tdme/tests/EngineTest.h>
 
-#include <com/jogamp/newt/event/KeyEvent.h>
-#include <com/jogamp/newt/event/MouseEvent.h>
-#include <com/jogamp/newt/opengl/GLWindow.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLCapabilities.h>
-#include <com/jogamp/opengl/GLCapabilitiesImmutable.h>
-#include <com/jogamp/opengl/GLProfile.h>
-#include <com/jogamp/opengl/util/FPSAnimator.h>
 #include <java/lang/Character.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
@@ -63,14 +55,6 @@
 #include <Array.h>
 
 using tdme::tests::EngineTest;
-using com::jogamp::newt::event::KeyEvent;
-using com::jogamp::newt::event::MouseEvent;
-using com::jogamp::newt::opengl::GLWindow;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLCapabilities;
-using com::jogamp::opengl::GLCapabilitiesImmutable;
-using com::jogamp::opengl::GLProfile;
-using com::jogamp::opengl::util::FPSAnimator;
 using java::lang::Character;
 using java::lang::ClassCastException;
 using java::lang::Exception;
@@ -151,33 +135,19 @@ EngineTest::EngineTest(const ::default_init_tag&)
 	clinit();
 }
 
-EngineTest::EngineTest(GLWindow* glWindow, FPSAnimator* fpsAnimator) 
+EngineTest::EngineTest()
 	: EngineTest(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(glWindow,fpsAnimator);
+	ctor();
 }
 
 void EngineTest::main(StringArray* args)
 {
 	clinit();
-	Logger::getLogger(u""_j)->setLevel(Level::WARNING);
-	auto glp = Engine::getProfile();
-	auto caps = new GLCapabilities(glp);
-	auto glWindow = GLWindow::create(static_cast< GLCapabilitiesImmutable* >(caps));
-	glWindow->setTitle(u"EngineTest"_j);
-	auto animator = new FPSAnimator(static_cast< GLAutoDrawable* >(glWindow), 60);
-	auto engineTest = new EngineTest(glWindow, animator);
-	glWindow->addGLEventListener(engineTest);
-	glWindow->setSize(800, 600);
-	glWindow->setVisible(true);
-	glWindow->addKeyListener(engineTest);
-	glWindow->addMouseListener(engineTest);
-	glWindow->addWindowListener(engineTest);
-	animator->setUpdateFPSFrames(3, nullptr);
-	animator->start();
+	auto engineTest = new EngineTest();
 }
 
-void EngineTest::ctor(GLWindow* glWindow, FPSAnimator* fpsAnimator)
+void EngineTest::ctor()
 {
 	super::ctor();
 	keyLeft = false;
@@ -232,7 +202,7 @@ Model* EngineTest::createWallModel()
 	return wall;
 }
 
-void EngineTest::display(GLAutoDrawable* drawable)
+void EngineTest::display()
 {
 	circleTransformations->getTranslation()->setX(java_cast< Object3D* >(players->get(0))->getTranslation()->getX());
 	circleTransformations->getTranslation()->setZ(java_cast< Object3D* >(players->get(0))->getTranslation()->getZ());
@@ -247,8 +217,8 @@ void EngineTest::display(GLAutoDrawable* drawable)
 	for (auto i = 0; i < players->size(); i++) {
 		java_cast< Object3D* >(playersBoundingVolumeModel->get(i))->fromTransformations(java_cast< Object3D* >(players->get(i)));
 	}
-	osEngine->display(drawable);
-	engine->display(drawable);
+	osEngine->display();
+	engine->display();
 	if (mouseClicked_ != nullptr) {
 		if (entityClicked != nullptr) {
 			entityClicked->getEffectColorMul()->setRed(1.0f);
@@ -324,16 +294,16 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	}
 }
 
-void EngineTest::dispose(GLAutoDrawable* drawable)
+void EngineTest::dispose()
 {
-	engine->dispose(drawable);
+	engine->dispose();
 }
 
-void EngineTest::init_(GLAutoDrawable* drawable)
+void EngineTest::init_()
 {
-	engine->initialize(drawable);
+	engine->initialize();
 	if (osEngine == nullptr) {
-		osEngine = Engine::createOffScreenInstance(drawable, 512, 512);
+		osEngine = Engine::createOffScreenInstance(512, 512);
 		auto osLight0 = osEngine->getLightAt(0);
 		osLight0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 		osLight0->getDiffuse()->set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -498,41 +468,18 @@ void EngineTest::init_(GLAutoDrawable* drawable)
 	}
 }
 
-void EngineTest::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void EngineTest::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	engine->reshape(drawable, x, y, width, height);
+	engine->reshape(x, y, width, height);
 }
 
-void EngineTest::mouseClicked(MouseEvent* e)
-{
-}
-
-void EngineTest::mouseEntered(MouseEvent* e)
-{
-}
-
-void EngineTest::mouseExited(MouseEvent* e)
-{
-}
-
+/*
 void EngineTest::mousePressed(MouseEvent* e)
 {
 	mouseClicked_ = new int32_tArray({
 		e->getX(),
 		e->getY()
 	});
-}
-
-void EngineTest::mouseReleased(MouseEvent* e)
-{
-}
-
-void EngineTest::mouseDragged(MouseEvent* e)
-{
-}
-
-void EngineTest::mouseMoved(MouseEvent* e)
-{
 }
 
 void EngineTest::keyPressed(KeyEvent* e)
@@ -588,39 +535,7 @@ void EngineTest::keyReleased(KeyEvent* e)
 		keyUp = false;
 
 }
-
-void EngineTest::mouseWheelMoved(MouseEvent* arg0)
-{
-}
-
-void EngineTest::windowDestroyNotify(WindowEvent* arg0)
-{
-}
-
-void EngineTest::windowDestroyed(WindowEvent* arg0)
-{
-	System::exit(0);
-}
-
-void EngineTest::windowGainedFocus(WindowEvent* arg0)
-{
-}
-
-void EngineTest::windowLostFocus(WindowEvent* arg0)
-{
-}
-
-void EngineTest::windowMoved(WindowEvent* arg0)
-{
-}
-
-void EngineTest::windowRepaint(WindowUpdateEvent* arg0)
-{
-}
-
-void EngineTest::windowResized(WindowEvent* arg0)
-{
-}
+*/
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 

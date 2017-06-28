@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/newt/event/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/concurrent/locks/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -13,14 +12,8 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
-#include <com/jogamp/newt/event/MouseListener.h>
-#include <com/jogamp/newt/event/KeyListener.h>
 
 using java::lang::Object;
-using com::jogamp::newt::event::MouseListener;
-using com::jogamp::newt::event::KeyListener;
-using com::jogamp::newt::event::KeyEvent;
-using com::jogamp::newt::event::MouseEvent;
 using java::lang::String;
 using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
@@ -45,8 +38,6 @@ struct default_init_tag;
  */
 class tdme::gui::GUI final
 	: public virtual Object
-	, public MouseListener
-	, public KeyListener
 {
 
 public:
@@ -251,14 +242,6 @@ public:
 	 * Handle screen events
 	 */
 	void handleEvents();
-	void mouseClicked(MouseEvent* event) override;
-	void mouseDragged(MouseEvent* event) override;
-	void mouseEntered(MouseEvent* event) override;
-	void mouseExited(MouseEvent* event) override;
-	void mouseMoved(MouseEvent* event) override;
-	void mousePressed(MouseEvent* event) override;
-	void mouseReleased(MouseEvent* event) override;
-	void mouseWheelMoved(MouseEvent* event) override;
 
 private:
 
@@ -268,8 +251,6 @@ private:
 	void fakeMouseMovedEvent();
 
 public:
-	void keyPressed(KeyEvent* event) override;
-	void keyReleased(KeyEvent* event) override;
 
 	// Generated
 	GUI(Engine* engine, GUIRenderer* guiRenderer);

@@ -216,10 +216,10 @@ void Tools::setDefaultLight(Light* light)
 	light->setEnabled(true);
 }
 
-void Tools::oseInit(GLAutoDrawable* drawable)
+void Tools::oseInit()
 {
 	clinit();
-	osEngine = Engine::createOffScreenInstance(drawable, 128, 128);
+	osEngine = Engine::createOffScreenInstance(128, 128);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
 	oseScale = 0.75f;
@@ -230,21 +230,21 @@ void Tools::oseInit(GLAutoDrawable* drawable)
 	oseLookFromRotations->update();
 }
 
-void Tools::oseDispose(GLAutoDrawable* drawable)
+void Tools::oseDispose()
 {
 	clinit();
-	osEngine->dispose(drawable);
+	osEngine->dispose();
 }
 
-void Tools::oseThumbnail(GLAutoDrawable* drawable, LevelEditorEntity* model)
+void Tools::oseThumbnail(LevelEditorEntity* model)
 {
 	clinit();
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
 	osEngine->getSceneColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
-	osEngine->display(drawable);
+	osEngine->display();
 	osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
 	osEngine->getSceneColor()->set(0.8f, 0.0f, 0.0f, 1.0f);
-	osEngine->display(drawable);
+	osEngine->display();
 	osEngine->makeScreenshot(u"tmp"_j, ::java::lang::StringBuilder().append(u"selected_"_j)->append(model->getThumbnail())->toString());
 	osEngine->reset();
 }

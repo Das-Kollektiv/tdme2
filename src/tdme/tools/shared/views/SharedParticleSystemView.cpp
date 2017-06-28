@@ -134,19 +134,19 @@ void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
 	initParticleSystemRequested = true;
 }
 
-void SharedParticleSystemView::initParticleSystem()
+void SharedParticleSystemView::initParticleSystemRequest()
 {
 	initParticleSystemRequested = true;
 }
 
-void SharedParticleSystemView::initParticleSystem(GLAutoDrawable* drawable)
+void SharedParticleSystemView::initParticleSystem()
 {
 	if (entity == nullptr)
 		return;
 
 	particleSystemFile = entity->getEntityFileName() != nullptr ? new File(entity->getEntityFileName()) : static_cast< File* >(nullptr);
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
-	Tools::oseThumbnail(drawable, entity);
+	Tools::oseThumbnail(entity);
 	BoundingBox* boundingBox = nullptr;
 	if (entity->getModel() == nullptr) {
 		boundingBox = new BoundingBox(new Vector3(-0.5f, 0.0f, -0.5f), new Vector3(0.5f, 3.0f, 0.5f));
@@ -186,7 +186,7 @@ void SharedParticleSystemView::handleInputEvents()
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void SharedParticleSystemView::display(GLAutoDrawable* drawable)
+void SharedParticleSystemView::display()
 {
 	if (loadParticleSystemRequested == true) {
 		initParticleSystemRequested = true;
@@ -196,7 +196,7 @@ void SharedParticleSystemView::display(GLAutoDrawable* drawable)
 	}
 	if (initParticleSystemRequested == true) {
 		engine->reset();
-		initParticleSystem(drawable);
+		initParticleSystem();
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
 		initParticleSystemRequested = false;

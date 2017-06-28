@@ -1,16 +1,6 @@
 // Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 
-#include <com/jogamp/opengl/DebugGL2.h>
-#include <com/jogamp/opengl/DebugGL3.h>
-#include <com/jogamp/opengl/DebugGLES2.h>
-#include <com/jogamp/opengl/GL2.h>
-#include <com/jogamp/opengl/GL3.h>
-#include <com/jogamp/opengl/GL.h>
-#include <com/jogamp/opengl/GLAutoDrawable.h>
-#include <com/jogamp/opengl/GLContext.h>
-#include <com/jogamp/opengl/GLES2.h>
-#include <com/jogamp/opengl/GLProfile.h>
 #include <java/io/File.h>
 #include <java/io/FileNotFoundException.h>
 #include <java/io/FileOutputStream.h>
@@ -77,16 +67,6 @@
 #include <SubArray.h>
 
 using tdme::engine::Engine;
-using com::jogamp::opengl::DebugGL2;
-using com::jogamp::opengl::DebugGL3;
-using com::jogamp::opengl::DebugGLES2;
-using com::jogamp::opengl::GL2;
-using com::jogamp::opengl::GL3;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLAutoDrawable;
-using com::jogamp::opengl::GLContext;
-using com::jogamp::opengl::GLES2;
-using com::jogamp::opengl::GLProfile;
 using java::io::File;
 using java::io::FileNotFoundException;
 using java::io::FileOutputStream;
@@ -230,7 +210,7 @@ Engine* Engine::getInstance()
 	return instance;
 }
 
-Engine* Engine::createOffScreenInstance(GLAutoDrawable* drawable, int32_t width, int32_t height)
+Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	clinit();
 	if (instance == nullptr || instance->initialized == false) {
@@ -252,51 +232,8 @@ Engine* Engine::createOffScreenInstance(GLAutoDrawable* drawable, int32_t width,
 	if (instance->shadowMappingEnabled == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
 	}
-	offScreenEngine->reshape(drawable, 0, 0, width, height);
+	offScreenEngine->reshape(0, 0, width, height);
 	return offScreenEngine;
-}
-
-GLProfile* Engine::getProfile()
-{
-	clinit();
-	GLProfile* glp = nullptr;
-	if (GLProfile::isAvailable(GLProfile::GL3)) {
-		_Console::println(static_cast< Object* >(u"TDME::Proposing GL3"_j));
-		glp = GLProfile::get(GLProfile::GL3);
-	} else if (GLProfile::isAvailable(GLProfile::GL2)) {
-		_Console::println(static_cast< Object* >(u"TDME::Proposing GL2"_j));
-		glp = GLProfile::get(GLProfile::GL2);
-	} else if (GLProfile::isAvailable(GLProfile::GLES2)) {
-		_Console::println(static_cast< Object* >(u"TDME::Proposing GLES2"_j));
-		glp = GLProfile::get(GLProfile::GLES2);
-	} else {
-		_Console::println(static_cast< Object* >(u"TDME::No suiting OpenGL profile available!"_j));
-		return nullptr;
-	}
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Proposing "_j)->append(static_cast< Object* >(glp))
-		->append(u", GL2 = "_j)
-		->append(glp->isGL2())
-		->append(u", GLES2 = "_j)
-		->append(glp->isGLES2())
-		->append(u", GL3 = "_j)
-		->append(glp->isGL3())->toString()));
-	return glp;
-}
-
-void Engine::updateRenderer(GLAutoDrawable* drawable)
-{
-	if (drawable->getGL()->isGL3()) {
-		auto gl = java_cast< GL3* >(drawable->getGL()->getGL3());
-		renderer->setGL(gl);
-	} else if (drawable->getGL()->isGL2()) {
-		auto gl = java_cast< GL2* >(drawable->getGL()->getGL2());
-		renderer->setGL(gl);
-	} else if (drawable->getGL()->isGLES2()) {
-		auto gl = java_cast< GLES2* >(drawable->getGL()->getGLES2());
-		renderer->setGL(gl);
-	} else {
-		_Console::println(static_cast< Object* >(u"Engine::updateRenderer(): unsupported GL!"_j));
-	}
 }
 
 void Engine::ctor()
@@ -507,30 +444,24 @@ void Engine::reset()
 	CollisionDetection::reset();
 }
 
-void Engine::initialize(GLAutoDrawable* drawable)
+void Engine::initialize()
 {
-	initialize(drawable, false);
+	initialize(false);
 }
 
-void Engine::initialize(GLAutoDrawable* drawable, bool debug)
+void Engine::initialize(bool debug)
 {
 	if (initialized == true)
 		return;
 
-	auto glContext = drawable->getGL()->getContext();
-	if (drawable->getGL()->isGL3()) {
-		auto gl = java_cast< GL3* >(drawable->getGL()->getGL3());
-		if (debug == true) {
-			drawable->setGL(new DebugGL3(gl));
-		}
+	if (true == true/*GL3*/) {
 		renderer = new Engine_initialize_1(this);
-		renderer->setGL(gl);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-	} else if (drawable->getGL()->isGL2()) {
+	}/* else if (drawable->getGL()->isGL2()) {
 		auto gl = java_cast< GL2* >(drawable->getGL()->getGL2());
 		if (debug == true) {
 			drawable->setGL(new DebugGL2(gl));
@@ -559,7 +490,7 @@ void Engine::initialize(GLAutoDrawable* drawable, bool debug)
 			shadowMappingEnabled = false;
 			animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		}
-	} else {
+	}*/ else {
 		_Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
 		return;
 	}
@@ -592,7 +523,7 @@ void Engine::initialize(GLAutoDrawable* drawable, bool debug)
 		_Console::println(static_cast< Object* >(u"TDME::VBOs are not available! Engine will not work!"_j));
 		initialized = false;
 	}
-	if (glContext->hasBasicFBOSupport() == false) {
+	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
 		_Console::println(static_cast< Object* >(u"TDME::Basic FBOs are not available!"_j));
 		shadowMappingEnabled = false;
 	} else {
@@ -617,11 +548,10 @@ void Engine::initialize(GLAutoDrawable* drawable, bool debug)
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::initialized & ready: "_j)->append(initialized)->toString()));
 }
 
-void Engine::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t width, int32_t height)
+void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	this->width = width;
 	this->height = height;
-	updateRenderer(drawable);
 	if (frameBuffer != nullptr) {
 		frameBuffer->reshape(width, height);
 	}
@@ -631,9 +561,8 @@ void Engine::reshape(GLAutoDrawable* drawable, int32_t x, int32_t y, int32_t wid
 	gui->reshape(width, height);
 }
 
-void Engine::initRendering(GLAutoDrawable* drawable)
+void Engine::initRendering()
 {
-	updateRenderer(drawable);
 	timing->updateTiming();
 	camera->update(width, height);
 	objects->clear();
@@ -644,10 +573,9 @@ void Engine::initRendering(GLAutoDrawable* drawable)
 	renderingInitiated = true;
 }
 
-void Engine::computeTransformations(GLAutoDrawable* drawable)
+void Engine::computeTransformations()
 {
-	if (renderingInitiated == false)
-		initRendering(drawable);
+	if (renderingInitiated == false) initRendering();
 
 	for (auto _i = entitiesById->getValuesIterator()->iterator(); _i->hasNext(); ) {
 		Entity* entity = java_cast< Entity* >(_i->next());
@@ -684,13 +612,11 @@ void Engine::computeTransformations(GLAutoDrawable* drawable)
 	renderingComputedTransformations = true;
 }
 
-void Engine::display(GLAutoDrawable* drawable)
+void Engine::display()
 {
-	if (renderingInitiated == false)
-		initRendering(drawable);
+	if (renderingInitiated == false) initRendering();
 
-	if (renderingComputedTransformations == false)
-		computeTransformations(drawable);
+	if (renderingComputedTransformations == false) computeTransformations();
 
 	Engine::renderer->initializeFrame();
 	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_VERTEX_ARRAY);
@@ -841,9 +767,8 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 	screenCoordinate->setY(height - (((*screenCoordinateXYZW)[1] + 1.0f) * height / 2.0f));
 }
 
-void Engine::dispose(GLAutoDrawable* drawable)
+void Engine::dispose()
 {
-	updateRenderer(drawable);
 	Iterator* entityKeys = entitiesById->getKeysIterator();
 	auto entitiesToRemove = new _ArrayList();
 	while (entityKeys->hasNext()) {

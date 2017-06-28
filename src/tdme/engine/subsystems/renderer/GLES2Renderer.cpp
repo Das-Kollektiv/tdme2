@@ -1,10 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GLES2Renderer.java
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
-#include <com/jogamp/common/nio/Buffers.h>
-#include <com/jogamp/opengl/GL.h>
-#include <com/jogamp/opengl/GLContext.h>
-#include <com/jogamp/opengl/GLES2.h>
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
 #include <java/io/IOException.h>
@@ -33,10 +29,6 @@
 #include <ObjectArray.h>
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
-using com::jogamp::common::nio::Buffers;
-using com::jogamp::opengl::GL;
-using com::jogamp::opengl::GLContext;
-using com::jogamp::opengl::GLES2;
 using java::io::BufferedReader;
 using java::io::DataInputStream;
 using java::io::IOException;
@@ -136,11 +128,6 @@ void GLES2Renderer::ctor()
 	SHADER_VERTEX_SHADER = GLES2::GL_VERTEX_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GLES2::GL_LEQUAL;
 	DEPTHFUNCTION_EQUAL = GLES2::GL_EQUAL;
-}
-
-void GLES2Renderer::setGL(GL* gl)
-{
-	this->gl = java_cast< GLES2* >(gl);
 }
 
 String* GLES2Renderer::getGLVersion()

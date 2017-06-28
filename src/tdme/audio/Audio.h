@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <com/jogamp/openal/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -11,7 +10,6 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using com::jogamp::openal::AL;
 using java::lang::String;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
@@ -43,7 +41,7 @@ private:
 
 public: /* protected */
 	AudioBufferManager* audioBufferManager {  };
-	static AL* al;
+	// static AL* al;
 	Vector3* listenerPosition {  };
 	Vector3* listenerVelocity {  };
 	Vector3* listenerOrientationAt {  };
