@@ -180,9 +180,7 @@ double Math::max(double arg0, double arg1) { /* stub */
 }
 
 int32_t Math::min(int32_t arg0, int32_t arg1) { /* stub */
-	clinit();
-	unimplemented_(u"int32_t Math::min(int32_t arg0, int32_t arg1)");
-	return 0;
+	return arg0 < arg1?arg0:arg1;
 }
 
 int64_t Math::min(int64_t arg0, int64_t arg1) { /* stub */

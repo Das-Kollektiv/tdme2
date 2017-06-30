@@ -773,8 +773,8 @@ void LevelEditorView::initialize()
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
 	levelEditorScreenController->setMapProperties(level->getProperties(), nullptr);
-	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets()->keySet());
-	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets()->keySet());
+	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
+	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);

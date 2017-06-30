@@ -104,7 +104,6 @@ StringBuffer* StringBuffer::append(char16_t arg0)
 
 StringBuffer* StringBuffer::append(int32_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(int32_t arg0)");
 	return 0;
 }
 

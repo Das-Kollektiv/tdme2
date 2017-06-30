@@ -1,12 +1,21 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+#include <exception>
+
+#include <Array.h>
 #include <java/lang/System.h>
 
 using java::lang::System;
 extern void unimplemented_(const char16_t* name);
 
+void System::arraycopy(floatArray* arg0, int32_t arg1, floatArray* arg2, int32_t arg3, int32_t arg4)
+{ /* native */
+	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
+}
+
 void System::arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, int32_t arg4)
 { /* native */
 	clinit();
+	throw std::exception();
 	unimplemented_(u"void System::arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, int32_t arg4)");
 }
 

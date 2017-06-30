@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
 #include <org/w3c/dom/fwd-tdme.h>
@@ -9,12 +11,19 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <tdme/utils/_HashMap.h>
+
+#include <ext/tinyxml/tinyxml.h>
+
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
-using java::util::HashMap;
 using org::w3c::dom::Element;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
+using tdme::ext::tinyxml::TiXmlElement;
 
 
 struct default_init_tag;
@@ -33,8 +42,8 @@ public:
 
 private:
 	_ArrayList* mapPropertiesPreset {  };
-	HashMap* objectPropertiesPresets {  };
-	HashMap* lightPresets {  };
+	_HashMap* objectPropertiesPresets {  };
+	_HashMap* lightPresets {  };
 	static LevelPropertyPresets* instance;
 
 public:
@@ -68,12 +77,12 @@ public:
 	/** 
 	 * @return object property presets
 	 */
-	HashMap* getObjectPropertiesPresets();
+	_HashMap* getObjectPropertiesPresets();
 
 	/** 
 	 * @return light presets
 	 */
-	HashMap* getLightPresets();
+	_HashMap* getLightPresets();
 
 private:
 
@@ -83,7 +92,7 @@ private:
 	 * @param name
 	 * @return children with given name
 	 */
-	static _ArrayList* getChildrenByTagName(Element* parent, String* name);
+	const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	// Generated
 

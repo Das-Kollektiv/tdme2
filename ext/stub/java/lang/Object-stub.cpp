@@ -17,7 +17,7 @@ java::lang::Object::Object()
 
 void Object::ctor()
 { /* stub */
-	unimplemented_(u"void Object::ctor()");
+	// unimplemented_(u"void Object::ctor()");
 }
 
 bool Object::equals(Object* arg0)

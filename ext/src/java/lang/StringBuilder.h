@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <string>
+
+#include <java/lang/String.h>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -94,5 +98,6 @@ public:
 	virtual CharSequence* subSequence(int32_t start, int32_t end);
 
 private:
+	wstring cppwstring { };
 	virtual ::java::lang::Class* getClass0();
 };

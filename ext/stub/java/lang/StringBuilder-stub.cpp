@@ -2,7 +2,9 @@
 #include <java/lang/StringBuilder.h>
 
 using java::lang::StringBuilder;
+
 extern void unimplemented_(const char16_t* name);
+
 java::lang::StringBuilder::StringBuilder(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -24,7 +26,7 @@ java::lang::StringBuilder::StringBuilder(int32_t arg0)
 java::lang::StringBuilder::StringBuilder(String* arg0)
 	: StringBuilder(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(arg0);
+	cppwstring = arg0->getCPPWString();
 }
 
 java::lang::StringBuilder::StringBuilder(CharSequence* arg0)
@@ -38,7 +40,7 @@ constexpr int64_t java::lang::StringBuilder::serialVersionUID;
 void StringBuilder::ctor()
 { /* stub */
 	/* super::ctor(); */
-	unimplemented_(u"void StringBuilder::ctor()");
+	// unimplemented_(u"void StringBuilder::ctor()");
 }
 
 void StringBuilder::ctor(int32_t arg0)
@@ -61,14 +63,14 @@ void StringBuilder::ctor(CharSequence* arg0)
 
 StringBuilder* StringBuilder::append(Object* arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(Object* arg0)");
-	return 0;
+	cppwstring+= arg0->toString()->getCPPWString();
+	return this;
 }
 
 StringBuilder* StringBuilder::append(String* arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(String* arg0)");
-	return 0;
+	cppwstring+= arg0->getCPPWString();
+	return this;
 }
 
 /* private: StringBuilder* StringBuilder::append(StringBuilder* arg0) */
@@ -92,8 +94,8 @@ StringBuilder* StringBuilder::append(char16_tArray* arg0)
 
 StringBuilder* StringBuilder::append(bool arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(bool arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(char16_t arg0)
@@ -104,26 +106,26 @@ StringBuilder* StringBuilder::append(char16_t arg0)
 
 StringBuilder* StringBuilder::append(int32_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(int32_t arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(int64_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(int64_t arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(float arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(float arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(double arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(double arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(CharSequence* arg0, int32_t arg1, int32_t arg2)
@@ -267,8 +269,7 @@ StringBuilder* StringBuilder::reverse()
 
 String* StringBuilder::toString()
 { /* stub */
-	unimplemented_(u"String* StringBuilder::toString()");
-	return 0;
+	return new String(cppwstring);
 }
 
 /* private: void StringBuilder::writeObject(ObjectOutputStream* arg0) */

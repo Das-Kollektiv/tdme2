@@ -9,7 +9,6 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Collection.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <java/util/Set.h>
 #include <tdme/gui/GUIParser.h>
@@ -26,6 +25,8 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/_HashMap.h>
+#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/MutableString.h>
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
@@ -37,7 +38,6 @@ using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Collection;
-using java::util::HashMap;
 using java::util::Iterator;
 using java::util::Set;
 using tdme::gui::GUIParser;
@@ -55,6 +55,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::_HashMap;
+using tdme::utils::_HashMap_ValuesIterator;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -110,7 +112,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 	} catch (Exception* e) {
 		e->printStackTrace();
 	}
-	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets()->keySet());
+	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
 void EntityBaseSubScreenController::setEntityData(String* name, String* description)
@@ -140,14 +142,14 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(Collection* entityPresetIds)
+void EntityBaseSubScreenController::setEntityPresetIds(_HashMap* entityPresetIds)
 {
 	auto entityPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto entityPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesPresets->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = entityPresetIds->iterator(); _i->hasNext(); ) {
+	for (auto _i = entityPresetIds->getValuesIterator(); _i->hasNext(); ) {
 		String* entityPresetId = java_cast< String* >(_i->next());
 		{
 			entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(entityPresetId))

@@ -67,7 +67,7 @@ public:
 
 private:
 	int32_t count {  };
-	int32_t hash {  };
+	int32_t hash { 0 };
 	int32_t offset {  };
 	static ObjectStreamFieldArray* serialPersistentFields;
 	static constexpr int64_t serialVersionUID { -6849794470754667710LL };
@@ -76,6 +76,7 @@ private:
 
 protected:
 	void ctor();
+	void ctor(const wstring& arg0);
 	void ctor(String* arg0);
 	void ctor(char16_tArray* arg0);
 	void ctor(int8_tArray* arg0);
@@ -177,6 +178,7 @@ public:
 
 	// Generated
 	String();
+	String(const wstring& arg0);
 	String(String* arg0);
 	String(char16_tArray* arg0);
 	String(int8_tArray* arg0);

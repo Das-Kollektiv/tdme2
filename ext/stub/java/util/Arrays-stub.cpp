@@ -1,7 +1,16 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+#include <string>
+
+#include <Array.h>
+#include <ObjectArray.h>
+#include <java/lang/String.h>
 #include <java/util/Arrays.h>
 
+using std::wstring;
+using std::to_wstring;
+
 using java::util::Arrays;
+
 extern void unimplemented_(const char16_t* name);
 java::util::Arrays::Arrays(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -424,7 +433,7 @@ void Arrays::fill(doubleArray* arg0, double arg1)
 void Arrays::fill(floatArray* arg0, float arg1)
 { /* stub */
 	clinit();
-	unimplemented_(u"void Arrays::fill(floatArray* arg0, float val)");
+	for (int i = 0; i < arg0->length; i++) arg0->set(i, arg1);
 }
 
 void Arrays::fill(ObjectArray* a, Object* val)
@@ -688,64 +697,109 @@ void Arrays::sort(ObjectArray* a, int32_t fromIndex, int32_t toIndex, Comparator
 String* Arrays::toString(int64_tArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(int64_tArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(int32_tArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(int32_tArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(int16_tArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(int16_tArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(char16_tArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(char16_tArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(int8_tArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(int8_tArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(boolArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(boolArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(floatArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(floatArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(doubleArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(doubleArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= to_wstring(a->get(i));
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 String* Arrays::toString(ObjectArray* a)
 { /* stub */
 	clinit();
-	unimplemented_(u"String* Arrays::toString(ObjectArray* a)");
-	return 0;
+	wstring result = L"[";
+	for (int i = 0; i < a->length; i++) {
+		if (i != 0) result+=  L",";
+		result+= a->get(i)->toString()->getCPPWString();
+	}
+	result+= L"[";
+	return new String(result);
 }
 
 /* private: void Arrays::vecswap(int64_tArray* arg0, int32_t arg1, int32_t arg2, int32_t arg3) */

@@ -16,6 +16,7 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -37,6 +38,7 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::utils::MutableString;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 using java::lang::Object;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -281,7 +283,7 @@ public:
 	 * Set up object property preset ids
 	 * @param object property preset ids
 	 */
-	void setObjectPresetIds(Collection* objectPresetIds);
+	void setObjectPresetIds(_HashMap* objectPresetIds);
 
 	/** 
 	 * Event callback for object properties selection
@@ -372,7 +374,7 @@ public:
 	 * Set up light presets
 	 * @param light presets
 	 */
-	void setLightPresetsIds(Collection* lightPresetIds);
+	void setLightPresetsIds(_HashMap* lightPresetIds);
 
 	/** 
 	 * Unselect light presets

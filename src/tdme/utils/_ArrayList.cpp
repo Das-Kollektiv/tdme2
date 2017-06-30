@@ -218,7 +218,6 @@ String* _ArrayList::toString()
 		result = ::java::lang::StringBuilder(result).append(static_cast< Object* >((*elements)[i]))->toString();
 		if (i < size_ - 1)
 			result = ::java::lang::StringBuilder(result).append(u", "_j)->toString();
-
 	}
 	result = ::java::lang::StringBuilder(result).append(u"]"_j)->toString();
 	return result;

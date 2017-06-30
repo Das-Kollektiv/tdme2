@@ -1,7 +1,9 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <cmath>
+#include <string>
 
 #include <java/lang/Float.h>
+#include <java/lang/String.h>
 
 using java::lang::Float;
 extern void unimplemented_(const char16_t* name);
@@ -153,9 +155,7 @@ int64_t Float::longValue()
 
 float Float::parseFloat(String* arg0)
 { /* stub */
-	clinit();
-	unimplemented_(u"float Float::parseFloat(String* arg0)");
-	return 0;
+	return stof(arg0->getCPPWString());
 }
 
 int16_t Float::shortValue()

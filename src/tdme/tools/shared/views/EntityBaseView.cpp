@@ -57,7 +57,7 @@ void EntityBaseView::ctor(EntityBaseSubScreenController* entityBaseSubScreenCont
 
 void EntityBaseView::initialize()
 {
-	entityBaseSubScreenController->setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets()->keySet());
+	entityBaseSubScreenController->setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
 void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* presetId)

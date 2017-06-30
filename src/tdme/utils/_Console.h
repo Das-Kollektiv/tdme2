@@ -2,10 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::string;
+using std::wstring;
 
 using java::lang::Object;
 
@@ -25,12 +30,24 @@ public:
 	typedef Object super;
 
 	/** 
+	 * Print given string and trailing newline to console
+	 * @param wstring
+	 */
+	static void println(const wstring& string);
+
+	/** 
+	 * Print given string and trailing newline to console
+	 * @param string
+	 */
+	static void println(const string& string);
+
+	/**
 	 * Print object and trailing newline to console
 	 * @param object
 	 */
 	static void println(Object* object);
 
-	/** 
+	/**
 	 * Print byte and trailing newline to console
 	 * @param value
 	 */
@@ -79,6 +96,18 @@ public:
 	static void println(char16_t value);
 
 	/** 
+	 * Print given string
+	 * @param wstring
+	 */
+	static void print(const wstring& string);
+
+	/**
+	 * Print given string
+	 * @param string
+	 */
+	static void print(const string& string);
+
+	/**
 	 * Print object to console
 	 * @param text
 	 */

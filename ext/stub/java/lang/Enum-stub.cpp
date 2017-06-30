@@ -19,7 +19,7 @@ java::lang::Enum::Enum(String* arg0, int32_t arg1)
 void Enum::ctor(String* arg0, int32_t arg1)
 { /* stub */
 	/* super::ctor(); */
-	unimplemented_(u"void Enum::ctor(String* arg0, int32_t arg1)");
+	// unimplemented_(u"void Enum::ctor(String* arg0, int32_t arg1)");
 }
 
 Object* Enum::clone()

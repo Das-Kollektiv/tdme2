@@ -1,13 +1,15 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelPropertyPresets.java
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 
+#include <string>
+#include <vector>
+
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
 #include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <javax/xml/parsers/DocumentBuilder.h>
 #include <javax/xml/parsers/DocumentBuilderFactory.h>
@@ -25,7 +27,14 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_HashMap.h>
+#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/StringConverter.h>
+
+#include <ext/tinyxml/tinyxml.h>
+
+using std::vector;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
 using java::lang::ClassCastException;
@@ -36,8 +45,6 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::HashMap;
 using java::util::Iterator;
-using javax::xml::parsers::DocumentBuilder;
-using javax::xml::parsers::DocumentBuilderFactory;
 using org::w3c::dom::Document;
 using org::w3c::dom::Element;
 using org::w3c::dom::Node;
@@ -52,7 +59,12 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
+using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_Console;
+using tdme::ext::tinyxml::TiXmlDocument;
+using tdme::ext::tinyxml::TiXmlElement;
+using tdme::utils::StringConverter;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -104,68 +116,70 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 {
 	super::ctor();
 	mapPropertiesPreset = new _ArrayList();
-	objectPropertiesPresets = new HashMap();
-	lightPresets = new HashMap();
-	auto builder = DocumentBuilderFactory::newInstance()->newDocumentBuilder();
-	auto document = builder->parse(_FileSystem::getInstance()->getInputStream(pathName, fileName));
-	auto xmlRoot = document->getDocumentElement();
-	for (auto _i = getChildrenByTagName(xmlRoot, u"map"_j)->iterator(); _i->hasNext(); ) {
-		Element* xmlMap = java_cast< Element* >(_i->next());
-		
-						for (auto _i = getChildrenByTagName(xmlMap, u"property"_j)->iterator(); _i->hasNext(); ) {
-				Element* xmlProperty = java_cast< Element* >(_i->next());
-				{
-					mapPropertiesPreset->add(new PropertyModelClass(xmlProperty->getAttribute(u"name"_j), xmlProperty->getAttribute(u"value"_j)));
-				}
-			}
+	objectPropertiesPresets = new _HashMap();
+	lightPresets = new _HashMap();
 
+	string fileNameUtf8 = StringConverter::toString(pathName->getCPPWString() + L"/" + fileName->getCPPWString());
+	TiXmlDocument xml;
+	if (xml.LoadFile(fileNameUtf8) == false) {
+		_Console::println("LevelPropertyPresets::ctor():: Could not load file '" + fileNameUtf8 + "'. Error='" + xml.ErrorDesc() + "'. Exiting.\n");
+		exit( 1 );
 	}
-	for (auto _i = getChildrenByTagName(xmlRoot, u"object"_j)->iterator(); _i->hasNext(); ) {
-		Element* xmlObject = java_cast< Element* >(_i->next());
-		
-						for (auto _i = getChildrenByTagName(xmlObject, u"type"_j)->iterator(); _i->hasNext(); ) {
-				Element* xmlType = java_cast< Element* >(_i->next());
-				{
-					auto typeId = xmlType->getAttribute(u"id"_j);
-					auto objectPropertiesPreset = new _ArrayList();
-					objectPropertiesPresets->put(typeId, objectPropertiesPreset);
-					objectPropertiesPreset->add(new PropertyModelClass(u"preset"_j, typeId));
-					for (auto _i = getChildrenByTagName(xmlType, u"property"_j)->iterator(); _i->hasNext(); ) {
-						Element* xmlProperty = java_cast< Element* >(_i->next());
-						{
-							objectPropertiesPreset->add(new PropertyModelClass(xmlProperty->getAttribute(u"name"_j), xmlProperty->getAttribute(u"value"_j)));
-						}
-					}
-				}
-			}
+	TiXmlElement* xmlRoot = xml.RootElement();
 
+	for (auto xmlMap: getChildrenByTagName(xmlRoot, "map")) {
+		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {
+			mapPropertiesPreset->add(
+				new PropertyModelClass(
+					new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
+					new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
+				)
+			);
+		}
 	}
+
+	for (auto xmlObject: getChildrenByTagName(xmlRoot, "object")) {
+		for (auto xmlType: getChildrenByTagName(xmlObject, "type")) {
+			auto typeId = new String(StringConverter::toWideString(xmlType->Attribute("id")));
+			auto objectPropertiesPreset = new _ArrayList();
+			objectPropertiesPresets->put(typeId, objectPropertiesPreset);
+			objectPropertiesPreset->add(new PropertyModelClass(u"preset"_j, typeId));
+			for (auto xmlProperty: getChildrenByTagName(xmlType, "property")) {
+				objectPropertiesPreset->add(
+					new PropertyModelClass(
+						new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
+						new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
+					)
+				);
+			}
+		}
+	}
+
 	auto lightId = 0;
-	for (auto _i = getChildrenByTagName(xmlRoot, u"lights"_j)->iterator(); _i->hasNext(); ) {
-		Element* xmlLights = java_cast< Element* >(_i->next());
-		
-						for (auto _i = getChildrenByTagName(xmlLights, u"type"_j)->iterator(); _i->hasNext(); ) {
-				Element* xmlType = java_cast< Element* >(_i->next());
-				{
-					auto typeId = xmlType->getAttribute(u"id"_j);
-					auto light = new LevelEditorLight(lightId++);
-					light->getAmbient()->set(static_cast< Color4Base* >(Tools::convertToColor4(java_cast< Element* >(getChildrenByTagName(xmlType, u"ambient"_j)->get(0))->getTextContent())));
-					light->getDiffuse()->set(static_cast< Color4Base* >(Tools::convertToColor4(java_cast< Element* >(getChildrenByTagName(xmlType, u"diffuse"_j)->get(0))->getTextContent())));
-					light->getSpecular()->set(static_cast< Color4Base* >(Tools::convertToColor4(java_cast< Element* >(getChildrenByTagName(xmlType, u"specular"_j)->get(0))->getTextContent())));
-					light->getPosition()->set(Tools::convertToVector4(java_cast< Element* >(getChildrenByTagName(xmlType, u"position"_j)->get(0))->getTextContent()));
-					light->setConstantAttenuation(Tools::convertToFloat(java_cast< Element* >(getChildrenByTagName(xmlType, u"constant_attenuation"_j)->get(0))->getTextContent()));
-					light->setLinearAttenuation(Tools::convertToFloat(java_cast< Element* >(getChildrenByTagName(xmlType, u"linear_attenuation"_j)->get(0))->getTextContent()));
-					light->setQuadraticAttenuation(Tools::convertToFloat(java_cast< Element* >(getChildrenByTagName(xmlType, u"quadratic_attenuation"_j)->get(0))->getTextContent()));
-					light->getSpotTo()->set(Tools::convertToVector3(java_cast< Element* >(getChildrenByTagName(xmlType, u"spot_to"_j)->get(0))->getTextContent()));
-					light->getSpotDirection()->set(Tools::convertToVector3(java_cast< Element* >(getChildrenByTagName(xmlType, u"spot_direction"_j)->get(0))->getTextContent()));
-					light->setSpotExponent(Tools::convertToFloat(java_cast< Element* >(getChildrenByTagName(xmlType, u"spot_exponent"_j)->get(0))->getTextContent()));
-					light->setSpotCutOff(Tools::convertToFloat(java_cast< Element* >(getChildrenByTagName(xmlType, u"spot_cutoff"_j)->get(0))->getTextContent()));
-					light->setEnabled(true);
-					lightPresets->put(typeId, light);
-				}
+	for (auto xmlLights: getChildrenByTagName(xmlRoot, "lights")) {
+		for (auto xmlType: getChildrenByTagName(xmlLights, "type")) {
+			{
+				auto typeId = new String(StringConverter::toWideString((xmlType->Attribute("id"))));
+				auto light = new LevelEditorLight(lightId++);
+				light->getAmbient()->set(static_cast< Color4Base* >(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText())))));
+				light->getDiffuse()->set(static_cast< Color4Base* >(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())))));
+				light->getSpecular()->set(static_cast< Color4Base* >(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText())))));
+				light->getPosition()->set(Tools::convertToVector4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "position").at(0)->GetText()))));
+				light->setConstantAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText()))));
+				light->setLinearAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText()))));
+				light->setQuadraticAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText()))));
+				light->getSpotTo()->set(Tools::convertToVector3(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_to").at(0)->GetText()))));
+				light->getSpotDirection()->set(Tools::convertToVector3(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText()))));
+				light->setSpotExponent(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText()))));
+				light->setSpotCutOff(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText()))));
+				light->setEnabled(true);
+				lightPresets->put(typeId, light);
 			}
-
+		}
 	}
+
+	_Console::println(static_cast< Object* >(mapPropertiesPreset));
+	_Console::println(static_cast< Object* >(objectPropertiesPresets));
 	_Console::println(static_cast< Object* >(lightPresets));
 }
 
@@ -174,26 +188,24 @@ _ArrayList* LevelPropertyPresets::getMapPropertiesPreset()
 	return mapPropertiesPreset;
 }
 
-HashMap* LevelPropertyPresets::getObjectPropertiesPresets()
+_HashMap* LevelPropertyPresets::getObjectPropertiesPresets()
 {
 	return objectPropertiesPresets;
 }
 
-HashMap* LevelPropertyPresets::getLightPresets()
+_HashMap* LevelPropertyPresets::getLightPresets()
 {
 	return lightPresets;
 }
 
-_ArrayList* LevelPropertyPresets::getChildrenByTagName(Element* parent, String* name)
+const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)
 {
 	clinit();
-	auto nodeList = new _ArrayList();
-	for (auto *child = parent->getFirstChild(); child != nullptr; child = child->getNextSibling()) {
-		if (child->getNodeType() == Node::ELEMENT_NODE && name->equals(child->getNodeName())) {
-			nodeList->add(java_cast< Element* >(child));
-		}
+	vector<TiXmlElement*> elementList;
+	for (auto *child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
+		elementList.push_back(child);
 	}
-	return nodeList;
+	return elementList;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
@@ -211,7 +223,7 @@ void LevelPropertyPresets::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		instance = nullptr;
+			instance = nullptr;
 		}
 	};
 

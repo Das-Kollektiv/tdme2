@@ -12,6 +12,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <tdme/utils/_HashMap.h>
+
 using java::lang::Object;
 using java::lang::Iterable;
 using java::lang::String;
@@ -24,6 +26,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -96,7 +99,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param entity property preset ids
 	 */
-	virtual void setEntityPresetIds(Collection* entityPresetIds);
+	virtual void setEntityPresetIds(_HashMap* entityPresetIds);
 
 	/** 
 	 * Set up entity properties

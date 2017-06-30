@@ -1,4 +1,4 @@
-INCLUDES := $(INCLUDES) -Isrc -Iext/src
+INCLUDES := $(INCLUDES) -Isrc -Iext/src -I./
 EXTRA_LIBS ?= -l$(NAME)-ext
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
@@ -18,6 +18,7 @@ LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 SRC = src
 STUB = stub
 NATIVE = native
+TINYXML = tinyxml
 
 SRCS = \
 	src/j2c.cpp \
@@ -363,6 +364,7 @@ SRCS = \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \
 	src/tdme/utils/QuickSort.cpp \
+	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/_ArrayList.cpp \
 	src/tdme/utils/_Console.cpp \
 	src/tdme/utils/_HashMap.cpp \
@@ -513,6 +515,11 @@ EXT_STUB_SRCS = \
 	ext/stub/org/json/JSONObject_Null-stub.cpp \
 	ext/stub/org/json/JSONTokener-stub.cpp \
 
+EXT_TINYXML_SRCS = \
+	ext/tinyxml/tinystr.cpp \
+	ext/tinyxml/tinyxml.cpp \
+	ext/tinyxml/tinyxmlerror.cpp \
+	ext/tinyxml/tinyxmlparser.cpp \
 
 EXT_NATIVE_SRCS = \
 	ext/native/java/io/FileInputStream-native.cpp \
@@ -550,6 +557,7 @@ NATIVE_OBJS = $(NATIVE_SRCS:$(NATIVE)/%.cpp=$(OBJ)/%.o)
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_STUB_OBJS = $(EXT_STUB_SRCS:ext/$(STUB)/%.cpp=$(OBJ)/%.o)
 EXT_NATIVE_OBJS = $(EXT_NATIVE_SRCS:ext/$(NATIVE)/%.cpp=$(OBJ)/%.o)
+EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -576,6 +584,9 @@ $(EXT_STUB_OBJS):$(OBJ)/%.o: ext/$(STUB)/%.cpp | print-opts
 $(EXT_NATIVE_OBJS):$(OBJ)/%.o: ext/$(NATIVE)/%.cpp | print-opts
 	$(cc-command)
 
+$(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
+	$(cc-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -584,7 +595,7 @@ $(EXT_NATIVE_OBJS):$(OBJ)/%.o: ext/$(NATIVE)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

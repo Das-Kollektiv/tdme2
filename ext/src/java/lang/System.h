@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <fwd-tdme.h>
+#include <Array.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/channels/fwd-tdme.h>
@@ -46,6 +47,7 @@ private:
 	/*static void adjustPropertiesForBackwardCompatibility(Properties* arg0); (private) */
 
 public:
+	static void arraycopy(floatArray* arg0, int32_t arg1, floatArray* arg2, int32_t arg3, int32_t arg4);
 	static void arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, int32_t arg4);
 	/*static void checkIO(); (private) */
 	/*static void checkKey(String* arg0); (private) */

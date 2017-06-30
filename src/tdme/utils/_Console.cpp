@@ -28,6 +28,18 @@ _Console::_Console()
 	ctor();
 }
 
+void _Console::println(const wstring& string)
+{
+	clinit();
+	wcout << string << endl;
+}
+
+void _Console::println(const string& string)
+{
+	clinit();
+	cout << string << endl;
+}
+
 void _Console::println(Object* object)
 {
 	clinit();
@@ -80,6 +92,18 @@ void _Console::println(char16_t value)
 {
 	clinit();
 	wcout << value << endl;
+}
+
+void _Console::print(const wstring& string)
+{
+	clinit();
+	wcout << string;
+}
+
+void _Console::print(const string& string)
+{
+	clinit();
+	cout << string;
 }
 
 void _Console::print(Object* object)

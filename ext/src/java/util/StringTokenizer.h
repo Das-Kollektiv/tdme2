@@ -2,11 +2,17 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <java/util/Enumeration.h>
+
+using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::util::Enumeration;
@@ -33,6 +39,8 @@ private:
 	int32_t newPosition {  };
 	bool retDelims {  };
 	String* str {  };
+	vector<wstring> elements;
+	int idx { 0 };
 
 protected:
 	void ctor(String* arg0);

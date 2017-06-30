@@ -6,7 +6,6 @@ extern void unimplemented_(const char16_t* name);
 
 String* String::intern()
 { /* native */
-	unimplemented_(u"String* String::intern()");
-	return 0;
+	return this;
 }
 

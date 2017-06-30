@@ -2,17 +2,32 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
-#include <tdme/tools/shared/views/View.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
+#include "../../../gui/events/GUIInputEventHandler.h"
+#include "View.h"
+
+namespace java {
+namespace io {
+class File;
+} /* namespace io */
+} /* namespace java */
+namespace tdme {
+namespace engine {
+class Engine;
+} /* namespace engine */
+namespace math {
+class Vector3;
+} /* namespace math */
+namespace tools {
+namespace shared {
+namespace controller {
+class ModelViewerScreenController;
+} /* namespace controller */
+namespace model {
+class LevelEditorEntity;
+} /* namespace model */
+} /* namespace shared */
+} /* namespace tools */
+} /* namespace tdme */
 
 using java::lang::Object;
 using tdme::tools::shared::views::View;

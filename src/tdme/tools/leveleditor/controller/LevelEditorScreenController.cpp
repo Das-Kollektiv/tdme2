@@ -16,7 +16,6 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Collection.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <java/util/StringTokenizer.h>
 #include <tdme/engine/model/Color4.h>
@@ -47,6 +46,8 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_HashMap.h>
+#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -66,7 +67,6 @@ using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Collection;
-using java::util::HashMap;
 using java::util::Iterator;
 using java::util::StringTokenizer;
 using tdme::engine::model::Color4;
@@ -96,6 +96,8 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
+using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -541,14 +543,14 @@ void LevelEditorScreenController::onMapPropertyRemove()
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(Collection* objectPresetIds)
+void LevelEditorScreenController::setObjectPresetIds(_HashMap* objectPresetIds)
 {
 	auto objectPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto objectPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesPresets->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = objectPresetIds->iterator(); _i->hasNext(); ) {
+	for (auto _i = objectPresetIds->getValuesIterator(); _i->hasNext(); ) {
 		String* modelPresetId = java_cast< String* >(_i->next());
 		{
 			objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(modelPresetId))
@@ -764,7 +766,7 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(Collection* lightPresetIds)
+void LevelEditorScreenController::setLightPresetsIds(_HashMap* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = java_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*lightsPresets)[i]->getId())->append(u"_inner"_j)->toString())));
@@ -772,7 +774,7 @@ void LevelEditorScreenController::setLightPresetsIds(Collection* lightPresetIds)
 		auto lightPresetsInnerNodeSubNodesXML = u""_j;
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append((*lightsPresets)[i]->getId())
 			->append(u"_inner_scrollarea\" width=\"100%\" height=\"50\">\n"_j)->toString())->toString();
-		for (auto _i = lightPresetIds->iterator(); _i->hasNext(); ) {
+		for (auto _i = lightPresetIds->getValuesIterator(); _i->hasNext(); ) {
 			String* lightPresetId = java_cast< String* >(_i->next());
 			{
 				lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(lightPresetId))
