@@ -20,7 +20,6 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <java/util/Properties.h>
 #include <java/util/Set.h>
@@ -102,7 +101,6 @@ using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::HashMap;
 using java::util::Iterator;
 using java::util::Properties;
 using java::util::Set;
@@ -263,7 +261,7 @@ void LevelEditorView::ctor(PopUps* popUps)
 	gridCenterLast = nullptr;
 	gridEnabled = true;
 	gridY = 0.0f;
-	objectColors = new HashMap();
+	objectColors = new _HashMap();
 	objectColors->put(u"red"_j, new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f));
 	objectColors->put(u"green"_j, new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f));
 	objectColors->put(u"blue"_j, new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f));
@@ -272,7 +270,7 @@ void LevelEditorView::ctor(PopUps* popUps)
 	objectColors->put(u"cyan"_j, new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f));
 	objectColors->put(u"none"_j, new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f));
 	selectedObjects = new _ArrayList();
-	selectedObjectsById = new HashMap();
+	selectedObjectsById = new _HashMap();
 	pasteObjects_ = new _ArrayList();
 	camScale = 1.0f;
 	camLookRotationX->update();
@@ -726,7 +724,7 @@ void LevelEditorView::updateGUIElements()
 
 void LevelEditorView::setObjectsListBox()
 {
-	levelEditorScreenController->setObjectListbox(level->getObjectIdsIterator());
+	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 }
 
 void LevelEditorView::unselectLightPresets()
@@ -1027,7 +1025,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		engine->addEntity(object);
 		selectedObjects->add(object);
 		selectedObjectsById->put(object->getId(), object);
-		levelEditorScreenController->setObjectListbox(level->getObjectIdsIterator());
+		levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 	}
 	levelEditorObject->setDescription(description);
 	return true;
@@ -1088,7 +1086,7 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			object->setPickable(true);
 			engine->addEntity(object);
 		}
-		levelEditorScreenController->setObjectListbox(level->getObjectIdsIterator());
+		levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 	}
 }
 
@@ -1112,7 +1110,7 @@ void LevelEditorView::removeObject()
 		}
 	}
 	level->computeDimension();
-	levelEditorScreenController->setObjectListbox(level->getObjectIdsIterator());
+	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 	updateGUIElements();
 }
 
@@ -1536,7 +1534,7 @@ void LevelEditorView::pasteObjects()
 			engine->addEntity(object);
 		}
 	}
-	levelEditorScreenController->setObjectListbox(level->getObjectIdsIterator());
+	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 }
 
 void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)

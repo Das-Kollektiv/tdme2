@@ -5,7 +5,6 @@
 #include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <java/util/Set.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
@@ -13,13 +12,13 @@
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::views::EntityBaseView;
 using java::lang::ClassCastException;
 using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
-using java::util::HashMap;
 using java::util::Iterator;
 using java::util::Set;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
@@ -27,6 +26,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)

@@ -206,9 +206,9 @@ public:
 
 	/** 
 	 * Set up object list box
-	 * @param object id enumerator
+	 * @param object by ids hash map
 	 */
-	void setObjectListbox(Iterator* objectIdsIterator);
+	void setObjectListbox(_HashMap* objectsByIds);
 
 	/** 
 	 * Unselect objects in object list box

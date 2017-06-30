@@ -12,9 +12,9 @@
 using java::lang::Object;
 using java::lang::Iterable;
 using java::lang::String;
-using java::util::HashMap;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -32,7 +32,7 @@ public:
 	typedef Object super;
 
 public: /* protected */
-	HashMap* propertiesByName {  };
+	_HashMap* propertiesByName {  };
 	_ArrayList* properties {  };
 protected:
 

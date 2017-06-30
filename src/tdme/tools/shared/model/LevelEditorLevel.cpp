@@ -6,7 +6,6 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/HashMap.h>
 #include <java/util/Iterator.h>
 #include <java/util/Set.h>
 #include <tdme/engine/Transformations.h>
@@ -24,6 +23,7 @@
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::model::LevelEditorLevel;
 using java::lang::ClassCastException;
@@ -31,7 +31,6 @@ using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::HashMap;
 using java::util::Iterator;
 using java::util::Set;
 using tdme::engine::Transformations;
@@ -49,6 +48,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
+using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -97,7 +97,7 @@ void LevelEditorLevel::ctor()
 	light->setSpotCutOff(180.0f);
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
-	objectsById = new HashMap();
+	objectsById = new _HashMap();
 	objects = new _ArrayList();
 	objectIdx = 0;
 	dimension = new Vector3();
@@ -372,9 +372,9 @@ LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
 	return java_cast< LevelEditorObject* >(objects->get(idx));
 }
 
-Iterator* LevelEditorLevel::getObjectIdsIterator()
+_HashMap* LevelEditorLevel::getObjectsByIds()
 {
-	return objectsById->keySet()->iterator();
+	return objectsById;
 }
 
 LevelEditorLevel* LevelEditorLevel::clone(String* objectIdPrefix)
@@ -388,7 +388,7 @@ LevelEditorLevel* LevelEditorLevel::clone(String* objectIdPrefix)
 	level->rotationOrder = rotationOrder;
 	level->lights = lights;
 	level->entityLibrary = entityLibrary;
-	level->objectsById = new HashMap();
+	level->objectsById = new _HashMap();
 	level->objects = new _ArrayList();
 	for (auto i = 0; i < getObjectCount(); i++) {
 		auto object = getObjectAt(i)->clone();

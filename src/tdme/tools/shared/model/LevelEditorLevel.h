@@ -15,7 +15,6 @@
 using tdme::tools::shared::model::ModelProperties;
 using java::lang::Object;
 using java::lang::String;
-using java::util::HashMap;
 using java::util::Iterator;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
@@ -24,7 +23,7 @@ using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::_ArrayList;
-
+using tdme::utils::_HashMap;
 
 struct default_init_tag;
 
@@ -47,7 +46,7 @@ private:
 	RotationOrder* rotationOrder {  };
 	_ArrayList* lights {  };
 	LevelEditorEntityLibrary* entityLibrary {  };
-	HashMap* objectsById {  };
+	_HashMap* objectsById {  };
 	_ArrayList* objects {  };
 	int32_t objectIdx {  };
 	BoundingBox* boundingBox {  };
@@ -225,9 +224,9 @@ public:
 	LevelEditorObject* getObjectAt(int32_t idx);
 
 	/** 
-	 * @return object keys enumerator
+	 * @return objects hash map
 	 */
-	Iterator* getObjectIdsIterator();
+	_HashMap* getObjectsByIds();
 
 	/** 
 	 * Clone level mainly with prefixed object names

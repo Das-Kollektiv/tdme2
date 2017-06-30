@@ -12,11 +12,11 @@
 
 using java::lang::Object;
 using java::lang::String;
-using java::util::HashMap;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -36,7 +36,7 @@ public:
 
 private:
 	LevelEditorLevel* level {  };
-	HashMap* entitiesById {  };
+	_HashMap* entitiesById {  };
 	_ArrayList* entities {  };
 	int32_t entityIdx {  };
 protected:

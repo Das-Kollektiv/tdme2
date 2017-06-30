@@ -14,6 +14,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_HashMap.h>
 #include <java/lang/Object.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
@@ -25,7 +26,6 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
-using java::util::HashMap;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
@@ -41,6 +41,7 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -92,7 +93,7 @@ private:
 	Engine* engine {  };
 	LevelEditorEntity* selectedEntity {  };
 	bool reloadEntityLibrary {  };
-	HashMap* objectColors {  };
+	_HashMap* objectColors {  };
 	Rotation* camLookRotationX {  };
 	Rotation* camLookRotationY {  };
 	float camScale {  };
@@ -142,7 +143,7 @@ private:
 	Model* levelEditorGround {  };
 	LevelEditorLevel* level {  };
 	_ArrayList* selectedObjects {  };
-	HashMap* selectedObjectsById {  };
+	_HashMap* selectedObjectsById {  };
 	_ArrayList* pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };

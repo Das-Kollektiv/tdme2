@@ -5,18 +5,18 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/HashMap.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::model::ModelProperties;
 using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::HashMap;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::_ArrayList;
+using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -43,7 +43,7 @@ void ModelProperties::ctor()
 {
 	super::ctor();
 	this->properties = new _ArrayList();
-	this->propertiesByName = new HashMap();
+	this->propertiesByName = new _HashMap();
 }
 
 Iterable* ModelProperties::getProperties()
@@ -84,7 +84,7 @@ PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
 
 bool ModelProperties::addProperty(String* name, String* value)
 {
-	if (propertiesByName->containsKey(name) == true)
+	if (propertiesByName->get(name) != nullptr)
 		return false;
 
 	auto property = new PropertyModelClass(name, value);
@@ -95,10 +95,10 @@ bool ModelProperties::addProperty(String* name, String* value)
 
 bool ModelProperties::updateProperty(String* oldName, String* name, String* value)
 {
-	if (propertiesByName->containsKey(oldName) == false)
+	if (propertiesByName->get(oldName) == nullptr)
 		return false;
 
-	if (oldName->equals(name) == false && propertiesByName->containsKey(name) == true) {
+	if (oldName->equals(name) == false && propertiesByName->get(name) != nullptr) {
 		return false;
 	}
 	auto property = java_cast< PropertyModelClass* >(propertiesByName->remove(oldName));
@@ -110,7 +110,7 @@ bool ModelProperties::updateProperty(String* oldName, String* name, String* valu
 
 bool ModelProperties::removeProperty(String* name)
 {
-	if (propertiesByName->containsKey(name) == false)
+	if (propertiesByName->get(name) == nullptr)
 		return false;
 
 	auto property = java_cast< PropertyModelClass* >(propertiesByName->remove(name));

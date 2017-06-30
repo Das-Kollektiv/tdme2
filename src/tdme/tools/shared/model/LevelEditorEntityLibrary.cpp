@@ -9,7 +9,6 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/HashMap.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Model.h>
@@ -22,6 +21,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using java::io::File;
@@ -32,7 +32,6 @@ using java::lang::Integer;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::HashMap;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
@@ -73,14 +72,14 @@ void LevelEditorEntityLibrary::ctor(LevelEditorLevel* level)
 {
 	super::ctor();
 	this->level = level;
-	this->entitiesById = new HashMap();
+	this->entitiesById = new _HashMap();
 	this->entities = new _ArrayList();
 	this->entityIdx = 0;
 }
 
 void LevelEditorEntityLibrary::clear()
 {
-	java_cast< HashMap* >(this->entitiesById)->clear();
+	java_cast< _HashMap* >(this->entitiesById)->clear();
 	java_cast< _ArrayList* >(this->entities)->clear();
 	this->entityIdx = 0;
 }
