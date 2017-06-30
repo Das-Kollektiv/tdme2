@@ -1,6 +1,8 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <exception>
 
+#include <sys/time.h>
+
 #include <Array.h>
 #include <java/lang/System.h>
 
@@ -21,9 +23,9 @@ void System::arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, i
 
 int64_t System::currentTimeMillis()
 { /* native */
-	clinit();
-	unimplemented_(u"int64_t System::currentTimeMillis()");
-	return 0;
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000ll) + (tv.tv_usec / 1000ll);
 }
 
 int32_t System::identityHashCode(Object* arg0)
