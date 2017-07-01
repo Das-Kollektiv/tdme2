@@ -1,12 +1,16 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+#include <algorithm>
 #include <string>
 
 #include <Array.h>
 #include <java/lang/String.h>
 
-using namespace std;
-
 using java::lang::String;
+using std::wstring;
+using std::transform;
+using std::toupper;
+using std::replace;
+
 template<typename ComponentType, typename ... Bases> struct SubArray;
 namespace java {
 namespace io {
@@ -280,8 +284,11 @@ bool String::equals(Object* arg0) { /* stub */
 }
 
 bool String::equalsIgnoreCase(String* arg0) { /* stub */
-	unimplemented_(u"bool String::equalsIgnoreCase(String* arg0)");
-	return 0;
+	wstring stringA = cppwstring;
+	wstring stringB = arg0->cppwstring;
+	transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
+	transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
+	return stringA == stringB;
 }
 
 String* String::format(String* arg0, ObjectArray* arg1) { /* stub */
@@ -422,8 +429,9 @@ bool String::regionMatches(bool arg0, int32_t arg1, String* arg2, int32_t arg3,
 }
 
 String* String::replace(char16_t arg0, char16_t arg1) { /* stub */
-	unimplemented_(u"String* String::replace(char16_t arg0, char16_t arg1)");
-	return 0;
+	String* result = new String(cppwstring);
+	std::replace(result->cppwstring.begin(), result->cppwstring.end(), arg0, arg1);
+	return result;
 }
 
 String* String::replace(CharSequence* arg0, CharSequence* arg1) { /* stub */
@@ -452,8 +460,7 @@ StringArray* String::split(String* arg0, int32_t arg1) { /* stub */
 }
 
 bool String::startsWith(String* arg0) { /* stub */
-	unimplemented_(u"bool String::startsWith(String* arg0)");
-	return 0;
+	return cppwstring.find(arg0->cppwstring) == 0;
 }
 
 bool String::startsWith(String* arg0, int32_t arg1) { /* stub */
