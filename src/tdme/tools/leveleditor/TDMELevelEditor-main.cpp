@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 {
     init_jvm();
     
-    ::tdme::tools::leveleditor::TDMELevelEditor::main(make_args(argc, argv));
+    ::tdme::tools::leveleditor::TDMELevelEditor::main(argc, argv);
     
     return 0;
 }

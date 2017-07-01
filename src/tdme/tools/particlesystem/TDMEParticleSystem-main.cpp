@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 {
     init_jvm();
     
-    ::tdme::tools::particlesystem::TDMEParticleSystem::main(make_args(argc, argv));
+    ::tdme::tools::particlesystem::TDMEParticleSystem::main(argc, argv);
     
     return 0;
 }

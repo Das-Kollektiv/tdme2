@@ -1,7 +1,7 @@
-#include <tdme/utils/StringConverter.h>
-
 #include <codecvt>
 #include <locale>
+
+#include <tdme/utils/StringConverter.h>
 
 using std::string;
 using std::wstring;

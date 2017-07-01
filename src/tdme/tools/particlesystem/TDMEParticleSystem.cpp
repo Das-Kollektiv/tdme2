@@ -64,13 +64,14 @@ String* TDMEParticleSystem::VERSION;
 
 TDMEParticleSystem* TDMEParticleSystem::instance;
 
-void TDMEParticleSystem::main(StringArray* args)
+void TDMEParticleSystem::main(int argc, char** argv)
 {
 	clinit();
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEParticleSystem "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
 	auto tdmeParticleSystem = new TDMEParticleSystem();
+	tdmeParticleSystem->run(argc, argv, "TDMEParticleSystem");
 }
 
 void TDMEParticleSystem::ctor()
@@ -155,9 +156,9 @@ void TDMEParticleSystem::initialize()
 	setView(new SharedParticleSystemView(popUps));
 }
 
-void TDMEParticleSystem::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMEParticleSystem::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

@@ -2,18 +2,19 @@
 
 #include <string>
 
+#include <tdme/utils/fwd-tdme.h>
+
 using std::string;
 using std::wstring;
 
-namespace tdme {
-namespace utils {
+using tdme::utils::StringConverter;
 
 /** 
  * String converter
  * @author Andreas Drewke
  * @version $Id$
  */
-class StringConverter final
+class tdme::utils::StringConverter final
 {
 public:
 
@@ -33,5 +34,3 @@ public:
 
 };
 
-};
-};

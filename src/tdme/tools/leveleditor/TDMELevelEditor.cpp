@@ -82,7 +82,7 @@ String* TDMELevelEditor::VERSION;
 
 TDMELevelEditor* TDMELevelEditor::instance;
 
-void TDMELevelEditor::main(StringArray* args)
+void TDMELevelEditor::main(int argc, char** argv)
 {
 	clinit();
 	String* modelFileName = nullptr;
@@ -90,6 +90,7 @@ void TDMELevelEditor::main(StringArray* args)
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
 	auto tdmeLevelEditor = new TDMELevelEditor();
+	tdmeLevelEditor->run(argc, argv, "TDMELevelEditor");
 }
 
 void TDMELevelEditor::ctor()
@@ -195,9 +196,9 @@ void TDMELevelEditor::initialize()
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMELevelEditor::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 void TDMELevelEditor::switchToLevelEditor()

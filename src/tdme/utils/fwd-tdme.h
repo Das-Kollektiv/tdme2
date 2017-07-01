@@ -9,6 +9,7 @@ namespace utils {
 		class MutableString;
 		class Pool;
 		class QuickSort;
+		class StringConverter;
 		class _ArrayList;
 		class _Console;
 		class _HashMap;
