@@ -67,7 +67,7 @@ void GUITest::ctor()
 	this->engine = Engine::getInstance();
 }
 
-void GUITest::init_()
+void GUITest::initialize()
 {
 	engine->initialize();
 	try {
@@ -99,9 +99,9 @@ void GUITest::dispose()
 	engine->dispose();
 }
 
-void GUITest::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void GUITest::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 void GUITest::display()
@@ -111,10 +111,11 @@ void GUITest::display()
 	engine->getGUI()->handleEvents();
 }
 
-void GUITest::main(StringArray* args)
+void GUITest::main(int argc, char** argv)
 {
 	clinit();
 	auto guiTest = new GUITest();
+	guiTest->run(argc, argv, "GUITest");
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

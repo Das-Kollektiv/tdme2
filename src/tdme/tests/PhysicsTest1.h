@@ -6,6 +6,7 @@
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Application.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <java/lang/Object.h>
@@ -15,6 +16,7 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
+using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
 
@@ -45,7 +47,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tests::PhysicsTest1 final
-	: public virtual Object
+	: public virtual Object, public virtual Application
 {
 
 public:
@@ -71,9 +73,11 @@ private:
 public:
 
 	/** 
-	 * @param args
+	 * Main
+	 * @param argument count
+	 * @param argument values
 	 */
-	static void main(StringArray* args);
+	static void main(int argc, char** argv);
 protected:
 
 	/** 
@@ -86,8 +90,8 @@ protected:
 public:
 	void display();
 	void dispose();
-	void init_();
-	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
+	void initialize();
+	void reshape(int32_t width, int32_t height);
 
 	// Generated
 	PhysicsTest1();

@@ -6,6 +6,7 @@
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Application.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/viewer/fwd-tdme.h>
 #include <java/lang/Object.h>
@@ -15,6 +16,7 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
+using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -46,7 +48,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::viewer::TDMEViewer final
-	: public virtual Object
+	: public virtual Object, public Application
 {
 
 public:
@@ -65,9 +67,10 @@ private:
 public:
 
 	/** 
-	 * @param args
+	 * @param argument count
+	 * @param argument values
 	 */
-	static void main(StringArray* args);
+	static void main(int argc, char** argv);
 protected:
 
 	/** 
@@ -82,7 +85,7 @@ public:
 	 */
 	static TDMEViewer* getInstance();
 
-	/** 
+	/**
 	 * Set up new view
 	 * @param view
 	 */
@@ -103,7 +106,7 @@ public:
 	 */
 	void display();
 
-	/** 
+	/**
 	 * Shutdown tdme viewer
 	 */
 	void dispose();
@@ -111,12 +114,14 @@ public:
 	/** 
 	 * Initialize tdme level editor
 	 */
-	void init_();
+	void initialize();
 
 	/** 
-	 * reshape tdme level editor
+	 * Reshape tdme level editor
+	 * @param width
+	 * @param height
 	 */
-	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
+	void reshape(int32_t width, int32_t height);
 
 	// Generated
 	TDMEViewer();

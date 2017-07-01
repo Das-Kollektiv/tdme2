@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 {
     init_jvm();
     
-    ::tdme::tests::GUITest::main(make_args(argc, argv));
+    ::tdme::tests::GUITest::main(argc, argv);
     
     return 0;
 }

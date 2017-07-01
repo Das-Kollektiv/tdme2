@@ -108,10 +108,11 @@ constexpr int32_t PhysicsTest1::CAPSULE_COUNT;
 
 constexpr int32_t PhysicsTest1::SPHERE_COUNT;
 
-void PhysicsTest1::main(StringArray* args)
+void PhysicsTest1::main(int argc, char** argv)
 {
 	clinit();
 	auto physicsTest1 = new PhysicsTest1();
+	physicsTest1->run(argc, argv, "PhysicsTest1");
 }
 
 void PhysicsTest1::ctor()
@@ -178,7 +179,7 @@ void PhysicsTest1::dispose()
 	engine->dispose();
 }
 
-void PhysicsTest1::init_()
+void PhysicsTest1::initialize()
 {
 	engine->initialize();
 	Object3D* entity;
@@ -370,9 +371,9 @@ void PhysicsTest1::init_()
 	}
 }
 
-void PhysicsTest1::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void PhysicsTest1::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 /*

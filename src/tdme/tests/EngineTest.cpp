@@ -141,10 +141,11 @@ EngineTest::EngineTest()
 	ctor();
 }
 
-void EngineTest::main(StringArray* args)
+void EngineTest::main(int argc, char** argv)
 {
 	clinit();
 	auto engineTest = new EngineTest();
+	engineTest->run(argc, argv, "EngineTest");
 }
 
 void EngineTest::ctor()
@@ -299,7 +300,7 @@ void EngineTest::dispose()
 	engine->dispose();
 }
 
-void EngineTest::init_()
+void EngineTest::initialize()
 {
 	engine->initialize();
 	if (osEngine == nullptr) {
@@ -468,9 +469,9 @@ void EngineTest::init_()
 	}
 }
 
-void EngineTest::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void EngineTest::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 /*

@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 {
     init_jvm();
     
-    ::tdme::tests::PhysicsTest3::main(make_args(argc, argv));
+    ::tdme::tests::PhysicsTest3::main(argc, argv);
     
     return 0;
 }

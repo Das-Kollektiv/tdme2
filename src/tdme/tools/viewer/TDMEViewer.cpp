@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/viewer/TDMEViewer.java
 #include <tdme/tools/viewer/TDMEViewer.h>
 
 #include <java/lang/Object.h>
@@ -64,14 +63,16 @@ String* TDMEViewer::VERSION;
 
 TDMEViewer* TDMEViewer::instance;
 
-void TDMEViewer::main(StringArray* args)
+void TDMEViewer::main(int argc, char** argv)
 {
 	clinit();
 	String* modelFileName = nullptr;
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEViewer "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
+
 	auto tdmeLevelEditor = new TDMEViewer();
+	tdmeLevelEditor->run(argc, argv, "TDMEViewer");
 }
 
 void TDMEViewer::ctor()
@@ -148,17 +149,18 @@ void TDMEViewer::dispose()
 	Tools::oseDispose();
 }
 
-void TDMEViewer::init_()
+void TDMEViewer::initialize()
 {
+	_Console::println(L"initialize");
 	engine->initialize();
 	Tools::oseInit();
 	popUps->initialize();
 	setView(new SharedModelViewerView(popUps));
 }
 
-void TDMEViewer::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void TDMEViewer::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

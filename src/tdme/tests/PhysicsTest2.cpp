@@ -84,10 +84,11 @@ constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
 
 constexpr int32_t PhysicsTest2::BOX_COUNT;
 
-void PhysicsTest2::main(StringArray* args)
+void PhysicsTest2::main(int argc, char** argv)
 {
 	clinit();
 	auto physicsTest2 = new PhysicsTest2();
+	physicsTest2->run(argc, argv, "PhysicsTest2");
 }
 
 void PhysicsTest2::ctor()
@@ -112,7 +113,7 @@ void PhysicsTest2::dispose()
 	engine->dispose();
 }
 
-void PhysicsTest2::init_()
+void PhysicsTest2::initialize()
 {
 	engine->initialize();
 	Object3D* entity;
@@ -156,9 +157,9 @@ void PhysicsTest2::init_()
 	}
 }
 
-void PhysicsTest2::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void PhysicsTest2::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(x, y, width, height);
+	engine->reshape(0, 0, width, height);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

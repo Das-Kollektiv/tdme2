@@ -174,7 +174,7 @@ void TDMELevelEditor::dispose()
 	Tools::oseDispose();
 }
 
-void TDMELevelEditor::init_()
+void TDMELevelEditor::initialize()
 {
 	engine->initialize();
 	Tools::oseInit();

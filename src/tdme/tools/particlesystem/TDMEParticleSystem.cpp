@@ -147,7 +147,7 @@ void TDMEParticleSystem::dispose()
 	Tools::oseDispose();
 }
 
-void TDMEParticleSystem::init_()
+void TDMEParticleSystem::initialize()
 {
 	engine->initialize();
 	Tools::oseInit();

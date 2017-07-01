@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 {
     init_jvm();
     
-    ::tdme::tools::viewer::TDMEViewer::main(make_args(argc, argv));
+    ::tdme::tools::viewer::TDMEViewer::main(argc, argv);
     
     return 0;
 }

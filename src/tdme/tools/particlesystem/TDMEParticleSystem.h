@@ -111,7 +111,7 @@ public:
 	/** 
 	 * Initialize tdme level editor
 	 */
-	void init_();
+	void initialize();
 
 	/** 
 	 * reshape tdme level editor

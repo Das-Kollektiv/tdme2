@@ -4,6 +4,7 @@
 
 namespace tdme {
 namespace engine {
+		class Application;
 		class Camera;
 		class Engine;
 		class Engine_AnimationProcessingTarget;
@@ -34,5 +35,6 @@ namespace engine {
 		class Rotations;
 		class Timing;
 		class Transformations;
+		class WindowManager;
 }  // namespace engine
 }  // namespace tdme

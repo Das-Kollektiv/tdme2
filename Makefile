@@ -30,6 +30,7 @@ SRCS = \
 	src/tdme/audio/Sound.cpp \
 	src/tdme/audio/decoder/AudioDecoder.cpp \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
+	src/tdme/engine/Application.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/Engine_AnimationProcessingTarget.cpp \
@@ -599,7 +600,7 @@ $(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS) -framework GLUT -framework OpenGL -framework Cocoa
 
 mains: $(MAINS)
 

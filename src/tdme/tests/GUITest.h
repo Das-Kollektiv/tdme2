@@ -6,6 +6,7 @@
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Application.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <java/lang/Object.h>
 
@@ -14,6 +15,7 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
+using tdme::engine::Application;
 using tdme::engine::Engine;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -42,8 +44,8 @@ struct default_init_tag;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tests::GUITest
-	: public virtual Object
+class tdme::tests::GUITest final
+	: public virtual Object, public virtual Application
 {
 
 public:
@@ -59,15 +61,17 @@ protected:
 	void ctor();
 
 public:
-	void init_();
+	void initialize();
 	void dispose();
-	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
+	void reshape(int32_t width, int32_t height);
 	void display();
 
 	/** 
-	 * @param args
+	 * Main
+	 * @param argument count
+	 * @param argument values
 	 */
-	static void main(StringArray* args);
+	static void main(int argc, char** argv);
 
 	// Generated
 	GUITest();
