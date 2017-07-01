@@ -44,7 +44,7 @@ ByteBuffer* _Buffer::getByteBuffer(int32_t bytes)
 	} else {
 		byteBuffer->clear();
 	}
-	return byteBuffer->order(ByteOrder::nativeOrder());
+	return byteBuffer;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

@@ -49,8 +49,8 @@ BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id)
 
 void BatchVBORendererPoints::init()
 {
-	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
-	fbColors = ByteBuffer::allocateDirect(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
+	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbColors = ByteBuffer::allocateDirect(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 int32_t BatchVBORendererPoints::VERTEX_COUNT;
@@ -93,8 +93,8 @@ void BatchVBORendererPoints::initialize()
 
 void BatchVBORendererPoints::render()
 {
-	fbVertices->flip();
-	fbColors->flip();
+	// fbVertices->flip();
+	// fbColors->flip();
 	if (fbVertices->limit() == 0 || fbColors->limit() == 0)
 		return;
 

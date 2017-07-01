@@ -331,7 +331,7 @@ ShortBuffer* Object3DGroupMesh::setupVertexIndicesBuffer()
 	for (auto index : *indices) {
 		sbIndices->put(index);
 	}
-	sbIndices->flip();
+	// sbIndices->flip();
 	return sbIndices;
 }
 
@@ -345,7 +345,7 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 	for (auto textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates->put(textureCoordinate->getArray());
 	}
-	fbTextureCoordinates->flip();
+	// fbTextureCoordinates->flip();
 	return fbTextureCoordinates;
 }
 
@@ -355,7 +355,7 @@ FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 	for (auto vertex : *vertices) {
 		fbVertices->put(vertex->getArray());
 	}
-	fbVertices->flip();
+	// fbVertices->flip();
 	return fbVertices;
 }
 
@@ -365,7 +365,7 @@ FloatBuffer* Object3DGroupMesh::setupNormalsBuffer()
 	for (auto normal : *normals) {
 		fbNormals->put(normal->getArray());
 	}
-	fbNormals->flip();
+	// fbNormals->flip();
 	return fbNormals;
 }
 
@@ -378,7 +378,7 @@ FloatBuffer* Object3DGroupMesh::setupTangentsBuffer()
 	for (auto tangent : *tangents) {
 		fbTangents->put(tangent->getArray());
 	}
-	fbTangents->flip();
+	// fbTangents->flip();
 	return fbTangents;
 }
 
@@ -391,7 +391,7 @@ FloatBuffer* Object3DGroupMesh::setupBitangentsBuffer()
 	for (auto bitangent : *bitangents) {
 		fbBitangents->put(bitangent->getArray());
 	}
-	fbBitangents->flip();
+	// fbBitangents->flip();
 	return fbBitangents;
 }
 

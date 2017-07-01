@@ -4,7 +4,8 @@
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Math.h>
 #include <java/lang/System.h>
-#include <java/nio/FloatBuffer.h>
+#include <java/nio/ByteOrder.h>
+#include <java/nio/ByteBuffer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/Matrix4x4.h>
@@ -67,7 +68,7 @@ void GLRenderer::init()
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
-	pixelDepthBuffer = FloatBuffer::allocate(1);
+	pixelDepthBuffer = ByteBuffer::allocateDirect(1)->asFloatBuffer();
 }
 
 void GLRenderer::ctor()

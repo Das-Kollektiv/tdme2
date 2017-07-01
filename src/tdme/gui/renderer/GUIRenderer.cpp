@@ -59,10 +59,10 @@ GUIRenderer::GUIRenderer(GLRenderer* renderer)
 
 void GUIRenderer::init()
 {
-	sbIndices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * Short::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asShortBuffer();
-	fbVertices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 3* Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
-	fbColors = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 4* Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
-	fbTextureCoordinates = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 2* Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
+	sbIndices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * Short::SIZE / Byte::SIZE)->asShortBuffer();
+	fbVertices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 3* Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbColors = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 4* Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbTextureCoordinates = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 2* Float::SIZE / Byte::SIZE)->asFloatBuffer();
 	renderAreaLeft = 0.0f;
 	renderAreaTop = 0.0f;
 	renderAreaRight = 0.0f;
@@ -197,7 +197,7 @@ void GUIRenderer::initialize()
 			sbIndices->put(static_cast< int16_t >((i * 4 + 3)));
 			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
 		}
-		sbIndices->flip();
+		// sbIndices->flip();
 		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->limit() * Short::SIZE / Byte::SIZE, sbIndices);
 	}
 }
@@ -507,9 +507,11 @@ void GUIRenderer::render()
 		System::arraycopy(GUIColor::BLACK->getArray(), 0, effectColorAdd, 0, 4);
 		return;
 	}
+	/*
 	fbVertices->flip();
 	fbColors->flip();
 	fbTextureCoordinates->flip();
+	*/
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices->limit() * Float::SIZE / Byte::SIZE, fbVertices);
 	renderer->uploadBufferObject((*vboIds)[2], fbColors->limit() * Float::SIZE / Byte::SIZE, fbColors);
 	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->limit() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);

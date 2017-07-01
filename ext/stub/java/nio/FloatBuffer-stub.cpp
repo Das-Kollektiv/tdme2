@@ -3,133 +3,52 @@
 
 using java::nio::FloatBuffer;
 extern void unimplemented_(const char16_t* name);
+
 java::nio::FloatBuffer::FloatBuffer(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 	clinit();
 }
 
-java::nio::FloatBuffer::FloatBuffer(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3)
-	: FloatBuffer(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(arg0, arg1, arg2, arg3);
+FloatBuffer::FloatBuffer(int32_t capacity)
+	: super(*static_cast< ::default_init_tag* >(0)) {
+	ctor(capacity);
 }
 
-java::nio::FloatBuffer::FloatBuffer(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3, floatArray* arg4, int32_t arg5)
-	: FloatBuffer(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(arg0, arg1, arg2, arg3, arg4, arg5);
+FloatBuffer::FloatBuffer(Buffer* buffer)
+	: super(*static_cast< ::default_init_tag* >(0)) {
+	ctor(buffer);
 }
 
-
-void FloatBuffer::ctor(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3)
-{ /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void FloatBuffer::ctor(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3)");
+void FloatBuffer::ctor(int32_t capacity) {
+	super::ctor(capacity);
 }
 
-void FloatBuffer::ctor(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3, floatArray* arg4, int32_t arg5)
-{ /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void FloatBuffer::ctor(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3, floatArray* arg4, int32_t arg5)");
+void FloatBuffer::ctor(Buffer* buffer) {
+	super::ctor(buffer);
 }
 
-FloatBuffer* FloatBuffer::allocate(int32_t arg0)
-{ /* stub */
-	clinit();
-	unimplemented_(u"FloatBuffer* FloatBuffer::allocate(int32_t arg0)");
-	return 0;
+float FloatBuffer::get(int32_t position) {
+	int floatAsInt = 0;
+	floatAsInt+= (int32_t)super::get(position);
+	floatAsInt+= (int32_t)super::get(position + 1) << 8;
+	floatAsInt+= (int32_t)super::get(position + 2) << 16;
+	floatAsInt+= (int32_t)super::get(position + 3) << 24;
+	return *((float*)&floatAsInt);
 }
 
-floatArray* FloatBuffer::array()
-{ /* stub */
-	unimplemented_(u"floatArray* FloatBuffer::array()");
-	return 0;
+Buffer* FloatBuffer::put(float arg0) {
+	int32_t floatAsInt = *((int*)&arg0);
+	super::put((floatAsInt) && 0xFF);
+	super::put((floatAsInt >> 8) && 0xFF);
+	super::put((floatAsInt >> 16) && 0xFF);
+	super::put((floatAsInt >> 24) && 0xFF);
 }
 
-int32_t FloatBuffer::arrayOffset()
-{ /* stub */
-	unimplemented_(u"int32_t FloatBuffer::arrayOffset()");
-	return 0;
-}
-
-int32_t FloatBuffer::compareTo(FloatBuffer* arg0)
-{ /* stub */
-	unimplemented_(u"int32_t FloatBuffer::compareTo(FloatBuffer* arg0)");
-	return 0;
-}
-
-int32_t FloatBuffer::compareTo(Object* o)
-{ 
-	return compareTo(dynamic_cast< FloatBuffer* >(o));
-}
-
-bool FloatBuffer::equals(Object* arg0)
-{ /* stub */
-	unimplemented_(u"bool FloatBuffer::equals(Object* arg0)");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::get(floatArray* arg0)
-{ /* stub */
-	unimplemented_(u"FloatBuffer* FloatBuffer::get(floatArray* arg0)");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::get(floatArray* arg0, int32_t arg1, int32_t arg2)
-{ /* stub */
-	unimplemented_(u"FloatBuffer* FloatBuffer::get(floatArray* arg0, int32_t arg1, int32_t arg2)");
-	return 0;
-}
-
-bool FloatBuffer::hasArray()
-{ /* stub */
-	unimplemented_(u"bool FloatBuffer::hasArray()");
-	return 0;
-}
-
-int32_t FloatBuffer::hashCode()
-{ /* stub */
-	unimplemented_(u"int32_t FloatBuffer::hashCode()");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::put(FloatBuffer* arg0)
-{ /* stub */
-	unimplemented_(u"FloatBuffer* FloatBuffer::put(FloatBuffer* arg0)");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::put(floatArray* arg0)
-{ /* stub */
-	unimplemented_(u"FloatBuffer* FloatBuffer::put(floatArray* arg0)");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::put(floatArray* arg0, int32_t arg1, int32_t arg2)
-{ /* stub */
-	unimplemented_(u"FloatBuffer* FloatBuffer::put(floatArray* arg0, int32_t arg1, int32_t arg2)");
-	return 0;
-}
-
-String* FloatBuffer::toString()
-{ /* stub */
-	unimplemented_(u"String* FloatBuffer::toString()");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::wrap(floatArray* arg0)
-{ /* stub */
-	clinit();
-	unimplemented_(u"FloatBuffer* FloatBuffer::wrap(floatArray* arg0)");
-	return 0;
-}
-
-FloatBuffer* FloatBuffer::wrap(floatArray* arg0, int32_t arg1, int32_t arg2)
-{ /* stub */
-	clinit();
-	unimplemented_(u"FloatBuffer* FloatBuffer::wrap(floatArray* arg0, int32_t arg1, int32_t arg2)");
-	return 0;
+Buffer* FloatBuffer::put(floatArray* arg0) {
+	for (int i = 0; i < arg0->length; i++) {
+		put(arg0->get(i));
+	}
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

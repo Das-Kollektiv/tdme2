@@ -48,9 +48,9 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 void BatchVBORendererTriangles::init()
 {
 	vertices = 0;
-	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
-	fbNormals = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
-	fbTextureCoordinates = ByteBuffer::allocateDirect(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->order(ByteOrder::nativeOrder())->asFloatBuffer();
+	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbNormals = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbTextureCoordinates = ByteBuffer::allocateDirect(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 int32_t BatchVBORendererTriangles::VERTEX_COUNT;
@@ -96,9 +96,9 @@ void BatchVBORendererTriangles::initialize()
 
 void BatchVBORendererTriangles::render()
 {
-	fbVertices->flip();
-	fbNormals->flip();
-	fbTextureCoordinates->flip();
+	// fbVertices->flip();
+	// fbNormals->flip();
+	// fbTextureCoordinates->flip();
 	if (fbVertices->limit() == 0 || fbNormals->limit() == 0 || fbTextureCoordinates->limit() == 0)
 		return;
 

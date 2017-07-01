@@ -18,61 +18,39 @@ class java::nio::Buffer
 public:
 	typedef Object super;
 
-public: /* package */
-	int64_t address {  };
-
 private:
-	int32_t capacity_ {  };
-	int32_t limit_ {  };
-	int32_t mark_ {  };
-	int32_t position_ {  };
+	int32_t capacity_ { 0 };
+	int32_t position_ { 0 };
+	char* buffer { nullptr };
 
 protected:
-	void ctor(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3);
+	void ctor(int32_t capacity);
+	void ctor(Buffer* buffer);
 
 public:
-	virtual Object* array() = 0;
-	virtual int32_t arrayOffset() = 0;
 	int32_t capacity();
-
-public: /* package */
-	static void checkBounds(int32_t arg0, int32_t arg1, int32_t arg2);
-	int32_t checkIndex(int32_t arg0);
-	int32_t checkIndex(int32_t arg0, int32_t arg1);
 
 public:
 	Buffer* clear();
-	Buffer* flip();
-	virtual bool hasArray() = 0;
 	bool hasRemaining();
-	virtual bool isDirect() = 0;
-	virtual bool isReadOnly() = 0;
+	int32_t position();
 	int32_t limit();
-	Buffer* limit(int32_t arg0);
-	Buffer* mark();
 
-public: /* package */
-	int32_t markValue();
-	int32_t nextGetIndex();
-	int32_t nextGetIndex(int32_t arg0);
-	int32_t nextPutIndex();
-	int32_t nextPutIndex(int32_t arg0);
+	int8_t get(int32_t position);
+	Buffer* put(int8_t arg0);
+	Buffer* put(int8_tArray* arg0);
+
+	const char* getBuffer();
 
 public:
-	int32_t position();
-	Buffer* position(int32_t arg0);
 	int32_t remaining();
-	Buffer* reset();
-	Buffer* rewind();
 
 public: /* package */
-	void truncate();
-
 	// Generated
-	Buffer(int32_t arg0, int32_t arg1, int32_t arg2, int32_t arg3);
+	Buffer(int32_t capacity);
+	Buffer(Buffer* buffer);
 protected:
 	Buffer(const ::default_init_tag&);
-
 
 public:
 	static ::java::lang::Class *class_();
