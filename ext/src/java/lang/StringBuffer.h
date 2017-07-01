@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/AbstractStringBuilder.h>
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
+
+using std::wstring;
 
 using java::lang::AbstractStringBuilder;
 using java::io::Serializable;
@@ -118,6 +122,8 @@ public:
 protected:
 	StringBuffer(const ::default_init_tag&);
 
+private:
+	wstring cppwstring;
 
 public:
 	static ::java::lang::Class *class_();

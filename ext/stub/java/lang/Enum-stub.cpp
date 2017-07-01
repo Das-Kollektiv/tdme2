@@ -1,6 +1,8 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/Enum.h>
 
+#include <java/lang/String.h>
+
 using java::lang::Enum;
 extern void unimplemented_(const char16_t* name);
 java::lang::Enum::Enum(const ::default_init_tag&)
@@ -18,8 +20,8 @@ java::lang::Enum::Enum(String* arg0, int32_t arg1)
 
 void Enum::ctor(String* arg0, int32_t arg1)
 { /* stub */
-	/* super::ctor(); */
-	// unimplemented_(u"void Enum::ctor(String* arg0, int32_t arg1)");
+	name_ = arg0;
+	ordinal_ = arg1;
 }
 
 Object* Enum::clone()
@@ -64,22 +66,19 @@ int32_t Enum::hashCode()
 
 String* Enum::name()
 { /* stub */
-	unimplemented_(u"String* Enum::name()");
-	return 0;
+	return name_;
 }
 
 int32_t Enum::ordinal()
 { /* stub */
-	unimplemented_(u"int32_t Enum::ordinal()");
-	return 0;
+	return ordinal_;
 }
 
 /* private: void Enum::readObject(ObjectInputStream* arg0) */
 /* private: void Enum::readObjectNoData() */
 String* Enum::toString()
 { /* stub */
-	unimplemented_(u"String* Enum::toString()");
-	return 0;
+	return name_;
 }
 
 Enum* Enum::valueOf(Class* arg0, String* arg1)

@@ -90,8 +90,7 @@ float Math::copySign(float arg0, float arg1) { /* stub */
 
 double Math::cos(double arg0) { /* stub */
 	clinit();
-	unimplemented_(u"double Math::cos(double arg0)");
-	return 0;
+	return ::cos(arg0);
 }
 
 double Math::cosh(double arg0) { /* stub */

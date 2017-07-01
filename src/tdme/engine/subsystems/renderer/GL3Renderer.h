@@ -34,7 +34,7 @@ public:
 	typedef GLRenderer super;
 
 private:
-	int32_t engineVAO {  };
+	uint32_t engineVAO {  };
 protected:
 
 	/** 

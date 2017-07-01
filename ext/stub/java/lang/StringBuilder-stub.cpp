@@ -1,6 +1,11 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/StringBuilder.h>
 
+#include <java/lang/String.h>
+
+using std::to_wstring;
+
+using java::lang::String;
 using java::lang::StringBuilder;
 
 extern void unimplemented_(const char16_t* name);

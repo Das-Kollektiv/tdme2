@@ -1,7 +1,15 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/StringBuffer.h>
 
+#include <string>
+
+#include <java/lang/String.h>
+
+using std::to_wstring;
+
 using java::lang::StringBuffer;
+using java::lang::String;
+
 extern void unimplemented_(const char16_t* name);
 java::lang::StringBuffer::StringBuffer(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -62,20 +70,20 @@ void StringBuffer::ctor(CharSequence* arg0)
 
 StringBuffer* StringBuffer::append(Object* arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(Object* arg0)");
-	return 0;
+	cppwstring+= arg0->toString()->getCPPWString();
+	return this;
 }
 
 StringBuffer* StringBuffer::append(String* arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(String* arg0)");
-	return 0;
+	cppwstring+= arg0->getCPPWString();
+	return this;
 }
 
 StringBuffer* StringBuffer::append(StringBuffer* arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(StringBuffer* arg0)");
-	return 0;
+	cppwstring+= arg0->cppwstring;
+	return this;
 }
 
 StringBuffer* StringBuffer::append(CharSequence* arg0)
@@ -92,37 +100,38 @@ StringBuffer* StringBuffer::append(char16_tArray* arg0)
 
 StringBuffer* StringBuffer::append(bool arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(bool arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(char16_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(char16_t arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(int32_t arg0)
 { /* stub */
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(int64_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(int64_t arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(float arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(float arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(double arg0)
 { /* stub */
-	unimplemented_(u"StringBuffer* StringBuffer::append(double arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuffer* StringBuffer::append(CharSequence* arg0, int32_t arg1, int32_t arg2)
@@ -346,8 +355,7 @@ String* StringBuffer::substring(int32_t arg0, int32_t arg1)
 
 String* StringBuffer::toString()
 { /* stub */
-	unimplemented_(u"String* StringBuffer::toString()");
-	return 0;
+	return new String(cppwstring);
 }
 
 void StringBuffer::trimToSize()

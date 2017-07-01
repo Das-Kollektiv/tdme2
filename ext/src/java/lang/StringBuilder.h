@@ -13,6 +13,8 @@
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 
+using std::wstring;
+
 using java::lang::AbstractStringBuilder;
 using java::io::Serializable;
 using java::lang::CharSequence;
