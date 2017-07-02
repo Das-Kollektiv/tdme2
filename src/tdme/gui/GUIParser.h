@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <java/lang/fwd-tdme.h>
 #include <org/w3c/dom/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
@@ -9,6 +11,10 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+#include <ext/tinyxml/tinyxml.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -19,7 +25,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
-
+using tdme::ext::tinyxml::TiXmlElement;
 
 struct default_init_tag;
 
@@ -83,22 +89,21 @@ private:
 	 * @param gui element
 	 * @throws Exception
 	 */
-	static void parseGUINode(GUIParentNode* guiParentNode, Element* xmlParentNode, GUIElement* guiElement) /* throws(Exception) */;
+	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) /* throws(Exception) */;
 
 	/** 
 	 * Returns immediate children tags
 	 * @param parent
-	 * @return children
+	 * @return name
 	 */
-	static _ArrayList* getChildrenTags(Element* parent);
+	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/** 
 	 * Get inner XML
-	 * see: http://stackoverflow.com/questions/3300839/get-a-nodes-inner-xml-as-string-in-java-dom
 	 * @param node
 	 * @return string
 	 */
-	static String* getInnerXml(Node* node);
+	static String* getInnerXml(TiXmlElement* node);
 
 public:
 

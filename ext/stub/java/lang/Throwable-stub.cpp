@@ -54,8 +54,7 @@ void Throwable::ctor()
 
 void Throwable::ctor(String* arg0)
 { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void Throwable::ctor(String* arg0)");
+	detailMessage = arg0;
 }
 
 void Throwable::ctor(Throwable* arg0)
@@ -83,8 +82,7 @@ String* Throwable::getLocalizedMessage()
 
 String* Throwable::getMessage()
 { /* stub */
-	unimplemented_(u"String* Throwable::getMessage()");
-	return 0;
+	return detailMessage;
 }
 
 /* private: StackTraceElementArray* Throwable::getOurStackTrace() */

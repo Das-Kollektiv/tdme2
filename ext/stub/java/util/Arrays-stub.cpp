@@ -409,7 +409,7 @@ void Arrays::fill(int16_tArray* arg0, int16_t arg1)
 void Arrays::fill(char16_tArray* arg0, char16_t arg1)
 { /* stub */
 	clinit();
-	unimplemented_(u"void Arrays::fill(char16_tArray* arg0, char16_t arg1)");
+	for (int i = 0; i < arg0->length; i++) arg0->set(i, arg1);
 }
 
 void Arrays::fill(int8_tArray* arg0, int8_t arg1)

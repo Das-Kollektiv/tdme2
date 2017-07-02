@@ -34,7 +34,7 @@ void GUIScrollArea::ctor() /* throws(IOException) */
 {
 	super::ctor();
 	attributes = new _HashMap();
-	template_ = _FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"scrollarea.xml"_j);
+	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"scrollarea.xml"_j));
 }
 
 String* GUIScrollArea::getName()

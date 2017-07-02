@@ -43,8 +43,7 @@ int32_t Enum::compareTo(Object* o)
 
 bool Enum::equals(Object* arg0)
 { /* stub */
-	unimplemented_(u"bool Enum::equals(Object* arg0)");
-	return 0;
+	return this == arg0;
 }
 
 void Enum::finalize()

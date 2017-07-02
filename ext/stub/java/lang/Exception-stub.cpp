@@ -43,8 +43,7 @@ void Exception::ctor()
 
 void Exception::ctor(String* arg0)
 { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void Exception::ctor(String* arg0)");
+	super::ctor(arg0);
 }
 
 void Exception::ctor(Throwable* arg0)

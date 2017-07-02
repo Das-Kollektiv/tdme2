@@ -67,9 +67,10 @@ struct tdme::os::_FileSystemInterface
 	 * Get file content
 	 * @param path
 	 * @param file name
+	 * @return byte array
 	 * @throws IOException
 	 */
-	virtual String* getContent(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
 	 * List files for given path and filter by a file name filter if not null 

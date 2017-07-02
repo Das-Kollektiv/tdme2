@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIColor.java
 #include <tdme/gui/nodes/GUIColor.h>
 
+#include <cwchar>
+
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -160,11 +162,17 @@ void GUIColor::ctor(String* colorString) /* throws(GUIParserException) */
 		0.0f,
 		1.0f
 	});
-	(*data)[0] = (Integer::valueOf(colorString->substring(1, 3), 16))->intValue() / 255.0f;
-	(*data)[1] = (Integer::valueOf(colorString->substring(3, 5), 16))->intValue() / 255.0f;
-	(*data)[2] = (Integer::valueOf(colorString->substring(5, 7), 16))->intValue() / 255.0f;
+
+	int colorValue;
+	swscanf(colorString->substring(1, 3)->getCPPWString().c_str(), L"%02x", &colorValue);
+	(*data)[0] = colorValue / 255.0f;
+	swscanf(colorString->substring(3, 5)->getCPPWString().c_str(), L"%02x", &colorValue);
+	(*data)[1] = colorValue / 255.0f;
+	swscanf(colorString->substring(5, 7)->getCPPWString().c_str(), L"%02x", &colorValue);
+	(*data)[2] = colorValue / 255.0f;
 	if (colorString->length() > 7) {
-		(*data)[3] = (Integer::valueOf(colorString->substring(7, 9), 16))->intValue() / 255.0f;
+		swscanf(colorString->substring(7, 9)->getCPPWString().c_str(), L"%02x", &colorValue);
+		(*data)[3] = colorValue / 255.0f;
 	}
 }
 

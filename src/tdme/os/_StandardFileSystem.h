@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <Array.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
@@ -48,7 +49,7 @@ public:
 	InputStream* getInputStream(String* path, String* fileName) /* throws(IOException) */ override;
 	OutputStream* getOutputStream(String* path, String* fileName) /* throws(IOException) */ override;
 	StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ override;
-	String* getContent(String* path, String* fileName) /* throws(IOException) */ override;
+	int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ override;
 
 	// Generated
 	_StandardFileSystem();

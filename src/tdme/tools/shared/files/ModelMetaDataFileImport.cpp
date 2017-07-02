@@ -114,7 +114,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathNam
 
 		});
 		try {
-			jEntityRoot = new JSONObject(new JSONTokener(_FileSystem::getInstance()->getContent(pathName, fileName)));
+			jEntityRoot = new JSONObject(new JSONTokener(new String(_FileSystem::getInstance()->getContent(pathName, fileName))));
 		} catch (IOException* ioe) {
 			throw ioe;
 		}

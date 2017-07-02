@@ -35,6 +35,7 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using std::vector;
+using std::string;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
 using java::lang::ClassCastException;
@@ -45,9 +46,6 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::HashMap;
 using java::util::Iterator;
-using org::w3c::dom::Document;
-using org::w3c::dom::Element;
-using org::w3c::dom::Node;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::math::Vector3;

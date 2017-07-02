@@ -168,8 +168,7 @@ int64_t Math::max(int64_t arg0, int64_t arg1) { /* stub */
 
 float Math::max(float arg0, float arg1) { /* stub */
 	clinit();
-	unimplemented_(u"float Math::max(float arg0, float arg1)");
-	return 0;
+	return arg0 > arg1?arg0:arg1;
 }
 
 double Math::max(double arg0, double arg1) { /* stub */
@@ -190,8 +189,7 @@ int64_t Math::min(int64_t arg0, int64_t arg1) { /* stub */
 
 float Math::min(float arg0, float arg1) { /* stub */
 	clinit();
-	unimplemented_(u"float Math::min(float arg0, float arg1)");
-	return 0;
+	return arg0 < arg1?arg0:arg1;
 }
 
 double Math::min(double arg0, double arg1) { /* stub */
@@ -297,7 +295,7 @@ double Math::sqrt(double arg0) { /* stub */
 
 double Math::tan(double arg0) { /* stub */
 	clinit();
-	unimplemented_(u"double Math::tan(double arg0)");
+	return ::tan(arg0);
 	return 0;
 }
 

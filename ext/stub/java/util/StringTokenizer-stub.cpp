@@ -46,9 +46,27 @@ void StringTokenizer::ctor(String* arg0)
 
 void StringTokenizer::ctor(String* arg0, String* arg1)
 { /* stub */
-	std::wregex regex(L"[" + arg1->getCPPWString() + L"]");
-	std::wsregex_token_iterator first{arg0->getCPPWString().begin(), arg0->getCPPWString().end(), regex, -1}, last;
-	elements = {first, last};
+	wstring input = arg0->getCPPWString();
+	wstring delimiters = arg1->getCPPWString();
+	wstring token;
+	for (int i = 0; i < input.length(); i++) {
+		// got a delimiter?
+		if (delimiters.find(input[i]) != -1) {
+			// yep, add token to elements if we have any
+			if (token.length() > 0) {
+				elements.push_back(token);
+				token = L"";
+			}
+		} else {
+			// no delimiter, add char to token
+			token+= input[i];
+		}
+	}
+	// do we have a token still? add it to elements
+	if (token.length() > 0) {
+		elements.push_back(token);
+		token = L"";
+	}
 }
 
 void StringTokenizer::ctor(String* arg0, String* arg1, bool arg2)

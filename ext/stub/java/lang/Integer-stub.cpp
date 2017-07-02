@@ -1,7 +1,19 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
+
+#include <string>
+
 #include <java/lang/Integer.h>
+#include <java/lang/String.h>
+
+#include <tdme/utils/_Console.h>
+
+using std::stoi;
 
 using java::lang::Integer;
+
+using tdme::utils::_Console;
+
+
 extern void unimplemented_(const char16_t* name);
 java::lang::Integer::Integer(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -34,8 +46,7 @@ int32_tArray* java::lang::Integer::sizeTable;
 
 void Integer::ctor(int32_t arg0)
 { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void Integer::ctor(int32_t arg0)");
+	value = arg0;
 }
 
 void Integer::ctor(String* arg0)
@@ -140,9 +151,8 @@ int32_t Integer::highestOneBit(int32_t arg0)
 }
 
 int32_t Integer::intValue()
-{ /* stub */
-	unimplemented_(u"int32_t Integer::intValue()");
-	return 0;
+{
+	return value;
 }
 
 int64_t Integer::longValue()
@@ -175,8 +185,7 @@ int32_t Integer::numberOfTrailingZeros(int32_t arg0)
 int32_t Integer::parseInt(String* arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"int32_t Integer::parseInt(String* arg0)");
-	return 0;
+	return std::stoi(arg0->getCPPWString());
 }
 
 int32_t Integer::parseInt(String* arg0, int32_t arg1)
@@ -279,8 +288,7 @@ String* Integer::toString(int32_t arg0, int32_t arg1)
 Integer* Integer::valueOf(String* arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"Integer* Integer::valueOf(String* arg0)");
-	return 0;
+	return new Integer(std::stoi(arg0->getCPPWString()));
 }
 
 Integer* Integer::valueOf(int32_t arg0)

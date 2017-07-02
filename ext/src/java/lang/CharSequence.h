@@ -21,4 +21,5 @@ struct java::lang::CharSequence
 
 	// Generated
 	static ::java::lang::Class *class_();
+
 };

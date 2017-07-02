@@ -367,6 +367,7 @@ bool GUINode::checkConditions()
 {
 	auto showOn = java_cast< _ArrayList* >(this->showOn->conditions);
 	auto hideOn = java_cast< _ArrayList* >(this->hideOn->conditions);
+
 	for (auto i = 0; i < showOn->size(); i++) {
 		if (java_cast< String* >(showOn->get(i))->equals(GUIElementNode::CONDITION_ALWAYS))
 			return true;

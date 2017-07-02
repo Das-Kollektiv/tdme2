@@ -75,7 +75,6 @@ void GUITest::initialize()
 		engine->getGUI()->getScreen(u"test"_j)->setScreenSize(640, 480);
 		engine->getGUI()->getScreen(u"test"_j)->addActionListener(new GUITest_init_1(this));
 		engine->getGUI()->getScreen(u"test"_j)->addChangeListener(new GUITest_init_2(this));
-		engine->getGUI()->getScreen(u"test"_j)->layout();
 		auto effectFadeIn = new GUIColorEffect();
 		effectFadeIn->getColorMulStart()->set(0.0f, 0.0f, 0.0f, 1.0f);
 		effectFadeIn->getColorMulEnd()->set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -90,6 +89,8 @@ void GUITest::initialize()
 		engine->getGUI()->getScreen(u"test"_j)->addEffect(u"scrollin"_j, effectScrollIn);
 		engine->getGUI()->addRenderScreen(u"test"_j);
 	} catch (Exception* exception) {
+		_Console::print("GUITest::initalize failed: ");
+		_Console::println(exception->getMessage());
 		exception->printStackTrace();
 	}
 }

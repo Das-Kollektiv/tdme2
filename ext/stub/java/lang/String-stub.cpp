@@ -1,15 +1,20 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <algorithm>
+#include <functional>
 #include <string>
 
 #include <Array.h>
 #include <java/lang/String.h>
+#include <tdme/utils/StringConverter.h>
 
 using java::lang::String;
+using std::string;
 using std::wstring;
 using std::transform;
 using std::toupper;
+using std::tolower;
 using std::replace;
+using tdme::utils::StringConverter;
 
 template<typename ComponentType, typename ... Bases> struct SubArray;
 namespace java {
@@ -131,8 +136,7 @@ void String::ctor(const wstring& arg0) { /* stub */
 }
 
 void String::ctor(String* arg0) { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void String::ctor(String* arg0)");
+	cppwstring = arg0->cppwstring;
 }
 
 void String::ctor(char16_tArray* arg0) { /* stub */
@@ -142,8 +146,10 @@ void String::ctor(char16_tArray* arg0) { /* stub */
 }
 
 void String::ctor(int8_tArray* arg0) { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void String::ctor(int8_tArray* arg0)");
+	string cppstring;
+	for (int i = 0; i < arg0->length; i++)
+		cppstring += (wchar_t) (arg0->get(i));
+	cppwstring = StringConverter::toWideString(cppstring);
 }
 
 void String::ctor(StringBuffer* arg0) { /* stub */
@@ -208,8 +214,7 @@ void String::ctor(int8_tArray* arg0, int32_t arg1, int32_t arg2,
 }
 
 char16_t String::charAt(int32_t arg0) { /* stub */
-	unimplemented_(u"char16_t String::charAt(int32_t arg0)");
-	return 0;
+	return cppwstring[arg0];
 }
 
 /* private: void String::checkBounds(int8_tArray* arg0, int32_t arg1, int32_t arg2) */
@@ -275,8 +280,8 @@ String* String::copyValueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /
 }
 
 bool String::endsWith(String* arg0) { /* stub */
-	unimplemented_(u"bool String::endsWith(String* arg0)");
-	return 0;
+	if (cppwstring.size() > arg0->cppwstring.size()) return false;
+	return std::equal(arg0->cppwstring.rbegin(), arg0->cppwstring.rend(), cppwstring.rbegin());
 }
 
 bool String::equals(Object* arg0) { /* stub */
@@ -435,8 +440,24 @@ String* String::replace(char16_t arg0, char16_t arg1) { /* stub */
 }
 
 String* String::replace(CharSequence* arg0, CharSequence* arg1) { /* stub */
-	unimplemented_(u"String* String::replace(CharSequence* arg0, CharSequence* arg1)");
-	return 0;
+	wstring source;
+	wstring replacement;
+	for (int i = 0; i < arg0->length(); i++) {
+		source+= arg0->charAt(i);
+	}
+	for (int i = 0; i < arg1->length(); i++) {
+		replacement+= arg1->charAt(i);
+	}
+
+	wstring string = cppwstring;
+	if (source.empty()) return new String(string);
+	size_t start_pos = 0;
+	while((start_pos = string.find(source, start_pos)) != std::string::npos) {
+		string.replace(start_pos, source.length(), replacement);
+		start_pos += replacement.length();
+	}
+
+	return new String(string);
 }
 
 String* String::replaceAll(String* arg0, String* arg1) { /* stub */
@@ -479,8 +500,7 @@ String* String::substring(int32_t arg0) { /* stub */
 }
 
 String* String::substring(int32_t arg0, int32_t arg1) { /* stub */
-	unimplemented_(u"String* String::substring(int32_t arg0, int32_t arg1)");
-	return 0;
+	return new String(cppwstring.substr(arg0, arg1));
 }
 
 char16_tArray* String::toCharArray() { /* stub */
@@ -489,8 +509,9 @@ char16_tArray* String::toCharArray() { /* stub */
 }
 
 String* String::toLowerCase() { /* stub */
-	unimplemented_(u"String* String::toLowerCase()");
-	return 0;
+	wstring string = cppwstring;
+	transform(string.begin(), string.end(), string.begin(), tolower);
+	return new String(string);
 }
 
 String* String::toLowerCase(Locale* arg0) { /* stub */
@@ -503,8 +524,9 @@ String* String::toString() { /* stub */
 }
 
 String* String::toUpperCase() { /* stub */
-	unimplemented_(u"String* String::toUpperCase()");
-	return 0;
+	wstring string = cppwstring;
+	transform(string.begin(), string.end(), string.begin(), toupper);
+	return new String(string);
 }
 
 String* String::toUpperCase(Locale* arg0) { /* stub */
@@ -513,8 +535,16 @@ String* String::toUpperCase(Locale* arg0) { /* stub */
 }
 
 String* String::trim() { /* stub */
-	unimplemented_(u"String* String::trim()");
-	return 0;
+	wstring string = cppwstring;
+	string.erase(
+		string.begin(), std::find_if(string.begin(), string.end(),
+		std::not1(std::ptr_fun<int, int>(std::isspace)))
+	);
+	string.erase(
+		std::find_if(string.rbegin(), string.rend(),
+		std::not1(std::ptr_fun<int, int>(std::isspace))).base(), string.end()
+	);
+	return new String(string);
 }
 
 String* String::valueOf(Object* arg0) { /* stub */

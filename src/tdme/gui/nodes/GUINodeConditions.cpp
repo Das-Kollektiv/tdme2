@@ -54,12 +54,7 @@ void GUINodeConditions::add(String* condition)
 
 void GUINodeConditions::remove(String* condition)
 {
-	for (auto i = 0; i < conditions->size(); i++) {
-		if (java_cast< String* >(conditions->get(i))->equals(condition) == true) {
-			conditions->remove(i);
-			break;
-		}
-	}
+	conditions->remove(condition);
 }
 
 void GUINodeConditions::removeAll()

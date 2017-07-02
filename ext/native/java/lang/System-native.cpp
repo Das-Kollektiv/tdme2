@@ -4,21 +4,28 @@
 #include <sys/time.h>
 
 #include <Array.h>
+#include <ObjectArray.h>
 #include <java/lang/System.h>
 
 using java::lang::System;
 extern void unimplemented_(const char16_t* name);
 
-void System::arraycopy(floatArray* arg0, int32_t arg1, floatArray* arg2, int32_t arg3, int32_t arg4)
+void System::arraycopy(char16_tArray* arg0, int32_t arg1, char16_tArray* arg2, int32_t arg3, int32_t arg4)
 { /* native */
+	clinit();
 	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
 }
 
-void System::arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, int32_t arg4)
+void System::arraycopy(floatArray* arg0, int32_t arg1, floatArray* arg2, int32_t arg3, int32_t arg4)
 { /* native */
 	clinit();
-	throw std::exception();
-	unimplemented_(u"void System::arraycopy(Object* arg0, int32_t arg1, Object* arg2, int32_t arg3, int32_t arg4)");
+	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
+}
+
+void System::arraycopy(ObjectArray* arg0, int32_t arg1, ObjectArray* arg2, int32_t arg3, int32_t arg4)
+{ /* native */
+	clinit();
+	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
 }
 
 int64_t System::currentTimeMillis()

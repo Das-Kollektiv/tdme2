@@ -108,7 +108,7 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 
 		});
 		try {
-			jRoot = new JSONObject(new JSONTokener(_FileSystem::getInstance()->getContent(pathName, fileName)));
+			jRoot = new JSONObject(new JSONTokener(new String(_FileSystem::getInstance()->getContent(pathName, fileName))));
 		} catch (IOException* ioe) {
 			throw ioe;
 		}

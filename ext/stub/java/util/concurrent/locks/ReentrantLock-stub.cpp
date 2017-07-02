@@ -109,7 +109,7 @@ bool ReentrantLock::isLocked()
 
 void ReentrantLock::lock()
 { /* stub */
-	unimplemented_(u"void ReentrantLock::lock()");
+	// unimplemented_(u"void ReentrantLock::lock()");
 }
 
 void ReentrantLock::lockInterruptibly()
@@ -143,7 +143,7 @@ bool ReentrantLock::tryLock(int64_t arg0, TimeUnit* arg1)
 
 void ReentrantLock::unlock()
 { /* stub */
-	unimplemented_(u"void ReentrantLock::unlock()");
+	// unimplemented_(u"void ReentrantLock::unlock()");
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/os/_StandardFileSystem.java
 #include <tdme/os/_StandardFileSystem.h>
 
+#include <iostream>
+#include <fstream>
+
 #include <java/io/BufferedReader.h>
 #include <java/io/File.h>
 #include <java/io/FileInputStream.h>
@@ -31,7 +34,9 @@
 #include <java/util/Iterator.h>
 #include <java/util/zip/ZipEntry.h>
 #include <java/util/zip/ZipInputStream.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+#include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -66,6 +71,7 @@ using java::security::ProtectionDomain;
 using java::util::Iterator;
 using java::util::zip::ZipEntry;
 using java::util::zip::ZipInputStream;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -215,28 +221,16 @@ StringArray* _StandardFileSystem::list(String* path, FilenameFilter* filter) /* 
 	return _files;
 }
 
-String* _StandardFileSystem::getContent(String* path, String* fileName) /* throws(IOException) */
+int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* throws(IOException) */
 {
-	auto contents = new StringBuilder();
-	auto fileInputStream = getInputStream(path, fileName);
-	{
-		auto finally0 = finally([&] {
-			if (fileInputStream != nullptr)
-				fileInputStream->close();
-
-		});
-		try {
-			auto input = new BufferedReader(new InputStreamReader(fileInputStream));
-			String* line = nullptr;
-			while ((line = input->readLine()) != nullptr) {
-				contents->append(line);
-				contents->append(System::getProperty(u"line.separator"_j));
-			}
-		} catch (IOException* ex) {
-			ex->printStackTrace();
-		}
-	}
-	return contents->toString();
+	ifstream fl(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	fl.seekg( 0, ios::end );
+	size_t size = fl.tellg();
+	int8_tArray* data = new int8_tArray(size);
+	fl.seekg(0, ios::beg);
+	fl.read((char *)data->getPointer(), size);
+	fl.close();
+	return data;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
