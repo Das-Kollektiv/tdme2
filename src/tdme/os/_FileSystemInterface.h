@@ -73,12 +73,43 @@ struct tdme::os::_FileSystemInterface
 	virtual int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
+	 * Get file content as string array
+	 * @param path
+	 * @param file name
+	 * @return byte array
+	 * @throws IOException
+	 */
+	virtual StringArray* getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */ = 0;
+
+	/**
 	 * List files for given path and filter by a file name filter if not null 
 	 * @param path
 	 * @param filter or null
 	 * @return file names 
 	 */
 	virtual StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ = 0;
+
+	/**
+	 * Get canonical path
+	 * @param path
+	 * @param file
+	 * @return canonical path
+	 */
+	virtual String* getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Get path name
+	 * @param file name
+	 * @return canonical path
+	 */
+	virtual String* getPathName(String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Get file name
+	 * @param file name
+	 * @return canonical path
+	 */
+	virtual String* getFileName(String* fileName) /* throws(IOException) */ = 0;
 
 	// Generated
 	static ::java::lang::Class *class_();

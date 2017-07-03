@@ -12,8 +12,6 @@ using java::lang::Object;
 using java::lang::String;
 using java::nio::ByteBuffer;
 
-
-
 /** 
  * Taken from Nifty-GUI 1.3.2 http://nifty-gui.lessvoid.com
  * This has been slightly modified by me
@@ -24,41 +22,70 @@ struct tdme::engine::fileio::textures::Texture
 	: public virtual Object
 {
 
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param depth
+	 * @param width
+	 * @param height
+	 * @param texture width
+	 * @param texture height
+	 * @param texture data
+	 */
+	Texture(
+		String* id,
+		int32_t depth,
+		int32_t width,
+		int32_t height,
+		int32_t textureWidth,
+		int32_t textureHeight,
+		ByteBuffer* textureData
+	);
+
 	/** 
 	 * @return id
 	 */
-	virtual String* getId() = 0;
+	String* getId();
 
 	/** 
 	 * @return depth in bits per pixel
 	 */
-	virtual int32_t getDepth() = 0;
+	int32_t getDepth();
 
 	/** 
 	 * @return image width
 	 */
-	virtual int32_t getWidth() = 0;
+	int32_t getWidth();
 
 	/** 
 	 * @return image height
 	 */
-	virtual int32_t getHeight() = 0;
+	int32_t getHeight();
 
 	/** 
 	 * @return texture height
 	 */
-	virtual int32_t getTextureHeight() = 0;
+	int32_t getTextureHeight();
 
 	/** 
 	 * @return texture width
 	 */
-	virtual int32_t getTextureWidth() = 0;
+	int32_t getTextureWidth();
 
 	/** 
 	 * @return texture data wrapped in a byte buffer
 	 */
-	virtual ByteBuffer* getTextureData() = 0;
+	ByteBuffer* getTextureData();
 
 	// Generated
 	static ::java::lang::Class *class_();
+
+private:
+	String* id;
+	int32_t depth;
+	int32_t width;
+	int32_t height;
+	int32_t textureHeight;
+	int32_t textureWidth;
+	ByteBuffer* textureData;
 };

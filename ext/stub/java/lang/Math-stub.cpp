@@ -156,8 +156,7 @@ double Math::log1p(double arg0) { /* stub */
 
 int32_t Math::max(int32_t arg0, int32_t arg1) { /* stub */
 	clinit();
-	unimplemented_(u"int32_t Math::max(int32_t arg0, int32_t arg1)");
-	return 0;
+	return arg0 > arg1?arg0:arg1;
 }
 
 int64_t Math::max(int64_t arg0, int64_t arg1) { /* stub */

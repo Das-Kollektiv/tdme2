@@ -50,6 +50,11 @@ public:
 	OutputStream* getOutputStream(String* path, String* fileName) /* throws(IOException) */ override;
 	StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ override;
 	int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ override;
+	StringArray* getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */ override;
+	String* getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ override;
+	String* getPathName(String* fileName) /* throws(IOException) */ override;
+	String* getFileName(String* fileName) /* throws(IOException) */ override;
+
 
 	// Generated
 	_StandardFileSystem();

@@ -31,12 +31,23 @@ java::nio::ByteBuffer::ByteBuffer(Buffer* arg0)
 	ctor(arg0);
 }
 
+java::nio::ByteBuffer::ByteBuffer(int32_t _capacity, int8_t* data)
+	: super(*static_cast< ::default_init_tag* >(0))
+{
+	clinit();
+	ctor(_capacity, data);
+}
+
 void ByteBuffer::ctor(int32_t capacity) {
 	super::ctor(capacity);
 }
 
 void ByteBuffer::ctor(Buffer* buffer) {
 	super::ctor(buffer);
+}
+
+void ByteBuffer::ctor(int32_t _capacity, int8_t* data) {
+	super::ctor(_capacity, data);
 }
 
 ByteBuffer* ByteBuffer::allocateDirect(int32_t arg0)

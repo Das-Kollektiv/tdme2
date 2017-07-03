@@ -17,10 +17,10 @@ Application::~Application() {
 void Application::run(int argc, char** argv, const char *title) {
 	// initialize GLUT
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_RGBA | GLUT_DOUBLE | GLUT_3_2_CORE_PROFILE);
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("TDMEViewer");
+	glutCreateWindow(title);
 	glutReshapeFunc(Application::glutReshape);
 	glutDisplayFunc(Application::glutDisplay);
 	glutIdleFunc(Application::glutDisplay);
@@ -34,6 +34,7 @@ void Application::glutDisplay() {
 		Application::application->initialized = true;
 	}
 	Application::application->display();
+	glutSwapBuffers();
 }
 
 void Application::glutReshape(int32_t width, int32_t height) {

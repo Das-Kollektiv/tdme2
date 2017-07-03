@@ -29,14 +29,14 @@ void ShortBuffer::ctor(Buffer* buffer) {
 
 short ShortBuffer::get(int32_t position) {
 	int16_t value = 0;
-	value+= (int16_t)super::get(position);
-	value+= (int16_t)super::get(position + 1) << 8;
+	value+= ((int16_t)super::get(position)) & 0xFF;
+	value+= ((int16_t)super::get(position + 1) << 8) & 0xFF;
 	return value;
 }
 
 Buffer* ShortBuffer::put(int16_t arg0) {
-	super::put(arg0 && 0xFF);
-	super::put((arg0 >> 8) && 0xFF);
+	super::put(arg0 & 0xFF);
+	super::put((arg0 >> 8) & 0xFF);
 }
 
 Buffer* ShortBuffer::put(int16_tArray* arg0) {

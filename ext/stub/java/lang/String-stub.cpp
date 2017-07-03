@@ -280,8 +280,9 @@ String* String::copyValueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /
 }
 
 bool String::endsWith(String* arg0) { /* stub */
-	if (cppwstring.size() > arg0->cppwstring.size()) return false;
-	return std::equal(arg0->cppwstring.rbegin(), arg0->cppwstring.rend(), cppwstring.rbegin());
+	return
+		cppwstring.size() >= arg0->cppwstring.size() &&
+		cppwstring.compare(cppwstring.size() - cppwstring.size(), cppwstring.size(), cppwstring) == 0;
 }
 
 bool String::equals(Object* arg0) { /* stub */
@@ -354,8 +355,7 @@ int32_t String::indexOf(int32_t arg0) { /* stub */
 }
 
 int32_t String::indexOf(String* arg0) { /* stub */
-	unimplemented_(u"int32_t String::indexOf(String* arg0)");
-	return 0;
+	return cppwstring.find(arg0->cppwstring);
 }
 
 int32_t String::indexOf(int32_t arg0, int32_t arg1) { /* stub */
@@ -381,13 +381,11 @@ bool String::isEmpty() { /* stub */
 }
 
 int32_t String::lastIndexOf(int32_t arg0) { /* stub */
-	unimplemented_(u"int32_t String::lastIndexOf(int32_t arg0)");
-	return 0;
+	return cppwstring.find_last_of(arg0);
 }
 
 int32_t String::lastIndexOf(String* arg0) { /* stub */
-	unimplemented_(u"int32_t String::lastIndexOf(String* arg0)");
-	return 0;
+	return cppwstring.rfind(arg0->cppwstring);
 }
 
 int32_t String::lastIndexOf(int32_t arg0, int32_t arg1) { /* stub */
@@ -500,7 +498,7 @@ String* String::substring(int32_t arg0) { /* stub */
 }
 
 String* String::substring(int32_t arg0, int32_t arg1) { /* stub */
-	return new String(cppwstring.substr(arg0, arg1));
+	return new String(cppwstring.substr(arg0, arg1 - arg0));
 }
 
 char16_tArray* String::toCharArray() { /* stub */

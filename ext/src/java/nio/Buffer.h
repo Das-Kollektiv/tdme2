@@ -21,11 +21,12 @@ public:
 private:
 	int32_t capacity_ { 0 };
 	int32_t position_ { 0 };
-	char* buffer { nullptr };
+	int8_t* buffer { nullptr };
 
 protected:
 	void ctor(int32_t capacity);
 	void ctor(Buffer* buffer);
+	void ctor(int32_t capacity, int8_t* data);
 
 public:
 	int32_t capacity();
@@ -40,7 +41,7 @@ public:
 	Buffer* put(int8_t arg0);
 	Buffer* put(int8_tArray* arg0);
 
-	const char* getBuffer();
+	const int8_t* getBuffer();
 
 public:
 	int32_t remaining();
@@ -49,6 +50,7 @@ public: /* package */
 	// Generated
 	Buffer(int32_t capacity);
 	Buffer(Buffer* buffer);
+	Buffer(int32_t capacity, int8_t* data);
 protected:
 	Buffer(const ::default_init_tag&);
 

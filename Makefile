@@ -1,5 +1,5 @@
 INCLUDES := $(INCLUDES) -Isrc -Iext/src -I./
-EXTRA_LIBS ?= -l$(NAME)-ext
+EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -L/usr/lib -lz
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
@@ -19,6 +19,7 @@ SRC = src
 STUB = stub
 NATIVE = native
 TINYXML = tinyxml
+LIBPNG = libpng
 
 SRCS = \
 	src/j2c.cpp \
@@ -522,6 +523,23 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinyxmlerror.cpp \
 	ext/tinyxml/tinyxmlparser.cpp \
 
+EXT_LIBPNG_SRCS = \
+	ext/libpng/pngrio.c \
+	ext/libpng/pngwio.c \
+	ext/libpng/pngmem.c \
+	ext/libpng/pngwtran.c \
+	ext/libpng/pngtrans.c \
+	ext/libpng/pngerror.c \
+	ext/libpng/pngpread.c \
+	ext/libpng/pngget.c \
+	ext/libpng/pngset.c \
+	ext/libpng/pngwrite.c \
+	ext/libpng/pngwutil.c \
+	ext/libpng/pngread.c \
+	ext/libpng/pngrutil.c \
+	ext/libpng/png.c \
+	ext/libpng/pngrtran.c \
+
 EXT_NATIVE_SRCS = \
 	ext/native/java/io/FileInputStream-native.cpp \
 	ext/native/java/io/FileOutputStream-native.cpp \
@@ -559,6 +577,7 @@ EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_STUB_OBJS = $(EXT_STUB_SRCS:ext/$(STUB)/%.cpp=$(OBJ)/%.o)
 EXT_NATIVE_OBJS = $(EXT_NATIVE_SRCS:ext/$(NATIVE)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
+EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -588,6 +607,9 @@ $(EXT_NATIVE_OBJS):$(OBJ)/%.o: ext/$(NATIVE)/%.cpp | print-opts
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cc-command)
 
+$(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
+	$(cc-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -596,11 +618,11 @@ $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_LIBPNG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS) -framework GLUT -framework OpenGL -framework Cocoa
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 mains: $(MAINS)
 

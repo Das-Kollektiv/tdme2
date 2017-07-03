@@ -1,4 +1,4 @@
-// Generated from /tdme/src/tdme/gui/GUI.java
+	// Generated from /tdme/src/tdme/gui/GUI.java
 #include <tdme/gui/GUI.h>
 
 #include <java/io/File.h>
@@ -30,6 +30,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
@@ -66,6 +68,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::utils::Pool;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_KeysIterator;
@@ -176,9 +180,12 @@ _ArrayList* GUI::getKeyboardEvents()
 GUIFont* GUI::getFont(String* fileName)
 {
 	clinit();
+	String* canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
+	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	String* key = nullptr;
 	try {
-		key = (new File(fileName))->getCanonicalPath();
+		key = canonicalFile;
 	} catch (IOException* ioe) {
 		ioe->printStackTrace();
 		return nullptr;
@@ -186,7 +193,7 @@ GUIFont* GUI::getFont(String* fileName)
 	auto font = java_cast< GUIFont* >(fontCache->get(key));
 	if (font == nullptr) {
 		try {
-			font = GUIFont::parse((new File(fileName))->getParentFile()->getCanonicalPath(), (new File(fileName))->getName());
+			font = GUIFont::parse(path, file);
 		} catch (Exception* exception) {
 			exception->printStackTrace();
 			return nullptr;
@@ -199,9 +206,11 @@ GUIFont* GUI::getFont(String* fileName)
 Texture* GUI::getImage(String* fileName)
 {
 	clinit();
+	// TODO: fix me, proper get path, filename
+	String* path = new String(u"."_j);
 	String* key = nullptr;
 	try {
-		key = (new File(fileName))->getCanonicalPath();
+		key = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
 	} catch (IOException* ioe) {
 		ioe->printStackTrace();
 		return nullptr;
@@ -209,7 +218,7 @@ Texture* GUI::getImage(String* fileName)
 	auto image = java_cast< Texture* >(imageCache->get(key));
 	if (image == nullptr) {
 		try {
-			image = TextureLoader::loadTexture((new File(fileName))->getParentFile()->getCanonicalPath(), (new File(fileName))->getName());
+			image = TextureLoader::loadTexture(path, fileName);
 		} catch (Exception* exception) {
 			exception->printStackTrace();
 			return nullptr;

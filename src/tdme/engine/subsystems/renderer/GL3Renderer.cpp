@@ -27,6 +27,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/StringConverter.h>
 #include <Array.h>
@@ -58,6 +60,8 @@ using java::nio::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 
@@ -158,6 +162,7 @@ void GL3Renderer::initialize()
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(0);
 	glGenVertexArrays(1, &engineVAO);
+	glBindVertexArray(engineVAO);
 }
 
 void GL3Renderer::initializeFrame()
@@ -165,8 +170,6 @@ void GL3Renderer::initializeFrame()
 	/*
 	if (getContext()->isCurrent() == false)
 		getContext()->makeCurrent();
-
-	glBindVertexArray(engineVAO);
 	*/
 }
 
@@ -207,61 +210,50 @@ int32_t GL3Renderer::getTextureUnits()
 
 int32_t GL3Renderer::loadShader(int32_t type, String* pathName, String* fileName)
 {
-	/*
-	auto handle = glCreateShader(type);
-	if (handle == 0)
-		return 0;
+	int32_t handle = glCreateShader(type);
+	checkGLError();
+	if (handle == 0) return 0;
 
-	auto shaderSources = new StringArray(1);
-	shaderSources->set(0, new String());
-	DataInputStream* sourceInputStream = nullptr;
-	{
-		auto finally0 = finally([&] {
-			try {
-				sourceInputStream->close();
-			} catch (IOException* ioe) {
-			}
-		});
-		try {
-			sourceInputStream = new DataInputStream(Engine::getInstance()->getInputStream(pathName, fileName));
-			auto reader = new BufferedReader(new InputStreamReader(sourceInputStream));
-			String* line;
-			while ((line = reader->readLine()) != nullptr) {
-				shaderSources->set(0, ::java::lang::StringBuilder((*shaderSources)[0]).append(::java::lang::StringBuilder().append(line)->append(u"\n"_j)->toString())->toString());
-			}
-			sourceInputStream->close();
-		} catch (IOException* ioe) {
-			glDeleteShader(handle);
-			return 0;
-		}
-	}
-	glShaderSource(handle, 1, shaderSources, nullptr);
+	auto shaderSource = _FileSystem::getInstance()->getContent(pathName, fileName);
+	if (shaderSource == nullptr) return 0;
+
+	auto shaderSourceString = new String(shaderSource);
+
+	string sourceString = StringConverter::toString(shaderSourceString->getCPPWString());
+	char *sourceHeap = new char[sourceString.length() + 1];
+	strcpy(sourceHeap, sourceString.c_str());
+	glShaderSource(handle, 1, &sourceHeap, nullptr);
+
 	glCompileShader(handle);
-	auto compileStatus = IntBuffer::allocate(1);
-	glGetShaderiv(handle, GL_COMPILE_STATUS, compileStatus);
-	while (compileStatus->remaining() > 0) {
-		auto result = compileStatus->get();
-		if (result == 0) {
-			auto infoLogLengthBuffer = Buffers::newDirectIntBuffer(1);
-			auto infoLogBuffer = Buffers::newDirectByteBuffer(2048);
-			glGetShaderInfoLog(handle, infoLogBuffer->limit(), infoLogLengthBuffer, infoLogBuffer);
-			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
-			infoLogBuffer->get(infoLogBytes);
-			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(handle)
-				->append(u"]"_j)
-				->append(pathName)
-				->append(u"/"_j)
-				->append(fileName)
-				->append(u": failed: "_j)
-				->append(infoLogString)->toString()));
-			glDeleteShader(handle);
-			return 0;
-		}
+
+	int32_t compileStatus;
+	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
+	if (compileStatus == 0) {
+		int32_t infoLogLengthBuffer;
+		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
+		char infoLogBuffer[infoLogLengthBuffer];
+		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
+		auto infoLogString = new String(StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer)));
+		_Console::println(
+			static_cast< Object* >(
+				::java::lang::StringBuilder().
+				 	 append(u"GL3Renderer::loadShader"_j)->
+				 	 append(u"["_j)->
+				 	 append(handle)->
+					 append(u"]"_j)->
+					 append(pathName)->
+					 append(u"/"_j)->
+					 append(fileName)->
+					 append(u": failed: "_j)->
+					 append(infoLogString)->
+					 toString()
+			 )
+		 );
+		glDeleteShader(handle);
+		return 0;
 	}
+
 	return handle;
-	*/
-	return -1;
 }
 
 void GL3Renderer::useProgram(int32_t programId)
@@ -282,28 +274,28 @@ void GL3Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 
 bool GL3Renderer::linkProgram(int32_t programId)
 {
-	/*
 	glLinkProgram(programId);
-	auto linkStatus = IntBuffer::allocate(1);
-	glGetProgramiv(programId, GL_LINK_STATUS, linkStatus);
-	while (linkStatus->remaining() > 0) {
-		auto result = linkStatus->get();
-		if (result == 0) {
-			auto infoLogLengthBuffer = Buffers::newDirectIntBuffer(1);
-			auto infoLogBuffer = Buffers::newDirectByteBuffer(2048);
-			glGetProgramInfoLog(programId, infoLogBuffer->limit(), infoLogLengthBuffer, infoLogBuffer);
-			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
-			infoLogBuffer->get(infoLogBytes);
-			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(programId)
-				->append(u"]: failed: "_j)
-				->append(infoLogString)->toString()));
-			return false;
-		}
+
+	int32_t linkStatus;
+	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
+	if (linkStatus == 0) {
+		int32_t infoLogLength = 0;
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		char infoLog[infoLogLength];
+		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
+		auto infoLogString = new String(StringConverter::toWideString(string(infoLog, infoLogLength)));
+		_Console::println(static_cast< Object* >(
+			::java::lang::StringBuilder().
+			 	 append(u"["_j)->
+				 append(programId)->
+				 append(u"]: failed: "_j)->
+				 append(infoLogString)->
+				 toString()
+			 )
+		);
+		return false;
 	}
 	return true;
-	*/
-	return false;
 }
 
 int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, String* name)

@@ -1,8 +1,14 @@
 // Generated from /tdme/src/tdme/os/_StandardFileSystem.java
 #include <tdme/os/_StandardFileSystem.h>
 
+#include <limits.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 
 #include <java/io/BufferedReader.h>
 #include <java/io/File.h>
@@ -36,9 +42,14 @@
 #include <java/util/zip/ZipInputStream.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::getline;
+using std::string;
+using std::vector;
 
 using tdme::os::_StandardFileSystem;
 using java::io::BufferedReader;
@@ -73,6 +84,7 @@ using java::util::zip::ZipEntry;
 using java::util::zip::ZipInputStream;
 using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -231,6 +243,60 @@ int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* 
 	fl.read((char *)data->getPointer(), size);
 	fl.close();
 	return data;
+}
+
+StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */
+{
+	ifstream ifs(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	if(!ifs) return nullptr;
+
+	vector<string> lines;
+	string line;
+	while (getline(ifs, line)) {
+		lines.push_back(line);
+	}
+
+	StringArray* result = new StringArray(lines.size());
+	int lineIdx = 0;
+	for (const string& tmpLine: lines) {
+		result->set(lineIdx++, new String(StringConverter::toWideString(tmpLine)));
+	}
+
+	return result;
+}
+
+String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ {
+	// cwd
+	char cwdBuffer[PATH_MAX + 1];
+	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
+	wstring cwdString = StringConverter::toWideString(cwdPtr);
+
+	// add cwd to path string
+	wstring pathString = path->getCPPWString() + L"/" + fileName->getCPPWString();
+	if (pathString[0] != '/') pathString = cwdString + L"/" + pathString;
+
+	// realpath
+	const char* nonCanonicalPath = StringConverter::toString(pathString).c_str();
+	char realpathBuffer[PATH_MAX + 1];
+	char* realPathPtr = realpath(nonCanonicalPath, realpathBuffer);
+	if (realPathPtr == nullptr) {
+		return nullptr;
+	}
+	return new String(StringConverter::toWideString(realPathPtr));
+}
+
+String* _StandardFileSystem::getPathName(String* fileName) {
+	String* unixFileName = fileName->replace('\\', '/');
+	int32_t lastPathSeparator = unixFileName->lastIndexOf('/');
+	if (lastPathSeparator == -1) return new String(u"."_j);
+	return unixFileName->substring(0, lastPathSeparator);
+}
+
+String* _StandardFileSystem::getFileName(String* fileName) {
+	String* unixFileName = fileName->replace('\\', '/');
+	int32_t lastPathSeparator = unixFileName->lastIndexOf('/');
+	if (lastPathSeparator == -1) return new String(fileName);
+	return unixFileName->substring(lastPathSeparator + 1, unixFileName->length());
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

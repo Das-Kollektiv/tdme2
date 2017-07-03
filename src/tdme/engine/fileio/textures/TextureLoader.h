@@ -43,5 +43,13 @@ public:
 	static ::java::lang::Class *class_();
 
 private:
+	/**
+	 * Load PNG
+	 * @param path name
+	 * @param file name
+	 */
+	static Texture* loadPNG(String* path, String* fileName);
+
+	//
 	virtual ::java::lang::Class* getClass0();
 };

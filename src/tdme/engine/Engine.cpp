@@ -509,7 +509,7 @@ void Engine::initialize(bool debug)
 	camera = new Camera(renderer);
 	partition = new PartitionOctTree();
 	for (auto i = 0; i < lights->length; i++) 
-				lights->set(i, new Light(renderer, i));
+		lights->set(i, new Light(renderer, i));
 
 	lightingShader = new LightingShader(renderer);
 	lightingShader->initialize();

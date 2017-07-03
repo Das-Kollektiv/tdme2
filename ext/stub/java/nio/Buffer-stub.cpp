@@ -25,14 +25,24 @@ java::nio::Buffer::Buffer(Buffer* buffer)
 	ctor(buffer);
 }
 
+java::nio::Buffer::Buffer(int32_t capacity, int8_t* data) {
+	clinit();
+	ctor(capacity, data);
+}
+
 void Buffer::ctor(int32_t capacity) {
 	capacity_ = capacity;
-	buffer = new char[capacity];
+	buffer = new int8_t[capacity];
 }
 
 void Buffer::ctor(Buffer* buffer) {
 	this->capacity_ = buffer->capacity_;
 	this->buffer = buffer->buffer;
+}
+
+void Buffer::ctor(int32_t capacity, int8_t* data) {
+	this->capacity_ = capacity;
+	this->buffer = data;
 }
 
 int32_t Buffer::capacity()
@@ -73,7 +83,7 @@ Buffer* Buffer::put(int8_tArray* arg0) {
 	}
 }
 
-const char* Buffer::getBuffer() {
+const int8_t* Buffer::getBuffer() {
 	return buffer;
 }
 

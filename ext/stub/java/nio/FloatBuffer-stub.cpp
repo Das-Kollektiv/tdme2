@@ -39,10 +39,10 @@ float FloatBuffer::get(int32_t position) {
 
 Buffer* FloatBuffer::put(float arg0) {
 	int32_t floatAsInt = *((int*)&arg0);
-	super::put((floatAsInt) && 0xFF);
-	super::put((floatAsInt >> 8) && 0xFF);
-	super::put((floatAsInt >> 16) && 0xFF);
-	super::put((floatAsInt >> 24) && 0xFF);
+	super::put((floatAsInt) & 0xFF);
+	super::put((floatAsInt >> 8) & 0xFF);
+	super::put((floatAsInt >> 16) & 0xFF);
+	super::put((floatAsInt >> 24) & 0xFF);
 }
 
 Buffer* FloatBuffer::put(floatArray* arg0) {

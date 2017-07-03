@@ -27,6 +27,7 @@ public:
 protected:
 	void ctor(int32_t _capacity);
 	void ctor(Buffer* buffer);
+	void ctor(int32_t _capacity, int8_t* data);
 
 public:
 	static ByteBuffer* allocateDirect(int32_t arg0);
@@ -39,6 +40,7 @@ public:
 public: /* package */
 	ByteBuffer(int32_t capacity);
 	ByteBuffer(Buffer* buffer);
+	ByteBuffer(int32_t _capacity, int8_t* data);
 protected:
 	ByteBuffer(const ::default_init_tag&);
 

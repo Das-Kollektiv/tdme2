@@ -29,18 +29,18 @@ void IntBuffer::ctor(Buffer* buffer) {
 
 int32_t IntBuffer::get(int32_t position) {
 	int32_t value = 0;
-	value+= (int16_t)super::get(position);
-	value+= (int16_t)super::get(position + 1) << 8;
-	value+= (int16_t)super::get(position + 2) << 16;
-	value+= (int16_t)super::get(position + 3) << 24;
+	value+= ((int32_t)super::get(position)) & 0xFF;
+	value+= ((int32_t)super::get(position + 1) << 8) & 0xFF;
+	value+= ((int32_t)super::get(position + 2) << 16) & 0xFF;
+	value+= ((int32_t)super::get(position + 3) << 24) & 0xFF;
 	return value;
 }
 
 Buffer* IntBuffer::put(int32_t arg0) {
-	super::put(arg0 && 0xFF);
-	super::put((arg0 >> 8) && 0xFF);
-	super::put((arg0 >> 16) && 0xFF);
-	super::put((arg0 >> 24) && 0xFF);
+	super::put(arg0 & 0xFF);
+	super::put((arg0 >> 8) & 0xFF);
+	super::put((arg0 >> 16) & 0xFF);
+	super::put((arg0 >> 24) & 0xFF);
 }
 
 Buffer* IntBuffer::put(int32_tArray* arg0) {

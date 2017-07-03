@@ -77,34 +77,31 @@ constexpr int32_t GUIFont::CHARACTERS_MAX;
 GUIFont* GUIFont::parse(String* pathName, String* fileName) /* throws(Exception) */
 {
 	clinit();
+	int lineIdx = 0;
 	auto font = new GUIFont();
-	auto in = new BufferedReader(new InputStreamReader(_FileSystem::getInstance()->getInputStream(pathName, fileName)));
-	auto info = in->readLine();
-	auto common = in->readLine();
-	auto page = in->readLine();
+	auto in = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
+	auto info = in->get(lineIdx++);
+	auto common = in->get(lineIdx++);
+	auto page = in->get(lineIdx++);
 	font->texture = TextureLoader::loadTexture(pathName, page->substring(page->indexOf(u"file="_j) + u"file=\""_j->length(), page->lastIndexOf(u"\""_j)));
 	auto done = false;
-	while (!done) {
-		auto line = in->readLine();
-		if (line == nullptr) {
-			done = true;
-		} else {
-			if (line->startsWith(u"chars c"_j)) {
-			} else if (line->startsWith(u"char"_j)) {
-				auto def = font->parseCharacter(line);
-				font->chars->set(def->id, def);
-			}
-			if (line->startsWith(u"kernings c"_j)) {
-			} else if (line->startsWith(u"kerning"_j)) {
-				auto tokens = new StringTokenizer(line, u" ="_j);
-				tokens->nextToken();
-				tokens->nextToken();
-				auto first = Integer::parseInt(tokens->nextToken());
-				tokens->nextToken();
-				auto second = Integer::parseInt(tokens->nextToken());
-				tokens->nextToken();
-				auto offset = Integer::parseInt(tokens->nextToken());
-			}
+	while (lineIdx < in->length) {
+		String* line = in->get(lineIdx++);
+		if (line->startsWith(u"chars c"_j)) {
+		} else if (line->startsWith(u"char"_j)) {
+			auto def = font->parseCharacter(line);
+			font->chars->set(def->id, def);
+		}
+		if (line->startsWith(u"kernings c"_j)) {
+		} else if (line->startsWith(u"kerning"_j)) {
+			auto tokens = new StringTokenizer(line, u" ="_j);
+			tokens->nextToken();
+			tokens->nextToken();
+			auto first = Integer::parseInt(tokens->nextToken());
+			tokens->nextToken();
+			auto second = Integer::parseInt(tokens->nextToken());
+			tokens->nextToken();
+			auto offset = Integer::parseInt(tokens->nextToken());
 		}
 	}
 	font->lineHeight = font->getTextHeight(LINEHEIGHT_STRING);
