@@ -175,10 +175,6 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 			}
 		}
 	}
-
-	_Console::println(static_cast< Object* >(mapPropertiesPreset));
-	_Console::println(static_cast< Object* >(objectPropertiesPresets));
-	_Console::println(static_cast< Object* >(lightPresets));
 }
 
 _ArrayList* LevelPropertyPresets::getMapPropertiesPreset()

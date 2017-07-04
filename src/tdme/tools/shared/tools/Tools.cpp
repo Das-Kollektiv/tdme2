@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/tools/Tools.java
 #include <tdme/tools/shared/tools/Tools.h>
 
+#include <string>
+
 #include <java/io/File.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Float.h>
@@ -47,6 +49,9 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::shared::tools::Tools;
 using java::io::File;
@@ -121,7 +126,8 @@ float Tools::oseScale;
 String* Tools::formatFloat(float value)
 {
 	clinit();
-	return String::format(Locale::ENGLISH, u"%.3f"_j, new ObjectArray({static_cast< Object* >(Float::valueOf(value))}));
+	wstring floatString = to_wstring(value);
+	return new String(floatString);
 }
 
 String* Tools::formatVector3(Vector3* value)
@@ -242,10 +248,10 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
 	osEngine->getSceneColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	osEngine->display();
-	osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
+	// osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
 	osEngine->getSceneColor()->set(0.8f, 0.0f, 0.0f, 1.0f);
 	osEngine->display();
-	osEngine->makeScreenshot(u"tmp"_j, ::java::lang::StringBuilder().append(u"selected_"_j)->append(model->getThumbnail())->toString());
+	// osEngine->makeScreenshot(u"tmp"_j, ::java::lang::StringBuilder().append(u"selected_"_j)->append(model->getThumbnail())->toString());
 	osEngine->reset();
 }
 

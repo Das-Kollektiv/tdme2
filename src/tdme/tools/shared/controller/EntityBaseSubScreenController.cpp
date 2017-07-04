@@ -26,6 +26,7 @@
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/_HashMap.h>
+#include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/MutableString.h>
 
@@ -56,6 +57,7 @@ using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::_HashMap;
+using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
 
 template<typename T, typename U>
@@ -149,7 +151,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(_HashMap* entityPresetIds
 	auto entityPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesPresets->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = entityPresetIds->getValuesIterator(); _i->hasNext(); ) {
+	for (auto _i = entityPresetIds->getKeysIterator(); _i->hasNext(); ) {
 		String* entityPresetId = java_cast< String* >(_i->next());
 		{
 			entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(entityPresetId))

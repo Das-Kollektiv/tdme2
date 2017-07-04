@@ -151,6 +151,7 @@ void TDMEParticleSystem::dispose()
 void TDMEParticleSystem::initialize()
 {
 	engine->initialize();
+	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
 	setView(new SharedParticleSystemView(popUps));

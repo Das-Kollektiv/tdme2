@@ -22,6 +22,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -63,6 +65,8 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -214,7 +218,7 @@ void SharedParticleSystemView::display()
 void SharedParticleSystemView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName() != nullptr ? Tools::getFileName(entity->getEntityFileName()) : entity->getName()))->toString());
+		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName() != nullptr ? _FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity->getProperties(), nullptr);
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -233,27 +237,14 @@ void SharedParticleSystemView::onInitAdditionalScreens()
 
 void SharedParticleSystemView::loadSettings()
 {
-	FileInputStream* fis = nullptr;
-	Object* tmp;
-	try {
-		fis = new FileInputStream(u"./settings/particlesystem.properties"_j);
-		auto settings = new Properties();
-		settings->load(static_cast< InputStream* >(fis));
-		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u""_j);
-		particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u""_j);
-		fis->close();
-	} catch (Exception* ioe) {
-		if (fis != nullptr)
-			try {
-				fis->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	Object* tmp = nullptr;
+	auto settings = new Properties();
+	settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"particlesystem.properties"_j));
+	entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u""_j);
+	particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u""_j);
 }
 
 void SharedParticleSystemView::initialize()
@@ -266,8 +257,9 @@ void SharedParticleSystemView::initialize()
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception* e) {
-		e->printStackTrace();
+		_Console::println(e->getMessage());
 	}
+
 	loadSettings();
 	entityBoundingVolumeView->initialize();
 	auto particleSystemTypes = new _ArrayList();

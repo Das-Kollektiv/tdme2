@@ -153,6 +153,7 @@ void TDMEViewer::initialize()
 {
 	_Console::println(L"initialize");
 	engine->initialize();
+	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
 	setView(new SharedModelViewerView(popUps));

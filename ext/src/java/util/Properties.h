@@ -5,8 +5,14 @@
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
+#include <java/net/fwd-tdme.h>
+#include <java/lang/Object.h>
+#include <java/io/Serializable.h>
+#include <java/lang/Comparable.h>
 #include <java/util/fwd-tdme.h>
 #include <java/util/Hashtable.h>
+
+#include <tdme/utils/_HashMap.h>
 
 using java::util::Hashtable;
 using java::io::BufferedWriter;
@@ -15,13 +21,39 @@ using java::io::OutputStream;
 using java::io::PrintStream;
 using java::io::PrintWriter;
 using java::io::Reader;
+using java::io::Serializable;
 using java::io::Writer;
+using java::lang::CharSequence;
+using java::lang::Comparable;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Enumeration;
 using java::util::Properties_LineReader;
 using java::util::Set;
 
+using tdme::utils::_HashMap;
+
+template<typename ComponentType, typename... Bases> struct SubArray;
+namespace java {
+namespace io {
+typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
+}  // namespace io
+
+namespace lang {
+typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
+}  // namespace lang
+
+namespace lang {
+typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
+typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
+}  // namespace lang
+}  // namespace java
+
+using java::io::SerializableArray;
+using java::lang::CharSequenceArray;
+using java::lang::ComparableArray;
+using java::lang::ObjectArray;
+using java::lang::StringArray;
 
 struct default_init_tag;
 class java::util::Properties
@@ -51,6 +83,7 @@ public:
 	virtual void list(PrintWriter* arg0);
 	virtual void load(Reader* arg0);
 	virtual void load(InputStream* arg0);
+	virtual void load(StringArray* arg0);
 	/*void load0(Properties_LineReader* arg0); (private) */
 	/*String* loadConvert(char16_tArray* arg0, int32_t arg1, int32_t arg2, char16_tArray* arg3); (private) */
 	virtual void loadFromXML(InputStream* arg0);
@@ -79,4 +112,6 @@ public:
 
 private:
 	virtual ::java::lang::Class* getClass0();
+
+	_HashMap* properties {  };
 };

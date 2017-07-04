@@ -178,6 +178,7 @@ void TDMELevelEditor::dispose()
 void TDMELevelEditor::initialize()
 {
 	engine->initialize();
+	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
 	levelEditorEntityLibraryScreenController->initialize();

@@ -96,7 +96,7 @@ void FileDialogScreenController::ctor()
 {
 	super::ctor();
 	try {
-		this->cwd = (new File(u"."_j))->getCanonicalFile()->toString();
+		this->cwd = _FileSystem::getInstance()->getCanonicalPath(new String(L"."), new String(L""));
 	} catch (IOException* ioe) {
 		ioe->printStackTrace();
 	}

@@ -5,6 +5,8 @@
 #include <java/lang/Math.h>
 
 using java::lang::Math;
+using std::rand;
+
 extern void unimplemented_(const char16_t* name);
 java::lang::Math::Math(const ::default_init_tag&) :
 		super(*static_cast<::default_init_tag*>(0)) {
@@ -229,8 +231,7 @@ double Math::pow(double arg0, double arg1) { /* stub */
 
 double Math::random() { /* stub */
 	clinit();
-	unimplemented_(u"double Math::random()");
-	return 0;
+	return (double)rand() / RAND_MAX;
 }
 
 double Math::rint(double arg0) { /* stub */
@@ -277,8 +278,7 @@ float Math::signum(float arg0) { /* stub */
 
 double Math::sin(double arg0) { /* stub */
 	clinit();
-	unimplemented_(u"double Math::sin(double arg0)");
-	return 0;
+	return ::sin(arg0);
 }
 
 double Math::sinh(double arg0) { /* stub */
