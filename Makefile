@@ -32,6 +32,7 @@ SRCS = \
 	src/tdme/audio/decoder/AudioDecoder.cpp \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
 	src/tdme/engine/Application.cpp \
+	src/tdme/engine/ApplicationInputEventsHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/Engine_AnimationProcessingTarget.cpp \

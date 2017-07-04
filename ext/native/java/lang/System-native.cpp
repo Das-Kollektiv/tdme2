@@ -12,6 +12,9 @@ extern void unimplemented_(const char16_t* name);
 
 void System::arraycopy(char16_tArray* arg0, int32_t arg1, char16_tArray* arg2, int32_t arg3, int32_t arg4)
 { /* native */
+	if (arg0 == arg2) {
+		arg0 = new char16_tArray(*arg0);
+	}
 	clinit();
 	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
 }
@@ -19,12 +22,18 @@ void System::arraycopy(char16_tArray* arg0, int32_t arg1, char16_tArray* arg2, i
 void System::arraycopy(floatArray* arg0, int32_t arg1, floatArray* arg2, int32_t arg3, int32_t arg4)
 { /* native */
 	clinit();
+	if (arg0 == arg2) {
+		arg0 = new floatArray(*arg0);
+	}
 	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
 }
 
 void System::arraycopy(ObjectArray* arg0, int32_t arg1, ObjectArray* arg2, int32_t arg3, int32_t arg4)
 { /* native */
 	clinit();
+	if (arg0 == arg2) {
+		arg0 = new ObjectArray(*arg0);
+	}
 	for (int i = 0; i < arg4; i++) arg2->set(i + arg3, arg0->get(i + arg1));
 }
 

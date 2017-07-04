@@ -145,7 +145,7 @@ void EngineTest::main(int argc, char** argv)
 {
 	clinit();
 	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, "EngineTest");
+	engineTest->run(argc, argv, L"EngineTest");
 }
 
 void EngineTest::ctor()

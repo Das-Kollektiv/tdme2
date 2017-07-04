@@ -113,6 +113,8 @@ public:
     const_iterator  end() const { return p + length; }
     const_iterator  cend() const { return end(); }
 
+    const pointer_type getPointer() { return p; }
+
     const size_type length;
     const pointer_type p;
 

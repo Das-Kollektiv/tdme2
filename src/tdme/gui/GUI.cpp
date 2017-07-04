@@ -111,6 +111,7 @@ void GUI::init()
 	keyboardEvents = new _ArrayList();
 	eventsMutex = new ReentrantLock();
 	renderScreens = new _ArrayList();
+	mouseButtonLast = 0;
 }
 
 _HashMap* GUI::fontCache;
@@ -513,88 +514,130 @@ void GUI::handleEvents()
 	unlockEvents();
 }
 
-/*
-void GUI::mouseClicked(MouseEvent* event)
-{
+void GUI::onKeyDown (unsigned char key, int x, int y) {
+	fakeMouseMovedEvent();
+	lockEvents();
+	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setKeyCode((int)key);
+	guiKeyboardEvent->setKeyChar(key);
+	guiKeyboardEvent->setMetaDown(false);
+	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent->setProcessed(false);
+	keyboardEvents->add(guiKeyboardEvent);
+	unlockEvents();
 }
 
-void GUI::mouseDragged(MouseEvent* event)
-{
+void GUI::onKeyUp(unsigned char key, int x, int y) {
+	fakeMouseMovedEvent();
+	lockEvents();
+	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setKeyCode((int)key);
+	guiKeyboardEvent->setKeyChar(key);
+	guiKeyboardEvent->setMetaDown(false);
+	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent->setProcessed(false);
+	keyboardEvents->add(guiKeyboardEvent);
+	unlockEvents();
+}
+
+void GUI::onSpecialKeyDown (int key, int x, int y) {
+	fakeMouseMovedEvent();
+	lockEvents();
+	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setKeyCode(key);
+	guiKeyboardEvent->setKeyChar(0);
+	guiKeyboardEvent->setMetaDown(false);
+	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent->setProcessed(false);
+	keyboardEvents->add(guiKeyboardEvent);
+	unlockEvents();
+}
+
+void GUI::onSpecialKeyUp(int key, int x, int y) {
+	fakeMouseMovedEvent();
+	lockEvents();
+	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setKeyCode(key);
+	guiKeyboardEvent->setKeyChar(0);
+	guiKeyboardEvent->setMetaDown(false);
+	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent->setProcessed(false);
+	keyboardEvents->add(guiKeyboardEvent);
+	unlockEvents();
+}
+
+void GUI::onMouseDragged(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(System::currentTimeMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_DRAGGED);
-	guiMouseEvent->setX(event->getX());
-	guiMouseEvent->setY(event->getY());
-	guiMouseEvent->setButton(event->getButton());
+	guiMouseEvent->setX(x);
+	guiMouseEvent->setY(y);
+	guiMouseEvent->setButton(mouseButtonLast);
+	/*
 	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
 	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
+	*/
 	guiMouseEvent->setProcessed(false);
 	mouseEvents->add(guiMouseEvent);
 	unlockEvents();
 }
 
-void GUI::mouseEntered(MouseEvent* event)
-{
-}
-
-void GUI::mouseExited(MouseEvent* event)
-{
-}
-
-void GUI::mouseMoved(MouseEvent* event)
-{
+void GUI::onMouseMoved(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(System::currentTimeMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
-	guiMouseEvent->setX(event->getX());
-	guiMouseEvent->setY(event->getY());
-	guiMouseEvent->setButton(event->getButton());
+	guiMouseEvent->setX(x);
+	guiMouseEvent->setY(y);
+	guiMouseEvent->setButton(0);
+	/*
 	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
 	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
+	*/
 	guiMouseEvent->setProcessed(false);
 	mouseEvents->add(guiMouseEvent);
 	unlockEvents();
 }
 
-void GUI::mousePressed(MouseEvent* event)
-{
+void GUI::onMouseButton(int button, int state, int x, int y) {
 	lockEvents();
+	mouseButtonLast = button + 1;
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(System::currentTimeMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_PRESSED);
-	guiMouseEvent->setX(event->getX());
-	guiMouseEvent->setY(event->getY());
-	guiMouseEvent->setButton(event->getButton());
+	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSE_PRESSED:GUIMouseEvent_Type::MOUSE_RELEASED);
+	guiMouseEvent->setX(x);
+	guiMouseEvent->setY(y);
+	guiMouseEvent->setButton(mouseButtonLast);
+	/*
 	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
 	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
+	*/
 	guiMouseEvent->setProcessed(false);
 	mouseEvents->add(guiMouseEvent);
 	unlockEvents();
 }
 
-void GUI::mouseReleased(MouseEvent* event)
-{
-	lockEvents();
-	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_RELEASED);
-	guiMouseEvent->setX(event->getX());
-	guiMouseEvent->setY(event->getY());
-	guiMouseEvent->setButton(event->getButton());
-	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
-	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
-	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
-	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
-	unlockEvents();
-	mouseMoved(event);
-}
-
+/*
 void GUI::mouseWheelMoved(MouseEvent* event)
 {
 	lockEvents();
@@ -611,6 +654,7 @@ void GUI::mouseWheelMoved(MouseEvent* event)
 	mouseEvents->add(guiMouseEvent);
 	unlockEvents();
 }
+*/
 
 void GUI::fakeMouseMovedEvent()
 {
@@ -628,43 +672,6 @@ void GUI::fakeMouseMovedEvent()
 	mouseEvents->add(guiMouseEvent);
 	unlockEvents();
 }
-
-void GUI::keyPressed(KeyEvent* event)
-{
-	fakeMouseMovedEvent();
-	lockEvents();
-	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
-	guiKeyboardEvent->setKeyCode(event->getKeyCode());
-	guiKeyboardEvent->setKeyChar(event->getKeyChar());
-	guiKeyboardEvent->setMetaDown(event->isMetaDown());
-	guiKeyboardEvent->setControlDown(event->isControlDown());
-	guiKeyboardEvent->setAltDown(event->isAltDown());
-	guiKeyboardEvent->setShiftDown(event->isShiftDown());
-	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
-	unlockEvents();
-}
-
-void GUI::keyReleased(KeyEvent* event)
-{
-	fakeMouseMovedEvent();
-	lockEvents();
-	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
-	guiKeyboardEvent->setKeyCode(event->getKeyCode());
-	guiKeyboardEvent->setKeyChar(event->getKeyChar());
-	guiKeyboardEvent->setMetaDown(event->isMetaDown());
-	guiKeyboardEvent->setControlDown(event->isControlDown());
-	guiKeyboardEvent->setAltDown(event->isAltDown());
-	guiKeyboardEvent->setShiftDown(event->isShiftDown());
-	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
-	unlockEvents();
-}
-*/
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 

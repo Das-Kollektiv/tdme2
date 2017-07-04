@@ -90,7 +90,7 @@ void TDMELevelEditor::main(int argc, char** argv)
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
 	auto tdmeLevelEditor = new TDMELevelEditor();
-	tdmeLevelEditor->run(argc, argv, "TDMELevelEditor");
+	tdmeLevelEditor->run(argc, argv, L"TDMELevelEditor");
 }
 
 void TDMELevelEditor::ctor()

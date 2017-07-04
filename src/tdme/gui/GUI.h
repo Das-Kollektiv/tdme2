@@ -7,6 +7,7 @@
 #include <java/util/concurrent/locks/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/ApplicationInputEventsHandler.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -17,6 +18,7 @@ using java::lang::Object;
 using java::lang::String;
 using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
+using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -37,7 +39,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::GUI final
-	: public virtual Object
+	: public virtual Object, public virtual ApplicationInputEventsHandler
 {
 
 public:
@@ -65,6 +67,7 @@ private:
 	_ArrayList* renderScreens {  };
 	int32_t width {  };
 	int32_t height {  };
+	int32_t mouseButtonLast { };
 protected:
 
 	/** 
@@ -237,6 +240,60 @@ private:
 	void handleEvents(GUINode* node);
 
 public:
+	/**
+	 * On key down
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	void onKeyDown (unsigned char key, int x, int y) override;
+
+	/**
+	 * On key up
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	void onKeyUp(unsigned char key, int x, int y) override;
+
+	/**
+	 * On special key up
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	void onSpecialKeyDown (int key, int x, int y) override;
+
+	/**
+	 * On special key up
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	void onSpecialKeyUp(int key, int x, int y) override;
+
+	/**
+	 * On mouse dragged
+	 * @param x
+	 * @param y
+	 */
+	void onMouseDragged(int x, int y) override;
+
+	/**
+	 * On mouse moved
+	 * @param x
+	 * @param y
+	 */
+	void onMouseMoved(int x, int y) override;
+
+	/**
+	 * On mouse moved
+	 * @param button
+	 * @param state
+	 * @param x
+	 * @param y
+	 */
+	void onMouseButton(int button, int state, int x, int y) override;
 
 	/** 
 	 * Handle screen events

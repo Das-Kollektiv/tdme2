@@ -178,8 +178,9 @@ void String::ctor(int8_tArray* arg0, Charset* arg1) { /* stub */
 }
 
 void String::ctor(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void String::ctor(char16_tArray* arg0, int32_t arg1, int32_t arg2)");
+	for (int i = 0; i < arg2; i++) {
+		cppwstring+= arg0->get(arg1 + i);
+	}
 }
 
 void String::ctor(int32_tArray* arg0, int32_t arg1, int32_t arg2) { /* stub */
@@ -282,7 +283,7 @@ String* String::copyValueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /
 bool String::endsWith(String* arg0) { /* stub */
 	return
 		cppwstring.size() >= arg0->cppwstring.size() &&
-		cppwstring.compare(cppwstring.size() - cppwstring.size(), cppwstring.size(), cppwstring) == 0;
+		cppwstring.compare(cppwstring.size() - arg0->cppwstring.size(), arg0->cppwstring.size(), arg0->cppwstring) == 0;
 }
 
 bool String::equals(Object* arg0) { /* stub */

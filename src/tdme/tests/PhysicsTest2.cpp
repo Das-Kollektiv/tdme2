@@ -88,7 +88,7 @@ void PhysicsTest2::main(int argc, char** argv)
 {
 	clinit();
 	auto physicsTest2 = new PhysicsTest2();
-	physicsTest2->run(argc, argv, "PhysicsTest2");
+	physicsTest2->run(argc, argv, L"PhysicsTest2");
 }
 
 void PhysicsTest2::ctor()

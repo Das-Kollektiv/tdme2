@@ -226,7 +226,7 @@ void GUIParser::parse(GUIParentNode* parentNode, String* xml) /* throws(Exceptio
 {
 	clinit();
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xml->getCPPWString()).c_str());
+	xmlDocument.Parse(StringConverter::toString(wstring(L"<gui-element>") + xml->getCPPWString() + wstring(L"</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
 		_Console::println(string("GUIParser::parse():: Could not parse XML. Error='") + xmlDocument.ErrorDesc() + string("'. Exiting.\n"));
 		exit(1);

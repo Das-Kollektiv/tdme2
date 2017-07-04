@@ -72,7 +72,7 @@ void TDMEViewer::main(int argc, char** argv)
 	_Console::println();
 
 	auto tdmeLevelEditor = new TDMEViewer();
-	tdmeLevelEditor->run(argc, argv, "TDMEViewer");
+	tdmeLevelEditor->run(argc, argv, L"TDMEViewer");
 }
 
 void TDMEViewer::ctor()

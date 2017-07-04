@@ -37,6 +37,8 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
+using tdme::engine::Application;
+
 struct default_init_tag;
 
 /** 
@@ -53,12 +55,19 @@ public:
 
 private:
 	Engine* engine {  };
+	Application* application { };
 protected:
 
 	/** 
 	 * Public constructor
 	 */
 	void ctor();
+
+	/**
+	 * Public constructor
+	 * @param application
+	 */
+	void ctor(Application* application);
 
 public:
 	void initialize();
@@ -75,6 +84,7 @@ public:
 
 	// Generated
 	GUITest();
+	GUITest(Application* application);
 protected:
 	GUITest(const ::default_init_tag&);
 

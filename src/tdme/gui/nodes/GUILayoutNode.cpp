@@ -136,7 +136,7 @@ void GUILayoutNode::layoutSubNodes()
 	{
 		auto v = alignment;
 		if ((v == GUILayoutNode_Alignment::VERTICAL)) {
-{
+			{
 				auto starCount = 0;
 				auto height = computedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
 				auto nodesHeight = 0;

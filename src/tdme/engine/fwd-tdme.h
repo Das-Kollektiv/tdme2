@@ -5,6 +5,7 @@
 namespace tdme {
 namespace engine {
 		class Application;
+		class ApplicationInputEventsHandler;
 		class Camera;
 		class Engine;
 		class Engine_AnimationProcessingTarget;

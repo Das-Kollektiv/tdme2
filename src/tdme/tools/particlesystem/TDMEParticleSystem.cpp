@@ -71,7 +71,7 @@ void TDMEParticleSystem::main(int argc, char** argv)
 	_Console::println(static_cast< Object* >(u"Programmed 2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
 	auto tdmeParticleSystem = new TDMEParticleSystem();
-	tdmeParticleSystem->run(argc, argv, "TDMEParticleSystem");
+	tdmeParticleSystem->run(argc, argv, L"TDMEParticleSystem");
 }
 
 void TDMEParticleSystem::ctor()

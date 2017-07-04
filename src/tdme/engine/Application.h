@@ -2,10 +2,20 @@
 
 #pragma once
 
+#include <GLUT/glut.h>
+
+#include <string>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+#include "ApplicationInputEventsHandler.h"
+
+using std::wstring;
+
+using tdme::engine::ApplicationInputEventsHandler;
 
 struct default_init_tag;
 
@@ -29,12 +39,19 @@ public:
 	virtual ~Application();
 
 	/**
+	 * Set input event handler
+	 * @param input event handler
+	 */
+	void setInputEventHandler(ApplicationInputEventsHandler* inputEventHandler);
+
+	/**
 	 * Run this application
 	 * @param argument count
 	 * @param argument values
 	 * @param title
+	 * @param application input event handler
 	 */
-	void run(int argc, char** argv, const char *title);
+	void run(int argc, char** argv, const wstring& title, ApplicationInputEventsHandler* inputEventHandler = nullptr);
 
 	/** 
 	 * Init
@@ -60,6 +77,7 @@ public:
 
 private:
 	static Application* application;
+	static ApplicationInputEventsHandler* inputEventHandler;
 	bool initialized { false };
 
 	/**
@@ -71,5 +89,60 @@ private:
 	 * GLUT reshape function
 	 */
 	static void glutReshape(int32_t width, int32_t height);
+
+	/**
+	 * GLUT on key down
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnKeyDown (unsigned char key, int x, int y);
+
+	/**
+	 * GLUT on key up
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnKeyUp(unsigned char key, int x, int y);
+
+	/**
+	 * GLUT on special key down
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnSpecialKeyDown (int key, int x, int y);
+
+	/**
+	 * GLUT on special key up
+	 * @param key
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnSpecialKeyUp(int, int x, int y);
+
+	/**
+	 * GLUT on mouse dragged
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnMouseDragged(int x, int y) ;
+
+	/**
+	 * GLUT on mouse moved
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnMouseMoved(int x, int y);
+
+	/**
+	 * On mouse button
+	 * @param button
+	 * @param state
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnMouseButton(int button, int state, int x, int y);
 
 };
