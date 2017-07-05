@@ -27,7 +27,7 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 	Application::inputEventHandler = inputEventHandler;
 	// initialize GLUT
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_RGBA | GLUT_DOUBLE | GLUT_3_2_CORE_PROFILE);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow(StringConverter::toString(title).c_str());

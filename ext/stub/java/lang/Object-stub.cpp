@@ -2,6 +2,7 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
+
 extern void unimplemented_(const char16_t* name);
 java::lang::Object::Object(const ::default_init_tag&)
 {
@@ -22,8 +23,7 @@ void Object::ctor()
 
 bool Object::equals(Object* arg0)
 { /* stub */
-	unimplemented_(u"bool Object::equals(Object* arg0)");
-	return 0;
+	return this == arg0;
 }
 
 void Object::finalize()

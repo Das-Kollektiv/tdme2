@@ -100,8 +100,8 @@ bool Float::equals(Object* arg0)
 int32_t Float::floatToIntBits(float arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"int32_t Float::floatToIntBits(float arg0)");
-	return 0;
+	int32_t value = *((int32_t*)&arg0);
+	return value;
 }
 
 float Float::floatValue()

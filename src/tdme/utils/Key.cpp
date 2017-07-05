@@ -61,8 +61,9 @@ void Key::append(String* string)
 	if (length + string->length() > LENGTH_MAX) {
 		_Console::println(static_cast< Object* >(u"Key.append: key too long"_j));
 	}
-	string->getChars(0, string->length(), data, length);
-	length += string->length();
+	for (int i = 0; i < string->length(); i++) {
+		(*data)[length++] = string->charAt(i);
+	}
 	hash = 0;
 }
 

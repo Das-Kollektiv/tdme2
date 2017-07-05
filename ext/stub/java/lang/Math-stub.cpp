@@ -225,8 +225,7 @@ float Math::nextUp(float arg0) { /* stub */
 
 double Math::pow(double arg0, double arg1) { /* stub */
 	clinit();
-	unimplemented_(u"double Math::pow(double arg0, double arg1)");
-	return 0;
+	return std::pow(arg0, arg1);
 }
 
 double Math::random() { /* stub */
