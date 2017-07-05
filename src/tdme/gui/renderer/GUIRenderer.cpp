@@ -198,7 +198,7 @@ void GUIRenderer::initialize()
 			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
 		}
 		// sbIndices->flip();
-		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->limit() * Short::SIZE / Byte::SIZE, sbIndices);
+		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->position() * Short::SIZE / Byte::SIZE, sbIndices);
 	}
 }
 
@@ -512,9 +512,9 @@ void GUIRenderer::render()
 	fbColors->flip();
 	fbTextureCoordinates->flip();
 	*/
-	renderer->uploadBufferObject((*vboIds)[1], fbVertices->limit() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[2], fbColors->limit() * Float::SIZE / Byte::SIZE, fbColors);
-	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->limit() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+	renderer->uploadBufferObject((*vboIds)[1], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[2], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
+	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
 	(*effectColorMulFinal)[0] = (*guiEffectColorMul)[0] * (*effectColorMul)[0] * (*fontColor)[0];
 	(*effectColorMulFinal)[1] = (*guiEffectColorMul)[1] * (*effectColorMul)[1] * (*fontColor)[1];
 	(*effectColorMulFinal)[2] = (*guiEffectColorMul)[2] * (*effectColorMul)[2] * (*fontColor)[2];

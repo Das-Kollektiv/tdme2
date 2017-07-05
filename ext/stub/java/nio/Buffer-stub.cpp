@@ -56,16 +56,7 @@ Buffer* Buffer::clear()
 	return this;
 }
 
-bool Buffer::hasRemaining()
-{ /* stub */
-	return position_ < capacity_;
-}
-
 int32_t Buffer::position() {
-	return position_;
-}
-
-int32_t Buffer::limit() {
 	return position_;
 }
 
@@ -85,11 +76,6 @@ Buffer* Buffer::put(int8_tArray* arg0) {
 
 const int8_t* Buffer::getBuffer() {
 	return buffer;
-}
-
-int32_t Buffer::remaining()
-{ /* stub */
-	return capacity_ - position_;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

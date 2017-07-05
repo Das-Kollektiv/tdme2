@@ -95,12 +95,12 @@ void BatchVBORendererPoints::render()
 {
 	// fbVertices->flip();
 	// fbColors->flip();
-	if (fbVertices->limit() == 0 || fbColors->limit() == 0)
+	if (fbVertices->position() == 0 || fbColors->position() == 0)
 		return;
 
-	auto points = fbVertices->limit() / 3;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->limit() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbColors->limit() * Float::SIZE / Byte::SIZE, fbColors);
+	auto points = fbVertices->position() / 3;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindColorsBufferObject((*vboIds)[1]);
 	renderer->drawPointsFromBufferObjects(points, 0);

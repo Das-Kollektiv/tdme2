@@ -92,21 +92,21 @@ void Object3DGroupVBORenderer::preRender(Object3DVBORenderer* object3DVBORendere
 	if (object3DGroup->mesh->hasRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
 			auto sbIndices = object3DGroup->mesh->setupVertexIndicesBuffer();
-			object3DVBORenderer->renderer->uploadIndicesBufferObject((*vboBaseIds)[0], sbIndices->remaining() * Short::SIZE / Byte::SIZE, sbIndices);
+			object3DVBORenderer->renderer->uploadIndicesBufferObject((*vboBaseIds)[0], sbIndices->position() * Short::SIZE / Byte::SIZE, sbIndices);
 			if (object3DGroup->mesh->group->getTextureCoordinates() != nullptr) {
 				auto fbTextureCoordinates = object3DGroup->mesh->setupTextureCoordinatesBuffer();
-				object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[3], fbTextureCoordinates->remaining() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+				object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[3], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
 			}
 		}
 		auto fbVertices = object3DGroup->mesh->setupVerticesBuffer();
-		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[1], fbVertices->remaining() * Float::SIZE / Byte::SIZE, fbVertices);
+		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[1], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
 		auto fbNormals = object3DGroup->mesh->setupNormalsBuffer();
-		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[2], fbNormals->remaining() * Float::SIZE / Byte::SIZE, fbNormals);
+		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[2], fbNormals->position() * Float::SIZE / Byte::SIZE, fbNormals);
 		if (vboTangentBitangentIds != nullptr) {
 			auto fbTangents = object3DGroup->mesh->setupTangentsBuffer();
-			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[0], fbTangents->remaining() * Float::SIZE / Byte::SIZE, fbTangents);
+			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[0], fbTangents->position() * Float::SIZE / Byte::SIZE, fbTangents);
 			auto fbBitangents = object3DGroup->mesh->setupBitangentsBuffer();
-			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[1], fbBitangents->remaining() * Float::SIZE / Byte::SIZE, fbBitangents);
+			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[1], fbBitangents->position() * Float::SIZE / Byte::SIZE, fbBitangents);
 		}
 	}
 }

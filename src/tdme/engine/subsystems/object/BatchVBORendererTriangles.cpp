@@ -99,13 +99,13 @@ void BatchVBORendererTriangles::render()
 	// fbVertices->flip();
 	// fbNormals->flip();
 	// fbTextureCoordinates->flip();
-	if (fbVertices->limit() == 0 || fbNormals->limit() == 0 || fbTextureCoordinates->limit() == 0)
+	if (fbVertices->position() == 0 || fbNormals->position() == 0 || fbTextureCoordinates->position() == 0)
 		return;
 
-	auto triangles = fbVertices->limit() / 3 / 3;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->remaining() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbNormals->remaining() * Float::SIZE / Byte::SIZE, fbNormals);
-	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->remaining() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+	auto triangles = fbVertices->position() / 3 / 3;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbNormals->position() * Float::SIZE / Byte::SIZE, fbNormals);
+	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);

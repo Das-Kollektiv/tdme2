@@ -33,18 +33,13 @@ public:
 
 public:
 	Buffer* clear();
-	bool hasRemaining();
 	int32_t position();
-	int32_t limit();
 
 	int8_t get(int32_t position);
 	Buffer* put(int8_t arg0);
 	Buffer* put(int8_tArray* arg0);
 
 	const int8_t* getBuffer();
-
-public:
-	int32_t remaining();
 
 public: /* package */
 	// Generated
