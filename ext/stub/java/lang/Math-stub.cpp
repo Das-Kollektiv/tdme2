@@ -115,8 +115,7 @@ double Math::expm1(double arg0) { /* stub */
 
 double Math::floor(double arg0) { /* stub */
 	clinit();
-	unimplemented_(u"double Math::floor(double arg0)");
-	return 0;
+	return std::floor(arg0);
 }
 
 int32_t Math::getExponent(float arg0) { /* stub */

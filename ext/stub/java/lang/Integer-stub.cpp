@@ -141,8 +141,7 @@ Integer* Integer::getInteger(String* arg0, Integer* arg1)
 
 int32_t Integer::hashCode()
 { /* stub */
-	unimplemented_(u"int32_t Integer::hashCode()");
-	return 0;
+	return value;
 }
 
 int32_t Integer::highestOneBit(int32_t arg0)
@@ -187,6 +186,7 @@ int32_t Integer::numberOfTrailingZeros(int32_t arg0)
 int32_t Integer::parseInt(String* arg0)
 { /* stub */
 	clinit();
+	if (arg0->length() == 0) return -1;
 	return std::stoi(arg0->getCPPWString());
 }
 
@@ -289,7 +289,7 @@ String* Integer::toString(int32_t arg0, int32_t arg1)
 Integer* Integer::valueOf(String* arg0)
 { /* stub */
 	clinit();
-	return new Integer(std::stoi(arg0->getCPPWString()));
+	return new Integer(arg0->length() == 0?-1:std::stoi(arg0->getCPPWString()));
 }
 
 Integer* Integer::valueOf(int32_t arg0)

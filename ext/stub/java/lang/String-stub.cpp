@@ -13,6 +13,7 @@ using std::wstring;
 using std::transform;
 using std::toupper;
 using std::tolower;
+using std::to_wstring;
 using std::replace;
 using tdme::utils::StringConverter;
 
@@ -583,8 +584,7 @@ String* String::valueOf(int64_t arg0) { /* stub */
 
 String* String::valueOf(float arg0) { /* stub */
 	clinit();
-	unimplemented_(u"String* String::valueOf(float arg0)");
-	return 0;
+	return new String(to_wstring(arg0));
 }
 
 String* String::valueOf(double arg0) { /* stub */

@@ -25,6 +25,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -68,6 +70,8 @@ using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -233,14 +237,12 @@ void SharedModelViewerView::loadSettings()
 	FileInputStream* fis = nullptr;
 	Object* tmp;
 	try {
-		fis = new FileInputStream(u"./settings/modelviewer.properties"_j);
 		auto settings = new Properties();
-		settings->load(static_cast< InputStream* >(fis));
+		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"modelviewer.properties"_j));
 		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		modelViewerScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u""_j);
-		fis->close();
 	} catch (Exception* ioe) {
 		if (fis != nullptr)
 			try {
