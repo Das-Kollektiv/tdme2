@@ -18,8 +18,6 @@ using java::lang::Object;
 #define MOUSE_BUTTON_DOWN GLUT_DOWN
 #define MOUSE_BUTTON_UP GLUT_UP
 
-#define MOUSE_
-
 /** 
  * Application input events handler
  * @author Andreas Drewke

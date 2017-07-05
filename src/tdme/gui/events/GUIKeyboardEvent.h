@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <GLUT/glut.h>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -26,14 +28,14 @@ class tdme::gui::events::GUIKeyboardEvent
 public:
 	typedef Object super;
 	static constexpr int32_t KEYCODE_TAB { 9 };
+	static constexpr int32_t KEYCODE_TAB_SHIFT { 25 };
 	static constexpr int32_t KEYCODE_BACKSPACE { 8 };
 	static constexpr int32_t KEYCODE_SPACE { 32 };
-	static constexpr int32_t KEYCODE_DELETE { 147 };
-	static constexpr int32_t KEYCODE_LEFT { 149 };
-	static constexpr int32_t KEYCODE_UP { 150 };
-	static constexpr int32_t KEYCODE_RIGHT { 151 };
-	static constexpr int32_t KEYCODE_DOWN { 152 };
-	static constexpr int32_t KEYCODE_CONTROL { 17 };
+	static constexpr int32_t KEYCODE_DELETE { 95 };
+	static constexpr int32_t KEYCODE_LEFT { GLUT_KEY_LEFT };
+	static constexpr int32_t KEYCODE_UP { GLUT_KEY_UP };
+	static constexpr int32_t KEYCODE_RIGHT { GLUT_KEY_RIGHT };
+	static constexpr int32_t KEYCODE_DOWN { GLUT_KEY_DOWN };
 	static constexpr int32_t KEYCODE_ESCAPE { 27 };
 
 private:
@@ -54,6 +56,12 @@ protected:
 	void ctor();
 
 public:
+
+	/**
+	 * Get key code from char
+	 * @param key char
+	 */
+	static int32_t getKeyCodeFromChar(wchar_t key);
 
 	/** 
 	 * @return time in milliseconds
@@ -153,6 +161,10 @@ public:
 	 * @param processed
 	 */
 	virtual void setProcessed(bool processed);
+
+	/**
+	 * @return string representation
+	 */
 	String* toString() override;
 
 	// Generated

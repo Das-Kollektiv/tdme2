@@ -2,6 +2,7 @@
 #include <java/util/Hashtable.h>
 
 using java::util::Hashtable;
+
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
 namespace util {

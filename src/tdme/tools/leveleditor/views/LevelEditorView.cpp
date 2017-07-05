@@ -359,7 +359,7 @@ void LevelEditorView::handleInputEvents()
 			continue;
 
 		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED;
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_CONTROL)
+		if (event->isControlDown() == true)
 			keyControl = isKeyDown;
 
 		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE)

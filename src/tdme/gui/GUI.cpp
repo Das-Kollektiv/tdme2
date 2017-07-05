@@ -1,6 +1,8 @@
 	// Generated from /tdme/src/tdme/gui/GUI.java
 #include <tdme/gui/GUI.h>
 
+#include <string>
+
 #include <java/io/File.h>
 #include <java/io/IOException.h>
 #include <java/lang/ClassCastException.h>
@@ -37,6 +39,11 @@
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
+
+using std::wstring;
+using std::string;
+using std::to_string;
+using std::to_wstring;
 
 using tdme::gui::GUI;
 using java::io::File;
@@ -208,10 +215,12 @@ Texture* GUI::getImage(String* fileName)
 {
 	clinit();
 	// TODO: fix me, proper get path, filename
-	String* path = new String(u"."_j);
+	String* canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
+	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	String* key = nullptr;
 	try {
-		key = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
+		key = canonicalFile;
 	} catch (IOException* ioe) {
 		ioe->printStackTrace();
 		return nullptr;
@@ -219,7 +228,7 @@ Texture* GUI::getImage(String* fileName)
 	auto image = java_cast< Texture* >(imageCache->get(key));
 	if (image == nullptr) {
 		try {
-			image = TextureLoader::loadTexture(path, fileName);
+			image = TextureLoader::loadTexture(path, file);
 		} catch (Exception* exception) {
 			exception->printStackTrace();
 			return nullptr;
@@ -452,20 +461,26 @@ void GUI::handleEvents(GUINode* node)
 			continue;
 
 		switch (event->getKeyCode()) {
-		case (GUIKeyboardEvent::KEYCODE_TAB): {
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
-					if (event->isShiftDown() == true) {
-						focusPreviousNode();
-					} else {
+			case (GUIKeyboardEvent::KEYCODE_TAB):
+				{
+					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
 						focusNextNode();
 					}
+					event->setProcessed(true);
+					break;
 				}
-				event->setProcessed(true);
-				break;
-			}
-		default: {
-				break;
-			}
+			case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
+				{
+					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+						focusPreviousNode();
+					}
+					event->setProcessed(true);
+					break;
+				}
+			default:
+				{
+					break;
+				}
 		}
 
 		if (event->isProcessed() == true) {
@@ -520,7 +535,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
 	guiKeyboardEvent->setTime(System::currentTimeMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
-	guiKeyboardEvent->setKeyCode((int)key);
+	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
 	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
@@ -537,7 +552,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
 	guiKeyboardEvent->setTime(System::currentTimeMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
-	guiKeyboardEvent->setKeyCode((int)key);
+	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
 	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
@@ -555,7 +570,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	guiKeyboardEvent->setTime(System::currentTimeMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(key);
-	guiKeyboardEvent->setKeyChar(0);
+	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
 	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
@@ -572,7 +587,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	guiKeyboardEvent->setTime(System::currentTimeMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(key);
-	guiKeyboardEvent->setKeyChar(0);
+	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
 	guiKeyboardEvent->setControlDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);

@@ -105,8 +105,8 @@ StringBuilder* StringBuilder::append(bool arg0)
 
 StringBuilder* StringBuilder::append(char16_t arg0)
 { /* stub */
-	unimplemented_(u"StringBuilder* StringBuilder::append(char16_t arg0)");
-	return 0;
+	cppwstring+= to_wstring(arg0);
+	return this;
 }
 
 StringBuilder* StringBuilder::append(int32_t arg0)

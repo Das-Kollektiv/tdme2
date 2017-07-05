@@ -12,6 +12,18 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
+int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
+	switch(key) {
+		case(9): return KEYCODE_TAB;
+		case(25): return KEYCODE_TAB_SHIFT;
+		case(27): return KEYCODE_ESCAPE;
+		case(32): return KEYCODE_SPACE;
+		case(95): return KEYCODE_DELETE;
+		case(127): return KEYCODE_BACKSPACE;
+		default: return -1;
+	}
+}
+
 GUIKeyboardEvent::GUIKeyboardEvent(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -26,6 +38,8 @@ GUIKeyboardEvent::GUIKeyboardEvent()
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB;
 
+constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB_SHIFT;
+
 constexpr int32_t GUIKeyboardEvent::KEYCODE_BACKSPACE;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_SPACE;
@@ -39,8 +53,6 @@ constexpr int32_t GUIKeyboardEvent::KEYCODE_UP;
 constexpr int32_t GUIKeyboardEvent::KEYCODE_RIGHT;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_DOWN;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_CONTROL;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_ESCAPE;
 
