@@ -8,6 +8,8 @@
 #include <tdme/utils/_Console.h>
 
 using std::stoi;
+using std::wstring;
+using std::to_wstring;
 
 using java::lang::Integer;
 
@@ -266,8 +268,7 @@ String* Integer::toOctalString(int32_t arg0)
 
 String* Integer::toString()
 { /* stub */
-	unimplemented_(u"String* Integer::toString()");
-	return 0;
+	return new String(to_wstring(value));
 }
 
 String* Integer::toString(int32_t arg0)
@@ -294,8 +295,7 @@ Integer* Integer::valueOf(String* arg0)
 Integer* Integer::valueOf(int32_t arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"Integer* Integer::valueOf(int32_t arg0)");
-	return 0;
+	return new Integer(arg0);
 }
 
 Integer* Integer::valueOf(String* arg0, int32_t arg1)

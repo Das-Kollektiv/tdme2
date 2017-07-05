@@ -494,8 +494,7 @@ CharSequence* String::subSequence(int32_t arg0, int32_t arg1) { /* stub */
 }
 
 String* String::substring(int32_t arg0) { /* stub */
-	unimplemented_(u"String* String::substring(int32_t arg0)");
-	return 0;
+	return new String(cppwstring.substr(arg0));
 }
 
 String* String::substring(int32_t arg0, int32_t arg1) { /* stub */

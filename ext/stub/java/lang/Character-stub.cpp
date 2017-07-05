@@ -1,7 +1,11 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/Character.h>
 
+#include <cwctype>
+
 using java::lang::Character;
+using std::tolower;
+
 extern void unimplemented_(const char16_t* name);
 java::lang::Character::Character(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -600,8 +604,7 @@ int32_t Character::toCodePoint(char16_t arg0, char16_t arg1)
 char16_t Character::toLowerCase(char16_t arg0)
 { /* stub */
 	clinit();
-	unimplemented_(u"char16_t Character::toLowerCase(char16_t arg0)");
-	return 0;
+	return towlower(arg0);
 }
 
 int32_t Character::toLowerCase(int32_t arg0)
