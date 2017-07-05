@@ -16,7 +16,7 @@ DAEReader_determineDisplacementFilename_1::DAEReader_determineDisplacementFilena
 	ctor();
 }
 
-bool DAEReader_determineDisplacementFilename_1::accept(File* dir, String* name)
+bool DAEReader_determineDisplacementFilename_1::accept(String* dir, String* name)
 {
 	return name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".png"_j)->toString()) || name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".tga"_j)->toString()) || name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".jpg"_j)->toString());
 }

@@ -24,7 +24,7 @@ class tdme::tools::shared::controller::FileDialogScreenController_setupFileDialo
 
 public:
 	typedef Object super;
-	bool accept(File* directory, String* file) override;
+	bool accept(String* directory, String* file) override;
 
 	// Generated
 	FileDialogScreenController_setupFileDialogListBox_1(FileDialogScreenController *FileDialogScreenController_this);

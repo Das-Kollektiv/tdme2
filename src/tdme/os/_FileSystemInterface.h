@@ -100,12 +100,25 @@ struct tdme::os::_FileSystemInterface
 	virtual StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ = 0;
 
 	/**
+	 * Check if file is a path
+	 * @param file
+	 * @return if file is a path
+	 */
+	virtual bool isPath(String* path) /* throws(IOException) */ = 0;
+
+	/**
 	 * Get canonical path
 	 * @param path
 	 * @param file
 	 * @return canonical path
 	 */
 	virtual String* getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Get currunt working path
+	 * @return current working path
+	 */
+	virtual String* getCurrentWorkingPath() /* throws(IOException) */ = 0;
 
 	/**
 	 * Get path name

@@ -25,7 +25,7 @@ class tdme::engine::fileio::models::DAEReader_determineDisplacementFilename_1
 
 public:
 	typedef Object super;
-	bool accept(File* dir, String* name) override;
+	bool accept(String* dir, String* name) override;
 
 	// Generated
 	DAEReader_determineDisplacementFilename_1(String* finalFilenameCandidate);

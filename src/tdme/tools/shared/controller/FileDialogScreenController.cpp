@@ -95,11 +95,7 @@ FileDialogScreenController::FileDialogScreenController()
 void FileDialogScreenController::ctor()
 {
 	super::ctor();
-	try {
-		this->cwd = _FileSystem::getInstance()->getCanonicalPath(new String(L"."), new String(L""));
-	} catch (IOException* ioe) {
-		ioe->printStackTrace();
-	}
+	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPath();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
 }
@@ -140,13 +136,12 @@ void FileDialogScreenController::dispose()
 
 void FileDialogScreenController::setupFileDialogListBox()
 {
-{
-		auto directory = cwd;
-		if (directory->length() > 50)
-			directory = ::java::lang::StringBuilder().append(u"..."_j)->append(directory->substring(directory->length() - 50 + 3))->toString();
-
-		caption->getText()->set(captionText)->append(directory);
+	auto directory = cwd;
+	if (directory->length() > 50) {
+		directory = ::java::lang::StringBuilder().append(u"..."_j)->append(directory->substring(directory->length() - 50 + 3))->toString();
 	}
+
+	caption->getText()->set(captionText)->append(directory);
 
 	auto fileList = new StringArray(0);
 	try {
@@ -159,7 +154,6 @@ void FileDialogScreenController::setupFileDialogListBox()
 	auto idx = 1;
 	auto filesInnerNodeSubNodesXML = u""_j;
 	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"<scrollarea width=\"100%\" height=\"100%\">\n"_j)->toString();
-	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"<selectbox-option text=\"..\" value=\"..\" />\n"_j)->toString();
 	for (auto file : *fileList) {
 		filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(file))
 			->append(u"\" value=\""_j)
@@ -177,8 +171,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 void FileDialogScreenController::show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction)
 {
 	try {
-		this->cwd = (new File(u"."_j))->getCanonicalPath()->toString();
-		this->cwd = (new File(cwd))->getCanonicalPath()->toString();
+		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, u""_j);
 	} catch (IOException* ioe) {
 		ioe->printStackTrace();
 	}
@@ -200,13 +193,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId()->equals(files->getId()) == true) {
 			auto selectedFile = node->getController()->getValue()->toString();
-			_Console::println(static_cast< Object* >(selectedFile));
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(cwd)->append(u":"_j)
-				->append(selectedFile)->toString()));
-			if ((new File(cwd, selectedFile))->isDirectory()) {
-				auto file = new File(cwd, selectedFile);
+			if (_FileSystem::getInstance()->isPath(new String(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString())) == true) {
 				try {
-					cwd = file->getCanonicalFile()->toString();
+					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
 				} catch (IOException* ioe) {
 				}
 				setupFileDialogListBox();

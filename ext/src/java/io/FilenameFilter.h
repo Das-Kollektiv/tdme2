@@ -16,7 +16,7 @@ struct java::io::FilenameFilter
 	: public virtual Object
 {
 
-	virtual bool accept(File* arg0, String* arg1) = 0;
+	virtual bool accept(String* path, String* file) = 0;
 
 	// Generated
 	static ::java::lang::Class *class_();

@@ -10,6 +10,8 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -23,6 +25,8 @@ using java::lang::NullPointerException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::tools::shared::controller::FileDialogScreenController;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -45,9 +49,9 @@ FileDialogScreenController_setupFileDialogListBox_1::FileDialogScreenController_
 	ctor();
 }
 
-bool FileDialogScreenController_setupFileDialogListBox_1::accept(File* directory, String* file)
+bool FileDialogScreenController_setupFileDialogListBox_1::accept(String* directory, String* file)
 {
-	if ((new File(directory, file))->isDirectory() == true)
+	if (_FileSystem::getInstance()->isPath(new String(directory->getCPPWString() + L"/" + file->getCPPWString())) == true)
 		return true;
 
 	for (auto extension : *FileDialogScreenController_this->extensions) {

@@ -4,6 +4,8 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #include <iostream>
 #include <fstream>
@@ -180,57 +182,31 @@ OutputStream* _StandardFileSystem::getOutputStream(String* path, String* fileNam
 StringArray* _StandardFileSystem::list(String* path, FilenameFilter* filter) /* throws(IOException) */
 {
 	auto files = new _ArrayList();
-	auto fileSystemFiles = (new File(path))->list(filter);
-	if (fileSystemFiles != nullptr) {
-		for (auto fileName : *fileSystemFiles) {
-			files->add(fileName);
-		}
-	}
-	try {
-		path = path->replace(u'\\', u'/');
-		auto stackTraceElements = Thread::currentThread()->getStackTrace();
-		auto src = Class::forName((*stackTraceElements)[2]->getClassName())->getProtectionDomain()->getCodeSource();
-		if (src != nullptr) {
-			auto jar = src->getLocation();
-			auto zip = new ZipInputStream(jar->openStream());
-			while (true) {
-				auto e = zip->getNextEntry();
-				if (e == nullptr)
-					break;
 
-				auto name = e->getName();
-				if (name->startsWith(path)) {
-					auto fileName = name->substring(path->length() + 1);
-					if (filter->accept(new File(path), fileName))
-						files->add(fileName);
-
-				}
-			}
-		}
-	} catch (ClassNotFoundException* cnfe) {
+	DIR *dir;
+	struct dirent *dirent;
+	if ((dir = opendir(StringConverter::toString(path->getCPPWString()).c_str())) == NULL) {
+		return nullptr;
 	}
-	auto filesNoDuplicates = new _ArrayList();
-	for (auto _i = files->iterator(); _i->hasNext(); ) {
-		String* file = java_cast< String* >(_i->next());
-		{
-			auto duplicate = false;
-			for (auto _i = filesNoDuplicates->iterator(); _i->hasNext(); ) {
-				String* _file = java_cast< String* >(_i->next());
-				{
-					if (file->equals(_file)) {
-						duplicate = true;
-						break;
-					}
-				}
-			}
-			if (duplicate == false)
-				filesNoDuplicates->add(file);
-
-		}
+	while ((dirent = readdir(dir)) != NULL) {
+		String* file = new String(StringConverter::toWideString(dirent->d_name));
+		if (filter != nullptr && filter->accept(path, file) == false) continue;
+		files->add(file);
 	}
-	auto _files = new StringArray(filesNoDuplicates->size());
-	filesNoDuplicates->toArray(_files);
+	closedir(dir);
+
+	auto _files = new StringArray(files->size());
+	files->toArray(_files);
 	return _files;
+}
+
+bool _StandardFileSystem::isPath(String* path) /* throws(IOException) */ {
+	struct stat s;
+	if (stat(StringConverter::toString(path->getCPPWString()).c_str(), &s) == 0) {
+		return (s.st_mode & S_IFDIR) == S_IFDIR;
+	} else {
+		return false;
+	}
 }
 
 int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* throws(IOException) */
@@ -297,6 +273,13 @@ String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /*
 		return nullptr;
 	}
 	return new String(StringConverter::toWideString(realPathPtr));
+}
+
+String* _StandardFileSystem::getCurrentWorkingPath() /* throws(IOException) */ {
+	// cwd
+	char cwdBuffer[PATH_MAX + 1];
+	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
+	return new String(StringConverter::toWideString(cwdPtr));
 }
 
 String* _StandardFileSystem::getPathName(String* fileName) {
