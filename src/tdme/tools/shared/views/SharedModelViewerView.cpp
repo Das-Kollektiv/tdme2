@@ -234,24 +234,13 @@ void SharedModelViewerView::onInitAdditionalScreens()
 
 void SharedModelViewerView::loadSettings()
 {
-	FileInputStream* fis = nullptr;
 	Object* tmp;
-	try {
-		auto settings = new Properties();
-		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"modelviewer.properties"_j));
-		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		modelViewerScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u""_j);
-	} catch (Exception* ioe) {
-		if (fis != nullptr)
-			try {
-				fis->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	auto settings = new Properties();
+	settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"modelviewer.properties"_j));
+	entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+	modelViewerScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u""_j);
 }
 
 void SharedModelViewerView::initialize()
@@ -285,25 +274,13 @@ void SharedModelViewerView::activate()
 
 void SharedModelViewerView::storeSettings()
 {
-	FileOutputStream* fos = nullptr;
-	try {
-		fos = new FileOutputStream(u"./settings/modelviewer.properties"_j);
-		auto settings = new Properties();
-		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-		settings->put(u"model.path"_j, modelViewerScreenController->getModelPath()->getPath());
-		settings->store(static_cast< OutputStream* >(fos), static_cast< String* >(nullptr));
-		fos->close();
-	} catch (Exception* ioe) {
-		if (fos != nullptr)
-			try {
-				fos->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	auto settings = new Properties();
+	settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
+	settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
+	settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
+	settings->put(u"model.path"_j, modelViewerScreenController->getModelPath()->getPath());
+	StringArray* settingsStringArray = settings->storeToStringArray();
+	_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"modelviewer.properties"_j, settingsStringArray);
 }
 
 void SharedModelViewerView::deactivate()

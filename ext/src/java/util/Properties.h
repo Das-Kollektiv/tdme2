@@ -93,6 +93,7 @@ public:
 	virtual Object* setProperty(String* arg0, String* arg1);
 	virtual void store(Writer* arg0, String* arg1);
 	virtual void store(OutputStream* arg0, String* arg1);
+	virtual StringArray* storeToStringArray();
 	/*void store0(BufferedWriter* arg0, String* arg1, bool arg2); (private) */
 	virtual void storeToXML(OutputStream* arg0, String* arg1);
 	virtual void storeToXML(OutputStream* arg0, String* arg1, String* arg2);

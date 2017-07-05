@@ -248,7 +248,7 @@ int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* 
 StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */
 {
 	ifstream ifs(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
-	if(!ifs) return nullptr;
+	if(ifs.is_open() == false) return nullptr;
 
 	vector<string> lines;
 	string line;
@@ -263,6 +263,20 @@ StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* 
 	}
 
 	return result;
+}
+
+void _StandardFileSystem::setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */
+{
+	ofstream ofs(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	if(ofs.is_open() == false) return;
+
+	for (int i = 0; i < stringArray->length; i++) {
+		auto line = stringArray->get(i);
+		ofs << StringConverter::toString(line->getCPPWString()) << "\n";
+	}
+
+	ofs.close();
+	return;
 }
 
 String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ {

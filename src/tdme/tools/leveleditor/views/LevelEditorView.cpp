@@ -740,24 +740,13 @@ void LevelEditorView::unselectLightPresets()
 
 void LevelEditorView::loadSettings()
 {
-	FileInputStream* fis = nullptr;
 	Object* tmp;
-	try {
-		auto settings = new Properties();
-		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
-		gridEnabled = (tmp = java_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
-		gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
-		levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	} catch (Exception* ioe) {
-		if (fis != nullptr)
-			try {
-				fis->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	auto settings = new Properties();
+	settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
+	gridEnabled = (tmp = java_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
+	gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
+	levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 }
 
 void LevelEditorView::initialize()
@@ -810,25 +799,13 @@ void LevelEditorView::deactivate()
 
 void LevelEditorView::storeSettings()
 {
-	FileOutputStream* fos = nullptr;
-	try {
-		fos = new FileOutputStream(u"./settings/leveleditor.properties"_j);
-		auto settings = new Properties();
-		settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
-		settings->put(u"grid.y"_j, String::valueOf(gridY));
-		settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
-		settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
-		settings->store(static_cast< OutputStream* >(fos), static_cast< String* >(nullptr));
-		fos->close();
-	} catch (Exception* ioe) {
-		if (fos != nullptr)
-			try {
-				fos->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	auto settings = new Properties();
+	settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
+	settings->put(u"grid.y"_j, String::valueOf(gridY));
+	settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
+	settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+	StringArray* settingsStringArray = settings->storeToStringArray();
+	_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"leveleditor.properties"_j, settingsStringArray);
 }
 
 void LevelEditorView::dispose()

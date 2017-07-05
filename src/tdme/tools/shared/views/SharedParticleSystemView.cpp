@@ -293,26 +293,14 @@ void SharedParticleSystemView::activate()
 
 void SharedParticleSystemView::storeSettings()
 {
-	FileOutputStream* fos = nullptr;
-	try {
-		fos = new FileOutputStream(u"./settings/particlesystem.properties"_j);
-		auto settings = new Properties();
-		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-		settings->put(u"particlesystem.path"_j, particleSystemScreenController->getParticleSystemPath()->getPath());
-		settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
-		settings->store(static_cast< OutputStream* >(fos), static_cast< String* >(nullptr));
-		fos->close();
-	} catch (Exception* ioe) {
-		if (fos != nullptr)
-			try {
-				fos->close();
-			} catch (IOException* ioeInner) {
-			}
-
-		ioe->printStackTrace();
-	}
+	auto settings = new Properties();
+	settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
+	settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
+	settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
+	settings->put(u"particlesystem.path"_j, particleSystemScreenController->getParticleSystemPath()->getPath());
+	settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
+	auto settingsStringArray = settings->storeToStringArray();
+	_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"particlesystem.properties"_j, settingsStringArray);
 }
 
 void SharedParticleSystemView::dispose()

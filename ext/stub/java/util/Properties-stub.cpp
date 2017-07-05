@@ -11,10 +11,16 @@
 #include <java/lang/Comparable.h>
 #include <java/lang/String.h>
 
+#include <tdme/utils/_HashMap.h>
+#include <tdme/utils/_HashMap_KeysIterator.h>
+
 using java::util::Properties;
 using java::lang::String;
 using java::lang::StringArray;
 using java::lang::ClassCastException;
+
+using tdme::utils::_HashMap;
+using tdme::utils::_HashMap_KeysIterator;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -150,6 +156,17 @@ void Properties::store(Writer* arg0, String* arg1)
 void Properties::store(OutputStream* arg0, String* arg1)
 { /* stub */
 	unimplemented_(u"void Properties::store(OutputStream* arg0, String* arg1)");
+}
+
+StringArray* Properties::storeToStringArray() {
+	StringArray* result = new StringArray(properties->size());
+	int32_t idx = 0;
+	for (auto _i = properties->getKeysIterator()->iterator(); _i->hasNext(); ) {
+		String* key = java_cast< String* >(_i->next());
+		String* value = java_cast< String* >(properties->get(key));
+		result->set(idx++, new String(key->getCPPWString() + L"=" + key->getCPPWString()));
+	}
+	return result;
 }
 
 /* private: void Properties::store0(BufferedWriter* arg0, String* arg1, bool arg2) */

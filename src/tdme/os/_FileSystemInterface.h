@@ -82,6 +82,16 @@ struct tdme::os::_FileSystemInterface
 	virtual StringArray* getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */ = 0;
 
 	/**
+	 * Set file content as string array
+	 * @param path
+	 * @param file name
+	 * @param string array
+	 * @return byte array
+	 * @throws IOException
+	 */
+	virtual void setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */ = 0;
+
+	/**
 	 * List files for given path and filter by a file name filter if not null 
 	 * @param path
 	 * @param filter or null
