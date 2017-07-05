@@ -35,8 +35,9 @@ short ShortBuffer::get(int32_t position) {
 }
 
 Buffer* ShortBuffer::put(int16_t arg0) {
-	super::put(arg0 & 0xFF);
-	super::put((arg0 >> 8) & 0xFF);
+	int8_t* shortAsInt8 = ((int8_t*)&arg0);
+	super::put(shortAsInt8[0]);
+	super::put(shortAsInt8[1]);
 }
 
 Buffer* ShortBuffer::put(int16_tArray* arg0) {

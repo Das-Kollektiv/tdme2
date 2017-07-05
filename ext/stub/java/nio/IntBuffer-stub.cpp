@@ -37,10 +37,11 @@ int32_t IntBuffer::get(int32_t position) {
 }
 
 Buffer* IntBuffer::put(int32_t arg0) {
-	super::put(arg0 & 0xFF);
-	super::put((arg0 >> 8) & 0xFF);
-	super::put((arg0 >> 16) & 0xFF);
-	super::put((arg0 >> 24) & 0xFF);
+	int8_t* intAsInt8 = ((int8_t*)&arg0);
+	super::put(intAsInt8[0]);
+	super::put(intAsInt8[1]);
+	super::put(intAsInt8[2]);
+	super::put(intAsInt8[3]);
 }
 
 Buffer* IntBuffer::put(int32_tArray* arg0) {
