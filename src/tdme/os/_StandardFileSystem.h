@@ -46,6 +46,7 @@ class tdme::os::_StandardFileSystem final
 
 public:
 	typedef Object super;
+	String* getFileName(String* path, String* fileName) /* throws(IOException) */ override;
 	InputStream* getInputStream(String* path, String* fileName) /* throws(IOException) */ override;
 	OutputStream* getOutputStream(String* path, String* fileName) /* throws(IOException) */ override;
 	StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ override;

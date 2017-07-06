@@ -45,6 +45,14 @@ struct tdme::os::_FileSystemInterface
 	: public virtual Object
 {
 
+	/**
+	 * Get file name
+	 * @param path
+	 * @param file name
+	 * @return complete filename with path and file
+	 */
+	virtual String* getFileName(String* path, String* fileName) /* throws(IOException) */ = 0;
+
 	/** 
 	 * Creates input stream by given path name and file name
 	 * @param path

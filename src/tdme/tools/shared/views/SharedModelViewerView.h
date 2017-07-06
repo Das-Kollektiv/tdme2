@@ -71,7 +71,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };
 	bool initModelRequested {  };
-	File* modelFile {  };
+	String* modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 protected:
 

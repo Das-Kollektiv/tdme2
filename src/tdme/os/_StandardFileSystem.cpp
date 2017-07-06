@@ -139,44 +139,18 @@ _StandardFileSystem::_StandardFileSystem()
 	ctor();
 }
 
+String* _StandardFileSystem::getFileName(String* path, String* fileName) /* throws(IOException) */ {
+	return new String(path->getCPPWString() + L"/" + fileName->getCPPWString());
+}
+
 InputStream* _StandardFileSystem::getInputStream(String* path, String* fileName) /* throws(IOException) */
 {
-	path = path->replace(u'\\', u'/');
-	auto currentPath = (new File(u""_j))->getCanonicalFile()->toString()->replace(u'\\', u'/');
-	if (path->startsWith(currentPath)) {
-		path = path->substring(currentPath->length() + 1);
-	}
-	auto _fileName = ::java::lang::StringBuilder().append(path)->append(File::separator)
-		->append(fileName)->toString();
-	try {
-		return new FileInputStream(_fileName);
-	} catch (IOException* ioe) {
-	}
-	InputStream* is;
-	is = this->getClass()->getResourceAsStream(::java::lang::StringBuilder().append(path)->append(u"/"_j)
-		->append(fileName)->toString());
-	if (is != nullptr)
-		return is;
-
-	is = this->getClass()->getClassLoader()->getResourceAsStream(::java::lang::StringBuilder().append(path)->append(u"/"_j)
-		->append(fileName)->toString());
-	if (is != nullptr)
-		return is;
-
-	throw new FileNotFoundException(::java::lang::StringBuilder().append(path)->append(u"/"_j)
-		->append(fileName)->toString());
+	return nullptr;
 }
 
 OutputStream* _StandardFileSystem::getOutputStream(String* path, String* fileName) /* throws(IOException) */
 {
-	path = path->replace(u'\\', u'/');
-	auto currentPath = (new File(u""_j))->getCanonicalFile()->toString()->replace(u'\\', u'/');
-	if (path->startsWith(currentPath)) {
-		path = path->substring(currentPath->length() + 1);
-	}
-	auto _fileName = ::java::lang::StringBuilder().append(path)->append(File::separator)
-		->append(fileName)->toString();
-	return new FileOutputStream(_fileName);
+	return nullptr;
 }
 
 StringArray* _StandardFileSystem::list(String* path, FilenameFilter* filter) /* throws(IOException) */
@@ -211,7 +185,7 @@ bool _StandardFileSystem::isPath(String* path) /* throws(IOException) */ {
 
 int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* throws(IOException) */
 {
-	ifstream fl(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	ifstream fl(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
 	fl.seekg( 0, ios::end );
 	size_t size = fl.tellg();
 	int8_tArray* data = new int8_tArray(size);
@@ -223,7 +197,7 @@ int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* 
 
 StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */
 {
-	ifstream ifs(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	ifstream ifs(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
 	if(ifs.is_open() == false) return nullptr;
 
 	vector<string> lines;
@@ -243,7 +217,7 @@ StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* 
 
 void _StandardFileSystem::setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */
 {
-	ofstream ofs(StringConverter::toString(path->getCPPWString() + L"/" + fileName->getCPPWString()).c_str());
+	ofstream ofs(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
 	if(ofs.is_open() == false) return;
 
 	for (int i = 0; i < stringArray->length; i++) {
@@ -262,7 +236,7 @@ String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /*
 	wstring cwdString = StringConverter::toWideString(cwdPtr);
 
 	// add cwd to path string
-	wstring pathString = path->getCPPWString() + L"/" + fileName->getCPPWString();
+	wstring pathString = getFileName(path, fileName)->getCPPWString();
 	if (pathString[0] != '/') pathString = cwdString + L"/" + pathString;
 
 	// realpath
