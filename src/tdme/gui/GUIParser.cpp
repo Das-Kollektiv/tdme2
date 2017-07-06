@@ -11,16 +11,6 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
-#include <javax/xml/parsers/DocumentBuilder.h>
-#include <javax/xml/parsers/DocumentBuilderFactory.h>
-#include <org/w3c/dom/DOMImplementation.h>
-#include <org/w3c/dom/Document.h>
-#include <org/w3c/dom/Element.h>
-#include <org/w3c/dom/NamedNodeMap.h>
-#include <org/w3c/dom/Node.h>
-#include <org/w3c/dom/NodeList.h>
-#include <org/w3c/dom/ls/DOMImplementationLS.h>
-#include <org/w3c/dom/ls/LSSerializer.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/GUIButton.h>
 #include <tdme/gui/elements/GUICheckbox.h>

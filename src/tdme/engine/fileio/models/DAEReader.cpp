@@ -203,7 +203,7 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 		if ((v == Model_UpVector::Y_UP) || (v == Model_UpVector::Z_UP)) {
 			rotationOrder = RotationOrder::YZX;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	auto model = new Model(::java::lang::StringBuilder().append(pathName)->append(File::separator)

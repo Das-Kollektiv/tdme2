@@ -11,11 +11,6 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
-#include <javax/xml/parsers/DocumentBuilder.h>
-#include <javax/xml/parsers/DocumentBuilderFactory.h>
-#include <org/w3c/dom/Document.h>
-#include <org/w3c/dom/Element.h>
-#include <org/w3c/dom/Node.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/math/Vector3.h>
