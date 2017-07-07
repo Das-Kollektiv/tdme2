@@ -260,15 +260,15 @@ String* _StandardFileSystem::getCurrentWorkingPath() /* throws(IOException) */ {
 }
 
 String* _StandardFileSystem::getPathName(String* fileName) {
-	String* unixFileName = fileName->replace('\\', '/');
-	int32_t lastPathSeparator = unixFileName->lastIndexOf('/');
+	String* unixFileName = fileName->replace(L'\\', L'/');
+	int32_t lastPathSeparator = unixFileName->lastIndexOf(L'/');
 	if (lastPathSeparator == -1) return new String(u"."_j);
 	return unixFileName->substring(0, lastPathSeparator);
 }
 
 String* _StandardFileSystem::getFileName(String* fileName) {
-	String* unixFileName = fileName->replace('\\', '/');
-	int32_t lastPathSeparator = unixFileName->lastIndexOf('/');
+	String* unixFileName = fileName->replace(L'\\', L'/');
+	int32_t lastPathSeparator = unixFileName->lastIndexOf(L'/');
 	if (lastPathSeparator == -1) return new String(fileName);
 	return unixFileName->substring(lastPathSeparator + 1, unixFileName->length());
 }

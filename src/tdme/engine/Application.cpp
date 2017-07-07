@@ -1,6 +1,10 @@
 #include <GLUT/glut.h>
 
 #include <fwd-tdme.h>
+
+#include <java/lang/System.h>
+#include <java/lang/Thread.h>
+
 #include <tdme/engine/Application.h>
 #include <tdme/utils/StringConverter.h>
 #include "ApplicationInputEventsHandler.h"
@@ -8,9 +12,12 @@
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::utils::StringConverter;
+using java::lang::System;
 
+constexpr int32_t Application::FPS;
 Application* Application::application = nullptr;
 ApplicationInputEventsHandler* Application::inputEventHandler = nullptr;
+int64_t Application::timeLast = -1L;
 
 Application::Application() {
 	Application::application = this;
@@ -51,6 +58,13 @@ void Application::glutDisplay() {
 		Application::application->initialize();
 		Application::application->initialized = true;
 	}
+	int64_t timeNow = System::currentTimeMillis();
+	int64_t timeFrame = 1000/Application::FPS;
+	if (Application::timeLast != -1L) {
+		int64_t timePassed = timeNow - timeLast;
+		if (timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
+	}
+	Application::timeLast = timeNow;
 	Application::application->display();
 	glutSwapBuffers();
 }

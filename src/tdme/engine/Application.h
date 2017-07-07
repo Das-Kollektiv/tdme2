@@ -27,6 +27,7 @@ struct default_init_tag;
 class tdme::engine::Application
 {
 public:
+	static constexpr int32_t FPS { 60 };
 
 	/**
 	 * Public constructor
@@ -79,6 +80,7 @@ private:
 	static Application* application;
 	static ApplicationInputEventsHandler* inputEventHandler;
 	bool initialized { false };
+	static int64_t timeLast;
 
 	/**
 	 * GLUT display function
@@ -87,6 +89,8 @@ private:
 
 	/**
 	 * GLUT reshape function
+	 * @param width
+	 * @param height
 	 */
 	static void glutReshape(int32_t width, int32_t height);
 

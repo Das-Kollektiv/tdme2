@@ -1,6 +1,8 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/Thread.h>
 
+#include <unistd.h>
+
 using java::lang::Thread;
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -56,7 +58,12 @@ bool Thread::isAlive()
 void Thread::sleep(int64_t arg0)
 { /* native */
 	clinit();
-	unimplemented_(u"void Thread::sleep(int64_t arg0)");
+	uint64_t secondsWaited = 0L;
+	while (arg0 - (secondsWaited * 1000L) >= 1000L) {
+		::sleep(1);
+		secondsWaited++;
+	}
+	usleep((arg0 - (secondsWaited * 1000L)) * 1000L);
 }
 
 /* private: void Thread::start0() */

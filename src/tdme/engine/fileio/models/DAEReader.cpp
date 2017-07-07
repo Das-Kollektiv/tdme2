@@ -375,7 +375,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 					 );
 					continue;
 				}
-				auto model = new Model(::java::lang::StringBuilder().append(pathName)->append('/')
+				auto model = new Model(::java::lang::StringBuilder().append(pathName)->append(L'/')
 					->append(fileName)
 					->append(u'-')
 					->append(modelName)->toString(), ::java::lang::StringBuilder().append(fileName)->append(u'-')
