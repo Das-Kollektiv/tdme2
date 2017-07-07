@@ -112,13 +112,20 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 	objectPropertiesPresets = new _HashMap();
 	lightPresets = new _HashMap();
 
-	string fileNameUtf8 = StringConverter::toString(pathName->getCPPWString() + L"/" + fileName->getCPPWString());
-	TiXmlDocument xml;
-	if (xml.LoadFile(fileNameUtf8) == false) {
-		_Console::println("LevelPropertyPresets::ctor():: Could not load file '" + fileNameUtf8 + "'. Error='" + xml.ErrorDesc() + "'. Exiting.\n");
-		exit( 1 );
+	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	TiXmlDocument xmlDocument;
+	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
+	if (xmlDocument.Error() == true) {
+		_Console::println(
+			"LevelPropertyPresets::ctor():: Could not parse file '" +
+			StringConverter::toString(pathName->getCPPWString()) + "/" + StringConverter::toString(fileName->getCPPWString()) +
+			"'. Error='" +
+			xmlDocument.ErrorDesc() +
+			"'. Exiting.\n"
+		);
+		exit(1);
 	}
-	TiXmlElement* xmlRoot = xml.RootElement();
+	TiXmlElement* xmlRoot = xmlDocument.RootElement();
 
 	for (auto xmlMap: getChildrenByTagName(xmlRoot, "map")) {
 		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {

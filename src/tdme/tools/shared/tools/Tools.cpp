@@ -40,6 +40,8 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -91,6 +93,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -419,14 +423,13 @@ String* Tools::getGameRootPath(String* fileName)
 String* Tools::getPath(String* fileName)
 {
 	clinit();
-	auto path = (new File(fileName))->getParent();
-	return path == nullptr ? u""_j : path;
+	return _FileSystem::getInstance()->getPathName(fileName);
 }
 
 String* Tools::getFileName(String* fileName)
 {
 	clinit();
-	return (new File(fileName))->getName();
+	return _FileSystem::getInstance()->getFileName(fileName);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

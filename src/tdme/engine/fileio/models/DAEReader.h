@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <org/w3c/dom/fwd-tdme.h>
@@ -11,10 +13,12 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <ext/tinyxml/tinyxml.h>
+
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
-using org::w3c::dom::Element;
-using org::w3c::dom::Node;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
@@ -25,6 +29,7 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
+using tdme::ext::tinyxml::TiXmlElement;
 
 struct default_init_tag;
 
@@ -72,7 +77,7 @@ private:
 	 * @param xml root
 	 * @return authoring tool
 	 */
-	static DAEReader_AuthoringTool* getAuthoringTool(Element* xmlRoot);
+	static DAEReader_AuthoringTool* getAuthoringTool(TiXmlElement* xmlRoot);
 
 	/** 
 	 * Get Up vector
@@ -80,21 +85,21 @@ private:
 	 * @return up vector
 	 * @throws ModelFileIOException
 	 */
-	static Model_UpVector* getUpVector(Element* xmlRoot) /* throws(ModelFileIOException) */;
+	static Model_UpVector* getUpVector(TiXmlElement* xmlRoot) /* throws(ModelFileIOException) */;
 
 	/** 
 	 * Set up model import rotation matrix
 	 * @param xml root
 	 * @param model
 	 */
-	static void setupModelImportRotationMatrix(Element* xmlRoot, Model* model);
+	static void setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* model);
 
 	/** 
 	 * Set up model import scale matrix
 	 * @param xml root
 	 * @param model
 	 */
-	static void setupModelImportScaleMatrix(Element* xmlRoot, Model* model);
+	static void setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model);
 
 	/** 
 	 * Read a DAE visual scene node
@@ -108,7 +113,7 @@ private:
 	 * @throws Exception
 	 * @return group
 	 */
-	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, Element* xmlRoot, Element* xmlNode, float fps) /* throws(Exception) */;
+	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */;
 
 	/** 
 	 * Reads a DAE visual scene group node
@@ -122,7 +127,7 @@ private:
 	 * @throws Exception
 	 * @return group
 	 */
-	static Group* readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, Element* xmlRoot, Element* xmlNode, float fps) /* throws(Exception) */;
+	static Group* readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */;
 
 	/** 
 	 * Reads a instance controller
@@ -135,7 +140,7 @@ private:
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, Element* xmlRoot, Element* xmlNode) /* throws(Exception) */;
+	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) /* throws(Exception) */;
 
 public:
 
@@ -150,7 +155,7 @@ public:
 	 * @param material symbols
 	 * @throws Exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, Element* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) /* throws(Exception) */;
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) /* throws(Exception) */;
 
 	/** 
 	 * Reads a material
@@ -162,7 +167,7 @@ public:
 	 * @return material
 	 * @throws Exception
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Element* xmlRoot, String* xmlNodeId) /* throws(Exception) */;
+	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId) /* throws(Exception) */;
 
 private:
 
@@ -188,17 +193,24 @@ private:
 	 * @param xml texture id
 	 * @return xml texture file name
 	 */
-	static String* getTextureFileNameById(Element* xmlRoot, String* xmlTextureId);
+	static String* getTextureFileNameById(TiXmlElement* xmlRoot, String* xmlTextureId);
 
 public:
 
 	/** 
-	 * Returns immediate children by tag names of parent
+	 * Returns immediate children tags by tag name
 	 * @param parent
 	 * @param name
-	 * @return children with given name
+	 * @return matching elements
 	 */
-	static _ArrayList* getChildrenByTagName(Element* parent, String* name);
+	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
+
+	/**
+	 * Returns immediate children tags
+	 * @param parent
+	 * @return elements
+	 */
+	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
 
 private:
 
@@ -207,7 +219,7 @@ private:
 	 * @param node
 	 * @return string representation
 	 */
-	static String* nodeToString(Node* node);
+	// static String* nodeToString(Node* node);
 
 	// Generated
 

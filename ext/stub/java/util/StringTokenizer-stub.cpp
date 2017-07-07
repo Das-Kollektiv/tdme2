@@ -40,8 +40,7 @@ java::util::StringTokenizer::StringTokenizer(String* arg0, String* arg1, bool ar
 
 void StringTokenizer::ctor(String* arg0)
 { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void StringTokenizer::ctor(String* arg0)");
+	ctor(arg0, new String(L" \t\n\r\f"));
 }
 
 void StringTokenizer::ctor(String* arg0, String* arg1)
