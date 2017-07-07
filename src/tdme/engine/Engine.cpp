@@ -441,7 +441,6 @@ void Engine::reset()
 	}
 	partition->reset();
 	object3DVBORenderer->reset();
-	CollisionDetection::reset();
 }
 
 void Engine::initialize()

@@ -137,6 +137,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	groupFacesEntity->setMaterial(material);
 	auto groupFacesEntities = new _ArrayList();
 	groupFacesEntities->add(groupFacesEntity);
+	// FIXME: Have initializing static classes on engine startup
+	OrientedBoundingBox::clinit();
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
 	auto vertices = new _ArrayList();
 	for (auto vertex : *boundingBox->getVertices()) {

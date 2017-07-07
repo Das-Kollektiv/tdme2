@@ -85,9 +85,7 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int32_t SAT_AXES_TEST_MAX { 20 };
 	static constexpr int32_t TRIANGLES_TEST_MAX { 10000 };
-	int64_t threadId {  };
-	static _ArrayList* instances;
-	static CollisionDetection* instanceLast;
+	static CollisionDetection* instance;
 	static Object* synchronizeObject;
 	static Vector3* zeroVector;
 	static int32_tArray* lineSegmentsTriangleIndices;
@@ -146,16 +144,12 @@ public:
 	 */
 	static CollisionDetection* getInstance();
 
-	/** 
-	 * Reset
-	 */
-	static void reset();
 protected:
 
 	/** 
 	 * Constructor
 	 */
-	void ctor(int64_t threadId);
+	void ctor();
 
 private:
 
@@ -617,7 +611,7 @@ private:
 	static void checkCollision(CollisionResponse* collision);
 
 	// Generated
-	CollisionDetection(int64_t threadId);
+	CollisionDetection();
 protected:
 	CollisionDetection(const ::default_init_tag&);
 

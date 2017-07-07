@@ -205,6 +205,8 @@ void PhysicsTest3::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
+	// TODO: fix me, need to init static members of all classes on engine start up
+	OrientedBoundingBox::clinit();
 	auto side = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(1.0f, 16.0f, 8.0f));
 	auto sideModel = PrimitiveModel::createModel(side, u"side_model"_j);
 	java_cast< Material* >(sideModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);

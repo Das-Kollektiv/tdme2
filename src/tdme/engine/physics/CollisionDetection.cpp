@@ -131,10 +131,10 @@ CollisionDetection::CollisionDetection(const ::default_init_tag&)
 	clinit();
 }
 
-CollisionDetection::CollisionDetection(int64_t threadId) 
+CollisionDetection::CollisionDetection()
 	: CollisionDetection(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(threadId);
+	ctor();
 }
 
 void CollisionDetection::init()
@@ -200,9 +200,7 @@ constexpr int32_t CollisionDetection::SAT_AXES_TEST_MAX;
 
 constexpr int32_t CollisionDetection::TRIANGLES_TEST_MAX;
 
-_ArrayList* CollisionDetection::instances;
-
-CollisionDetection* CollisionDetection::instanceLast;
+CollisionDetection* CollisionDetection::instance = nullptr;
 
 Object* CollisionDetection::synchronizeObject;
 
@@ -212,42 +210,18 @@ int32_tArray* CollisionDetection::lineSegmentsTriangleIndices;
 
 constexpr bool CollisionDetection::CHECK_COLLISIONRESPONSE;
 
-CollisionDetection* CollisionDetection::getInstance()
-{
+CollisionDetection* CollisionDetection::getInstance() {
 	clinit();
-	auto currentThreadId = Thread::currentThread()->getId();
-	if (instanceLast != nullptr && instanceLast->threadId == currentThreadId) {
-		return instanceLast;
+	if (CollisionDetection::instance == nullptr) {
+		CollisionDetection::instance = new CollisionDetection();
 	}
-	{
-		synchronized synchronized_0(synchronizeObject);
-		{
-			for (auto i = 0; i < instances->size(); i++) {
-				auto instance = java_cast< CollisionDetection* >(instances->get(i));
-				if (instance->threadId == currentThreadId) {
-					instanceLast = instance;
-					return instance;
-				}
-			}
-			auto instance = new CollisionDetection(currentThreadId);
-			instances->add(instance);
-			instanceLast = instance;
-			return instance;
-		}
-	}
+	return CollisionDetection::instance;
 }
 
-void CollisionDetection::reset()
-{
-	clinit();
-	instances->clear();
-}
-
-void CollisionDetection::ctor(int64_t threadId)
+void CollisionDetection::ctor()
 {
 	super::ctor();
 	init();
-	this->threadId = threadId;
 	satPenetrations = new floatArray(SAT_AXES_TEST_MAX);
 	satAxes = new Vector3Array(SAT_AXES_TEST_MAX);
 	for (auto i = 0; i < satAxes->length; i++) 
@@ -1336,8 +1310,7 @@ void CollisionDetection::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		instances = new _ArrayList();
-		instanceLast = nullptr;
+		instance = nullptr;
 		synchronizeObject = new Object();
 		zeroVector = new Vector3();
 		lineSegmentsTriangleIndices = (new int32_tArray({
