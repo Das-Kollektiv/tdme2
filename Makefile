@@ -439,6 +439,7 @@ EXT_STUB_SRCS = \
 	ext/stub/java/lang/Short_ShortCache-stub.cpp \
 	ext/stub/java/lang/StackTraceElement-stub.cpp \
 	ext/stub/java/lang/String-stub.cpp \
+	ext/stub/java/lang/String-stub-regex.cpp \
 	ext/stub/java/lang/StringBuffer-stub.cpp \
 	ext/stub/java/lang/StringBuilder-stub.cpp \
 	ext/stub/java/lang/String_CaseInsensitiveComparator-stub.cpp \

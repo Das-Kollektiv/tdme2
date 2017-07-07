@@ -12,6 +12,7 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Console.h>
 
 #include <ext/libpng/png.h>
 
@@ -25,6 +26,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
+using tdme::utils::_Console;
 
 TextureLoader::TextureLoader(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -53,9 +55,14 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) {
 
 	// canonical file name for id
 	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
+	if (canonicalFileName == nullptr) {
+		_Console::println(string("No canonical file name"));
+		_Console::println(path);
+		_Console::println(fileName);
+	}
 
 	// open file
-	FILE *f = fopen(StringConverter::toString(path->getCPPWString() + L"/" +  fileName->getCPPWString()).c_str(), "rb");
+	FILE *f = fopen(StringConverter::toString(canonicalFileName->getCPPWString()).c_str(), "rb");
 	if (f == nullptr) {
 	    return nullptr;
 	}

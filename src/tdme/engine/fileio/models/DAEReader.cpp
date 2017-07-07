@@ -64,6 +64,8 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
+#define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
+
 using std::unordered_set;
 
 using tdme::engine::fileio::models::DAEReader;
@@ -214,21 +216,26 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 	}
 
 	String* tmpString = nullptr;
-	auto model = new Model(::java::lang::StringBuilder().append(pathName)->append('/')
-		->append(fileName)->toString(), fileName, upVector, rotationOrder, nullptr);
+	auto model = new Model(
+		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
+		fileName,
+		upVector,
+		rotationOrder,
+		nullptr
+	);
 	setupModelImportRotationMatrix(xmlRoot, model);
 	setupModelImportScaleMatrix(xmlRoot, model);
 	String* xmlSceneId = nullptr;
 	auto xmlScene = getChildrenByTagName(xmlRoot, "scene").at(0);
 	for (auto xmlInstanceVisualscene: getChildrenByTagName(xmlScene, "instance_visual_scene")) {
-		xmlSceneId = (tmpString = new String(StringConverter::toWideString(xmlInstanceVisualscene->Attribute("url"))))->substring(1);
+		xmlSceneId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url")))))->substring(1);
 	}
 	if (xmlSceneId == nullptr) {
 		throw new ModelFileIOException(u"No scene id found"_j);
 	}
 	auto xmlLibraryVisualScenes = getChildrenByTagName(xmlRoot, "library_visual_scenes").at(0);
 	for (auto xmlLibraryVisualScene: getChildrenByTagName(xmlLibraryVisualScenes, "visual_scene")) {
-		auto xmlVisualSceneId = new String(StringConverter::toWideString(xmlLibraryVisualScene->Attribute("id")));
+		auto xmlVisualSceneId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlLibraryVisualScene->Attribute("id"))));
 		if (xmlVisualSceneId->equals(xmlSceneId)) {
 			auto fps = 30.0f;
 			auto xmlExtraNodes = getChildrenByTagName(xmlLibraryVisualScene, "extra");
@@ -237,7 +244,7 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 				for (auto xmlTechnique: getChildrenByTagName(xmlExtraNode, "technique")) {
 					auto xmlFrameRateNodes = getChildrenByTagName(xmlTechnique, "frame_rate");
 					if (xmlFrameRateNodes.empty() == false) {
-						fps = Float::parseFloat(new String(StringConverter::toWideString(string(xmlFrameRateNodes.at(0)->GetText()))));
+						fps = Float::parseFloat(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFrameRateNodes.at(0)->GetText()))));
 						break;
 					}
 				}
@@ -305,14 +312,14 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 	String* xmlSceneId = nullptr;
 	auto xmlScene = getChildrenByTagName(xmlRoot, "scene").at(0);
 	for (auto xmlInstanceVisualscene: getChildrenByTagName(xmlScene, "instance_visual_scene")) {
-		xmlSceneId = (tmpString = new String(StringConverter::toWideString(xmlInstanceVisualscene->Attribute("url"))))->substring(1);
+		xmlSceneId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url")))))->substring(1);
 	}
 	if (xmlSceneId == nullptr) {
 		throw new ModelFileIOException(u"No scene id found"_j);
 	}
 	auto xmlLibraryVisualScenes = getChildrenByTagName(xmlRoot, "library_visual_scenes").at(0);
 	for (auto xmlLibraryVisualScene: getChildrenByTagName(xmlLibraryVisualScenes, "visual_scene")) {
-		auto xmlVisualSceneId = new String(StringConverter::toWideString(xmlLibraryVisualScene->Attribute("id")));
+		auto xmlVisualSceneId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlLibraryVisualScene->Attribute("id"))));
 		if (xmlVisualSceneId->equals(xmlSceneId)) {
 			auto fps = 30.0f;
 			auto xmlExtraNodes = getChildrenByTagName(xmlLibraryVisualScene,"extra");
@@ -321,7 +328,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 				for (auto xmlTechnique: getChildrenByTagName(xmlExtraNode, "technique")) {
 					auto xmlFrameRateNodes = getChildrenByTagName(xmlTechnique, "frame_rate");
 					if (xmlFrameRateNodes.empty() == false) {
-						fps = Float::parseFloat(new String(StringConverter::toWideString(xmlFrameRateNodes.at(0)->GetText())));
+						fps = Float::parseFloat(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFrameRateNodes.at(0)->GetText()))));
 						break;
 					}
 				}
@@ -330,10 +337,10 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 			LevelEditorEntity* emptyEntity = nullptr;
 			auto nodeIdx = 0;
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto nodeId = new String(StringConverter::toWideString(xmlNode->Attribute("id")));
+				auto nodeId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id"))));
 				auto modelName = new String(nodeId->getCPPWString());
-				// modelName = modelName->replaceAll(u"[\\-\\_]{1}+[0-9]+$"_j, u""_j);
-				// modelName = modelName->replaceAll(u"[0-9]+$"_j, u""_j);
+				modelName = modelName->replaceAll(u"[\\-\\_]{1}+[0-9]+$"_j, u""_j);
+				modelName = modelName->replaceAll(u"[0-9]+$"_j, u""_j);
 				auto haveName = entityLibrary->getEntityCount() == 0;
 				if (haveName == false) {
 					for (auto i = 0; i < 10000; i++) {
@@ -385,7 +392,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 				Matrix4x4* nodeTransformationsMatrix = nullptr;
 				auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
 				if (xmlMatrixElements.empty() == false) {
-					auto xmlMatrix = new String(StringConverter::toWideString(xmlMatrixElements.at(0)->GetText()));
+					auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText())));
 					auto t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
 					nodeTransformationsMatrix = (
 						new Matrix4x4(
@@ -505,7 +512,7 @@ DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlContributer: getChildrenByTagName(xmlAsset, "contributor")) {
 			for (auto xmlAuthoringTool: getChildrenByTagName(xmlContributer, "authoring_tool")) {
-				if ((tmpString = new String(StringConverter::toWideString(xmlAuthoringTool->GetText())))->indexOf(u"Blender"_j) != -1) {
+				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAuthoringTool->GetText()))))->indexOf(u"Blender"_j) != -1) {
 					return DAEReader_AuthoringTool::BLENDER;
 				}
 			}
@@ -519,7 +526,7 @@ Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) /* throws(ModelFil
 	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
-			auto upAxis = new String(StringConverter::toWideString(xmlAssetUpAxis->GetText()));
+			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
 			if (upAxis->equalsIgnoreCase(u"Y_UP"_j)) {
 				return Model_UpVector::Y_UP;
 			} else if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
@@ -539,7 +546,7 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
-			auto upAxis = new String(StringConverter::toWideString(xmlAssetUpAxis->GetText()));
+			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
 			if (upAxis->equalsIgnoreCase(u"Y_UP"_j)) {
 			} else if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
 				model->getImportTransformationsMatrix()->rotate(-90.0f, new Vector3(1.0f, 0.0f, 0.0f));
@@ -558,7 +565,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUnit: getChildrenByTagName(xmlAsset, "unit")) {
 			String* tmp = nullptr;
-			if ((tmp = new String(StringConverter::toWideString(xmlAssetUnit->Attribute("meter")))) != nullptr) {
+			if ((tmp = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter"))))) != nullptr) {
 				model->getImportTransformationsMatrix()->scale(Float::parseFloat(tmp));
 			}
 		}
@@ -581,15 +588,15 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	clinit();
 	String* tmpString = nullptr;
 
-	auto xmlNodeId = xmlNode->Attribute("id") != nullptr?new String(StringConverter::toWideString(xmlNode->Attribute("id"))):nullptr;
-	auto xmlNodeName = new String(StringConverter::toWideString(xmlNode->Attribute("name")));
+	auto xmlNodeId = AVOID_NULLPTR_STRING(xmlNode->Attribute("id")) != nullptr?new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")))):nullptr;
+	auto xmlNodeName = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("name"))));
 	if (xmlNodeId == nullptr) xmlNodeId = xmlNodeName;
 
 	StringTokenizer* t = nullptr;
 	Matrix4x4* transformationsMatrix = nullptr;
 	auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
-	if (xmlMatrixElements.empty() != false) {
-		auto xmlMatrix = new String(StringConverter::toWideString(xmlMatrixElements.at(0)->GetText()));
+	if (xmlMatrixElements.empty() == false) {
+		auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText())));
 		t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
 		transformationsMatrix = (new Matrix4x4(
 			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
@@ -617,22 +624,21 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			}
 			String* xmlSamplerSource = nullptr;
 			auto xmlChannel = getChildrenByTagName(xmlAnimation, "channel").at(0);
-			if ((tmpString = new String(StringConverter::toWideString(xmlChannel->Attribute("target"))))->startsWith(::java::lang::StringBuilder().append(xmlNodeId)->append(u"/"_j)->toString())) {
-				xmlSamplerSource = (tmpString = new String(StringConverter::toWideString(xmlChannel->Attribute("source"))))->substring(1);
+			if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlChannel->Attribute("target")))))->startsWith(::java::lang::StringBuilder().append(xmlNodeId)->append(u"/"_j)->toString())) {
+				xmlSamplerSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlChannel->Attribute("source")))))->substring(1);
 			}
 			if (xmlSamplerSource == nullptr) {
-				throw new ModelFileIOException(u"No sampler source"_j);
 				continue;
 			}
 			String* xmlSamplerOutputSource = nullptr;
 			String* xmlSamplerInputSource = nullptr;
 			auto xmlSampler = getChildrenByTagName(xmlAnimation, "sampler").at(0);
 			for (auto xmlSamplerInput: getChildrenByTagName(xmlSampler, "input")) {
-				if ((tmpString = new String(StringConverter::toWideString(xmlSamplerInput->Attribute("semantic"))))->equals(u"OUTPUT"_j)) {
-					xmlSamplerOutputSource = (tmpString = new String(StringConverter::toWideString(xmlSamplerInput->Attribute("source"))))->substring(1);
+				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("semantic")))))->equals(u"OUTPUT"_j)) {
+					xmlSamplerOutputSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source")))))->substring(1);
 				} else
-				if ((tmpString = new String(StringConverter::toWideString(xmlSamplerInput->Attribute("semantic"))))->equals(u"INPUT"_j)) {
-					xmlSamplerInputSource = (tmpString = new String(StringConverter::toWideString(xmlSamplerInput->Attribute("source"))))->substring(1);
+				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("semantic")))))->equals(u"INPUT"_j)) {
+					xmlSamplerInputSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source")))))->substring(1);
 				}
 			}
 			if (xmlSamplerOutputSource == nullptr) {
@@ -640,10 +646,10 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			}
 			floatArray* keyFrameTimes = nullptr;
 			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
-				if ((tmpString = new String(StringConverter::toWideString(xmlAnimationSource->Attribute("id"))))->equals(xmlSamplerInputSource)) {
+				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id")))))->equals(xmlSamplerInputSource)) {
 					auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
-					auto frames = Integer::parseInt(new String(StringConverter::toWideString(xmlFloatArray->Attribute("count"))));
-					auto valueString = new String(StringConverter::toWideString(xmlFloatArray->GetText()));
+					auto frames = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count")))));
+					auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 					auto keyFrameIdx = 0;
 					keyFrameTimes = new floatArray(frames);
 					t = new StringTokenizer(valueString, u" \n\r"_j);
@@ -654,11 +660,11 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			}
 			Matrix4x4Array* keyFrameMatrices = nullptr;
 			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
-				if ((tmpString = new String(StringConverter::toWideString(xmlAnimationSource->Attribute("id"))))->equals(xmlSamplerOutputSource)) {
+				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id")))))->equals(xmlSamplerOutputSource)) {
 					auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
-					auto keyFrames = Integer::parseInt(new String(StringConverter::toWideString(xmlFloatArray->Attribute("count")))) / 16;
+					auto keyFrames = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count"))))) / 16;
 					if (keyFrames > 0) {
-						auto valueString = new String(StringConverter::toWideString(xmlFloatArray->GetText()));
+						auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 						t = new StringTokenizer(valueString, u" \n\r"_j);
 						auto keyFrameIdx = 0;
 						keyFrameMatrices = new Matrix4x4Array(keyFrames);
@@ -722,14 +728,14 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	auto xmlInstanceGeometryElements = getChildrenByTagName(xmlNode, "instance_geometry");
 	if (xmlInstanceGeometryElements.empty() == false) {
 		auto xmlInstanceGeometryElement = xmlInstanceGeometryElements.at(0);
-		xmlInstanceGeometryId = (tmpString = new String(StringConverter::toWideString(xmlInstanceGeometryElement->Attribute("url"))))->substring(1);
+		xmlInstanceGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceGeometryElement->Attribute("url")))))->substring(1);
 		auto materialSymbols = new _HashMap();
 		for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometryElement, "bind_material"))
 		for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 		for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
 			materialSymbols->put(
-				new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("symbol"))),
-				new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("target")))
+				new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
+				new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
 			);
 		}
 		readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlInstanceGeometryId, materialSymbols);
@@ -738,12 +744,12 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 
 	String* xmlInstanceNodeId = nullptr;
 	for (auto xmlInstanceNodeElement: getChildrenByTagName(xmlNode, "instance_node")) {
-		xmlInstanceNodeId = (tmpString = new String(StringConverter::toWideString(xmlInstanceNodeElement->Attribute("url"))))->substring(1);
+		xmlInstanceNodeId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceNodeElement->Attribute("url")))))->substring(1);
 	}
 	if (xmlInstanceNodeId != nullptr) {
 		for (auto xmlLibraryNodes: getChildrenByTagName(xmlRoot, "library_nodes"))
 		for (auto xmlLibraryNode: getChildrenByTagName(xmlLibraryNodes, "node"))
-		if ((tmpString = new String(StringConverter::toWideString(xmlLibraryNode->Attribute("id"))))->equals(xmlInstanceNodeId)) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlLibraryNode->Attribute("id")))))->equals(xmlInstanceNodeId)) {
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
 				auto _group = readVisualSceneNode(authoringTool, pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
 				if (_group != nullptr) {
@@ -752,14 +758,14 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 				}
 			}
 			for (auto xmlInstanceGeometry: getChildrenByTagName(xmlLibraryNode, "instance_geometry")) {
-				auto xmlGeometryId = (tmpString = new String(StringConverter::toWideString(xmlInstanceGeometry->Attribute("url"))))->substring(1);
+				auto xmlGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceGeometry->Attribute("url")))))->substring(1);
 				auto materialSymbols = new _HashMap();
 				for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometry, "bind_material"))
 				for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 				for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
 					materialSymbols->put(
-						new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("symbol"))),
-						new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("target")))
+						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
+						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
 					);
 				}
 				readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
@@ -776,8 +782,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	String* tmpString = nullptr;
 
 	StringTokenizer* t;
-	auto xmlNodeId = new String(StringConverter::toWideString(xmlNode->Attribute("id")));
-	auto xmlNodeName = new String(StringConverter::toWideString(xmlNode->Attribute("name")));
+	auto xmlNodeId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id"))));
+	auto xmlNodeName = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("name"))));
 	auto materialSymbols = new _HashMap();
 	String* xmlGeometryId = nullptr;
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
@@ -788,15 +794,15 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 	for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
 		materialSymbols->put(
-			new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("symbol"))),
-			new String(StringConverter::toWideString(xmlInstanceMaterial->Attribute("target")))
+			new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
+			new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
 		);
 	}
 
-	auto xmlInstanceControllerId = (tmpString = new String(StringConverter::toWideString(xmlInstanceController->Attribute("url"))))->substring(1);
+	auto xmlInstanceControllerId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceController->Attribute("url")))))->substring(1);
 	auto xmlLibraryControllers = getChildrenByTagName(xmlRoot, "library_controllers").at(0);
 	for (auto xmlLibraryController: getChildrenByTagName(xmlLibraryControllers, "controller")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlLibraryController->Attribute("id"))))->equals(xmlInstanceControllerId)) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlLibraryController->Attribute("id")))))->equals(xmlInstanceControllerId)) {
 			auto xmlSkins = getChildrenByTagName(xmlLibraryController, "skin");
 			if (xmlSkins.empty() == false) {
 				xmlSkin = xmlSkins.at(0);
@@ -807,8 +813,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"skin not found for instance controller "_j)->append(xmlNodeId)->toString());
 	}
 
-	xmlGeometryId = (tmpString = new String(StringConverter::toWideString(xmlSkin->Attribute("source"))))->substring(1);
-	auto xmlMatrix = new String(StringConverter::toWideString(getChildrenByTagName(xmlSkin, "bind_shape_matrix").at(0)->GetText()));
+	xmlGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkin->Attribute("source")))))->substring(1);
+	auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkin, "bind_shape_matrix").at(0)->GetText())));
 	t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
 	auto bindShapeMatrix =
 		(new Matrix4x4(
@@ -830,11 +836,11 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	String* xmlJointsInverseBindMatricesSource = nullptr;
 	auto xmlJoints = getChildrenByTagName(xmlSkin, "joints").at(0);
 	for (auto xmlJointsInput: getChildrenByTagName(xmlJoints, "input")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlJointsInput->Attribute("semantic"))))->equals(u"JOINT"_j)) {
-			xmlJointsSource = (tmpString = new String(StringConverter::toWideString(xmlJointsInput->Attribute("source"))))->substring(1);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("semantic")))))->equals(u"JOINT"_j)) {
+			xmlJointsSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source")))))->substring(1);
 		} else
-		if ((tmpString = new String(StringConverter::toWideString(xmlJointsInput->Attribute("semantic"))))->equals(u"INV_BIND_MATRIX"_j)) {
-			xmlJointsInverseBindMatricesSource = (tmpString = new String(StringConverter::toWideString(xmlJointsInput->Attribute("source"))))->substring(1);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("semantic")))))->equals(u"INV_BIND_MATRIX"_j)) {
+			xmlJointsInverseBindMatricesSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source")))))->substring(1);
 		}
 	}
 	if (xmlJointsSource == nullptr) {
@@ -843,8 +849,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 
 	auto joints = new _ArrayList();
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlSkinSource->Attribute("id"))))->equals(xmlJointsSource)) {
-			t = new StringTokenizer(new String(StringConverter::toWideString(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText())), u" \n\r"_j);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsSource)) {
+			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
 				joints->add(new Joint(t->nextToken()));
 			}
@@ -857,8 +863,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	}
 
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlSkinSource->Attribute("id"))))->equals(xmlJointsInverseBindMatricesSource)) {
-			t = new StringTokenizer((tmpString = new String(StringConverter::toWideString(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText()))), u" \n\r"_j);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsInverseBindMatricesSource)) {
+			t = new StringTokenizer((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())))), u" \n\r"_j);
 			auto _joints = skinning->getJoints();
 			for (auto i = 0; i < _joints->length; i++) {
 				(*_joints)[i]->getBindMatrix()->multiply(bindShapeMatrix);
@@ -884,15 +890,15 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	auto xmlVertexWeights = getChildrenByTagName(xmlSkin, "vertex_weights").at(0);
 	auto xmlVertexWeightInputs = getChildrenByTagName(xmlVertexWeights, "input");
 	for (auto xmlVertexWeightInput: xmlVertexWeightInputs) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("semantic"))))->equals(u"JOINT"_j)) {
-			if ((tmpString = new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("source"))))->substring(1)->equals(xmlJointsSource) == false) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic")))))->equals(u"JOINT"_j)) {
+			if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source")))))->substring(1)->equals(xmlJointsSource) == false) {
 				throw new ModelFileIOException(u"joint inverse bind matrices source do not match"_j);
 			}
-			xmlJointOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("offset"))));
+			xmlJointOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset")))));
 		} else
-		if ((tmpString = new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("semantic"))))->equals(u"WEIGHT"_j)) {
-			xmlWeightOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("offset"))));
-			xmlWeightsSource = (tmpString = new String(StringConverter::toWideString(xmlVertexWeightInput->Attribute("source"))))->substring(1);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic")))))->equals(u"WEIGHT"_j)) {
+			xmlWeightOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset")))));
+			xmlWeightsSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source")))))->substring(1);
 		}
 	}
 	if (xmlJointOffset == -1) {
@@ -905,8 +911,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"xml vertex weight weight source missing for node "_j)->append(xmlNodeId)->toString());
 	}
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlSkinSource->Attribute("id"))))->equals(xmlWeightsSource)) {
-			t = new StringTokenizer(new String(StringConverter::toWideString(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), u" \n\r"_j);
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlWeightsSource)) {
+			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
 				weights->add(new Float(Float::parseFloat(t->nextToken())));
 			}
@@ -914,8 +920,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	}
 	skinning->setWeights(weights);
 	auto xmlVertexWeightInputCount = xmlVertexWeightInputs.size();
-	auto vertexJointsInfluenceCountString = new String(StringConverter::toWideString(getChildrenByTagName(xmlVertexWeights, "vcount").at(0)->GetText()));
-	auto vertexJointsInfluencesString = new String(StringConverter::toWideString(getChildrenByTagName(xmlVertexWeights, "v").at(0)->GetText()));
+	auto vertexJointsInfluenceCountString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlVertexWeights, "vcount").at(0)->GetText())));
+	auto vertexJointsInfluencesString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlVertexWeights, "v").at(0)->GetText())));
 	t = new StringTokenizer(vertexJointsInfluenceCountString, u" \n\r"_j);
 	auto t2 = new StringTokenizer(vertexJointsInfluencesString, u" \n\r"_j);
 	auto offset = 0;
@@ -959,7 +965,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 	auto textureCoordinates = group->getTextureCoordinates() != nullptr ? new _ArrayList(group->getTextureCoordinates()) : new _ArrayList();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlGeometry->Attribute("id"))))->equals(xmlNodeId)) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id")))))->equals(xmlNodeId)) {
 			auto xmlMesh = getChildrenByTagName(xmlGeometry, "mesh").at(0);
 			vector<TiXmlElement*> xmlPolygonsList;
 			for (auto xmlTriangesElement: getChildrenByTagName(xmlMesh, "triangles")) {
@@ -975,7 +981,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				auto faces = new _ArrayList();
 				facesEntity = new FacesEntity(group, xmlNodeId);
 				if ((tmpString = new String(StringConverter::toWideString(xmlPolygons->Value())))->toLowerCase()->equals(u"polylist"_j)) {
-					t = new StringTokenizer(new String(StringConverter::toWideString(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText())));
+					t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText()))));
 					while (t->hasMoreTokens()) {
 						auto vertexCount = Integer::parseInt(t->nextToken());
 						if (vertexCount != 3) {
@@ -996,7 +1002,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				String* xmlTexCoordSource = nullptr;
 				auto xmlColorOffset = -1;
 				String* xmlColorSource = nullptr;
-				auto xmlMaterialId = new String(StringConverter::toWideString(xmlPolygons->Attribute("material")));
+				auto xmlMaterialId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlPolygons->Attribute("material"))));
 				auto materialSymbol = java_cast< String* >(materialSymbols->get(xmlMaterialId));
 				if (materialSymbol != nullptr)
 					xmlMaterialId = materialSymbol->substring(1);
@@ -1010,36 +1016,36 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				}
 				unordered_set<Integer*> xmlInputSet;
 				for (auto xmlTrianglesInput: getChildrenByTagName(xmlPolygons, "input")) {
-					if ((tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("semantic"))))->equals(u"VERTEX"_j)) {
-						xmlVerticesOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("offset"))));
-						xmlVerticesSource = (tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("source"))))->substring(1);
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic")))))->equals(u"VERTEX"_j)) {
+						xmlVerticesOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset")))));
+						xmlVerticesSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source")))))->substring(1);
 						xmlInputSet.insert(Integer::valueOf(xmlVerticesOffset));
 					} else
-					if ((tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("semantic"))))->equals(u"NORMAL"_j)) {
-						xmlNormalsOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("offset"))));
-						xmlNormalsSource = (tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("source"))))->substring(1);
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic")))))->equals(u"NORMAL"_j)) {
+						xmlNormalsOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset")))));
+						xmlNormalsSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source")))))->substring(1);
 						xmlInputSet.insert(Integer::valueOf(xmlNormalsOffset));
 					} else
-					if ((tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("semantic"))))->equals(u"TEXCOORD"_j)) {
-						xmlTexCoordOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("offset"))));
-						xmlTexCoordSource = (tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("source"))))->substring(1);
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic")))))->equals(u"TEXCOORD"_j)) {
+						xmlTexCoordOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset")))));
+						xmlTexCoordSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source")))))->substring(1);
 						xmlInputSet.insert(Integer::valueOf(xmlTexCoordOffset));
 					} else
-					if ((tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("semantic"))))->equals(u"COLOR"_j)) {
-						xmlColorOffset = Integer::parseInt(new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("offset"))));
-						xmlColorSource = (tmpString = new String(StringConverter::toWideString(xmlTrianglesInput->Attribute("source"))))->substring(1);
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic")))))->equals(u"COLOR"_j)) {
+						xmlColorOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset")))));
+						xmlColorSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source")))))->substring(1);
 						xmlInputSet.insert(Integer::valueOf(xmlColorOffset));
 					}
 				}
 				xmlInputs = xmlInputSet.size();
 				for (auto xmlVertices: getChildrenByTagName(xmlMesh, "vertices")) {
-					if ((tmpString = new String(StringConverter::toWideString(xmlVertices->Attribute("id"))))->equals(xmlVerticesSource)) {
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertices->Attribute("id")))))->equals(xmlVerticesSource)) {
 						for (auto xmlVerticesInput: getChildrenByTagName(xmlVertices, "input")) {
-							if ((tmpString = new String(StringConverter::toWideString(xmlVerticesInput->Attribute("semantic"))))->equalsIgnoreCase(u"position"_j)) {
-								xmlVerticesSource = (tmpString = new String(StringConverter::toWideString(xmlVerticesInput->Attribute("source"))))->substring(1);
+							if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic")))))->equalsIgnoreCase(u"position"_j)) {
+								xmlVerticesSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source")))))->substring(1);
 							} else
-							if ((tmpString = new String(StringConverter::toWideString(xmlVerticesInput->Attribute("semantic"))))->equalsIgnoreCase(u"normal"_j)) {
-								xmlNormalsSource = (tmpString = new String(StringConverter::toWideString(xmlVerticesInput->Attribute("source"))))->substring(1);
+							if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic")))))->equalsIgnoreCase(u"normal"_j)) {
+								xmlNormalsSource = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source")))))->substring(1);
 							}
 						}
 					}
@@ -1053,18 +1059,18 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						->append(u"'"_j)->toString());
 				}
 				for (auto xmlMeshSource: getChildrenByTagName(xmlMesh, "source")) {
-					if ((tmpString = new String(StringConverter::toWideString(xmlMeshSource->Attribute("id"))))->equals(xmlVerticesSource)) {
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMeshSource->Attribute("id")))))->equals(xmlVerticesSource)) {
 						auto xmlFloatArray = getChildrenByTagName(xmlMeshSource, "float_array").at(0);
-						auto valueString = new String(StringConverter::toWideString(xmlFloatArray->GetText()));
+						auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 						t = new StringTokenizer(valueString, u" \n\r"_j);
 						while (t->hasMoreTokens()) {
 							auto v = new Vector3(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
 							vertices->add(v);
 						}
 					} else
-					if ((tmpString = new String(StringConverter::toWideString(xmlMeshSource->Attribute("id"))))->equals(xmlNormalsSource)) {
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMeshSource->Attribute("id")))))->equals(xmlNormalsSource)) {
 						auto xmlFloatArray = getChildrenByTagName(xmlMeshSource, "float_array").at(0);
-						auto valueString = new String(StringConverter::toWideString(xmlFloatArray->GetText()));
+						auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 						t = new StringTokenizer(valueString, u" \n\r"_j);
 						while (t->hasMoreTokens()) {
 							auto v = new Vector3(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
@@ -1072,9 +1078,9 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						}
 					}
 					if (xmlTexCoordSource != nullptr) {
-						if ((tmpString = new String(StringConverter::toWideString(xmlMeshSource->Attribute("id"))))->equals(xmlTexCoordSource)) {
+						if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMeshSource->Attribute("id")))))->equals(xmlTexCoordSource)) {
 							auto xmlFloatArray = getChildrenByTagName(xmlMeshSource, "float_array").at(0);
-							auto valueString = new String(StringConverter::toWideString(xmlFloatArray->GetText()));
+							auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 							t = new StringTokenizer(valueString, u" \n\r"_j);
 							while (t->hasMoreTokens()) {
 								auto tc = new TextureCoordinate(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
@@ -1084,7 +1090,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 					}
 				}
 				for (auto xmlPolygon: getChildrenByTagName(xmlPolygons, "p")) {
-					auto valueString = new String(StringConverter::toWideString(xmlPolygon->GetText()));
+					auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlPolygon->GetText())));
 					t = new StringTokenizer(valueString, u" \n\r"_j);
 					auto vi = new int32_tArray(3);
 					auto viIdx = 0;
@@ -1173,9 +1179,9 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 	String* xmlEffectId = nullptr;
 	auto xmlLibraryMaterials = getChildrenByTagName(xmlRoot, "library_materials").at(0);
 	for (auto xmlMaterial: getChildrenByTagName(xmlLibraryMaterials, "material")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlMaterial->Attribute("id"))))->equals(xmlNodeId)) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMaterial->Attribute("id")))))->equals(xmlNodeId)) {
 			auto xmlInstanceEffect = getChildrenByTagName(xmlMaterial, "instance_effect").at(0);
-			xmlEffectId = (tmpString = new String(StringConverter::toWideString(xmlInstanceEffect->Attribute("url"))))->substring(1);
+			xmlEffectId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceEffect->Attribute("url")))))->substring(1);
 		}
 	}
 	if (xmlEffectId == nullptr) {
@@ -1196,24 +1202,24 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 	String* xmlBumpTextureId = nullptr;
 	auto xmlLibraryEffects = getChildrenByTagName(xmlRoot, "library_effects").at(0);
 	for (auto xmlEffect: getChildrenByTagName(xmlLibraryEffects, "effect")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlEffect->Attribute("id"))))->equals(xmlEffectId)) {
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlEffect->Attribute("id")))))->equals(xmlEffectId)) {
 			auto xmlProfile = getChildrenByTagName(xmlEffect, "profile_COMMON").at(0);
 			auto samplerSurfaceMapping = new _HashMap();
 			auto surfaceImageMapping = new _HashMap();
 			for (auto xmlNewParam: getChildrenByTagName(xmlProfile, "newparam")) {
-				auto xmlNewParamSID = new String(StringConverter::toWideString(xmlNewParam->Attribute("sid")));
+				auto xmlNewParamSID = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNewParam->Attribute("sid"))));
 				for (auto xmlSurface: getChildrenByTagName(xmlNewParam, "surface"))
 				for (auto xmlSurfaceInitFrom: getChildrenByTagName(xmlSurface, "init_from")) {
 					surfaceImageMapping->put(
 						xmlNewParamSID,
-						new String(StringConverter::toWideString(xmlSurfaceInitFrom->GetText()))
+						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSurfaceInitFrom->GetText())))
 					);
 				}
 				for (auto xmlSampler2D: getChildrenByTagName(xmlNewParam, "sampler2D"))
 				for (auto xmlSampler2DSource: getChildrenByTagName(xmlSampler2D, "source")) {
 					samplerSurfaceMapping->put(
 						xmlNewParamSID,
-						new String(StringConverter::toWideString(xmlSampler2DSource->GetText()))
+						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSampler2DSource->GetText())))
 					);
 				}
 			}
@@ -1221,7 +1227,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 				for (auto xmlTechniqueNode: getChildren(xmlTechnique)) {
 					for (auto xmlDiffuse: getChildrenByTagName(xmlTechniqueNode, "diffuse")) {
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
-							xmlDiffuseTextureId = new String(StringConverter::toWideString(xmlTexture->Attribute("texture")));
+							xmlDiffuseTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
 							auto sample2Surface = java_cast< String* >(samplerSurfaceMapping->get(xmlDiffuseTextureId));
 							String* surface2Image = nullptr;
 							if (sample2Surface != nullptr)
@@ -1230,7 +1236,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 								xmlDiffuseTextureId = surface2Image;
 						}
 						for (auto xmlColor: getChildrenByTagName(xmlDiffuse, "color")) {
-							auto t = new StringTokenizer(new String(StringConverter::toWideString(xmlColor->GetText())), u" "_j);
+							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
 							material->getDiffuseColor()->set(
 								Float::parseFloat(t->nextToken()),
 								Float::parseFloat(t->nextToken()),
@@ -1241,7 +1247,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					}
 					for (auto xmlAmbient: getChildrenByTagName(xmlTechniqueNode, "ambient")) {
 						for (auto xmlColor: getChildrenByTagName(xmlAmbient, "color")) {
-							auto t = new StringTokenizer(new String(StringConverter::toWideString(xmlColor->GetText())), u" "_j);
+							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
 							material->getAmbientColor()->set(
 								Float::parseFloat(t->nextToken()),
 								Float::parseFloat(t->nextToken()),
@@ -1252,7 +1258,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					}
 					for (auto xmlEmission: getChildrenByTagName(xmlTechniqueNode, "emission")) {
 						for (auto xmlColor: getChildrenByTagName(xmlEmission, "color")) {
-							auto t = new StringTokenizer(new String(StringConverter::toWideString(xmlColor->GetText())), u" "_j);
+							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
 							material->getEmissionColor()->set(
 								Float::parseFloat(t->nextToken()),
 								Float::parseFloat(t->nextToken()),
@@ -1265,7 +1271,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					auto hasSpecularColor = false;
 					for (auto xmlSpecular: getChildrenByTagName(xmlTechniqueNode, "specular")) {
 						for (auto xmlTexture: getChildrenByTagName(xmlSpecular, "texture")) {
-							xmlSpecularTextureId = new String(StringConverter::toWideString(xmlTexture->Attribute("texture")));
+							xmlSpecularTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
 							auto sample2Surface = samplerSurfaceMapping->get(xmlSpecularTextureId);
 							String* surface2Image = nullptr;
 							if (sample2Surface != nullptr) surface2Image = java_cast< String* >(surfaceImageMapping->get(sample2Surface));
@@ -1273,7 +1279,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 							hasSpecularMap = true;
 						}
 						for (auto xmlColor: getChildrenByTagName(xmlSpecular, "color")) {
-							auto t = new StringTokenizer(new String(StringConverter::toWideString(xmlColor->GetText())), u" "_j);
+							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
 							material->getSpecularColor()->set(
 								Float::parseFloat(t->nextToken()),
 								Float::parseFloat(t->nextToken()),
@@ -1288,14 +1294,14 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					}
 					for (auto xmlShininess: getChildrenByTagName(xmlTechniqueNode, "shininess"))
 					for (auto xmlFloat: getChildrenByTagName(xmlShininess, "float")) {
-							material->setShininess(Float::parseFloat(new String(StringConverter::toWideString(xmlFloat->GetText()))));
+							material->setShininess(Float::parseFloat(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloat->GetText())))));
 					}
 				}
 				for (auto xmlBumpExtra: getChildrenByTagName(xmlTechnique, "extra"))
 				for (auto xmlBumpTechnique: getChildrenByTagName(xmlBumpExtra, "technique"))
 				for (auto xmlBumpTechniqueBump: getChildrenByTagName(xmlBumpTechnique, "bump"))
 				for (auto xmlBumpTexture: getChildrenByTagName(xmlBumpTechniqueBump, "texture")) {
-					xmlBumpTextureId = new String(StringConverter::toWideString(xmlBumpTexture->Attribute("texture")));
+					xmlBumpTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlBumpTexture->Attribute("texture"))));
 					auto sample2Surface = java_cast< String* >(samplerSurfaceMapping->get(xmlBumpTextureId));
 					String* surface2Image = nullptr;
 					if (sample2Surface != nullptr) surface2Image = java_cast< String* >(surfaceImageMapping->get(sample2Surface));
@@ -1396,8 +1402,8 @@ String* DAEReader::getTextureFileNameById(TiXmlElement* xmlRoot, String* xmlText
 	String* xmlTextureFilename = nullptr;
 	auto xmlLibraryImages = getChildrenByTagName(xmlRoot, "library_images").at(0);
 	for (auto xmlImage: getChildrenByTagName(xmlLibraryImages, "image")) {
-		if ((tmpString = new String(StringConverter::toWideString(xmlImage->Attribute("id"))))->equals(xmlTextureId)) {
-			xmlTextureFilename = new String(StringConverter::toWideString(getChildrenByTagName(xmlImage, "init_from").at(0)->GetText()));
+		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlImage->Attribute("id")))))->equals(xmlTextureId)) {
+			xmlTextureFilename = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlImage, "init_from").at(0)->GetText())));
 			if (xmlTextureFilename->startsWith(u"file://"_j)) {
 				xmlTextureFilename = xmlTextureFilename->substring(7);
 			}

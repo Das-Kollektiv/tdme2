@@ -45,8 +45,7 @@ constexpr int64_t java::lang::Float::serialVersionUID;
 
 void Float::ctor(float arg0)
 { /* stub */
-	/* super::ctor(); */
-	unimplemented_(u"void Float::ctor(float arg0)");
+	value = arg0;
 }
 
 void Float::ctor(double arg0)
@@ -106,8 +105,7 @@ int32_t Float::floatToIntBits(float arg0)
 
 float Float::floatValue()
 { /* stub */
-	unimplemented_(u"float Float::floatValue()");
-	return 0;
+	return value;
 }
 
 int32_t Float::hashCode()

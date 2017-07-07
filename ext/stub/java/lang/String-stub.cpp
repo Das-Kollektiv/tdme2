@@ -7,14 +7,16 @@
 #include <java/lang/String.h>
 #include <tdme/utils/StringConverter.h>
 
-using java::lang::String;
+using std::replace;
 using std::string;
-using std::wstring;
 using std::transform;
 using std::toupper;
 using std::tolower;
 using std::to_wstring;
-using std::replace;
+using std::wstring;
+
+using java::lang::String;
+
 using tdme::utils::StringConverter;
 
 template<typename ComponentType, typename ... Bases> struct SubArray;
@@ -180,7 +182,7 @@ void String::ctor(int8_tArray* arg0, Charset* arg1) { /* stub */
 
 void String::ctor(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /* stub */
 	for (int i = 0; i < arg2; i++) {
-		cppwstring+= arg0->get(arg1 + i);
+		cppwstring += arg0->get(arg1 + i);
 	}
 }
 
@@ -282,9 +284,9 @@ String* String::copyValueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2) { /
 }
 
 bool String::endsWith(String* arg0) { /* stub */
-	return
-		cppwstring.size() >= arg0->cppwstring.size() &&
-		cppwstring.compare(cppwstring.size() - arg0->cppwstring.size(), arg0->cppwstring.size(), arg0->cppwstring) == 0;
+	return cppwstring.size() >= arg0->cppwstring.size()
+			&& cppwstring.compare(cppwstring.size() - arg0->cppwstring.size(),
+					arg0->cppwstring.size(), arg0->cppwstring) == 0;
 }
 
 bool String::equals(Object* arg0) { /* stub */
@@ -411,11 +413,6 @@ int32_t String::length() { /* stub */
 	return cppwstring.length();
 }
 
-bool String::matches(String* arg0) { /* stub */
-	unimplemented_(u"bool String::matches(String* arg0)");
-	return 0;
-}
-
 int32_t String::offsetByCodePoints(int32_t arg0, int32_t arg1) { /* stub */
 	unimplemented_(u"int32_t String::offsetByCodePoints(int32_t arg0, int32_t arg1)");
 	return 0;
@@ -435,7 +432,8 @@ bool String::regionMatches(bool arg0, int32_t arg1, String* arg2, int32_t arg3,
 
 String* String::replace(char16_t arg0, char16_t arg1) { /* stub */
 	String* result = new String(cppwstring);
-	std::replace(result->cppwstring.begin(), result->cppwstring.end(), arg0, arg1);
+	std::replace(result->cppwstring.begin(), result->cppwstring.end(), arg0,
+			arg1);
 	return result;
 }
 
@@ -443,26 +441,22 @@ String* String::replace(CharSequence* arg0, CharSequence* arg1) { /* stub */
 	wstring source;
 	wstring replacement;
 	for (int i = 0; i < arg0->length(); i++) {
-		source+= arg0->charAt(i);
+		source += arg0->charAt(i);
 	}
 	for (int i = 0; i < arg1->length(); i++) {
-		replacement+= arg1->charAt(i);
+		replacement += arg1->charAt(i);
 	}
 
 	wstring string = cppwstring;
-	if (source.empty()) return new String(string);
+	if (source.empty())
+		return new String(string);
 	size_t start_pos = 0;
-	while((start_pos = string.find(source, start_pos)) != std::string::npos) {
+	while ((start_pos = string.find(source, start_pos)) != std::string::npos) {
 		string.replace(start_pos, source.length(), replacement);
 		start_pos += replacement.length();
 	}
 
 	return new String(string);
-}
-
-String* String::replaceAll(String* arg0, String* arg1) { /* stub */
-	unimplemented_(u"String* String::replaceAll(String* arg0, String* arg1)");
-	return 0;
 }
 
 String* String::replaceFirst(String* arg0, String* arg1) { /* stub */
@@ -535,14 +529,13 @@ String* String::toUpperCase(Locale* arg0) { /* stub */
 
 String* String::trim() { /* stub */
 	wstring string = cppwstring;
+	string.erase(string.begin(),
+			std::find_if(string.begin(), string.end(),
+					std::not1(std::ptr_fun<int, int>(std::isspace))));
 	string.erase(
-		string.begin(), std::find_if(string.begin(), string.end(),
-		std::not1(std::ptr_fun<int, int>(std::isspace)))
-	);
-	string.erase(
-		std::find_if(string.rbegin(), string.rend(),
-		std::not1(std::ptr_fun<int, int>(std::isspace))).base(), string.end()
-	);
+			std::find_if(string.rbegin(), string.rend(),
+					std::not1(std::ptr_fun<int, int>(std::isspace))).base(),
+			string.end());
 	return new String(string);
 }
 

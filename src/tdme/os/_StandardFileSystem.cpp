@@ -44,7 +44,6 @@
 #include <java/util/zip/ZipInputStream.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
-#include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -86,7 +85,6 @@ using java::util::zip::ZipEntry;
 using java::util::zip::ZipInputStream;
 using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
-using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -237,10 +235,15 @@ String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /*
 
 	// add cwd to path string
 	wstring pathString = getFileName(path, fileName)->getCPPWString();
-	if (pathString[0] != '/') pathString = cwdString + L"/" + pathString;
+	if (pathString.size() > 0 && pathString[0] == L'/') {
+		// no op
+	} else {
+		pathString = cwdString + L"/" + pathString;
+	}
 
 	// realpath
-	const char* nonCanonicalPath = StringConverter::toString(pathString).c_str();
+	const string nonCanonicalPathString = StringConverter::toString(pathString);
+	const char* nonCanonicalPath = nonCanonicalPathString.c_str();
 	char realpathBuffer[PATH_MAX + 1];
 	char* realPathPtr = realpath(nonCanonicalPath, realpathBuffer);
 	if (realPathPtr == nullptr) {

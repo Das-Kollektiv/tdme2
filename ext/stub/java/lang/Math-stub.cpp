@@ -73,9 +73,7 @@ double Math::cbrt(double arg0) { /* stub */
 }
 
 double Math::ceil(double arg0) { /* stub */
-	clinit();
-	unimplemented_(u"double Math::ceil(double arg0)");
-	return 0;
+	return ::ceil(arg0);
 }
 
 double Math::copySign(double arg0, double arg1) { /* stub */
