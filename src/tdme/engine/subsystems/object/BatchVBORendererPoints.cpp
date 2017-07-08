@@ -98,7 +98,7 @@ void BatchVBORendererPoints::render()
 	if (fbVertices->position() == 0 || fbColors->position() == 0)
 		return;
 
-	auto points = fbVertices->position() / 3;
+	auto points = fbVertices->position() / 3 /* 3 components */ / 4 /* bytes per float */;
 	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
 	renderer->uploadBufferObject((*vboIds)[1], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
