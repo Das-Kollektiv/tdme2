@@ -53,17 +53,26 @@ namespace models {
 
 /**
  * TM reader input stream
+ * @author Andreas Drewke
+ * @version $Id$
  */
 class TMReaderInputStream {
 private:
 	int8_tArray* data;
 	int32_t position;
 public:
+	/**
+	 * Constructor
+	 * @param input data array
+	 */
 	inline TMReaderInputStream(int8_tArray* data) {
 		this->data = data;
 		this->position = 0;
 	}
 
+	/**
+	 * Destructor
+	 */
 	inline ~TMReaderInputStream() {
 		delete data;
 	}
@@ -122,6 +131,7 @@ public:
 			auto l = readInt();
 			auto sb = new StringBuffer();
 			for (auto i = 0; i < l; i++) {
+				// FIXME: actually we use wide string
 				sb->append(static_cast< char16_t >(readByte()));
 			}
 			return sb->toString();

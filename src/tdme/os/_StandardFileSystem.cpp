@@ -193,6 +193,12 @@ int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* 
 	return data;
 }
 
+void _StandardFileSystem::setContent(String* path, String* fileName, int8_tArray* data, int32_t size) /* throws(IOException)*/ {
+	ofstream fl(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
+	fl.write((char *)data->getPointer(), size == -1?data->length:size);
+	fl.close();
+}
+
 StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */
 {
 	ifstream ifs(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());

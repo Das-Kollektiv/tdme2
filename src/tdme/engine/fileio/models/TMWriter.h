@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <Array.h>
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -10,6 +11,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+#include <java/lang/String.h>
 
 using java::lang::Object;
 using java::io::OutputStream;
@@ -41,11 +43,141 @@ typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Ar
 }  // namespace tdme
 
 using java::lang::ObjectArray;
+using java::lang::String;
 using tdme::engine::model::FacesEntityArray;
 using tdme::engine::model::TextureCoordinateArray;
 using tdme::math::Vector3Array;
 
 struct default_init_tag;
+
+namespace tdme {
+namespace engine {
+namespace fileio {
+namespace models {
+
+/**
+ * TM writer output stream
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class TMWriterOutputStream {
+private:
+	int8_tArray* data;
+	int32_t position;
+	int32_t capacity;
+public:
+
+	/**
+	 * Constructor
+	 */
+	inline TMWriterOutputStream() {
+		this->capacity = 1024 * 1024;
+		this->data = new int8_tArray(capacity);
+		this->position = 0;
+	}
+
+	/**
+	 * Destructor
+	 */
+	inline ~TMWriterOutputStream() {
+		delete data;
+	}
+
+	/**
+	 * Get data
+	 * @return data
+	 */
+	inline int8_tArray* getData() {
+		return data;
+	}
+
+	/**
+	 * Get position
+	 * @return position
+	 */
+	inline int32_t getPosition() {
+		return position;
+	}
+
+	/**
+	 * Writes a boolean to output stream
+	 * @param boolean
+	 */
+	inline void writeBoolean(bool b) {
+		writeByte(b == true?1:0);
+	}
+
+	/**
+	 * Writes a byte to output stream
+	 * @param byte
+	 */
+	inline void writeByte(int8_t b) {
+		if (position + 1 == capacity) {
+			this->capacity+= 1024 * 1024;
+			int8_tArray* dataNew = new int8_tArray(capacity);
+			for (int i = 0; i < position; i++) {
+				dataNew->set(i, data->get(i));
+			}
+			delete this->data;
+			this->data = dataNew;
+		}
+		data[position++] = b;
+	}
+
+	/**
+	 * Writes a integer to output stream
+	 * @param int
+	 */
+	inline void writeInt(int32_t i) {
+		writeByte((i >> 24) & 255);
+		writeByte((i >> 16) & 255);
+		writeByte((i >> 8) & 255);
+		writeByte((i >> 0) & 255);
+	}
+
+	/**
+	 * Writes a float to output stream
+	 * @param float
+	 */
+	inline void writeFloat(float f) {
+		int value = *((int*)&f);
+		writeInt(value);
+	}
+
+	/**
+	 * Writes a string to output stream
+	 * @param string
+	 */
+	inline void writeString(String* s) {
+		if (s == nullptr) {
+			writeBoolean(false);
+		} else {
+			writeBoolean(true);
+			writeInt(s->length());
+			for (auto i = 0; i < s->length(); i++) {
+				// FIXME: actually we use wide string
+				writeByte(static_cast< int8_t >(s->charAt(i)));
+			}
+		}
+	}
+
+	/**
+	 * Writes a float array to output stream
+	 * @param float array
+	 */
+	inline void writeFloatArray(floatArray* f) {
+		writeInt(f->length);
+		for (auto i = 0; i < f->length; i++) {
+			writeFloat((*f)[i]);
+		}
+	}
+
+};
+
+};
+};
+};
+};
 
 /** 
  * TDME model writer
@@ -64,148 +196,87 @@ public:
 	 * @param model
 	 * @param path name
 	 * @param file name
-	 * @throws IOException
-	 * @throws ModelIOException
 	 */
 	static void write(Model* model, String* pathName, String* fileName) /* throws(IOException) */;
 
 private:
 
 	/** 
-	 * Writes a boolean to output stream
-	 * @param output stream
-	 * @param boolean
-	 * @throws IOException
-	 */
-	static void writeBoolean(OutputStream* os, bool b) /* throws(IOException) */;
-
-	/** 
-	 * Writes a byte to output stream
-	 * @param output stream
-	 * @param byte
-	 * @throws IOException
-	 */
-	static void writeByte(OutputStream* os, int8_t b) /* throws(IOException) */;
-
-	/** 
-	 * Writes a integer to output stream
-	 * @param output stream
-	 * @param int
-	 * @throws IOException
-	 */
-	static void writeInt(OutputStream* os, int32_t i) /* throws(IOException) */;
-
-	/** 
-	 * Writes a float to output stream
-	 * @param output stream
-	 * @param float
-	 * @throws IOException
-	 */
-	static void writeFloat(OutputStream* os, float f) /* throws(IOException) */;
-
-	/** 
-	 * Writes a string to output stream
-	 * @param output stream
-	 * @param string
-	 * @throws IOException
-	 */
-	static void writeString(OutputStream* os, String* s) /* throws(IOException) */;
-
-	/** 
-	 * Writes a float array to output stream
-	 * @param output stream
-	 * @param float array
-	 * @throws IOException
-	 */
-	static void writeFloatArray(OutputStream* os, floatArray* f) /* throws(IOException) */;
-
-	/** 
 	 * Write material 
 	 * @param output stream
 	 * @param material
-	 * @throws IOException
 	 */
-	static void writeMaterial(OutputStream* os, Material* m) /* throws(IOException) */;
+	static void writeMaterial(TMWriterOutputStream* os, Material* m) /* throws(IOException) */;
 
 	/** 
 	 * Write vertices to output stream
 	 * @param output stream
 	 * @param vertices
-	 * @throws IOException
 	 */
-	static void writeVertices(OutputStream* os, Vector3Array* v) /* throws(IOException) */;
+	static void writeVertices(TMWriterOutputStream* os, Vector3Array* v) /* throws(IOException) */;
 
 	/** 
 	 * Write texture coordinates to output stream
 	 * @param output stream
 	 * @param texture coordinates
-	 * @throws IOException
 	 */
-	static void writeTextureCoordinates(OutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */;
+	static void writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */;
 
 	/** 
 	 * Write indices to output stream
 	 * @param output stream
 	 * @param indices
-	 * @throws IOException
 	 */
-	static void writeIndices(OutputStream* os, int32_tArray* indices) /* throws(IOException) */;
+	static void writeIndices(TMWriterOutputStream* os, int32_tArray* indices) /* throws(IOException) */;
 
 	/** 
 	 * Write animation to output stream
 	 * @param output stream
 	 * @param animation
-	 * @throws IOException 
 	 */
-	static void writeAnimation(OutputStream* os, Animation* a) /* throws(IOException) */;
+	static void writeAnimation(TMWriterOutputStream* os, Animation* a) /* throws(IOException) */;
 
 	/** 
 	 * Write faces entities to output stream
 	 * @param output stream
 	 * @param faces entities
-	 * @throws IOException
 	 */
-	static void writeFacesEntities(OutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */;
+	static void writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */;
 
 	/** 
 	 * Write skinning joint
 	 * @param output stream
 	 * @param joint
-	 * @throws IOException
 	 */
-	static void writeSkinningJoint(OutputStream* os, Joint* joint) /* throws(IOException) */;
+	static void writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) /* throws(IOException) */;
 
 	/** 
 	 * Write skinning joint weight
 	 * @param output stream
 	 * @param joint
-	 * @throws IOException
 	 */
-	static void writeSkinningJointWeight(OutputStream* os, JointWeight* jointWeight) /* throws(IOException) */;
+	static void writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) /* throws(IOException) */;
 
 	/** 
 	 * Write skinning to output stream
 	 * @param output stream
 	 * @param skinning
-	 * @throws IOException
 	 */
-	static void writeSkinning(OutputStream* os, Skinning* skinning) /* throws(IOException) */;
+	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning) /* throws(IOException) */;
 
 	/** 
 	 * Write sub groups
 	 * @param output stream
 	 * @param sub groups
-	 * @throws IOException
 	 */
-	static void writeSubGroups(OutputStream* os, _HashMap* subGroups) /* throws(IOException) */;
+	static void writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) /* throws(IOException) */;
 
 	/** 
 	 * Write group to output stream
 	 * @param output stream
 	 * @param group
-	 * @throws IOException
 	 */
-	static void writeGroup(OutputStream* os, Group* g) /* throws(IOException) */;
+	static void writeGroup(TMWriterOutputStream* os, Group* g) /* throws(IOException) */;
 
 	// Generated
 

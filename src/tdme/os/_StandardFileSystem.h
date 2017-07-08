@@ -52,6 +52,7 @@ public:
 	StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ override;
 	bool isPath(String* path) /* throws(IOException) */ override;
 	int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ override;
+	void setContent(String* path, String* fileName, int8_tArray* data, int32_t size = -1) /* throws(IOException) */ override;
 	StringArray* getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */ override;
 	void setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */ override;
 	String* getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ override;

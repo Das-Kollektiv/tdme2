@@ -143,28 +143,27 @@ TMWriter::TMWriter()
 void TMWriter::write(Model* model, String* pathName, String* fileName) /* throws(IOException) */
 {
 	clinit();
-	OutputStream* os = nullptr;
+	TMWriterOutputStream* os = nullptr;
 	{
 		auto finally0 = finally([&] {
 			if (os != nullptr) {
-				os->flush();
-				os->close();
+				delete os;
 			}
 		});
 		try {
-			os = _FileSystem::getInstance()->getOutputStream(pathName, fileName);
-			writeString(os, u"TDME Model"_j);
-			writeByte(os, static_cast< int8_t >(1));
-			writeByte(os, static_cast< int8_t >(0));
-			writeByte(os, static_cast< int8_t >(0));
-			writeString(os, model->getName());
-			writeString(os, model->getUpVector()->toString());
-			writeString(os, model->getRotationOrder()->toString());
-			writeFloatArray(os, model->getBoundingBox()->getMin()->getArray());
-			writeFloatArray(os, model->getBoundingBox()->getMax()->getArray());
-			writeFloat(os, model->getFPS());
-			writeFloatArray(os, model->getImportTransformationsMatrix()->getArray());
-			writeInt(os, model->getMaterials()->size());
+			os = new TMWriterOutputStream();
+			os->writeString(u"TDME Model"_j);
+			os->writeByte(static_cast< int8_t >(1));
+			os->writeByte(static_cast< int8_t >(0));
+			os->writeByte(static_cast< int8_t >(0));
+			os->writeString(model->getName());
+			os->writeString(model->getUpVector()->toString());
+			os->writeString(model->getRotationOrder()->toString());
+			os->writeFloatArray(model->getBoundingBox()->getMin()->getArray());
+			os->writeFloatArray(model->getBoundingBox()->getMax()->getArray());
+			os->writeFloat(model->getFPS());
+			os->writeFloatArray(model->getImportTransformationsMatrix()->getArray());
+			os->writeInt(model->getMaterials()->size());
 			for (auto _i = model->getMaterials()->getValuesIterator()->iterator(); _i->hasNext(); ) {
 				Material* material = java_cast< Material* >(_i->next());
 				{
@@ -172,151 +171,102 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) /* throws
 				}
 			}
 			writeSubGroups(os, model->getSubGroups());
+			_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
 		} catch (IOException* ioe) {
 			throw ioe;
 		}
 	}
 }
 
-void TMWriter::writeBoolean(OutputStream* os, bool b) /* throws(IOException) */
+void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) /* throws(IOException) */
 {
 	clinit();
-	os->write(static_cast< int32_t >(static_cast< int8_t >((b == true ? 1 : 0))));
+	os->writeString(m->getId());
+	os->writeFloatArray(m->getAmbientColor()->getArray());
+	os->writeFloatArray(m->getDiffuseColor()->getArray());
+	os->writeFloatArray(m->getSpecularColor()->getArray());
+	os->writeFloatArray(m->getEmissionColor()->getArray());
+	os->writeFloat(m->getShininess());
+	os->writeString(m->getDiffuseTexturePathName());
+	os->writeString(m->getDiffuseTextureFileName());
+	os->writeString(m->getSpecularTexturePathName());
+	os->writeString(m->getSpecularTextureFileName());
+	os->writeString(m->getNormalTexturePathName());
+	os->writeString(m->getNormalTextureFileName());
+	os->writeString(m->getDisplacementTexturePathName());
+	os->writeString(m->getDisplacementTextureFileName());
 }
 
-void TMWriter::writeByte(OutputStream* os, int8_t b) /* throws(IOException) */
-{
-	clinit();
-	os->write(static_cast< int32_t >(b));
-}
-
-void TMWriter::writeInt(OutputStream* os, int32_t i) /* throws(IOException) */
-{
-	clinit();
-	os->write((i >> 24) & 255);
-	os->write((i >> 16) & 255);
-	os->write((i >> 8) & 255);
-	os->write((i >> 0) & 255);
-}
-
-void TMWriter::writeFloat(OutputStream* os, float f) /* throws(IOException) */
-{
-	clinit();
-	writeInt(os, Float::floatToIntBits(f));
-}
-
-void TMWriter::writeString(OutputStream* os, String* s) /* throws(IOException) */
-{
-	clinit();
-	if (s == nullptr) {
-		writeBoolean(os, false);
-	} else {
-		writeBoolean(os, true);
-		writeInt(os, s->length());
-		for (auto i = 0; i < s->length(); i++) {
-			writeByte(os, static_cast< int8_t >(s->charAt(i)));
-		}
-	}
-}
-
-void TMWriter::writeFloatArray(OutputStream* os, floatArray* f) /* throws(IOException) */
-{
-	clinit();
-	writeInt(os, f->length);
-	for (auto i = 0; i < f->length; i++) {
-		writeFloat(os, (*f)[i]);
-	}
-}
-
-void TMWriter::writeMaterial(OutputStream* os, Material* m) /* throws(IOException) */
-{
-	clinit();
-	writeString(os, m->getId());
-	writeFloatArray(os, m->getAmbientColor()->getArray());
-	writeFloatArray(os, m->getDiffuseColor()->getArray());
-	writeFloatArray(os, m->getSpecularColor()->getArray());
-	writeFloatArray(os, m->getEmissionColor()->getArray());
-	writeFloat(os, m->getShininess());
-	writeString(os, m->getDiffuseTexturePathName());
-	writeString(os, m->getDiffuseTextureFileName());
-	writeString(os, m->getSpecularTexturePathName());
-	writeString(os, m->getSpecularTextureFileName());
-	writeString(os, m->getNormalTexturePathName());
-	writeString(os, m->getNormalTextureFileName());
-	writeString(os, m->getDisplacementTexturePathName());
-	writeString(os, m->getDisplacementTextureFileName());
-}
-
-void TMWriter::writeVertices(OutputStream* os, Vector3Array* v) /* throws(IOException) */
+void TMWriter::writeVertices(TMWriterOutputStream* os, Vector3Array* v) /* throws(IOException) */
 {
 	clinit();
 	if (v == nullptr) {
-		writeBoolean(os, false);
+		os->writeBoolean(false);
 	} else {
-		writeBoolean(os, true);
-		writeInt(os, v->length);
+		os->writeBoolean(true);
+		os->writeInt(v->length);
 		for (auto i = 0; i < v->length; i++) {
-			writeFloatArray(os, (*v)[i]->getArray());
+			os->writeFloatArray((*v)[i]->getArray());
 		}
 	}
 }
 
-void TMWriter::writeTextureCoordinates(OutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */
 {
 	clinit();
 	if (tc == nullptr) {
-		writeBoolean(os, false);
+		os->writeBoolean(false);
 	} else {
-		writeBoolean(os, true);
-		writeInt(os, tc->length);
+		os->writeBoolean(true);
+		os->writeInt(tc->length);
 		for (auto i = 0; i < tc->length; i++) {
-			writeFloatArray(os, (*tc)[i]->getArray());
+			os->writeFloatArray((*tc)[i]->getArray());
 		}
 	}
 }
 
-void TMWriter::writeIndices(OutputStream* os, int32_tArray* indices) /* throws(IOException) */
+void TMWriter::writeIndices(TMWriterOutputStream* os, int32_tArray* indices) /* throws(IOException) */
 {
 	clinit();
 	if (indices == nullptr) {
-		writeBoolean(os, false);
+		os->writeBoolean(false);
 	} else {
-		writeBoolean(os, true);
-		writeInt(os, indices->length);
+		os->writeBoolean(true);
+		os->writeInt(indices->length);
 		for (auto i = 0; i < indices->length; i++) {
-			writeInt(os, (*indices)[i]);
+			os->writeInt((*indices)[i]);
 		}
 	}
 }
 
-void TMWriter::writeAnimation(OutputStream* os, Animation* a) /* throws(IOException) */
+void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) /* throws(IOException) */
 {
 	clinit();
 	if (a == nullptr) {
-		writeBoolean(os, false);
+		os->writeBoolean(false);
 	} else {
-		writeBoolean(os, true);
-		writeInt(os, a->getTransformationsMatrices()->length);
+		os->writeBoolean(true);
+		os->writeInt(a->getTransformationsMatrices()->length);
 		for (auto i = 0; i < a->getTransformationsMatrices()->length; i++) {
-			writeFloatArray(os, (*a->getTransformationsMatrices())[i]->getArray());
+			os->writeFloatArray((*a->getTransformationsMatrices())[i]->getArray());
 		}
 	}
 }
 
-void TMWriter::writeFacesEntities(OutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */
+void TMWriter::writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */
 {
 	clinit();
-	writeInt(os, facesEntities->length);
+	os->writeInt(facesEntities->length);
 	for (auto i = 0; i < facesEntities->length; i++) {
 		auto fe = (*facesEntities)[i];
-		writeString(os, fe->getId());
+		os->writeString(fe->getId());
 		if (fe->getMaterial() == nullptr) {
-			writeBoolean(os, false);
+			os->writeBoolean(false);
 		} else {
-			writeBoolean(os, true);
-			writeString(os, fe->getMaterial()->getId());
+			os->writeBoolean(true);
+			os->writeString(fe->getMaterial()->getId());
 		}
-		writeInt(os, fe->getFaces()->length);
+		os->writeInt(fe->getFaces()->length);
 		for (auto j = 0; j < fe->getFaces()->length; j++) {
 			auto f = (*fe->getFaces())[j];
 			writeIndices(os, f->getVertexIndices());
@@ -328,35 +278,35 @@ void TMWriter::writeFacesEntities(OutputStream* os, FacesEntityArray* facesEntit
 	}
 }
 
-void TMWriter::writeSkinningJoint(OutputStream* os, Joint* joint) /* throws(IOException) */
+void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) /* throws(IOException) */
 {
 	clinit();
-	writeString(os, joint->getGroupId());
-	writeFloatArray(os, joint->getBindMatrix()->getArray());
+	os->writeString(joint->getGroupId());
+	os->writeFloatArray(joint->getBindMatrix()->getArray());
 }
 
-void TMWriter::writeSkinningJointWeight(OutputStream* os, JointWeight* jointWeight) /* throws(IOException) */
+void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) /* throws(IOException) */
 {
 	clinit();
-	writeInt(os, jointWeight->getJointIndex());
-	writeInt(os, jointWeight->getWeightIndex());
+	os->writeInt(jointWeight->getJointIndex());
+	os->writeInt(jointWeight->getWeightIndex());
 }
 
-void TMWriter::writeSkinning(OutputStream* os, Skinning* skinning) /* throws(IOException) */
+void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) /* throws(IOException) */
 {
 	clinit();
 	if (skinning == nullptr) {
-		writeBoolean(os, false);
+		os->writeBoolean(false);
 	} else {
-		writeBoolean(os, true);
-		writeFloatArray(os, skinning->getWeights());
-		writeInt(os, skinning->getJoints()->length);
+		os->writeBoolean(true);
+		os->writeFloatArray(skinning->getWeights());
+		os->writeInt(skinning->getJoints()->length);
 		for (auto i = 0; i < skinning->getJoints()->length; i++) {
 			writeSkinningJoint(os, (*skinning->getJoints())[i]);
 		}
-		writeInt(os, skinning->getVerticesJointsWeights()->length);
+		os->writeInt(skinning->getVerticesJointsWeights()->length);
 		for (auto i = 0; i < skinning->getVerticesJointsWeights()->length; i++) {
-			writeInt(os, (*skinning->getVerticesJointsWeights())[i]->length);
+			os->writeInt((*skinning->getVerticesJointsWeights())[i]->length);
 			for (auto j = 0; j < (*skinning->getVerticesJointsWeights())[i]->length; j++) {
 				writeSkinningJointWeight(os, (*(*skinning->getVerticesJointsWeights())[i])[j]);
 			}
@@ -364,10 +314,10 @@ void TMWriter::writeSkinning(OutputStream* os, Skinning* skinning) /* throws(IOE
 	}
 }
 
-void TMWriter::writeSubGroups(OutputStream* os, _HashMap* subGroups) /* throws(IOException) */
+void TMWriter::writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) /* throws(IOException) */
 {
 	clinit();
-	writeInt(os, subGroups->size());
+	os->writeInt(subGroups->size());
 	for (auto _i = subGroups->getValuesIterator()->iterator(); _i->hasNext(); ) {
 		Group* subGroup = java_cast< Group* >(_i->next());
 		{
@@ -376,13 +326,13 @@ void TMWriter::writeSubGroups(OutputStream* os, _HashMap* subGroups) /* throws(I
 	}
 }
 
-void TMWriter::writeGroup(OutputStream* os, Group* g) /* throws(IOException) */
+void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) /* throws(IOException) */
 {
 	clinit();
-	writeString(os, g->getId());
-	writeString(os, g->getName());
-	writeBoolean(os, g->isJoint());
-	writeFloatArray(os, g->getTransformationsMatrix()->getArray());
+	os->writeString(g->getId());
+	os->writeString(g->getName());
+	os->writeBoolean(g->isJoint());
+	os->writeFloatArray(g->getTransformationsMatrix()->getArray());
 	writeVertices(os, g->getVertices());
 	writeVertices(os, g->getNormals());
 	writeTextureCoordinates(os, g->getTextureCoordinates());

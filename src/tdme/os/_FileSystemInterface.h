@@ -81,6 +81,16 @@ struct tdme::os::_FileSystemInterface
 	virtual int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
+	 * Get file content
+	 * @param path
+	 * @param file name
+	 * @param data
+	 * @param length or -1 if data length should be used
+	 * @throws IOException
+	 */
+	virtual void setContent(String* path, String* fileName, int8_tArray* data, int32_t size = -1) /* throws(IOException) */ = 0;
+
+	/**
 	 * Get file content as string array
 	 * @param path
 	 * @param file name
