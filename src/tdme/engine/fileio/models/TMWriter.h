@@ -129,10 +129,10 @@ public:
 	 * @param int
 	 */
 	inline void writeInt(int32_t i) {
-		writeByte((i >> 24) & 255);
-		writeByte((i >> 16) & 255);
-		writeByte((i >> 8) & 255);
-		writeByte((i >> 0) & 255);
+		writeByte((i >> 24) & 0xFF);
+		writeByte((i >> 16) & 0xFF);
+		writeByte((i >> 8) & 0xFF);
+		writeByte((i >> 0) & 0xFF);
 	}
 
 	/**
