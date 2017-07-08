@@ -90,10 +90,10 @@ public:
 	 */
 	inline  int32_t readInt() {
 		int32_t value =
-			((static_cast< int32_t >(readByte()) & 255) << 24) +
-			((static_cast< int32_t >(readByte()) & 255) << 16) +
-			((static_cast< int32_t >(readByte()) & 255) << 8)+
-			((static_cast< int32_t >(readByte()) & 255) << 0);
+			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
+			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
+			((static_cast< int32_t >(readByte()) & 0xFF) << 8)+
+			((static_cast< int32_t >(readByte()) & 0xFF) << 0);
 		return value;
 	}
 
@@ -103,10 +103,10 @@ public:
 	 */
 	inline float readFloat() {
 		int32_t value =
-			((static_cast< int32_t >(readByte()) & 255) << 24) +
-			((static_cast< int32_t >(readByte()) & 255) << 16) +
-			((static_cast< int32_t >(readByte()) & 255) << 8)+
-			((static_cast< int32_t >(readByte()) & 255) << 0);
+			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
+			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
+			((static_cast< int32_t >(readByte()) & 0xFF) << 8)+
+			((static_cast< int32_t >(readByte()) & 0xFF) << 0);
 		float* floatValue = (float*)&value;
 		return *floatValue;
 	}
