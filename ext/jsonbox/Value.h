@@ -34,7 +34,7 @@ class Value {
 	 * @param v Value to be output in the stream.
 	 * @return Output parameter with the valud json written into it.
 	 */
-	friend std::ostream &operator<<(std::ostream &output, const Value &v);
+	friend std::ostream& operator<<(std::ostream &output, const tdme::ext::jsonbox::Value &v);
 public:
 	/**
 	 * Represents the different types a value can be. A value can only be

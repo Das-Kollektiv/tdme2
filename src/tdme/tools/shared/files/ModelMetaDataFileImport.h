@@ -7,13 +7,16 @@
 #include <org/json/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
+#include <ext/jsonbox/Value.h>
 #include <java/lang/Object.h>
+
 
 using java::lang::Object;
 using java::lang::String;
 using org::json::JSONObject;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::ext::jsonbox::Value;
 
 
 struct default_init_tag;
@@ -44,7 +47,7 @@ public:
 	 * @param path name or null
 	 * @param JSON entity root
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, String* pathName, JSONObject* jEntityRoot) /* throws(Exception) */;
+	static LevelEditorEntity* doImportFromJSON(int32_t id, String* pathName, Value& jEntityRoot) /* throws(Exception) */;
 
 private:
 
@@ -56,7 +59,7 @@ private:
 	 * @return level editor entity bounding volume
 	 * @throws JSONException
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, JSONObject* jBv) /* throws(JSONException) */;
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, Value& jBv) /* throws(JSONException) */;
 
 	// Generated
 

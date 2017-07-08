@@ -177,7 +177,7 @@ void tdme::ext::jsonbox::Array::swap(tdme::ext::jsonbox::Array &other) {
 	data.swap(other.data);
 }
 
-std::ostream &operator<<(std::ostream &output, const tdme::ext::jsonbox::Array &a) {
+std::ostream& tdme::ext::jsonbox::operator<<(std::ostream &output, const tdme::ext::jsonbox::Array &a) {
 	if (a.empty()) {
 		output << Structural::BEGIN_ARRAY << Structural::END_ARRAY;
 

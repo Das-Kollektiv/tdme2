@@ -145,7 +145,7 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 	auto jModels = jRoot->getJSONArray(u"models"_j);
 	for (auto i = 0; i < jModels->length(); i++) {
 		auto jModel = jModels->getJSONObject(i);
-		auto levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(jModel->getInt(u"id"_j), (new File(pathName))->getCanonicalPath(), jModel->getJSONObject(u"entity"_j));
+		LevelEditorEntity* levelEditorEntity = nullptr; //ModelMetaDataFileImport::doImportFromJSON(jModel->getInt(u"id"_j), (new File(pathName))->getCanonicalPath(), jModel->getJSONObject(u"entity"_j));
 		if (levelEditorEntity == nullptr) {
 			throw new Exception(u"Invalid entity"_j);
 		}

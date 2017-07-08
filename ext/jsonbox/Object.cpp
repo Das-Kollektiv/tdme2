@@ -166,7 +166,7 @@ Object::key_compare Object::key_comp() const {
 	return data.key_comp();
 }
 
-std::ostream &operator<<(std::ostream &output, const Object &o) {
+std::ostream& tdme::ext::jsonbox::operator<<(std::ostream &output, const Object &o) {
 	// If the object is empty, we simply write "{}".
 	if (o.empty()) {
 		output << Structural::BEGIN_OBJECT << Structural::END_OBJECT;

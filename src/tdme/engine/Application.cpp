@@ -38,7 +38,7 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow(StringConverter::toString(title).c_str());
-	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+	// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	glutReshapeFunc(Application::glutReshape);
 	glutDisplayFunc(Application::glutDisplay);
 	glutIdleFunc(Application::glutDisplay);

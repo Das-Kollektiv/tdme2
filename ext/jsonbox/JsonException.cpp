@@ -8,5 +8,5 @@ using namespace tdme::ext::jsonbox;
 
 using std::wstring;
 
-JsonException::JsonException(const wstring &message) throw() : Exception(message) {
+JsonException::JsonException(const wstring &message) throw() : tdme::utils::Exception(message) {
 }

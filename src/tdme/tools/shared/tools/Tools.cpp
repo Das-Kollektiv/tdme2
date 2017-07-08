@@ -346,9 +346,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		modelBoundingVolumeObject->setEnabled(false);
 		engine->addEntity(modelBoundingVolumeObject);
 	}
-	for (auto light : *engine->getLights()) 
-				light->setEnabled(false);
-
+	for (auto light : *engine->getLights()) light->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -383,7 +381,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 String* Tools::getRelativeResourcesFileName(String* gameRoot, String* fileName)
 {
 	clinit();
-	fileName = fileName->replace(File::separatorChar == u'/' ? u'\\' : u'/', File::separatorChar);
+	fileName = fileName->replace(u'\\', u'/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
 		cutFileNameIdx = fileName->lastIndexOf(u"/resources/"_j);
@@ -403,7 +401,7 @@ String* Tools::getRelativeResourcesFileName(String* gameRoot, String* fileName)
 String* Tools::getGameRootPath(String* fileName)
 {
 	clinit();
-	fileName = fileName->replace(File::separatorChar == u'/' ? u'\\' : u'/', File::separatorChar);
+	fileName = fileName->replace(u'\\', u'/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName->lastIndexOf(u"/resources/"_j);

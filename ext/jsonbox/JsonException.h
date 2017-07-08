@@ -8,7 +8,6 @@
 
 #include <tdme/utils/Exception.h>
 
-using tdme::utils::Exception;
 using std::wstring;
 
 namespace tdme {
@@ -19,7 +18,7 @@ namespace jsonbox {
  * Base exception class for threading exceptions
  * @author Andreas Drewke
  */
-class JsonException: public Exception {
+class JsonException: public tdme::utils::Exception {
 	public:
 		/**
 		 * @brief public constructor
