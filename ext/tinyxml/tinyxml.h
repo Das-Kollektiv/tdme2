@@ -22,8 +22,7 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#ifndef TINYXML_INCLUDED
-#define TINYXML_INCLUDED
+#pragma once
 
 #include <assert.h>
 #include <ctype.h>
@@ -1716,5 +1715,3 @@ namespace tinyxml {
 };
 };
 };
-
-#endif

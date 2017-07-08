@@ -19,6 +19,7 @@ SRC = src
 STUB = stub
 NATIVE = native
 TINYXML = tinyxml
+JSONBOX = jsonbox
 LIBPNG = libpng
 
 SRCS = \
@@ -363,6 +364,7 @@ SRCS = \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/ArrayListIteratorMultiple.cpp \
+	src/tdme/utils/Exception.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \
@@ -525,6 +527,17 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinyxmlerror.cpp \
 	ext/tinyxml/tinyxmlparser.cpp \
 
+EXT_JSONBOX_SRCS = \
+	ext/jsonbox/Array.cpp \
+	ext/jsonbox/Convert.cpp \
+	ext/jsonbox/Escaper.cpp \
+	ext/jsonbox/IndentCanceller.cpp \
+	ext/jsonbox/Indenter.cpp \
+	ext/jsonbox/JsonException.cpp \
+	ext/jsonbox/Object.cpp \
+	ext/jsonbox/SolidusEscaper.cpp \
+	ext/jsonbox/Value.cpp \
+
 EXT_LIBPNG_SRCS = \
 	ext/libpng/pngrio.c \
 	ext/libpng/pngwio.c \
@@ -579,6 +592,7 @@ EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_STUB_OBJS = $(EXT_STUB_SRCS:ext/$(STUB)/%.cpp=$(OBJ)/%.o)
 EXT_NATIVE_OBJS = $(EXT_NATIVE_SRCS:ext/$(NATIVE)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
+EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
@@ -609,6 +623,9 @@ $(EXT_NATIVE_OBJS):$(OBJ)/%.o: ext/$(NATIVE)/%.cpp | print-opts
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cc-command)
 
+$(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
+	$(cc-command)
+
 $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 	$(cc-command)
 
@@ -620,7 +637,7 @@ $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_LIBPNG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

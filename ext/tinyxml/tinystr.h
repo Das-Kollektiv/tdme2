@@ -21,6 +21,7 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
 
 #ifndef TIXML_USE_STL
 
