@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include <Array.h>
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
+#include <java/lang/StringBuffer.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -14,6 +16,7 @@
 using java::lang::Object;
 using java::io::InputStream;
 using java::lang::String;
+using java::lang::StringBuffer;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
@@ -43,6 +46,107 @@ using tdme::math::Vector3Array;
 
 struct default_init_tag;
 
+namespace tdme {
+namespace engine {
+namespace fileio {
+namespace models {
+
+/**
+ * TM reader input stream
+ */
+class TMReaderInputStream {
+private:
+	int8_tArray* data;
+	int32_t position;
+public:
+	inline TMReaderInputStream(int8_tArray* data) {
+		this->data = data;
+		this->position = 0;
+	}
+
+	inline ~TMReaderInputStream() {
+		delete data;
+	}
+
+	/**
+	 * Reads a boolean from input stream
+	 * @return boolean
+	 */
+	inline bool readBoolean() {
+		return readByte() == 1;
+	}
+
+	/**
+	 * Reads a byte from input stream
+	 * @return byte
+	 */
+	inline int8_t readByte() {
+		return data->get(position++);
+	}
+
+	/**
+	 * Reads a integer from input stream
+	 * @return int
+	 */
+	inline  int32_t readInt() {
+		int32_t value =
+			((static_cast< int32_t >(readByte()) & 255) << 24) +
+			((static_cast< int32_t >(readByte()) & 255) << 16) +
+			((static_cast< int32_t >(readByte()) & 255) << 8)+
+			((static_cast< int32_t >(readByte()) & 255) << 0);
+		return value;
+	}
+
+	/**
+	 * Reads a float from input stream
+	 * @return float
+	 */
+	inline float readFloat() {
+		int32_t value =
+			((static_cast< int32_t >(readByte()) & 255) << 24) +
+			((static_cast< int32_t >(readByte()) & 255) << 16) +
+			((static_cast< int32_t >(readByte()) & 255) << 8)+
+			((static_cast< int32_t >(readByte()) & 255) << 0);
+		float* floatValue = (float*)&value;
+		return *floatValue;
+	}
+
+	/**
+	 * Reads a string from input stream
+	 * @return string
+	 */
+	inline String* readString() {
+		if (readBoolean() == false) {
+			return nullptr;
+		} else {
+			auto l = readInt();
+			auto sb = new StringBuffer();
+			for (auto i = 0; i < l; i++) {
+				sb->append(static_cast< char16_t >(readByte()));
+			}
+			return sb->toString();
+		}
+	}
+
+	/**
+	 * Reads a float array from input stream
+	 * @return float array
+	 */
+	inline floatArray* readFloatArray() {
+		auto f = new floatArray(readInt());
+		for (auto i = 0; i < f->length; i++) {
+			(*f)[i] = readFloat();
+		}
+		return f;
+	}
+
+};
+
+};
+};
+};
+};
+
 /** 
  * TDME model reader
  * @author Andreas Drewke
@@ -68,67 +172,13 @@ public:
 private:
 
 	/** 
-	 * Reads a boolean from input stream
-	 * @param input stream
-	 * @throws IOException
-	 * @throws ModelFileIOException
-	 * @return boolean
-	 */
-	static bool readBoolean(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
-	 * Reads a byte from input stream
-	 * @param output stream
-	 * @throws IOException
-	 * @throws ModelFileIOException
-	 * @return byte
-	 */
-	static int8_t readByte(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
-	 * Reads a integer from input stream
-	 * @param input stream
-	 * @throws IOException
-	 * @throws ModelFileIOException
-	 * @return int
-	 */
-	static int32_t readInt(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
-	 * Reads a float from input stream
-	 * @param input stream
-	 * @throws IOException
-	 * @throws ModelIOException
-	 * @return float
-	 */
-	static float readFloat(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
-	 * Reads a string from input stream
-	 * @param input stream
-	 * @throws IOException
-	 * @throws ModelFileIOException
-	 * @return string
-	 */
-	static String* readString(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
-	 * Reads a float array from input stream
-	 * @param input stream
-	 * @throws IOException
-	 * @throws ModelFileIOException
-	 * @return float array
-	 */
-	static floatArray* readFloatArray(InputStream* is) /* throws(IOException, ModelFileIOException) */;
-
-	/** 
 	 * Read material
 	 * @param input stream
 	 * @throws IOException
 	 * @throws ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Material* readMaterial(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read vertices from input stream
@@ -137,7 +187,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return vector3 array
 	 */
-	static Vector3Array* readVertices(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Vector3Array* readVertices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read texture coordinates from input stream
@@ -146,7 +196,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return texture coordinates array
 	 */
-	static TextureCoordinateArray* readTextureCoordinates(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static TextureCoordinateArray* readTextureCoordinates(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read indices from input stream
@@ -155,7 +205,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return indicies / int array
 	 */
-	static int32_tArray* readIndices(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static int32_tArray* readIndices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read animation from input stream into group
@@ -164,7 +214,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return Animation
 	 */
-	static Animation* readAnimation(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static Animation* readAnimation(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read faces entities from input stream
@@ -173,7 +223,7 @@ private:
 	 * @throws IOException
 	 * @throws ModelIOException
 	 */
-	static void readFacesEntities(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static void readFacesEntities(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read skinning joint
@@ -182,7 +232,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return joint
 	 */
-	static Joint* readSkinningJoint(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Joint* readSkinningJoint(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read skinning joint weight
@@ -191,7 +241,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return joint weight
 	 */
-	static JointWeight* readSkinningJointWeight(InputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static JointWeight* readSkinningJointWeight(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read skinning from input stream
@@ -199,7 +249,7 @@ private:
 	 * @param group
 	 * @throws IOException
 	 */
-	static void readSkinning(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static void readSkinning(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Read sub groups
@@ -210,7 +260,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return group
 	 */
-	static void readSubGroups(InputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */;
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */;
 
 	/** 
 	 * Write group to output stream
@@ -221,7 +271,7 @@ private:
 	 * @throws ModelFileIOException
 	 * @return group
 	 */
-	static Group* readGroup(InputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */;
+	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */;
 
 	// Generated
 

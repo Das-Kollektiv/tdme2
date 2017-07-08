@@ -47,7 +47,6 @@ constexpr int64_t java::lang::StringBuffer::serialVersionUID;
 void StringBuffer::ctor()
 { /* stub */
 	/* super::ctor(); */
-	unimplemented_(u"void StringBuffer::ctor()");
 }
 
 void StringBuffer::ctor(int32_t arg0)
@@ -106,7 +105,7 @@ StringBuffer* StringBuffer::append(bool arg0)
 
 StringBuffer* StringBuffer::append(char16_t arg0)
 { /* stub */
-	cppwstring+= to_wstring(arg0);
+	cppwstring+= arg0;
 	return this;
 }
 

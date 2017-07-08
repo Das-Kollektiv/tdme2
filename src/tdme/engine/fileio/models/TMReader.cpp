@@ -39,6 +39,7 @@
 #include <ObjectArray.h>
 
 using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::TMReaderInputStream;
 using java::io::File;
 using java::io::IOException;
 using java::io::InputStream;
@@ -147,24 +148,24 @@ TMReader::TMReader()
 Model* TMReader::read(String* pathName, String* fileName) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	InputStream* is = nullptr;
+	TMReaderInputStream* is = nullptr;
 	{
 		auto finally0 = finally([&] {
 			if (is != nullptr) {
-				is->close();
+				delete is;
 			}
 		});
 		try {
-			is = _FileSystem::getInstance()->getInputStream(pathName, fileName);
-			auto fileId = readString(is);
+			is = new TMReaderInputStream(_FileSystem::getInstance()->getContent(pathName, fileName));
+			auto fileId = is->readString();
 			if (fileId == nullptr || fileId->equals(u"TDME Model"_j) == false) {
 				throw new ModelFileIOException(::java::lang::StringBuilder().append(u"File is not a TDME model file, file id = '"_j)->append(fileId)
 					->append(u"'"_j)->toString());
 			}
 			auto version = new int8_tArray(3);
-			(*version)[0] = readByte(is);
-			(*version)[1] = readByte(is);
-			(*version)[2] = readByte(is);
+			(*version)[0] = is->readByte();
+			(*version)[1] = is->readByte();
+			(*version)[2] = is->readByte();
 			if ((*version)[0] != 1 || (*version)[1] != 0 || (*version)[2] != 0) {
 				throw new ModelFileIOException(::java::lang::StringBuilder().append(u"Version mismatch, should be 1.0.0, but is "_j)->append((*version)[0])
 					->append(u"."_j)
@@ -172,15 +173,24 @@ Model* TMReader::read(String* pathName, String* fileName) /* throws(IOException,
 					->append(u"."_j)
 					->append((*version)[2])->toString());
 			}
-			auto name = readString(is);
-			auto upVector = Model_UpVector::valueOf(readString(is));
-			auto rotationOrder = RotationOrder::valueOf(readString(is));
-			auto boundingBox = new BoundingBox(new Vector3(readFloatArray(is)), new Vector3(readFloatArray(is)));
-			auto model = new Model(::java::lang::StringBuilder().append(pathName)->append(File::separator)
-				->append(fileName)->toString(), fileName, upVector, rotationOrder, boundingBox);
-			model->setFPS(readFloat(is));
-			model->getImportTransformationsMatrix()->set(readFloatArray(is));
-			auto materialCount = readInt(is);
+			auto name = is->readString();
+			auto upVector = Model_UpVector::valueOf(is->readString());
+			auto rotationOrder = RotationOrder::valueOf(is->readString());
+			auto boundingBox = new BoundingBox(new Vector3(is->readFloatArray()), new Vector3(is->readFloatArray()));
+			auto model = new Model(
+				::java::lang::StringBuilder().
+				 append(pathName)->
+				 append(L'/')->
+				 append(fileName)->
+				 toString(),
+				fileName,
+				upVector,
+				rotationOrder,
+				boundingBox
+			);
+			model->setFPS(is->readFloat());
+			model->getImportTransformationsMatrix()->set(is->readFloatArray());
+			auto materialCount = is->readInt();
 			for (auto i = 0; i < materialCount; i++) {
 				auto material = readMaterial(is);
 				model->getMaterials()->put(material->getId(), material);
@@ -195,161 +205,106 @@ Model* TMReader::read(String* pathName, String* fileName) /* throws(IOException,
 	}
 }
 
-bool TMReader::readBoolean(InputStream* is) /* throws(IOException, ModelFileIOException) */
+Material* TMReader::readMaterial(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	return readByte(is) == 1;
-}
-
-int8_t TMReader::readByte(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	auto i = is->read();
-	if (i == -1) {
-		throw new ModelFileIOException(u"End of stream"_j);
-	}
-	return static_cast< int8_t >(i);
-}
-
-int32_t TMReader::readInt(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	auto i = ((static_cast< int32_t >(readByte(is)) & 255) << 24) + ((static_cast< int32_t >(readByte(is)) & 255) << 16) + ((static_cast< int32_t >(readByte(is)) & 255) << 8)+ ((static_cast< int32_t >(readByte(is)) & 255) << 0);
-	return i;
-}
-
-float TMReader::readFloat(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	auto i = readInt(is);
-	return Float::intBitsToFloat(i);
-}
-
-String* TMReader::readString(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	if (readBoolean(is) == false) {
-		return nullptr;
-	} else {
-		auto l = readInt(is);
-		auto sb = new StringBuffer();
-		for (auto i = 0; i < l; i++) {
-			sb->append(static_cast< char16_t >(readByte(is)));
-		}
-		return sb->toString();
-	}
-}
-
-floatArray* TMReader::readFloatArray(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	auto f = new floatArray(readInt(is));
-	for (auto i = 0; i < f->length; i++) {
-		(*f)[i] = readFloat(is);
-	}
-	return f;
-}
-
-Material* TMReader::readMaterial(InputStream* is) /* throws(IOException, ModelFileIOException) */
-{
-	clinit();
-	auto id = readString(is);
+	auto id = is->readString();
 	auto m = new Material(id);
-	m->getAmbientColor()->set(readFloatArray(is));
-	m->getDiffuseColor()->set(readFloatArray(is));
-	m->getSpecularColor()->set(readFloatArray(is));
-	m->getEmissionColor()->set(readFloatArray(is));
-	m->setShininess(readFloat(is));
-	auto diffuseTexturePathName = readString(is);
-	auto diffuseTextureFileName = readString(is);
+	m->getAmbientColor()->set(is->readFloatArray());
+	m->getDiffuseColor()->set(is->readFloatArray());
+	m->getSpecularColor()->set(is->readFloatArray());
+	m->getEmissionColor()->set(is->readFloatArray());
+	m->setShininess(is->readFloat());
+	auto diffuseTexturePathName = is->readString();
+	auto diffuseTextureFileName = is->readString();
 	if (diffuseTextureFileName != nullptr && diffuseTexturePathName != nullptr) {
 		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName);
 	}
-	auto specularTexturePathName = readString(is);
-	auto specularTextureFileName = readString(is);
+	auto specularTexturePathName = is->readString();
+	auto specularTextureFileName = is->readString();
 	if (specularTextureFileName != nullptr && specularTexturePathName != nullptr) {
 		m->setSpecularTexture(specularTexturePathName, specularTextureFileName);
 	}
-	auto normalTexturePathName = readString(is);
-	auto normalTextureFileName = readString(is);
+	auto normalTexturePathName = is->readString();
+	auto normalTextureFileName = is->readString();
 	if (normalTextureFileName != nullptr && normalTexturePathName != nullptr) {
 		m->setNormalTexture(normalTexturePathName, normalTextureFileName);
 	}
-	auto displacementTexturePathName = readString(is);
-	auto displacementTextureFileName = readString(is);
+	auto displacementTexturePathName = is->readString();
+	auto displacementTextureFileName = is->readString();
 	if (displacementTextureFileName != nullptr && displacementTexturePathName != nullptr) {
 		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
 	}
 	return m;
 }
 
-Vector3Array* TMReader::readVertices(InputStream* is) /* throws(IOException, ModelFileIOException) */
+Vector3Array* TMReader::readVertices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	if (readBoolean(is) == false) {
+	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
-		auto v = new Vector3Array(readInt(is));
+		auto v = new Vector3Array(is->readInt());
 		for (auto i = 0; i < v->length; i++) {
-			v->set(i, new Vector3(readFloatArray(is)));
+			v->set(i, new Vector3(is->readFloatArray()));
 		}
 		return v;
 	}
 }
 
-TextureCoordinateArray* TMReader::readTextureCoordinates(InputStream* is) /* throws(IOException, ModelFileIOException) */
+TextureCoordinateArray* TMReader::readTextureCoordinates(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	if (readBoolean(is) == false) {
+	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
-		auto tc = new TextureCoordinateArray(readInt(is));
+		auto tc = new TextureCoordinateArray(is->readInt());
 		for (auto i = 0; i < tc->length; i++) {
-			tc->set(i, new TextureCoordinate(readFloatArray(is)));
+			tc->set(i, new TextureCoordinate(is->readFloatArray()));
 		}
 		return tc;
 	}
 }
 
-int32_tArray* TMReader::readIndices(InputStream* is) /* throws(IOException, ModelFileIOException) */
+int32_tArray* TMReader::readIndices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	if (readBoolean(is) == false) {
+	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
-		auto indices = new int32_tArray(readInt(is));
+		auto indices = new int32_tArray(is->readInt());
 		for (auto i = 0; i < indices->length; i++) {
-			(*indices)[i] = readInt(is);
+			(*indices)[i] = is->readInt();
 		}
 		return indices;
 	}
 }
 
-Animation* TMReader::readAnimation(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	if (readBoolean(is) == false) {
+	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
-		g->createAnimation(readInt(is));
+		g->createAnimation(is->readInt());
 		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->length; i++) {
-			(*g->getAnimation()->getTransformationsMatrices())[i]->set(readFloatArray(is));
+			(*g->getAnimation()->getTransformationsMatrices())[i]->set(is->readFloatArray());
 		}
 		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->length);
 		return g->getAnimation();
 	}
 }
 
-void TMReader::readFacesEntities(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	auto facesEntities = new FacesEntityArray(readInt(is));
+	auto facesEntities = new FacesEntityArray(is->readInt());
 	for (auto i = 0; i < facesEntities->length; i++) {
-		facesEntities->set(i, new FacesEntity(g, readString(is)));
-		if (readBoolean(is) == true) {
-			(*facesEntities)[i]->setMaterial(java_cast< Material* >(g->getModel()->getMaterials()->get(readString(is))));
+		facesEntities->set(i, new FacesEntity(g, is->readString()));
+		if (is->readBoolean() == true) {
+			(*facesEntities)[i]->setMaterial(java_cast< Material* >(g->getModel()->getMaterials()->get(is->readString())));
 		}
-		auto faces = new FaceArray(readInt(is));
+		auto faces = new FaceArray(is->readInt());
 		for (auto j = 0; j < faces->length; j++) {
 			auto vertexIndices = readIndices(is);
 			auto normalIndices = readIndices(is);
@@ -370,34 +325,34 @@ void TMReader::readFacesEntities(InputStream* is, Group* g) /* throws(IOExceptio
 	g->setFacesEntities(facesEntities);
 }
 
-Joint* TMReader::readSkinningJoint(InputStream* is) /* throws(IOException, ModelFileIOException) */
+Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	auto joint = new Joint(readString(is));
-	joint->getBindMatrix()->set(readFloatArray(is));
+	auto joint = new Joint(is->readString());
+	joint->getBindMatrix()->set(is->readFloatArray());
 	return joint;
 }
 
-JointWeight* TMReader::readSkinningJointWeight(InputStream* is) /* throws(IOException, ModelFileIOException) */
+JointWeight* TMReader::readSkinningJointWeight(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	return new JointWeight(readInt(is), readInt(is));
+	return new JointWeight(is->readInt(), is->readInt());
 }
 
-void TMReader::readSkinning(InputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+void TMReader::readSkinning(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	if (readBoolean(is) == true) {
+	if (is->readBoolean() == true) {
 		auto skinning = g->createSkinning();
-		skinning->setWeights(readFloatArray(is));
-		auto joints = new JointArray(readInt(is));
+		skinning->setWeights(is->readFloatArray());
+		auto joints = new JointArray(is->readInt());
 		for (auto i = 0; i < joints->length; i++) {
 			joints->set(i, readSkinningJoint(is));
 		}
 		skinning->setJoints(joints);
-		auto verticesJointsWeight = new JointWeightArrayArray(readInt(is));
+		auto verticesJointsWeight = new JointWeightArrayArray(is->readInt());
 		for (auto i = 0; i < verticesJointsWeight->length; i++) {
-			verticesJointsWeight->set(i, new JointWeightArray(readInt(is)));
+			verticesJointsWeight->set(i, new JointWeightArray(is->readInt()));
 			for (auto j = 0; j < (*verticesJointsWeight)[i]->length; j++) {
 				(*verticesJointsWeight)[i]->set(j, readSkinningJointWeight(is));
 			}
@@ -406,10 +361,10 @@ void TMReader::readSkinning(InputStream* is, Group* g) /* throws(IOException, Mo
 	}
 }
 
-void TMReader::readSubGroups(InputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	auto subGroupCount = readInt(is);
+	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
 		subGroups->put(subGroup->getId(), subGroup);
@@ -417,12 +372,12 @@ void TMReader::readSubGroups(InputStream* is, Model* model, Group* parentGroup, 
 	}
 }
 
-Group* TMReader::readGroup(InputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */
+Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	auto group = new Group(model, parentGroup, readString(is), readString(is));
-	group->setJoint(readBoolean(is));
-	group->getTransformationsMatrix()->set(readFloatArray(is));
+	auto group = new Group(model, parentGroup, is->readString(), is->readString());
+	group->setJoint(is->readBoolean());
+	group->getTransformationsMatrix()->set(is->readFloatArray());
 	group->setVertices(readVertices(is));
 	group->setNormals(readVertices(is));
 	group->setTextureCoordinates(readTextureCoordinates(is));
