@@ -28,9 +28,11 @@ public:
 
 	/** 
 	 * Exports a level to a TDME level file
+	 * @param path name
 	 * @param file name
+	 * @param level
 	 */
-	static void export_(String* fileName, LevelEditorLevel* level) /* throws(Exception) */;
+	static void export_(String* pathName, String* fileName, LevelEditorLevel* level) /* throws(Exception) */;
 
 	// Generated
 	LevelFileExport();

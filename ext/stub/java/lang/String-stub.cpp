@@ -565,8 +565,7 @@ String* String::valueOf(char16_t arg0) { /* stub */
 
 String* String::valueOf(int32_t arg0) { /* stub */
 	clinit();
-	unimplemented_(u"String* String::valueOf(int32_t arg0)");
-	return 0;
+	return new String(to_wstring(arg0));
 }
 
 String* String::valueOf(int64_t arg0) { /* stub */

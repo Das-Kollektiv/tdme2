@@ -1406,8 +1406,7 @@ void LevelEditorView::loadMap(String* path, String* file)
 void LevelEditorView::saveMap(String* pathName, String* fileName)
 {
 	try {
-		auto levelFile = new File(pathName, fileName);
-		LevelFileExport::export_(levelFile->getAbsolutePath(), level);
+		LevelFileExport::export_(pathName, fileName, level);
 	} catch (Exception* exception) {
 		exception->printStackTrace();
 		levelEditorScreenController->showErrorPopUp(u"Warning: Could not save level file"_j, exception->getMessage());

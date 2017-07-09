@@ -29,8 +29,8 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/StringConverter.h>
 
-#include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
+#include <ext/jsonbox/Object.h>
 
 using tdme::tools::shared::files::LevelFileExport;
 using java::io::File;
@@ -60,9 +60,6 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::StringConverter;
-
-using tdme::ext::jsonbox::Value;
-using tdme::ext::jsonbox::Array;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -101,24 +98,24 @@ LevelFileExport::LevelFileExport()
 	ctor();
 }
 
-void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* throws(Exception) */
+void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLevel* level) /* throws(Exception) */
 {
 	clinit();
 	FileOutputStream* fos = nullptr;
 	PrintStream* fops = nullptr;
-	level->setFileName((new File(fileName))->getName());
+	level->setFileName(new String(pathName->getCPPWString() + L'/' + fileName->getCPPWString()));
 	{
 		auto finally0 = finally([&] {
 		});
 		try {
 			auto entityLibrary = level->getEntityLibrary();
-			auto jRoot = Value();
-			jRoot["version"].setString("0.99");
+			tdme::ext::jsonbox::Object jRoot;
+			jRoot["version"] = "0.99";
 			jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->toString()->getCPPWString());
-			ext::jsonbox::Array jLights;
+			tdme::ext::jsonbox::Array jLights;
 			for (auto i = 0; i < level->getLightCount(); i++) {
 				auto light = level->getLightAt(i);
-				Value jLight;
+				ext::jsonbox::Object jLight;
 				jLight["id"] = i;
 				jLight["ar"] = static_cast< double >(light->getAmbient()->getRed());
 				jLight["ag"] = static_cast< double >(light->getAmbient()->getGreen());
@@ -154,7 +151,7 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 			ext::jsonbox::Array jEntityLibrary;
 			for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 				auto entity = entityLibrary->getEntityAt(i);
-				Value jModel;
+				tdme::ext::jsonbox::Object jModel;
 				jModel["id"] = StringConverter::toString(String::valueOf(entity->getId())->getCPPWString());
 				jModel["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
 				jModel["name"] = StringConverter::toString(entity->getName()->getCPPWString());
@@ -166,7 +163,7 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 			for (auto _i = level->getProperties()->iterator(); _i->hasNext(); ) {
 				PropertyModelClass* mapProperty = java_cast< PropertyModelClass* >(_i->next());
 				{
-					Value jMapProperty;
+					tdme::ext::jsonbox::Object jMapProperty;
 					jMapProperty["name"] = StringConverter::toString(mapProperty->getName()->getCPPWString());
 					jMapProperty["value"] = StringConverter::toString(mapProperty->getValue()->getCPPWString());
 					jMapProperties.push_back(jMapProperty);
@@ -174,10 +171,10 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 			}
 			jRoot["properties"] = jMapProperties;
 			jRoot["models"] = jEntityLibrary;
-			ext::jsonbox::Array jObjects;
+			tdme::ext::jsonbox::Array jObjects;
 			for (auto i = 0; i < level->getObjectCount(); i++) {
 				auto levelEditorObject = level->getObjectAt(i);
-				Value jObject;
+				tdme::ext::jsonbox::Object jObject;
 				auto transformations = levelEditorObject->getTransformations();
 				auto translation = transformations->getTranslation();
 				auto scale = transformations->getScale();
@@ -196,11 +193,11 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 				jObject["rx"] = static_cast< double >(rotationAroundXAxis->getAngle());
 				jObject["ry"] = static_cast< double >(rotationAroundYAxis->getAngle());
 				jObject["rz"] = static_cast< double >(rotationAroundZAxis->getAngle());
-				ext::jsonbox::Array jObjectProperties;
+				tdme::ext::jsonbox::Array jObjectProperties;
 				for (auto _i = levelEditorObject->getProperties()->iterator(); _i->hasNext(); ) {
 					PropertyModelClass* objectProperty = java_cast< PropertyModelClass* >(_i->next());
 					{
-						Value jObjectProperty;
+						tdme::ext::jsonbox::Object jObjectProperty;
 						jObjectProperty["name"] = StringConverter::toString(objectProperty->getName()->getCPPWString());
 						jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue()->getCPPWString());
 						jObjectProperties.push_back(jObjectProperty);
@@ -211,7 +208,8 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 			}
 			jRoot["objects"] = jObjects;
 			jRoot["objects_eidx"] = level->getObjectIdx();
-			// TODO: Save to file
+
+			std::cout << jRoot;
 		} catch (Exception* e) {
 			e->printStackTrace();
 		} catch (IOException* ioe) {

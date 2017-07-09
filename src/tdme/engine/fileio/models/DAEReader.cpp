@@ -494,9 +494,8 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 		}
 	}
 	LevelFileExport::export_(
+		pathName,
 		::java::lang::StringBuilder().
-		 	 append(pathName)->
-			 append(u"/"_j)->
 			 append(fileName)->
 			 append(u".tl"_j)->
 			 toString(),
