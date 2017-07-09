@@ -43,6 +43,7 @@ TextureLoader::TextureLoader()
 Texture* TextureLoader::loadTexture(String* path, String* fileName)
 {
 	clinit();
+	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
 	if (fileName->toLowerCase()->endsWith(new String(L".png")) == true) {
 		return TextureLoader::loadPNG(path, fileName);
 	}
@@ -56,9 +57,7 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) {
 	// canonical file name for id
 	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
 	if (canonicalFileName == nullptr) {
-		_Console::println(string("No canonical file name"));
-		_Console::println(path);
-		_Console::println(fileName);
+		_Console::println(string("TextureLoader::loadPNG(): No canonical file name"));
 	}
 
 	// open file
@@ -111,8 +110,9 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) {
 	int width = png_get_image_width(png, info);
 	int height = png_get_image_height(png, info);
 
-	// set least one byte per channel
+	// set one byte per channel
 	if (png_get_bit_depth(png, info) < 8) png_set_packing(png);
+	if (png_get_bit_depth(png, info) == 16) png_set_strip_16(png);
 
 	// determine bytes per pixel
 	int bytesPerPixel = -1;
