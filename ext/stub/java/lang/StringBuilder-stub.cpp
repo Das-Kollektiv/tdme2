@@ -68,13 +68,21 @@ void StringBuilder::ctor(CharSequence* arg0)
 
 StringBuilder* StringBuilder::append(Object* arg0)
 { /* stub */
-	cppwstring+= arg0->toString()->getCPPWString();
+	if (arg0 == nullptr) {
+		cppwstring+= L"null";
+	} else {
+		cppwstring+= arg0->toString()->getCPPWString();
+	}
 	return this;
 }
 
 StringBuilder* StringBuilder::append(String* arg0)
 { /* stub */
-	cppwstring+= arg0->getCPPWString();
+	if (arg0 == nullptr) {
+		cppwstring+= L"null";
+	} else {
+		cppwstring+= arg0->getCPPWString();
+	}
 	return this;
 }
 

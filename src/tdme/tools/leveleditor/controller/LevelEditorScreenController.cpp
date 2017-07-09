@@ -737,10 +737,16 @@ void LevelEditorScreenController::onObjectCenter()
 
 void LevelEditorScreenController::onMapLoad()
 {
-	view->getPopUps()->getFileDialogScreenController()->show(mapPath->getPath(), u"Load from: "_j, new StringArray({
-		u"tl"_j,
-		u"dae"_j
-	}), view->getFileName(), new LevelEditorScreenController_onMapLoad_1(this));
+	view->getPopUps()->getFileDialogScreenController()->show(
+		mapPath->getPath(),
+		u"Load from: "_j,
+		new StringArray({
+			u"tl"_j,
+			u"dae"_j
+		}),
+		view->getFileName(),
+		new LevelEditorScreenController_onMapLoad_1(this)
+	);
 }
 
 void LevelEditorScreenController::onMapSave()

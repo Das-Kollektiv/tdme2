@@ -161,12 +161,26 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		} else {
 			throw new Exception(::java::lang::StringBuilder().append(u"Unsupported mode file: "_j)->append(modelFile)->toString());
 		}
+		if (model == nullptr) {
+			_Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath->getCPPWString() + L"/" + modelFile->getCPPWString() + L"'");
+			return nullptr;
+		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
 		model = DAEReader::read(u"resources/tools/leveleditor/models"_j, u"arrow.dae"_j);
 	}
 
-	levelEditorEntity = new LevelEditorEntity(id, modelType, name, description, nullptr, modelFile != nullptr ? (new File(gameRoot, modelRelativeFileName))->getCanonicalPath() : static_cast< String* >(nullptr), modelThumbnail, model, pivot);
+	levelEditorEntity = new LevelEditorEntity(
+		id,
+		modelType,
+		name,
+		description,
+		nullptr,
+		modelFile != nullptr ? _FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : nullptr,
+		modelThumbnail,
+		model,
+		pivot
+	);
 	auto jProperties = jEntityRoot["properties"].getArray();
 	for (auto i = 0; i < jProperties.size(); i++) {
 		auto& jProperty = jProperties[i];

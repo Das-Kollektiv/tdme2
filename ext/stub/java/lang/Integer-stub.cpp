@@ -96,8 +96,11 @@ double Integer::doubleValue()
 
 bool Integer::equals(Object* arg0)
 { /* stub */
-	unimplemented_(u"bool Integer::equals(Object* arg0)");
-	return 0;
+	if (arg0 == nullptr) return false;
+	if (arg0 == this) return true;
+	Integer* arg0Integer = dynamic_cast<Integer*>(arg0);
+	if (arg0Integer == nullptr) return false;
+	return (arg0Integer->value == value);
 }
 
 float Integer::floatValue()

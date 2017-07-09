@@ -13,7 +13,6 @@
 
 using java::lang::Object;
 using java::lang::String;
-using org::json::JSONObject;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::ext::jsonbox::Value;

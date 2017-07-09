@@ -294,7 +294,7 @@ PopUps* LevelEditorView::getPopUps()
 
 String* LevelEditorView::getFileName()
 {
-	return (new File(level->getFileName()))->getName();
+	return _FileSystem::getInstance()->getFileName(level->getFileName());
 }
 
 LevelEditorLevel* LevelEditorView::getLevel()

@@ -697,109 +697,150 @@ void Arrays::sort(ObjectArray* a, int32_t fromIndex, int32_t toIndex, Comparator
 String* Arrays::toString(int64_tArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(int32_tArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(int16_tArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(char16_tArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(int8_tArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(boolArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(floatArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(doubleArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= to_wstring(a->get(i));
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			result+= to_wstring(a->get(i));
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 String* Arrays::toString(ObjectArray* a)
 { /* stub */
 	clinit();
-	wstring result = L"[";
-	for (int i = 0; i < a->length; i++) {
-		if (i != 0) result+=  L",";
-		result+= a->get(i)->toString()->getCPPWString();
+	if (a == nullptr) {
+		return new String(L"null");
+	} else {
+		wstring result = L"[";
+		for (int i = 0; i < a->length; i++) {
+			if (i != 0) result+=  L",";
+			Object* o = a->get(i);
+			if (o == nullptr) {
+				result+= L"null";
+			} else {
+				result+= o->toString()->getCPPWString();
+			}
+		}
+		result+= L"[";
+		return new String(result);
 	}
-	result+= L"[";
-	return new String(result);
 }
 
 /* private: void Arrays::vecswap(int64_tArray* arg0, int32_t arg1, int32_t arg2, int32_t arg3) */

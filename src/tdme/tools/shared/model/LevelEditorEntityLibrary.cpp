@@ -20,6 +20,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/utils/_Console.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -43,6 +44,7 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::utils::_Console;
 using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
@@ -91,18 +93,18 @@ int32_t LevelEditorEntityLibrary::allocateEntityId()
 
 LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */
 {
-	auto modelFile = new File(::java::lang::StringBuilder().append(pathName)->append(File::separator)
-		->append(fileName)->toString());
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	if (modelFile->getName()->toLowerCase()->endsWith(u".dae"_j)) {
-		auto model = DAEReader::read(modelFile->getParentFile()->getCanonicalPath(), modelFile->getName());
+	if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
+		auto model = DAEReader::read(pathName, fileName);
 		levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::MODEL, name, description, nullptr, ::java::lang::StringBuilder().append(pathName)->append(File::separator)
 			->append(fileName)->toString(), ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3(0.0f, 0.0f, 0.0f));
-	} else if (modelFile->getName()->toLowerCase()->endsWith(u".tm"_j)) {
-		auto model = TMReader::read(modelFile->getParentFile()->getCanonicalPath(), modelFile->getName());
+	} else
+	if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
+		auto model = TMReader::read(pathName, fileName);
 		levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::MODEL, name, description, nullptr, ::java::lang::StringBuilder().append(pathName)->append(File::separator)
 			->append(fileName)->toString(), ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3(0.0f, 0.0f, 0.0f));
-	} else if (modelFile->getName()->toLowerCase()->endsWith(u".tmm"_j)) {
+	} else
+	if (fileName->toLowerCase()->endsWith(u".tmm"_j)) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
 		throw new Exception(::java::lang::StringBuilder().append(pathName)->append(u"/"_j)

@@ -8,9 +8,6 @@
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <org/json/JSONArray.h>
-#include <org/json/JSONObject.h>
-#include <org/json/JSONTokener.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -27,7 +24,12 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Console.h>
 #include <Array.h>
+
+#include <ext/jsonbox/Value.h>
+#include <ext/jsonbox/Array.h>
 
 using tdme::tools::shared::files::LevelFileImport;
 using java::io::File;
@@ -37,9 +39,6 @@ using java::lang::Exception;
 using java::lang::Float;
 using java::lang::String;
 using java::lang::StringBuilder;
-using org::json::JSONArray;
-using org::json::JSONObject;
-using org::json::JSONTokener;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -56,6 +55,11 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::tools::Tools;
+using tdme::utils::StringConverter;
+using tdme::utils::_Console;
+
+using tdme::ext::jsonbox::Value;
+using tdme::ext::jsonbox::Array;
 
 namespace
 {
@@ -94,96 +98,150 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) /* throws(Exception) */
 {
 	clinit();
-	pathName = pathName->replace(File::separatorChar == u'/' ? u'\\' : u'/', File::separatorChar);
-	fileName = fileName->replace(File::separatorChar == u'/' ? u'\\' : u'/', File::separatorChar);
-	JSONObject* jRoot = nullptr;
-	InputStream* is = nullptr;
-	{
-		auto finally0 = finally([&] {
-			if (is != nullptr)
-				try {
-					is->close();
-				} catch (IOException* ioei) {
-				}
 
-		});
-		try {
-			jRoot = new JSONObject(new JSONTokener(new String(_FileSystem::getInstance()->getContent(pathName, fileName))));
-		} catch (IOException* ioe) {
-			throw ioe;
-		}
-	}
+	auto jsonContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+
+	Value jRoot;
+	jRoot.loadFromString(
+		StringConverter::toString(jsonContent->getCPPWString())
+	);
+
 	level->setGameRoot(Tools::getGameRootPath(pathName));
-	auto version = Float::parseFloat(jRoot->getString(u"version"_j));
-	level->setRotationOrder(jRoot->has(u"ro"_j) == true ? RotationOrder::valueOf(jRoot->getString(u"ro"_j)) : RotationOrder::XYZ);
+	auto version = Float::parseFloat(new String(StringConverter::toWideString(jRoot["version"].getString())));
+	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(new String(StringConverter::toWideString(jRoot["ro"].getString()))) : RotationOrder::XYZ);
 	level->clearProperties();
-	auto jMapProperties = jRoot->getJSONArray(u"properties"_j);
-	for (auto i = 0; i < jMapProperties->length(); i++) {
-		auto jMapProperty = jMapProperties->getJSONObject(i);
-		level->addProperty(jMapProperty->getString(u"name"_j), jMapProperty->getString(u"value"_j));
+	auto jMapProperties = jRoot["properties"].getArray();
+	for (auto i = 0; i < jMapProperties.size(); i++) {
+		auto& jMapProperty = jMapProperties[i];
+		level->addProperty(
+			new String(StringConverter::toWideString(jMapProperty["name"].getString())),
+			new String(StringConverter::toWideString(jMapProperty["value"].getString()))
+		);
 	}
-	if (jRoot->has(u"lights"_j) == true) {
-		auto jLights = jRoot->getJSONArray(u"lights"_j);
-		for (auto i = 0; i < jLights->length(); i++) {
-			auto jLight = jLights->getJSONObject(i);
-			auto light = level->getLightAt(jLight->has(u"id"_j) ? jLight->getInt(u"id"_j) : i);
-			light->getAmbient()->set(static_cast< float >(jLight->getDouble(u"ar"_j)), static_cast< float >(jLight->getDouble(u"ag"_j)), static_cast< float >(jLight->getDouble(u"ab"_j)), static_cast< float >(jLight->getDouble(u"aa"_j)));
-			light->getDiffuse()->set(static_cast< float >(jLight->getDouble(u"dr"_j)), static_cast< float >(jLight->getDouble(u"dg"_j)), static_cast< float >(jLight->getDouble(u"db"_j)), static_cast< float >(jLight->getDouble(u"da"_j)));
-			light->getSpecular()->set(static_cast< float >(jLight->getDouble(u"sr"_j)), static_cast< float >(jLight->getDouble(u"sg"_j)), static_cast< float >(jLight->getDouble(u"sb"_j)), static_cast< float >(jLight->getDouble(u"sa"_j)));
-			light->getPosition()->set(static_cast< float >(jLight->getDouble(u"px"_j)), static_cast< float >(jLight->getDouble(u"py"_j)), static_cast< float >(jLight->getDouble(u"pz"_j)), static_cast< float >(jLight->getDouble(u"pw"_j)));
-			light->setConstantAttenuation(static_cast< float >(jLight->getDouble(u"ca"_j)));
-			light->setLinearAttenuation(static_cast< float >(jLight->getDouble(u"la"_j)));
-			light->setQuadraticAttenuation(static_cast< float >(jLight->getDouble(u"qa"_j)));
-			light->getSpotTo()->set(static_cast< float >(jLight->getDouble(u"stx"_j)), static_cast< float >(jLight->getDouble(u"sty"_j)), static_cast< float >(jLight->getDouble(u"stz"_j)));
-			light->getSpotDirection()->set(static_cast< float >(jLight->getDouble(u"sdx"_j)), static_cast< float >(jLight->getDouble(u"sdy"_j)), static_cast< float >(jLight->getDouble(u"sdz"_j)));
-			light->setSpotExponent(static_cast< float >(jLight->getDouble(u"se"_j)));
-			light->setSpotCutOff(static_cast< float >(jLight->getDouble(u"sco"_j)));
-			light->setEnabled(jLight->getBoolean(u"e"_j));
+	if (jRoot["lights"].isNull() == false) {
+		auto& jLights = jRoot["lights"].getArray();
+		for (auto i = 0; i < jLights.size(); i++) {
+			auto jLight = jLights[i];
+			auto light = level->getLightAt(jLight["id"].isNull() == false? jLight["id"].getInt() : i);
+			light->getAmbient()->set(
+				static_cast< float >(jLight["ar"].getDouble()),
+				static_cast< float >(jLight["ag"].getDouble()),
+				static_cast< float >(jLight["ab"].getDouble()),
+				static_cast< float >(jLight["aa"].getDouble())
+			);
+			light->getDiffuse()->set(
+				static_cast< float >(jLight["dr"].getDouble()),
+				static_cast< float >(jLight["dg"].getDouble()),
+				static_cast< float >(jLight["db"].getDouble()),
+				static_cast< float >(jLight["da"].getDouble())
+			);
+			light->getSpecular()->set(
+				static_cast< float >(jLight["sr"].getDouble()),
+				static_cast< float >(jLight["sg"].getDouble()),
+				static_cast< float >(jLight["sb"].getDouble()),
+				static_cast< float >(jLight["sa"].getDouble())
+			);
+			light->getPosition()->set(
+				static_cast< float >(jLight["px"].getDouble()),
+				static_cast< float >(jLight["py"].getDouble()),
+				static_cast< float >(jLight["pz"].getDouble()),
+				static_cast< float >(jLight["pw"].getDouble())
+			);
+			light->setConstantAttenuation(static_cast< float >(jLight["ca"].getDouble()));
+			light->setLinearAttenuation(static_cast< float >(jLight["la"].getDouble()));
+			light->setQuadraticAttenuation(static_cast< float >(jLight["qa"].getDouble()));
+			light->getSpotTo()->set(
+				static_cast< float >(jLight["stx"].getDouble()),
+				static_cast< float >(jLight["sty"].getDouble()),
+				static_cast< float >(jLight["stz"].getDouble())
+			);
+			light->getSpotDirection()->set(
+				static_cast< float >(jLight["sdx"].getDouble()),
+				static_cast< float >(jLight["sdy"].getDouble()),
+				static_cast< float >(jLight["sdz"].getDouble())
+			);
+			light->setSpotExponent(static_cast< float >(jLight["se"].getDouble()));
+			light->setSpotCutOff(static_cast< float >(jLight["sco"].getDouble()));
+			light->setEnabled(jLight["e"].getBoolean());
 		}
 	}
 	level->getEntityLibrary()->clear();
-	auto jModels = jRoot->getJSONArray(u"models"_j);
-	for (auto i = 0; i < jModels->length(); i++) {
-		auto jModel = jModels->getJSONObject(i);
-		LevelEditorEntity* levelEditorEntity = nullptr; //ModelMetaDataFileImport::doImportFromJSON(jModel->getInt(u"id"_j), (new File(pathName))->getCanonicalPath(), jModel->getJSONObject(u"entity"_j));
+	auto jModels = jRoot["models"].getArray();
+	for (auto i = 0; i < jModels.size(); i++) {
+		auto jModel = jModels[i];
+		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
+			jModel["id"].getInt(),
+			pathName,
+			jModel["entity"]
+		);
 		if (levelEditorEntity == nullptr) {
 			throw new Exception(u"Invalid entity"_j);
 		}
 		level->getEntityLibrary()->addEntity(levelEditorEntity);
-		if (jModel->has(u"properties"_j)) {
-			auto jModelProperties = jModel->getJSONArray(u"properties"_j);
-			for (auto j = 0; j < jModelProperties->length(); j++) {
-				auto jModelProperty = jModelProperties->getJSONObject(j);
-				levelEditorEntity->addProperty(jModelProperty->getString(u"name"_j), jModelProperty->getString(u"value"_j));
+		if (jModel["properties"].isNull() == false) {
+			auto jModelProperties = jModel["properties"].getArray();
+			for (auto j = 0; j < jModelProperties.size(); j++) {
+				auto jModelProperty = jModelProperties[j];
+				levelEditorEntity->addProperty(
+					new String(StringConverter::toWideString(jModelProperty["name"].getString())),
+					new String(StringConverter::toWideString(jModelProperty["value"].getString()))
+				);
 			}
 		}
 	}
 	level->clearObjects();
-	auto jObjects = jRoot->getJSONArray(u"objects"_j);
-	for (auto i = 0; i < jObjects->length(); i++) {
-		auto jObject = jObjects->getJSONObject(i);
-		auto model = level->getEntityLibrary()->getEntity(jObject->getInt(u"mid"_j));
+	auto jObjects = jRoot["objects"].getArray();
+	for (auto i = 0; i < jObjects.size(); i++) {
+		auto& jObject = jObjects[i];
+		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].getInt());
+		if (model == nullptr) {
+			_Console::println(L"LevelFileImport::doImport(): No entity found with id = " + to_wstring(jObject["mid"].getInt()));
+			continue;
+		}
+
 		auto transformations = new Transformations();
 		transformations->getPivot()->set(model->getPivot());
-		transformations->getTranslation()->set(static_cast< float >(jObject->getDouble(u"tx"_j)), static_cast< float >(jObject->getDouble(u"ty"_j)), static_cast< float >(jObject->getDouble(u"tz"_j)));
-		transformations->getScale()->set(static_cast< float >(jObject->getDouble(u"sx"_j)), static_cast< float >(jObject->getDouble(u"sy"_j)), static_cast< float >(jObject->getDouble(u"sz"_j)));
-		auto rotation = new Vector3(static_cast< float >(jObject->getDouble(u"rx"_j)), static_cast< float >(jObject->getDouble(u"ry"_j)), static_cast< float >(jObject->getDouble(u"rz"_j)));
+		transformations->getTranslation()->set(
+			static_cast< float >(jObject["tx"].getDouble()),
+			static_cast< float >(jObject["ty"].getDouble()),
+			static_cast< float >(jObject["tz"].getDouble())
+		);
+		transformations->getScale()->set(
+			static_cast< float >(jObject["sx"].getDouble()),
+			static_cast< float >(jObject["sy"].getDouble()),
+			static_cast< float >(jObject["sz"].getDouble())
+		);
+		auto rotation = new Vector3(
+			static_cast< float >(jObject["rx"].getDouble()),
+			static_cast< float >(jObject["ry"].getDouble()),
+			static_cast< float >(jObject["rz"].getDouble())
+		);
 		transformations->getRotations()->add(new Rotation((*rotation->getArray())[level->getRotationOrder()->getAxis0VectorIndex()], level->getRotationOrder()->getAxis0()));
 		transformations->getRotations()->add(new Rotation((*rotation->getArray())[level->getRotationOrder()->getAxis1VectorIndex()], level->getRotationOrder()->getAxis1()));
 		transformations->getRotations()->add(new Rotation((*rotation->getArray())[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
 		transformations->update();
-		auto levelEditorObject = new LevelEditorObject(objectIdPrefix != nullptr ? ::java::lang::StringBuilder().append(objectIdPrefix)->append(jObject->getString(u"id"_j))->toString() : jObject->getString(u"id"_j), jObject->has(u"descr"_j) ? jObject->getString(u"descr"_j) : u""_j, transformations, model);
+		auto levelEditorObject = new LevelEditorObject(
+			objectIdPrefix != nullptr ?
+				::java::lang::StringBuilder().append(objectIdPrefix)->append(new String(StringConverter::toWideString(jObject["id"].getString())))->toString() :
+				 new String(StringConverter::toWideString(jObject["id"].getString())),
+			 jObject["descr"].isNull() == false?new String(StringConverter::toWideString(jObject["descr"].getString())) : new String(L""),
+			 transformations,
+			 model
+		);
 		levelEditorObject->clearProperties();
-		if (jObject->has(u"properties"_j)) {
-			auto jObjectProperties = jObject->getJSONArray(u"properties"_j);
-			for (auto j = 0; j < jObjectProperties->length(); j++) {
-				auto jObjectProperty = jObjectProperties->getJSONObject(j);
-				levelEditorObject->addProperty(jObjectProperty->getString(u"name"_j), jObjectProperty->getString(u"value"_j));
+		if (jObject["properties"].isNull() == false) {
+			auto jObjectProperties = jObject["properties"].getArray();
+			for (auto j = 0; j < jObjectProperties.size(); j++) {
+				auto jObjectProperty = jObjectProperties[j];
+				levelEditorObject->addProperty(
+					new String(StringConverter::toWideString(jObjectProperty["name"].getString())),
+					new String(StringConverter::toWideString(jObjectProperty["value"].getString()))
+				);
 			}
 		}
 		level->addObject(levelEditorObject);
 	}
-	level->setObjectIdx(jRoot->getInt(u"objects_eidx"_j));
+	level->setObjectIdx(jRoot["objects_eidx"].getInt());
 	level->setPathName(pathName);
 	level->setFileName(fileName);
 	level->computeDimension();
