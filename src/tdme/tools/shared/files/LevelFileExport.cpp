@@ -12,9 +12,6 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
-#include <org/json/JSONArray.h>
-#include <org/json/JSONException.h>
-#include <org/json/JSONObject.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -30,6 +27,10 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/utils/StringConverter.h>
+
+#include <ext/jsonbox/Value.h>
+#include <ext/jsonbox/Array.h>
 
 using tdme::tools::shared::files::LevelFileExport;
 using java::io::File;
@@ -43,9 +44,6 @@ using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
-using org::json::JSONArray;
-using org::json::JSONException;
-using org::json::JSONObject;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -61,6 +59,10 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
+using tdme::utils::StringConverter;
+
+using tdme::ext::jsonbox::Value;
+using tdme::ext::jsonbox::Array;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -107,122 +109,111 @@ void LevelFileExport::export_(String* fileName, LevelEditorLevel* level) /* thro
 	level->setFileName((new File(fileName))->getName());
 	{
 		auto finally0 = finally([&] {
-			if (fops != nullptr)
-				fops->close();
-
-			if (fos != nullptr)
-				try {
-					fos->close();
-				} catch (IOException* ioe) {
-				}
-
 		});
 		try {
 			auto entityLibrary = level->getEntityLibrary();
-			auto jRoot = new JSONObject();
-			jRoot->put(u"version"_j, static_cast< Object* >(u"0.99"_j));
-			jRoot->put(u"ro"_j, static_cast< Object* >(level->getRotationOrder()->toString()));
-			auto jLights = new JSONArray();
+			auto jRoot = Value();
+			jRoot["version"].setString("0.99");
+			jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->toString()->getCPPWString());
+			ext::jsonbox::Array jLights;
 			for (auto i = 0; i < level->getLightCount(); i++) {
 				auto light = level->getLightAt(i);
-				auto jLight = new JSONObject();
-				jLight->put(u"id"_j, i);
-				jLight->put(u"ar"_j, static_cast< double >(light->getAmbient()->getRed()));
-				jLight->put(u"ag"_j, static_cast< double >(light->getAmbient()->getGreen()));
-				jLight->put(u"ab"_j, static_cast< double >(light->getAmbient()->getBlue()));
-				jLight->put(u"aa"_j, static_cast< double >(light->getAmbient()->getAlpha()));
-				jLight->put(u"dr"_j, static_cast< double >(light->getDiffuse()->getRed()));
-				jLight->put(u"dg"_j, static_cast< double >(light->getDiffuse()->getGreen()));
-				jLight->put(u"db"_j, static_cast< double >(light->getDiffuse()->getBlue()));
-				jLight->put(u"da"_j, static_cast< double >(light->getDiffuse()->getAlpha()));
-				jLight->put(u"sr"_j, static_cast< double >(light->getSpecular()->getRed()));
-				jLight->put(u"sg"_j, static_cast< double >(light->getSpecular()->getGreen()));
-				jLight->put(u"sb"_j, static_cast< double >(light->getSpecular()->getBlue()));
-				jLight->put(u"sa"_j, static_cast< double >(light->getSpecular()->getAlpha()));
-				jLight->put(u"px"_j, static_cast< double >(light->getPosition()->getX()));
-				jLight->put(u"py"_j, static_cast< double >(light->getPosition()->getY()));
-				jLight->put(u"pz"_j, static_cast< double >(light->getPosition()->getZ()));
-				jLight->put(u"pw"_j, static_cast< double >(light->getPosition()->getW()));
-				jLight->put(u"stx"_j, static_cast< double >(light->getSpotTo()->getX()));
-				jLight->put(u"sty"_j, static_cast< double >(light->getSpotTo()->getY()));
-				jLight->put(u"stz"_j, static_cast< double >(light->getSpotTo()->getZ()));
-				jLight->put(u"sdx"_j, static_cast< double >(light->getSpotDirection()->getX()));
-				jLight->put(u"sdy"_j, static_cast< double >(light->getSpotDirection()->getY()));
-				jLight->put(u"sdz"_j, static_cast< double >(light->getSpotDirection()->getZ()));
-				jLight->put(u"se"_j, static_cast< double >(light->getSpotExponent()));
-				jLight->put(u"sco"_j, static_cast< double >(light->getSpotCutOff()));
-				jLight->put(u"ca"_j, static_cast< double >(light->getConstantAttenuation()));
-				jLight->put(u"la"_j, static_cast< double >(light->getLinearAttenuation()));
-				jLight->put(u"qa"_j, static_cast< double >(light->getQuadraticAttenuation()));
-				jLight->put(u"e"_j, light->isEnabled());
-				jLights->put(static_cast< Object* >(jLight));
+				Value jLight;
+				jLight["id"] = i;
+				jLight["ar"] = static_cast< double >(light->getAmbient()->getRed());
+				jLight["ag"] = static_cast< double >(light->getAmbient()->getGreen());
+				jLight["ab"] = static_cast< double >(light->getAmbient()->getBlue());
+				jLight["aa"] = static_cast< double >(light->getAmbient()->getAlpha());
+				jLight["dr"] = static_cast< double >(light->getDiffuse()->getRed());
+				jLight["dg"] = static_cast< double >(light->getDiffuse()->getGreen());
+				jLight["db"] = static_cast< double >(light->getDiffuse()->getBlue());
+				jLight["da"] = static_cast< double >(light->getDiffuse()->getAlpha());
+				jLight["sr"] = static_cast< double >(light->getSpecular()->getRed());
+				jLight["sg"] = static_cast< double >(light->getSpecular()->getGreen());
+				jLight["sb"] = static_cast< double >(light->getSpecular()->getBlue());
+				jLight["sa"] = static_cast< double >(light->getSpecular()->getAlpha());
+				jLight["px"] = static_cast< double >(light->getPosition()->getX());
+				jLight["py"] = static_cast< double >(light->getPosition()->getY());
+				jLight["pz"] = static_cast< double >(light->getPosition()->getZ());
+				jLight["pw"] = static_cast< double >(light->getPosition()->getW());
+				jLight["stx"] = static_cast< double >(light->getSpotTo()->getX());
+				jLight["sty"] = static_cast< double >(light->getSpotTo()->getY());
+				jLight["stz"] = static_cast< double >(light->getSpotTo()->getZ());
+				jLight["sdx"] = static_cast< double >(light->getSpotDirection()->getX());
+				jLight["sdy"] = static_cast< double >(light->getSpotDirection()->getY());
+				jLight["sdz"] = static_cast< double >(light->getSpotDirection()->getZ());
+				jLight["se"] = static_cast< double >(light->getSpotExponent());
+				jLight["sco"] = static_cast< double >(light->getSpotCutOff());
+				jLight["ca"] = static_cast< double >(light->getConstantAttenuation());
+				jLight["la"] = static_cast< double >(light->getLinearAttenuation());
+				jLight["qa"] = static_cast< double >(light->getQuadraticAttenuation());
+				jLight["e"] = light->isEnabled();
+				jLights.push_back(jLight);
 			}
-			jRoot->put(u"lights"_j, static_cast< Object* >(jLights));
-			auto jEntityLibrary = new JSONArray();
+			jRoot["lights"] = jLights;
+			ext::jsonbox::Array jEntityLibrary;
 			for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 				auto entity = entityLibrary->getEntityAt(i);
-				auto jModel = new JSONObject();
-				jModel->put(u"id"_j, entity->getId());
-				jModel->put(u"type"_j, static_cast< Object* >(entity->getType()));
-				jModel->put(u"name"_j, static_cast< Object* >(entity->getName()));
-				jModel->put(u"descr"_j, static_cast< Object* >(entity->getDescription()));
-				jModel->put(u"entity"_j, static_cast< Object* >(ModelMetaDataFileExport::exportToJSON(entity)));
-				jEntityLibrary->put(static_cast< Object* >(jModel));
+				Value jModel;
+				jModel["id"] = StringConverter::toString(String::valueOf(entity->getId())->getCPPWString());
+				jModel["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
+				jModel["name"] = StringConverter::toString(entity->getName()->getCPPWString());
+				jModel["descr"] = StringConverter::toString(entity->getDescription()->getCPPWString());
+				jModel["entity"] = ModelMetaDataFileExport::exportToJSON(entity);
+				jEntityLibrary.push_back(jModel);
 			}
-			auto jMapProperties = new JSONArray();
+			ext::jsonbox::Array jMapProperties;
 			for (auto _i = level->getProperties()->iterator(); _i->hasNext(); ) {
 				PropertyModelClass* mapProperty = java_cast< PropertyModelClass* >(_i->next());
 				{
-					auto jMapProperty = new JSONObject();
-					jMapProperty->put(u"name"_j, static_cast< Object* >(mapProperty->getName()));
-					jMapProperty->put(u"value"_j, static_cast< Object* >(mapProperty->getValue()));
-					jMapProperties->put(static_cast< Object* >(jMapProperty));
+					Value jMapProperty;
+					jMapProperty["name"] = StringConverter::toString(mapProperty->getName()->getCPPWString());
+					jMapProperty["value"] = StringConverter::toString(mapProperty->getValue()->getCPPWString());
+					jMapProperties.push_back(jMapProperty);
 				}
 			}
-			jRoot->put(u"properties"_j, static_cast< Object* >(jMapProperties));
-			jRoot->put(u"models"_j, static_cast< Object* >(jEntityLibrary));
-			auto jObjects = new JSONArray();
+			jRoot["properties"] = jMapProperties;
+			jRoot["models"] = jEntityLibrary;
+			ext::jsonbox::Array jObjects;
 			for (auto i = 0; i < level->getObjectCount(); i++) {
 				auto levelEditorObject = level->getObjectAt(i);
-				auto jObject = new JSONObject();
+				Value jObject;
 				auto transformations = levelEditorObject->getTransformations();
 				auto translation = transformations->getTranslation();
 				auto scale = transformations->getScale();
 				auto rotationAroundXAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisXIndex());
 				auto rotationAroundYAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisYIndex());
 				auto rotationAroundZAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisZIndex());
-				jObject->put(u"id"_j, static_cast< Object* >(levelEditorObject->getId()));
-				jObject->put(u"descr"_j, static_cast< Object* >(levelEditorObject->getDescription()));
-				jObject->put(u"mid"_j, levelEditorObject->getEntity()->getId());
-				jObject->put(u"tx"_j, static_cast< double >(translation->getX()));
-				jObject->put(u"ty"_j, static_cast< double >(translation->getY()));
-				jObject->put(u"tz"_j, static_cast< double >(translation->getZ()));
-				jObject->put(u"sx"_j, static_cast< double >(scale->getX()));
-				jObject->put(u"sy"_j, static_cast< double >(scale->getY()));
-				jObject->put(u"sz"_j, static_cast< double >(scale->getZ()));
-				jObject->put(u"rx"_j, static_cast< double >(rotationAroundXAxis->getAngle()));
-				jObject->put(u"ry"_j, static_cast< double >(rotationAroundYAxis->getAngle()));
-				jObject->put(u"rz"_j, static_cast< double >(rotationAroundZAxis->getAngle()));
-				auto jObjectProperties = new JSONArray();
+				jObject["id"] = StringConverter::toString(levelEditorObject->getId()->getCPPWString());
+				jObject["descr"] = StringConverter::toString(levelEditorObject->getDescription()->getCPPWString());
+				jObject["mid"] = levelEditorObject->getEntity()->getId();
+				jObject["tx"] = static_cast< double >(translation->getX());
+				jObject["ty"] = static_cast< double >(translation->getY());
+				jObject["tz"] = static_cast< double >(translation->getZ());
+				jObject["sx"] = static_cast< double >(scale->getX());
+				jObject["sy"] = static_cast< double >(scale->getY());
+				jObject["sz"] = static_cast< double >(scale->getZ());
+				jObject["rx"] = static_cast< double >(rotationAroundXAxis->getAngle());
+				jObject["ry"] = static_cast< double >(rotationAroundYAxis->getAngle());
+				jObject["rz"] = static_cast< double >(rotationAroundZAxis->getAngle());
+				ext::jsonbox::Array jObjectProperties;
 				for (auto _i = levelEditorObject->getProperties()->iterator(); _i->hasNext(); ) {
 					PropertyModelClass* objectProperty = java_cast< PropertyModelClass* >(_i->next());
 					{
-						auto jObjectProperty = new JSONObject();
-						jObjectProperty->put(u"name"_j, static_cast< Object* >(objectProperty->getName()));
-						jObjectProperty->put(u"value"_j, static_cast< Object* >(objectProperty->getValue()));
-						jObjectProperties->put(static_cast< Object* >(jObjectProperty));
+						Value jObjectProperty;
+						jObjectProperty["name"] = StringConverter::toString(objectProperty->getName()->getCPPWString());
+						jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue()->getCPPWString());
+						jObjectProperties.push_back(jObjectProperty);
 					}
 				}
-				jObject->put(u"properties"_j, static_cast< Object* >(jObjectProperties));
-				jObjects->put(static_cast< Object* >(jObject));
+				jObject["properties"] = jObjectProperties;
+				jObjects.push_back(jObject);
 			}
-			jRoot->put(u"objects"_j, static_cast< Object* >(jObjects));
-			jRoot->put(u"objects_eidx"_j, level->getObjectIdx());
-			fos = new FileOutputStream(new File(fileName));
-			fops = new PrintStream(static_cast< OutputStream* >(fos));
-			fops->print(jRoot->toString(2));
-		} catch (JSONException* je) {
-			je->printStackTrace();
+			jRoot["objects"] = jObjects;
+			jRoot["objects_eidx"] = level->getObjectIdx();
+			// TODO: Save to file
+		} catch (Exception* e) {
+			e->printStackTrace();
 		} catch (IOException* ioe) {
 			ioe->printStackTrace();
 		}
