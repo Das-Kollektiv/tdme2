@@ -9,6 +9,8 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <ext/jsonbox/Object.h>
+
 using java::lang::Object;
 using java::io::File;
 using java::lang::String;
@@ -53,7 +55,7 @@ public:
 	 * Export model meta data file to JSON node
 	 * @param entity
 	 */
-	static JSONObject* exportToJSON(LevelEditorEntity* entity) /* throws(Exception) */;
+	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) /* throws(Exception) */;
 
 	// Generated
 	ModelMetaDataFileExport();
