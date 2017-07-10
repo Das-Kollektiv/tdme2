@@ -241,16 +241,27 @@ void ModelViewerScreenController::onQuit()
 
 void ModelViewerScreenController::onModelLoad()
 {
-	view->getPopUpsViews()->getFileDialogScreenController()->show(modelPath->getPath(), u"Load from: "_j, new StringArray({
-		u"tmm"_j,
-		u"dae"_j,
-		u"tm"_j
-	}), view->getFileName(), new ModelViewerScreenController_onModelLoad_2(this));
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():nullptr;
+	if (fileName == nullptr) {
+		fileName = view->getFileName();
+	}
+	fileName = Tools::getFileName(fileName);
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		modelPath->getPath(),
+		u"Load from: "_j,
+		new StringArray({
+			u"tmm"_j,
+			u"dae"_j,
+			u"tm"_j
+		}),
+		view->getFileName(),
+		new ModelViewerScreenController_onModelLoad_2(this)
+	);
 }
 
 void ModelViewerScreenController::onModelSave()
 {
-	auto fileName = view->getEntity()->getEntityFileName();
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():nullptr;
 	if (fileName == nullptr) {
 		fileName = view->getFileName();
 		if (fileName->toLowerCase()->endsWith(u".tmm"_j) == false) {
@@ -258,7 +269,13 @@ void ModelViewerScreenController::onModelSave()
 		}
 	}
 	fileName = Tools::getFileName(fileName);
-	view->getPopUpsViews()->getFileDialogScreenController()->show(modelPath->getPath(), u"Save from: "_j, new StringArray({u"tmm"_j}), fileName, new ModelViewerScreenController_onModelSave_3(this));
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		modelPath->getPath(),
+		u"Save from: "_j,
+		new StringArray({u"tmm"_j}),
+		fileName,
+		new ModelViewerScreenController_onModelSave_3(this)
+	);
 }
 
 void ModelViewerScreenController::onModelReload()
