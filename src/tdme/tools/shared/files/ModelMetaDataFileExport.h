@@ -4,7 +4,6 @@
 
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <org/json/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <java/lang/Object.h>
@@ -14,7 +13,6 @@
 using java::lang::Object;
 using java::io::File;
 using java::lang::String;
-using org::json::JSONObject;
 using tdme::tools::shared::model::LevelEditorEntity;
 
 

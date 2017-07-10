@@ -515,11 +515,6 @@ EXT_STUB_SRCS = \
 	ext/stub/java/util/zip/ZipInputStream-stub.cpp \
 	ext/stub/javax/xml/parsers/DocumentBuilder-stub.cpp \
 	ext/stub/javax/xml/parsers/DocumentBuilderFactory-stub.cpp \
-	ext/stub/org/json/JSONArray-stub.cpp \
-	ext/stub/org/json/JSONException-stub.cpp \
-	ext/stub/org/json/JSONObject-stub.cpp \
-	ext/stub/org/json/JSONObject_Null-stub.cpp \
-	ext/stub/org/json/JSONTokener-stub.cpp \
 
 EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
