@@ -513,8 +513,6 @@ EXT_STUB_SRCS = \
 	ext/stub/java/util/zip/InflaterInputStream-stub.cpp \
 	ext/stub/java/util/zip/ZipEntry-stub.cpp \
 	ext/stub/java/util/zip/ZipInputStream-stub.cpp \
-	ext/stub/javax/xml/parsers/DocumentBuilder-stub.cpp \
-	ext/stub/javax/xml/parsers/DocumentBuilderFactory-stub.cpp \
 
 EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \

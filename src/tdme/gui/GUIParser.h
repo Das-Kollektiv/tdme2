@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
-#include <org/w3c/dom/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -18,8 +17,6 @@ using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
-using org::w3c::dom::Element;
-using org::w3c::dom::Node;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;

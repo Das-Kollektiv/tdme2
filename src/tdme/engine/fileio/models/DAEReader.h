@@ -6,7 +6,6 @@
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <org/w3c/dom/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>

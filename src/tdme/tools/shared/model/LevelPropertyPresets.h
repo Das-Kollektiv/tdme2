@@ -6,7 +6,6 @@
 
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
-#include <org/w3c/dom/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
@@ -19,7 +18,6 @@ using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
-using org::w3c::dom::Element;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
