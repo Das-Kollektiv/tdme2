@@ -329,7 +329,7 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 			nullptr,
 			::java::lang::StringBuilder().
 				append(pathName)->
-				append(L'/')->
+				append(new String(wstring(L"/")))->
 				append(fileName)->
 				toString(),
 			::java::lang::StringBuilder().
