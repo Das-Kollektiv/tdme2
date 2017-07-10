@@ -155,6 +155,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 	mesh->group = group;
 	auto groupVertices = group->getVertices();
 	auto groupNormals = group->getNormals();
+	auto groupTextureCoordinates = group->getTextureCoordinates();
 	auto groupTangents = group->getTangents();
 	auto groupBitangents = group->getBitangents();
 	mesh->faceCount = group->getFaceCount();
@@ -192,22 +193,20 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 			mesh->bitangents = groupBitangents;
 		}
 	}
+	mesh->textureCoordinates = groupTextureCoordinates;
 	auto indicesCount = 0;
 	for (auto facesEntity : *group->getFacesEntities()) {
 		indicesCount += 3 * facesEntity->getFaces()->length;
 	}
 	mesh->indices = new int16_tArray(indicesCount);
-{
+	{
 		auto j = 0;
 		for (auto facesEntity : *group->getFacesEntities()) 
-						for (auto face : *facesEntity->getFaces()) 
-								for (auto vertexIndex : *face->getVertexIndices()) {
-					(*mesh->indices)[j++] = static_cast< int16_t >(vertexIndex);
-				}
-
-
+		for (auto face : *facesEntity->getFaces())
+		for (auto vertexIndex : *face->getVertexIndices()) {
+			(*mesh->indices)[j++] = static_cast< int16_t >(vertexIndex);
+		}
 	}
-
 	mesh->recreatedBuffers = false;
 	if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
 		mesh->cGroupTransformationsMatrix = java_cast< Matrix4x4* >(transformationMatrices->get(group->getId()));

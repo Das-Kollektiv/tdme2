@@ -45,7 +45,8 @@ Texture* TextureLoader::loadTexture(String* path, String* fileName)
 	clinit();
 	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
 	if (fileName->toLowerCase()->endsWith(new String(L".png")) == true) {
-		return TextureLoader::loadPNG(path, fileName);
+		Texture* texture = TextureLoader::loadPNG(path, fileName);
+		return texture;
 	}
 	return nullptr;
 }

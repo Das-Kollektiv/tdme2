@@ -77,6 +77,11 @@ struct tdme::engine::fileio::textures::Texture
 	 */
 	ByteBuffer* getTextureData();
 
+	/**
+	 * @return string representation
+	 */
+	String* toString() override;
+
 	// Generated
 	static ::java::lang::Class *class_();
 

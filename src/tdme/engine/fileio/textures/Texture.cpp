@@ -1,7 +1,17 @@
 // Generated from /tdme/src/tdme/engine/fileio/textures/Texture.java
 #include <tdme/engine/fileio/textures/Texture.h>
 
+#include <java/lang/String.h>
+
+#include <string>
+
+using std::wstring;
+using std::to_wstring;
+
+using java::lang::String;
+
 using tdme::engine::fileio::textures::Texture;
+
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* Texture::class_()
@@ -53,4 +63,20 @@ int32_t Texture::getTextureWidth() {
 
 ByteBuffer* Texture::getTextureData() {
 	return textureData;
+}
+
+String* Texture::toString() {
+	return new String(
+		wstring(
+			L"Material["
+			L"id=" + id->getCPPWString() + L", " +
+			L"depth=" + to_wstring(depth) + L", " +
+			L"width=" + to_wstring(width) + L", " +
+			L"height=" + to_wstring(height) + L", " +
+			L"textureHeight=" + to_wstring(textureHeight) + L", " +
+			L"textureWidth=" + to_wstring(textureWidth) + L", " +
+			L"textureData=" + (textureData != nullptr?L"yes":L"no") +
+			L"]"
+		)
+	);
 }
