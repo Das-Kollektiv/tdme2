@@ -121,7 +121,7 @@ public:
 			delete this->data;
 			this->data = dataNew;
 		}
-		data[position++] = b;
+		data->set(position++, b);
 	}
 
 	/**

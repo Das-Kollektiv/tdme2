@@ -18,8 +18,7 @@ Class* Object::getClass()
 
 int32_t Object::hashCode()
 { /* native */
-	unimplemented_(u"int32_t Object::hashCode()");
-	return 0;
+	return (int32_t)((int64_t)(this) % 2147483647);
 }
 
 void Object::notify()

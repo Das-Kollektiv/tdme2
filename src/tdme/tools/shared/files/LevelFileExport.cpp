@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/tools/shared/files/LevelFileExport.java
 #include <tdme/tools/shared/files/LevelFileExport.h>
 
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 #include <java/io/File.h>
 #include <java/io/FileOutputStream.h>
 #include <java/io/IOException.h>
@@ -19,6 +23,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -31,6 +37,8 @@
 
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/Object.h>
+
+using std::ostringstream;
 
 using tdme::tools::shared::files::LevelFileExport;
 using java::io::File;
@@ -51,6 +59,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -152,7 +162,7 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 			for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 				auto entity = entityLibrary->getEntityAt(i);
 				tdme::ext::jsonbox::Object jModel;
-				jModel["id"] = StringConverter::toString(String::valueOf(entity->getId())->getCPPWString());
+				jModel["id"] = entity->getId();
 				jModel["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
 				jModel["name"] = StringConverter::toString(entity->getName()->getCPPWString());
 				jModel["descr"] = StringConverter::toString(entity->getDescription()->getCPPWString());
@@ -209,7 +219,10 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 			jRoot["objects"] = jObjects;
 			jRoot["objects_eidx"] = level->getObjectIdx();
 
-			std::cout << jRoot;
+			ostringstream json;
+			json << jRoot;
+
+			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
 		} catch (Exception* e) {
 			e->printStackTrace();
 		} catch (IOException* ioe) {

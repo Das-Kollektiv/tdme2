@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/tools/shared/files/ModelMetaDataFileExport.java
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 #include <java/io/File.h>
 #include <java/io/FileInputStream.h>
 #include <java/io/FileOutputStream.h>
@@ -26,6 +30,8 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
@@ -50,6 +56,8 @@
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/JsonException.h>
 #include <ext/jsonbox/Object.h>
+
+using std::ostringstream;
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using java::io::File;
@@ -77,6 +85,8 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Vector3;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
@@ -146,37 +156,9 @@ ModelMetaDataFileExport::ModelMetaDataFileExport()
 	ctor();
 }
 
-void ModelMetaDataFileExport::copyFile(File* source, File* dest) /* throws(IOException) */
+void ModelMetaDataFileExport::copyFile(String* source, String* dest) /* throws(IOException) */
 {
 	clinit();
-	InputStream* is = nullptr;
-	OutputStream* os = nullptr;
-	{
-		auto finally0 = finally([&] {
-			if (is != nullptr)
-				try {
-					is->close();
-				} catch (IOException* ioe) {
-				}
-
-			if (os != nullptr)
-				try {
-					os->close();
-				} catch (IOException* ioe) {
-				}
-
-		});
-		{
-			is = new FileInputStream(source);
-			os = new FileOutputStream(dest);
-			auto buffer = new int8_tArray(1024);
-			int32_t length;
-			while ((length = is->read(buffer)) > 0) {
-				os->write(buffer, 0, length);
-			}
-		}
-	}
-
 }
 
 void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) /* throws(Exception) */
@@ -186,22 +168,16 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 	PrintStream* fops = nullptr;
 	{
 		auto finally1 = finally([&] {
-			if (fops != nullptr)
-				fops->close();
-
-			if (fos != nullptr)
-				try {
-					fos->close();
-				} catch (IOException* ioe) {
-					throw ioe;
-				}
-
 		});
 		try {
 			auto entityFileName = (new File(pathName, fileName))->getCanonicalPath();
 			entity->setEntityFileName(entityFileName);
 			auto jEntityRoot = exportToJSON(entity);
-			std::cout << jEntityRoot;
+
+			ostringstream json;
+			json << jEntityRoot;
+
+			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
 		} catch (ext::jsonbox::JsonException* je) {
 			throw je;
 		} catch (IOException* ioe) {
@@ -594,6 +570,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 	}
 	jEntityRoot["properties"] = jModelProperties;
+
 	return jEntityRoot;
 }
 

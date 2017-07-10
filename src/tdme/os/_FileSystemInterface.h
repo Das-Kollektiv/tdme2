@@ -47,96 +47,112 @@ struct tdme::os::_FileSystemInterface
 
 	/**
 	 * Get file name
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @return complete filename with path and file
 	 */
-	virtual String* getFileName(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual String* getFileName(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
 	 * Creates input stream by given path name and file name
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @return input stream
 	 * @throws IOException
 	 */
-	virtual InputStream* getInputStream(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual InputStream* getInputStream(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
 	 * Creates output stream by given path name and file name
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @return output stream
 	 * @throws IOException
 	 */
-	virtual OutputStream* getOutputStream(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual OutputStream* getOutputStream(String* pathName, String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Get content as string
+	 * @param path name
+	 * @param file name
+	 * @return string
+	 */
+	virtual String* getContentAsString(String* pathName, String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Set content from string
+	 * @param path name
+	 * @param file name
+	 * @return string
+	 */
+	virtual void setContentFromString(String* pathName, String* fileName, String* string) /* throws(IOException) */ = 0;
 
 	/** 
 	 * Get file content
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @return byte array
 	 * @throws IOException
 	 */
-	virtual int8_tArray* getContent(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual int8_tArray* getContent(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/** 
 	 * Get file content
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @param data
 	 * @param length or -1 if data length should be used
 	 * @throws IOException
 	 */
-	virtual void setContent(String* path, String* fileName, int8_tArray* data, int32_t size = -1) /* throws(IOException) */ = 0;
+	virtual void setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size = -1) /* throws(IOException) */ = 0;
 
 	/**
 	 * Get file content as string array
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @return byte array
 	 * @throws IOException
 	 */
-	virtual StringArray* getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual StringArray* getContentAsStringArray(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/**
 	 * Set file content as string array
-	 * @param path
+	 * @param path name
 	 * @param file name
 	 * @param string array
 	 * @return byte array
 	 * @throws IOException
 	 */
-	virtual void setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */ = 0;
+	virtual void setContentFromStringArray(String* pathName, String* fileName, StringArray* stringArray) /* throws(IOException) */ = 0;
 
 	/**
 	 * List files for given path and filter by a file name filter if not null 
-	 * @param path
+	 * @param path name
 	 * @param filter or null
 	 * @return file names 
 	 */
-	virtual StringArray* list(String* path, FilenameFilter* filter) /* throws(IOException) */ = 0;
+	virtual StringArray* list(String* pathName, FilenameFilter* filter) /* throws(IOException) */ = 0;
 
 	/**
 	 * Check if file is a path
-	 * @param file
+	 * @param path name
 	 * @return if file is a path
 	 */
-	virtual bool isPath(String* path) /* throws(IOException) */ = 0;
+	virtual bool isPath(String* pathName) /* throws(IOException) */ = 0;
 
 	/**
-	 * Get canonical path
-	 * @param path
-	 * @param file
+	 * Get canonical path name
+	 * @param path name
+	 * @param file name
 	 * @return canonical path
 	 */
-	virtual String* getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ = 0;
+	virtual String* getCanonicalPath(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/**
-	 * Get currunt working path
+	 * Get current working path name
 	 * @return current working path
 	 */
-	virtual String* getCurrentWorkingPath() /* throws(IOException) */ = 0;
+	virtual String* getCurrentWorkingPathName() /* throws(IOException) */ = 0;
 
 	/**
 	 * Get path name

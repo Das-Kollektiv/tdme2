@@ -95,7 +95,7 @@ FileDialogScreenController::FileDialogScreenController()
 void FileDialogScreenController::ctor()
 {
 	super::ctor();
-	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPath();
+	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
 }

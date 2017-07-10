@@ -137,32 +137,32 @@ _StandardFileSystem::_StandardFileSystem()
 	ctor();
 }
 
-String* _StandardFileSystem::getFileName(String* path, String* fileName) /* throws(IOException) */ {
-	return new String(path->getCPPWString() + L"/" + fileName->getCPPWString());
+String* _StandardFileSystem::getFileName(String* pathName, String* fileName) /* throws(IOException) */ {
+	return new String(pathName->getCPPWString() + L"/" + fileName->getCPPWString());
 }
 
-InputStream* _StandardFileSystem::getInputStream(String* path, String* fileName) /* throws(IOException) */
+InputStream* _StandardFileSystem::getInputStream(String* pathName, String* fileName) /* throws(IOException) */
 {
 	return nullptr;
 }
 
-OutputStream* _StandardFileSystem::getOutputStream(String* path, String* fileName) /* throws(IOException) */
+OutputStream* _StandardFileSystem::getOutputStream(String* pathName, String* fileName) /* throws(IOException) */
 {
 	return nullptr;
 }
 
-StringArray* _StandardFileSystem::list(String* path, FilenameFilter* filter) /* throws(IOException) */
+StringArray* _StandardFileSystem::list(String* pathName, FilenameFilter* filter) /* throws(IOException) */
 {
 	auto files = new _ArrayList();
 
 	DIR *dir;
 	struct dirent *dirent;
-	if ((dir = opendir(StringConverter::toString(path->getCPPWString()).c_str())) == NULL) {
+	if ((dir = opendir(StringConverter::toString(pathName->getCPPWString()).c_str())) == NULL) {
 		return nullptr;
 	}
 	while ((dirent = readdir(dir)) != NULL) {
 		String* file = new String(StringConverter::toWideString(dirent->d_name));
-		if (filter != nullptr && filter->accept(path, file) == false) continue;
+		if (filter != nullptr && filter->accept(pathName, file) == false) continue;
 		files->add(file);
 	}
 	closedir(dir);
@@ -172,18 +172,32 @@ StringArray* _StandardFileSystem::list(String* path, FilenameFilter* filter) /* 
 	return _files;
 }
 
-bool _StandardFileSystem::isPath(String* path) /* throws(IOException) */ {
+bool _StandardFileSystem::isPath(String* pathName) /* throws(IOException) */ {
 	struct stat s;
-	if (stat(StringConverter::toString(path->getCPPWString()).c_str(), &s) == 0) {
+	if (stat(StringConverter::toString(pathName->getCPPWString()).c_str(), &s) == 0) {
 		return (s.st_mode & S_IFDIR) == S_IFDIR;
 	} else {
 		return false;
 	}
 }
 
-int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* throws(IOException) */
+String* _StandardFileSystem::getContentAsString(String* pathName, String* fileName) /* throws(IOException) */ {
+	return new String(getContent(pathName, fileName));
+}
+
+void _StandardFileSystem::setContentFromString(String* pathName, String* fileName, String* string) /* throws(IOException) */ {
+	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
+	if(ofs.is_open() == false) return;
+
+	ofs << StringConverter::toString(string->getCPPWString());
+
+	ofs.close();
+	return;
+}
+
+int8_tArray* _StandardFileSystem::getContent(String* pathName, String* fileName) /* throws(IOException) */
 {
-	ifstream fl(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
+	ifstream fl(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	fl.seekg( 0, ios::end );
 	size_t size = fl.tellg();
 	int8_tArray* data = new int8_tArray(size);
@@ -193,15 +207,15 @@ int8_tArray* _StandardFileSystem::getContent(String* path, String* fileName) /* 
 	return data;
 }
 
-void _StandardFileSystem::setContent(String* path, String* fileName, int8_tArray* data, int32_t size) /* throws(IOException)*/ {
-	ofstream fl(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
+void _StandardFileSystem::setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size) /* throws(IOException)*/ {
+	ofstream fl(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	fl.write((char *)data->getPointer(), size == -1?data->length:size);
 	fl.close();
 }
 
-StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* fileName) /* throws(IOException) */
+StringArray* _StandardFileSystem::getContentAsStringArray(String* pathName, String* fileName) /* throws(IOException) */
 {
-	ifstream ifs(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
+	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if(ifs.is_open() == false) return nullptr;
 
 	vector<string> lines;
@@ -219,9 +233,9 @@ StringArray* _StandardFileSystem::getContentAsStringArray(String* path, String* 
 	return result;
 }
 
-void _StandardFileSystem::setContentFromStringArray(String* path, String* fileName, StringArray* stringArray) /* throws(IOException) */
+void _StandardFileSystem::setContentFromStringArray(String* pathName, String* fileName, StringArray* stringArray) /* throws(IOException) */
 {
-	ofstream ofs(StringConverter::toString(getFileName(path, fileName)->getCPPWString()).c_str());
+	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if(ofs.is_open() == false) return;
 
 	for (int i = 0; i < stringArray->length; i++) {
@@ -233,14 +247,14 @@ void _StandardFileSystem::setContentFromStringArray(String* path, String* fileNa
 	return;
 }
 
-String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /* throws(IOException) */ {
+String* _StandardFileSystem::getCanonicalPath(String* pathName, String* fileName) /* throws(IOException) */ {
 	// cwd
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
 	wstring cwdString = StringConverter::toWideString(cwdPtr);
 
 	// add cwd to path string
-	wstring pathString = getFileName(path, fileName)->getCPPWString();
+	wstring pathString = getFileName(pathName, fileName)->getCPPWString();
 	if (pathString.size() > 0 && pathString[0] == L'/') {
 		// no op
 	} else {
@@ -258,7 +272,7 @@ String* _StandardFileSystem::getCanonicalPath(String* path, String* fileName) /*
 	return new String(StringConverter::toWideString(realPathPtr));
 }
 
-String* _StandardFileSystem::getCurrentWorkingPath() /* throws(IOException) */ {
+String* _StandardFileSystem::getCurrentWorkingPathName() /* throws(IOException) */ {
 	// cwd
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));

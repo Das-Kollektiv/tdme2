@@ -40,7 +40,7 @@ private:
 	 * @param dest
 	 * @throws IOException
 	 */
-	static void copyFile(File* source, File* dest) /* throws(IOException) */;
+	static void copyFile(String* source, String* dest) /* throws(IOException) */;
 
 public:
 
