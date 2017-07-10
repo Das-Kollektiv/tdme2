@@ -54,7 +54,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };
-	File* particleSystemFile {  };
+	String* particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 protected:
 

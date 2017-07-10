@@ -148,7 +148,7 @@ void SharedParticleSystemView::initParticleSystem()
 	if (entity == nullptr)
 		return;
 
-	particleSystemFile = entity->getEntityFileName() != nullptr ? new File(entity->getEntityFileName()) : static_cast< File* >(nullptr);
+	particleSystemFile = entity->getEntityFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	BoundingBox* boundingBox = nullptr;
@@ -166,13 +166,13 @@ String* SharedParticleSystemView::getFileName()
 	if (particleSystemFile == nullptr)
 		return u""_j;
 
-	return particleSystemFile->getName();
+	return _FileSystem::getInstance()->getFileName(particleSystemFile);
 }
 
 void SharedParticleSystemView::loadFile(String* pathName, String* fileName)
 {
 	loadParticleSystemRequested = true;
-	particleSystemFile = new File(pathName, fileName);
+	particleSystemFile = new String(pathName->getCPPWString() + L"/" + fileName->getCPPWString());
 }
 
 void SharedParticleSystemView::saveFile(String* pathName, String* fileName) /* throws(Exception) */
@@ -322,7 +322,12 @@ void SharedParticleSystemView::loadParticleSystem()
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Particle system file: "_j)->append(static_cast< Object* >(particleSystemFile))->toString()));
 	try {
 		auto oldEntity = entity;
-		entity = loadParticleSystem(particleSystemFile->getName(), u""_j, particleSystemFile->getParentFile()->getAbsolutePath(), particleSystemFile->getName());
+		entity = loadParticleSystem(
+			particleSystemFile,
+			u""_j,
+			_FileSystem::getInstance()->getPathName(particleSystemFile),
+			_FileSystem::getInstance()->getFileName(particleSystemFile)
+		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (Exception* exception) {
 		exception->printStackTrace();

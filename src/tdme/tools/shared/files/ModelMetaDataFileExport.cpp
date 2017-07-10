@@ -254,7 +254,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getX());
 					jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getY());
 					jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getZ());
-					jObjectParticleSystem["mf"] = static_cast< Object* >(particleSystem->getObjectParticleSystem()->getModelFile());
+					jObjectParticleSystem["mf"] = StringConverter::toString(particleSystem->getObjectParticleSystem()->getModelFile()->getCPPWString());
 					jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
 					jParticleSystem["ops"] = jObjectParticleSystem;
 					goto end_switch0;;

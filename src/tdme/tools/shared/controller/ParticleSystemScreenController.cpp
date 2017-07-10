@@ -820,26 +820,39 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 	{
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+			{
 				if (node->getId()->equals(u"button_entity_load"_j)) {
 					onParticleSystemLoad();
-				} else if (node->getId()->equals(u"button_entity_reload"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_reload"_j)) {
 					onParticleSystemReload();
-				} else if (node->getId()->equals(u"button_entity_save"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_save"_j)) {
 					onEntitySave();
-				} else if (node->getId()->equals(u"button_ps_type_apply"_j)) {
+				} else
+				if (node->getId()->equals(u"button_ps_type_apply"_j)) {
 					onParticleSystemTypeApply();
-				} else if (node->getId()->equals(u"button_ops_apply"_j) || node->getId()->equals(u"button_pps_type_apply"_j)) {
+				} else
+				if (node->getId()->equals(u"button_ops_apply"_j) || node->getId()->equals(u"button_pps_type_apply"_j)) {
 					onParticleSystemTypeDataApply();
-				} else if (node->getId()->equals(u"button_emitter_apply"_j)) {
+				} else
+				if (node->getId()->equals(u"button_emitter_apply"_j)) {
 					onParticleSystemEmitterApply();
-				} else if (node->getId()->equals(u"button_ppe_emitter_apply"_j) || node->getId()->equals(u"button_bbpe_emitter_apply"_j) || node->getId()->equals(u"button_cpe_emitter_apply"_j)|| node->getId()->equals(u"button_cpepv_emitter_apply"_j)|| node->getId()->equals(u"button_spe_emitter_apply"_j)) {
+				} else
+				if (node->getId()->equals(u"button_ppe_emitter_apply"_j) || node->getId()->equals(u"button_bbpe_emitter_apply"_j) || node->getId()->equals(u"button_cpe_emitter_apply"_j)|| node->getId()->equals(u"button_cpepv_emitter_apply"_j)|| node->getId()->equals(u"button_spe_emitter_apply"_j)) {
 					onParticleSystemEmitterDataApply();
-				} else if (node->getId()->equals(u"button_ops_model_file"_j)) {
-					view->getPopUpsViews()->getFileDialogScreenController()->show(modelPath->getPath(), u"Load from: "_j, new StringArray({
-						u"dae"_j,
-						u"tm"_j
-					}), u""_j, new ParticleSystemScreenController_onActionPerformed_4(this));
+				} else
+				if (node->getId()->equals(u"button_ops_model_file"_j)) {
+					view->getPopUpsViews()->getFileDialogScreenController()->show(
+						modelPath->getPath(),
+						u"Load from: "_j,
+						new StringArray({
+							u"dae"_j,
+							u"tm"_j
+						}),
+						u""_j,
+						new ParticleSystemScreenController_onActionPerformed_4(this)
+					);
 				} else {
 					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onActionPerformed()::unknown, type='"_j)->append(static_cast< Object* >(type))
 						->append(u"', id = '"_j)
@@ -852,10 +865,10 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				goto end_switch4;;
 			}		}
 		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-{
+			{
 				goto end_switch4;;
 			}		}
-end_switch4:;
+			end_switch4:;
 	}
 
 }
