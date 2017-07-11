@@ -471,24 +471,23 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 						}
 					}
 					if (levelEditorEntity == nullptr) {
+						auto modelFileName =
+							::java::lang::StringBuilder().
+							 	 append(modelName)->
+								 append(u".tm"_j)->
+								 toString();
 						TMWriter::write(
 							model,
 							modelPathName,
-							 ::java::lang::StringBuilder().
-							  	  append(modelName)->
-								  append(u".tm"_j)->
-								  toString()
+							modelFileName
 						  );
 						levelEditorEntity = entityLibrary->addModel(
 							nodeIdx++,
 							modelName,
 							modelName,
 							modelPathName,
-							 ::java::lang::StringBuilder().
-							  	  append(modelName)->
-								  append(u".tm"_j)->
-								  toString(),
-								  new Vector3()
+							modelFileName,
+							new Vector3()
 						);
 					}
 				} else

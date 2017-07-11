@@ -96,20 +96,65 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
 		auto model = DAEReader::read(pathName, fileName);
-		levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::MODEL, name, description, nullptr, ::java::lang::StringBuilder().append(pathName)->append(File::separator)
-			->append(fileName)->toString(), ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3(0.0f, 0.0f, 0.0f));
+		levelEditorEntity = new LevelEditorEntity(
+			id == ID_ALLOCATE ? allocateEntityId() : id,
+			LevelEditorEntity_EntityType::MODEL,
+			name,
+			description,
+			nullptr,
+			::java::lang::StringBuilder().
+			 	 append(pathName)->
+				 append(u"/"_j)->
+				 append(fileName)->
+				 toString()
+			, ::java::lang::StringBuilder().
+				append(
+					model->getId()->
+						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
+						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
+						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->
+						append(u".png"_j)->
+						toString(),
+			model,
+			new Vector3(0.0f, 0.0f, 0.0f)
+		);
 	} else
 	if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
 		auto model = TMReader::read(pathName, fileName);
-		levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::MODEL, name, description, nullptr, ::java::lang::StringBuilder().append(pathName)->append(File::separator)
-			->append(fileName)->toString(), ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3(0.0f, 0.0f, 0.0f));
+		levelEditorEntity = new LevelEditorEntity(
+			id == ID_ALLOCATE ? allocateEntityId() : id,
+			LevelEditorEntity_EntityType::MODEL,
+			name,
+			description,
+			nullptr,
+			::java::lang::StringBuilder().
+			 	 append(pathName)->
+				 append(u"/"_j)->
+				 append(fileName)->
+				 toString(),
+			::java::lang::StringBuilder().
+			 	 append(
+			 		model->getId()->
+			 			replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
+						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
+						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->
+						append(u".png"_j)->
+						toString(),
+			model,
+			new Vector3(0.0f, 0.0f, 0.0f)
+		);
 	} else
 	if (fileName->toLowerCase()->endsWith(u".tmm"_j)) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
-		throw new Exception(::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-			->append(fileName)
-			->append(u": Unknown model file format"_j)->toString());
+		throw new Exception(
+			::java::lang::StringBuilder().
+			 	 append(pathName)->
+				 append(u"/"_j)->
+				 append(fileName)->
+				 append(u": Unknown model file format"_j)->
+				 toString()
+		 );
 	}
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;

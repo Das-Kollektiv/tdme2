@@ -135,7 +135,13 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	if (jEntityRoot["file"].isNull() == false) {
 		auto modelFileString = new String(StringConverter::toWideString(jEntityRoot["file"].getString()));
 		modelFile = _FileSystem::getInstance()->getCanonicalPath(
-			pathName,
+			_FileSystem::getInstance()->getPathName(modelFileString)->startsWith(u"/"_j) == true?
+				_FileSystem::getInstance()->getPathName(modelFileString):
+				::java::lang::StringBuilder().
+				 	 append(pathName)->
+					 append(u"/"_j)->
+					 append(_FileSystem::getInstance()->getPathName(modelFileString))->
+					 toString(),
 			_FileSystem::getInstance()->getFileName(modelFileString)
 		);
 	}
