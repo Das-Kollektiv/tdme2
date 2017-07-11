@@ -380,6 +380,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 					 );
 					continue;
 				}
+				// FIXME: use canonical path
 				auto model = new Model(
 					modelPathName,
 					::java::lang::StringBuilder().
