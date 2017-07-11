@@ -51,6 +51,7 @@ public:
 	OutputStream* getOutputStream(String* pathName, String* fileName) /* throws(IOException) */ override;
 	StringArray* list(String* pathName, FilenameFilter* filter) /* throws(IOException) */ override;
 	bool isPath(String* pathName) /* throws(IOException) */ override;
+	bool fileExists(String* fileName) /* throws(IOException) */ override;
 	String* getContentAsString(String* pathName, String* fileName) /* throws(IOException) */ override;
 	void setContentFromString(String* pathName, String* fileName, String* string) /* throws(IOException) */ override;
 	int8_tArray* getContent(String* pathName, String* fileName) /* throws(IOException) */ override;
@@ -61,7 +62,9 @@ public:
 	String* getCurrentWorkingPathName() /* throws(IOException) */ override;
 	String* getPathName(String* fileName) /* throws(IOException) */ override;
 	String* getFileName(String* fileName) /* throws(IOException) */ override;
-
+	bool createPath(String* pathName) /* throws(IOException) */ override;
+	bool removePath(String* pathName) /* throws(IOException) */ override;
+	bool removeFile(String* pathName, String* fileName) /* throws(IOException) */ override;
 
 	// Generated
 	_StandardFileSystem();

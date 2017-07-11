@@ -206,13 +206,12 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 	RotationOrder* rotationOrder = nullptr;
 	{
 		auto v = upVector;
-		if ((v == Model_UpVector::Y_UP)) {
+		if (v == Model_UpVector::Y_UP) {
 			rotationOrder = RotationOrder::ZYX;
-		}
-		if ((v == Model_UpVector::Y_UP) || (v == Model_UpVector::Z_UP)) {
+		} else
+		if (v == Model_UpVector::Z_UP) {
 			rotationOrder = RotationOrder::YZX;
 		}
-		end_switch0:;
 	}
 
 	String* tmpString = nullptr;
@@ -270,19 +269,26 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 	String* tmpString = nullptr;
 
 	clinit();
-	auto tmFilesFolder = new File(::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-		->append(fileName)
-		->append(u"-models"_j)->toString());
-	if (tmFilesFolder->exists()) {
-		tmFilesFolder->delete_();
+
+	auto modelPathName =
+		::java::lang::StringBuilder().
+			append(pathName)->
+			append(u"/"_j)->
+			append(fileName)->
+			append(u"-models"_j)->
+			toString();
+	if (_FileSystem::getInstance()->fileExists(modelPathName)) {
+		_FileSystem::getInstance()->removePath(modelPathName);
 	}
-	tmFilesFolder->mkdir();
+	_FileSystem::getInstance()->createPath(
+		modelPathName
+	);
 
 	auto levelEditorLevel = new LevelEditorLevel();
 	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
-	if (xmlDocument.Error() == false) {
+	if (xmlDocument.Error() == true) {
 		_Console::println(
 			"DAEReader::read():: Could not parse file '" +
 			StringConverter::toString(pathName->getCPPWString()) + "/" + StringConverter::toString(fileName->getCPPWString()) +
@@ -299,13 +305,12 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 	RotationOrder* rotationOrder = nullptr;
 	{
 		auto v = upVector;
-		if ((v == Model_UpVector::Y_UP)) {
+		if (v == Model_UpVector::Y_UP) {
 			rotationOrder = RotationOrder::ZYX;
-		}
-		if ((v == Model_UpVector::Y_UP) || (v == Model_UpVector::Z_UP)) {
+		} else
+		if (v == Model_UpVector::Z_UP) {
 			rotationOrder = RotationOrder::YZX;
 		}
-		end_switch1:;
 	}
 
 	levelEditorLevel->setRotationOrder(rotationOrder);
@@ -339,7 +344,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
 				auto nodeId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id"))));
 				auto modelName = new String(nodeId->getCPPWString());
-				modelName = modelName->replaceAll(u"[\\-\\_]{1}+[0-9]+$"_j, u""_j);
+				modelName = modelName->replaceAll(u"[-_]{1}[0-9]+$"_j, u""_j);
 				modelName = modelName->replaceAll(u"[0-9]+$"_j, u""_j);
 				auto haveName = entityLibrary->getEntityCount() == 0;
 				if (haveName == false) {
@@ -375,11 +380,17 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 					 );
 					continue;
 				}
-				auto model = new Model(::java::lang::StringBuilder().append(pathName)->append(L'/')
-					->append(fileName)
-					->append(u'-')
-					->append(modelName)->toString(), ::java::lang::StringBuilder().append(fileName)->append(u'-')
-					->append(modelName)->toString(), upVector, rotationOrder, nullptr);
+				auto model = new Model(
+					modelPathName,
+					::java::lang::StringBuilder().
+					 append(fileName)->
+					 append(u'-')->
+					 append(modelName)->
+					 toString(),
+					 upVector,
+					 rotationOrder,
+					 nullptr
+				);
 				setupModelImportRotationMatrix(xmlRoot, model);
 				auto modelImportRotationMatrix = new Matrix4x4(model->getImportTransformationsMatrix());
 				setupModelImportScaleMatrix(xmlRoot, model);
@@ -460,14 +471,28 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 						}
 					}
 					if (levelEditorEntity == nullptr) {
-						TMWriter::write(model, ::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-							->append(fileName)
-							->append(u"-models"_j)->toString(), ::java::lang::StringBuilder().append(modelName)->append(u".tm"_j)->toString());
-						levelEditorEntity = entityLibrary->addModel(nodeIdx++, modelName, modelName, ::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-							->append(fileName)
-							->append(u"-models"_j)->toString(), ::java::lang::StringBuilder().append(modelName)->append(u".tm"_j)->toString(), new Vector3());
+						TMWriter::write(
+							model,
+							modelPathName,
+							 ::java::lang::StringBuilder().
+							  	  append(modelName)->
+								  append(u".tm"_j)->
+								  toString()
+						  );
+						levelEditorEntity = entityLibrary->addModel(
+							nodeIdx++,
+							modelName,
+							modelName,
+							modelPathName,
+							 ::java::lang::StringBuilder().
+							  	  append(modelName)->
+								  append(u".tm"_j)->
+								  toString(),
+								  new Vector3()
+						);
 					}
-				} else if (entityType == LevelEditorEntity_EntityType::EMPTY) {
+				} else
+				if (entityType == LevelEditorEntity_EntityType::EMPTY) {
 					if (emptyEntity == nullptr) {
 						emptyEntity = entityLibrary->addEmpty(nodeIdx++, u"Default Empty"_j, u""_j);
 					}

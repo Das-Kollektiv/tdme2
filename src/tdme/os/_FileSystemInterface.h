@@ -141,6 +141,13 @@ struct tdme::os::_FileSystemInterface
 	virtual bool isPath(String* pathName) /* throws(IOException) */ = 0;
 
 	/**
+	 * Check if file exists
+	 * @param file name
+	 * @return bool if file exists
+	 */
+	virtual bool fileExists(String* fileName) /* throws(IOException) */ = 0;
+
+	/**
 	 * Get canonical path name
 	 * @param path name
 	 * @param file name
@@ -167,6 +174,27 @@ struct tdme::os::_FileSystemInterface
 	 * @return canonical path
 	 */
 	virtual String* getFileName(String* fileName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Create path
+	 * @param path name
+	 */
+	virtual bool createPath(String* pathName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Remove path
+	 * @param path name
+	 * @return success
+	 */
+	virtual bool removePath(String* pathName) /* throws(IOException) */ = 0;
+
+	/**
+	 * Remove file
+	 * @param path name
+	 * @param file name
+	 * @return success
+	 */
+	virtual bool removeFile(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	// Generated
 	static ::java::lang::Class *class_();

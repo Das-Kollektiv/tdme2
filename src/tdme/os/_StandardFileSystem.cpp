@@ -45,6 +45,7 @@
 #include <java/util/zip/ZipInputStream.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -86,6 +87,7 @@ using java::util::StringTokenizer;
 using java::util::zip::ZipEntry;
 using java::util::zip::ZipInputStream;
 using tdme::utils::StringConverter;
+using tdme::utils::_Console;
 using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -181,6 +183,11 @@ bool _StandardFileSystem::isPath(String* pathName) /* throws(IOException) */ {
 	} else {
 		return false;
 	}
+}
+
+bool _StandardFileSystem::fileExists(String* fileName) /* throws(IOException) */ {
+	struct stat s;
+	return stat(StringConverter::toString(fileName->getCPPWString()).c_str(), &s) == 0;
 }
 
 String* _StandardFileSystem::getContentAsString(String* pathName, String* fileName) /* throws(IOException) */ {
@@ -324,6 +331,34 @@ String* _StandardFileSystem::getFileName(String* fileName) {
 	int32_t lastPathSeparator = unixFileName->lastIndexOf(L'/');
 	if (lastPathSeparator == -1) return new String(fileName);
 	return unixFileName->substring(lastPathSeparator + 1, unixFileName->length());
+}
+
+bool _StandardFileSystem::createPath(String* pathName) {
+	const int dir_err = mkdir(StringConverter::toString(pathName->getCPPWString()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	return dir_err != -1;
+}
+
+bool _StandardFileSystem::removePath(String* pathName) {
+	auto files = list(pathName, nullptr);
+	for (int i = 0; i < files->length; i++) {
+		auto file = files->get(i);
+		if (file->equals(u"."_j) || file->equals(u".."_j)) {
+			continue;
+		}
+		auto completeFileName = getFileName(pathName, file);
+		if (isPath(completeFileName)) {
+			removePath(completeFileName);
+		} else {
+			removeFile(pathName, file);
+		}
+	}
+	_Console::println(wstring(L"_StandardFileSystem::removePath(): Removing ") + pathName->getCPPWString());
+	rmdir(StringConverter::toString(pathName->getCPPWString()).c_str());
+}
+
+bool _StandardFileSystem::removeFile(String* pathName, String* fileName) {
+	_Console::println(wstring(L"_StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName)->getCPPWString());
+	unlink(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
