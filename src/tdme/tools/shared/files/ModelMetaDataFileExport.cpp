@@ -170,8 +170,7 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 		auto finally1 = finally([&] {
 		});
 		try {
-			auto entityFileName = (new File(pathName, fileName))->getCanonicalPath();
-			entity->setEntityFileName(entityFileName);
+			entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 			auto jEntityRoot = exportToJSON(entity);
 
 			ostringstream json;
