@@ -53,11 +53,12 @@ private:
 	 * Parse bounding volume
 	 * @param idx
 	 * @param level editor entity
+	 * @param path name
 	 * @param JSON bounding volume node
 	 * @return level editor entity bounding volume
 	 * @throws JSONException
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, Value& jBv) /* throws(JSONException) */;
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv) /* throws(JSONException) */;
 
 	// Generated
 

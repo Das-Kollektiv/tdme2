@@ -40,6 +40,7 @@
 #include <java/security/CodeSource.h>
 #include <java/security/ProtectionDomain.h>
 #include <java/util/Iterator.h>
+#include <java/util/StringTokenizer.h>
 #include <java/util/zip/ZipEntry.h>
 #include <java/util/zip/ZipInputStream.h>
 #include <tdme/utils/StringConverter.h>
@@ -81,6 +82,7 @@ using java::net::URL;
 using java::security::CodeSource;
 using java::security::ProtectionDomain;
 using java::util::Iterator;
+using java::util::StringTokenizer;
 using java::util::zip::ZipEntry;
 using java::util::zip::ZipInputStream;
 using tdme::utils::StringConverter;
@@ -248,28 +250,59 @@ void _StandardFileSystem::setContentFromStringArray(String* pathName, String* fi
 }
 
 String* _StandardFileSystem::getCanonicalPath(String* pathName, String* fileName) /* throws(IOException) */ {
-	// cwd
-	char cwdBuffer[PATH_MAX + 1];
-	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
-	wstring cwdString = StringConverter::toWideString(cwdPtr);
+	String* unixPathName = pathName->replace(L'\\', L'/');
+	String* unixFileName = fileName->replace(L'\\', L'/');
 
-	// add cwd to path string
-	wstring pathString = getFileName(pathName, fileName)->getCPPWString();
-	if (pathString.size() > 0 && pathString[0] == L'/') {
-		// no op
-	} else {
-		pathString = cwdString + L"/" + pathString;
+	auto pathString = getFileName(unixPathName, unixFileName);
+
+	// separate into path components
+	auto pathComponents = new _ArrayList();
+	auto t = new StringTokenizer(pathString, u"/"_j);
+	while (t->hasMoreTokens()) {
+		pathComponents->add(t->nextToken());
 	}
 
-	// realpath
-	const string nonCanonicalPathString = StringConverter::toString(pathString);
-	const char* nonCanonicalPath = nonCanonicalPathString.c_str();
-	char realpathBuffer[PATH_MAX + 1];
-	char* realPathPtr = realpath(nonCanonicalPath, realpathBuffer);
-	if (realPathPtr == nullptr) {
-		return nullptr;
+	// process path components
+	for (int i = 0; i < pathComponents->size(); i++) {
+		auto pathComponent = pathComponents->get(i);
+		if (pathComponent->equals(u"."_j) == true) {
+			pathComponents->set(i, nullptr);
+		} else
+		if (pathComponent->equals(u".."_j) == true) {
+			pathComponents->set(i, nullptr);
+			int j = i - 1;
+			for (int pathComponentReplaced = 0; pathComponentReplaced < 1 && j >= 0; ) {
+				if (pathComponents->get(j) != nullptr) {
+					pathComponents->set(j, nullptr);
+					pathComponentReplaced++;
+				}
+				j--;
+			}
+		}
 	}
-	return new String(StringConverter::toWideString(realPathPtr));
+
+	// process path components
+	wstring canonicalPath = L"";
+	bool slash = pathString->startsWith(u"/"_j);
+	for (int i = 0; i < pathComponents->size(); i++) {
+		auto pathComponent = java_cast<String*>(pathComponents->get(i));
+		if (pathComponent == nullptr) {
+			// no op
+		} else {
+			canonicalPath = canonicalPath + (slash == true?L"/":L"") + pathComponent->getCPPWString();
+			slash = true;
+		}
+	}
+
+	// add cwd if required
+	auto canonicalPathString = new String(canonicalPath);
+	if (canonicalPathString->length() == 0 ||
+		canonicalPathString->startsWith(u"/"_j) == false) {
+		canonicalPathString = new String(getCurrentWorkingPathName()->getCPPWString() + L"/" + canonicalPathString->getCPPWString());
+	}
+
+	//
+	return new String(canonicalPathString);
 }
 
 String* _StandardFileSystem::getCurrentWorkingPathName() /* throws(IOException) */ {

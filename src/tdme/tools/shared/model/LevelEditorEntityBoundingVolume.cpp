@@ -10,6 +10,7 @@
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
+#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -19,8 +20,11 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using java::io::File;
@@ -32,6 +36,7 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Object3DModel;
 using tdme::engine::fileio::models::DAEReader;
+using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -41,8 +46,11 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Matrix4x4;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::utils::_Console;
 
 LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -145,11 +153,23 @@ void LevelEditorEntityBoundingVolume::setupAabb(Vector3* min, Vector3* max)
 	updateLevelEditorEntity();
 }
 
-void LevelEditorEntityBoundingVolume::setupConvexMesh(String* file)
+void LevelEditorEntityBoundingVolume::setupConvexMesh(String* pathName, String* fileName)
 {
-	modelMeshFile = file;
+	modelMeshFile = fileName;
 	try {
-		auto convexMeshModel = DAEReader::read((new File(levelEditorEntity->getFileName()))->getAbsoluteFile()->getCanonicalFile()->getParentFile()->getPath(), file);
+		Model* convexMeshModel = nullptr;
+		if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
+			convexMeshModel = DAEReader::read(
+				pathName,
+				fileName
+			);
+		} else
+		if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
+			convexMeshModel = TMReader::read(
+				pathName,
+				fileName
+			);
+		}
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
 		convexMeshModel->setId(::java::lang::StringBuilder().append(convexMeshModel->getId())->append(u"_model_bv."_j)
 			->append(id)

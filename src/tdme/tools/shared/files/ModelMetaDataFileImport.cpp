@@ -135,7 +135,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	if (jEntityRoot["file"].isNull() == false) {
 		auto modelFileString = new String(StringConverter::toWideString(jEntityRoot["file"].getString()));
 		modelFile = _FileSystem::getInstance()->getCanonicalPath(
-			_FileSystem::getInstance()->getPathName(modelFileString),
+			pathName,
 			_FileSystem::getInstance()->getFileName(modelFileString)
 		);
 	}
@@ -196,6 +196,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 			parseBoundingVolume(
 				0,
 				levelEditorEntity,
+				pathName,
 				jEntityRoot["bv"]
 			)
 		);
@@ -204,7 +205,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		auto jBoundingVolumes = jEntityRoot["bvs"].getArray();
 		for (auto i = 0; i < jBoundingVolumes.size(); i++) {
 			auto& jBv = jBoundingVolumes[i];
-			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, jBv));
+			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, pathName, jBv));
 		}
 	}
 
@@ -463,7 +464,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	return levelEditorEntity;
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, Value& jBv) /* throws(JSONException) */
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv) /* throws(JSONException) */
 {
 	clinit();
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
@@ -542,7 +543,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (bvTypeString->equalsIgnoreCase(u"convexmesh"_j) == true) {
 		try {
-			entityBoundingVolume->setupConvexMesh(new String(StringConverter::toWideString(jBv["file"].getString())));
+			entityBoundingVolume->setupConvexMesh(pathName, new String(StringConverter::toWideString(jBv["file"].getString())));
 		} catch (Exception* e) {
 			e->printStackTrace();
 		}

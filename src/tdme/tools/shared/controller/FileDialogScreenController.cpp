@@ -26,7 +26,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -56,7 +55,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
-using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {

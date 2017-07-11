@@ -146,9 +146,9 @@ public:
 	 * On bounding volume convex mesh apply
 	 * @param entity
 	 * @param bounding volume index
-	 * @param file
+	 * @param file name
 	 */
-	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, String* file);
+	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, String* fileName);
 
 	// Generated
 	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps);

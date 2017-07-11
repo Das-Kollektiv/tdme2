@@ -115,9 +115,10 @@ public:
 
 	/** 
 	 * Setup bounding volume sphere
-	 * @param file
+	 * @param path name
+	 * @param file name
 	 */
-	virtual void setupConvexMesh(String* file);
+	virtual void setupConvexMesh(String* pathName, String* fileName);
 
 private:
 
