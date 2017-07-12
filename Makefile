@@ -279,6 +279,7 @@ SRCS = \
 	src/tdme/math/Vector3.cpp \
 	src/tdme/math/Vector4.cpp \
 	src/tdme/os/_FileSystem.cpp \
+	src/tdme/os/_FileSystemException.cpp \
 	src/tdme/os/_FileSystemInterface.cpp \
 	src/tdme/os/_StandardFileSystem.cpp \
 	src/tdme/tests/AngleTest.cpp \
@@ -364,7 +365,7 @@ SRCS = \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/ArrayListIteratorMultiple.cpp \
-	src/tdme/utils/Exception.cpp \
+	src/tdme/utils/_Exception.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \

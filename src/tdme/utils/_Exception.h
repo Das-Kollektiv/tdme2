@@ -17,13 +17,13 @@ using std::wstring;
  * Exception base class
  * @author Andreas Drewke
  */
-class tdme::utils::Exception: public runtime_error {
+class tdme::utils::_Exception: public runtime_error {
 	public:
 		/**
 		 * @brief Public constructor
 		 * @param message Exception message
 		 */
-		Exception(const wstring& message) throw();
-		~Exception() throw();
+		_Exception(const wstring& message) throw();
+		~_Exception() throw();
 };
 

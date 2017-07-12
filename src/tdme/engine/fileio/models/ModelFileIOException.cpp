@@ -2,6 +2,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 
 using tdme::engine::fileio::models::ModelFileIOException;
+
 ModelFileIOException::ModelFileIOException(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {

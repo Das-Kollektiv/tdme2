@@ -5,7 +5,7 @@
 namespace tdme {
 namespace utils {
 		class ArrayListIteratorMultiple;
-		class Exception;
+		class _Exception;
 		class Key;
 		class MutableString;
 		class Pool;

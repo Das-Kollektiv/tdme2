@@ -44,23 +44,23 @@ class tdme::os::_StandardFileSystem final
 
 public:
 	typedef Object super;
-	String* getFileName(String* path, String* fileName) /* throws(IOException) */ override;
-	StringArray* list(String* pathName, FilenameFilter* filter) /* throws(IOException) */ override;
-	bool isPath(String* pathName) /* throws(IOException) */ override;
-	bool fileExists(String* fileName) /* throws(IOException) */ override;
-	String* getContentAsString(String* pathName, String* fileName) /* throws(IOException) */ override;
-	void setContentFromString(String* pathName, String* fileName, String* string) /* throws(IOException) */ override;
-	int8_tArray* getContent(String* pathName, String* fileName) /* throws(IOException) */ override;
-	void setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size = -1) /* throws(IOException) */ override;
-	StringArray* getContentAsStringArray(String* pathName, String* fileName) /* throws(IOException) */ override;
-	void setContentFromStringArray(String* pathName, String* fileName, StringArray* stringArray) /* throws(IOException) */ override;
-	String* getCanonicalPath(String* pathName, String* fileName) /* throws(IOException) */ override;
-	String* getCurrentWorkingPathName() /* throws(IOException) */ override;
-	String* getPathName(String* fileName) /* throws(IOException) */ override;
-	String* getFileName(String* fileName) /* throws(IOException) */ override;
-	bool createPath(String* pathName) /* throws(IOException) */ override;
-	bool removePath(String* pathName) /* throws(IOException) */ override;
-	bool removeFile(String* pathName, String* fileName) /* throws(IOException) */ override;
+	String* getFileName(String* path, String* fileName) throw (_FileSystemException) override;
+	StringArray* list(String* pathName, FilenameFilter* filter) throw (_FileSystemException) override;
+	bool isPath(String* pathName) throw (_FileSystemException) override;
+	bool fileExists(String* fileName) throw (_FileSystemException) override;
+	String* getContentAsString(String* pathName, String* fileName) throw (_FileSystemException) override;
+	void setContentFromString(String* pathName, String* fileName, String* string) throw (_FileSystemException) override;
+	int8_tArray* getContent(String* pathName, String* fileName) throw (_FileSystemException) override;
+	void setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size = -1) throw (_FileSystemException) override;
+	StringArray* getContentAsStringArray(String* pathName, String* fileName) throw (_FileSystemException) override;
+	void setContentFromStringArray(String* pathName, String* fileName, StringArray* stringArray) throw (_FileSystemException) override;
+	String* getCanonicalPath(String* pathName, String* fileName) throw (_FileSystemException) override;
+	String* getCurrentWorkingPathName() throw (_FileSystemException) override;
+	String* getPathName(String* fileName) throw (_FileSystemException) override;
+	String* getFileName(String* fileName) throw (_FileSystemException) override;
+	void createPath(String* pathName) throw (_FileSystemException) override;
+	void removePath(String* pathName) throw (_FileSystemException) override;
+	void removeFile(String* pathName, String* fileName) throw (_FileSystemException) override;
 
 	// Generated
 	_StandardFileSystem();
