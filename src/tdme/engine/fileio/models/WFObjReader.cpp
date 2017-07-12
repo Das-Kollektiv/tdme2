@@ -1,12 +1,12 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/WFObjReader.java
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
-#include <java/io/BufferedReader.h>
-#include <java/io/DataInputStream.h>
-#include <java/io/File.h>
-#include <java/io/InputStreamReader.h>
+#include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
+#include <java/lang/CharSequence.h>
 #include <java/lang/ClassCastException.h>
+#include <java/lang/Comparable.h>
+#include <java/lang/String.h>
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
@@ -69,6 +69,19 @@ typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Ar
 }  // namespace math
 }  // namespace tdme
 
+template<typename ComponentType, typename... Bases> struct SubArray;
+namespace java {
+namespace io {
+typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
+}  // namespace io
+
+namespace lang {
+typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
+typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
+typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
+}  // namespace lang
+}  // namespace java
+
 template<typename T, typename U>
 static T java_cast(U* u)
 {
@@ -109,8 +122,17 @@ WFObjReader::WFObjReader()
 Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOException, ModelFileIOException) */
 {
 	clinit();
-	auto model = new Model(::java::lang::StringBuilder().append(pathName)->append(File::separator)
-		->append(fileName)->toString(), fileName, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(
+		::java::lang::StringBuilder().
+		 	 append(pathName)->
+			 append(u"/"_j)->
+			 append(fileName)->
+			 toString(),
+		fileName,
+		Model_UpVector::Y_UP,
+		RotationOrder::XYZ,
+		nullptr
+	);
 	auto vertices = new _ArrayList();
 	auto textureCoordinates = new _ArrayList();
 	auto materials = model->getMaterials();
@@ -125,17 +147,16 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 	_ArrayList* groupTextureCoordinates = nullptr;
 	_ArrayList* groupFacesEntities = nullptr;
 	FacesEntity* groupFacesEntity = nullptr;
-	auto inputStream = new DataInputStream(_FileSystem::getInstance()->getInputStream(pathName, fileName));
-	auto reader = new BufferedReader(new InputStreamReader(inputStream));
+	StringArray* lines = nullptr;
 	{
 		auto finally0 = finally([&] {
-			reader->close();
-			inputStream->close();
+			if (lines != nullptr) delete lines;
 		});
 		{
+			lines = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
 			String* line;
-			while ((line = reader->readLine()) != nullptr) {
-				line = line->trim();
+			for (int lineIdx = 0; lineIdx < lines->length; lineIdx++) {
+				line = lines->get(lineIdx)->trim();
 				if (line->startsWith(u"#"_j)) {
 					continue;
 				}
@@ -148,18 +169,21 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 				if (command->equals(u"mtllib"_j)) {
 					auto materialFileName = arguments;
 					materials = WFObjReader::readMaterials(pathName, materialFileName);
-				} else if (command->equals(u"v"_j)) {
+				} else
+				if (command->equals(u"v"_j)) {
 					auto t = new StringTokenizer(arguments, u" "_j);
 					auto x = Float::parseFloat(t->nextToken());
 					auto y = Float::parseFloat(t->nextToken());
 					auto z = Float::parseFloat(t->nextToken());
 					vertices->add(new Vector3(x, y, z));
-				} else if (command->equals(u"vt"_j)) {
+				} else
+				if (command->equals(u"vt"_j)) {
 					auto t = new StringTokenizer(arguments, u" "_j);
 					auto u = Float::parseFloat(t->nextToken());
 					auto v = Float::parseFloat(t->nextToken());
 					textureCoordinates->add(new TextureCoordinate(u, v));
-				} else if (command->equals(u"f"_j)) {
+				} else
+				if (command->equals(u"f"_j)) {
 					StringTokenizer* t2;
 					auto t = new StringTokenizer(arguments, u" "_j);
 					auto v0 = -1;
@@ -246,7 +270,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 						face->setTextureCoordinateIndices(vt0, vt1, vt2);
 					}
 					groupFacesEntityFaces->add(face);
-				} else if (command->equals(u"g"_j)) {
+				} else
+				if (command->equals(u"g"_j)) {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces->isEmpty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
@@ -271,7 +296,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 					modelGroupTextureCoordinatesMapping = new _HashMap();
 					subGroups->put(name, group);
 					groups->put(name, group);
-				} else if (command->equals(u"usemtl"_j)) {
+				} else
+				if (command->equals(u"usemtl"_j)) {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces->isEmpty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
@@ -307,53 +333,65 @@ _HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) /* thro
 	clinit();
 	auto materials = new _HashMap();
 	Material* current = nullptr;
-	auto inputStream = new DataInputStream(_FileSystem::getInstance()->getInputStream(pathName, fileName));
-	auto reader = new BufferedReader(new InputStreamReader(inputStream));
 	String* line;
 	auto alpha = 1.0f;
-	while ((line = reader->readLine()) != nullptr) {
-		line = line->trim();
-		if (line->startsWith(u"#"_j)) {
-			continue;
-		}
-		auto commandEndIdx = line->indexOf(static_cast< int32_t >(u' '));
-		if (commandEndIdx == -1)
-			commandEndIdx = line->length();
+	StringArray* lines = nullptr;
+	{
+		auto finally0 = finally([&] {
+			if (lines != nullptr) delete lines;
+		});
+		lines = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
+		String* line;
+		for (int lineIdx = 0; lineIdx < lines->length; lineIdx++) {
+			line = lines->get(lineIdx)->trim();
+			if (line->startsWith(u"#"_j)) {
+				continue;
+			}
+			auto commandEndIdx = line->indexOf(static_cast< int32_t >(u' '));
+			if (commandEndIdx == -1)
+				commandEndIdx = line->length();
 
-		auto command = line->substring(0, commandEndIdx)->trim()->toLowerCase();
-		auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
-		if (command->equals(u"newmtl"_j)) {
-			auto name = arguments;
-			current = new Material(name);
-			materials->put(name, current);
-		} else if (command->equals(u"map_ka"_j)) {
-			current->setDiffuseTexture(pathName, arguments);
-		} else if (command->equals(u"map_kd"_j)) {
-			current->setDiffuseTexture(pathName, arguments);
-		} else if (command->equals(u"ka"_j)) {
-			auto t = new StringTokenizer(arguments, u" "_j);
-			current->getAmbientColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
-		} else if (command->equals(u"kd"_j)) {
-			auto t = new StringTokenizer(arguments, u" "_j);
-			current->getDiffuseColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
-		} else if (command->equals(u"ks"_j)) {
-			auto t = new StringTokenizer(arguments, u" "_j);
-			current->getSpecularColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
-		} else if (command->equals(u"tr"_j)) {
-			alpha = Float::parseFloat(arguments);
-			current->getAmbientColor()->setAlpha(alpha);
-			current->getDiffuseColor()->setAlpha(alpha);
-			current->getSpecularColor()->setAlpha(alpha);
-			current->getEmissionColor()->setAlpha(alpha);
-		} else if (command->equals(u"d"_j)) {
-			alpha = Float::parseFloat(arguments);
-			current->getAmbientColor()->setAlpha(alpha);
-			current->getDiffuseColor()->setAlpha(alpha);
-			current->getSpecularColor()->setAlpha(alpha);
-			current->getEmissionColor()->setAlpha(alpha);
+			auto command = line->substring(0, commandEndIdx)->trim()->toLowerCase();
+			auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
+			if (command->equals(u"newmtl"_j)) {
+				auto name = arguments;
+				current = new Material(name);
+				materials->put(name, current);
+			} else
+			if (command->equals(u"map_ka"_j)) {
+				current->setDiffuseTexture(pathName, arguments);
+			} else
+			if (command->equals(u"map_kd"_j)) {
+				current->setDiffuseTexture(pathName, arguments);
+			} else
+			if (command->equals(u"ka"_j)) {
+				auto t = new StringTokenizer(arguments, u" "_j);
+				current->getAmbientColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			} else
+			if (command->equals(u"kd"_j)) {
+				auto t = new StringTokenizer(arguments, u" "_j);
+				current->getDiffuseColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			} else
+			if (command->equals(u"ks"_j)) {
+				auto t = new StringTokenizer(arguments, u" "_j);
+				current->getSpecularColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			} else
+			if (command->equals(u"tr"_j)) {
+				alpha = Float::parseFloat(arguments);
+				current->getAmbientColor()->setAlpha(alpha);
+				current->getDiffuseColor()->setAlpha(alpha);
+				current->getSpecularColor()->setAlpha(alpha);
+				current->getEmissionColor()->setAlpha(alpha);
+			} else
+			if (command->equals(u"d"_j)) {
+				alpha = Float::parseFloat(arguments);
+				current->getAmbientColor()->setAlpha(alpha);
+				current->getDiffuseColor()->setAlpha(alpha);
+				current->getSpecularColor()->setAlpha(alpha);
+				current->getEmissionColor()->setAlpha(alpha);
+			}
 		}
 	}
-	inputStream->close();
 	return materials;
 }
 

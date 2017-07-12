@@ -1,7 +1,6 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/util/Properties.h>
 
-#include <java/lang/String.h>
 #include <java/lang/ClassCastException.h>
 
 #include <ObjectArray.h>
