@@ -8,10 +8,8 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using java::io::FilenameFilter;
-using java::io::InputStream;
-using java::io::OutputStream;
 using java::io::Serializable;
+using java::io::FilenameFilter;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
@@ -52,24 +50,6 @@ struct tdme::os::_FileSystemInterface
 	 * @return complete filename with path and file
 	 */
 	virtual String* getFileName(String* pathName, String* fileName) /* throws(IOException) */ = 0;
-
-	/** 
-	 * Creates input stream by given path name and file name
-	 * @param path name
-	 * @param file name
-	 * @return input stream
-	 * @throws IOException
-	 */
-	virtual InputStream* getInputStream(String* pathName, String* fileName) /* throws(IOException) */ = 0;
-
-	/** 
-	 * Creates output stream by given path name and file name
-	 * @param path name
-	 * @param file name
-	 * @return output stream
-	 * @throws IOException
-	 */
-	virtual OutputStream* getOutputStream(String* pathName, String* fileName) /* throws(IOException) */ = 0;
 
 	/**
 	 * Get content as string

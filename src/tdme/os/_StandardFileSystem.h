@@ -12,8 +12,6 @@
 using java::lang::Object;
 using tdme::os::_FileSystemInterface;
 using java::io::FilenameFilter;
-using java::io::InputStream;
-using java::io::OutputStream;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -47,8 +45,6 @@ class tdme::os::_StandardFileSystem final
 public:
 	typedef Object super;
 	String* getFileName(String* path, String* fileName) /* throws(IOException) */ override;
-	InputStream* getInputStream(String* pathName, String* fileName) /* throws(IOException) */ override;
-	OutputStream* getOutputStream(String* pathName, String* fileName) /* throws(IOException) */ override;
 	StringArray* list(String* pathName, FilenameFilter* filter) /* throws(IOException) */ override;
 	bool isPath(String* pathName) /* throws(IOException) */ override;
 	bool fileExists(String* fileName) /* throws(IOException) */ override;

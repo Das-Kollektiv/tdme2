@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/files/LevelFileImport.java
 #include <tdme/tools/shared/files/LevelFileImport.h>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Float.h>
 #include <java/lang/String.h>

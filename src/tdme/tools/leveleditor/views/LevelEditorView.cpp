@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/views/LevelEditorView.java
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 
-#include <java/io/File.h>
-#include <java/io/FileInputStream.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
-#include <java/io/OutputStream.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -85,12 +79,6 @@
 #include <ObjectArray.h>
 
 using tdme::tools::leveleditor::views::LevelEditorView;
-using java::io::File;
-using java::io::FileInputStream;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::InputStream;
-using java::io::OutputStream;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::CharSequence;

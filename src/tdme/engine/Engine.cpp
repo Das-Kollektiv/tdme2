@@ -1,11 +1,6 @@
 // Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 
-#include <java/io/File.h>
-#include <java/io/FileNotFoundException.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Class.h>
 #include <java/lang/ClassCastException.h>
@@ -67,11 +62,6 @@
 #include <SubArray.h>
 
 using tdme::engine::Engine;
-using java::io::File;
-using java::io::FileNotFoundException;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::InputStream;
 using java::lang::ArrayStoreException;
 using java::lang::Class;
 using java::lang::ClassCastException;
@@ -816,43 +806,12 @@ bool Engine::makeScreenshot(String* pathName, String* fileName)
 	if (pixels == nullptr)
 		return false;
 
-	FileOutputStream* fos = nullptr;
-	{
-		auto finally0 = finally([&] {
-			if (fos != nullptr)
-				try {
-					fos->close();
-				} catch (IOException* ioe2) {
-				}
+	// TODO: save to PNG
 
-		});
-		try {
-			fos = new FileOutputStream(::java::lang::StringBuilder().append(pathName)->append(File::separator)
-				->append(fileName)->toString());
-		} catch (IOException* ioe) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Engine::makeScreenshot(): failed: "_j)->append(ioe->getMessage())->toString()));
-			return false;
-		}
-	}
 	if (frameBuffer != nullptr)
 		FrameBuffer::disableFrameBuffer();
 
 	return true;
-}
-
-InputStream* Engine::getInputStream(String* pathName, String* fileName) /* throws(IOException) */
-{
-	try {
-		return _FileSystem::getInstance()->getInputStream(pathName, fileName);
-	} catch (IOException* ioe) {
-	}
-	auto is = this->getClass()->getClassLoader()->getResourceAsStream(::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-		->append(fileName)->toString());
-	if (is == nullptr)
-		throw new FileNotFoundException(::java::lang::StringBuilder().append(pathName)->append(u"/"_j)
-			->append(fileName)->toString());
-
-	return is;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

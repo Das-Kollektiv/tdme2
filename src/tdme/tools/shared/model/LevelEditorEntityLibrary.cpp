@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityLibrary.java
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 
-#include <java/io/File.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
@@ -25,7 +24,6 @@
 #include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using java::io::File;
 using java::lang::CharSequence;
 using java::lang::ClassCastException;
 using java::lang::Exception;

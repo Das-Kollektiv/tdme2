@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/FileDialogScreenController.java
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 
-#include <java/io/File.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -16,7 +15,6 @@
 #include <ObjectArray.h>
 
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
-using java::io::File;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::CharSequence;

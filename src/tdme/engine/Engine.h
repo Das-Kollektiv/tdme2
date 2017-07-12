@@ -431,14 +431,6 @@ public:
 	 */
 	bool makeScreenshot(String* pathName, String* fileName);
 
-	/** 
-	 * Retrieves an input stream for a tdme.jar packaged file or from filesystem 
-	 * @param file name
-	 * @param path name
-	 * @return
-	 */
-	InputStream* getInputStream(String* pathName, String* fileName) /* throws(IOException) */;
-
 	// Generated
 
 private:

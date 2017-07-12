@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/audio/Sound.java
 #include <tdme/audio/Sound.h>
 
-#include <java/io/File.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -46,8 +45,12 @@ void Sound::ctor(String* id, String* pathName, String* fileName)
 {
 	super::ctor(id);
 	init();
-	this->bufferId = ::java::lang::StringBuilder().append(pathName)->append(File::separator)
-		->append(fileName)->toString();
+	this->bufferId =
+		::java::lang::StringBuilder().
+			append(pathName)->
+			append(u"/"_j)->
+			append(fileName)->
+			toString();
 	this->pathName = pathName;
 	this->fileName = fileName;
 	alBufferId = Audio::ALBUFFERID_NONE;

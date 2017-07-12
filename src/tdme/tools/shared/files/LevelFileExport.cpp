@@ -5,11 +5,6 @@
 #include <iomanip>
 #include <sstream>
 
-#include <java/io/File.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/OutputStream.h>
-#include <java/io/PrintStream.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Iterable.h>
 #include <java/lang/NullPointerException.h>
@@ -41,11 +36,6 @@
 using std::ostringstream;
 
 using tdme::tools::shared::files::LevelFileExport;
-using java::io::File;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::OutputStream;
-using java::io::PrintStream;
 using java::lang::ClassCastException;
 using java::lang::Iterable;
 using java::lang::NullPointerException;
@@ -111,8 +101,6 @@ LevelFileExport::LevelFileExport()
 void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLevel* level) /* throws(Exception) */
 {
 	clinit();
-	FileOutputStream* fos = nullptr;
-	PrintStream* fops = nullptr;
 	level->setFileName(new String(pathName->getCPPWString() + L'/' + fileName->getCPPWString()));
 	{
 		auto finally0 = finally([&] {
@@ -225,9 +213,9 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
 		} catch (Exception* e) {
 			e->printStackTrace();
-		} catch (IOException* ioe) {
+		}/* catch (IOException* ioe) {
 			ioe->printStackTrace();
-		}
+		}*/
 	}
 }
 

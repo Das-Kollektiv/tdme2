@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 #include <tdme/engine/fileio/models/TMReader.h>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/ClassCastException.h>
@@ -40,9 +37,6 @@
 
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using java::io::File;
-using java::io::IOException;
-using java::io::InputStream;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::ClassCastException;
@@ -197,9 +191,9 @@ Model* TMReader::read(String* pathName, String* fileName) /* throws(IOException,
 			}
 			readSubGroups(is, model, nullptr, model->getSubGroups());
 			return model;
-		} catch (IOException* ioe) {
+		}/* catch (IOException* ioe) {
 			throw ioe;
-		} catch (ModelFileIOException* mfioe) {
+		}*/ catch (ModelFileIOException* mfioe) {
 			throw mfioe;
 		}
 	}

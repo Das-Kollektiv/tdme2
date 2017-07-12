@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/io/File.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
@@ -56,7 +55,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::shared::tools::Tools;
-using java::io::File;
 using java::lang::ArrayStoreException;
 using java::lang::Float;
 using java::lang::Integer;

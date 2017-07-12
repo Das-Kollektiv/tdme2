@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMWriter.java
 #include <tdme/engine/fileio/models/TMWriter.h>
 
-#include <java/io/IOException.h>
-#include <java/io/OutputStream.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/ClassCastException.h>
@@ -37,8 +35,6 @@
 #include <ObjectArray.h>
 
 using tdme::engine::fileio::models::TMWriter;
-using java::io::IOException;
-using java::io::OutputStream;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::ClassCastException;
@@ -150,7 +146,7 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) /* throws
 				delete os;
 			}
 		});
-		try {
+		/*try {*/
 			os = new TMWriterOutputStream();
 			os->writeString(u"TDME Model"_j);
 			os->writeByte(static_cast< int8_t >(1));
@@ -170,11 +166,11 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) /* throws
 					writeMaterial(os, material);
 				}
 			}
-			writeSubGroups(os, model->getSubGroups());
 			_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
-		} catch (IOException* ioe) {
+			writeSubGroups(os, model->getSubGroups());
+		/*} catch (IOException* ioe) {
 			throw ioe;
-		}
+		}*/
 	}
 }
 

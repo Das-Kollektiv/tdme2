@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Object.h>
@@ -46,8 +44,6 @@ using std::to_string;
 using std::to_wstring;
 
 using tdme::gui::GUI;
-using java::io::File;
-using java::io::IOException;
 using java::lang::ClassCastException;
 using java::lang::Exception;
 using java::lang::Object;
@@ -192,12 +188,12 @@ GUIFont* GUI::getFont(String* fileName)
 	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
 	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	String* key = nullptr;
-	try {
+	/*try {*/
 		key = canonicalFile;
-	} catch (IOException* ioe) {
+	/*} catch (IOException* ioe) {
 		ioe->printStackTrace();
 		return nullptr;
-	}
+	}*/
 	auto font = java_cast< GUIFont* >(fontCache->get(key));
 	if (font == nullptr) {
 		try {
@@ -219,12 +215,13 @@ Texture* GUI::getImage(String* fileName)
 	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
 	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	String* key = nullptr;
-	try {
+	/*try {*/
 		key = canonicalFile;
-	} catch (IOException* ioe) {
+	/*} catch (IOException* ioe) {
 		ioe->printStackTrace();
 		return nullptr;
 	}
+	*/
 	auto image = java_cast< Texture* >(imageCache->get(key));
 	if (image == nullptr) {
 		try {

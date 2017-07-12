@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/tests/AudioTest.java
 #include <tdme/tests/AudioTest.h>
 
-#include <java/io/BufferedReader.h>
-#include <java/io/InputStreamReader.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
@@ -13,8 +11,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tests::AudioTest;
-using java::io::BufferedReader;
-using java::io::InputStreamReader;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::System;
@@ -59,8 +55,7 @@ void AudioTest::main(StringArray* args) /* throws(Exception) */
 	Thread* audioUpdateThread = new AudioTest_main_1();
 	audioUpdateThread->start();
 	_Console::println(static_cast< Object* >(u"Press 'enter' to quit"_j));
-	auto buf = new BufferedReader(new InputStreamReader(System::in));
-	buf->readLine();
+	// read char/line();
 	audioUpdateThread->interrupt();
 	Audio::getInstance()->shutdown();
 }

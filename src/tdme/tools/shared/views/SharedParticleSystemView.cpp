@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/views/SharedParticleSystemView.java
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
-#include <java/io/File.h>
-#include <java/io/FileInputStream.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
-#include <java/io/OutputStream.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Object.h>
@@ -44,12 +38,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::views::SharedParticleSystemView;
-using java::io::File;
-using java::io::FileInputStream;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::InputStream;
-using java::io::OutputStream;
 using java::lang::ClassCastException;
 using java::lang::Exception;
 using java::lang::Object;

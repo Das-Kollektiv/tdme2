@@ -12,15 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <java/io/BufferedReader.h>
-#include <java/io/File.h>
-#include <java/io/FileInputStream.h>
-#include <java/io/FileNotFoundException.h>
-#include <java/io/FileOutputStream.h>
 #include <java/io/FilenameFilter.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
-#include <java/io/InputStreamReader.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -41,8 +33,6 @@
 #include <java/security/ProtectionDomain.h>
 #include <java/util/Iterator.h>
 #include <java/util/StringTokenizer.h>
-#include <java/util/zip/ZipEntry.h>
-#include <java/util/zip/ZipInputStream.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
@@ -56,14 +46,7 @@ using std::vector;
 
 using tdme::os::_StandardFileSystem;
 using java::io::BufferedReader;
-using java::io::File;
-using java::io::FileInputStream;
-using java::io::FileNotFoundException;
-using java::io::FileOutputStream;
 using java::io::FilenameFilter;
-using java::io::IOException;
-using java::io::InputStream;
-using java::io::InputStreamReader;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
@@ -84,8 +67,6 @@ using java::security::CodeSource;
 using java::security::ProtectionDomain;
 using java::util::Iterator;
 using java::util::StringTokenizer;
-using java::util::zip::ZipEntry;
-using java::util::zip::ZipInputStream;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_ArrayList;
@@ -143,16 +124,6 @@ _StandardFileSystem::_StandardFileSystem()
 
 String* _StandardFileSystem::getFileName(String* pathName, String* fileName) /* throws(IOException) */ {
 	return new String(pathName->getCPPWString() + L"/" + fileName->getCPPWString());
-}
-
-InputStream* _StandardFileSystem::getInputStream(String* pathName, String* fileName) /* throws(IOException) */
-{
-	return nullptr;
-}
-
-OutputStream* _StandardFileSystem::getOutputStream(String* pathName, String* fileName) /* throws(IOException) */
-{
-	return nullptr;
 }
 
 StringArray* _StandardFileSystem::list(String* pathName, FilenameFilter* filter) /* throws(IOException) */

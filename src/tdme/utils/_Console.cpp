@@ -4,7 +4,6 @@
 
 #include <tdme/utils/_Console.h>
 
-#include <java/io/PrintStream.h>
 #include <java/lang/Object.h>
 #include <java/lang/System.h>
 #include <java/lang/String.h>

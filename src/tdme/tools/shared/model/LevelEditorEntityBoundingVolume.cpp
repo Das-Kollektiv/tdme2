@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.java
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
-#include <java/io/File.h>
 #include <java/io/Serializable.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Integer.h>
@@ -27,7 +26,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using java::io::File;
 using java::io::Serializable;
 using java::lang::Exception;
 using java::lang::Integer;

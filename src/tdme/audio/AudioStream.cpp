@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/audio/AudioStream.java
 #include <tdme/audio/AudioStream.h>
 
-#include <java/io/IOException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -14,7 +13,6 @@
 #include <Array.h>
 
 using tdme::audio::AudioStream;
-using java::io::IOException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -77,11 +75,11 @@ void AudioStream::rewind()
 
 	try {
 		decoder->reset();
-	} catch (IOException* ioe) {
+	}/* catch (IOException* ioe) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 			->append(u"': "_j)
 			->append(ioe->getMessage())->toString()));
-	} catch (AudioDecoderException* ade) {
+	}*/ catch (AudioDecoderException* ade) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 			->append(u"': "_j)
 			->append(ade->getMessage())->toString()));
@@ -105,11 +103,11 @@ void AudioStream::play()
 			if (bytesDecoded == 0)
 				break;
 
-		} catch (IOException* ioe) {
+		}/*catch (IOException* ioe) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 				->append(u"': "_j)
 				->append(ioe->getMessage())->toString()));
-		} catch (AudioDecoderException* ade) {
+		}*/catch (AudioDecoderException* ade) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 				->append(u"': "_j)
 				->append(ade->getMessage())->toString()));

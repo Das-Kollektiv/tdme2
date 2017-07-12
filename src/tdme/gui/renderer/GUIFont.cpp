@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/gui/renderer/GUIFont.java
 #include <tdme/gui/renderer/GUIFont.h>
 
-#include <java/io/BufferedReader.h>
-#include <java/io/InputStreamReader.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Math.h>
@@ -21,8 +19,6 @@
 #include <SubArray.h>
 
 using tdme::gui::renderer::GUIFont;
-using java::io::BufferedReader;
-using java::io::InputStreamReader;
 using java::lang::ArrayStoreException;
 using java::lang::Integer;
 using java::lang::Math;

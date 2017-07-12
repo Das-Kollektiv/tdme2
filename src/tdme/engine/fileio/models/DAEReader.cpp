@@ -3,8 +3,6 @@
 
 #include <unordered_set>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -69,8 +67,6 @@
 using std::unordered_set;
 
 using tdme::engine::fileio::models::DAEReader;
-using java::io::File;
-using java::io::IOException;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
@@ -1393,12 +1389,12 @@ String* DAEReader::determineDisplacementFilename(String* path, String* mapType, 
 
 	tmpFileNameCandidate = ::java::lang::StringBuilder(tmpFileNameCandidate).append(u"displacement"_j)->toString();
 	auto const finalFilenameCandidate = tmpFileNameCandidate;
-	try {
+	/*try*/ {
 		auto fileNameCandidates = _FileSystem::getInstance()->list(path, new DAEReader_determineDisplacementFilename_1(finalFilenameCandidate));
 		tmpFileNameCandidate = fileNameCandidates->length > 0 ? (*fileNameCandidates)[0] : static_cast< String* >(nullptr);
-	} catch (IOException* ioe) {
+	}/* catch (IOException* ioe) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"DAEReader::makeDisplacementFilenameCandidate::"_j)->append(static_cast< Object* >(ioe))->toString()));
-	}
+	}*/
 	return tmpFileNameCandidate;
 }
 

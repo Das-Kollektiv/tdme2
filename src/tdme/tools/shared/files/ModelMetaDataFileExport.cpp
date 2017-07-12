@@ -5,13 +5,6 @@
 #include <iomanip>
 #include <sstream>
 
-#include <java/io/File.h>
-#include <java/io/FileInputStream.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
-#include <java/io/OutputStream.h>
-#include <java/io/PrintStream.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Iterable.h>
@@ -60,13 +53,6 @@
 using std::ostringstream;
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
-using java::io::File;
-using java::io::FileInputStream;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::InputStream;
-using java::io::OutputStream;
-using java::io::PrintStream;
 using java::lang::ArrayStoreException;
 using java::lang::ClassCastException;
 using java::lang::Iterable;
@@ -164,8 +150,6 @@ void ModelMetaDataFileExport::copyFile(String* source, String* dest) /* throws(I
 void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) /* throws(Exception) */
 {
 	clinit();
-	FileOutputStream* fos = nullptr;
-	PrintStream* fops = nullptr;
 	{
 		auto finally1 = finally([&] {
 		});
@@ -179,10 +163,10 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
 		} catch (ext::jsonbox::JsonException* je) {
 			throw je;
-		} catch (IOException* ioe) {
+		}/* catch (IOException* ioe) {
 			ioe->printStackTrace();
 			throw ioe;
-		}
+		}*/
 	}
 }
 

@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/FileDialogScreenController.java
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
@@ -30,8 +28,6 @@
 #include <ObjectArray.h>
 
 using tdme::tools::shared::controller::FileDialogScreenController;
-using java::io::File;
-using java::io::IOException;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
@@ -142,12 +138,13 @@ void FileDialogScreenController::setupFileDialogListBox()
 	caption->getText()->set(captionText)->append(directory);
 
 	auto fileList = new StringArray(0);
-	try {
+	/*try*/ {
 		auto directory = cwd;
 		fileList = _FileSystem::getInstance()->list(directory, new FileDialogScreenController_setupFileDialogListBox_1(this));
-	} catch (IOException* ioe) {
+	}/* catch (IOException* ioe) {
 		ioe->printStackTrace();
 	}
+	*/
 	auto filesInnerNode = java_cast< GUIParentNode* >((files->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(files->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto filesInnerNodeSubNodesXML = u""_j;
@@ -168,11 +165,11 @@ void FileDialogScreenController::setupFileDialogListBox()
 
 void FileDialogScreenController::show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction)
 {
-	try {
+	/*try {*/
 		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, u""_j);
-	} catch (IOException* ioe) {
+	/*} catch (IOException* ioe) {
 		ioe->printStackTrace();
-	}
+	}*/
 	this->captionText = captionText;
 	this->extensions = extensions;
 	this->fileName->getController()->setValue(value->set(fileName));
@@ -192,10 +189,10 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 		if (node->getId()->equals(files->getId()) == true) {
 			auto selectedFile = node->getController()->getValue()->toString();
 			if (_FileSystem::getInstance()->isPath(new String(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString())) == true) {
-				try {
+				/*try*/ {
 					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
-				} catch (IOException* ioe) {
-				}
+				}/* catch (IOException* ioe) {
+				}*/
 				setupFileDialogListBox();
 			} else {
 				fileName->getController()->setValue(value->set(selectedFile));

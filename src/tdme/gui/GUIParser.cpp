@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/gui/GUIParser.java
 #include <tdme/gui/GUIParser.h>
 
-#include <java/io/ByteArrayInputStream.h>
-#include <java/io/InputStream.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
@@ -57,8 +55,6 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using tdme::gui::GUIParser;
-using java::io::ByteArrayInputStream;
-using java::io::InputStream;
 using java::lang::CharSequence;
 using java::lang::ClassCastException;
 using java::lang::Exception;

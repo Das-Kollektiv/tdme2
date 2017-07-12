@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/files/ModelMetaDataFileImport.java
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 
-#include <java/io/File.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Float.h>
 #include <java/lang/Object.h>
@@ -37,9 +34,6 @@
 #include <ext/jsonbox/Array.h>
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
-using java::io::File;
-using java::io::IOException;
-using java::io::InputStream;
 using java::lang::Exception;
 using java::lang::Float;
 using java::lang::Object;

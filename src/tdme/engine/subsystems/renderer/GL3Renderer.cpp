@@ -3,10 +3,6 @@
 
 #include <OpenGL/gl3.h>
 
-#include <java/io/BufferedReader.h>
-#include <java/io/DataInputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStreamReader.h>
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/Byte.h>
@@ -36,10 +32,6 @@
 #include <ObjectArray.h>
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
-using java::io::BufferedReader;
-using java::io::DataInputStream;
-using java::io::IOException;
-using java::io::InputStreamReader;
 using java::io::Serializable;
 using java::lang::ArrayStoreException;
 using java::lang::Byte;

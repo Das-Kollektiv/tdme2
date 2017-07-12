@@ -1,12 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/views/SharedModelViewerView.java
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
-#include <java/io/File.h>
-#include <java/io/FileInputStream.h>
-#include <java/io/FileOutputStream.h>
-#include <java/io/IOException.h>
-#include <java/io/InputStream.h>
-#include <java/io/OutputStream.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
@@ -46,12 +40,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::views::SharedModelViewerView;
-using java::io::File;
-using java::io::FileInputStream;
-using java::io::FileOutputStream;
-using java::io::IOException;
-using java::io::InputStream;
-using java::io::OutputStream;
 using java::lang::CharSequence;
 using java::lang::ClassCastException;
 using java::lang::Exception;
