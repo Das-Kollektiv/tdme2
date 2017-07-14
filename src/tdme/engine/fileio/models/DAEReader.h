@@ -8,9 +8,13 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/os/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+
 #include <java/lang/Object.h>
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/_FileSystemException.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -19,11 +23,13 @@ using std::vector;
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
+using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::Model;
+using tdme::os::_FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
@@ -55,19 +61,21 @@ public:
 	 * Reads Collada DAE file
 	 * @param path name
 	 * @param file name
-	 * @throws Exception
-	 * @return Model instance
+	 * @throws model file IO exception
+	 * @throws file system exception
+	 * @return model instance
 	 */
-	static Model* read(String* pathName, String* fileName) /* throws(Exception) */;
+	static Model* read(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException);
 
 	/** 
 	 * Reads Collada DAE file level
 	 * @param path name
 	 * @param file name
-	 * @throws Exception
-	 * @return Model instance
+	 * @throws model file IO exception
+	 * @throws file system exception
+	 * @return model instance
 	 */
-	static LevelEditorLevel* readLevel(String* pathName, String* fileName) /* throws(Exception) */;
+	static LevelEditorLevel* readLevel(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException);
 
 private:
 
@@ -84,7 +92,7 @@ private:
 	 * @return up vector
 	 * @throws ModelFileIOException
 	 */
-	static Model_UpVector* getUpVector(TiXmlElement* xmlRoot) /* throws(ModelFileIOException) */;
+	static Model_UpVector* getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException);
 
 	/** 
 	 * Set up model import rotation matrix
@@ -109,10 +117,9 @@ private:
 	 * @param xml node
 	 * @param xml root
 	 * @param frames per second
-	 * @throws Exception
 	 * @return group
 	 */
-	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */;
+	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a DAE visual scene group node
@@ -123,10 +130,10 @@ private:
 	 * @param xml node
 	 * @param xml root
 	 * @param frames per seconds
-	 * @throws Exception
+	 * @throws model file IO exception
 	 * @return group
 	 */
-	static Group* readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */;
+	static Group* readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a instance controller
@@ -136,12 +143,11 @@ private:
 	 * @param parent group
 	 * @param xml root
 	 * @param xml node
+	 * @throws model file IO exception
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) /* throws(Exception) */;
-
-public:
+	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a geometry
@@ -152,9 +158,9 @@ public:
 	 * @param xml root
 	 * @param xml node id
 	 * @param material symbols
-	 * @throws Exception
+	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) /* throws(Exception) */;
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
@@ -164,11 +170,8 @@ public:
 	 * @param xml root
 	 * @param xml node id
 	 * @return material
-	 * @throws Exception
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId) /* throws(Exception) */;
-
-private:
+	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 

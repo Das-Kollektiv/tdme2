@@ -373,7 +373,7 @@ Value &Value::operator[](const char *key) throw (JsonException) {
 
 Value &Value::operator[](tdme::ext::jsonbox::Array::size_type index) throw (JsonException) {
 	if (type != ARRAY) {
-		throw JsonException(L"value is not of type array");
+		throw JsonException("value is not of type array");
 	}
 
 	return (*data.arrayValue)[index];
@@ -415,7 +415,7 @@ const std::string &Value::getString() const throw (JsonException) {
 	if (type == STRING) {
 		return  (*data.stringValue);
 	}
-	throw JsonException(L"value is not of type string");
+	throw JsonException("value is not of type string");
 }
 
 void Value::setString(std::string const &newString) {
@@ -433,7 +433,7 @@ int Value::getInt() const throw (JsonException) {
 	if (type == INTEGER) {
 		return (*data.intValue);
 	}
-	throw JsonException(L"value is not of type int");
+	throw JsonException("value is not of type int");
 }
 
 void Value::setInt(int newInt) {
@@ -454,7 +454,7 @@ double Value::getDouble() const throw (JsonException) {
 	if (type == DOUBLE) {
 		return (*data.doubleValue);
 	}
-	throw JsonException(L"value is not of type double");
+	throw JsonException("value is not of type double");
 }
 
 void Value::setDouble(double newDouble) {
@@ -472,7 +472,7 @@ const Object &Value::getObject() const throw (JsonException) {
 	if (type == OBJECT) {
 		return (*data.objectValue);
 	}
-	throw JsonException(L"value is not of type object");
+	throw JsonException("value is not of type object");
 }
 
 void Value::setObject(const Object &newObject) {
@@ -490,7 +490,7 @@ const tdme::ext::jsonbox::Array &Value::getArray() const throw (JsonException) {
 	if (type == ARRAY) {
 		return (*data.arrayValue);
 	}
-	throw JsonException(L"value is not of type array");
+	throw JsonException("value is not of type array");
 }
 
 void Value::setArray(const tdme::ext::jsonbox::Array &newArray) {
@@ -508,7 +508,7 @@ bool Value::getBoolean() const throw (JsonException) {
 	if (type == BOOLEAN) {
 		return (*data.boolValue);
 	}
-	throw JsonException(L"value is not of type boolean");
+	throw JsonException("value is not of type boolean");
 }
 
 void Value::setBoolean(bool newBoolean) {
@@ -590,27 +590,27 @@ void Value::loadFromStream(std::istream &input) throw (JsonException) {
 											noErrors = false;
 
 										} else {
-											throw JsonException(L"invalid characters found");
+											throw JsonException("invalid characters found");
 										}
 
 									} else {
-										throw JsonException(L"json input ends incorrectly");
+										throw JsonException("json input ends incorrectly");
 									}
 
 								} else {
-									throw JsonException(L"invalid characters found");
+									throw JsonException("invalid characters found");
 								}
 
 							} else {
-								throw JsonException(L"json input ends incorrectly");
+								throw JsonException("json input ends incorrectly");
 							}
 
 						} else {
-							throw JsonException(L"invalid characters found");
+							throw JsonException("invalid characters found");
 						}
 
 					} else {
-						throw JsonException(L"json input ends incorrectly");
+						throw JsonException("json input ends incorrectly");
 					}
 
 				} else if (currentCharacter == Numbers::MINUS ||
@@ -673,16 +673,16 @@ void Value::loadFromStream(std::istream &input) throw (JsonException) {
 					}
 
 				} else if (!isWhiteSpace(currentCharacter)) {
-					std::wstring msg = L"Invalid character found: '";
-					msg+= std::to_wstring(currentCharacter);
-					msg+= L"'";
+					std::string msg = "Invalid character found: '";
+					msg+= std::to_string(currentCharacter);
+					msg+= "'";
 					throw JsonException(msg);
 				}
 			}
 		}
 
 	} else {
-		throw JsonException(L"File is not in UTF-8, not parsing");
+		throw JsonException("File is not in UTF-8, not parsing");
 	}
 }
 
@@ -695,8 +695,8 @@ void Value::loadFromFile(const std::string &filePath) throw (JsonException) {
 		file.close();
 
 	} else {
-		std::wstring msg = L"Failed to open file to load the json: ";
-		msg+= StringConverter::toWideString(filePath);
+		std::string msg = "Failed to open file to load the json: ";
+		msg+= string(filePath);
 		throw JsonException(msg);
 	}
 }
@@ -715,8 +715,8 @@ void Value::writeToFile(const std::string &filePath, bool indent,
 		writeToStream(file, indent, escapeAll);
 		file.close();
 	} else {
-		std::wstring msg = L"Failed to open file to write the json into: ";
-		msg+= StringConverter::toWideString(filePath);
+		std::string msg = "Failed to open file to write the json into: ";
+		msg+= string(filePath);
 		throw JsonException(msg);
 	}
 }
@@ -832,7 +832,7 @@ void Value::readString(std::istream &input, std::string &result) throw (JsonExce
 
 							} else {
 								noUnicodeError = false;
-								throw JsonException(L"Invalid \\u character, skipping it.");
+								throw JsonException("Invalid \\u character, skipping it.");
 							}
 
 							++tmpCounter;
@@ -911,9 +911,9 @@ void Value::readObject(std::istream &input, Object &result) throw (JsonException
 			} else if (currentCharacter == Structural::END_OBJECT) {
 				noErrors = false;
 			} else if (!isWhiteSpace(currentCharacter)) {
-				std::wstring msg = L"Expected '\"', got '";
+				std::string msg = "Expected '\"', got '";
 				msg+= currentCharacter;
-				msg+= L"', ignoring it.";
+				msg+= string("', ignoring it.");
 				throw JsonException(msg);
 			}
 		}
@@ -979,9 +979,9 @@ void Value::readNumber(std::istream &input, Value &result) throw (JsonException)
 				constructing << currentCharacter;
 
 			} else {
-				std::wstring msg = L"Expected a digit, '.', 'e' or 'E', got '";
-				msg+= std::to_wstring(currentCharacter);
-				msg+= L"' instead, ignoring it.";
+				std::string msg = "Expected a digit, '.', 'e' or 'E', got '";
+				msg+= std::to_string(currentCharacter);
+				msg+= "' instead, ignoring it.";
 				throw JsonException(msg);
 			}
 

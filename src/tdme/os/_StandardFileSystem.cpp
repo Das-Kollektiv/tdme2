@@ -43,6 +43,7 @@
 using std::getline;
 using std::string;
 using std::vector;
+using std::to_string;
 
 using tdme::os::_StandardFileSystem;
 using java::io::BufferedReader;
@@ -133,7 +134,7 @@ StringArray* _StandardFileSystem::list(String* pathName, FilenameFilter* filter)
 	DIR *dir;
 	struct dirent *dirent;
 	if ((dir = opendir(StringConverter::toString(pathName->getCPPWString()).c_str())) == NULL) {
-		throw _FileSystemException(L"Unable to list path(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to list path(" + to_string(errno) + ")");
 	}
 	while ((dirent = readdir(dir)) != NULL) {
 		String* file = new String(StringConverter::toWideString(dirent->d_name));
@@ -152,7 +153,7 @@ bool _StandardFileSystem::isPath(String* pathName) throw (_FileSystemException) 
 	if (stat(StringConverter::toString(pathName->getCPPWString()).c_str(), &s) == 0) {
 		return (s.st_mode & S_IFDIR) == S_IFDIR;
 	} else {
-		throw _FileSystemException(L"Unable to check if path(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to check if path(" + to_string(errno) + ")");
 	}
 }
 
@@ -168,7 +169,7 @@ String* _StandardFileSystem::getContentAsString(String* pathName, String* fileNa
 void _StandardFileSystem::setContentFromString(String* pathName, String* fileName, String* string) throw (_FileSystemException) {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if (ofs.is_open() == false) {
-		throw _FileSystemException(L"Unable to open file for writing(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 
 	ofs << StringConverter::toString(string->getCPPWString());
@@ -181,7 +182,7 @@ int8_tArray* _StandardFileSystem::getContent(String* pathName, String* fileName)
 {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if (ifs.is_open() == false) {
-		throw _FileSystemException(L"Unable to open file for reading(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 	ifs.seekg( 0, ios::end );
 	size_t size = ifs.tellg();
@@ -195,7 +196,7 @@ int8_tArray* _StandardFileSystem::getContent(String* pathName, String* fileName)
 void _StandardFileSystem::setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size) throw (_FileSystemException) {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if (ofs.is_open() == false) {
-		throw _FileSystemException(L"Unable to open file for writing(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 	ofs.write((char *)data->getPointer(), size == -1?data->length:size);
 	ofs.close();
@@ -205,7 +206,7 @@ StringArray* _StandardFileSystem::getContentAsStringArray(String* pathName, Stri
 {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if(ifs.is_open() == false) {
-		throw _FileSystemException(L"Unable to open file for reading(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 
 	vector<string> lines;
@@ -229,7 +230,7 @@ void _StandardFileSystem::setContentFromStringArray(String* pathName, String* fi
 {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if(ofs.is_open() == false) {
-		throw _FileSystemException(L"Unable to open file for writing(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 
 	for (int i = 0; i < stringArray->length; i++) {
@@ -302,7 +303,7 @@ String* _StandardFileSystem::getCurrentWorkingPathName() throw (_FileSystemExcep
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
 	if (cwdPtr == nullptr) {
-		throw _FileSystemException(L"Unable to get current working path(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to get current working path(" + to_string(errno) + ")");
 	}
 	return new String(StringConverter::toWideString(cwdPtr));
 }
@@ -324,7 +325,7 @@ String* _StandardFileSystem::getFileName(String* fileName) throw (_FileSystemExc
 void _StandardFileSystem::createPath(String* pathName) throw (_FileSystemException) {
 	int32_t status = mkdir(StringConverter::toString(pathName->getCPPWString()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	if (status == -1) {
-		throw _FileSystemException(L"Unable to create path(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to create path(" + to_string(errno) + ")");
 	}
 }
 
@@ -345,7 +346,7 @@ void _StandardFileSystem::removePath(String* pathName) throw (_FileSystemExcepti
 	_Console::println(wstring(L"_StandardFileSystem::removePath(): Removing ") + pathName->getCPPWString());
 	int32_t status = rmdir(StringConverter::toString(pathName->getCPPWString()).c_str());
 	if (status == -1) {
-		throw _FileSystemException(L"Unable to delete folder(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to delete folder(" + to_string(errno) + ")");
 	}
 }
 
@@ -353,7 +354,7 @@ void _StandardFileSystem::removeFile(String* pathName, String* fileName) throw (
 	_Console::println(wstring(L"_StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName)->getCPPWString());
 	int32_t status = unlink(StringConverter::toString(getFileName(pathName, fileName)->getCPPWString()).c_str());
 	if (status == -1) {
-		throw _FileSystemException(L"Unable to delete file(" + to_wstring(errno) + L")");
+		throw _FileSystemException("Unable to delete file(" + to_string(errno) + ")");
 	}
 }
 

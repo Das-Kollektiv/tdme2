@@ -8,6 +8,8 @@
 #include <tdme/tools/shared/controller/ModelViewerScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::ModelViewerScreenController_onModelSave_3;
 using java::lang::Exception;
@@ -17,6 +19,8 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::ModelViewerScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::utils::StringConverter;
+using tdme::utils::_Exception;
 
 ModelViewerScreenController_onModelSave_3::ModelViewerScreenController_onModelSave_3(ModelViewerScreenController *ModelViewerScreenController_this)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -32,8 +36,8 @@ void ModelViewerScreenController_onModelSave_3::performAction()
 		ModelViewerScreenController_this->view->saveFile(ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
 		ModelViewerScreenController_this->modelPath->setPath(ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 		ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->close();
-	} catch (Exception* ioe) {
-		ModelViewerScreenController_this->showErrorPopUp(u"Warning"_j, ioe->getMessage());
+	} catch (_Exception& exception) {
+		ModelViewerScreenController_this->showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 

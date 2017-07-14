@@ -35,7 +35,9 @@
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -74,7 +76,9 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -162,8 +166,9 @@ void ModelViewerScreenController::initialize()
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
@@ -290,8 +295,8 @@ void ModelViewerScreenController::onPivotApply()
 		auto y = Float::parseFloat(pivotY->getController()->getValue()->toString());
 		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toString());
 		view->pivotApply(x, y, z);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 

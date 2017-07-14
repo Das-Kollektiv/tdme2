@@ -11,6 +11,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <tdme/gui/GUIParserException.h>
+
 #include <ext/tinyxml/tinyxml.h>
 
 using std::vector;
@@ -22,6 +24,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
+using tdme::gui::GUIParserException;
 using tdme::ext::tinyxml::TiXmlElement;
 
 struct default_init_tag;
@@ -50,7 +53,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(String* pathName, String* fileName) /* throws(Exception) */;
+	static GUIScreenNode* parse(String* pathName, String* fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content
@@ -58,7 +61,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(String* xml) /* throws(Exception) */;
+	static GUIScreenNode* parse(String* xml) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML file into parent node
@@ -67,7 +70,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, String* pathName, String* fileName) /* throws(Exception) */;
+	static void parse(GUIParentNode* parentNode, String* pathName, String* fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content into parent node
@@ -75,7 +78,7 @@ public:
 	 * @param xml
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, String* xml) /* throws(Exception) */;
+	static void parse(GUIParentNode* parentNode, String* xml) throw (GUIParserException);
 
 private:
 
@@ -86,7 +89,7 @@ private:
 	 * @param gui element
 	 * @throws Exception
 	 */
-	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) /* throws(Exception) */;
+	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException);
 
 	/** 
 	 * Returns immediate children tags
@@ -123,7 +126,7 @@ public:
 	 * @param guiElement
 	 * @throws GUIParserException
 	 */
-	static void addElement(GUIElement* guiElement) /* throws(GUIParserException) */;
+	static void addElement(GUIElement* guiElement) throw (GUIParserException);
 
 	// Generated
 	GUIParser();

@@ -34,7 +34,9 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::views::SharedParticleSystemView;
@@ -71,7 +73,9 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -225,14 +229,19 @@ void SharedParticleSystemView::onInitAdditionalScreens()
 
 void SharedParticleSystemView::loadSettings()
 {
-	Object* tmp = nullptr;
-	auto settings = new Properties();
-	settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"particlesystem.properties"_j));
-	entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-	entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-	entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-	particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+	try {
+		Object* tmp = nullptr;
+		auto settings = new Properties();
+		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"particlesystem.properties"_j));
+		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+	} catch (_Exception& exception) {
+		_Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
+		_Console::println(string(exception.what()));
+	}
 }
 
 void SharedParticleSystemView::initialize()
@@ -244,8 +253,9 @@ void SharedParticleSystemView::initialize()
 		entityBoundingVolumeView = particleSystemScreenController->getEntityBoundingVolumeSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (Exception* e) {
-		_Console::println(e->getMessage());
+	} catch (_Exception& exception) {
+		_Console::print(string("SharedParticleSystemView::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 
 	loadSettings();
@@ -281,14 +291,19 @@ void SharedParticleSystemView::activate()
 
 void SharedParticleSystemView::storeSettings()
 {
-	auto settings = new Properties();
-	settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
-	settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
-	settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-	settings->put(u"particlesystem.path"_j, particleSystemScreenController->getParticleSystemPath()->getPath());
-	settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
-	auto settingsStringArray = settings->storeToStringArray();
-	_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"particlesystem.properties"_j, settingsStringArray);
+	try {
+		auto settings = new Properties();
+		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
+		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
+		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
+		settings->put(u"particlesystem.path"_j, particleSystemScreenController->getParticleSystemPath()->getPath());
+		settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
+		auto settingsStringArray = settings->storeToStringArray();
+		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"particlesystem.properties"_j, settingsStringArray);
+	} catch (_Exception& exception) {
+		_Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
+		_Console::println(string(exception.what()));
+	}
 }
 
 void SharedParticleSystemView::dispose()
@@ -317,9 +332,8 @@ void SharedParticleSystemView::loadParticleSystem()
 			_FileSystem::getInstance()->getFileName(particleSystemFile)
 		);
 		onLoadParticleSystem(oldEntity, entity);
-	} catch (Exception* exception) {
-		exception->printStackTrace();
-		popUps->getInfoDialogScreenController()->show(u"Warning"_j, exception->getMessage());
+	} catch (_Exception& exception) {
+		popUps->getInfoDialogScreenController()->show(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 

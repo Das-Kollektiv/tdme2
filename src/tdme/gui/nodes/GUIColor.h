@@ -8,6 +8,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/engine/model/Color4Base.h>
+#include <tdme/gui/GUIParserException.h>
 
 using tdme::engine::model::Color4Base;
 using java::io::Serializable;
@@ -17,6 +18,7 @@ using java::lang::String;
 using tdme::engine::model::Color4;
 using java::lang::Object;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::GUIParserException;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -104,7 +106,7 @@ protected:
 	 * Public constructor
 	 * @param color text
 	 */
-	void ctor(String* colorString) /* throws(GUIParserException) */;
+	void ctor(String* colorString) throw (GUIParserException);
 
 public:
 	String* toString() override;

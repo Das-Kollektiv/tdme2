@@ -34,7 +34,9 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -72,7 +74,9 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -140,8 +144,9 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		entityLibraryListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_library_listbox"_j));
 		buttonEntityPlace = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_place"_j));
 		buttonLevelEdit = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_level_edit"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
@@ -180,8 +185,9 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	if (entityLibraryListBoxSelection->length() > 0) {
 		entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
@@ -284,45 +290,61 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 {
 	if (node->getId()->equals(u"entity_library_listbox"_j) == true) {
 		onEntitySelectionChanged();
-	} else if (node->getId()->equals(u"dropdown_entity_action"_j) == true) {
+	} else
+		if (node->getId()->equals(u"dropdown_entity_action"_j) == true) {
 		if (node->getController()->getValue()->equals(u"edit"_j) == true) {
 			onEditEntity();
-		} else if (node->getController()->getValue()->equals(u"delete"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"delete"_j) == true) {
 			onDeleteEntity();
-		} else if (node->getController()->getValue()->equals(u"create_model"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"create_model"_j) == true) {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 			popUps->getFileDialogScreenController()->show(modelPath, u"Load from: "_j, new StringArray({
 				u"tmm"_j,
 				u"dae"_j,
 				u"tm"_j
 			}), u""_j, new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary));
-		} else if (node->getController()->getValue()->equals(u"create_trigger"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"create_trigger"_j) == true) {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, u"New trigger"_j, u""_j, 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (Exception* exception) {
-				popUps->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+			} catch (_Exception& exception) {
+				popUps->getInfoDialogScreenController()->show(
+					u"Error"_j,
+					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
+				 );
 			}
-		} else if (node->getController()->getValue()->equals(u"create_empty"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"create_empty"_j) == true) {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, u"New empty"_j, u""_j);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (Exception* exception) {
-				popUps->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+			} catch (_Exception& exception) {
+				popUps->getInfoDialogScreenController()->show(
+					u"Error"_j,
+					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
+				 );
 			}
-		} else if (node->getController()->getValue()->equals(u"create_light"_j) == true) {
-		} else if (node->getController()->getValue()->equals(u"create_particlesystem"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"create_light"_j) == true) {
+		} else
+		if (node->getController()->getValue()->equals(u"create_particlesystem"_j) == true) {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, u"New particle system"_j, u""_j);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (Exception* exception) {
-				popUps->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+			} catch (_Exception& exception) {
+				popUps->getInfoDialogScreenController()->show(
+					u"Error"_j,
+					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
+				 );
 			}
 		} else {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: "_j)->append(static_cast< Object* >(node->getController()->getValue()))->toString()));

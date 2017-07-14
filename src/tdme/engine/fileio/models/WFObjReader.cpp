@@ -26,6 +26,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
@@ -58,6 +59,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
@@ -119,7 +121,7 @@ WFObjReader::WFObjReader()
 	ctor();
 }
 
-Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOException, ModelFileIOException) */
+Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	clinit();
 	auto model = new Model(
@@ -208,7 +210,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 						vt2 = Integer::parseInt(t2->nextToken()) - 1;
 					}
 					if (t->hasMoreTokens()) {
-						throw new ModelFileIOException(u"We only support triangulated meshes"_j);
+						throw ModelFileIOException("We only support triangulated meshes");
 					}
 					Integer* mappedVertex = nullptr;
 					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v0)));
@@ -328,7 +330,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) /* throws(IOExcepti
 	return model;
 }
 
-_HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) /* throws(IOException) */
+_HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	clinit();
 	auto materials = new _HashMap();

@@ -98,7 +98,6 @@ Object* StringTokenizer::nextElement()
 String* StringTokenizer::nextToken()
 { /* stub */
 	return new String(elements[idx++]);
-	return 0;
 }
 
 String* StringTokenizer::nextToken(String* arg0)

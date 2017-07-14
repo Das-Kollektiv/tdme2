@@ -6,11 +6,11 @@
 
 #include <string>
 
-#include "../../src/tdme/utils/_Exception.h"
+#include <tdme/utils/_ExceptionBase.h>
 
 using std::wstring;
 
-using tdme::utils::_Exception;
+using tdme::utils::_ExceptionBase;
 
 namespace tdme {
 namespace ext {
@@ -20,13 +20,13 @@ namespace jsonbox {
  * Base exception class for threading exceptions
  * @author Andreas Drewke
  */
-class JsonException: public _Exception {
+class JsonException: public _ExceptionBase {
 	public:
 		/**
 		 * @brief public constructor
 		 * @param message exception message
 		 */
-		JsonException(const wstring &message) throw();
+		JsonException(const string& message) throw();
 };
 
 };

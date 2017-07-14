@@ -23,7 +23,9 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using java::lang::ClassCastException;
@@ -48,7 +50,9 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -97,8 +101,9 @@ void TriggerScreenController::initialize()
 		triggerHeight = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_height"_j));
 		triggerDepth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_depth"_j));
 		triggerApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_trigger_apply"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 }
@@ -167,8 +172,8 @@ void TriggerScreenController::onTriggerApply()
 		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->toString());
 		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toString());
 		view->triggerApply(width, height, depth);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 

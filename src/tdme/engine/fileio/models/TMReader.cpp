@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 #include <tdme/engine/fileio/models/TMReader.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/ArrayStoreException.h>
 #include <java/lang/ClassCastException.h>
@@ -30,10 +32,14 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
+using std::to_string;
 
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
@@ -66,6 +72,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
+using tdme::utils::StringConverter;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -139,67 +146,65 @@ TMReader::TMReader()
 	ctor();
 }
 
-Model* TMReader::read(String* pathName, String* fileName) /* throws(IOException, ModelFileIOException) */
+Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	clinit();
 	TMReaderInputStream* is = nullptr;
-	{
-		auto finally0 = finally([&] {
-			if (is != nullptr) {
-				delete is;
-			}
-		});
-		try {
-			is = new TMReaderInputStream(_FileSystem::getInstance()->getContent(pathName, fileName));
-			auto fileId = is->readString();
-			if (fileId == nullptr || fileId->equals(u"TDME Model"_j) == false) {
-				throw new ModelFileIOException(::java::lang::StringBuilder().append(u"File is not a TDME model file, file id = '"_j)->append(fileId)
-					->append(u"'"_j)->toString());
-			}
-			auto version = new int8_tArray(3);
-			(*version)[0] = is->readByte();
-			(*version)[1] = is->readByte();
-			(*version)[2] = is->readByte();
-			if ((*version)[0] != 1 || (*version)[1] != 0 || (*version)[2] != 0) {
-				throw new ModelFileIOException(::java::lang::StringBuilder().append(u"Version mismatch, should be 1.0.0, but is "_j)->append((*version)[0])
-					->append(u"."_j)
-					->append((*version)[1])
-					->append(u"."_j)
-					->append((*version)[2])->toString());
-			}
-			auto name = is->readString();
-			auto upVector = Model_UpVector::valueOf(is->readString());
-			auto rotationOrder = RotationOrder::valueOf(is->readString());
-			auto boundingBox = new BoundingBox(new Vector3(is->readFloatArray()), new Vector3(is->readFloatArray()));
-			auto model = new Model(
-				::java::lang::StringBuilder().
-				 append(pathName)->
-				 append(L'/')->
-				 append(fileName)->
-				 toString(),
-				fileName,
-				upVector,
-				rotationOrder,
-				boundingBox
-			);
-			model->setFPS(is->readFloat());
-			model->getImportTransformationsMatrix()->set(is->readFloatArray());
-			auto materialCount = is->readInt();
-			for (auto i = 0; i < materialCount; i++) {
-				auto material = readMaterial(is);
-				model->getMaterials()->put(material->getId(), material);
-			}
-			readSubGroups(is, model, nullptr, model->getSubGroups());
-			return model;
-		}/* catch (IOException* ioe) {
-			throw ioe;
-		}*/ catch (ModelFileIOException* mfioe) {
-			throw mfioe;
+	auto finally0 = finally([&] {
+		if (is != nullptr) {
+			delete is;
 		}
+	});
+	is = new TMReaderInputStream(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto fileId = is->readString();
+	if (fileId == nullptr || fileId->equals(u"TDME Model"_j) == false) {
+		throw ModelFileIOException(
+			"File is not a TDME model file, file id = '" +
+			StringConverter::toString(fileId->getCPPWString()) +
+			"'"
+		);
 	}
+	auto version = new int8_tArray(3);
+	(*version)[0] = is->readByte();
+	(*version)[1] = is->readByte();
+	(*version)[2] = is->readByte();
+	if ((*version)[0] != 1 || (*version)[1] != 0 || (*version)[2] != 0) {
+		throw ModelFileIOException(
+			"Version mismatch, should be 1.0.0, but is " +
+			to_string((*version)[0]) +
+			"." +
+			to_string((*version)[1]) +
+			"." +
+			to_string((*version)[2])
+		);
+	}
+	auto name = is->readString();
+	auto upVector = Model_UpVector::valueOf(is->readString());
+	auto rotationOrder = RotationOrder::valueOf(is->readString());
+	auto boundingBox = new BoundingBox(new Vector3(is->readFloatArray()), new Vector3(is->readFloatArray()));
+	auto model = new Model(
+		::java::lang::StringBuilder().
+		 append(pathName)->
+		 append(L'/')->
+		 append(fileName)->
+		 toString(),
+		fileName,
+		upVector,
+		rotationOrder,
+		boundingBox
+	);
+	model->setFPS(is->readFloat());
+	model->getImportTransformationsMatrix()->set(is->readFloatArray());
+	auto materialCount = is->readInt();
+	for (auto i = 0; i < materialCount; i++) {
+		auto material = readMaterial(is);
+		model->getMaterials()->put(material->getId(), material);
+	}
+	readSubGroups(is, model, nullptr, model->getSubGroups());
+	return model;
 }
 
-Material* TMReader::readMaterial(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	auto id = is->readString();
@@ -232,7 +237,7 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) /* throws(IOException,
 	return m;
 }
 
-Vector3Array* TMReader::readVertices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+Vector3Array* TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	if (is->readBoolean() == false) {
@@ -246,7 +251,7 @@ Vector3Array* TMReader::readVertices(TMReaderInputStream* is) /* throws(IOExcept
 	}
 }
 
-TextureCoordinateArray* TMReader::readTextureCoordinates(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+TextureCoordinateArray* TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	if (is->readBoolean() == false) {
@@ -260,7 +265,7 @@ TextureCoordinateArray* TMReader::readTextureCoordinates(TMReaderInputStream* is
 	}
 }
 
-int32_tArray* TMReader::readIndices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+int32_tArray* TMReader::readIndices(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	if (is->readBoolean() == false) {
@@ -274,7 +279,7 @@ int32_tArray* TMReader::readIndices(TMReaderInputStream* is) /* throws(IOExcepti
 	}
 }
 
-Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
 	clinit();
 	if (is->readBoolean() == false) {
@@ -289,7 +294,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) /* throws(
 	}
 }
 
-void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
 	clinit();
 	auto facesEntities = new FacesEntityArray(is->readInt());
@@ -319,7 +324,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) /* throws(IO
 	g->setFacesEntities(facesEntities);
 }
 
-Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	auto joint = new Joint(is->readString());
@@ -327,13 +332,13 @@ Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) /* throws(IOExceptio
 	return joint;
 }
 
-JointWeight* TMReader::readSkinningJointWeight(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */
+JointWeight* TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
 	return new JointWeight(is->readInt(), is->readInt());
 }
 
-void TMReader::readSkinning(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */
+void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
 	clinit();
 	if (is->readBoolean() == true) {
@@ -355,7 +360,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) /* throws(IOExcep
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) throw (ModelFileIOException)
 {
 	clinit();
 	auto subGroupCount = is->readInt();
@@ -366,7 +371,7 @@ void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* paren
 	}
 }
 
-Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */
+Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException)
 {
 	clinit();
 	auto group = new Group(model, parentGroup, is->readString(), is->readString());

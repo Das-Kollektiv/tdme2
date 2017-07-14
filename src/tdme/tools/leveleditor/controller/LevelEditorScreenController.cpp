@@ -44,8 +44,10 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
@@ -96,7 +98,9 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -267,8 +271,9 @@ void LevelEditorScreenController::initialize()
 		value = new MutableString();
 		selectedObjects = new MutableString();
 		selectedObjectList = new _ArrayList();
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -368,8 +373,9 @@ void LevelEditorScreenController::setObjectListbox(_HashMap* objectsByIds)
 	objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		objectsListBoxInnerNode->replaceSubNodes(objectsListBoxSubNodesXML, false);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorScreenController::setObjectListbox(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	objectsListBox->getController()->setValue(selectedObjects);
 }
@@ -519,8 +525,9 @@ void LevelEditorScreenController::setMapProperties(Iterable* mapProperties, Stri
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	onMapPropertiesSelectionChanged();
 }
@@ -568,8 +575,9 @@ void LevelEditorScreenController::setObjectPresetIds(_HashMap* objectPresetIds)
 	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		objectPropertiesPresetsInnerNode->replaceSubNodes(objectPropertiesPresetsInnerNodeSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorScreenController::setObjectPresetIds(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -628,8 +636,9 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, Iterable
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		objectPropertiesListBoxInnerNode->replaceSubNodes(objectPropertiesListBoxSubNodesXML, false);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorScreenController::setObjectProperties(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	onObjectPropertiesSelectionChanged();
 }
@@ -667,10 +676,8 @@ void LevelEditorScreenController::onObjectTranslationApply()
 		auto y = Float::parseFloat(objectTranslationY->getController()->getValue()->toString());
 		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toString());
 		view->objectTranslationApply(x, y, z);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
-	} catch (IllegalArgumentException* iae) {
-		showErrorPopUp(u"Warning"_j, iae->getMessage());
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 
@@ -690,10 +697,8 @@ void LevelEditorScreenController::onObjectScaleApply()
 			throw new IllegalArgumentException(u"z scale must be within -10 .. +10"_j);
 
 		view->objectScaleApply(x, y, z);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
-	} catch (IllegalArgumentException* iae) {
-		showErrorPopUp(u"Warning"_j, iae->getMessage());
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 
@@ -713,10 +718,8 @@ void LevelEditorScreenController::onObjectRotationsApply()
 			throw new IllegalArgumentException(u"z axis rotation must be within -360 .. +360"_j);
 
 		view->objectRotationsApply(x, y, z);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
-	} catch (IllegalArgumentException* iae) {
-		showErrorPopUp(u"Warning"_j, iae->getMessage());
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 
@@ -763,10 +766,8 @@ void LevelEditorScreenController::onGridApply()
 
 		view->setGridY(gridY);
 		view->setGridEnabled(gridEnabled->getController()->getValue()->equals(CHECKBOX_CHECKED));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
-	} catch (IllegalArgumentException* iae) {
-		showErrorPopUp(u"Warning"_j, iae->getMessage());
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 
@@ -798,8 +799,9 @@ void LevelEditorScreenController::setLightPresetsIds(_HashMap* lightPresetIds)
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 		try {
 			lightPresetsInnerNode->replaceSubNodes(lightPresetsInnerNodeSubNodesXML, true);
-		} catch (Exception* e) {
-			e->printStackTrace();
+		} catch (_Exception& exception) {
+			_Console::print(string("LevelEditorScreenController::setLightPresetsIds(): An error occurred: "));
+			_Console::println(string(exception.what()));
 		}
 	}
 }
@@ -873,8 +875,8 @@ void LevelEditorScreenController::onLightApply(int32_t lightIdx)
 		(*lightsSpotExponent)[lightIdx]->getController()->setDisabled(enabled == false);
 		(*lightsSpotCutoff)[lightIdx]->getController()->setDisabled(enabled == false);
 		(*ligthsSpotDirectionCompute)[lightIdx]->getController()->setDisabled(enabled == false);
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 
@@ -931,8 +933,8 @@ void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
 {
 	try {
 		view->computeSpotDirection(lightIdx, Tools::convertToVector4((*lightsPosition)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector3((*lightsSpotTo)[lightIdx]->getController()->getValue()->toString()));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
 	}
 }
 

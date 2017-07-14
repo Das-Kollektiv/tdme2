@@ -23,6 +23,8 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/MutableString.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -51,6 +53,8 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -119,8 +123,9 @@ void FileDialogScreenController::initialize()
 		caption = java_cast< GUITextNode* >(screenNode->getNodeById(u"filedialog_caption"_j));
 		files = java_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_files"_j));
 		fileName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_filename"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -138,13 +143,14 @@ void FileDialogScreenController::setupFileDialogListBox()
 	caption->getText()->set(captionText)->append(directory);
 
 	auto fileList = new StringArray(0);
-	/*try*/ {
+	try {
 		auto directory = cwd;
 		fileList = _FileSystem::getInstance()->list(directory, new FileDialogScreenController_setupFileDialogListBox_1(this));
-	}/* catch (IOException* ioe) {
-		ioe->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
-	*/
+
 	auto filesInnerNode = java_cast< GUIParentNode* >((files->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(files->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto filesInnerNodeSubNodesXML = u""_j;
@@ -158,18 +164,20 @@ void FileDialogScreenController::setupFileDialogListBox()
 	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"</scrollarea>\n"_j)->toString();
 	try {
 		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
 void FileDialogScreenController::show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction)
 {
-	/*try {*/
+	try {
 		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, u""_j);
-	/*} catch (IOException* ioe) {
-		ioe->printStackTrace();
-	}*/
+	} catch (_Exception& exception) {
+		_Console::print(string("FileDialogScreenController::show(): An error occurred: "));
+		_Console::println(string(exception.what()));
+	}
 	this->captionText = captionText;
 	this->extensions = extensions;
 	this->fileName->getController()->setValue(value->set(fileName));
@@ -189,17 +197,20 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 		if (node->getId()->equals(files->getId()) == true) {
 			auto selectedFile = node->getController()->getValue()->toString();
 			if (_FileSystem::getInstance()->isPath(new String(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString())) == true) {
-				/*try*/ {
+				try {
 					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
-				}/* catch (IOException* ioe) {
-				}*/
+				} catch (_Exception& exception) {
+					_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
 				setupFileDialogListBox();
 			} else {
 				fileName->getController()->setValue(value->set(selectedFile));
 			}
 		}
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -207,8 +218,9 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+		if ((v == GUIActionListener_Type::PERFORMED))
+		{
+			{
 				if (node->getId()->equals(u"filedialog_apply"_j)) {
 					if (applyAction != nullptr)
 						applyAction->performAction();
@@ -217,12 +229,15 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 					close();
 				}
 				goto end_switch0;;
-			}		}
-		if (((v == GUIActionListener_Type::PERFORMED) || ((v != GUIActionListener_Type::PERFORMED)))) {
-{
+			}
+		}
+		if (((v == GUIActionListener_Type::PERFORMED) || ((v != GUIActionListener_Type::PERFORMED))))
+		{
+			{
 				goto end_switch0;;
-			}		}
-end_switch0:;
+			}
+		}
+		end_switch0:;
 	}
 
 }

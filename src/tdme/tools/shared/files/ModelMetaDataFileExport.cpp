@@ -42,6 +42,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -90,6 +91,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -142,12 +144,12 @@ ModelMetaDataFileExport::ModelMetaDataFileExport()
 	ctor();
 }
 
-void ModelMetaDataFileExport::copyFile(String* source, String* dest) /* throws(IOException) */
+void ModelMetaDataFileExport::copyFile(String* source, String* dest) throw (_FileSystemException)
 {
 	clinit();
 }
 
-void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) /* throws(Exception) */
+void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 	{
@@ -161,16 +163,13 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 			json << jEntityRoot;
 
 			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
-		} catch (ext::jsonbox::JsonException* je) {
-			throw je;
-		}/* catch (IOException* ioe) {
-			ioe->printStackTrace();
-			throw ioe;
-		}*/
+		} catch (_Exception& exception) {
+			throw exception;
+		}
 	}
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) /* throws(Exception) */
+tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 	ext::jsonbox::Object jEntityRoot;;
@@ -189,9 +188,11 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			auto thumbnail = ::java::lang::StringBuilder().append(modelFileName)->append(u".png"_j)->toString();
 			jEntityRoot->put(u"thumbnail"_j, static_cast< Object* >(thumbnail));
 			copyFile(new File(u"./tmp"_j, entity->getThumbnail()), new File(Tools::getPath(entity->getFileName()), thumbnail));
-		} catch (IOException* ioe) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelMetaDataFileExport::export(): Could not copy thumbnail for '"_j)->append(entity->getFileName())
-				->append(u"'"_j)->toString()));
+		} catch (_Exception& exception) {
+			_Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
+			_Console::print(entity->getFileName());
+			_Console::print(string(": "));
+			_Console::println(exception.what());
 		}
 		*/
 	}

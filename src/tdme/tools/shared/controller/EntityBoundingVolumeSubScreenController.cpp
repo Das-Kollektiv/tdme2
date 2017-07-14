@@ -42,7 +42,9 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -88,7 +90,9 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -190,8 +194,9 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			boundingvolumeObbRotationZ->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_z_"_j)->append(i)->toString())));
 			boundingvolumeConvexMeshFile->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_convexmesh_file_"_j)->append(i)->toString())));
 		}
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -221,15 +226,20 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 		auto bv = entityBoundingVolume->getBoundingVolume();
 		if (bv == nullptr) {
 			view->selectBoundingVolumeType(idx, 0);
-		} else if (dynamic_cast< Sphere* >(bv) != nullptr) {
+		} else
+		if (dynamic_cast< Sphere* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 1);
-		} else if (dynamic_cast< Capsule* >(bv) != nullptr) {
+		} else
+		if (dynamic_cast< Capsule* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 2);
-		} else if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
+		} else
+		if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 3);
-		} else if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
+		} else
+		if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 4);
-		} else if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
+		} else
+		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 5);
 		} else {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onTabSelected(): invalid bounding volume@"_j)->append(idx)
@@ -254,8 +264,9 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 	boundingVolumeTypeDropDownSubNodesXML = ::java::lang::StringBuilder(boundingVolumeTypeDropDownSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -381,8 +392,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 {
 	try {
 		view->applyBoundingVolumeSphere(entity, idx, Tools::convertToVector3((*boundingvolumeSphereCenter)[idx]->getController()->getValue()->toString()), Tools::convertToFloat((*boundingvolumeSphereRadius)[idx]->getController()->getValue()->toString()));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 
@@ -390,8 +401,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 {
 	try {
 		view->applyBoundingVolumeCapsule(entity, idx, Tools::convertToVector3((*boundingvolumeCapsuleA)[idx]->getController()->getValue()->toString()), Tools::convertToVector3((*boundingvolumeCapsuleB)[idx]->getController()->getValue()->toString()), Tools::convertToFloat((*boundingvolumeCapsuleRadius)[idx]->getController()->getValue()->toString()));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 
@@ -399,8 +410,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 {
 	try {
 		view->applyBoundingVolumeAabb(entity, idx, Tools::convertToVector3((*boundingvolumeBoundingBoxMin)[idx]->getController()->getValue()->toString()), Tools::convertToVector3((*boundingvolumeBoundingBoxMax)[idx]->getController()->getValue()->toString()));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 
@@ -417,8 +428,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		auto zAxis = new Vector3();
 		rotations->getTransformationsMatrix()->getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(entity, idx, Tools::convertToVector3((*boundingvolumeObbCenter)[idx]->getController()->getValue()->toString()), xAxis, yAxis, zAxis, Tools::convertToVector3((*boundingvolumeObbHalfextension)[idx]->getController()->getValue()->toString()));
-	} catch (NumberFormatException* nfe) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
 

@@ -7,8 +7,11 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+
 #include <java/lang/Object.h>
+#include <tdme/os/_FileSystemException.h>
 
 using java::lang::Object;
 using java::lang::String;
@@ -16,6 +19,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::os::_FileSystemException;
 using tdme::utils::MutableString;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -86,9 +90,9 @@ public:
 	/** 
 	 * Parse the font definition file
 	 * @param font file
-	 * @throws GUIParserException
+	 * @throws _FileSystemException
 	 */
-	static GUIFont* parse(String* pathName, String* fileName) /* throws(Exception) */;
+	static GUIFont* parse(String* pathName, String* fileName) throw (_FileSystemException);
 
 private:
 

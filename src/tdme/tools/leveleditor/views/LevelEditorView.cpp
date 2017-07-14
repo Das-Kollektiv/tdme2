@@ -71,6 +71,8 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap.h>
@@ -149,6 +151,8 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::StringConverter;
+using tdme::utils::_Exception;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap;
@@ -728,13 +732,18 @@ void LevelEditorView::unselectLightPresets()
 
 void LevelEditorView::loadSettings()
 {
-	Object* tmp;
-	auto settings = new Properties();
-	settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
-	gridEnabled = (tmp = java_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
-	gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
-	levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+	try {
+		Object* tmp;
+		auto settings = new Properties();
+		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
+		gridEnabled = (tmp = java_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
+		gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
+		levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
+		_Console::println(string(exception.what()));
+	}
 }
 
 void LevelEditorView::initialize()
@@ -746,8 +755,9 @@ void LevelEditorView::initialize()
 		levelEditorScreenController->initialize();
 		levelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 		engine->getGUI()->addScreen(levelEditorScreenController->getScreenNode()->getId(), levelEditorScreenController->getScreenNode());
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorView::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
@@ -787,13 +797,18 @@ void LevelEditorView::deactivate()
 
 void LevelEditorView::storeSettings()
 {
-	auto settings = new Properties();
-	settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
-	settings->put(u"grid.y"_j, String::valueOf(gridY));
-	settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
-	settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
-	StringArray* settingsStringArray = settings->storeToStringArray();
-	_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"leveleditor.properties"_j, settingsStringArray);
+	try {
+		auto settings = new Properties();
+		settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
+		settings->put(u"grid.y"_j, String::valueOf(gridY));
+		settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
+		settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+		StringArray* settingsStringArray = settings->storeToStringArray();
+		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"leveleditor.properties"_j, settingsStringArray);
+	} catch (_Exception& exception) {
+		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
+		_Console::println(string(exception.what()));
+	}
 }
 
 void LevelEditorView::dispose()
@@ -1385,9 +1400,11 @@ void LevelEditorView::loadMap(String* path, String* file)
 		gridCenter->set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
-	} catch (Exception* exception) {
-		exception->printStackTrace();
-		levelEditorScreenController->showErrorPopUp(u"Warning: Could not load level file"_j, exception->getMessage());
+	} catch (_Exception& exception) {
+		levelEditorScreenController->showErrorPopUp(
+			u"Warning: Could not load level file"_j,
+			new String(StringConverter::toWideString(string(exception.what())))
+		);
 	}
 }
 
@@ -1395,9 +1412,11 @@ void LevelEditorView::saveMap(String* pathName, String* fileName)
 {
 	try {
 		LevelFileExport::export_(pathName, fileName, level);
-	} catch (Exception* exception) {
-		exception->printStackTrace();
-		levelEditorScreenController->showErrorPopUp(u"Warning: Could not save level file"_j, exception->getMessage());
+	} catch (_Exception& exception) {
+		levelEditorScreenController->showErrorPopUp(
+			u"Warning: Could not save level file"_j,
+			new String(StringConverter::toWideString(string(exception.what())))
+		);
 	}
 	updateGUIElements();
 }

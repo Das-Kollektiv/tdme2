@@ -9,13 +9,18 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/_FileSystemException.h>
+
 using java::lang::Object;
 using java::io::OutputStream;
 using java::lang::String;
+using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
@@ -26,6 +31,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
+using tdme::os::_FileSystemException;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -70,9 +76,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	inline TMWriterOutputStream() {
+	inline TMWriterOutputStream() throw (ModelFileIOException) {
 		this->capacity = 1024 * 1024;
-		this->data = new int8_tArray(capacity);
+		this->data = new (std::nothrow) int8_tArray(capacity);
+		if (this->data == nullptr) {
+			throw ModelFileIOException("Not enough memory");
+		}
 		this->position = 0;
 	}
 
@@ -101,20 +110,25 @@ public:
 
 	/**
 	 * Writes a boolean to output stream
+	 * @throws model file IO exception
 	 * @param boolean
 	 */
-	inline void writeBoolean(bool b) {
+	inline void writeBoolean(bool b) throw (ModelFileIOException) {
 		writeByte(b == true?1:0);
 	}
 
 	/**
 	 * Writes a byte to output stream
+	 * @throws model file IO exception
 	 * @param byte
 	 */
-	inline void writeByte(int8_t b) {
+	inline void writeByte(int8_t b) throw (ModelFileIOException) {
 		if (position + 1 == capacity) {
 			this->capacity+= 1024 * 1024;
-			int8_tArray* dataNew = new int8_tArray(capacity);
+			int8_tArray* dataNew = new (std::nothrow) int8_tArray(capacity);
+			if (dataNew == nullptr) {
+				throw ModelFileIOException("Not enough memory");
+			}
 			for (int i = 0; i < position; i++) {
 				dataNew->set(i, data->get(i));
 			}
@@ -126,9 +140,10 @@ public:
 
 	/**
 	 * Writes a integer to output stream
+	 * @throws model file IO exception
 	 * @param int
 	 */
-	inline void writeInt(int32_t i) {
+	inline void writeInt(int32_t i) throw (ModelFileIOException) {
 		writeByte((i >> 24) & 0xFF);
 		writeByte((i >> 16) & 0xFF);
 		writeByte((i >> 8) & 0xFF);
@@ -138,8 +153,9 @@ public:
 	/**
 	 * Writes a float to output stream
 	 * @param float
+	 * @throws model file IO exception
 	 */
-	inline void writeFloat(float f) {
+	inline void writeFloat(float f) throw (ModelFileIOException) {
 		int value = *((int*)&f);
 		writeInt(value);
 	}
@@ -147,8 +163,9 @@ public:
 	/**
 	 * Writes a string to output stream
 	 * @param string
+	 * @throws model file IO exception
 	 */
-	inline void writeString(String* s) {
+	inline void writeString(String* s) throw (ModelFileIOException) {
 		if (s == nullptr) {
 			writeBoolean(false);
 		} else {
@@ -164,8 +181,9 @@ public:
 	/**
 	 * Writes a float array to output stream
 	 * @param float array
+	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(floatArray* f) {
+	inline void writeFloatArray(floatArray* f) throw (ModelFileIOException) {
 		writeInt(f->length);
 		for (auto i = 0; i < f->length; i++) {
 			writeFloat((*f)[i]);
@@ -197,7 +215,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	static void write(Model* model, String* pathName, String* fileName) /* throws(IOException) */;
+	static void write(Model* model, String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
 
 private:
 
@@ -205,78 +223,89 @@ private:
 	 * Write material 
 	 * @param output stream
 	 * @param material
+	 * @throws model file IO exception
 	 */
-	static void writeMaterial(TMWriterOutputStream* os, Material* m) /* throws(IOException) */;
+	static void writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException);
 
 	/** 
 	 * Write vertices to output stream
 	 * @param output stream
 	 * @param vertices
+	 * @throws model file IO exception
 	 */
-	static void writeVertices(TMWriterOutputStream* os, Vector3Array* v) /* throws(IOException) */;
+	static void writeVertices(TMWriterOutputStream* os, Vector3Array* v) throw (ModelFileIOException);
 
 	/** 
 	 * Write texture coordinates to output stream
 	 * @param output stream
 	 * @param texture coordinates
+	 * @throws model file IO exception
 	 */
-	static void writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */;
+	static void writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) throw (ModelFileIOException);
 
 	/** 
 	 * Write indices to output stream
 	 * @param output stream
 	 * @param indices
+	 * @throws model file IO exception
 	 */
-	static void writeIndices(TMWriterOutputStream* os, int32_tArray* indices) /* throws(IOException) */;
+	static void writeIndices(TMWriterOutputStream* os, int32_tArray* indices) throw (ModelFileIOException);
 
 	/** 
 	 * Write animation to output stream
 	 * @param output stream
 	 * @param animation
+	 * @throws model file IO exception
 	 */
-	static void writeAnimation(TMWriterOutputStream* os, Animation* a) /* throws(IOException) */;
+	static void writeAnimation(TMWriterOutputStream* os, Animation* a) throw (ModelFileIOException);
 
 	/** 
 	 * Write faces entities to output stream
 	 * @param output stream
 	 * @param faces entities
+	 * @throws model file IO exception
 	 */
-	static void writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */;
+	static void writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint
 	 * @param output stream
 	 * @param joint
+	 * @throws model file IO exception
 	 */
-	static void writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) /* throws(IOException) */;
+	static void writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint weight
 	 * @param output stream
 	 * @param joint
+	 * @throws model file IO exception
 	 */
-	static void writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) /* throws(IOException) */;
+	static void writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning to output stream
 	 * @param output stream
 	 * @param skinning
+	 * @throws model file IO exception
 	 */
-	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning) /* throws(IOException) */;
+	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw (ModelFileIOException);
 
 	/** 
 	 * Write sub groups
 	 * @param output stream
 	 * @param sub groups
+	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) /* throws(IOException) */;
+	static void writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream
 	 * @param output stream
 	 * @param group
+	 * @throws model file IO exception
 	 */
-	static void writeGroup(TMWriterOutputStream* os, Group* g) /* throws(IOException) */;
+	static void writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIOException);
 
 	// Generated
 

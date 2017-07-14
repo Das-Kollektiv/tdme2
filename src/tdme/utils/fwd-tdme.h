@@ -5,7 +5,6 @@
 namespace tdme {
 namespace utils {
 		class ArrayListIteratorMultiple;
-		class _Exception;
 		class Key;
 		class MutableString;
 		class Pool;
@@ -13,6 +12,7 @@ namespace utils {
 		class StringConverter;
 		class _ArrayList;
 		class _Console;
+		class _ExceptionBase;
 		class _HashMap;
 		class _HashMap_1;
 		class _HashMap_KeysIterator;

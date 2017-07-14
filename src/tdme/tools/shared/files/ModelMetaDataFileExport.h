@@ -6,14 +6,24 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
+
 #include <java/lang/Object.h>
 
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/_FileSystemException.h>
+
 #include <ext/jsonbox/Object.h>
+#include <ext/jsonbox/JsonException.h>
 
 using java::lang::Object;
 using java::io::File;
 using java::lang::String;
+
+using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::os::_FileSystemException;
 using tdme::tools::shared::model::LevelEditorEntity;
+
+using tdme::ext::jsonbox::JsonException;
 
 
 struct default_init_tag;
@@ -36,9 +46,9 @@ private:
 	 * Copy file
 	 * @param source
 	 * @param dest
-	 * @throws IOException
+	 * @throws file system exception
 	 */
-	static void copyFile(String* source, String* dest) /* throws(IOException) */;
+	static void copyFile(String* source, String* dest) throw (_FileSystemException);
 
 public:
 
@@ -46,14 +56,20 @@ public:
 	 * Exports a level to a TDME level file
 	 * @param file name
 	 * @param entity
+	 * @throws file system exception
+	 * @throws json exception
+	 * @throws model file io exception
 	 */
-	static void export_(String* pathName, String* fileName, LevelEditorEntity* entity) /* throws(Exception) */;
+	static void export_(String* pathName, String* fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Export model meta data file to JSON node
 	 * @param entity
+	 * @throws file system exception
+	 * @throws json exception
+	 * @throws model file io exception
 	 */
-	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) /* throws(Exception) */;
+	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 	// Generated
 	ModelMetaDataFileExport();

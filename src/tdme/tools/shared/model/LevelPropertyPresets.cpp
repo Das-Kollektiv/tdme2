@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelPropertyPresets.java
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 
+#include <stdlib.h>
+
 #include <string>
 #include <vector>
 
@@ -22,6 +24,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_Console.h>
@@ -51,13 +54,14 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_Console;
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
-using tdme::utils::StringConverter;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -88,8 +92,10 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 	if (instance == nullptr) {
 		try {
 			instance = new LevelPropertyPresets(u"resources/tools/leveleditor/gd"_j, u"presets.xml"_j);
-		} catch (Exception* exception) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Couldn't load level property presets: "_j)->append(exception->getMessage())->toString()));
+		} catch (_Exception& exception) {
+			_Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
+			_Console::print(string(exception.what()));
+			exit(0);
 		}
 	}
 	return instance;

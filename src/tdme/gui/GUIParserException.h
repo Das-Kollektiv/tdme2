@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include <java/lang/fwd-tdme.h>
+#include <string>
+
 #include <tdme/gui/fwd-tdme.h>
-#include <java/lang/Exception.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_ExceptionBase.h>
 
-using java::lang::Exception;
-using java::lang::String;
+using std::wstring;
 
-
-struct default_init_tag;
+using tdme::utils::_ExceptionBase;
 
 /** 
  * GUI parser exception
@@ -18,30 +18,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::GUIParserException final
-	: public Exception
+	: public _ExceptionBase
 {
-
 public:
-	typedef Exception super;
-protected:
-
-	/** 
-	 * Constructor
-	 * @param message
-	 */
-	void ctor(String* message);
-
-	// Generated
-
-public:
-	GUIParserException(String* message);
-protected:
-	GUIParserException(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
+	GUIParserException(const string& message);
 };

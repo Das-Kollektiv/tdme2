@@ -40,7 +40,7 @@ TextureLoader::TextureLoader()
 	ctor();
 }
 
-Texture* TextureLoader::loadTexture(String* path, String* fileName)
+Texture* TextureLoader::loadTexture(String* path, String* fileName) throw (_FileSystemException)
 {
 	clinit();
 	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
@@ -51,7 +51,7 @@ Texture* TextureLoader::loadTexture(String* path, String* fileName)
 	return nullptr;
 }
 
-Texture* TextureLoader::loadPNG(String* path, String* fileName) {
+Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 	clinit();
 

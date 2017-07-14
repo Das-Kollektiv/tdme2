@@ -365,13 +365,13 @@ SRCS = \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/ArrayListIteratorMultiple.cpp \
-	src/tdme/utils/_Exception.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \
 	src/tdme/utils/QuickSort.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/_ArrayList.cpp \
+	src/tdme/utils/_ExceptionBase.cpp \
 	src/tdme/utils/_Console.cpp \
 	src/tdme/utils/_HashMap.cpp \
 	src/tdme/utils/_HashMap_1.cpp \

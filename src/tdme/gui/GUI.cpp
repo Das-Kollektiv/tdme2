@@ -33,7 +33,10 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/Pool.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
@@ -74,7 +77,10 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::Pool;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap;
 
@@ -132,7 +138,9 @@ void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
 	this->height = 0;
 	try {
 		this->foccussedBorderColor = new GUIColor(u"#8080FF"_j);
-	} catch (GUIParserException* gpe) {
+	} catch (_Exception& exception) {
+		_Console::print(string("GUI::ctor(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -184,25 +192,31 @@ _ArrayList* GUI::getKeyboardEvents()
 GUIFont* GUI::getFont(String* fileName)
 {
 	clinit();
-	String* canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
-	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
-	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
+	String* canonicalFile = nullptr;
+	String* path = nullptr;
+	String* file = nullptr;
 	String* key = nullptr;
-	/*try {*/
-		key = canonicalFile;
-	/*} catch (IOException* ioe) {
-		ioe->printStackTrace();
+	try {
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+		path = _FileSystem::getInstance()->getPathName(canonicalFile);
+		file = _FileSystem::getInstance()->getFileName(canonicalFile);
+	} catch (_Exception& exception) {
+		_Console::print(string("GUI::getFont(): An error occurred: "));
+		_Console::println(string(exception.what()));
 		return nullptr;
-	}*/
-	auto font = java_cast< GUIFont* >(fontCache->get(key));
+	}
+
+	auto font = java_cast< GUIFont* >(fontCache->get(canonicalFile));
 	if (font == nullptr) {
 		try {
 			font = GUIFont::parse(path, file);
-		} catch (Exception* exception) {
-			exception->printStackTrace();
+		} catch (_Exception& exception) {
+			_Console::print(string("GUI::getFont(): An error occurred: "));
+			_Console::println(string(exception.what()));
 			return nullptr;
 		}
-		fontCache->put(key, font);
+
+		fontCache->put(canonicalFile, font);
 	}
 	return font;
 }
@@ -211,26 +225,29 @@ Texture* GUI::getImage(String* fileName)
 {
 	clinit();
 	// TODO: fix me, proper get path, filename
-	String* canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
-	String* path = _FileSystem::getInstance()->getPathName(canonicalFile);
-	String* file = _FileSystem::getInstance()->getFileName(canonicalFile);
-	String* key = nullptr;
-	/*try {*/
-		key = canonicalFile;
-	/*} catch (IOException* ioe) {
-		ioe->printStackTrace();
+	String* canonicalFile = nullptr;
+	String* path = nullptr;
+	String* file = nullptr;
+	try {
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+		path = _FileSystem::getInstance()->getPathName(canonicalFile);
+		file = _FileSystem::getInstance()->getFileName(canonicalFile);
+	} catch (_Exception& exception) {
+		_Console::print(string("GUI::getImage(): An error occurred: "));
+		_Console::println(string(exception.what()));
 		return nullptr;
 	}
-	*/
-	auto image = java_cast< Texture* >(imageCache->get(key));
+
+	auto image = java_cast< Texture* >(imageCache->get(canonicalFile));
 	if (image == nullptr) {
 		try {
 			image = TextureLoader::loadTexture(path, file);
-		} catch (Exception* exception) {
-			exception->printStackTrace();
+		} catch (_Exception& exception) {
+			_Console::print(string("GUI::getImage(): An error occurred: "));
+			_Console::println(string(exception.what()));
 			return nullptr;
 		}
-		imageCache->put(key, image);
+		imageCache->put(canonicalFile, image);
 	}
 	return image;
 }

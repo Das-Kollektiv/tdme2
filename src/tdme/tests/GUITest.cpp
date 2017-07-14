@@ -18,6 +18,7 @@
 #include <tdme/tests/GUITest_init_1.h>
 #include <tdme/tests/GUITest_init_2.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tests::GUITest;
 using java::lang::Exception;
@@ -37,6 +38,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tests::GUITest_init_1;
 using tdme::tests::GUITest_init_2;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -105,10 +107,10 @@ void GUITest::initialize()
 		effectScrollIn->start();
 		engine->getGUI()->getScreen(u"test"_j)->addEffect(u"scrollin"_j, effectScrollIn);
 		engine->getGUI()->addRenderScreen(u"test"_j);
-	} catch (Exception* exception) {
-		_Console::print("GUITest::initialize failed: ");
-		_Console::println(exception->getMessage());
-		exception->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("GUITest::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
+		exit(0);
 	}
 }
 

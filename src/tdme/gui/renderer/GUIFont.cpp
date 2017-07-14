@@ -70,7 +70,7 @@ MutableString* GUIFont::LINEHEIGHT_STRING;
 
 constexpr int32_t GUIFont::CHARACTERS_MAX;
 
-GUIFont* GUIFont::parse(String* pathName, String* fileName) /* throws(Exception) */
+GUIFont* GUIFont::parse(String* pathName, String* fileName) throw (_FileSystemException)
 {
 	clinit();
 	int lineIdx = 0;

@@ -10,13 +10,19 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/_FileSystemException.h>
+
 
 using java::lang::Object;
 using java::io::InputStream;
 using java::lang::String;
 using java::lang::StringBuffer;
+using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
@@ -25,6 +31,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
+using tdme::os::_FileSystemException;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -79,42 +86,49 @@ public:
 
 	/**
 	 * Reads a boolean from input stream
+	 * @throws model file IO exception
 	 * @return boolean
 	 */
-	inline bool readBoolean() {
+	inline bool readBoolean() throw (ModelFileIOException) {
 		return readByte() == 1;
 	}
 
 	/**
 	 * Reads a byte from input stream
+	 * @throws model file IO exception
 	 * @return byte
 	 */
-	inline int8_t readByte() {
+	inline int8_t readByte() throw (ModelFileIOException) {
+		if (position == data->length) {
+			throw ModelFileIOException("Unexpected end of stream");
+		}
 		return data->get(position++);
 	}
 
 	/**
 	 * Reads a integer from input stream
+	 * @throws model file IO exception
 	 * @return int
 	 */
-	inline  int32_t readInt() {
+	inline  int32_t readInt() throw (ModelFileIOException) {
 		int32_t value =
 			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
-			((static_cast< int32_t >(readByte()) & 0xFF) << 8)+
+			((static_cast< int32_t >(readByte()) & 0xFF) << 8) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 0);
 		return value;
 	}
 
 	/**
 	 * Reads a float from input stream
+	 * @throws model file IO exception
 	 * @return float
 	 */
-	inline float readFloat() {
+	inline float readFloat() throw (ModelFileIOException) {
 		int32_t value =
 			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
-			((static_cast< int32_t >(readByte()) & 0xFF) << 8)+
+			((static_cast< int32_t >(readByte()) & 0xFF) << 8) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 0);
 		float* floatValue = (float*)&value;
 		return *floatValue;
@@ -122,9 +136,10 @@ public:
 
 	/**
 	 * Reads a string from input stream
+	 * @throws model file IO exception
 	 * @return string
 	 */
-	inline String* readString() {
+	inline String* readString() throw (ModelFileIOException) {
 		if (readBoolean() == false) {
 			return nullptr;
 		} else {
@@ -140,9 +155,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
+	 * @throws model file IO exception
 	 * @return float array
 	 */
-	inline floatArray* readFloatArray() {
+	inline floatArray* readFloatArray() throw (ModelFileIOException) {
 		auto f = new floatArray(readInt());
 		for (auto i = 0; i < f->length; i++) {
 			(*f)[i] = readFloat();
@@ -174,10 +190,10 @@ public:
 	 * @param path name
 	 * @param file name
 	 * @throws IOException
-	 * @throws ModelIOException
+	 * @throws model file IO exception
 	 * @return model
 	 */
-	static Model* read(String* pathName, String* fileName) /* throws(IOException, ModelFileIOException) */;
+	static Model* read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
 
 private:
 
@@ -185,81 +201,80 @@ private:
 	 * Read material
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return material
 	 */
-	static Material* readMaterial(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Material* readMaterial(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read vertices from input stream
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return vector3 array
 	 */
-	static Vector3Array* readVertices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Vector3Array* readVertices(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read texture coordinates from input stream
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return texture coordinates array
 	 */
-	static TextureCoordinateArray* readTextureCoordinates(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static TextureCoordinateArray* readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read indices from input stream
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return indicies / int array
 	 */
-	static int32_tArray* readIndices(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static int32_tArray* readIndices(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read animation from input stream into group
 	 * @param input stream
 	 * @throws IOException 
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return Animation
 	 */
-	static Animation* readAnimation(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static Animation* readAnimation(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
 
 	/** 
 	 * Read faces entities from input stream
 	 * @param input stream
 	 * @param group
-	 * @throws IOException
-	 * @throws ModelIOException
+	 * @throws model file IO exception
 	 */
-	static void readFacesEntities(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static void readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
 
 	/** 
 	 * Read skinning joint
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return joint
 	 */
-	static Joint* readSkinningJoint(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static Joint* readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read skinning joint weight
 	 * @param input stream
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return joint weight
 	 */
-	static JointWeight* readSkinningJointWeight(TMReaderInputStream* is) /* throws(IOException, ModelFileIOException) */;
+	static JointWeight* readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read skinning from input stream
 	 * @param input stream
 	 * @param group
-	 * @throws IOException
+	 * @throws model file IO exception
 	 */
-	static void readSkinning(TMReaderInputStream* is, Group* g) /* throws(IOException, ModelFileIOException) */;
+	static void readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
 
 	/** 
 	 * Read sub groups
@@ -267,21 +282,20 @@ private:
 	 * @param model
 	 * @param sub groups
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) /* throws(IOException, ModelFileIOException) */;
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream
 	 * @param input stream
 	 * @param model
 	 * @param parent group
-	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws model file IO exception
 	 * @return group
 	 */
-	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) /* throws(IOException, ModelFileIOException) */;
+	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException);
 
 	// Generated
 

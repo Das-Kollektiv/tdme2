@@ -49,6 +49,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -103,6 +104,7 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap;
 
@@ -135,26 +137,27 @@ GUIParser::GUIParser()
 
 _HashMap* GUIParser::elements;
 
-GUIScreenNode* GUIParser::parse(String* pathName, String* fileName) /* throws(Exception) */
+GUIScreenNode* GUIParser::parse(String* pathName, String* fileName) throw (GUIParserException)
 {
 	clinit();
 	return parse(new String(_FileSystem::getInstance()->getContent(pathName, fileName)));
 }
 
-GUIScreenNode* GUIParser::parse(String* xml) /* throws(Exception) */
+GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
 {
 	clinit();
 
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xml->getCPPWString()).c_str());
 	if (xmlDocument.Error() == true) {
-		_Console::println(string("GUIParser::parse():: Could not parse XML. Error='") + xmlDocument.ErrorDesc() + string("'. Exiting.\n"));
-		exit(1);
+		throw GUIParserException(
+			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc())
+		);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
 	GUIScreenNode* guiScreenNode = nullptr;
 	if (string(xmlRoot->Value()) != string("screen")) {
-		throw new GUIParserException(u"XML root node must be <screen>"_j);
+		throw GUIParserException("XML root node must be <screen>");
 	}
 
 	String* tmpString = nullptr;
@@ -202,27 +205,28 @@ GUIScreenNode* GUIParser::parse(String* xml) /* throws(Exception) */
 	return guiScreenNode;
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, String* pathName, String* fileName) /* throws(Exception) */
+void GUIParser::parse(GUIParentNode* parentNode, String* pathName, String* fileName) throw (GUIParserException)
 {
 	String* xml = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	parse(parentNode, xml);
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, String* xml) /* throws(Exception) */
+void GUIParser::parse(GUIParentNode* parentNode, String* xml) throw (GUIParserException)
 {
 	clinit();
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(wstring(L"<gui-element>") + xml->getCPPWString() + wstring(L"</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
-		_Console::println(string("GUIParser::parse():: Could not parse XML. Error='") + xmlDocument.ErrorDesc() + string("'. Exiting.\n"));
-		exit(1);
+		throw GUIParserException(
+			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc())
+		);
 	}
 	TiXmlElement* xmlNode = xmlDocument.RootElement();
 
 	parseGUINode(parentNode, xmlNode, nullptr);
 }
 
-void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) /* throws(Exception) */
+void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException)
 {
 	clinit();
 	String* tmpString = nullptr;
@@ -699,8 +703,11 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				String* nodeTagNameString = new String(StringConverter::toWideString(nodeTagName));
 				auto newGuiElement = java_cast< GUIElement* >(elements->get(nodeTagNameString));
 				if (newGuiElement == nullptr) {
-					throw new GUIParserException(::java::lang::StringBuilder().append(u"Unknown element '"_j)->append(nodeTagNameString)
-						->append(u"'"_j)->toString());
+					throw GUIParserException(
+						"Unknown element '" +
+						StringConverter::toString(nodeTagNameString->getCPPWString()) +
+						"'"
+					);
 				}
 				auto newGuiElementTemplate = newGuiElement->getTemplate();
 				for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
@@ -748,8 +755,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				TiXmlDocument newGuiElementDocument;
 				newGuiElementDocument.Parse(StringConverter::toString(newGuiElementDocumentXML->getCPPWString()).c_str());
 				if (newGuiElementDocument.Error() == true) {
-					_Console::println(string("GUIParser::parse():: Could not parse XML. Error='") + newGuiElementDocument.ErrorDesc() + string("'. Exiting.\n"));
-					exit(1);
+					throw GUIParserException(
+						"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
+					);
 				}
 				parseGUINode(guiParentNode, newGuiElementDocument.RootElement(), newGuiElement);
 			}
@@ -792,12 +800,15 @@ String* GUIParser::escapeQuotes(String* string)
 	return string->replace(static_cast< CharSequence* >(u"\""_j), static_cast< CharSequence* >(u"&quot;"_j));
 }
 
-void GUIParser::addElement(GUIElement* guiElement) /* throws(GUIParserException) */
+void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException)
 {
 	clinit();
 	if (java_cast< GUIElement* >(elements->get(guiElement->getName())) != nullptr) {
-		throw new GUIParserException(::java::lang::StringBuilder().append(u"Element with given name '"_j)->append(guiElement->getName())
-			->append(u"' already exists"_j)->toString());
+		throw GUIParserException(
+			"Element with given name '" +
+			StringConverter::toString(guiElement->getName()->getCPPWString()) +
+			"' already exists"
+		);
 	}
 	elements->put(guiElement->getName(), guiElement);
 }
@@ -817,135 +828,153 @@ void GUIParser::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		elements = new _HashMap();
-		{
-			try {
-				GUICheckbox::clinit();
-				GUIElement* guiElement = new GUICheckbox();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
+			elements = new _HashMap();
+			{
+				try {
+					GUICheckbox::clinit();
+					GUIElement* guiElement = new GUICheckbox();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIRadioButton::clinit();
+					GUIElement* guiElement = new GUIRadioButton();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUISelectBox::clinit();
+					GUIElement* guiElement = new GUISelectBox();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUISelectBoxOption::clinit();
+					GUIElement* guiElement = new GUISelectBoxOption();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUISelectBoxMultiple::clinit();
+					GUIElement* guiElement = new GUISelectBoxMultiple();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUISelectBoxMultipleOption::clinit();
+					GUIElement* guiElement = new GUISelectBoxMultipleOption();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIDropDown::clinit();
+					GUIElement* guiElement = new GUIDropDown();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIDropDownOption::clinit();
+					GUIElement* guiElement = new GUIDropDownOption();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUITabs::clinit();
+					GUIElement* guiElement = new GUITabs();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUITabsHeader::clinit();
+					GUIElement* guiElement = new GUITabsHeader();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUITab::clinit();
+					GUIElement* guiElement = new GUITab();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUITabsContent::clinit();
+					GUIElement* guiElement = new GUITabsContent();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUITabContent::clinit();
+					GUIElement* guiElement = new GUITabContent();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIButton::clinit();
+					GUIElement* guiElement = new GUIButton();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIInput::clinit();
+					GUIElement* guiElement = new GUIInput();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIScrollAreaVertical::clinit();
+					GUIElement* guiElement = new GUIScrollAreaVertical();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIScrollAreaHorizontal::clinit();
+					GUIElement* guiElement = new GUIScrollAreaHorizontal();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
+				try {
+					GUIScrollArea::clinit();
+					GUIElement* guiElement = new GUIScrollArea();
+					addElement(guiElement);
+				} catch (_Exception& exception) {
+					_Console::print(string("GUIParser::clinit(): An error occurred: "));
+					_Console::println(string(exception.what()));
+				}
 			}
-			try {
-				GUIRadioButton::clinit();
-				GUIElement* guiElement = new GUIRadioButton();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUISelectBox::clinit();
-				GUIElement* guiElement = new GUISelectBox();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUISelectBoxOption::clinit();
-				GUIElement* guiElement = new GUISelectBoxOption();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUISelectBoxMultiple::clinit();
-				GUIElement* guiElement = new GUISelectBoxMultiple();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUISelectBoxMultipleOption::clinit();
-				GUIElement* guiElement = new GUISelectBoxMultipleOption();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIDropDown::clinit();
-				GUIElement* guiElement = new GUIDropDown();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIDropDownOption::clinit();
-				GUIElement* guiElement = new GUIDropDownOption();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUITabs::clinit();
-				GUIElement* guiElement = new GUITabs();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUITabsHeader::clinit();
-				GUIElement* guiElement = new GUITabsHeader();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUITab::clinit();
-				GUIElement* guiElement = new GUITab();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUITabsContent::clinit();
-				GUIElement* guiElement = new GUITabsContent();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUITabContent::clinit();
-				GUIElement* guiElement = new GUITabContent();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIButton::clinit();
-				GUIElement* guiElement = new GUIButton();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIInput::clinit();
-				GUIElement* guiElement = new GUIInput();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIScrollAreaVertical::clinit();
-				GUIElement* guiElement = new GUIScrollAreaVertical();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIScrollAreaHorizontal::clinit();
-				GUIElement* guiElement = new GUIScrollAreaHorizontal();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-			try {
-				GUIScrollArea::clinit();
-				GUIElement* guiElement = new GUIScrollArea();
-				addElement(guiElement);
-			} catch (Exception* e) {
-				e->printStackTrace();
-			}
-		}
 		}
 	};
 

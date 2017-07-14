@@ -22,6 +22,8 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::views::EmptyView;
 using java::lang::Exception;
@@ -45,6 +47,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 EmptyView::EmptyView(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -144,8 +148,9 @@ void EmptyView::initialize()
 		emptyScreenController->initialize();
 		engine->getGUI()->addScreen(emptyScreenController->getScreenNode()->getId(), emptyScreenController->getScreenNode());
 		emptyScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EmptyView::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	updateGUIElements();
 }

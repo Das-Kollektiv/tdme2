@@ -11,6 +11,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using java::lang::ClassCastException;
@@ -22,6 +24,8 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::MutableString;
 
 template<typename T, typename U>
@@ -64,8 +68,9 @@ void InfoDialogScreenController::initialize()
 		screenNode->addActionListener(this);
 		captionNode = java_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_caption"_j));
 		messageNode = java_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_message"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 

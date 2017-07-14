@@ -15,6 +15,8 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using java::lang::ClassCastException;
@@ -31,6 +33,8 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -75,8 +79,9 @@ void EmptyScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 }

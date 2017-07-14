@@ -25,6 +25,8 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
@@ -56,6 +58,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -111,8 +115,9 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 		entityPropertiesList = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_listbox"_j));
 		entityPropertyPresetApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_presetapply"_j));
 		entityPropertiesPresets = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_presets"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
@@ -166,8 +171,9 @@ void EntityBaseSubScreenController::setEntityPresetIds(_HashMap* entityPresetIds
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {
 		entityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityBaseSubScreenController::setEntityPresetIds(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -203,8 +209,9 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* model
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityBaseSubScreenController::setEntityProperties(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	onEntityPropertiesSelectionChanged(model);
 }
@@ -288,27 +295,35 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+		if ((v == GUIActionListener_Type::PERFORMED))
+		{
+			{
 				if (node->getId()->equals(u"button_entity_apply"_j)) {
 					onEntityDataApply(entity);
-				} else if (node->getId()->equals(u"button_entity_properties_presetapply"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_properties_presetapply"_j)) {
 					onEntityPropertyPresetApply(entity);
-				} else if (node->getId()->equals(u"button_entity_properties_add"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_properties_add"_j)) {
 					onEntityPropertyAdd(entity);
-				} else if (node->getId()->equals(u"button_entity_properties_remove"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_properties_remove"_j)) {
 					onEntityPropertyRemove(entity);
-				} else if (node->getId()->equals(u"button_entity_properties_save"_j)) {
+				} else
+				if (node->getId()->equals(u"button_entity_properties_save"_j)) {
 					onEntityPropertySave(entity);
 				} else {
 				}
 				goto end_switch0;;
-			}		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-{
+			}
+		}
+		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING))
+		{
+			{
 				goto end_switch0;;
-			}		}
-end_switch0:;
+			}
+		}
+		end_switch0:;
 	}
 
 }

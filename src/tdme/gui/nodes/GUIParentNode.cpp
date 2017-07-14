@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIParentNode.java
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+#include <string>
+
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -24,7 +26,10 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
 using java::lang::ClassCastException;
@@ -50,6 +55,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
@@ -129,13 +135,16 @@ void GUIParentNode::replaceSubNodes(String* xml, bool resetScrollOffsets) /* thr
 
 }
 
-void GUIParentNode::addSubNode(GUINode* node) /* throws(GUIParserException) */
+void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
 {
 	if (screenNode->addNode(node) == false) {
-		throw new GUIParserException(::java::lang::StringBuilder().append(u"Screen '"_j)->append(screenNode->id)
-			->append(u"' already has a node attached with given node id '"_j)
-			->append(node->id)
-			->append(u"'"_j)->toString());
+		throw GUIParserException(
+			"Screen '" +
+			StringConverter::toString(screenNode->id->getCPPWString()) +
+			"' already has a node attached with given node id '" +
+			StringConverter::toString(node->id->getCPPWString()) +
+			"'"
+		);
 	}
 	subNodes->add(node);
 }
@@ -150,20 +159,26 @@ GUIParentNode_Overflow* GUIParentNode::getOverflowY()
 	return overflowY;
 }
 
-GUIParentNode_Overflow* GUIParentNode::createOverflow(String* overflow) /* throws(GUIParserException) */
+GUIParentNode_Overflow* GUIParentNode::createOverflow(String* overflow) throw (GUIParserException)
 {
 	clinit();
 	if (overflow->trim()->equalsIgnoreCase(u"hidden"_j) == true) {
 		return GUIParentNode_Overflow::HIDDEN;
-	} else if (overflow->trim()->equalsIgnoreCase(u"downsize-children"_j) == true) {
+	} else
+	if (overflow->trim()->equalsIgnoreCase(u"downsize-children"_j) == true) {
 		return GUIParentNode_Overflow::DOWNSIZE_CHILDREN;
-	} else if (overflow->trim()->equalsIgnoreCase(u"scroll"_j) == true) {
+	} else
+	if (overflow->trim()->equalsIgnoreCase(u"scroll"_j) == true) {
 		return GUIParentNode_Overflow::SCROLL;
-	} else if (overflow == nullptr || overflow->trim()->length() == 0) {
+	} else
+	if (overflow == nullptr || overflow->trim()->length() == 0) {
 		return GUIParentNode_Overflow::HIDDEN;
 	} else {
-		throw new GUIParserException(::java::lang::StringBuilder().append(u"Unknown overflow '"_j)->append(overflow)
-			->append(u"'"_j)->toString());
+		throw GUIParserException(
+			"Unknown overflow '" +
+			StringConverter::toString(overflow->toString()->getCPPWString()) +
+			"'"
+		);
 	}
 }
 

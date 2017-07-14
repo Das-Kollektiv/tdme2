@@ -8,6 +8,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/nodes/GUINode.h>
 
 using tdme::gui::nodes::GUINode;
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUIParserException;
 using tdme::utils::_ArrayList;
 
 
@@ -85,7 +87,7 @@ public:
 	 * Add sub node
 	 * @param node
 	 */
-	virtual void addSubNode(GUINode* node) /* throws(GUIParserException) */;
+	virtual void addSubNode(GUINode* node) throw (GUIParserException);
 
 	/** 
 	 * @return overflow x
@@ -103,7 +105,7 @@ public:
 	 * @return over flow
 	 * @throws gui parser exception
 	 */
-	static GUIParentNode_Overflow* createOverflow(String* overflow) /* throws(GUIParserException) */;
+	static GUIParentNode_Overflow* createOverflow(String* overflow) throw (GUIParserException);
 
 	/** 
 	 * @return children render offset x

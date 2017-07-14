@@ -44,6 +44,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -55,6 +56,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
@@ -108,6 +110,7 @@ using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -119,6 +122,7 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 
 using tdme::ext::tinyxml::TiXmlDocument;
@@ -180,21 +184,16 @@ float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE;
 
 float DAEReader::BLENDER_DIFFUSE_SCALE;
 
-Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) */
+Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
 {
 	clinit();
 	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
 	if (xmlDocument.Error() == true) {
-		_Console::println(
-			"DAEReader::read():: Could not parse file '" +
-			StringConverter::toString(pathName->getCPPWString()) + "/" + StringConverter::toString(fileName->getCPPWString()) +
-			"'. Error='" +
-			xmlDocument.ErrorDesc() +
-			"'. Exiting.\n"
+		throw ModelFileIOException(
+			string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
 		);
-		exit(1);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
 	auto authoringTool = getAuthoringTool(xmlRoot);
@@ -226,7 +225,7 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 		xmlSceneId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url")))))->substring(1);
 	}
 	if (xmlSceneId == nullptr) {
-		throw new ModelFileIOException(u"No scene id found"_j);
+		throw ModelFileIOException("No scene id found");
 	}
 	auto xmlLibraryVisualScenes = getChildrenByTagName(xmlRoot, "library_visual_scenes").at(0);
 	for (auto xmlLibraryVisualScene: getChildrenByTagName(xmlLibraryVisualScenes, "visual_scene")) {
@@ -260,7 +259,7 @@ Model* DAEReader::read(String* pathName, String* fileName) /* throws(Exception) 
 	return model;
 }
 
-LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* throws(Exception) */
+LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
 {
 	String* tmpString = nullptr;
 
@@ -285,14 +284,9 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
 	if (xmlDocument.Error() == true) {
-		_Console::println(
-			"DAEReader::read():: Could not parse file '" +
-			StringConverter::toString(pathName->getCPPWString()) + "/" + StringConverter::toString(fileName->getCPPWString()) +
-			"'. Error='" +
-			xmlDocument.ErrorDesc() +
-			"'. Exiting.\n"
+		throw ModelFileIOException(
+			string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
 		);
-		exit(1);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
 
@@ -316,7 +310,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 		xmlSceneId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url")))))->substring(1);
 	}
 	if (xmlSceneId == nullptr) {
-		throw new ModelFileIOException(u"No scene id found"_j);
+		throw ModelFileIOException("No scene id found");
 	}
 	auto xmlLibraryVisualScenes = getChildrenByTagName(xmlRoot, "library_visual_scenes").at(0);
 	for (auto xmlLibraryVisualScene: getChildrenByTagName(xmlLibraryVisualScenes, "visual_scene")) {
@@ -416,11 +410,11 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) /* th
 					)->transpose();
 				}
 				if (nodeTransformationsMatrix == nullptr) {
-					throw new ModelFileIOException(
-						::java::lang::StringBuilder().
-						 	 append(u"missing node transformations matrix for node "_j)->
-							 append(nodeId)->
-							 toString());
+					throw ModelFileIOException(
+						 "missing node transformations matrix for node '" +
+						 StringConverter::toString(nodeId->getCPPWString()) +
+						 "'"
+					);
 				}
 				nodeTransformationsMatrix->getAxes(xAxis, yAxis, zAxis);
 				nodeTransformationsMatrix->getTranslation(translation);
@@ -541,7 +535,7 @@ DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 	return DAEReader_AuthoringTool::UNKNOWN;
 }
 
-Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) /* throws(ModelFileIOException) */
+Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
 {
 	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
@@ -549,16 +543,18 @@ Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) /* throws(ModelFil
 			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
 			if (upAxis->equalsIgnoreCase(u"Y_UP"_j)) {
 				return Model_UpVector::Y_UP;
-			} else if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
+			} else
+			if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
 				return Model_UpVector::Z_UP;
-			} else if (upAxis->equalsIgnoreCase(u"X_UP"_j)) {
-				throw new ModelFileIOException(u"X-Up is not supported"_j);
+			} else
+			if (upAxis->equalsIgnoreCase(u"X_UP"_j)) {
+				throw ModelFileIOException("X-Up is not supported");
 			} else {
-				throw new ModelFileIOException(u"Unknown Up vector"_j);
+				throw ModelFileIOException("Unknown Up vector");
 			}
 		}
 	}
-	throw new ModelFileIOException(u"Unknown Up vector"_j);
+	throw ModelFileIOException("Unknown Up vector");
 }
 
 void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* model)
@@ -592,7 +588,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	}
 }
 
-Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */
+Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	clinit();
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
@@ -603,7 +599,7 @@ Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, St
 	}
 }
 
-Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) /* throws(Exception) */
+Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
 {
 	clinit();
 	String* tmpString = nullptr;
@@ -662,7 +658,11 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 				}
 			}
 			if (xmlSamplerOutputSource == nullptr) {
-				throw new ModelFileIOException(::java::lang::StringBuilder().append(u"Could not find xml sampler output source for animation for "_j)->append(xmlNodeId)->toString());
+				throw ModelFileIOException(
+					"Could not find xml sampler output source for animation for '" +
+					StringConverter::toString(xmlNodeId->getCPPWString()) +
+					"'"
+				);
 			}
 			floatArray* keyFrameTimes = nullptr;
 			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
@@ -795,7 +795,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	return group;
 }
 
-Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) /* throws(Exception) */
+Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
 {
 	clinit();
 
@@ -830,7 +830,11 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		}
 	}
 	if (xmlSkin == nullptr) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"skin not found for instance controller "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"skin not found for instance controller '" +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 
 	xmlGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkin->Attribute("source")))))->substring(1);
@@ -864,7 +868,11 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		}
 	}
 	if (xmlJointsSource == nullptr) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"joint source not found for instance controller "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"joint source not found for instance controller '" +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 
 	auto joints = new _ArrayList();
@@ -879,7 +887,11 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	skinning->setJoints(joints);
 
 	if (xmlJointsInverseBindMatricesSource == nullptr) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"inverse bind matrices source not found for instance controller "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"inverse bind matrices source not found for instance controller '" +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
@@ -912,7 +924,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	for (auto xmlVertexWeightInput: xmlVertexWeightInputs) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic")))))->equals(u"JOINT"_j)) {
 			if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source")))))->substring(1)->equals(xmlJointsSource) == false) {
-				throw new ModelFileIOException(u"joint inverse bind matrices source do not match"_j);
+				throw ModelFileIOException("joint inverse bind matrices source do not match");
 			}
 			xmlJointOffset = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset")))));
 		} else
@@ -922,13 +934,25 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		}
 	}
 	if (xmlJointOffset == -1) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"xml vertex weight joint offset missing for node "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"xml vertex weight joint offset missing for node '" +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 	if (xmlWeightOffset == -1) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"xml vertex weight weight offset missing for node "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"xml vertex weight weight offset missing for node " +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 	if (xmlWeightsSource == nullptr) {
-		throw new ModelFileIOException(::java::lang::StringBuilder().append(u"xml vertex weight weight source missing for node "_j)->append(xmlNodeId)->toString());
+		throw ModelFileIOException(
+			"xml vertex weight weight source missing for node '" +
+			StringConverter::toString(xmlNodeId->getCPPWString()) +
+			"'"
+		);
 	}
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlWeightsSource)) {
@@ -970,7 +994,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	return group;
 }
 
-void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) /* throws(Exception) */
+void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException)
 {
 	clinit();
 	StringTokenizer* t;
@@ -1005,11 +1029,11 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 					while (t->hasMoreTokens()) {
 						auto vertexCount = Integer::parseInt(t->nextToken());
 						if (vertexCount != 3) {
-							throw new ModelFileIOException(
-								::java::lang::StringBuilder().
-								 	 append(u"we only support triangles in "_j)->
-									 append(xmlNodeId)->
-									 toString());
+							throw ModelFileIOException(
+								 "we only support triangles in '" +
+								 StringConverter::toString(xmlNodeId->getCPPWString()) +
+								 "'"
+							);
 						}
 					}
 				}
@@ -1071,12 +1095,18 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 					}
 				}
 				if (xmlVerticesSource == nullptr) {
-					throw new ModelFileIOException(::java::lang::StringBuilder().append(u"Could not determine triangles vertices source for '"_j)->append(xmlNodeId)
-						->append(u"'"_j)->toString());
+					throw ModelFileIOException(
+						"Could not determine triangles vertices source for '" +
+						StringConverter::toString(xmlNodeId->getCPPWString()) +
+						"'"
+					);
 				}
 				if (xmlNormalsSource == nullptr) {
-					throw new ModelFileIOException(::java::lang::StringBuilder().append(u"Could not determine triangles normal source for '"_j)->append(xmlNodeId)
-						->append(u"'"_j)->toString());
+					throw ModelFileIOException(
+						"Could not determine triangles normal source for '" +
+						StringConverter::toString(xmlNodeId->getCPPWString()) +
+						"'"
+					);
 				}
 				for (auto xmlMeshSource: getChildrenByTagName(xmlMesh, "source")) {
 					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMeshSource->Attribute("id")))))->equals(xmlVerticesSource)) {
@@ -1192,7 +1222,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 	group->determineFeatures();
 }
 
-Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId) /* throws(Exception) */
+Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId)
 {
 	clinit();
 	String* tmpString = nullptr;
@@ -1389,12 +1419,13 @@ String* DAEReader::determineDisplacementFilename(String* path, String* mapType, 
 
 	tmpFileNameCandidate = ::java::lang::StringBuilder(tmpFileNameCandidate).append(u"displacement"_j)->toString();
 	auto const finalFilenameCandidate = tmpFileNameCandidate;
-	/*try*/ {
+	try {
 		auto fileNameCandidates = _FileSystem::getInstance()->list(path, new DAEReader_determineDisplacementFilename_1(finalFilenameCandidate));
 		tmpFileNameCandidate = fileNameCandidates->length > 0 ? (*fileNameCandidates)[0] : static_cast< String* >(nullptr);
-	}/* catch (IOException* ioe) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"DAEReader::makeDisplacementFilenameCandidate::"_j)->append(static_cast< Object* >(ioe))->toString()));
-	}*/
+	} catch (_Exception& exception) {
+		_Console::print(string("DAEReader::determineDisplacementFilename(): An exception occurred: "));
+		_Console::println(string(exception.what()));
+	}
 	return tmpFileNameCandidate;
 }
 

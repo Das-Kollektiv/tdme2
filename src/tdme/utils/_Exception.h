@@ -5,25 +5,14 @@
 #pragma once
 
 #include <stdexcept>
-#include <string>
 
-#include <fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::runtime_error;
-using std::wstring;
+namespace tdme {
+namespace utils {
 
-/**
- * Exception base class
- * @author Andreas Drewke
- */
-class tdme::utils::_Exception: public runtime_error {
-	public:
-		/**
-		 * @brief Public constructor
-		 * @param message Exception message
-		 */
-		_Exception(const wstring& message) throw();
-		~_Exception() throw();
+typedef std::exception _Exception;
+
+};
 };
 

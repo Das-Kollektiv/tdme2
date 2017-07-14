@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tests/GUITest.java
 #include <tdme/tests/GUITest_init_1.h>
 
+#include <stdlib.h>
+
 #include <java/lang/ClassCastException.h>
 #include <java/lang/Exception.h>
 #include <java/lang/Object.h>
@@ -16,6 +18,7 @@
 #include <tdme/tests/GUITest.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 
 using tdme::tests::GUITest_init_1;
@@ -34,6 +37,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tests::GUITest;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 
 template<typename T, typename U>
@@ -73,7 +77,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab1"_j)->getController()))->selectTab();
 	} else if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button2"_j)) {
 		try {
-{
+			{
 				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(u"sadd_inner"_j)));
 				parentNode->replaceSubNodes(::java::lang::StringBuilder().append(u"<dropdown-option text=\"Option 1\" value=\"1\" />"_j)->append(u"<dropdown-option text=\"Option 2\" value=\"2\" />"_j)
 					->append(u"<dropdown-option text=\"Option 3\" value=\"3\" />"_j)
@@ -85,8 +89,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					->append(u"<dropdown-option text=\"Option 9\" value=\"9\" />"_j)
 					->append(u"<dropdown-option text=\"Option 10\" value=\"10\" />"_j)->toString(), true);
 			}
-
-{
+			{
 				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(u"sasb_inner"_j)));
 				parentNode->replaceSubNodes(::java::lang::StringBuilder().append(u"<selectbox-option text=\"Option 1\" value=\"1\" />"_j)->append(u"<selectbox-option text=\"Option 2\" value=\"2\" />"_j)
 					->append(u"<selectbox-option text=\"Option 3\" value=\"3\" />"_j)
@@ -98,8 +101,10 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					->append(u"<selectbox-option text=\"Option 9\" value=\"9\" />"_j)
 					->append(u"<selectbox-option text=\"Option 10\" value=\"10\" />"_j)->toString(), true);
 			}
-		} catch (Exception* e) {
-			e->printStackTrace();
+		} catch (_Exception& exception) {
+			_Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
+			_Console::println(string(exception.what()));
+			exit(0);
 		}
 		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab2"_j)->getController()))->selectTab();
 	}

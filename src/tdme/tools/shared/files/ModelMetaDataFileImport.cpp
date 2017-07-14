@@ -6,6 +6,7 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Color4.h>
@@ -27,11 +28,14 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
+#include <ext/jsonbox/JsonException.h>
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using java::lang::Exception;
@@ -39,12 +43,14 @@ using java::lang::Float;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
+using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -62,6 +68,9 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
+
+using tdme::ext::jsonbox::JsonException;
 
 namespace
 {
@@ -91,7 +100,7 @@ ModelMetaDataFileImport::ModelMetaDataFileImport()
 	ctor();
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathName, String* fileName) /* throws(Exception) */
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathName, String* fileName) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 
@@ -114,7 +123,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathNam
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String* pathName, Value& jEntityRoot) /* throws(Exception) */
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String* pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 	LevelEditorEntity* levelEditorEntity;
@@ -241,9 +250,9 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 							 append(u"/"_j)->
 							 append(Tools::getFileName(particleModelRelativeFileName))->
 							 toString());
-					} catch (Exception* exception) {
-						exception->printStackTrace();
-						_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelMetaDataFileImport::doImport(): Failed to set model file: "_j)->append(exception->getMessage())->toString()));
+					} catch (_Exception& exception) {
+						_Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+						_Console::println(string(exception.what()));
 					}
 					goto end_switch0;;
 				}			}
@@ -464,7 +473,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	return levelEditorEntity;
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv) /* throws(JSONException) */
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
@@ -544,8 +553,9 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	if (bvTypeString->equalsIgnoreCase(u"convexmesh"_j) == true) {
 		try {
 			entityBoundingVolume->setupConvexMesh(pathName, new String(StringConverter::toWideString(jBv["file"].getString())));
-		} catch (Exception* e) {
-			e->printStackTrace();
+		} catch (_Exception& exception) {
+			_Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
+			_Console::println(string(exception.what()));
 		}
 	}
 	return entityBoundingVolume;

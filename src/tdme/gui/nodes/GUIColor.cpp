@@ -14,6 +14,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>
+#include <tdme/utils/StringConverter.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -30,6 +31,7 @@ using java::util::Arrays;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::gui::GUIParserException;
+using tdme::utils::StringConverter;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -135,11 +137,11 @@ void GUIColor::ctor(floatArray* color)
 	super::ctor(color);
 }
 
-void GUIColor::ctor(String* colorString) /* throws(GUIParserException) */
+void GUIColor::ctor(String* colorString) throw (GUIParserException)
 {
 	super::ctor();
 	if (colorString == nullptr) {
-		throw new GUIParserException(u"No color given"_j);
+		throw GUIParserException("No color given");
 	}
 	for (auto i = 0; i < COLOR_NAMES->length; i++) {
 		if ((*COLOR_NAMES)[i]->equalsIgnoreCase(colorString) == true) {
@@ -153,8 +155,11 @@ void GUIColor::ctor(String* colorString) /* throws(GUIParserException) */
 		}
 	}
 	if (colorString->startsWith(u"#"_j) == false || (colorString->length() != 7 && colorString->length() != 9)) {
-		throw new GUIParserException(::java::lang::StringBuilder().append(u"Invalid color '"_j)->append(colorString)
-			->append(u"'"_j)->toString());
+		throw GUIParserException(
+			"Invalid color '" +
+			StringConverter::toString(colorString->getCPPWString()) +
+			"'"
+		);
 	}
 	data = new floatArray({
 		0.0f,

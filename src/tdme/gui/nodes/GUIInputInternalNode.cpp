@@ -20,6 +20,8 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
@@ -42,6 +44,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -70,7 +74,9 @@ int32_t GUIInputInternalNode::createMaxLength(String* s)
 	try {
 		auto maxLength = Integer::parseInt(s);
 		return maxLength;
-	} catch (NumberFormatException* nfe) {
+	} catch (_Exception& exception) {
+		_Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
+		_Console::println(string(exception.what()));
 		return 0;
 	}
 }

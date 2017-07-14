@@ -1,9 +1,7 @@
 #include <tdme/os/_FileSystemException.h>
-
-#include "../utils/_Exception.h"
+#include <tdme/utils/_ExceptionBase.h>
 
 using tdme::os::_FileSystemException;
-using tdme::utils::_Exception;
 
-_FileSystemException::_FileSystemException(const wstring& message) throw() : _Exception(message) {
+_FileSystemException::_FileSystemException(const string& message) throw() : _ExceptionBase(message) {
 }

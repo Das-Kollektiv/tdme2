@@ -24,6 +24,9 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
 using java::lang::Exception;
@@ -49,6 +52,9 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::StringConverter;
+using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 TriggerView::TriggerView(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -160,8 +166,14 @@ void TriggerView::triggerApply(float width, float height, float depth)
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		initModelRequested = true;
 		updateGUIElements();
-	} catch (Exception* exception) {
-		popUps->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+	} catch (_Exception& exception) {
+		popUps->getInfoDialogScreenController()->show(
+			u"Error"_j,
+			::java::lang::StringBuilder().
+			 	 append(u"An error occurred: "_j)->
+				 append(new String(StringConverter::toWideString(string(exception.what()))))->
+				 toString()
+		 );
 	}
 }
 
@@ -172,8 +184,9 @@ void TriggerView::initialize()
 		triggerScreenController->initialize();
 		engine->getGUI()->addScreen(triggerScreenController->getScreenNode()->getId(), triggerScreenController->getScreenNode());
 		triggerScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("TriggerView::initialize(): An error occurred: "));
+		_Console::println(exception.what());
 	}
 	updateGUIElements();
 }

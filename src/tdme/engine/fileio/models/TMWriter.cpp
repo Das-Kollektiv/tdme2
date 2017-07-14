@@ -28,6 +28,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
@@ -62,6 +63,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
 
@@ -136,45 +138,39 @@ TMWriter::TMWriter()
 	ctor();
 }
 
-void TMWriter::write(Model* model, String* pathName, String* fileName) /* throws(IOException) */
+void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	clinit();
 	TMWriterOutputStream* os = nullptr;
-	{
-		auto finally0 = finally([&] {
-			if (os != nullptr) {
-				delete os;
-			}
-		});
-		/*try {*/
-			os = new TMWriterOutputStream();
-			os->writeString(u"TDME Model"_j);
-			os->writeByte(static_cast< int8_t >(1));
-			os->writeByte(static_cast< int8_t >(0));
-			os->writeByte(static_cast< int8_t >(0));
-			os->writeString(model->getName());
-			os->writeString(model->getUpVector()->toString());
-			os->writeString(model->getRotationOrder()->toString());
-			os->writeFloatArray(model->getBoundingBox()->getMin()->getArray());
-			os->writeFloatArray(model->getBoundingBox()->getMax()->getArray());
-			os->writeFloat(model->getFPS());
-			os->writeFloatArray(model->getImportTransformationsMatrix()->getArray());
-			os->writeInt(model->getMaterials()->size());
-			for (auto _i = model->getMaterials()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-				Material* material = java_cast< Material* >(_i->next());
-				{
-					writeMaterial(os, material);
-				}
-			}
-			_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
-			writeSubGroups(os, model->getSubGroups());
-		/*} catch (IOException* ioe) {
-			throw ioe;
-		}*/
+	auto finally0 = finally([&] {
+		if (os != nullptr) {
+			delete os;
+		}
+	});
+	os = new TMWriterOutputStream();
+	os->writeString(u"TDME Model"_j);
+	os->writeByte(static_cast< int8_t >(1));
+	os->writeByte(static_cast< int8_t >(0));
+	os->writeByte(static_cast< int8_t >(0));
+	os->writeString(model->getName());
+	os->writeString(model->getUpVector()->toString());
+	os->writeString(model->getRotationOrder()->toString());
+	os->writeFloatArray(model->getBoundingBox()->getMin()->getArray());
+	os->writeFloatArray(model->getBoundingBox()->getMax()->getArray());
+	os->writeFloat(model->getFPS());
+	os->writeFloatArray(model->getImportTransformationsMatrix()->getArray());
+	os->writeInt(model->getMaterials()->size());
+	for (auto _i = model->getMaterials()->getValuesIterator()->iterator(); _i->hasNext(); ) {
+		Material* material = java_cast< Material* >(_i->next());
+		{
+			writeMaterial(os, material);
+		}
 	}
+	_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
+	writeSubGroups(os, model->getSubGroups());
 }
 
-void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) /* throws(IOException) */
+void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeString(m->getId());
@@ -193,7 +189,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) /* throws(IO
 	os->writeString(m->getDisplacementTextureFileName());
 }
 
-void TMWriter::writeVertices(TMWriterOutputStream* os, Vector3Array* v) /* throws(IOException) */
+void TMWriter::writeVertices(TMWriterOutputStream* os, Vector3Array* v) throw (ModelFileIOException)
 {
 	clinit();
 	if (v == nullptr) {
@@ -207,7 +203,7 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, Vector3Array* v) /* throw
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) /* throws(IOException) */
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) throw (ModelFileIOException)
 {
 	clinit();
 	if (tc == nullptr) {
@@ -221,7 +217,7 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordina
 	}
 }
 
-void TMWriter::writeIndices(TMWriterOutputStream* os, int32_tArray* indices) /* throws(IOException) */
+void TMWriter::writeIndices(TMWriterOutputStream* os, int32_tArray* indices) throw (ModelFileIOException)
 {
 	clinit();
 	if (indices == nullptr) {
@@ -235,7 +231,7 @@ void TMWriter::writeIndices(TMWriterOutputStream* os, int32_tArray* indices) /* 
 	}
 }
 
-void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) /* throws(IOException) */
+void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (ModelFileIOException)
 {
 	clinit();
 	if (a == nullptr) {
@@ -249,7 +245,7 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) /* throws(
 	}
 }
 
-void TMWriter::writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) /* throws(IOException) */
+void TMWriter::writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeInt(facesEntities->length);
@@ -274,21 +270,21 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* fa
 	}
 }
 
-void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) /* throws(IOException) */
+void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeString(joint->getGroupId());
 	os->writeFloatArray(joint->getBindMatrix()->getArray());
 }
 
-void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) /* throws(IOException) */
+void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeInt(jointWeight->getJointIndex());
 	os->writeInt(jointWeight->getWeightIndex());
 }
 
-void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) /* throws(IOException) */
+void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw (ModelFileIOException)
 {
 	clinit();
 	if (skinning == nullptr) {
@@ -310,7 +306,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) /* th
 	}
 }
 
-void TMWriter::writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) /* throws(IOException) */
+void TMWriter::writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeInt(subGroups->size());
@@ -322,7 +318,7 @@ void TMWriter::writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) /* 
 	}
 }
 
-void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) /* throws(IOException) */
+void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeString(g->getId());

@@ -14,6 +14,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using java::lang::Exception;
@@ -29,6 +31,8 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
+using tdme::utils::_Exception;
 
 LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibraryScreenController_onValueChanged_1(LevelEditorEntityLibraryScreenController *LevelEditorEntityLibraryScreenController_this, LevelEditorEntityLibrary* entityLibrary)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -47,8 +51,11 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		LevelEditorEntityLibraryScreenController_this->setEntityLibrary();
 		LevelEditorEntityLibraryScreenController_this->entityLibraryListBox->getController()->setValue(LevelEditorEntityLibraryScreenController_this->entityLibraryListBoxSelection->set(entity->getId()));
 		LevelEditorEntityLibraryScreenController_this->onEditEntity();
-	} catch (Exception* exception) {
-		LevelEditorEntityLibraryScreenController_this->popUps->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+	} catch (_Exception& exception) {
+		LevelEditorEntityLibraryScreenController_this->popUps->getInfoDialogScreenController()->show(
+			u"Error"_j,
+			::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(exception.what())))->toString()
+		);
 	}
 	LevelEditorEntityLibraryScreenController_this->modelPath = LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->getPathName();
 	LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->close();

@@ -56,8 +56,10 @@
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -117,7 +119,9 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -292,8 +296,9 @@ void ParticleSystemScreenController::initialize()
 		speColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorend"_j));
 		speCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_center"_j));
 		speRadius = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_radius"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
@@ -356,8 +361,9 @@ void ParticleSystemScreenController::setParticleSystemTypes(_ArrayList* particle
 	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {
 		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -383,8 +389,9 @@ void ParticleSystemScreenController::setParticleSystemEmitters(_ArrayList* emitt
 	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {
 		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 
@@ -446,8 +453,8 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->equals(u"1"_j));
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString());
-				} catch (Exception* exception) {
-					view->getPopUpsViews()->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(exception->getMessage())->toString());
+				} catch (_Exception& exception) {
+					view->getPopUpsViews()->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString());
 				}
 				goto end_switch1;;
 			}
@@ -461,11 +468,11 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 					->append(u"'"_j)->toString()));
 				goto end_switch1;;
 			}
-end_switch1:;
+			end_switch1:;
 		}
 
-	} catch (NumberFormatException* exception) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 	view->initParticleSystemRequest();
 }
@@ -520,13 +527,16 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 		auto particleSystem = view->getEntity()->getParticleSystem();
 		{
 			auto v = particleSystem->getEmitter();
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-{
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_NONE));
 					goto end_switch2;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-{
+				}
+			}
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_POINTPARTICLEEMITTER));
 					auto emitter = particleSystem->getPointParticleEmitter();
 					emitter->setCount(Tools::convertToInt(ppeCount->getController()->getValue()->toString()));
@@ -540,9 +550,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(ppeColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toString())));
 					goto end_switch2;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-{
+				}
+			}
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
 					auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 					emitter->setCount(Tools::convertToInt(bbpeCount->getController()->getValue()->toString()));
@@ -563,9 +575,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->update();
 					rotations->getTransformationsMatrix()->getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 					goto end_switch2;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-{
+				}
+			}
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTER));
 					auto emitter = particleSystem->getCircleParticleEmitter();
 					emitter->setCount(Tools::convertToInt(cpeCount->getController()->getValue()->toString()));
@@ -586,9 +600,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->update();
 					rotations->getTransformationsMatrix()->getAxes(emitter->getAxis0(), new Vector3(), emitter->getAxis1());
 					goto end_switch2;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-{
+				}
+			}
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
 					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 					emitter->setCount(Tools::convertToInt(cpepvCount->getController()->getValue()->toString()));
@@ -609,9 +625,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->update();
 					rotations->getTransformationsMatrix()->getAxes(emitter->getAxis0(), new Vector3(), emitter->getAxis1());
 					goto end_switch2;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-{
+				}
+			}
+			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))
+			{
+				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_SPHEREPARTICLEEMITTER));
 					auto emitter = particleSystem->getSphereParticleEmitter();
 					emitter->setCount(Tools::convertToInt(speCount->getController()->getValue()->toString()));
@@ -626,16 +644,18 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getCenter()->set(Tools::convertToVector3(speCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(speRadius->getController()->getValue()->toString()));
 					goto end_switch2;;
-				}			}
-			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
+				}
+			}
+			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
+			{
 				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
 					->append(u"'"_j)->toString()));
 			}
-end_switch2:;
+			end_switch2:;
 		}
 
-	} catch (NumberFormatException* exception) {
-		showErrorPopUp(u"Warning"_j, u"Invalid number entered"_j);
+	} catch (_Exception& exception) {
+		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 	view->initParticleSystemRequest();
 }

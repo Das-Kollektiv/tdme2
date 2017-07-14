@@ -46,6 +46,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
@@ -98,6 +99,7 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -203,7 +205,7 @@ int32_t Tools::convertToIntSilent(String* text)
 	clinit();
 	try {
 		return Integer::parseInt(text);
-	} catch (NumberFormatException* nfe) {
+	} catch (_Exception& exception) {
 		return -1;
 	}
 }

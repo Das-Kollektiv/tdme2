@@ -14,6 +14,7 @@
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using java::lang::ClassCastException;
@@ -29,6 +30,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
+using tdme::utils::_Exception;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -72,8 +74,9 @@ void EntityDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 		displayBoundingVolume = java_cast< GUIElementNode* >(screenNode->getNodeById(u"display_boundingvolume"_j));
 		displayShadowing = java_cast< GUIElementNode* >(screenNode->getNodeById(u"display_shadowing"_j));
 		displayGround = java_cast< GUIElementNode* >(screenNode->getNodeById(u"display_ground"_j));
-	} catch (Exception* e) {
-		e->printStackTrace();
+	} catch (_Exception& exception) {
+		_Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
+		_Console::println(string(exception.what()));
 	}
 }
 

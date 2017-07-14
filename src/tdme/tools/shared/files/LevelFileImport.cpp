@@ -86,13 +86,13 @@ LevelFileImport::LevelFileImport()
 	ctor();
 }
 
-void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level) /* throws(Exception) */
+void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 	doImport(pathName, fileName, level, nullptr);
 }
 
-void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) /* throws(Exception) */
+void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	clinit();
 
