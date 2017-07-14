@@ -4,6 +4,7 @@
 #include <java/lang/String.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -11,6 +12,7 @@ using tdme::gui::elements::GUITabsContent;
 using java::lang::String;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_HashMap;
 
@@ -20,7 +22,7 @@ GUITabsContent::GUITabsContent(const ::default_init_tag&)
 	clinit();
 }
 
-GUITabsContent::GUITabsContent()  /* throws(IOException) */
+GUITabsContent::GUITabsContent() throw (_FileSystemException)
 	: GUITabsContent(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -28,7 +30,7 @@ GUITabsContent::GUITabsContent()  /* throws(IOException) */
 
 String* GUITabsContent::NAME;
 
-void GUITabsContent::ctor() /* throws(IOException) */
+void GUITabsContent::ctor() throw (_FileSystemException)
 {
 	super::ctor();
 	attributes = new _HashMap();

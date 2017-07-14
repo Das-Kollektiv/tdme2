@@ -5,6 +5,7 @@
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -13,6 +14,7 @@ using java::lang::String;
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_HashMap;
 
@@ -22,7 +24,7 @@ GUIScrollArea::GUIScrollArea(const ::default_init_tag&)
 	clinit();
 }
 
-GUIScrollArea::GUIScrollArea()  /* throws(IOException) */
+GUIScrollArea::GUIScrollArea() throw (_FileSystemException)
 	: GUIScrollArea(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -30,7 +32,7 @@ GUIScrollArea::GUIScrollArea()  /* throws(IOException) */
 
 String* GUIScrollArea::NAME;
 
-void GUIScrollArea::ctor() /* throws(IOException) */
+void GUIScrollArea::ctor() throw (_FileSystemException)
 {
 	super::ctor();
 	attributes = new _HashMap();

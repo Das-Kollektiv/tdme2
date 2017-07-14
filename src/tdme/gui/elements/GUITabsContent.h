@@ -7,14 +7,15 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/elements/GUIElement.h>
+#include <tdme/os/_FileSystemException.h>
 
 using tdme::gui::elements::GUIElement;
 using java::lang::String;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::os::_FileSystemException;
 using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -39,7 +40,7 @@ protected:
 	/** 
 	 * Constructor
 	 */
-	void ctor() /* throws(IOException) */;
+	void ctor() throw (_FileSystemException);
 
 public:
 	String* getName() override;
@@ -48,7 +49,7 @@ public:
 	GUINodeController* createController(GUINode* node) override;
 
 	// Generated
-	GUITabsContent();
+	GUITabsContent() throw (_FileSystemException);
 protected:
 	GUITabsContent(const ::default_init_tag&);
 

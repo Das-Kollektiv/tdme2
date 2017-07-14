@@ -5,6 +5,7 @@
 #include <tdme/gui/elements/GUIScrollAreaVerticalController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -13,6 +14,7 @@ using java::lang::String;
 using tdme::gui::elements::GUIScrollAreaVerticalController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_HashMap;
 
@@ -22,7 +24,7 @@ GUIScrollAreaVertical::GUIScrollAreaVertical(const ::default_init_tag&)
 	clinit();
 }
 
-GUIScrollAreaVertical::GUIScrollAreaVertical()  /* throws(IOException) */
+GUIScrollAreaVertical::GUIScrollAreaVertical() throw (_FileSystemException)
 	: GUIScrollAreaVertical(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -30,7 +32,7 @@ GUIScrollAreaVertical::GUIScrollAreaVertical()  /* throws(IOException) */
 
 String* GUIScrollAreaVertical::NAME;
 
-void GUIScrollAreaVertical::ctor() /* throws(IOException) */
+void GUIScrollAreaVertical::ctor() throw (_FileSystemException)
 {
 	super::ctor();
 	attributes = new _HashMap();

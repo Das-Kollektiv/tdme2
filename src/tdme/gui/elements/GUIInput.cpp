@@ -22,7 +22,7 @@ GUIInput::GUIInput(const ::default_init_tag&)
 	clinit();
 }
 
-GUIInput::GUIInput()  /* throws(IOException) */
+GUIInput::GUIInput() throw (_FileSystemException)
 	: GUIInput(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -30,7 +30,7 @@ GUIInput::GUIInput()  /* throws(IOException) */
 
 String* GUIInput::NAME;
 
-void GUIInput::ctor() /* throws(IOException) */
+void GUIInput::ctor() throw (_FileSystemException)
 {
 	super::ctor();
 	attributes = new _HashMap();
