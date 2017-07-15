@@ -54,7 +54,7 @@ public:
 	 * @param out bytes to read
 	 */
 	void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
-		for (int32_t i = 0; i < outBytesToRead; i++) {
+		for (int32_t i = 0; i < outBytesToRead && offset < data->length; i++) {
 			outBytes[i] = data->get(offset++);
 		}
 	}

@@ -572,6 +572,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
+	src/tdme/tests/STLTests-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/viewer/TDMEViewer-main.cpp \
