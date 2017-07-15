@@ -108,55 +108,55 @@ void _Console::print(const string& string)
 void _Console::print(Object* object)
 {
 	clinit();
-	wcout << object->toString()->getCPPWString() << endl;
+	wcout << object->toString()->getCPPWString();
 }
 
 void _Console::print(int8_t value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(int16_t value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(int32_t value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(int64_t value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(float value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(double value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(bool value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::print(char16_t value)
 {
 	clinit();
-	wcout << value << endl;
+	wcout << value;
 }
 
 void _Console::println()

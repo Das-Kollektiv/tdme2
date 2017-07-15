@@ -23,6 +23,7 @@ using java::nio::ByteBuffer;
 
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
@@ -51,57 +52,56 @@ Texture* TextureLoader::loadTexture(String* path, String* fileName) throw (_File
 	return nullptr;
 }
 
+void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
+	png_voidp io_ptr = png_get_io_ptr(png_ptr);
+	if (io_ptr == nullptr) return;
+
+	PNGInputStream* pngInputStream = (PNGInputStream*)io_ptr;
+	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
+}
+
 Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 	clinit();
 
 	// canonical file name for id
 	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
-	if (canonicalFileName == nullptr) {
-		_Console::println(string("TextureLoader::loadPNG(): No canonical file name"));
-	}
 
-	// open file
-	FILE *f = fopen(StringConverter::toString(canonicalFileName->getCPPWString()).c_str(), "rb");
-	if (f == nullptr) {
-	    return nullptr;
-	}
+	// create PNG input stream
+	PNGInputStream* pngInputStream = new PNGInputStream(_FileSystem::getInstance()->getContent(path, fileName));
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];
-	if (fread(sig, 1, sizeof(sig), f) < 8) {
-	    fclose(f);
-	    return nullptr;
-	}
+	pngInputStream->readBytes((int8_t*)sig, sizeof(sig));
 	if (png_sig_cmp(sig, 0, 8)) {
-	    fclose(f);
+		delete pngInputStream;
 	    return nullptr;
 	}
 
 	// create two data structures: 'png_struct' and 'png_info'
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr) {
-	    fclose(f);
+		delete pngInputStream;
 	    return nullptr;
 	}
 	png_infop info = png_create_info_struct(png);
 	if (info == nullptr) {
 	    png_destroy_read_struct(&png, nullptr, nullptr);
-	    fclose(f);
+	    delete pngInputStream;
 	    return nullptr;
 	}
+
+	// set up custom read function
+	png_set_read_fn(png, pngInputStream, TextureLoader::readPNGDataFromMemory);
 
 	// set libpng error handling mechanism
 	if (setjmp(png_jmpbuf(png))) {
 	    png_destroy_read_struct(&png, &info, nullptr);
-	    fclose(f);
+	    delete pngInputStream;
 	    return nullptr;
 	}
 
-	// pass open file to png struct
-	png_init_io(png, f);
-
-	// skip signature bytes (we already read those)
+	// tell libpng we already read the signature
 	png_set_sig_bytes(png, sizeof(sig));
 
 	// get image information
@@ -156,7 +156,7 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSyst
 	    default:
 	    	{
 	    		png_destroy_read_struct(&png, &info, nullptr);
-	    		fclose(f);
+	    		delete pngInputStream;
 	    		return nullptr;
 	    	}
 	}
@@ -187,7 +187,7 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSyst
 
 	// done
 	png_destroy_read_struct(&png, &info, nullptr);
-	fclose(f);
+	delete pngInputStream;
 
 	// thats it
 	return new Texture(
