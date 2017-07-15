@@ -209,6 +209,10 @@ public:
 public:
 	wstring& getCPPWString();
 
+	bool operator==(const String& b) const;
+	bool operator>(const String& b) const;
+	bool operator<(const String& b) const;
+
 private:
 	virtual ::java::lang::Class* getClass0();
 	friend String *operator"" _j(const char16_t *s, size_t n);

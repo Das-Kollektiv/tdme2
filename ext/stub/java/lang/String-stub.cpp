@@ -293,6 +293,18 @@ bool String::equals(Object* arg0) { /* stub */
 	return arg0->toString()->cppwstring == cppwstring;
 }
 
+bool String::operator==(const String& b) const {
+	return this->cppwstring == b.cppwstring;
+}
+
+bool String::operator<(const String& b) const {
+	return this->cppwstring < b.cppwstring;
+}
+
+bool String::operator>(const String& b)  const{
+	return this->cppwstring > b.cppwstring;
+}
+
 bool String::equalsIgnoreCase(String* arg0) { /* stub */
 	wstring stringA = cppwstring;
 	wstring stringB = arg0->cppwstring;
