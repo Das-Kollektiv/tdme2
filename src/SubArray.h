@@ -4,7 +4,6 @@
 #include <utility>
 
 #include <ObjectArray.h>
-#include <java/lang/ArrayStoreException.h>
 
 template<typename ComponentType, typename... Bases>
 struct SubArray : public virtual Bases... {
@@ -86,7 +85,6 @@ private:
     void set0(size_type i, ::java::lang::Object *x) override
     {
         if(x && !dynamic_cast<value_type>(x)) {
-            throw new ::java::lang::ArrayStoreException();
         }
         
         this->p[i] = x;

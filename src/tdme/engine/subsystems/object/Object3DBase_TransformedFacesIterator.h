@@ -10,7 +10,6 @@
 #include <java/lang/Object.h>
 #include <java/util/Iterator.h>
 #include <java/lang/Iterable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <tdme/math/Vector3.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -18,7 +17,6 @@
 using java::lang::Object;
 using java::util::Iterator;
 using java::lang::Iterable;
-using java::lang::ArrayStoreException;
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

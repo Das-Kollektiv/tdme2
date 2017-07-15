@@ -73,17 +73,18 @@ void AudioStream::rewind()
 	if (initiated == false)
 		return;
 
-	try {
+	/*try {*/
 		decoder->reset();
-	}/* catch (IOException* ioe) {
+	/*} catch (IOException* ioe) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 			->append(u"': "_j)
 			->append(ioe->getMessage())->toString()));
-	}*/ catch (AudioDecoderException* ade) {
+	} catch (AudioDecoderException* ade) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 			->append(u"': "_j)
 			->append(ade->getMessage())->toString()));
 	}
+	*/
 }
 
 void AudioStream::play()
@@ -98,16 +99,16 @@ void AudioStream::play()
 	auto buffersToPlay = 0;
 	for (auto i = 0; i < alBufferIds->length; i++) {
 		data->clear();
-		try {
+		/*try {*/
 			auto bytesDecoded = decoder->readFromStream(data);
 			if (bytesDecoded == 0)
 				break;
 
-		}/*catch (IOException* ioe) {
+		/*} catch (IOException* ioe) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 				->append(u"': "_j)
 				->append(ioe->getMessage())->toString()));
-		}*/catch (AudioDecoderException* ade) {
+		} catch (AudioDecoderException* ade) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Audio stream: '"_j)->append(id)
 				->append(u"': "_j)
 				->append(ade->getMessage())->toString()));

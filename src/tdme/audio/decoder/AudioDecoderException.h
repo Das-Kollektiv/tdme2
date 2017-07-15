@@ -1,47 +1,24 @@
-// Generated from /tdme/src/tdme/audio/decoder/AudioDecoderException.java
-
 #pragma once
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
-#include <java/lang/Exception.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_ExceptionBase.h>
 
-using java::lang::Exception;
-using java::lang::String;
+using tdme::utils::_ExceptionBase;
 
-
-struct default_init_tag;
-
-/** 
+/**
  * Audio decoder exception
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::audio::decoder::AudioDecoderException final
-	: public Exception
+class tdme::audio::decoder::AudioDecoderException: public _ExceptionBase
 {
-
 public:
-	typedef Exception super;
-protected:
 
-	/** 
-	 * Public constructor
-	 * @param message
+	/**
+	 * @brief Public constructor
+	 * @param message exception message
 	 */
-	void ctor(String* message);
+	AudioDecoderException(const string& message) throw();
 
-	// Generated
-
-public:
-	AudioDecoderException(String* message);
-protected:
-	AudioDecoderException(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
