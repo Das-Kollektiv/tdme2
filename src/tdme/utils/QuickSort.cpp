@@ -1,14 +1,12 @@
 // Generated from /tdme/src/tdme/utils/QuickSort.java
 #include <tdme/utils/QuickSort.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Object.h>
 #include <java/util/Comparator.h>
 #include <tdme/utils/_ArrayList.h>
 
 using tdme::utils::QuickSort;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
 using java::lang::Object;
 using java::util::Comparator;
@@ -19,7 +17,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

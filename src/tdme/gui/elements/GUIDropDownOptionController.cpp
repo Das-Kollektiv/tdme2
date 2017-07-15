@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDownOptionController.java
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
@@ -17,7 +16,6 @@
 #include <tdme/utils/MutableString.h>
 
 using tdme::gui::elements::GUIDropDownOptionController;
-using java::lang::ClassCastException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::elements::GUIDropDownController;
@@ -37,7 +35,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

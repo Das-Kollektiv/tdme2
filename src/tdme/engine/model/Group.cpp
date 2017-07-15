@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/engine/model/Group.java
 #include <tdme/engine/model/Group.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -22,9 +19,6 @@
 #include <SubArray.h>
 
 using tdme::engine::model::Group;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -60,7 +54,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

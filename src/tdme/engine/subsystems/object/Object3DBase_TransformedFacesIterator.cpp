@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DBase.java
 #include <tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/NullPointerException.h>
-#include <java/lang/UnsupportedOperationException.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
@@ -17,9 +14,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
-using java::lang::ArrayStoreException;
-using java::lang::NullPointerException;
-using java::lang::UnsupportedOperationException;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
@@ -131,7 +125,7 @@ Vector3Array* Object3DBase_TransformedFacesIterator::next()
 
 void Object3DBase_TransformedFacesIterator::remove()
 {
-	throw new UnsupportedOperationException();
+	// TODO: throw exception here maybe
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

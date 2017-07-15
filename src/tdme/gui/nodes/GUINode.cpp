@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -30,7 +29,6 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUINode;
-using java::lang::ClassCastException;
 using java::lang::Integer;
 using java::lang::Object;
 using java::lang::String;
@@ -62,7 +60,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalController.java
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/System.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -23,7 +22,6 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
-using java::lang::ClassCastException;
 using java::lang::System;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIKeyboardEvent_Type;
@@ -48,7 +46,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

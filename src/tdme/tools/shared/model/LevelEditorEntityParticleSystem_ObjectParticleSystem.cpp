@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -10,9 +9,10 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utils/StringConverter.h>
+#include <tdme/utils/_ExceptionBase.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using java::lang::Exception;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -21,6 +21,8 @@ using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
+using tdme::utils::StringConverter;
+using tdme::utils::_ExceptionBase;
 
 LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -94,11 +96,14 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(String* 
 	this->modelFileName = modelFileName;
 	if (modelFileName->toLowerCase()->endsWith(u".tm"_j)) {
 		model = TMReader::read(Tools::getPath(modelFileName), Tools::getFileName(modelFileName));
-	} else if (modelFileName->toLowerCase()->endsWith(u".dae"_j)) {
+	} else
+	if (modelFileName->toLowerCase()->endsWith(u".dae"_j)) {
 		model = DAEReader::read(Tools::getPath(modelFileName), Tools::getFileName(modelFileName));
 	} else {
-		throw new Exception(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '"_j)->append(modelFileName)
-			->append(u"'"_j)->toString());
+		throw new _ExceptionBase(
+			string("LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '") +
+			StringConverter::toString(modelFileName->getCPPWString())
+		);
 	}
 }
 

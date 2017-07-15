@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/primitives/LineSegment.java
 #include <tdme/engine/primitives/LineSegment.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -12,7 +11,6 @@
 #include <SubArray.h>
 
 using tdme::engine::primitives::LineSegment;
-using java::lang::ArrayStoreException;
 using java::lang::Math;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;

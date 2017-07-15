@@ -2,11 +2,8 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Math.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
@@ -37,11 +34,8 @@
 
 using tdme::engine::primitives::PrimitiveModel;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Cloneable;
 using java::lang::Math;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
@@ -99,7 +93,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

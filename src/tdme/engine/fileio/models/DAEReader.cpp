@@ -4,14 +4,11 @@
 #include <unordered_set>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Math.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -70,14 +67,11 @@ using std::unordered_set;
 
 using tdme::engine::fileio::models::DAEReader;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
 using java::lang::Float;
 using java::lang::Integer;
 using java::lang::Math;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -162,7 +156,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

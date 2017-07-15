@@ -1,9 +1,7 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalNode.java
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Integer.h>
-#include <java/lang/NumberFormatException.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
@@ -25,9 +23,7 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
-using java::lang::ClassCastException;
 using java::lang::Integer;
-using java::lang::NumberFormatException;
 using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
@@ -52,7 +48,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

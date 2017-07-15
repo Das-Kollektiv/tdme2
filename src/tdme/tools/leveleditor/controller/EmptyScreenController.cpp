@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/EmptyScreenController.java
 #include <tdme/tools/leveleditor/controller/EmptyScreenController.h>
 
-#include <java/lang/ClassCastException.h>
-#include <java/lang/Exception.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -19,8 +17,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
-using java::lang::ClassCastException;
-using java::lang::Exception;
 using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::nodes::GUINode;
@@ -41,7 +37,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

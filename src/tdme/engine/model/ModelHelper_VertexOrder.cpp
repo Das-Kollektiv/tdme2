@@ -2,20 +2,16 @@
 #include <tdme/engine/model/ModelHelper_VertexOrder.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
 using tdme::engine::model::ModelHelper_VertexOrder;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -66,7 +62,8 @@ ModelHelper_VertexOrder* ModelHelper_VertexOrder::valueOf(String* a0)
 		return CLOCKWISE;
 	if (COUNTERCLOCKWISE->toString()->equals(a0))
 		return COUNTERCLOCKWISE;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 ModelHelper_VertexOrderArray* ModelHelper_VertexOrder::values()

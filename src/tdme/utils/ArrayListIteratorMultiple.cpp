@@ -1,15 +1,11 @@
 // Generated from /tdme/src/tdme/utils/ArrayListIteratorMultiple.java
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
-#include <java/lang/UnsupportedOperationException.h>
 #include <tdme/utils/_ArrayList.h>
 
 using tdme::utils::ArrayListIteratorMultiple;
-using java::lang::ClassCastException;
 using java::lang::Object;
-using java::lang::UnsupportedOperationException;
 using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
@@ -17,7 +13,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 
@@ -103,7 +98,7 @@ Object* ArrayListIteratorMultiple::next()
 
 void ArrayListIteratorMultiple::remove()
 {
-	throw new UnsupportedOperationException();
+	// TODO: Throw a exception maybe
 }
 
 Iterator* ArrayListIteratorMultiple::iterator()

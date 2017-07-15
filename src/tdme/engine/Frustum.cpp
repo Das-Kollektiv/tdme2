@@ -1,9 +1,7 @@
 // Generated from /tdme/src/tdme/engine/Frustum.java
 #include <tdme/engine/Frustum.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Math.h>
-#include <java/lang/NullPointerException.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Plane.h>
 #include <tdme/engine/primitives/Sphere.h>
@@ -15,9 +13,7 @@
 #include <SubArray.h>
 
 using tdme::engine::Frustum;
-using java::lang::ArrayStoreException;
 using java::lang::Math;
-using java::lang::NullPointerException;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;

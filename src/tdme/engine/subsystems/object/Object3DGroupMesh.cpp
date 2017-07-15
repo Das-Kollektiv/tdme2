@@ -2,13 +2,10 @@
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Byte.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Math.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/Short.h>
 #include <java/lang/String.h>
@@ -34,13 +31,10 @@
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Byte;
-using java::lang::ClassCastException;
 using java::lang::Cloneable;
 using java::lang::Float;
 using java::lang::Math;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::Short;
 using java::lang::String;
@@ -110,7 +104,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

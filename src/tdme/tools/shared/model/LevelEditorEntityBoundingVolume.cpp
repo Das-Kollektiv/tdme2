@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/Exception.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -28,7 +27,6 @@
 
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using java::io::Serializable;
-using java::lang::Exception;
 using java::lang::Integer;
 using java::lang::Object;
 using java::lang::String;

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GLRenderer.java
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Math.h>
 #include <java/lang/System.h>
 #include <java/nio/ByteOrder.h>
@@ -14,7 +13,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::renderer::GLRenderer;
-using java::lang::ArrayStoreException;
 using java::lang::Math;
 using java::lang::System;
 using java::nio::FloatBuffer;

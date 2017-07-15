@@ -2,9 +2,7 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Math.h>
 #include <java/lang/String.h>
@@ -32,9 +30,7 @@
 
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
 using java::lang::Math;
 using java::lang::String;
@@ -81,7 +77,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

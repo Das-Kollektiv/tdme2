@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.java
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -15,8 +13,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -37,7 +33,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

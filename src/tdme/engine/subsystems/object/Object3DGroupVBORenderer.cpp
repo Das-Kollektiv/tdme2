@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroupVBORenderer.java
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
 #include <java/lang/Short.h>
@@ -24,7 +23,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
-using java::lang::ArrayStoreException;
 using java::lang::Byte;
 using java::lang::Float;
 using java::lang::Short;

@@ -2,7 +2,6 @@
 #include <tdme/engine/physics/ConstraintsEntity.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Math.h>
@@ -21,7 +20,6 @@
 
 using tdme::engine::physics::ConstraintsEntity;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Cloneable;
 using java::lang::Float;
 using java::lang::Math;

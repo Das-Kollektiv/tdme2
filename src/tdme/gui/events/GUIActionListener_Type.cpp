@@ -2,20 +2,16 @@
 #include <tdme/gui/events/GUIActionListener_Type.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
 using tdme::gui::events::GUIActionListener_Type;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -66,7 +62,8 @@ GUIActionListener_Type* GUIActionListener_Type::valueOf(String* a0)
 		return PERFORMED;
 	if (PERFORMING->toString()->equals(a0))
 		return PERFORMING;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 GUIActionListener_TypeArray* GUIActionListener_Type::values()

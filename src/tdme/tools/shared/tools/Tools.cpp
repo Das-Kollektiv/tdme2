@@ -3,11 +3,8 @@
 
 #include <string>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
-#include <java/lang/NullPointerException.h>
-#include <java/lang/NumberFormatException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -56,11 +53,8 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::shared::tools::Tools;
-using java::lang::ArrayStoreException;
 using java::lang::Float;
 using java::lang::Integer;
-using java::lang::NullPointerException;
-using java::lang::NumberFormatException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;

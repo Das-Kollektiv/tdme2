@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/model/Animation.java
 #include <tdme/engine/model/Animation.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Arrays.h>
@@ -10,7 +9,6 @@
 #include <SubArray.h>
 
 using tdme::engine::model::Animation;
-using java::lang::ArrayStoreException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Arrays;

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/manager/VBOManager.java
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -11,7 +10,6 @@
 #include <Array.h>
 
 using tdme::engine::subsystems::manager::VBOManager;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -24,7 +22,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

@@ -2,10 +2,8 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -16,10 +14,8 @@
 
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
 using java::lang::Comparable;
-using java::lang::NullPointerException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::tools::shared::controller::FileDialogScreenController;

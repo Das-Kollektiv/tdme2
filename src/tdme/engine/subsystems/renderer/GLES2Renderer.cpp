@@ -3,12 +3,9 @@
 
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
-#include <java/io/IOException.h>
 #include <java/io/InputStreamReader.h>
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Object.h>
 #include <java/lang/StackTraceElement.h>
@@ -31,12 +28,9 @@
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using java::io::BufferedReader;
 using java::io::DataInputStream;
-using java::io::IOException;
 using java::io::InputStreamReader;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
 using java::lang::Object;
 using java::lang::StackTraceElement;
@@ -78,7 +72,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

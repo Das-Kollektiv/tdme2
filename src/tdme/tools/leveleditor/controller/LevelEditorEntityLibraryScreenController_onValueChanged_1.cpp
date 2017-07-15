@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -18,7 +17,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
-using java::lang::Exception;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;

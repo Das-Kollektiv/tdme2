@@ -2,20 +2,16 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -80,7 +76,8 @@ LevelEditorEntityParticleSystem_Emitter* LevelEditorEntityParticleSystem_Emitter
 		return POINT_PARTICLE_EMITTER;
 	if (SPHERE_PARTICLE_EMITTER->toString()->equals(a0))
 		return SPHERE_PARTICLE_EMITTER;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 LevelEditorEntityParticleSystem_EmitterArray* LevelEditorEntityParticleSystem_Emitter::values()

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -14,7 +13,6 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using java::lang::ClassCastException;
 using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
@@ -30,7 +28,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

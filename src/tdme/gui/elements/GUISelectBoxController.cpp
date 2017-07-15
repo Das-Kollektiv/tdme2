@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUISelectBoxController.java
 #include <tdme/gui/elements/GUISelectBoxController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
@@ -20,7 +19,6 @@
 #include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::elements::GUISelectBoxController;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using tdme::gui::GUI;
@@ -43,7 +41,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

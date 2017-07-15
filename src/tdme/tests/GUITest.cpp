@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tests/GUITest.java
 #include <tdme/tests/GUITest.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
@@ -21,7 +20,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tests::GUITest;
-using java::lang::Exception;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::System;

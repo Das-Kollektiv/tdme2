@@ -5,9 +5,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Iterable.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
@@ -36,9 +34,7 @@
 using std::ostringstream;
 
 using tdme::tools::shared::files::LevelFileExport;
-using java::lang::ClassCastException;
 using java::lang::Iterable;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
@@ -66,7 +62,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

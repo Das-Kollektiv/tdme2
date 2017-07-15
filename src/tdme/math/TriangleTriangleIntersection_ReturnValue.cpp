@@ -2,20 +2,16 @@
 #include <tdme/math/TriangleTriangleIntersection_ReturnValue.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
 using tdme::math::TriangleTriangleIntersection_ReturnValue;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -67,7 +63,8 @@ TriangleTriangleIntersection_ReturnValue* TriangleTriangleIntersection_ReturnVal
 		return INTERSECTION;
 	if (NOINTERSECTION->toString()->equals(a0))
 		return NOINTERSECTION;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 TriangleTriangleIntersection_ReturnValueArray* TriangleTriangleIntersection_ReturnValue::values()

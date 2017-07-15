@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
 #include <java/lang/Character.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
@@ -20,7 +19,6 @@
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using java::lang::Character;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -41,7 +39,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

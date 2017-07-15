@@ -2,9 +2,7 @@
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/String.h>
 #include <java/lang/Float.h>
@@ -38,8 +36,6 @@ using java::io::BufferedReader;
 using java::io::DataInputStream;
 using java::io::File;
 using java::io::InputStreamReader;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Float;
 using java::lang::Integer;
 using java::lang::Object;
@@ -89,7 +85,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

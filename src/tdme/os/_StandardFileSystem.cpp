@@ -14,14 +14,10 @@
 
 #include <java/io/FilenameFilter.h>
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Class.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/ClassLoader.h>
-#include <java/lang/ClassNotFoundException.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/StackTraceElement.h>
 #include <java/lang/String.h>
@@ -49,14 +45,10 @@ using tdme::os::_StandardFileSystem;
 using java::io::BufferedReader;
 using java::io::FilenameFilter;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
 using java::lang::Class;
-using java::lang::ClassCastException;
 using java::lang::ClassLoader;
-using java::lang::ClassNotFoundException;
 using java::lang::Comparable;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::StackTraceElement;
 using java::lang::String;
@@ -91,7 +83,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

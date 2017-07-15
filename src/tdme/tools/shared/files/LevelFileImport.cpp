@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/files/LevelFileImport.java
 #include <tdme/tools/shared/files/LevelFileImport.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -30,9 +29,7 @@
 
 using tdme::tools::shared::files::LevelFileImport;
 using java::io::File;
-using java::io::IOException;
 using java::io::InputStream;
-using java::lang::Exception;
 using java::lang::Float;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -172,7 +169,8 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 			jModel["entity"]
 		);
 		if (levelEditorEntity == nullptr) {
-			throw new Exception(u"Invalid entity"_j);
+			_Console::println(L"LevelFileImport::doImport(): Invalid entity = " + to_wstring(jModel["id"].getInt()));
+			continue;
 		}
 		level->getEntityLibrary()->addEntity(levelEditorEntity);
 		if (jModel["properties"].isNull() == false) {

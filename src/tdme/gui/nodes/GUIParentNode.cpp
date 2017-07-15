@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -32,7 +31,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -63,7 +61,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

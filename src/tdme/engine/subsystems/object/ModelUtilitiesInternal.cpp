@@ -1,10 +1,7 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/ModelUtilitiesInternal.java
 #include <tdme/engine/subsystems/object/ModelUtilitiesInternal.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Integer.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
@@ -30,10 +27,7 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::object::ModelUtilitiesInternal;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Integer;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
@@ -80,7 +74,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

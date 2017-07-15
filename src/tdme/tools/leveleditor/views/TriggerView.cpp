@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/views/TriggerView.java
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
@@ -29,7 +28,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
-using java::lang::Exception;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Engine;

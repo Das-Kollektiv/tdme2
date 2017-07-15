@@ -2,8 +2,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
-#include <java/lang/Exception.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -19,14 +17,14 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/_ExceptionBase.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
-using java::lang::Exception;
 using java::lang::Integer;
 using java::lang::Object;
 using java::lang::String;
@@ -42,15 +40,16 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_Console;
+using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Console;
+using tdme::utils::_ExceptionBase;
 
 template<typename T, typename U>
 static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 
@@ -145,13 +144,11 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 	if (fileName->toLowerCase()->endsWith(u".tmm"_j)) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
-		throw new Exception(
-			::java::lang::StringBuilder().
-			 	 append(pathName)->
-				 append(u"/"_j)->
-				 append(fileName)->
-				 append(u": Unknown model file format"_j)->
-				 toString()
+		throw _ExceptionBase(
+			StringConverter::toString(pathName->getCPPWString()) +
+			"/" +
+			StringConverter::toString(pathName->getCPPWString()) +
+			string(": Unknown model file format")
 		 );
 	}
 	addEntity(levelEditorEntity);
@@ -197,7 +194,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, Strin
 void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /* throws(Exception) */
 {
 	if (java_cast< LevelEditorEntity* >(entitiesById->get(new Integer(levelEditorEntity->getId()))) != nullptr) {
-		throw new Exception(u"Entity id already in use"_j);
+		throw _ExceptionBase("Entity id already in use");
 	}
 	entities->add(levelEditorEntity);
 	entitiesById->put(Integer::valueOf(levelEditorEntity->getId()), levelEditorEntity);

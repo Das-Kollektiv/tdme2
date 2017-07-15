@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.java
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -28,7 +27,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
-using java::lang::ArrayStoreException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;

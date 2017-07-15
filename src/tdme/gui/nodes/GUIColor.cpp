@@ -4,7 +4,6 @@
 #include <cwchar>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Integer.h>
@@ -21,7 +20,6 @@
 
 using tdme::gui::nodes::GUIColor;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::Integer;

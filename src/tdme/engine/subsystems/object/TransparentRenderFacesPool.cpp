@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesPool.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesPool.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/model/Face.h>
@@ -22,8 +20,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Face;
@@ -58,7 +54,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

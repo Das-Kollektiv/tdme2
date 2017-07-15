@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabContentController.java
 #include <tdme/gui/elements/GUITabContentController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,7 +9,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::elements::GUITabContentController;
-using java::lang::ClassCastException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;
@@ -23,7 +21,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

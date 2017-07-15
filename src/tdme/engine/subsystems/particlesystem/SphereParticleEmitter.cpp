@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.java
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -12,7 +11,6 @@
 #include <Array.h>
 
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
-using java::lang::ClassCastException;
 using java::lang::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -26,7 +24,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
@@ -15,7 +14,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
-using java::lang::ClassCastException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::events::GUIMouseEvent_Type;
@@ -33,7 +31,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

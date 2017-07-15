@@ -2,8 +2,6 @@
 #include <tdme/engine/model/Skinning.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Object.h>
@@ -20,8 +18,6 @@
 
 using tdme::engine::model::Skinning;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::Cloneable;
 using java::lang::Float;
 using java::lang::Object;
@@ -59,7 +55,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

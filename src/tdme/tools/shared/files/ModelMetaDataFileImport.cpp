@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/files/ModelMetaDataFileImport.java
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 
-#include <java/lang/Exception.h>
 #include <java/lang/Float.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -38,7 +37,6 @@
 #include <ext/jsonbox/JsonException.h>
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
-using java::lang::Exception;
 using java::lang::Float;
 using java::lang::Object;
 using java::lang::String;
@@ -168,7 +166,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		if (modelRelativeFileName->toLowerCase()->endsWith(u".tm"_j)) {
 			model = TMReader::read(modelPath, modelFile);
 		} else {
-			throw new Exception(::java::lang::StringBuilder().append(u"Unsupported mode file: "_j)->append(modelFile)->toString());
+			throw new ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile->getCPPWString()));
 		}
 		if (model == nullptr) {
 			_Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath->getCPPWString() + L"/" + modelFile->getCPPWString() + L"'");

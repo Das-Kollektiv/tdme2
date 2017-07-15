@@ -1,18 +1,14 @@
 // Generated from /tdme/src/tdme/utils/_HashMap.java
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
-#include <java/lang/UnsupportedOperationException.h>
 #include <java/util/Iterator.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_Pair.h>
 #include <tdme/utils/_HashMap.h>
 
 using tdme::utils::_HashMap_ValuesIterator;
-using java::lang::ClassCastException;
 using java::lang::Object;
-using java::lang::UnsupportedOperationException;
 using java::util::Iterator;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_Pair;
@@ -23,7 +19,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 
@@ -82,7 +77,7 @@ Object* _HashMap_ValuesIterator::next()
 
 void _HashMap_ValuesIterator::remove()
 {
-	throw new UnsupportedOperationException();
+	// TODO: throw a exception maybe
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

@@ -2,16 +2,10 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Exception.h>
 #include <java/lang/Float.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/Iterable.h>
-#include <java/lang/NullPointerException.h>
-#include <java/lang/NumberFormatException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -48,6 +42,7 @@
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+#include <tdme/utils/_ExceptionBase.h>
 #include <tdme/utils/_HashMap.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
@@ -56,16 +51,10 @@
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
-using java::lang::Exception;
 using java::lang::Float;
-using java::lang::IllegalArgumentException;
 using java::lang::Iterable;
-using java::lang::NullPointerException;
-using java::lang::NumberFormatException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -101,6 +90,7 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
+using tdme::utils::_ExceptionBase;
 using tdme::utils::_HashMap;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -134,7 +124,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 
@@ -688,13 +677,13 @@ void LevelEditorScreenController::onObjectScaleApply()
 		auto y = Float::parseFloat(objectScaleY->getController()->getValue()->toString());
 		auto z = Float::parseFloat(objectScaleZ->getController()->getValue()->toString());
 		if (x < -10.0f || x > 10.0f)
-			throw new IllegalArgumentException(u"x scale must be within -10 .. +10"_j);
+			throw _ExceptionBase("x scale must be within -10 .. +10");
 
 		if (y < -10.0f || y > 10.0f)
-			throw new IllegalArgumentException(u"y scale must be within -10 .. +10"_j);
+			throw _ExceptionBase("y scale must be within -10 .. +10");
 
 		if (z < -10.0f || z > 10.0f)
-			throw new IllegalArgumentException(u"z scale must be within -10 .. +10"_j);
+			throw _ExceptionBase("z scale must be within -10 .. +10");
 
 		view->objectScaleApply(x, y, z);
 	} catch (_Exception& exception) {
@@ -709,13 +698,13 @@ void LevelEditorScreenController::onObjectRotationsApply()
 		auto y = Float::parseFloat(objectRotationY->getController()->getValue()->toString());
 		auto z = Float::parseFloat(objectRotationZ->getController()->getValue()->toString());
 		if (x < -360.0f || x > 360.0f)
-			throw new IllegalArgumentException(u"x axis rotation must be within -360 .. +360"_j);
+			throw _ExceptionBase("x axis rotation must be within -360 .. +360");
 
 		if (y < -360.0f || y > 360.0f)
-			throw new IllegalArgumentException(u"y axis rotation must be within -360 .. +360"_j);
+			throw _ExceptionBase("y axis rotation must be within -360 .. +360");
 
 		if (z < -360.0f || z > 360.0f)
-			throw new IllegalArgumentException(u"z axis rotation must be within -360 .. +360"_j);
+			throw _ExceptionBase("z axis rotation must be within -360 .. +360");
 
 		view->objectRotationsApply(x, y, z);
 	} catch (_Exception& exception) {
@@ -762,7 +751,7 @@ void LevelEditorScreenController::onGridApply()
 	try {
 		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue()->toString());
 		if (gridY < -5.0f || gridY > 5.0f)
-			throw new IllegalArgumentException(u"grid y position must be within -5 .. +5"_j);
+			throw _ExceptionBase("grid y position must be within -5 .. +5");
 
 		view->setGridY(gridY);
 		view->setGridEnabled(gridEnabled->getController()->getValue()->equals(CHECKBOX_CHECKED));

@@ -1,28 +1,23 @@
 // Generated from /tdme/src/tdme/utils/_ArrayList.java
 #include <tdme/utils/_ArrayList.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
-#include <java/lang/UnsupportedOperationException.h>
 #include <ObjectArray.h>
 
 using tdme::utils::_ArrayList;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
-using java::lang::UnsupportedOperationException;
 
 template<typename T, typename U>
 static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 
@@ -195,7 +190,7 @@ Object* _ArrayList::next()
 
 void _ArrayList::remove()
 {
-	throw new UnsupportedOperationException();
+	// TODO: Throw a exception maybe
 }
 
 _ArrayList* _ArrayList::clone()

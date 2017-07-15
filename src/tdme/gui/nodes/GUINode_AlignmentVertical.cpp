@@ -2,20 +2,16 @@
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -69,7 +65,8 @@ GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(String* a0)
 		return CENTER;
 	if (TOP->toString()->equals(a0))
 		return TOP;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 GUINode_AlignmentVerticalArray* GUINode_AlignmentVertical::values()

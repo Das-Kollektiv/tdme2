@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/InfoDialogScreenController.java
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 
-#include <java/lang/ClassCastException.h>
-#include <java/lang/Exception.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -15,8 +13,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using java::lang::ClassCastException;
-using java::lang::Exception;
 using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
@@ -33,7 +29,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

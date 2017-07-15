@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DInternal.java
 #include <tdme/engine/subsystems/object/Object3DInternal.h>
 
-#include <java/lang/ArrayStoreException.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -20,8 +18,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::object::Object3DInternal;
-using java::lang::ArrayStoreException;
-using java::lang::ClassCastException;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -55,7 +51,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

@@ -2,13 +2,8 @@
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/CharSequence.h>
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Exception.h>
-#include <java/lang/NullPointerException.h>
-#include <java/lang/NumberFormatException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -50,13 +45,8 @@
 
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::CharSequence;
-using java::lang::ClassCastException;
 using java::lang::Comparable;
-using java::lang::Exception;
-using java::lang::NullPointerException;
-using java::lang::NumberFormatException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -122,7 +112,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

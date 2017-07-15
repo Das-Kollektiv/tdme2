@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/math/SeparatingAxisTheorem.java
 #include <tdme/math/SeparatingAxisTheorem.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/math/MathTools.h>
@@ -11,7 +10,6 @@
 #include <SubArray.h>
 
 using tdme::math::SeparatingAxisTheorem;
-using java::lang::ArrayStoreException;
 using java::lang::Float;
 using java::lang::Math;
 using tdme::math::MathTools;

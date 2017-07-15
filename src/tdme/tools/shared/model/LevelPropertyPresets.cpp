@@ -6,9 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/ClassCastException.h>
-#include <java/lang/Exception.h>
-#include <java/lang/NullPointerException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -36,9 +33,6 @@ using std::vector;
 using std::string;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
-using java::lang::ClassCastException;
-using java::lang::Exception;
-using java::lang::NullPointerException;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -68,7 +62,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

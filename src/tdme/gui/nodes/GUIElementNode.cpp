@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIElementNode.java
 #include <tdme/gui/nodes/GUIElementNode.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
@@ -22,7 +21,6 @@
 #include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::nodes::GUIElementNode;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using java::lang::String;
 using tdme::gui::events::GUIMouseEvent_Type;
@@ -47,7 +45,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabsHeaderController.java
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 
-#include <java/lang/ClassCastException.h>
 #include <java/lang/Object.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabController.h>
@@ -18,7 +17,6 @@
 #include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::elements::GUITabsHeaderController;
-using java::lang::ClassCastException;
 using java::lang::Object;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUITabController;
@@ -39,7 +37,6 @@ static T java_cast(U* u)
 {
     if (!u) return static_cast<T>(nullptr);
     auto t = dynamic_cast<T>(u);
-    if (!t) throw new ::java::lang::ClassCastException();
     return t;
 }
 

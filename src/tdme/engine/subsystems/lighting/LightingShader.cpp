@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/lighting/LightingShader.java
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -14,7 +13,6 @@
 #include <SubArray.h>
 
 using tdme::engine::subsystems::lighting::LightingShader;
-using java::lang::ArrayStoreException;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;

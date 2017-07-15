@@ -2,10 +2,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 
 #include <java/io/Serializable.h>
-#include <java/lang/ArrayStoreException.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/IllegalArgumentException.h>
 #include <java/lang/String.h>
 #include <tdme/math/Vector3.h>
 #include <SubArray.h>
@@ -13,10 +11,8 @@
 
 using tdme::engine::model::RotationOrder;
 using java::io::Serializable;
-using java::lang::ArrayStoreException;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::IllegalArgumentException;
 using java::lang::String;
 using tdme::math::Vector3;
 
@@ -130,7 +126,8 @@ RotationOrder* RotationOrder::valueOf(String* a0)
 		return YZX;
 	if (ZYX->toString()->equals(a0))
 		return ZYX;
-	throw new IllegalArgumentException(a0);
+	// TODO: throw exception here maybe
+	return nullptr;
 }
 
 RotationOrderArray* RotationOrder::values()
