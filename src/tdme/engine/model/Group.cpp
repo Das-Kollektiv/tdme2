@@ -127,9 +127,13 @@ Matrix4x4* Group::getTransformationsMatrix()
 	return transformationsMatrix;
 }
 
-void Group::setVertices(_ArrayList* vertices)
+void Group::setVertices(const vector<Vector3*>& vertices)
 {
-	this->vertices = java_cast< Vector3Array* >(vertices->toArray(new Vector3Array(vertices->size())));
+	this->vertices = new Vector3Array(vertices.size());
+	int i = 0;
+	for (Vector3* vertex: vertices) {
+		this->vertices->set(i++, vertex);
+	}
 }
 
 Vector3Array* Group::getVertices()
@@ -152,9 +156,13 @@ void Group::setNormals(Vector3Array* normals)
 	this->normals = normals;
 }
 
-void Group::setNormals(_ArrayList* normals)
+void Group::setNormals(const vector<Vector3*>& normals)
 {
-	this->normals = java_cast< Vector3Array* >(normals->toArray(new Vector3Array(normals->size())));
+	this->normals = new Vector3Array(normals.size());
+	int i = 0;
+	for (Vector3* normal: normals) {
+		this->normals->set(i++, normal);
+	}
 }
 
 TextureCoordinateArray* Group::getTextureCoordinates()

@@ -134,7 +134,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 		RotationOrder::XYZ,
 		nullptr
 	);
-	auto vertices = new _ArrayList();
+	vector<Vector3*> vertices;
 	auto textureCoordinates = new _ArrayList();
 	auto materials = model->getMaterials();
 	auto subGroups = model->getSubGroups();
@@ -143,8 +143,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	_HashMap* modelGroupVerticesMapping = nullptr;
 	_HashMap* modelGroupTextureCoordinatesMapping = nullptr;
 	vector<Face*> groupFacesEntityFaces;
-	_ArrayList* groupVertices = nullptr;
-	_ArrayList* groupNormals = nullptr;
+	vector<Vector3*> groupVertices;
+	vector<Vector3*> groupNormals;
 	_ArrayList* groupTextureCoordinates = nullptr;
 	vector<FacesEntity*> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
@@ -176,7 +176,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					auto x = Float::parseFloat(t->nextToken());
 					auto y = Float::parseFloat(t->nextToken());
 					auto z = Float::parseFloat(t->nextToken());
-					vertices->add(new Vector3(x, y, z));
+					vertices.push_back(new Vector3(x, y, z));
 				} else
 				if (command->equals(u"vt"_j)) {
 					auto t = new StringTokenizer(arguments, u" "_j);
@@ -214,22 +214,22 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					Integer* mappedVertex = nullptr;
 					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v0)));
 					if (mappedVertex == nullptr) {
-						groupVertices->add(java_cast< Vector3* >(vertices->get(v0))->clone());
-						v0 = groupVertices->size() - 1;
+						groupVertices.push_back(vertices.at(v0)->clone());
+						v0 = groupVertices.size() - 1;
 					} else {
 						v0 = mappedVertex->intValue();
 					}
 					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v1)));
 					if (mappedVertex == nullptr) {
-						groupVertices->add(java_cast< Vector3* >(vertices->get(v1))->clone());
-						v1 = groupVertices->size() - 1;
+						groupVertices.push_back(vertices.at(v1)->clone());
+						v1 = groupVertices.size() - 1;
 					} else {
 						v1 = mappedVertex->intValue();
 					}
 					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v2)));
 					if (mappedVertex == nullptr) {
-						groupVertices->add(java_cast< Vector3* >(vertices->get(v2))->clone());
-						v2 = groupVertices->size() - 1;
+						groupVertices.push_back(vertices.at(v2)->clone());
+						v2 = groupVertices.size() - 1;
 					} else {
 						v2 = mappedVertex->intValue();
 					}
@@ -256,16 +256,16 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 						vt2 = mappedTextureCoordinate->intValue();
 					}
 					auto faceVertexNormals = ModelHelper::computeNormals(new Vector3Array({
-						java_cast< Vector3* >(groupVertices->get(v0)),
-						java_cast< Vector3* >(groupVertices->get(v1)),
-						java_cast< Vector3* >(groupVertices->get(v2))
+						groupVertices.at(v0),
+						groupVertices.at(v1),
+						groupVertices.at(v2)
 					}));
-					auto n0 = groupNormals->size();
-					groupNormals->add((*faceVertexNormals)[0]);
-					auto n1 = groupNormals->size();
-					groupNormals->add((*faceVertexNormals)[1]);
-					auto n2 = groupNormals->size();
-					groupNormals->add((*faceVertexNormals)[2]);
+					auto n0 = groupNormals.size();
+					groupNormals.push_back((*faceVertexNormals)[0]);
+					auto n1 = groupNormals.size();
+					groupNormals.push_back((*faceVertexNormals)[1]);
+					auto n2 = groupNormals.size();
+					groupNormals.push_back((*faceVertexNormals)[2]);
 					auto face = new Face(group, v0, v1, v2, n0, n1, n2);
 					if (vt0 != -1 && vt1 != -1 && vt2 != -1) {
 						face->setTextureCoordinateIndices(vt0, vt1, vt2);
@@ -286,8 +286,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					}
 					auto t = new StringTokenizer(arguments, u" "_j);
 					auto name = t->nextToken();
-					groupVertices = new _ArrayList();
-					groupNormals = new _ArrayList();
+					groupVertices.clear();
+					groupNormals.clear();
 					groupTextureCoordinates = new _ArrayList();
 					groupFacesEntityFaces.clear();
 					group = new Group(model, nullptr, name, name);

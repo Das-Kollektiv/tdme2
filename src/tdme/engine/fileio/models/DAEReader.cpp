@@ -991,18 +991,21 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 
 void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException)
 {
+	#define ARRAY_TO_VECTOR(array, vector) { \
+		for (int i = 0; i < array->length; i++) { \
+			vector.push_back(array->get(i)); \
+		} \
+	}
+
 	clinit();
 	StringTokenizer* t;
 	String* tmpString = nullptr;
 	FacesEntity* facesEntity = nullptr;
-	vector<FacesEntity*> facesEntities;
-	for (int i = 0; i < group->getFacesEntities()->length; i++) {
-		facesEntities.push_back(group->getFacesEntities()->get(i));
-	}
+	vector<FacesEntity*> facesEntities; ARRAY_TO_VECTOR(group->getFacesEntities(), facesEntities);
 	auto verticesOffset = group->getVertices()->length;
-	auto vertices = new _ArrayList(group->getVertices());
+	vector<Vector3*> vertices; ARRAY_TO_VECTOR(group->getVertices(), vertices);
 	auto normalsOffset = group->getNormals()->length;
-	auto normals = new _ArrayList(group->getNormals());
+	vector<Vector3*> normals; ARRAY_TO_VECTOR(group->getNormals(), normals);
 	auto textureCoordinatesOffset = group->getTextureCoordinates() != nullptr ? group->getTextureCoordinates()->length : 0;
 	auto textureCoordinates = group->getTextureCoordinates() != nullptr ? new _ArrayList(group->getTextureCoordinates()) : new _ArrayList();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
@@ -1113,7 +1116,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						t = new StringTokenizer(valueString, u" \n\r"_j);
 						while (t->hasMoreTokens()) {
 							auto v = new Vector3(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
-							vertices->add(v);
+							vertices.push_back(v);
 						}
 					} else
 					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMeshSource->Attribute("id")))))->equals(xmlNormalsSource)) {
@@ -1122,7 +1125,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						t = new StringTokenizer(valueString, u" \n\r"_j);
 						while (t->hasMoreTokens()) {
 							auto v = new Vector3(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
-							normals->add(v);
+							normals.push_back(v);
 						}
 					}
 					if (xmlTexCoordSource != nullptr) {
@@ -1152,19 +1155,19 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						auto value = Integer::parseInt(t->nextToken());
 						if (valueIdx % xmlInputs == xmlVerticesOffset) {
 							(*vi)[viIdx++] = value;
-							if (value < 0 || value >= vertices->size() - verticesOffset) {
+							if (value < 0 || value >= vertices.size() - verticesOffset) {
 								valid = false;
 							}
 							if (xmlNormalsSource != nullptr && xmlNormalsOffset == -1) {
 								(*ni)[niIdx++] = value;
-								if (value < 0 || value >= normals->size() - normalsOffset) {
+								if (value < 0 || value >= normals.size() - normalsOffset) {
 									valid = false;
 								}
 							}
 						}
 						if (xmlNormalsOffset != -1 && valueIdx % xmlInputs == xmlNormalsOffset) {
 							(*ni)[niIdx++] = value;
-							if (value < 0 || value >= normals->size() - normalsOffset) {
+							if (value < 0 || value >= normals.size() - normalsOffset) {
 								valid = false;
 							}
 						}

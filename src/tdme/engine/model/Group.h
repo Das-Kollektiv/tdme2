@@ -128,7 +128,7 @@ public:
 	 * Set up vertices
 	 * @param vertices
 	 */
-	void setVertices(_ArrayList* vertices);
+	void setVertices(const vector<Vector3*>& vertices);
 
 	/** 
 	 * @return vertices
@@ -156,7 +156,7 @@ public:
 	 * Set up normals
 	 * @param normals
 	 */
-	void setNormals(_ArrayList* normals);
+	void setNormals(const vector<Vector3*>& normals);
 
 	/** 
 	 * @return texture coordinates or null (optional)
