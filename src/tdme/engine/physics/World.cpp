@@ -31,7 +31,6 @@
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Key.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap.h>
@@ -68,7 +67,6 @@ using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap;
@@ -96,8 +94,6 @@ World::World()
 void World::init()
 {
 	partition = new PhysicsPartitionOctTree();
-	rigidBodies = new _ArrayList();
-	rigidBodiesDynamic = new _ArrayList();
 	rigidBodiesById = new _HashMap();
 	rigidBodyTestedCollisions = new _HashMap();
 	rigidBodyCollisionsKeyPoolCurrentFrame = new World_1(this);
@@ -119,7 +115,6 @@ void World::init()
 	forwardVector = new Vector3(0.0f, 0.0f, 1.0f);
 	heightPoint = new Vector3();
 	heightPointDest = new Vector3();
-	collidedRigidBodies = new _ArrayList();
 }
 
 void World::ctor()
@@ -130,7 +125,7 @@ void World::ctor()
 
 void World::reset()
 {
-	rigidBodies->clear();
+	rigidBodies.clear();
 	partition->reset();
 }
 
@@ -146,9 +141,9 @@ void World::setPartition(PhysicsPartition* partition)
 
 RigidBody* World::addRigidBody(String* id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix)
 {
-	auto rigidBody = new RigidBody(this, rigidBodies->size(), id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
-	rigidBodies->add(rigidBody);
-	rigidBodiesDynamic->add(rigidBody);
+	auto rigidBody = new RigidBody(this, rigidBodies.size(), id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
+	rigidBodies.push_back(rigidBody);
+	rigidBodiesDynamic.push_back(rigidBody);
 	rigidBodiesById->put(id, rigidBody);
 	if (enabled == true)
 		partition->addRigidBody(rigidBody);
@@ -158,8 +153,8 @@ RigidBody* World::addRigidBody(String* id, bool enabled, int32_t typeId, Transfo
 
 RigidBody* World::addStaticRigidBody(String* id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction)
 {
-	auto rigidBody = new RigidBody(this, rigidBodies->size(), id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
-	rigidBodies->add(rigidBody);
+	auto rigidBody = new RigidBody(this, rigidBodies.size(), id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
+	rigidBodies.push_back(rigidBody);
 	rigidBodiesById->put(id, rigidBody);
 	if (enabled == true)
 		partition->addRigidBody(rigidBody);
@@ -177,8 +172,8 @@ void World::update(float deltaTime)
 	if (constraintsSolver == nullptr) {
 		constraintsSolver = new ConstraintsSolver(rigidBodies);
 	}
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBody = rigidBodies.at(i);
 		if (rigidBody->enabled == false) {
 			continue;
 		}
@@ -195,8 +190,8 @@ void World::update(float deltaTime)
 	}
 	auto collisionsTests = 0;
 	rigidBodyTestedCollisions->clear();
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBody1 = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBody1 = rigidBodies.at(i);
 		if (rigidBody1->enabled == false) {
 			continue;
 		}
@@ -281,8 +276,8 @@ void World::update(float deltaTime)
 				rigidBodyIdx2 += static_cast< int32_t >((*keyData)[6]) << 8;
 				rigidBodyIdx2 += static_cast< int32_t >((*keyData)[7]) << 16;
 				rigidBodyIdx2 += static_cast< int32_t >((*keyData)[8]) << 24;
-				auto rigidBody1 = java_cast< RigidBody* >(rigidBodies->get(rigidBodyIdx1));
-				auto rigidBody2 = java_cast< RigidBody* >(rigidBodies->get(rigidBodyIdx2));
+				auto rigidBody1 = rigidBodies.at(rigidBodyIdx1);
+				auto rigidBody2 = rigidBodies.at(rigidBodyIdx2);
 				rigidBody1->fireOnCollisionEnd(rigidBody2);
 			}
 		}
@@ -298,8 +293,8 @@ void World::update(float deltaTime)
 	constraintsSolver->compute(deltaTime);
 	constraintsSolver->updateAllBodies(deltaTime);
 	constraintsSolver->reset();
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBody = rigidBodies.at(i);
 		if (rigidBody->enabled == false) {
 			continue;
 		}
@@ -325,8 +320,8 @@ void World::update(float deltaTime)
 
 void World::synch(Engine* engine)
 {
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBody = rigidBodies.at(i);
 		if (rigidBody->isStatic_ == true)
 			continue;
 
@@ -477,9 +472,9 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	}
 }
 
-_ArrayList* World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume)
+const vector<RigidBody*>& World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume)
 {
-	collidedRigidBodies->clear();
+	collidedRigidBodies.clear();
 	for (auto _i = partition->getObjectsNearTo(boundingVolume)->iterator(); _i->hasNext(); ) {
 		RigidBody* rigidBody = java_cast< RigidBody* >(_i->next());
 		{
@@ -487,7 +482,7 @@ _ArrayList* World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolu
 				continue;
 
 			if (rigidBody->cbv->doesCollideWith(boundingVolume, nullptr, collision) == true && collision->hasPenetration() == true) {
-				collidedRigidBodies->add(rigidBody);
+				collidedRigidBodies.push_back(rigidBody);
 			}
 		}
 	}
@@ -497,8 +492,8 @@ _ArrayList* World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolu
 World* World::clone()
 {
 	auto clonedWorld = new World();
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBody = rigidBodies.at(i);
 		auto obv = rigidBody->obv == nullptr ? static_cast< BoundingVolume* >(nullptr) : rigidBody->obv->clone();
 		RigidBody* clonedRigidBody = nullptr;
 		if (rigidBody->isStatic_ == true) {
@@ -539,9 +534,9 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 
 void World::synch(World* world)
 {
-	for (auto i = 0; i < rigidBodiesDynamic->size(); i++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodiesDynamic->get(i));
-		auto clonedRigidBody = java_cast< RigidBody* >(world->rigidBodiesById->get(rigidBody->id));
+	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
+		auto rigidBody = rigidBodiesDynamic.at(i);
+		auto clonedRigidBody = java_cast<RigidBody*>(world->rigidBodiesById->get(rigidBody->id));
 		if (clonedRigidBody == nullptr) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Cloned world::entity '"_j)->append(rigidBody->id)
 				->append(u"' not found"_j)->toString()));
@@ -558,8 +553,14 @@ void World::synch(World* world)
 
 String* World::toString()
 {
-	return ::java::lang::StringBuilder().append(u"World [rigidBodies="_j)->append(static_cast< Object* >(rigidBodies))
-		->append(u"]"_j)->toString();
+	StringBuilder result = ::java::lang::StringBuilder();
+	result.append(u"World [rigidBodies="_j);
+	for (int i = 0; i < rigidBodies.size(); i++) {
+		if (i != 0) result.append(u","_j);
+		result.append(rigidBodies.at(i)->toString());
+	}
+	result.append(u"]"_j);
+	return result.toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

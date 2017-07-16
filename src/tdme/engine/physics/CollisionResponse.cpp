@@ -8,7 +8,6 @@
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 
 using tdme::engine::physics::CollisionResponse;
@@ -19,7 +18,6 @@ using java::lang::StringBuilder;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -57,28 +55,26 @@ void CollisionResponse::ctor()
 	init();
 	selectedEntity = nullptr;
 	entityCount = 0;
-	entities = new _ArrayList();
 	for (auto i = 0; i < ENTITY_COUNT; i++) {
 		auto entity = new CollisionResponse_Entity();
 		entity->distance = 0.0f;
 		entity->normal = new Vector3();
-		entity->hitPoints = new _ArrayList();
 		entity->hitPointsCount = 0;
 		for (auto j = 0; j < HITPOINT_COUNT; j++) {
-			entity->hitPoints->add(new Vector3());
+			entity->hitPoints.push_back(new Vector3());
 		}
-		entities->add(entity);
+		entities.push_back(entity);
 	}
 }
 
 void CollisionResponse::reset()
 {
 	for (auto i = 0; i < entityCount; i++) {
-		auto entity = java_cast< CollisionResponse_Entity* >(entities->get(i));
+		auto entity = entities.at(i);
 		entity->getNormal()->set(0.0f, 0.0f, 0.0f);
 		entity->setDistance(0.0f);
 		for (auto j = 0; j < entity->hitPointsCount; j++) {
-			java_cast< Vector3* >(entity->hitPoints->get(j))->set(0.0f, 0.0f, 0.0f);
+			entity->hitPoints.at(j)->set(0.0f, 0.0f, 0.0f);
 		}
 		entity->hitPointsCount = 0;
 	}
@@ -92,7 +88,7 @@ CollisionResponse_Entity* CollisionResponse::addResponse(float distance)
 		_Console::println(static_cast< Object* >(u"CollisionResponse::too many entities"_j));
 		return nullptr;
 	}
-	auto entity = java_cast< CollisionResponse_Entity* >(entities->get(entityCount));
+	auto entity = entities.at(entityCount);
 	entity->distance = distance;
 	if (selectedEntity == nullptr || distance > selectedEntity->distance) {
 		selectedEntity = entity;
@@ -116,7 +112,7 @@ CollisionResponse_Entity* CollisionResponse::getEntityAt(int32_t idx)
 	if (idx < 0 || idx >= entityCount)
 		return nullptr;
 
-	return java_cast< CollisionResponse_Entity* >(entities->get(idx));
+	return entities.at(idx);
 }
 
 CollisionResponse* CollisionResponse::selectEntityAt(int32_t idx)
@@ -124,7 +120,7 @@ CollisionResponse* CollisionResponse::selectEntityAt(int32_t idx)
 	if (idx < 0 || idx >= entityCount)
 		return this;
 
-	selectedEntity = java_cast< CollisionResponse_Entity* >(entities->get(idx));
+	selectedEntity = entities.at(idx);
 	return this;
 }
 
@@ -132,7 +128,7 @@ CollisionResponse* CollisionResponse::selectEntityExcludeAxis(Vector3* axis, boo
 {
 	selectedEntity = nullptr;
 	for (auto i = 0; i < entityCount; i++) {
-		auto entity = java_cast< CollisionResponse_Entity* >(entities->get(i));
+		auto entity = entities.at(i);
 		auto distanceOnAxis = Vector3::computeDotProduct(entity->normal, axis);
 		if (respectDirection == false)
 			distanceOnAxis = Math::abs(distanceOnAxis);
@@ -152,7 +148,7 @@ CollisionResponse* CollisionResponse::selectEntityOnAxis(Vector3* axis, bool res
 	selectedEntity = nullptr;
 	auto selectedEntityDistanceOnAxis = 0.0f;
 	for (auto i = 0; i < entityCount; i++) {
-		auto entity = java_cast< CollisionResponse_Entity* >(entities->get(i));
+		auto entity = entities.at(i);
 		auto distanceOnAxis = Vector3::computeDotProduct(entity->normal, axis);
 		if (respectDirection == false)
 			distanceOnAxis = Math::abs(distanceOnAxis);
@@ -219,13 +215,13 @@ Vector3* CollisionResponse::getHitPointAt(int32_t i)
 	if (selectedEntity == nullptr)
 		return nullptr;
 
-	return java_cast< Vector3* >(selectedEntity->hitPoints->get(i));
+	return selectedEntity->hitPoints.at(i);
 }
 
 void CollisionResponse::invertNormals()
 {
 	for (auto i = 0; i < entityCount; i++) {
-		java_cast< CollisionResponse_Entity* >(entities->get(i))->getNormal()->scale(-1.0f);
+		entities.at(i)->getNormal()->scale(-1.0f);
 	}
 }
 
@@ -234,8 +230,8 @@ CollisionResponse* CollisionResponse::fromResponse(CollisionResponse* response)
 	reset();
 	entityCount = response->entityCount;
 	for (auto i = 0; i < response->entityCount; i++) {
-		auto srcEntity = java_cast< CollisionResponse_Entity* >(response->entities->get(i));
-		auto dstEntity = java_cast< CollisionResponse_Entity* >(entities->get(i));
+		auto srcEntity = response->entities.at(i);
+		auto dstEntity = entities.at(i);
 		if (srcEntity == response->selectedEntity) {
 			selectedEntity = dstEntity;
 		}
@@ -243,7 +239,7 @@ CollisionResponse* CollisionResponse::fromResponse(CollisionResponse* response)
 		dstEntity->normal->set(srcEntity->normal);
 		dstEntity->hitPointsCount = srcEntity->hitPointsCount;
 		for (auto j = 0; j < srcEntity->hitPointsCount; j++) {
-			java_cast< Vector3* >(dstEntity->hitPoints->get(j))->set(java_cast< Vector3* >(srcEntity->hitPoints->get(j)));
+			dstEntity->hitPoints.at(j)->set(srcEntity->hitPoints.at(j));
 		}
 	}
 	return this;
@@ -252,21 +248,21 @@ CollisionResponse* CollisionResponse::fromResponse(CollisionResponse* response)
 CollisionResponse* CollisionResponse::mergeResponse(CollisionResponse* response)
 {
 	for (auto i = 0; i < response->entityCount; i++) {
-		auto srcEntity = java_cast< CollisionResponse_Entity* >(response->entities->get(i));
+		auto srcEntity = response->entities.at(i);
 		CollisionResponse_Entity* dstEntity = nullptr;
 		if (entityCount > 0)
-			dstEntity = java_cast< CollisionResponse_Entity* >(entities->get(0));
+			dstEntity = entities.at(0);
 
 		if (dstEntity == nullptr || srcEntity->distance > dstEntity->distance) {
 			if (dstEntity == nullptr)
-				dstEntity = java_cast< CollisionResponse_Entity* >(entities->get(entityCount++));
+				dstEntity = entities.at(entityCount++);
 
 			dstEntity->distance = srcEntity->distance;
 			dstEntity->normal->set(srcEntity->normal);
 		}
-		selectedEntity = java_cast< CollisionResponse_Entity* >(entities->get(0));
+		selectedEntity = entities.at(0);
 		for (auto j = 0; j < srcEntity->hitPointsCount; j++) {
-			dstEntity->addHitPoint(java_cast< Vector3* >(srcEntity->hitPoints->get(j)));
+			dstEntity->addHitPoint(srcEntity->hitPoints.at(j));
 		}
 	}
 	return this;
@@ -279,10 +275,10 @@ String* CollisionResponse::toString()
 		if (tmp->length() > 0)
 			tmp = ::java::lang::StringBuilder(tmp).append(u","_j)->toString();
 
-		tmp = ::java::lang::StringBuilder(tmp).append(java_cast< CollisionResponse_Entity* >(entities->get(i))->toString())->toString();
+		tmp = ::java::lang::StringBuilder(tmp).append(entities.at(i)->toString())->toString();
 	}
 	tmp = ::java::lang::StringBuilder(tmp).append(u"]"_j)->toString();
-	return ::java::lang::StringBuilder().append(u"CollisionResponseMultiple [selected="_j)->append(static_cast< Object* >(selectedEntity))
+	return ::java::lang::StringBuilder().append(u"CollisionResponseMultiple [selected="_j)->append(selectedEntity)
 		->append(u", entities="_j)
 		->append(tmp)
 		->append(u"]"_j)->toString();

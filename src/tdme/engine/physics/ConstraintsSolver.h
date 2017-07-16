@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -23,7 +27,6 @@ using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::Vector6;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -101,7 +104,7 @@ private:
 	int32_t collisionsCount {  };
 	int32_t constraintsCount {  };
 	int32_t keyCount {  };
-	_ArrayList* rigidBodies {  };
+	vector<RigidBody*> rigidBodies {  };
 	_HashMap* constrainedBodies {  };
 	ContactCache* contactCache {  };
 	int32_tArrayArray* constraintsBodyIdxMap {  };
@@ -122,9 +125,9 @@ private:
 	Vector6Array* constrainedVelocityVectors {  };
 	Vector6Array* forcesVectors {  };
 	Vector6Array* a {  };
-	_ArrayList* rigidBodiesVelocityChange {  };
-	_ArrayList* rigidBodiesCurrentChain {  };
-	_ArrayList* rigidBodiesChainsResult {  };
+	vector<RigidBody*> rigidBodiesVelocityChange {  };
+	vector<RigidBody*> rigidBodiesCurrentChain {  };
+	vector<RigidBody*> rigidBodiesChainsResult {  };
 	floatArray* tmpLamdaValues {  };
 	Matrix1x6* tmpMatrix1x6 {  };
 	Vector6* tmpVector6 {  };
@@ -138,7 +141,7 @@ protected:
 	 * Protected constructor
 	 * @param rigid bodies
 	 */
-	void ctor(_ArrayList* rigidBodies);
+	void ctor(const vector<RigidBody*>& rigidBodies);
 
 public: /* protected */
 
@@ -222,7 +225,7 @@ private:
 	 * @param rigid bodies current chain result
 	 * @param calls
 	 */
-	void checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* normalLast, _ArrayList* rigidBodiesCurrentChain);
+	void checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* normalLast, vector<RigidBody*>& rigidBodiesCurrentChain);
 
 public: /* protected */
 
@@ -232,7 +235,7 @@ public: /* protected */
 	 * @param rigid bodies current chain
 	 * @return new idx to process
 	 */
-	int32_t processRigidBodyChain(int32_t idx, _ArrayList* rigidBodiesCurrentChain);
+	int32_t processRigidBodyChain(int32_t idx, const vector<RigidBody*>& rigidBodiesCurrentChain);
 
 	/** 
 	 * Check if we have any user velocity rigids
@@ -266,7 +269,7 @@ public: /* protected */
 	void updateAllBodies(float deltaTime);
 
 	// Generated
-	ConstraintsSolver(_ArrayList* rigidBodies);
+	ConstraintsSolver(const vector<RigidBody*>& rigidBodies);
 protected:
 	ConstraintsSolver(const ::default_init_tag&);
 

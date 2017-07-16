@@ -6,7 +6,6 @@
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 
 using tdme::engine::physics::CollisionResponse_Entity;
@@ -15,7 +14,6 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -61,7 +59,7 @@ Vector3* CollisionResponse_Entity::getNormal()
 void CollisionResponse_Entity::addHitPoint(Vector3* hitPoint)
 {
 	for (auto i = 0; i < hitPointsCount; i++) {
-		if (java_cast< Vector3* >(hitPoints->get(i))->equals(hitPoint, 0.1f))
+		if (hitPoints.at(i)->equals(hitPoint, 0.1f))
 			return;
 
 	}
@@ -69,7 +67,7 @@ void CollisionResponse_Entity::addHitPoint(Vector3* hitPoint)
 		_Console::println(static_cast< Object* >(u"CollisionResponse::Entity::too many hit points"_j));
 		return;
 	}
-	java_cast< Vector3* >(hitPoints->get(hitPointsCount++))->set(hitPoint);
+	hitPoints.at(hitPointsCount++)->set(hitPoint);
 }
 
 int32_t CollisionResponse_Entity::getHitPointsCount()
@@ -79,7 +77,7 @@ int32_t CollisionResponse_Entity::getHitPointsCount()
 
 Vector3* CollisionResponse_Entity::getHitPointAt(int32_t i)
 {
-	return java_cast< Vector3* >(hitPoints->get(i));
+	return hitPoints.at(i);
 }
 
 String* CollisionResponse_Entity::toString()
@@ -89,7 +87,7 @@ String* CollisionResponse_Entity::toString()
 		if (tmp->length() > 0)
 			tmp = ::java::lang::StringBuilder(tmp).append(u","_j)->toString();
 
-		tmp = ::java::lang::StringBuilder(tmp).append(java_cast< Vector3* >(hitPoints->get(i))->toString())->toString();
+		tmp = ::java::lang::StringBuilder(tmp).append(hitPoints.at(i)->toString())->toString();
 	}
 	tmp = ::java::lang::StringBuilder(tmp).append(u"]"_j)->toString();
 	return ::java::lang::StringBuilder().append(u"Entity [distance="_j)->append(distance)

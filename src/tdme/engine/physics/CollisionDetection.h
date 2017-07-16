@@ -27,7 +27,6 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {

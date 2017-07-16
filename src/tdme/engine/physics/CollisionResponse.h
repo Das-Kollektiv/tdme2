@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
@@ -9,11 +11,12 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -33,7 +36,7 @@ public:
 	static constexpr int32_t HITPOINT_COUNT { 30 };
 
 public: /* protected */
-	_ArrayList* entities {  };
+	vector<CollisionResponse_Entity*> entities {  };
 	int32_t entityCount {  };
 	CollisionResponse_Entity* selectedEntity {  };
 protected:

@@ -25,7 +25,6 @@
 #include <tdme/math/TriangleTriangleIntersection_ReturnValue.h>
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
@@ -56,7 +55,6 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection_ReturnValue;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;

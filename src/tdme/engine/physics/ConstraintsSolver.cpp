@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/physics/ConstraintsSolver.java
 #include <tdme/engine/physics/ConstraintsSolver.h>
 
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Math.h>
@@ -20,12 +22,13 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Key.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::vector;
 
 using tdme::engine::physics::ConstraintsSolver;
 using java::io::Serializable;
@@ -47,7 +50,6 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
 
@@ -105,7 +107,7 @@ ConstraintsSolver::ConstraintsSolver(const ::default_init_tag&)
 	clinit();
 }
 
-ConstraintsSolver::ConstraintsSolver(_ArrayList* rigidBodies) 
+ConstraintsSolver::ConstraintsSolver(const vector<RigidBody*>& rigidBodies)
 	: ConstraintsSolver(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(rigidBodies);
@@ -117,7 +119,6 @@ void ConstraintsSolver::init()
 	collisionsCount = 0;
 	constraintsCount = 0;
 	keyCount = 0;
-	rigidBodies = nullptr;
 	constrainedBodies = new _HashMap();
 	contactCache = new ContactCache();
 	constraintsBodyIdxMap = new int32_tArrayArray(CONSTRAINTS_MAX);
@@ -138,9 +139,6 @@ void ConstraintsSolver::init()
 	constrainedVelocityVectors = new Vector6Array(BODIES_MAX);
 	forcesVectors = new Vector6Array(BODIES_MAX);
 	a = new Vector6Array(BODIES_MAX);
-	rigidBodiesVelocityChange = new _ArrayList();
-	rigidBodiesCurrentChain = new _ArrayList();
-	rigidBodiesChainsResult = new _ArrayList();
 	tmpLamdaValues = new floatArray(CollisionResponse::HITPOINT_COUNT * 3);
 	tmpMatrix1x6 = new Matrix1x6();
 	tmpVector6 = new Vector6();
@@ -154,7 +152,7 @@ constexpr int32_t ConstraintsSolver::BODIES_MAX;
 
 constexpr int32_t ConstraintsSolver::CONSTRAINTS_MAX;
 
-void ConstraintsSolver::ctor(_ArrayList* rigidBodies)
+void ConstraintsSolver::ctor(const vector<RigidBody*>& rigidBodies)
 {
 	super::ctor();
 	init();
@@ -377,9 +375,9 @@ void ConstraintsSolver::updateContactCache()
 	}
 }
 
-void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* normalLast, _ArrayList* rigidBodiesCurrentChain)
+void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* normalLast, vector<RigidBody*>& rigidBodiesCurrentChain)
 {
-	rigidBodiesCurrentChain->add(rigidBodySrc);
+	rigidBodiesCurrentChain.push_back(rigidBodySrc);
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto constraintEntity = (*constraintsEntities)[i];
 		RigidBody* rigidBodyCheck = nullptr;
@@ -397,8 +395,8 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 			continue;
 
 		auto haveRigidBodyCheck = false;
-		for (auto j = 0; j < rigidBodiesCurrentChain->size(); j++) {
-			if (java_cast< RigidBody* >(rigidBodiesCurrentChain->get(j)) == rigidBodyCheck) {
+		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
+			if (rigidBodiesCurrentChain.at(j) == rigidBodyCheck) {
 				haveRigidBodyCheck = true;
 				break;
 			}
@@ -416,14 +414,14 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 	}
 }
 
-int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidBodiesCurrentChain)
+int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<RigidBody*>& rigidBodiesCurrentChain)
 {
 	auto rigidBodyAIdx = -1;
-	for (auto j = idx; j < rigidBodiesCurrentChain->size(); j++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(j));
+	for (auto j = idx; j < rigidBodiesCurrentChain.size(); j++) {
+		auto rigidBody = rigidBodiesCurrentChain.at(j);
 		auto isVelocityChangeRigidBody = false;
-		for (auto k = 0; k < rigidBodiesVelocityChange->size(); k++) {
-			auto rigidBodyVC = java_cast< RigidBody* >(rigidBodiesVelocityChange->get(k));
+		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
+			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
 			if (rigidBodyVC == rigidBody) {
 				isVelocityChangeRigidBody = true;
 				break;
@@ -439,15 +437,15 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidB
 	if (rigidBodyAIdx == -1)
 		return -1;
 
-	auto rigidBodyA = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(rigidBodyAIdx));
+	auto rigidBodyA = rigidBodiesCurrentChain.at(rigidBodyAIdx);
 	auto rigidBodyASpeed = rigidBodyA->linearVelocity->computeLength();
 	auto rigidBodyBIdx = -1;
 	auto rigidBodyBSpeed = 0.0f;
-	for (auto j = idx + 1; j < rigidBodiesCurrentChain->size(); j++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(j));
+	for (auto j = idx + 1; j < rigidBodiesCurrentChain.size(); j++) {
+		auto rigidBody = rigidBodiesCurrentChain.at(j);
 		auto isVelocityChangeRigidBody = false;
-		for (auto k = 0; k < rigidBodiesVelocityChange->size(); k++) {
-			auto rigidBodyVC = java_cast< RigidBody* >(rigidBodiesVelocityChange->get(k));
+		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
+			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
 			if (rigidBodyVC == rigidBody) {
 				isVelocityChangeRigidBody = true;
 				break;
@@ -456,7 +454,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidB
 		if (isVelocityChangeRigidBody == false)
 			continue;
 
-		auto ab = Vector3::computeDotProduct(java_cast< RigidBody* >(rigidBodiesCurrentChain->get(rigidBodyAIdx))->linearVelocity, java_cast< RigidBody* >(rigidBodiesCurrentChain->get(j))->linearVelocity);
+		auto ab = Vector3::computeDotProduct(rigidBodiesCurrentChain.at(rigidBodyAIdx)->linearVelocity, rigidBodiesCurrentChain.at(j)->linearVelocity);
 		if (ab > 0.0f)
 			continue;
 
@@ -475,7 +473,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidB
 		rigidBodyA->linearVelocity->scale(rigidBodyASpeed - rigidBodyBSpeed > 0.0f ? rigidBodyASpeed - rigidBodyBSpeed : 0.0f);
 		rigidBodyA->linearVelocity->setY(y);
 	}
-	auto rigidBodyB = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(rigidBodyBIdx));
+	auto rigidBodyB = rigidBodiesCurrentChain.at(rigidBodyBIdx);
 	if (rigidBodyB->linearVelocity->computeLength() > MathTools::EPSILON) {
 		auto y = rigidBodyB->linearVelocity->getY();
 		rigidBodyB->linearVelocity->normalize();
@@ -483,7 +481,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidB
 		rigidBodyB->linearVelocity->setY(y);
 	}
 	for (auto rigidBodyIdx = rigidBodyAIdx + 1; rigidBodyIdx < rigidBodyBIdx; rigidBodyIdx++) {
-		auto rigidBody = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(rigidBodyIdx));
+		auto rigidBody = rigidBodiesCurrentChain.at(rigidBodyIdx);
 		auto y = rigidBody->linearVelocity->getY();
 		rigidBody->linearVelocity->scale(0.0f);
 		rigidBody->linearVelocity->setY(y);
@@ -493,20 +491,20 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, _ArrayList* rigidB
 
 void ConstraintsSolver::checkVelocityConstraint()
 {
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBodyVelocityChange = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto rigidBodyVelocityChange = rigidBodies.at(i);
 		if (rigidBodyVelocityChange->enabled == false)
 			continue;
 
 		if (rigidBodyVelocityChange->checkVelocityChange() == true) {
-			rigidBodiesVelocityChange->add(rigidBodyVelocityChange);
+			rigidBodiesVelocityChange.push_back(rigidBodyVelocityChange);
 		}
 	}
-	for (auto i = 0; i < rigidBodiesVelocityChange->size(); i++) {
-		auto rigidBodySrc = java_cast< RigidBody* >(rigidBodiesVelocityChange->get(i));
+	for (auto i = 0; i < rigidBodiesVelocityChange.size(); i++) {
+		auto rigidBodySrc = rigidBodiesVelocityChange.at(i);
 		auto rigidBodyProcessed = false;
-		for (auto j = 0; j < rigidBodiesChainsResult->size(); j++) {
-			if (java_cast< RigidBody* >(rigidBodiesChainsResult->get(j)) == rigidBodySrc) {
+		for (auto j = 0; j < rigidBodiesChainsResult.size(); j++) {
+			if (rigidBodiesChainsResult.at(j) == rigidBodySrc) {
 				rigidBodyProcessed = true;
 				break;
 			}
@@ -515,25 +513,25 @@ void ConstraintsSolver::checkVelocityConstraint()
 			continue;
 
 		checkChainSuccessor(rigidBodySrc, nullptr, rigidBodiesCurrentChain);
-		for (auto j = 0; j < rigidBodiesCurrentChain->size(); j++) {
-			auto rigidBody = java_cast< RigidBody* >(rigidBodiesCurrentChain->get(j));
-			rigidBodiesChainsResult->add(rigidBody);
+		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
+			auto rigidBody = rigidBodiesCurrentChain.at(j);
+			rigidBodiesChainsResult.push_back(rigidBody);
 		}
-		if (rigidBodiesCurrentChain->size() < 2) {
-			rigidBodiesCurrentChain->clear();
+		if (rigidBodiesCurrentChain.size() < 2) {
+			rigidBodiesCurrentChain.clear();
 			continue;
 		}
 		auto idx = 0;
 		while (true == true) {
 			idx = processRigidBodyChain(idx, rigidBodiesCurrentChain);
-			if (idx == -1 || idx >= rigidBodiesCurrentChain->size())
+			if (idx == -1 || idx >= rigidBodiesCurrentChain.size())
 				break;
 
 		}
-		rigidBodiesCurrentChain->clear();
+		rigidBodiesCurrentChain.clear();
 	}
-	rigidBodiesChainsResult->clear();
-	rigidBodiesVelocityChange->clear();
+	rigidBodiesChainsResult.clear();
+	rigidBodiesVelocityChange.clear();
 }
 
 void ConstraintsSolver::compute(float dt)
@@ -561,8 +559,8 @@ void ConstraintsSolver::getConstrainedVelocity(RigidBody* body, Vector3* linearV
 
 void ConstraintsSolver::updateAllBodies(float deltaTime)
 {
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto body = java_cast< RigidBody* >(rigidBodies->get(i));
+	for (auto i = 0; i < rigidBodies.size(); i++) {
+		auto body = rigidBodies.at(i);
 		if (body->isStatic_ == true || body->isSleeping_ == true || body->enabled == false) {
 			continue;
 		}

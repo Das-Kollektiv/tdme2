@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -25,9 +29,7 @@ using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -47,8 +49,8 @@ public: /* protected */
 	PhysicsPartition* partition {  };
 
 private:
-	_ArrayList* rigidBodies {  };
-	_ArrayList* rigidBodiesDynamic {  };
+	vector<RigidBody*> rigidBodies {  };
+	vector<RigidBody*> rigidBodiesDynamic {  };
 	_HashMap* rigidBodiesById {  };
 	_HashMap* rigidBodyTestedCollisions {  };
 	Pool* rigidBodyCollisionsKeyPoolCurrentFrame {  };
@@ -70,7 +72,7 @@ private:
 	Vector3* forwardVector {  };
 	Vector3* heightPoint {  };
 	Vector3* heightPointDest {  };
-	_ArrayList* collidedRigidBodies {  };
+	vector<RigidBody*> collidedRigidBodies {  };
 protected:
 
 	/** 
@@ -179,7 +181,7 @@ public:
 	 * @param bounding volume
 	 * @return collided rigid bodies
 	 */
-	_ArrayList* doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume);
+	const vector<RigidBody*>& doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume);
 
 	/** 
 	 * Clone this world
