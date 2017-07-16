@@ -2,15 +2,17 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 
@@ -28,8 +30,8 @@ public:
 	typedef Object super;
 
 private:
-	_ArrayList* freeElements {  };
-	_ArrayList* usedElements {  };
+	vector<Object*> freeElements;
+	vector<Object*> usedElements;
 protected:
 
 	/** 
