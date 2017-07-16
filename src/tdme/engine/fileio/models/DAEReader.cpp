@@ -995,7 +995,10 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 	StringTokenizer* t;
 	String* tmpString = nullptr;
 	FacesEntity* facesEntity = nullptr;
-	auto facesEntities = new _ArrayList(group->getFacesEntities());
+	vector<FacesEntity*> facesEntities;
+	for (int i = 0; i < group->getFacesEntities()->length; i++) {
+		facesEntities.push_back(group->getFacesEntities()->get(i));
+	}
 	auto verticesOffset = group->getVertices()->length;
 	auto vertices = new _ArrayList(group->getVertices());
 	auto normalsOffset = group->getNormals()->length;
@@ -1201,7 +1204,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				}
 				if (faces.empty() == false) {
 					facesEntity->setFaces(faces);
-					facesEntities->add(facesEntity);
+					facesEntities.push_back(facesEntity);
 				}
 			}
 		}

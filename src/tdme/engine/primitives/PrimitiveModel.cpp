@@ -132,8 +132,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntity);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
 	// FIXME: Have initializing static classes on engine startup
 	OrientedBoundingBox::clinit();
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
@@ -184,8 +184,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntity);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
 	auto vertices = new _ArrayList();
 	for (auto vertex : *orientedBoundingBox->vertices) {
@@ -237,8 +237,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntity);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
 	auto vertices = new _ArrayList();
 	for (auto i = 0; i < (segmentsY + 1) * segmentsX; i++) 
 		vertices->add(nullptr);
@@ -320,8 +320,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntity);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
 	auto vertices = new _ArrayList();
 	for (auto i = 0; i < (segmentsY + 2) * segmentsX; i++) 
 		vertices->add(nullptr);

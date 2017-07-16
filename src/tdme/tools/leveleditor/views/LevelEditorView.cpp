@@ -939,8 +939,8 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	auto groundGroup = new Group(groundPlate, nullptr, u"ground"_j, u"ground"_j);
 	auto groupFacesEntityGround = new FacesEntity(groundGroup, u"leveleditor.ground.facesentity"_j);
 	groupFacesEntityGround->setMaterial(groundPlateMaterial);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntityGround);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntityGround);
 	auto groundVertices = new _ArrayList();
 	groundVertices->add(new Vector3(0.0f, 0.0f, 0.0f));
 	groundVertices->add(new Vector3(0.0f, 0.0f, +groundPlateDepth));

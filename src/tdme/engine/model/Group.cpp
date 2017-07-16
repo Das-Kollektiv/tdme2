@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/model/Group.java
 #include <tdme/engine/model/Group.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -17,6 +19,8 @@
 #include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::model::Group;
 using java::lang::Object;
@@ -235,9 +239,13 @@ FacesEntityArray* Group::getFacesEntities()
 	return facesEntities;
 }
 
-void Group::setFacesEntities(_ArrayList* facesEntities)
+void Group::setFacesEntities(const vector<FacesEntity*>& facesEntities)
 {
-	this->facesEntities = java_cast< FacesEntityArray* >(facesEntities->toArray(new FacesEntityArray(facesEntities->size())));
+	this->facesEntities = new FacesEntityArray(facesEntities.size());
+	int i = 0;
+	for (FacesEntity* facesEntity: facesEntities) {
+		this->facesEntities->set(i++, facesEntity);
+	}
 }
 
 void Group::setFacesEntities(FacesEntityArray* facesEntities)

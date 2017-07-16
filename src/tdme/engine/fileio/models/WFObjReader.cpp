@@ -146,7 +146,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	_ArrayList* groupVertices = nullptr;
 	_ArrayList* groupNormals = nullptr;
 	_ArrayList* groupTextureCoordinates = nullptr;
-	_ArrayList* groupFacesEntities = nullptr;
+	vector<FacesEntity*> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
 	StringArray* lines = nullptr;
 	{
@@ -276,7 +276,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
-							groupFacesEntities->add(groupFacesEntity);
+							groupFacesEntities.push_back(groupFacesEntity);
 						}
 						group->setVertices(groupVertices);
 						group->setNormals(groupNormals);
@@ -292,7 +292,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					groupFacesEntityFaces.clear();
 					group = new Group(model, nullptr, name, name);
 					groupFacesEntity = new FacesEntity(group, name);
-					groupFacesEntities = new _ArrayList();
+					groupFacesEntities.clear();
 					modelGroupVerticesMapping = new _HashMap();
 					modelGroupTextureCoordinatesMapping = new _HashMap();
 					subGroups->put(name, group);
@@ -302,9 +302,9 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
-							groupFacesEntities->add(groupFacesEntity);
+							groupFacesEntities.push_back(groupFacesEntity);
 						}
-						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append(groupFacesEntities->size())->toString());
+						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString());
 						groupFacesEntityFaces.clear();
 					}
 					groupFacesEntity->setMaterial(java_cast< Material* >(materials->get(arguments)));
@@ -314,7 +314,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 			if (group != nullptr) {
 				if (groupFacesEntityFaces.empty() == false) {
 					groupFacesEntity->setFaces(groupFacesEntityFaces);
-					groupFacesEntities->add(groupFacesEntity);
+					groupFacesEntities.push_back(groupFacesEntity);
 				}
 				group->setVertices(groupVertices);
 				group->setNormals(groupNormals);

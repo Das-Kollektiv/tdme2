@@ -280,8 +280,8 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto groundGroup = new Group(ground, nullptr, u"ground"_j, u"ground"_j);
 	auto groupFacesEntityGround = new FacesEntity(groundGroup, u"ground group faces entity ground"_j);
 	groupFacesEntityGround->setMaterial(groundMaterial);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntityGround);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntityGround);
 	auto groundVertices = new _ArrayList();
 	groundVertices->add(new Vector3(-width, y, -depth));
 	groundVertices->add(new Vector3(-width, y, +depth));

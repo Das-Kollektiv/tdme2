@@ -171,8 +171,8 @@ Model* EngineTest::createWallModel()
 	wallMaterial->getAmbientColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	wallMaterial->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	groupFacesEntityFarPlane->setMaterial(wallMaterial);
-	auto groupFacesEntities = new _ArrayList();
-	groupFacesEntities->add(groupFacesEntityFarPlane);
+	vector<FacesEntity*> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntityFarPlane);
 	auto vertices = new _ArrayList();
 	vertices->add(new Vector3(-4.0f, 0.0f, +4.0f));
 	vertices->add(new Vector3(-4.0f, +4.0f, +4.0f));

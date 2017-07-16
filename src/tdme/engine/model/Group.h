@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -242,7 +246,7 @@ public:
 	 * Set up faces entities
 	 * @param faces entity
 	 */
-	void setFacesEntities(_ArrayList* facesEntities);
+	void setFacesEntities(const vector<FacesEntity*>& facesEntities);
 
 	/** 
 	 * Set up faces entities
