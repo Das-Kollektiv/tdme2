@@ -948,11 +948,11 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundVertices.push_back(new Vector3(+groundPlateWidth, 0.0f, 0.0f));
 	vector<Vector3*> groundNormals;
 	groundNormals.push_back(new Vector3(0.0f, 1.0f, 0.0f));
-	auto groundTextureCoordinates = new _ArrayList();
-	groundTextureCoordinates->add(new TextureCoordinate(0.0f, 1.0f));
-	groundTextureCoordinates->add(new TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates->add(new TextureCoordinate(1.0f, 0.0f));
-	groundTextureCoordinates->add(new TextureCoordinate(1.0f, 1.0f));
+	vector<TextureCoordinate*> groundTextureCoordinates;
+	groundTextureCoordinates.push_back(new TextureCoordinate(0.0f, 1.0f));
+	groundTextureCoordinates.push_back(new TextureCoordinate(0.0f, 0.0f));
+	groundTextureCoordinates.push_back(new TextureCoordinate(1.0f, 0.0f));
+	groundTextureCoordinates.push_back(new TextureCoordinate(1.0f, 1.0f));
 	vector<Face*> groundFacesGround;
 	groundFacesGround.push_back(new Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(new Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));

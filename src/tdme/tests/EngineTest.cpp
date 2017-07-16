@@ -180,11 +180,11 @@ Model* EngineTest::createWallModel()
 	vertices.push_back(new Vector3(+4.0f, 0.0f, +4.0f));
 	vector<Vector3*> normals;
 	normals.push_back(new Vector3(0.0f, 0.0f, -1.0f));
-	auto textureCoordinates = new _ArrayList();
-	textureCoordinates->add(new TextureCoordinate(0.0f, 0.0f));
-	textureCoordinates->add(new TextureCoordinate(0.0f, 1.0f));
-	textureCoordinates->add(new TextureCoordinate(1.0f, 1.0f));
-	textureCoordinates->add(new TextureCoordinate(1.0f, 0.0f));
+	vector<TextureCoordinate*> textureCoordinates;
+	textureCoordinates.push_back(new TextureCoordinate(0.0f, 0.0f));
+	textureCoordinates.push_back(new TextureCoordinate(0.0f, 1.0f));
+	textureCoordinates.push_back(new TextureCoordinate(1.0f, 1.0f));
+	textureCoordinates.push_back(new TextureCoordinate(1.0f, 0.0f));
 	vector<Face*> facesFarPlane;
 	facesFarPlane.push_back(new Face(wallGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	facesFarPlane.push_back(new Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));

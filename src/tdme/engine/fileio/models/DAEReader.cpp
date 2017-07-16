@@ -559,9 +559,11 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
 			if (upAxis->equalsIgnoreCase(u"Y_UP"_j)) {
-			} else if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
+			} else
+			if (upAxis->equalsIgnoreCase(u"Z_UP"_j)) {
 				model->getImportTransformationsMatrix()->rotate(-90.0f, new Vector3(1.0f, 0.0f, 0.0f));
-			} else if (upAxis->equalsIgnoreCase(u"X_UP"_j)) {
+			} else
+			if (upAxis->equalsIgnoreCase(u"X_UP"_j)) {
 				model->getImportTransformationsMatrix()->rotate(-90.0f, new Vector3(0.0f, 1.0f, 0.0f));
 			} else {
 				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Warning: Unknown up axis: "_j)->append(upAxis)->toString()));
@@ -992,6 +994,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException)
 {
 	#define ARRAY_TO_VECTOR(array, vector) { \
+		if (array != nullptr) \
 		for (int i = 0; i < array->length; i++) { \
 			vector.push_back(array->get(i)); \
 		} \
@@ -1007,7 +1010,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 	auto normalsOffset = group->getNormals()->length;
 	vector<Vector3*> normals; ARRAY_TO_VECTOR(group->getNormals(), normals);
 	auto textureCoordinatesOffset = group->getTextureCoordinates() != nullptr ? group->getTextureCoordinates()->length : 0;
-	auto textureCoordinates = group->getTextureCoordinates() != nullptr ? new _ArrayList(group->getTextureCoordinates()) : new _ArrayList();
+	vector<TextureCoordinate*> textureCoordinates; ARRAY_TO_VECTOR(group->getTextureCoordinates(), textureCoordinates);
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id")))))->equals(xmlNodeId)) {
@@ -1135,7 +1138,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 							t = new StringTokenizer(valueString, u" \n\r"_j);
 							while (t->hasMoreTokens()) {
 								auto tc = new TextureCoordinate(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()));
-								textureCoordinates->add(tc);
+								textureCoordinates.push_back(tc);
 							}
 						}
 					}
@@ -1173,7 +1176,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						}
 						if (xmlTexCoordOffset != -1 && valueIdx % xmlInputs == xmlTexCoordOffset) {
 							(*ti)[tiIdx++] = value;
-							if (value < 0 || value >= textureCoordinates->size() - textureCoordinatesOffset) {
+							if (value < 0 || value >= textureCoordinates.size() - textureCoordinatesOffset) {
 								valid = false;
 							}
 						}
@@ -1215,7 +1218,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 
 	group->setVertices(vertices);
 	group->setNormals(normals);
-	if (textureCoordinates->size() > 0)
+	if (textureCoordinates.size() > 0)
 		group->setTextureCoordinates(textureCoordinates);
 
 	group->setFacesEntities(facesEntities);

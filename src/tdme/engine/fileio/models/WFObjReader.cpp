@@ -135,7 +135,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 		nullptr
 	);
 	vector<Vector3*> vertices;
-	auto textureCoordinates = new _ArrayList();
+	vector<TextureCoordinate*> textureCoordinates;
 	auto materials = model->getMaterials();
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
@@ -145,7 +145,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	vector<Face*> groupFacesEntityFaces;
 	vector<Vector3*> groupVertices;
 	vector<Vector3*> groupNormals;
-	_ArrayList* groupTextureCoordinates = nullptr;
+	vector<TextureCoordinate*> groupTextureCoordinates;
 	vector<FacesEntity*> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
 	StringArray* lines = nullptr;
@@ -182,7 +182,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					auto t = new StringTokenizer(arguments, u" "_j);
 					auto u = Float::parseFloat(t->nextToken());
 					auto v = Float::parseFloat(t->nextToken());
-					textureCoordinates->add(new TextureCoordinate(u, v));
+					textureCoordinates.push_back(new TextureCoordinate(u, v));
 				} else
 				if (command->equals(u"f"_j)) {
 					StringTokenizer* t2;
@@ -236,22 +236,22 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					Integer* mappedTextureCoordinate = nullptr;
 					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt0)));
 					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates->add(java_cast< TextureCoordinate* >(textureCoordinates->get(vt0))->clone());
-						vt0 = groupTextureCoordinates->size() - 1;
+						groupTextureCoordinates.push_back(textureCoordinates.at(vt0)->clone());
+						vt0 = groupTextureCoordinates.size() - 1;
 					} else {
 						vt0 = mappedTextureCoordinate->intValue();
 					}
 					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt1)));
 					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates->add(java_cast< TextureCoordinate* >(textureCoordinates->get(vt1))->clone());
-						vt1 = groupTextureCoordinates->size() - 1;
+						groupTextureCoordinates.push_back(textureCoordinates.at(vt1)->clone());
+						vt1 = groupTextureCoordinates.size() - 1;
 					} else {
 						vt1 = mappedTextureCoordinate->intValue();
 					}
 					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt2)));
 					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates->add(java_cast< TextureCoordinate* >(textureCoordinates->get(vt2))->clone());
-						vt2 = groupTextureCoordinates->size() - 1;
+						groupTextureCoordinates.push_back(textureCoordinates.at(vt2)->clone());
+						vt2 = groupTextureCoordinates.size() - 1;
 					} else {
 						vt2 = mappedTextureCoordinate->intValue();
 					}
@@ -288,7 +288,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					auto name = t->nextToken();
 					groupVertices.clear();
 					groupNormals.clear();
-					groupTextureCoordinates = new _ArrayList();
+					groupTextureCoordinates.clear();
 					groupFacesEntityFaces.clear();
 					group = new Group(model, nullptr, name, name);
 					groupFacesEntity = new FacesEntity(group, name);
@@ -318,7 +318,9 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 				}
 				group->setVertices(groupVertices);
 				group->setNormals(groupNormals);
-				group->setTextureCoordinates(groupTextureCoordinates);
+				if (groupTextureCoordinates.size() > 0) {
+					group->setTextureCoordinates(groupTextureCoordinates);
+				}
 				group->setFacesEntities(groupFacesEntities);
 				group->determineFeatures();
 			}

@@ -173,7 +173,7 @@ public:
 	 * Set texture coordinates
 	 * @param textureCoordinates
 	 */
-	void setTextureCoordinates(_ArrayList* textureCoordinates);
+	void setTextureCoordinates(const vector<TextureCoordinate*>& textureCoordinates);
 
 	/** 
 	 * @return tangents

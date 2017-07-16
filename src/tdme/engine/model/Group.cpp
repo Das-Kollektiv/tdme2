@@ -175,9 +175,13 @@ void Group::setTextureCoordinates(TextureCoordinateArray* textureCoordinates)
 	this->textureCoordinates = textureCoordinates;
 }
 
-void Group::setTextureCoordinates(_ArrayList* textureCoordinates)
+void Group::setTextureCoordinates(const vector<TextureCoordinate*>& textureCoordinates)
 {
-	this->textureCoordinates = java_cast< TextureCoordinateArray* >(textureCoordinates->toArray(new TextureCoordinateArray(textureCoordinates->size())));
+	this->textureCoordinates = new TextureCoordinateArray(textureCoordinates.size());
+	int i = 0;
+	for (TextureCoordinate* textureCoordinate: textureCoordinates) {
+		this->textureCoordinates->set(i++, textureCoordinate);
+	}
 }
 
 Vector3Array* Group::getTangents()
