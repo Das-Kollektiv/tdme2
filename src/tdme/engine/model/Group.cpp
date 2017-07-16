@@ -15,7 +15,6 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -35,7 +34,6 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -194,9 +192,13 @@ void Group::setTangents(Vector3Array* tangents)
 	this->tangents = tangents;
 }
 
-void Group::setTangents(_ArrayList* tangents)
+void Group::setTangents(const vector<Vector3*>& tangents)
 {
-	this->tangents = java_cast< Vector3Array* >(tangents->toArray(new Vector3Array(tangents->size())));
+	this->tangents = new Vector3Array(tangents.size());
+	int i = 0;
+	for (Vector3* tangent: tangents) {
+		this->tangents->set(i++, tangent);
+	}
 }
 
 Vector3Array* Group::getBitangents()
@@ -209,9 +211,13 @@ void Group::setBitangents(Vector3Array* bitangents)
 	this->bitangents = bitangents;
 }
 
-void Group::setBitangents(_ArrayList* bitangents)
+void Group::setBitangents(const vector<Vector3*>& bitangents)
 {
-	this->bitangents = java_cast< Vector3Array* >(bitangents->toArray(new Vector3Array(bitangents->size())));
+	this->bitangents = new Vector3Array(bitangents.size());
+	int i = 0;
+	for (Vector3* bitangent: bitangents) {
+		this->bitangents->set(i++, bitangent);
+	}
 }
 
 Animation* Group::getAnimation()

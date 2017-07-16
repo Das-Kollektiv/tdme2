@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/model/ModelHelper.java
 #include <tdme/engine/model/ModelHelper.h>
 
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Object.h>
@@ -22,13 +24,14 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::vector;
 
 using tdme::engine::model::ModelHelper;
 using java::io::Serializable;
@@ -52,7 +55,6 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
@@ -147,8 +149,8 @@ Vector3Array* ModelHelper::computeNormals(Vector3Array* vertices)
 void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 {
 	clinit();
-	auto tangentsArrayList = new _ArrayList();
-	auto bitangentsArrayList = new _ArrayList();
+	vector<Vector3*> tangentsArrayList;
+	vector<Vector3*> bitangentsArrayList;
 	auto uv0 = new Vector2();
 	auto uv1 = new Vector2();
 	auto uv2 = new Vector2();
@@ -161,7 +163,7 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 	auto normals = group->getNormals();
 	auto textureCoordinates = group->getTextureCoordinates();
 	for (auto faceEntity : *group->getFacesEntities()) 
-				if (faceEntity->getMaterial() != nullptr && faceEntity->getMaterial()->hasNormalTexture() == true) {
+		if (faceEntity->getMaterial() != nullptr && faceEntity->getMaterial()->hasNormalTexture() == true) {
 			for (auto face : *faceEntity->getFaces()) {
 				auto verticesIndexes = face->getVertexIndices();
 				auto v0 = (*vertices)[(*verticesIndexes)[0]];
@@ -181,38 +183,36 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 				auto r = 1.0f / (deltaUV1->getX() * deltaUV2->getY() - deltaUV1->getY() * deltaUV2->getX());
 				auto tangent = (new Vector3(deltaPos1))->scale(deltaUV2->getY())->sub(tmpVector3->set(deltaPos2)->scale(deltaUV1->getY()))->scale(r);
 				auto bitangent = (new Vector3(deltaPos2))->scale(deltaUV1->getX())->sub(tmpVector3->set(deltaPos1)->scale(deltaUV2->getX()))->scale(r);
-				face->setTangentIndices(tangentsArrayList->size() + 0, tangentsArrayList->size() + 1, tangentsArrayList->size() + 2);
-				face->setBitangentIndices(bitangentsArrayList->size() + 0, bitangentsArrayList->size() + 1, bitangentsArrayList->size() + 2);
-				tangentsArrayList->add(tangent);
-				tangentsArrayList->add(tangent);
-				tangentsArrayList->add(tangent);
-				bitangentsArrayList->add(bitangent);
-				bitangentsArrayList->add(bitangent);
-				bitangentsArrayList->add(bitangent);
+				face->setTangentIndices(tangentsArrayList.size() + 0, tangentsArrayList.size() + 1, tangentsArrayList.size() + 2);
+				face->setBitangentIndices(bitangentsArrayList.size() + 0, bitangentsArrayList.size() + 1, bitangentsArrayList.size() + 2);
+				tangentsArrayList.push_back(tangent);
+				tangentsArrayList.push_back(tangent);
+				tangentsArrayList.push_back(tangent);
+				bitangentsArrayList.push_back(bitangent);
+				bitangentsArrayList.push_back(bitangent);
+				bitangentsArrayList.push_back(bitangent);
 			}
 		}
 
-	if (tangentsArrayList->size() > 0 && bitangentsArrayList->size() > 0) {
+	if (tangentsArrayList.size() > 0 && bitangentsArrayList.size() > 0) {
 		group->setTangents(tangentsArrayList);
 		group->setBitangents(bitangentsArrayList);
 		auto tangents = group->getTangents();
 		auto bitangents = group->getBitangents();
 		for (auto faceEntity : *group->getFacesEntities()) 
-						if (faceEntity->getMaterial() != nullptr && faceEntity->getMaterial()->hasNormalTexture() == true) {
-				for (auto face : *faceEntity->getFaces()) 
-										for (auto i = 0; i < 3; i++) {
-						auto normal = (*normals)[(*face->getNormalIndices())[i]];
-						auto tangent = (*tangents)[(*face->getTangentIndices())[i]];
-						auto bitangent = (*bitangents)[(*face->getBitangentIndices())[i]];
-						tangent->sub(tmpVector3->set(normal)->scale(Vector3::computeDotProduct(normal, tangent)))->normalize();
-						if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, tmpVector3), bitangent) < 0.0f) {
-							tangent->scale(-1.0f);
-						}
-						bitangent->normalize();
-					}
-
+		if (faceEntity->getMaterial() != nullptr && faceEntity->getMaterial()->hasNormalTexture() == true) {
+			for (auto face : *faceEntity->getFaces())
+				for (auto i = 0; i < 3; i++) {
+				auto normal = (*normals)[(*face->getNormalIndices())[i]];
+				auto tangent = (*tangents)[(*face->getTangentIndices())[i]];
+				auto bitangent = (*bitangents)[(*face->getBitangentIndices())[i]];
+				tangent->sub(tmpVector3->set(normal)->scale(Vector3::computeDotProduct(normal, tangent)))->normalize();
+				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, tmpVector3), bitangent) < 0.0f) {
+					tangent->scale(-1.0f);
+				}
+				bitangent->normalize();
 			}
-
+		}
 	}
 }
 

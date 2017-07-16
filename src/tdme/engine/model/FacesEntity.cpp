@@ -10,7 +10,6 @@
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/utils/_ArrayList.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -25,7 +24,6 @@ using java::util::Arrays;
 using tdme::engine::model::Face;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {

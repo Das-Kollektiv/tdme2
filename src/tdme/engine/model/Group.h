@@ -22,7 +22,6 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -190,7 +189,7 @@ public:
 	 * Set up tangents
 	 * @param tangents
 	 */
-	void setTangents(_ArrayList* tangents);
+	void setTangents(const vector<Vector3*>& tangents);
 
 	/** 
 	 * @return bitangents
@@ -207,7 +206,7 @@ public:
 	 * Set up bitangents
 	 * @param bitangents
 	 */
-	void setBitangents(_ArrayList* bitangents);
+	void setBitangents(const vector<Vector3*>& bitangents);
 
 	/** 
 	 * @return animation

@@ -17,7 +17,6 @@ using java::lang::String;
 using tdme::engine::model::Face;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
