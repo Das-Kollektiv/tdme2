@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/WFObjReader.java
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -30,6 +32,8 @@
 #include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::fileio::models::WFObjReader;
 using java::io::BufferedReader;
@@ -138,7 +142,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	Group* group = nullptr;
 	_HashMap* modelGroupVerticesMapping = nullptr;
 	_HashMap* modelGroupTextureCoordinatesMapping = nullptr;
-	_ArrayList* groupFacesEntityFaces = nullptr;
+	vector<Face*> groupFacesEntityFaces;
 	_ArrayList* groupVertices = nullptr;
 	_ArrayList* groupNormals = nullptr;
 	_ArrayList* groupTextureCoordinates = nullptr;
@@ -266,11 +270,11 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					if (vt0 != -1 && vt1 != -1 && vt2 != -1) {
 						face->setTextureCoordinateIndices(vt0, vt1, vt2);
 					}
-					groupFacesEntityFaces->add(face);
+					groupFacesEntityFaces.push_back(face);
 				} else
 				if (command->equals(u"g"_j)) {
 					if (group != nullptr) {
-						if (groupFacesEntityFaces->isEmpty() == false) {
+						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities->add(groupFacesEntity);
 						}
@@ -285,7 +289,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					groupVertices = new _ArrayList();
 					groupNormals = new _ArrayList();
 					groupTextureCoordinates = new _ArrayList();
-					groupFacesEntityFaces = new _ArrayList();
+					groupFacesEntityFaces.clear();
 					group = new Group(model, nullptr, name, name);
 					groupFacesEntity = new FacesEntity(group, name);
 					groupFacesEntities = new _ArrayList();
@@ -296,19 +300,19 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 				} else
 				if (command->equals(u"usemtl"_j)) {
 					if (group != nullptr) {
-						if (groupFacesEntityFaces->isEmpty() == false) {
+						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities->add(groupFacesEntity);
 						}
 						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append(groupFacesEntities->size())->toString());
-						groupFacesEntityFaces = new _ArrayList();
+						groupFacesEntityFaces.clear();
 					}
 					groupFacesEntity->setMaterial(java_cast< Material* >(materials->get(arguments)));
 				} else {
 				}
 			}
 			if (group != nullptr) {
-				if (groupFacesEntityFaces->isEmpty() == false) {
+				if (groupFacesEntityFaces.empty() == false) {
 					groupFacesEntity->setFaces(groupFacesEntityFaces);
 					groupFacesEntities->add(groupFacesEntity);
 				}

@@ -185,9 +185,9 @@ Model* EngineTest::createWallModel()
 	textureCoordinates->add(new TextureCoordinate(0.0f, 1.0f));
 	textureCoordinates->add(new TextureCoordinate(1.0f, 1.0f));
 	textureCoordinates->add(new TextureCoordinate(1.0f, 0.0f));
-	auto facesFarPlane = new _ArrayList();
-	facesFarPlane->add(new Face(wallGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	facesFarPlane->add(new Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	vector<Face*> facesFarPlane;
+	facesFarPlane.push_back(new Face(wallGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	facesFarPlane.push_back(new Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
 	groupFacesEntityFarPlane->setFaces(facesFarPlane);
 	wallGroup->setVertices(vertices);
 	wallGroup->setNormals(normals);

@@ -2,6 +2,7 @@
 #include <tdme/engine/fileio/models/DAEReader.h>
 
 #include <unordered_set>
+#include <vector>
 
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
@@ -63,6 +64,7 @@
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
+using std::vector;
 using std::unordered_set;
 
 using tdme::engine::fileio::models::DAEReader;
@@ -868,12 +870,12 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		);
 	}
 
-	auto joints = new _ArrayList();
+	vector<Joint*> joints;
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsSource)) {
 			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
-				joints->add(new Joint(t->nextToken()));
+				joints.push_back(new Joint(t->nextToken()));
 			}
 		}
 	}
@@ -908,7 +910,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		}
 	}
 
-	auto weights = new _ArrayList();
+	vector<float> weights;
 	auto xmlJointOffset = -1;
 	auto xmlWeightOffset = -1;
 	String* xmlWeightsSource = nullptr;
@@ -951,7 +953,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlWeightsSource)) {
 			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
-				weights->add(new Float(Float::parseFloat(t->nextToken())));
+				weights.push_back(Float::parseFloat(t->nextToken()));
 			}
 		}
 	}
@@ -962,10 +964,10 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	t = new StringTokenizer(vertexJointsInfluenceCountString, u" \n\r"_j);
 	auto t2 = new StringTokenizer(vertexJointsInfluencesString, u" \n\r"_j);
 	auto offset = 0;
-	auto verticesJointsWeights = new _ArrayList();
+	vector<vector<JointWeight*>> verticesJointsWeights;
 	while (t->hasMoreTokens()) {
 		auto vertexJointsInfluencesCount = Integer::parseInt(t->nextToken());
-		auto vertexJointsWeights = new _ArrayList();
+		vector<JointWeight*>vertexJointsWeights;
 		for (auto i = 0; i < vertexJointsInfluencesCount; i++) {
 			auto vertexJoint = -1;
 			auto vertexWeight = -1;
@@ -978,9 +980,9 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 				}
 				offset++;
 			}
-			vertexJointsWeights->add(new JointWeight(vertexJoint, vertexWeight));
+			vertexJointsWeights.push_back(new JointWeight(vertexJoint, vertexWeight));
 		}
-		verticesJointsWeights->add(vertexJointsWeights);
+		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
 	skinning->setVerticesJointsWeights(verticesJointsWeights);
 
@@ -1015,7 +1017,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				xmlPolygonsList.push_back(xmlPolygonsElement);
 			}
 			for (auto xmlPolygons: xmlPolygonsList) {
-				auto faces = new _ArrayList();
+				vector<Face*> faces;
 				facesEntity = new FacesEntity(group, xmlNodeId);
 				if ((tmpString = new String(StringConverter::toWideString(xmlPolygons->Value())))->toLowerCase()->equals(u"polylist"_j)) {
 					t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText()))));
@@ -1187,7 +1189,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 										(*ti)[2] + textureCoordinatesOffset
 									);
 								}
-								faces->add(f);
+								faces.push_back(f);
 							}
 							viIdx = 0;
 							niIdx = 0;
@@ -1197,7 +1199,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						valueIdx++;
 					}
 				}
-				if (faces->isEmpty() == false) {
+				if (faces.empty() == false) {
 					facesEntity->setFaces(faces);
 					facesEntities->add(facesEntity);
 				}

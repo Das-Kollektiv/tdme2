@@ -89,11 +89,12 @@ void Skinning::setWeights(floatArray* weights)
 	this->weights = weights;
 }
 
-void Skinning::setWeights(_ArrayList* weights)
+void Skinning::setWeights(const vector<float>& weights)
 {
-	this->weights = new floatArray(weights->size());
-	for (auto i = 0; i < this->weights->length; i++) {
-		(*this->weights)[i] = (java_cast< Float* >(weights->get(i)))->floatValue();
+	this->weights = new floatArray(weights.size());
+	int i = 0;
+	for (float weight: weights) {
+		(*this->weights)[i++] = weight;
 	}
 }
 
@@ -108,9 +109,13 @@ void Skinning::setJoints(JointArray* joints)
 	setupJointsByName();
 }
 
-void Skinning::setJoints(_ArrayList* joints)
+void Skinning::setJoints(const vector<Joint*>& joints)
 {
-	this->joints = java_cast< JointArray* >(joints->toArray(new JointArray(joints->size())));
+	this->joints = new JointArray(joints.size());
+	int i = 0;
+	for (Joint* joint: joints) {
+		this->joints->set(i++, joint);
+	}
 	setupJointsByName();
 }
 
@@ -124,13 +129,13 @@ void Skinning::setVerticesJointsWeights(JointWeightArrayArray* verticesJointsWei
 	this->verticesJointsWeights = verticesJointsWeights;
 }
 
-void Skinning::setVerticesJointsWeights(_ArrayList* verticesJointsWeights)
+void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight*>>& verticesJointsWeights)
 {
-	this->verticesJointsWeights = new JointWeightArrayArray(verticesJointsWeights->size());
-	for (auto i = 0; i < verticesJointsWeights->size(); i++) {
-		this->verticesJointsWeights->set(i, new JointWeightArray(java_cast< _ArrayList* >(verticesJointsWeights->get(i))->size()));
-		for (auto j = 0; j < java_cast< _ArrayList* >(verticesJointsWeights->get(i))->size(); j++) {
-			(*this->verticesJointsWeights)[i]->set(j, java_cast< JointWeight* >(java_cast< _ArrayList* >(verticesJointsWeights->get(i))->get(j)));
+	this->verticesJointsWeights = new JointWeightArrayArray(verticesJointsWeights.size());
+	for (auto i = 0; i < verticesJointsWeights.size(); i++) {
+		this->verticesJointsWeights->set(i, new JointWeightArray(verticesJointsWeights.at(i).size()));
+		for (auto j = 0; j < verticesJointsWeights.at(i).size(); j++) {
+			(*this->verticesJointsWeights)[i]->set(j, verticesJointsWeights.at(i).at(j));
 		}
 	}
 }

@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -89,7 +93,7 @@ public:
 	 * Set up weights
 	 * @param weights
 	 */
-	void setWeights(_ArrayList* weights);
+	void setWeights(const vector<float>& weights);
 
 	/** 
 	 * @return all joints
@@ -106,7 +110,7 @@ public:
 	 * Set up joints
 	 * @param joints
 	 */
-	void setJoints(_ArrayList* joints);
+	void setJoints(const vector<Joint*>& joints);
 
 	/** 
 	 * @return all vertex joints
@@ -123,7 +127,7 @@ public:
 	 * Sets up vertices joints weights 
 	 * @param verticesJointsWeights
 	 */
-	void setVerticesJointsWeights(_ArrayList* verticesJointsWeights);
+	void setVerticesJointsWeights(const vector<vector<JointWeight*>>& verticesJointsWeights);
 
 private:
 

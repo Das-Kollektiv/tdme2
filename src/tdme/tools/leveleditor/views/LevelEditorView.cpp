@@ -953,9 +953,9 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundTextureCoordinates->add(new TextureCoordinate(0.0f, 0.0f));
 	groundTextureCoordinates->add(new TextureCoordinate(1.0f, 0.0f));
 	groundTextureCoordinates->add(new TextureCoordinate(1.0f, 1.0f));
-	auto groundFacesGround = new _ArrayList();
-	groundFacesGround->add(new Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround->add(new Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	vector<Face*> groundFacesGround;
+	groundFacesGround.push_back(new Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	groundFacesGround.push_back(new Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
 	groupFacesEntityGround->setFaces(groundFacesGround);
 	groundGroup->setVertices(groundVertices);
 	groundGroup->setNormals(groundNormals);

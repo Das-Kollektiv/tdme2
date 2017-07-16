@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/model/FacesEntity.java
 #include <tdme/engine/model/FacesEntity.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -12,6 +14,8 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::model::FacesEntity;
 using java::lang::Object;
@@ -83,9 +87,13 @@ FaceArray* FacesEntity::getFaces()
 	return faces;
 }
 
-void FacesEntity::setFaces(_ArrayList* faces)
+void FacesEntity::setFaces(const vector<Face*>& faces)
 {
-	this->faces = java_cast< FaceArray* >(faces->toArray(new FaceArray(faces->size())));
+	this->faces = new FaceArray(faces.size());
+	int i = 0;
+	for (Face* face: faces) {
+		this->faces->set(i++, face);
+	}
 	this->textureCoordinatesAvailable = false;
 	this->tangentBitangentAvailable = false;
 }

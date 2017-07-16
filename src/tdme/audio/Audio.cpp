@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/audio/Audio.java
 #include <tdme/audio/Audio.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -10,12 +12,13 @@
 #include <tdme/audio/AudioStream.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
+
+using std::vector;
 
 using tdme::audio::Audio;
 using java::lang::Object;
@@ -27,7 +30,6 @@ using tdme::audio::AudioEntity;
 using tdme::audio::AudioStream;
 using tdme::audio::Sound;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -157,18 +159,15 @@ void Audio::removeEntity(String* id)
 
 void Audio::reset()
 {
-	auto keys = new _ArrayList();
+	vector<String*> keys;
 	for (auto _i = audioEntities->getKeysIterator()->iterator(); _i->hasNext(); ) {
 		String* key = java_cast< String* >(_i->next());
 		{
-			keys->add(key);
+			keys.push_back(key);
 		}
 	}
-	for (auto _i = keys->iterator(); _i->hasNext(); ) {
-		String* key = java_cast< String* >(_i->next());
-		{
-			removeEntity(key);
-		}
+	for (String* key: keys) {
+		removeEntity(key);
 	}
 }
 
