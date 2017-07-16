@@ -31,7 +31,6 @@ using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::Model;
 using tdme::os::_FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 using tdme::ext::tinyxml::TiXmlElement;

@@ -52,7 +52,6 @@
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap.h>
@@ -116,7 +115,6 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::_HashMap;

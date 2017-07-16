@@ -19,7 +19,6 @@ using java::lang::Cloneable;
 using java::lang::String;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;

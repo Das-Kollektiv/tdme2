@@ -10,7 +10,6 @@
 #include <java/util/Arrays.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
@@ -26,7 +25,6 @@ using java::lang::StringBuilder;
 using java::util::Arrays;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
