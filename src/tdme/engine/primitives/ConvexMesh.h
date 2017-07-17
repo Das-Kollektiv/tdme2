@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::engine::primitives::BoundingVolume;
@@ -79,7 +83,7 @@ public:
 	 * @param model
 	 * @param convex meshes
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, _ArrayList* convexMeshes);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh*>& convexMeshes);
 protected:
 
 	/** 

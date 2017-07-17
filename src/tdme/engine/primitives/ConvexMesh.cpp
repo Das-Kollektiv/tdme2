@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/primitives/ConvexMesh.java
 #include <tdme/engine/primitives/ConvexMesh.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -17,10 +19,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/SeparatingAxisTheorem.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
 using java::lang::Object;
@@ -39,7 +42,6 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::Matrix4x4;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -82,7 +84,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	ctor(model);
 }
 
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, _ArrayList* convexMeshes)
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh*>& convexMeshes)
 {
 	clinit();
 	auto triangles = model->getFaceTriangles();
@@ -93,7 +95,7 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, _ArrayList* con
 		(*(*convexMeshTriangles)[1]->getVertices())[0]->addY(-1.0f);
 		(*(*convexMeshTriangles)[1]->getVertices())[1]->addY(-1.0f);
 		(*(*convexMeshTriangles)[1]->getVertices())[2]->addY(-1.0f);
-		convexMeshes->add(new ConvexMesh(convexMeshTriangles));
+		convexMeshes.push_back(new ConvexMesh(convexMeshTriangles));
 	}
 }
 
@@ -131,22 +133,24 @@ void ConvexMesh::ctor(Object3DModel* model)
 
 void ConvexMesh::createVertices()
 {
-	auto vertices = new _ArrayList();
+	vector<Vector3*> vertices;
 	for (auto i = 0; i < triangles->length; i++) {
 		for (auto j = 0; j < (*triangles)[i]->vertices->length; j++) {
 			auto haveVertex = false;
-			for (auto k = 0; k < vertices->size(); k++) {
-				if (java_cast< Vector3* >(vertices->get(k))->equals((*(*triangles)[i]->vertices)[j]) == true) {
+			for (auto k = 0; k < vertices.size(); k++) {
+				if (vertices.at(k)->equals((*(*triangles)[i]->vertices)[j]) == true) {
 					haveVertex = true;
 				}
 			}
 			if (haveVertex == false)
-				vertices->add((*(*triangles)[i]->vertices)[j]);
+				vertices.push_back((*(*triangles)[i]->vertices)[j]);
 
 		}
 	}
-	this->vertices = new Vector3Array(vertices->size());
-	vertices->toArray(this->vertices);
+	this->vertices = new Vector3Array(vertices.size());
+	for (int i = 0; i < vertices.size(); i++) {
+		this->vertices->set(i, vertices.at(i));
+	}
 }
 
 TriangleArray* ConvexMesh::getTriangles()

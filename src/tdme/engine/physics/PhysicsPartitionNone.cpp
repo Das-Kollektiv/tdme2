@@ -7,7 +7,6 @@
 #include <java/lang/Object.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
-#include <tdme/utils/_ArrayList.h>
 
 using std::find;
 using std::vector;
@@ -17,7 +16,6 @@ using tdme::engine::physics::PhysicsPartitionNone;
 using java::lang::Object;
 using tdme::engine::physics::RigidBody;
 using tdme::utils::ArrayListIteratorMultiple;
-using tdme::utils::_ArrayList;
 
 PhysicsPartitionNone::PhysicsPartitionNone(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))

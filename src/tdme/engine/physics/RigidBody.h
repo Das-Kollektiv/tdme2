@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <vector>
+#include <algorithm>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -10,6 +13,10 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+#include <tdme/engine/physics/CollisionListener.h>
+
+using std::vector;
+using std::remove;
 
 using java::lang::Object;
 using java::lang::String;
@@ -21,7 +28,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -84,7 +90,7 @@ public: /* protected */
 
 private:
 	Vector3* distance {  };
-	_ArrayList* collisionListener {  };
+	vector<CollisionListener*> collisionListener {  };
 	Quaternion* tmpQuaternion1 {  };
 	Quaternion* tmpQuaternion2 {  };
 	Vector3* tmpVector3 {  };

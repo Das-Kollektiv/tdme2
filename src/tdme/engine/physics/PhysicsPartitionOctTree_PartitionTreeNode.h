@@ -18,7 +18,6 @@ using java::lang::Object;
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 

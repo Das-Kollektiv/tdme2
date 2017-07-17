@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/physics/RigidBody.java
 #include <tdme/engine/physics/RigidBody.h>
 
+#include <vector>
+
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -17,9 +19,10 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
+
+using std::vector;
 
 using tdme::engine::physics::RigidBody;
 using java::lang::Math;
@@ -38,7 +41,6 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -76,7 +78,6 @@ void RigidBody::init()
 	orientationMatrix = (new Matrix4x4())->identity();
 	worldInverseInertia = (new Matrix4x4())->identity();
 	distance = new Vector3();
-	collisionListener = new _ArrayList();
 	tmpQuaternion1 = new Quaternion();
 	tmpQuaternion2 = new Quaternion();
 	tmpVector3 = new Vector3();
@@ -370,32 +371,32 @@ bool RigidBody::checkVelocityChange()
 
 void RigidBody::addCollisionListener(CollisionListener* listener)
 {
-	collisionListener->add(listener);
+	collisionListener.push_back(listener);
 }
 
 void RigidBody::removeCollisionListener(CollisionListener* listener)
 {
-	collisionListener->remove(static_cast< Object* >(listener));
+	collisionListener.erase(remove(collisionListener.begin(), collisionListener.end(), listener), collisionListener.end());
 }
 
 void RigidBody::fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse)
 {
-	for (auto i = 0; i < collisionListener->size(); i++) {
-		java_cast< CollisionListener* >(collisionListener->get(i))->onCollision(this, other, collisionResponse);
+	for (auto listener: collisionListener) {
+		listener->onCollision(this, other, collisionResponse);
 	}
 }
 
 void RigidBody::fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse)
 {
-	for (auto i = 0; i < collisionListener->size(); i++) {
-		java_cast< CollisionListener* >(collisionListener->get(i))->onCollisionBegin(this, other, collisionResponse);
+	for (auto listener: collisionListener) {
+		listener->onCollisionBegin(this, other, collisionResponse);
 	}
 }
 
 void RigidBody::fireOnCollisionEnd(RigidBody* other)
 {
-	for (auto i = 0; i < collisionListener->size(); i++) {
-		java_cast< CollisionListener* >(collisionListener->get(i))->onCollisionEnd(this, other);
+	for (auto listener: collisionListener) {
+		listener->onCollisionEnd(this, other);
 	}
 }
 
