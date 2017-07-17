@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Engine_AnimationProcessingTarget;
@@ -21,7 +25,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 using tdme::engine::subsystems::object::Object3DGroup;
 
@@ -71,7 +74,6 @@ public: /* protected */
 	Object3DGroupVBORenderer* renderer {  };
 	Object3DGroupMesh* mesh {  };
 	Matrix4x4* groupTransformationsMatrix {  };
-	_ArrayList* groupTransformationsMatricesVector {  };
 
 	/** 
 	 * Creates object 3d groups from given object3d base object
@@ -91,7 +93,7 @@ private:
 	 * @param animated
 	 * @param use mesh manager
 	 */
-	static void createGroups(Object3DBase* object3D, _ArrayList* object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	static void createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
 
 public: /* protected */
 

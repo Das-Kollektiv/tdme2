@@ -21,7 +21,6 @@
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
@@ -49,7 +48,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
 
@@ -103,7 +101,6 @@ void Object3DGroup::init()
 	materialDisplacementTextureIdsByEntities = nullptr;
 	materialNormalTextureIdsByEntities = nullptr;
 	groupTransformationsMatrix = nullptr;
-	groupTransformationsMatricesVector = nullptr;
 }
 
 int64_t Object3DGroup::counter;
@@ -115,15 +112,18 @@ constexpr int32_t Object3DGroup::GLTEXTUREID_NOTUSED;
 Object3DGroupArray* Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
 {
 	clinit();
-	auto object3DGroups = new _ArrayList();
+	vector<Object3DGroup*> object3DGroups;
 	auto model = object->getModel();
 	createGroups(object, object3DGroups, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget);
-	auto object3DGroupArray = new Object3DGroupArray(object3DGroups->size());
-	object3DGroups->toArray(object3DGroupArray);
+	auto object3DGroupArray = new Object3DGroupArray(object3DGroups.size());
+	int i = 0;
+	for (auto object3DGroup: object3DGroups) {
+		object3DGroupArray->set(i++, object3DGroup);
+	}
 	return object3DGroupArray;
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, _ArrayList* object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
+void Object3DGroup::createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
 {
 	clinit();
 	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
@@ -135,7 +135,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, _ArrayList* object3DGro
 			auto faceCount = group->getFaceCount();
 			if (faceCount > 0) {
 				auto object3DGroup = new Object3DGroup();
-				object3DGroups->add(object3DGroup);
+				object3DGroups.push_back(object3DGroup);
 				object3DGroup->id = ::java::lang::StringBuilder().append(group->getModel()->getId())->append(u":"_j)
 					->append(group->getId())
 					->append(u":"_j)
@@ -169,15 +169,6 @@ void Object3DGroup::createGroups(Object3DBase* object3D, _ArrayList* object3DGro
 					(*object3DGroup->materialNormalTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
 				}
 				object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
-				auto skinning = group->getSkinning();
-				if (skinning != nullptr) {
-					object3DGroup->groupTransformationsMatricesVector = new _ArrayList();
-					for (auto joint : *skinning->getJoints()) {
-						object3DGroup->groupTransformationsMatricesVector->add(java_cast< Matrix4x4* >(object3D->transformationsMatrices->get(joint->getGroupId())));
-					}
-				} else {
-					object3DGroup->groupTransformationsMatricesVector = nullptr;
-				}
 				object3DGroup->groupTransformationsMatrix = java_cast< Matrix4x4* >(object3D->transformationsMatrices->get(group->getId()));
 			}
 			createGroups(object3D, object3DGroups, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget);
