@@ -2,14 +2,21 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+
 #include <java/lang/Object.h>
+#include <tdme/engine/physics/RigidBody.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::engine::physics::PhysicsPartitionOctTree;
+using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
@@ -36,9 +43,9 @@ private:
 	int32_t z {  };
 	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox* bv {  };
-	_ArrayList* subNodes {  };
+	vector<PhysicsPartitionOctTree_PartitionTreeNode*> subNodes {  };
 	_HashMap* subNodesByCoordinate {  };
-	_ArrayList* partitionRidigBodies {  };
+	vector<RigidBody*> partitionRidigBodies {  };
 
 	// Generated
 

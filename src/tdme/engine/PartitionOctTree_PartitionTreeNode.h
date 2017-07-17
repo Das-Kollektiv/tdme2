@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -14,6 +16,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
+using std::vector;
 
 struct default_init_tag;
 
@@ -36,9 +39,9 @@ private:
 	int32_t z {  };
 	PartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox* bv {  };
-	_ArrayList* subNodes {  };
+	vector<PartitionOctTree_PartitionTreeNode*> subNodes {  };
 	_HashMap* subNodesByCoordinate {  };
-	_ArrayList* partitionEntities {  };
+	vector<Entity*> partitionEntities {  };
 
 	// Generated
 

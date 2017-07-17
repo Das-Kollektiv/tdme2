@@ -9,6 +9,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
+#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/utils/ArrayListIteratorMultiple.h>
 
 using tdme::engine::physics::PhysicsPartition;
 using java::lang::String;
@@ -39,7 +41,7 @@ public:
 
 private:
 	Key* key {  };
-	ArrayListIteratorMultiple* rigidBodyIterator {  };
+	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
 	BoundingBox* boundingBox {  };
 	Vector3* halfExtension {  };
 	Vector3* sideVector {  };
@@ -47,9 +49,7 @@ private:
 	Vector3* upVector {  };
 	Pool* boundingBoxPool {  };
 	Pool* partitionTreeNodePool {  };
-	Pool* subNodesPool {  };
 	Pool* rigidBodyPartitionNodesPool {  };
-	Pool* partitionRigidBodyPool {  };
 	Pool* keyPool {  };
 	_HashMap* rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode* treeRoot {  };
@@ -137,7 +137,7 @@ private:
 	 * @param cbv
 	 * @param rigidBody iterator
 	 */
-	int32_t doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple* rigidBodyIterator);
+	int32_t doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<RigidBody*>& rigidBodyIterator);
 
 public:
 
@@ -146,14 +146,14 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple* getObjectsNearTo(BoundingVolume* cbv) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) override;
 
 	/** 
 	 * To string

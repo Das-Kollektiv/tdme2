@@ -96,8 +96,8 @@ public:
 	typedef Object super;
 
 public: /* protected */
-	static constexpr int32_t BODIES_MAX { 256 };
-	static constexpr int32_t CONSTRAINTS_MAX { 768 };
+	static constexpr int32_t BODIES_MAX { 1024 };
+	static constexpr int32_t CONSTRAINTS_MAX { 1024 * 3 };
 
 private:
 	int32_t constraintsEntityCount {  };

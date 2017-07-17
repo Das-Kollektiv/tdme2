@@ -54,8 +54,6 @@ SRCS = \
 	src/tdme/engine/PartitionOctTree_reset_1.cpp \
 	src/tdme/engine/PartitionOctTree_reset_2.cpp \
 	src/tdme/engine/PartitionOctTree_reset_3.cpp \
-	src/tdme/engine/PartitionOctTree_reset_4.cpp \
-	src/tdme/engine/PartitionOctTree_reset_5.cpp \
 	src/tdme/engine/PartitionOctTree_reset_6.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \
 	src/tdme/engine/Rotation.cpp \
@@ -106,8 +104,6 @@ SRCS = \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_1.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_2.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_3.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_4.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_5.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_6.cpp \
 	src/tdme/engine/physics/RigidBody.cpp \
 	src/tdme/engine/physics/Vector6.cpp \
@@ -364,7 +360,6 @@ SRCS = \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
-	src/tdme/utils/ArrayListIteratorMultiple.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \

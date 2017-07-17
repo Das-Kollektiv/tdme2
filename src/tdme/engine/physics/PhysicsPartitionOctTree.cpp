@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/physics/PhysicsPartitionOctTree.java
 #include <tdme/engine/physics/PhysicsPartitionOctTree.h>
 
+#include <vector>
+#include <algorithm>
+
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -10,8 +13,6 @@
 #include <tdme/engine/physics/PhysicsPartitionOctTree_reset_1.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_reset_2.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_reset_3.h>
-#include <tdme/engine/physics/PhysicsPartitionOctTree_reset_4.h>
-#include <tdme/engine/physics/PhysicsPartitionOctTree_reset_5.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_reset_6.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -24,6 +25,10 @@
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap.h>
+
+using std::vector;
+using std::find;
+using std::remove;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using java::lang::Math;
@@ -84,7 +89,6 @@ void PhysicsPartitionOctTree::ctor()
 	super::ctor();
 	init();
 	this->key = new Key();
-	this->rigidBodyIterator = new ArrayListIteratorMultiple();
 	this->boundingBox = new BoundingBox();
 	this->halfExtension = new Vector3();
 	this->sideVector = new Vector3(1.0f, 0.0f, 0.0f);
@@ -98,8 +102,6 @@ void PhysicsPartitionOctTree::reset()
 	this->rigidBodyPartitionNodesPool = new PhysicsPartitionOctTree_reset_1(this);
 	this->boundingBoxPool = new PhysicsPartitionOctTree_reset_2(this);
 	this->partitionTreeNodePool = new PhysicsPartitionOctTree_reset_3(this);
-	this->subNodesPool = new PhysicsPartitionOctTree_reset_4(this);
-	this->partitionRigidBodyPool = new PhysicsPartitionOctTree_reset_5(this);
 	this->keyPool = new PhysicsPartitionOctTree_reset_6(this);
 	this->rigidBodyPartitionNodes = new _HashMap();
 	this->treeRoot = new PhysicsPartitionOctTree_PartitionTreeNode();
@@ -109,9 +111,10 @@ void PhysicsPartitionOctTree::reset()
 	this->treeRoot->z = -1;
 	this->treeRoot->parent = nullptr;
 	this->treeRoot->bv = nullptr;
-	this->treeRoot->subNodes = new _ArrayList();
+	this->treeRoot->subNodes.clear();
 	this->treeRoot->subNodesByCoordinate = new _HashMap();
-	this->treeRoot->partitionRidigBodies = nullptr;
+	this->treeRoot->partitionRidigBodies.clear();
+	this->rigidBodyIterator.clear();
 }
 
 PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
@@ -126,13 +129,10 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	node->bv->getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node->bv->update();
-	node->subNodes = nullptr;
+	node->subNodes.clear();
 	node->subNodesByCoordinate = nullptr;
-	node->partitionRidigBodies = nullptr;
-	if (parent->subNodes == nullptr) {
-		parent->subNodes = java_cast< _ArrayList* >(subNodesPool->allocate());
-	}
-	parent->subNodes->add(node);
+	node->partitionRidigBodies.clear();
+	parent->subNodes.push_back(node);
 	if (parent == treeRoot) {
 		auto key = java_cast< Key* >(keyPool->allocate());
 		key->reset();
@@ -145,14 +145,10 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
-						for (auto _x = 0; _x < 2; _x++) 
-								for (auto _z = 0; _z < 2; _z++) {
-					createPartition(node, static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x, static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y, static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z, partitionSize / 2.0f);
-				}
-
-
-	} else {
-		node->partitionRidigBodies = java_cast< _ArrayList* >(partitionRigidBodyPool->allocate());
+		for (auto _x = 0; _x < 2; _x++)
+		for (auto _z = 0; _z < 2; _z++) {
+			createPartition(node, static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x, static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y, static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z, partitionSize / 2.0f);
+		}
 	}
 	return node;
 }
@@ -178,20 +174,19 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	auto maxYPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax()->getY() / PARTITION_SIZE_MAX));
 	auto maxZPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax()->getZ() / PARTITION_SIZE_MAX));
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
-				for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++) 
-						for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-				key->reset();
-				key->append(xPartition);
-				key->append(u","_j);
-				key->append(yPartition);
-				key->append(u","_j);
-				key->append(zPartition);
-				auto node = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(treeRoot->subNodesByCoordinate->get(key));
-				if (node == nullptr) {
-					node = createPartition(treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
-				}
-			}
-
+	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
+	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
+		key->reset();
+		key->append(xPartition);
+		key->append(u","_j);
+		key->append(yPartition);
+		key->append(u","_j);
+		key->append(zPartition);
+		auto node = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(treeRoot->subNodesByCoordinate->get(key));
+		if (node == nullptr) {
+			node = createPartition(treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+		}
+	}
 
 	addToPartitionTree(rigidBody, boundingBox);
 }
@@ -212,14 +207,14 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 	while (rigidBodyPartitionsVector->size() > 0) {
 		auto lastIdx = rigidBodyPartitionsVector->size() - 1;
 		auto partitionTreeNode = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(rigidBodyPartitionsVector->get(lastIdx));
-		auto partitionRigidBody = partitionTreeNode->partitionRidigBodies;
-		partitionRigidBody->remove(static_cast< Object* >(rigidBody));
+		auto& partitionRigidBody = partitionTreeNode->partitionRidigBodies;
+		partitionRigidBody.erase(remove(partitionRigidBody.begin(), partitionRigidBody.end(), rigidBody), partitionRigidBody.end());
 		rigidBodyPartitionsVector->remove(lastIdx);
-		if (partitionRigidBody->isEmpty() == true) {
+		if (partitionRigidBody.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
 				removePartitionNode(rootPartitionTreeNode);
-				treeRoot->subNodes->remove(static_cast< Object* >(rootPartitionTreeNode));
+				treeRoot->subNodes.erase(remove(treeRoot->subNodes.begin(), treeRoot->subNodes.end(), rootPartitionTreeNode), treeRoot->subNodes.end());
 				key->reset();
 				key->append(rootPartitionTreeNode->x);
 				key->append(u","_j);
@@ -236,13 +231,12 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 
 bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
-	if (node->partitionRidigBodies != nullptr) {
-		return node->partitionRidigBodies->size() == 0;
+	if (node->partitionRidigBodies.size() > 0) {
+		return false;
 	} else {
-		for (auto i = 0; i < node->subNodes->size(); i++) {
-			if (isPartitionNodeEmpty(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes->get(i))) == false)
+		for (auto i = 0; i < node->subNodes.size(); i++) {
+			if (isPartitionNodeEmpty(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes.at(i))) == false)
 				return false;
-
 		}
 		return true;
 	}
@@ -250,21 +244,15 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 
 void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
-	if (node->partitionRidigBodies != nullptr) {
-		if (node->partitionRidigBodies->size() > 0) {
-			_Console::println(static_cast< Object* >(u"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"_j));
-			node->partitionRidigBodies->clear();
-		}
-		partitionRigidBodyPool->release(node->partitionRidigBodies);
-		node->partitionRidigBodies = nullptr;
+	if (node->partitionRidigBodies.size() > 0) {
+		_Console::println(static_cast< Object* >(u"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"_j));
+		node->partitionRidigBodies.clear();
 	} else {
-		for (auto i = 0; i < node->subNodes->size(); i++) {
-			auto subNode = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes->get(i));
+		for (auto i = 0; i < node->subNodes.size(); i++) {
+			auto subNode = node->subNodes.at(i);
 			removePartitionNode(subNode);
 		}
-		node->subNodes->clear();
-		subNodesPool->release(node->subNodes);
-		node->subNodes = nullptr;
+		node->subNodes.clear();
 	}
 	boundingBoxPool->release(node->bv);
 	node->bv = nullptr;
@@ -276,46 +264,46 @@ void PhysicsPartitionOctTree::addToPartitionTree(PhysicsPartitionOctTree_Partiti
 	if (CollisionDetection::doCollideAABBvsAABBFast(node->bv, cbv) == false) {
 		return;
 	}
-	if (node->partitionRidigBodies != nullptr) {
-		node->partitionRidigBodies->add(rigidBody);
+	if (node->partitionSize == PARTITION_SIZE_MIN) {
+		node->partitionRidigBodies.push_back(rigidBody);
 		auto rigidBodyPartitionNodesVector = java_cast< _ArrayList* >(rigidBodyPartitionNodes->get(rigidBody->getId()));
 		if (rigidBodyPartitionNodesVector == nullptr) {
 			rigidBodyPartitionNodesVector = java_cast< _ArrayList* >(rigidBodyPartitionNodesPool->allocate());
 			rigidBodyPartitionNodes->put(rigidBody->getId(), rigidBodyPartitionNodesVector);
 		}
 		rigidBodyPartitionNodesVector->add(node);
-	} else if (node->subNodes != nullptr) {
-		for (auto i = 0; i < node->subNodes->size(); i++) {
-			addToPartitionTree(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes->get(i)), rigidBody, cbv);
+	} else {
+		for (auto i = 0; i < node->subNodes.size(); i++) {
+			addToPartitionTree(node->subNodes.at(i), rigidBody, cbv);
 		}
 	}
 }
 
 void PhysicsPartitionOctTree::addToPartitionTree(RigidBody* rigidBody, BoundingBox* cbv)
 {
-	for (auto i = 0; i < treeRoot->subNodes->size(); i++) {
-		addToPartitionTree(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(treeRoot->subNodes->get(i)), rigidBody, cbv);
+	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
+		addToPartitionTree(treeRoot->subNodes.at(i), rigidBody, cbv);
 	}
 }
 
-int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple* rigidBodyIterator)
+int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<RigidBody*>& rigidBodyIterator)
 {
 	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, node->bv) == false) {
 		return 1;
 	}
-	if (node->partitionRidigBodies != nullptr) {
-		rigidBodyIterator->addArrayList(node->partitionRidigBodies);
+	if (node->partitionRidigBodies.size() > 0) {
+		rigidBodyIterator.addArrayList(&node->partitionRidigBodies);
 		return 1;
 	} else {
 		auto lookUps = 1;
-		for (auto i = 0; i < node->subNodes->size(); i++) {
-			lookUps += doPartitionTreeLookUpNearEntities(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes->get(i)), cbv, rigidBodyIterator);
+		for (auto i = 0; i < node->subNodes.size(); i++) {
+			lookUps += doPartitionTreeLookUpNearEntities(node->subNodes.at(i), cbv, rigidBodyIterator);
 		}
 		return lookUps;
 	}
 }
 
-ArrayListIteratorMultiple* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
+ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto center = cbv->getCenter();
 	halfExtension->set(cbv->computeDimensionOnAxis(sideVector) + 0.2f, cbv->computeDimensionOnAxis(upVector) + 0.2f, cbv->computeDimensionOnAxis(forwardVector) + 0.2f)->scale(0.5f);
@@ -324,15 +312,15 @@ ArrayListIteratorMultiple* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVol
 	boundingBox->getMax()->set(center);
 	boundingBox->getMax()->add(halfExtension);
 	boundingBox->update();
-	rigidBodyIterator->clear();
+	rigidBodyIterator.clear();
 	auto lookUps = 0;
-	for (auto i = 0; i < treeRoot->subNodes->size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(treeRoot->subNodes->get(i)), boundingBox, rigidBodyIterator);
+	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
+		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), boundingBox, rigidBodyIterator);
 	}
-	return rigidBodyIterator;
+	return &rigidBodyIterator;
 }
 
-ArrayListIteratorMultiple* PhysicsPartitionOctTree::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(Vector3* center)
 {
 	halfExtension->set(0.2f, 0.2f, 0.2f)->scale(0.5f);
 	boundingBox->getMin()->set(center);
@@ -340,12 +328,12 @@ ArrayListIteratorMultiple* PhysicsPartitionOctTree::getObjectsNearTo(Vector3* ce
 	boundingBox->getMax()->set(center);
 	boundingBox->getMax()->add(halfExtension);
 	boundingBox->update();
-	rigidBodyIterator->clear();
+	rigidBodyIterator.clear();
 	auto lookUps = 0;
-	for (auto i = 0; i < treeRoot->subNodes->size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(treeRoot->subNodes->get(i)), boundingBox, rigidBodyIterator);
+	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
+		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), boundingBox, rigidBodyIterator);
 	}
-	return rigidBodyIterator;
+	return &rigidBodyIterator;
 }
 
 String* PhysicsPartitionOctTree::toString(String* indent, PhysicsPartitionOctTree_PartitionTreeNode* node)
@@ -360,22 +348,16 @@ String* PhysicsPartitionOctTree::toString(String* indent, PhysicsPartitionOctTre
 		->append(u" / "_j)
 		->append(static_cast< Object* >(node->bv))
 		->append(u"\n"_j)->toString();
-	if (node->partitionRidigBodies != nullptr) {
+	if (node->partitionRidigBodies.size() > 0) {
 		result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString())->toString();
-		for (auto _i = node->partitionRidigBodies->iterator(); _i->hasNext(); ) {
-			RigidBody* rigidBody = java_cast< RigidBody* >(_i->next());
-			{
-				result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(rigidBody->id)->append(u","_j)->toString())->toString();
-			}
+		for (auto rigidBody: node->partitionRidigBodies) {
+			result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(rigidBody->id)->append(u","_j)->toString())->toString();
 		}
 		result = ::java::lang::StringBuilder(result).append(u"\n"_j)->toString();
 	}
-	if (node->subNodes != nullptr) {
-		for (auto _i = node->subNodes->iterator(); _i->hasNext(); ) {
-			PhysicsPartitionOctTree_PartitionTreeNode* subNode = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(_i->next());
-			{
-				result = ::java::lang::StringBuilder(result).append(toString(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString(), subNode))->toString();
-			}
+	if (node->subNodes.size() > 0) {
+		for (auto subNode: node->subNodes) {
+			result = ::java::lang::StringBuilder(result).append(toString(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString(), subNode))->toString();
 		}
 	}
 	return result;
@@ -384,11 +366,8 @@ String* PhysicsPartitionOctTree::toString(String* indent, PhysicsPartitionOctTre
 String* PhysicsPartitionOctTree::toString()
 {
 	auto result = u"PartitionOctTree\n"_j;
-	for (auto _i = treeRoot->subNodes->iterator(); _i->hasNext(); ) {
-		PhysicsPartitionOctTree_PartitionTreeNode* subNode = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(_i->next());
-		{
-			result = ::java::lang::StringBuilder(result).append(toString(u"  "_j, subNode))->toString();
-		}
+	for (auto subNode: treeRoot->subNodes) {
+		result = ::java::lang::StringBuilder(result).append(toString(u"  "_j, subNode))->toString();
 	}
 	return result;
 }

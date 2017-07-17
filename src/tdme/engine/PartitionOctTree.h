@@ -7,7 +7,9 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/utils/ArrayListIteratorMultiple.h>
 
 using tdme::engine::Partition;
 using tdme::engine::Entity;
@@ -39,7 +41,7 @@ public:
 
 private:
 	Key* key {  };
-	ArrayListIteratorMultiple* entityIterator {  };
+	ArrayListIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox* boundingBox {  };
 	Vector3* halfExtension {  };
 	Vector3* sideVector {  };
@@ -48,11 +50,9 @@ private:
 	Pool* entityPartitionNodesPool {  };
 	Pool* boundingBoxPool {  };
 	Pool* partitionTreeNodePool {  };
-	Pool* subNodesPool {  };
-	Pool* partitionEntitiesPool {  };
 	Pool* keyPool {  };
 	_HashMap* entityPartitionNodes {  };
-	_ArrayList* visibleEntities {  };
+	vector<Entity*> visibleEntities {  };
 	PartitionOctTree_PartitionTreeNode* treeRoot {  };
 
 public:
@@ -109,10 +109,10 @@ private:
 	 * @param visible entities
 	 * @return number of look ups
 	 */
-	int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, _ArrayList* visibleEntities);
+	int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities);
 
 public:
-	_ArrayList* getVisibleEntities(Frustum* frustum) override;
+	vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
 
 private:
 
@@ -135,11 +135,11 @@ private:
 	 * @param cbv
 	 * @param entity iterator
 	 */
-	int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple* entityIterator);
+	int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<Entity*>& entityIterator);
 
 public:
-	ArrayListIteratorMultiple* getObjectsNearTo(BoundingVolume* cbv) override;
-	ArrayListIteratorMultiple* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
+	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) override;
 
 	// Generated
 	PartitionOctTree();

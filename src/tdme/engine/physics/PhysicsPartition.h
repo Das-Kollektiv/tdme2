@@ -8,6 +8,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/utils/ArrayListIteratorMultiple.h>
+
 using java::lang::Object;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingVolume;
@@ -61,14 +64,14 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple* getObjectsNearTo(BoundingVolume* cbv) = 0;
+	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple* getObjectsNearTo(Vector3* center) = 0;
+	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) = 0;
 
 	// Generated
 	PhysicsPartition();

@@ -130,22 +130,19 @@ void ShadowMap::render(Light* light, _ArrayList* objects)
 	lightCamera->update(frameBuffer->getWidth(), frameBuffer->getHeight());
 	frameBuffer->enableFrameBuffer();
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
-	for (auto _i = shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())->iterator(); _i->hasNext(); ) {
-		Entity* entity = java_cast< Entity* >(_i->next());
-		{
-			if (dynamic_cast< Object3D* >(entity) != nullptr) {
-				auto object = java_cast< Object3D* >(entity);
-				if (object->isDynamicShadowingEnabled() == false)
-					continue;
+	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
+		if (dynamic_cast< Object3D* >(entity) != nullptr) {
+			auto object = java_cast< Object3D* >(entity);
+			if (object->isDynamicShadowingEnabled() == false)
+				continue;
 
-				visibleObjects->add(object);
-			} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-				auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
-				if (opse->isDynamicShadowingEnabled() == false)
-					continue;
+			visibleObjects->add(object);
+		} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+			auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
+			if (opse->isDynamicShadowingEnabled() == false)
+				continue;
 
-				visibleObjects->addAll(opse->getEnabledObjects());
-			}
+			visibleObjects->addAll(opse->getEnabledObjects());
 		}
 	}
 	computeDepthBiasMVPMatrix();

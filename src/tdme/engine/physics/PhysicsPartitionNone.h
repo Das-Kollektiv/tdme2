@@ -2,11 +2,16 @@
 
 #pragma once
 
+#include <vector>
+
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
+#include <tdme/engine/physics/RigidBody.h>
+
+using std::vector;
 
 using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
@@ -31,8 +36,8 @@ public:
 	typedef PhysicsPartition super;
 
 private:
-	_ArrayList* bodies {  };
-	ArrayListIteratorMultiple* arrayListIteratorMultiple {  };
+	vector<RigidBody*> bodies {  };
+	ArrayListIteratorMultiple<RigidBody*> arrayListIteratorMultiple {  };
 protected:
 
 	/** 
@@ -72,14 +77,14 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple* getObjectsNearTo(BoundingVolume* cbv) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) override;
 
 	// Generated
 

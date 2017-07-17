@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <vector>
+#include <algorithm>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
@@ -10,22 +13,26 @@
 #include <java/util/Iterator.h>
 #include <java/lang/Iterable.h>
 
+using std::vector;
+using std::find;
+
 using java::lang::Object;
 using java::util::Iterator;
 using java::lang::Iterable;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
+
+namespace tdme {
+namespace utils {
 
 /** 
  * Array list iterator for multiple array lists
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utils::ArrayListIteratorMultiple final
-	: public virtual Object
-	, public Iterator
+template<typename T>
+class ArrayListIteratorMultiple final
+	: public Iterator
 	, public Iterable
 {
 
@@ -33,61 +40,87 @@ public:
 	typedef Object super;
 
 private:
-	int32_t vectorIdx {  };
-	int32_t elementIdx {  };
-	int32_t length {  };
-	_ArrayList* arrayLists {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param array lists
-	 */
-	void ctor(_ArrayList* arrayLists);
-
+	int32_t vectorIdx {  0 };
+	int32_t elementIdx {  0 };
+	int32_t length { 0  };
+	vector<vector<T>*> arrayLists {  };
 public:
 
 	/** 
 	 * Clears list of array lists to iterate
 	 */
-	void clear();
+	void clear() {
+		arrayLists.clear();
+	}
 
 	/** 
 	 * Adds array lists to iterate
-	 * @param array lists
+	 * @param array list
 	 */
-	void addArrayList(_ArrayList* _arrayLists);
+	void addArrayList(vector<T>* _arrayList) {
+		if (find(arrayLists.begin(), arrayLists.end(), _arrayList) != arrayLists.end()) return;
+		arrayLists.push_back(_arrayList);
+	}
 
 	/** 
 	 * resets vector iterator for iterating
 	 * @return this vector iterator
 	 */
-	ArrayListIteratorMultiple* reset();
-	bool hasNext() override;
-	Object* next() override;
-	void remove() override;
-	Iterator* iterator() override;
+	ArrayListIteratorMultiple<T>* reset() {
+		this->vectorIdx = 0;
+		this->elementIdx = 0;
+		this->length = 0;
+		for (auto i = 0; i < arrayLists.size(); i++) {
+			this->length += arrayLists.at(i)->size();
+		}
+		return this;
+	}
+
+	bool hasNext() override {
+		auto hasNext = (vectorIdx < arrayLists.size() - 1) || (vectorIdx == arrayLists.size() - 1 && elementIdx < arrayLists.at(vectorIdx)->size());
+		return hasNext;
+	}
+
+	T next() override {
+		auto element = arrayLists.at(vectorIdx)->at(elementIdx++);
+		if (elementIdx == arrayLists.at(vectorIdx)->size()) {
+			elementIdx = 0;
+			vectorIdx++;
+		}
+		return element;
+	}
+
+	void remove() override {
+
+	}
+
+	Iterator* iterator() {
+		reset();
+		return this;
+	}
 
 	/** 
 	 * Clones this iterator
 	 */
-	ArrayListIteratorMultiple* clone() override;
+	ArrayListIteratorMultiple<T>* clone() override {
+		return new ArrayListIteratorMultiple<T>(arrayLists);
+	}
 
 	// Generated
-	ArrayListIteratorMultiple();
-	ArrayListIteratorMultiple(_ArrayList* arrayLists);
-protected:
-	ArrayListIteratorMultiple(const ::default_init_tag&);
+	ArrayListIteratorMultiple() {
+		reset();
+	}
 
+	/**
+	 * Adds array lists to iterate
+	 * @param array list
+	 */
+	ArrayListIteratorMultiple(vector<vector<T>*>& arrayLists) {
+		this->arrayLists = arrayLists;
+		reset();
+	}
 
-public:
-	static ::java::lang::Class *class_();
+};
 
-private:
-	virtual ::java::lang::Class* getClass0();
+};
 };

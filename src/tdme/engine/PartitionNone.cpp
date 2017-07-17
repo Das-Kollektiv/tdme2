@@ -1,10 +1,14 @@
 // Generated from /tdme/src/tdme/engine/PartitionNone.java
 #include <tdme/engine/PartitionNone.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::engine::PartitionNone;
 using java::lang::Object;
@@ -26,15 +30,13 @@ PartitionNone::PartitionNone()
 
 void PartitionNone::init()
 {
-	entities = new _ArrayList();
-	arrayListIteratorMultiple = new ArrayListIteratorMultiple();
 }
 
 void PartitionNone::ctor()
 {
 	super::ctor();
 	init();
-	arrayListIteratorMultiple->addArrayList(entities);
+	arrayListIteratorMultiple.addArrayList(&entities);
 }
 
 void PartitionNone::reset()
@@ -43,10 +45,11 @@ void PartitionNone::reset()
 
 void PartitionNone::addEntity(Entity* entity)
 {
-	if (entities->contains(entity))
-		return;
+	for (int i = 0; i < entities.size(); i++) {
+		if (entities.at(i) == entity) return;
+	}
 
-	entities->add(entity);
+	entities.push_back(entity);
 }
 
 void PartitionNone::updateEntity(Entity* entity)
@@ -55,22 +58,27 @@ void PartitionNone::updateEntity(Entity* entity)
 
 void PartitionNone::removeEntity(Entity* entity)
 {
-	entities->remove(static_cast< Object* >(entity));
+	for (int i = 0; i < entities.size(); i++) {
+		if (entities.at(i) == entity) {
+			entities.erase(entities.begin() + i);
+			return;
+		}
+	}
 }
 
-_ArrayList* PartitionNone::getVisibleEntities(Frustum* frustum)
+const vector<Entity*>* PartitionNone::getVisibleEntities(Frustum* frustum)
 {
-	return entities;
+	return &entities;
 }
 
-ArrayListIteratorMultiple* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)
+ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)
 {
-	return arrayListIteratorMultiple;
+	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple* PartitionNone::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(Vector3* center)
 {
-	return arrayListIteratorMultiple;
+	return &arrayListIteratorMultiple;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

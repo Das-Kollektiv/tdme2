@@ -8,6 +8,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+#include <tdme/utils/ArrayListIteratorMultiple.h>
+
 using java::lang::Object;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
@@ -63,21 +65,21 @@ public:
 	 * @param frustum
 	 * @return visible entities
 	 */
-	virtual _ArrayList* getVisibleEntities(Frustum* frustum) = 0;
+	virtual const vector<Entity*>* getVisibleEntities(Frustum* frustum) = 0;
 
 	/** 
 	 * Get objects near to bounding volume
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple* getObjectsNearTo(BoundingVolume* cbv) = 0;
+	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
 
 	/** 
 	 * Get objects near to given world position
 	 * @param center
 	 * @return objects near to given world position
 	 */
-	virtual ArrayListIteratorMultiple* getObjectsNearTo(Vector3* center) = 0;
+	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) = 0;
 
 	// Generated
 	Partition();

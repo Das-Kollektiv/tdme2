@@ -49,6 +49,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
@@ -574,21 +575,18 @@ void Engine::computeTransformations()
 			}
 		}
 	}
-	for (auto _i = partition->getVisibleEntities(camera->getFrustum())->iterator(); _i->hasNext(); ) {
-		Entity* entity = java_cast< Entity* >(_i->next());
-		{
-			if (dynamic_cast< Object3D* >(entity) != nullptr) {
-				auto object = java_cast< Object3D* >(entity);
-				object->computeTransformations();
-				visibleObjects->add(object);
-			} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-				auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
-				visibleObjects->addAll(opse->getEnabledObjects());
-				visibleOpses->add(opse);
-			} else if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-				auto ppse = java_cast< PointsParticleSystemEntity* >(entity);
-				visiblePpses->add(ppse);
-			}
+	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
+		if (dynamic_cast< Object3D* >(entity) != nullptr) {
+			auto object = java_cast< Object3D* >(entity);
+			object->computeTransformations();
+			visibleObjects->add(object);
+		} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+			auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
+			visibleObjects->addAll(opse->getEnabledObjects());
+			visibleOpses->add(opse);
+		} else if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
+			auto ppse = java_cast< PointsParticleSystemEntity* >(entity);
+			visiblePpses->add(ppse);
 		}
 	}
 	renderingComputedTransformations = true;

@@ -1,10 +1,17 @@
 // Generated from /tdme/src/tdme/engine/physics/PhysicsPartitionNone.java
 #include <tdme/engine/physics/PhysicsPartitionNone.h>
 
+#include <vector>
+#include <algorithm>
+
 #include <java/lang/Object.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/_ArrayList.h>
+
+using std::find;
+using std::vector;
+using std::remove;
 
 using tdme::engine::physics::PhysicsPartitionNone;
 using java::lang::Object;
@@ -26,8 +33,7 @@ PhysicsPartitionNone::PhysicsPartitionNone()
 
 void PhysicsPartitionNone::init()
 {
-	bodies = new _ArrayList();
-	arrayListIteratorMultiple = new ArrayListIteratorMultiple();
+	arrayListIteratorMultiple.addArrayList(&bodies);
 }
 
 void PhysicsPartitionNone::ctor()
@@ -42,10 +48,8 @@ void PhysicsPartitionNone::reset()
 
 void PhysicsPartitionNone::addRigidBody(RigidBody* rigidBody)
 {
-	if (bodies->contains(rigidBody))
-		return;
-
-	bodies->add(rigidBody);
+	if (find(bodies.begin(), bodies.end(), rigidBody) != bodies.end()) return;
+	bodies.push_back(rigidBody);
 }
 
 void PhysicsPartitionNone::updateRigidBody(RigidBody* rigidBody)
@@ -54,21 +58,17 @@ void PhysicsPartitionNone::updateRigidBody(RigidBody* rigidBody)
 
 void PhysicsPartitionNone::removeRigidBody(RigidBody* rigidBody)
 {
-	bodies->remove(static_cast< Object* >(rigidBody));
+	bodies.erase(remove(bodies.begin(), bodies.end(), rigidBody), bodies.end());
 }
 
-ArrayListIteratorMultiple* PhysicsPartitionNone::getObjectsNearTo(BoundingVolume* cbv)
+ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(BoundingVolume* cbv)
 {
-	arrayListIteratorMultiple->clear();
-	arrayListIteratorMultiple->addArrayList(bodies);
-	return arrayListIteratorMultiple;
+	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple* PhysicsPartitionNone::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(Vector3* center)
 {
-	arrayListIteratorMultiple->clear();
-	arrayListIteratorMultiple->addArrayList(bodies);
-	return arrayListIteratorMultiple;
+	return &arrayListIteratorMultiple;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
