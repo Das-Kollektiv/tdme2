@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DBase.java
 #include <tdme/engine/subsystems/object/Object3DBase.h>
 
+#include <vector>
+
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -25,13 +27,14 @@
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using java::lang::Math;
@@ -58,7 +61,6 @@ using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
@@ -129,7 +131,6 @@ void Object3DBase::ctor(Model* model, bool useMeshManager, Engine_AnimationProce
 	this->overlayAnimationsById = new _HashMap();
 	this->overlayAnimationsByJointId = new _HashMap();
 	this->usesMeshManager = useMeshManager;
-	this->overlayAnimationsToRemove = new _ArrayList();
 	transformationsMatrices = new _HashMap();
 	parentTransformationsMatrix = new Matrix4x4();
 	transformationsMatrix = super::getTransformationsMatrix();
@@ -216,17 +217,17 @@ void Object3DBase::removeOverlayAnimation(AnimationState* animationState)
 
 void Object3DBase::removeOverlayAnimationsFinished()
 {
-	overlayAnimationsToRemove->clear();
+	vector<AnimationState*> overlayAnimationsToRemove;
 	for (auto _i = overlayAnimationsById->getValuesIterator()->iterator(); _i->hasNext(); ) {
 		AnimationState* animationState = java_cast< AnimationState* >(_i->next());
 		{
 			if (animationState->finished == true) {
-				overlayAnimationsToRemove->add(animationState);
+				overlayAnimationsToRemove.push_back(animationState);
 			}
 		}
 	}
-	for (auto i = 0; i < overlayAnimationsToRemove->size(); i++) {
-		removeOverlayAnimation(java_cast< AnimationState* >(overlayAnimationsToRemove->get(i)));
+	for (auto animationState: overlayAnimationsToRemove) {
+		removeOverlayAnimation(animationState);
 	}
 }
 
@@ -398,18 +399,20 @@ void Object3DBase::computeTransformations()
 
 TriangleArray* Object3DBase::getFaceTriangles()
 {
-	auto triangles = new _ArrayList();
+	vector<Triangle*> triangles;
 	for (auto object3DGroup : *object3dGroups) {
 		auto groupVerticesTransformed = object3DGroup->mesh->vertices;
 		for (auto facesEntity : *object3DGroup->group->getFacesEntities()) 
-						for (auto face : *facesEntity->getFaces()) {
-				auto faceVertexIndices = face->getVertexIndices();
-				triangles->add(new Triangle((*groupVerticesTransformed)[(*faceVertexIndices)[0]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[1]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[2]]->clone()));
-			}
-
+		for (auto face : *facesEntity->getFaces()) {
+			auto faceVertexIndices = face->getVertexIndices();
+			triangles.push_back(new Triangle((*groupVerticesTransformed)[(*faceVertexIndices)[0]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[1]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[2]]->clone()));
+		}
 	}
-	auto triangleArray = new TriangleArray(triangles->size());
-	triangles->toArray(triangleArray);
+	auto triangleArray = new TriangleArray(triangles.size());
+	int i = 0;
+	for (auto triangle: triangles) {
+		triangleArray->set(i++, triangle);
+	}
 	return triangleArray;
 }
 
