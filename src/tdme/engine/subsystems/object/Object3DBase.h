@@ -24,7 +24,6 @@ using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 using java::lang::Object;
 
@@ -96,7 +95,6 @@ public: /* protected */
 	Engine_AnimationProcessingTarget* animationProcessingTarget {  };
 
 private:
-	_ArrayList* overlayAnimationsToRemove {  };
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
 protected:
 
