@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -128,14 +132,15 @@ public:
 
 	/** 
 	 * Create shadow maps
+	 * @param objects
 	 */
-	void createShadowMaps(_ArrayList* objects);
+	void createShadowMaps(const vector<Object3D*>& objects);
 
 	/** 
 	 * Render shadow maps
 	 * @param visible objects
 	 */
-	void renderShadowMaps(_ArrayList* visibleObjects);
+	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
 
 	/** 
 	 * Dispose shadow maps

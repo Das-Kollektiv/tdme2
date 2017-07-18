@@ -1,6 +1,11 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DVBORenderer.java
 #include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 
+#include <algorithm>
+#include <map>
+#include <vector>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -41,8 +46,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Key.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/QuickSort.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
@@ -50,6 +53,12 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::find;
+using std::map;
+using std::sort;
+using std::vector;
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DVBORenderer;
 using java::lang::Object;
@@ -92,8 +101,6 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::QuickSort;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -142,13 +149,10 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 
 void Object3DVBORenderer::init()
 {
-	visibleObjectsByModels = nullptr;
 	keyPool = nullptr;
-	groupTransparentRenderFaces = nullptr;
 	transparentRenderFacesPool = nullptr;
 	transparentRenderFacesGroups = nullptr;
 	pseKeyPool = new Object3DVBORenderer_1(this);
-	pseKeys = new _ArrayList();
 	pseTransparentRenderPointsPool = nullptr;
 	psePointBatchVBORenderer = nullptr;
 	modelViewMatrixBackup = new Matrix4x4();
@@ -166,10 +170,7 @@ void Object3DVBORenderer::ctor(Engine* engine, GLRenderer* renderer)
 	init();
 	this->engine = engine;
 	this->renderer = renderer;
-	trianglesBatchVBORenderers = new _ArrayList();
-	visibleObjectsByModels = new _HashMap();
 	keyPool = new Object3DVBORenderer_Object3DVBORenderer_2(this);
-	groupTransparentRenderFaces = new _ArrayList();
 	transparentRenderFacesGroupPool = new Object3DVBORenderer_Object3DVBORenderer_3(this);
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	transparentRenderFacesGroups = new _HashMap();
@@ -184,12 +185,9 @@ void Object3DVBORenderer::initialize()
 
 void Object3DVBORenderer::dispose()
 {
-	for (auto _i = trianglesBatchVBORenderers->iterator(); _i->hasNext(); ) {
-		BatchVBORendererTriangles* batchVBORenderer = java_cast< BatchVBORendererTriangles* >(_i->next());
-		{
-			batchVBORenderer->dispose();
-			batchVBORenderer->release();
-		}
+	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
+		batchVBORenderer->dispose();
+		batchVBORenderer->release();
 	}
 	psePointBatchVBORenderer->dispose();
 }
@@ -197,21 +195,15 @@ void Object3DVBORenderer::dispose()
 BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer()
 {
 	auto i = 0;
-	for (auto _i = trianglesBatchVBORenderers->iterator(); _i->hasNext(); ) {
-		BatchVBORendererTriangles* batchVBORenderer = java_cast< BatchVBORendererTriangles* >(_i->next());
-		{
-			if (batchVBORenderer->acquire())
-				return batchVBORenderer;
-
-			i++;
-		}
+	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
+		if (batchVBORenderer->acquire()) return batchVBORenderer;
+		i++;
 	}
 	if (i < BATCHVBORENDERER_MAX) {
 		auto batchVBORenderer = new BatchVBORendererTriangles(renderer, i);
 		batchVBORenderer->initialize();
-		trianglesBatchVBORenderers->add(batchVBORenderer);
-		if (batchVBORenderer->acquire())
-			return batchVBORenderer;
+		trianglesBatchVBORenderers.push_back(batchVBORenderer);
+		if (batchVBORenderer->acquire()) return batchVBORenderer;
 
 	}
 	_Console::println(static_cast< Object* >(u"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"_j));
@@ -220,58 +212,49 @@ BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer
 
 void Object3DVBORenderer::reset()
 {
-	visibleObjectsByModels->clear();
+	visibleObjectsByModels.clear();
 }
 
-void Object3DVBORenderer::render(_ArrayList* objects, bool renderTransparentFaces)
+void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces)
 {
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
-	for (auto objectIdx = 0; objectIdx < objects->size(); objectIdx++) {
-		auto object = java_cast< Object3D* >(objects->get(objectIdx));
+	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+		auto object = java_cast< Object3D* >(objects.at(objectIdx));
 		auto modelId = object->getModel()->getId();
-		auto visibleObjectsByModel = java_cast< _ArrayList* >(visibleObjectsByModels->get(modelId));
-		if (visibleObjectsByModel == nullptr) {
-			visibleObjectsByModel = new _ArrayList();
-			visibleObjectsByModels->put(modelId, visibleObjectsByModel);
-		}
-		visibleObjectsByModel->add(object);
+		auto& visibleObjectsByModel = visibleObjectsByModels[modelId->getCPPWString()];
+		visibleObjectsByModel.push_back(object);
 	}
-	for (auto _i = visibleObjectsByModels->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		_ArrayList* objectsByModel = java_cast< _ArrayList* >(_i->next());
-		{
-			if (objectsByModel->size() > 0) {
-				renderObjectsOfSameType(objectsByModel, renderTransparentFaces);
-				objectsByModel->clear();
-			}
+	for (auto& objectsByModelIt: visibleObjectsByModels) {
+		auto& objectsByModel = objectsByModelIt.second;
+		if (objectsByModel.size() > 0) {
+			renderObjectsOfSameType(objectsByModel, renderTransparentFaces);
+			objectsByModel.clear();
 		}
 	}
 	auto transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
 	if (transparentRenderFaces->size() > 0) {
-		QuickSort::sort(transparentRenderFaces);
+		sort(transparentRenderFaces->begin(), transparentRenderFaces->end(), TransparentRenderFace::compare);
 		renderer->disableDepthBuffer();
 		renderer->disableCulling();
 		renderer->enableBlending();
 		renderer->setFrontFace(renderer->FRONTFACE_CCW);
-		for (auto _i = transparentRenderFacesPool->getTransparentRenderFaces()->iterator(); _i->hasNext(); ) {
-			TransparentRenderFace* transparentRenderFace = java_cast< TransparentRenderFace* >(_i->next());
-			{
-				if (groupTransparentRenderFaces->size() == 0) {
-					groupTransparentRenderFaces->add(transparentRenderFace);
-				} else if (groupTransparentRenderFaces->size() > 0) {
-					if (java_cast< TransparentRenderFace* >(groupTransparentRenderFaces->get(0))->object3DGroup == transparentRenderFace->object3DGroup) {
-						groupTransparentRenderFaces->add(transparentRenderFace);
-					} else {
-						prepareTransparentFaces(groupTransparentRenderFaces);
-						groupTransparentRenderFaces->clear();
-						groupTransparentRenderFaces->add(transparentRenderFace);
-					}
+		for (auto transparentRenderFace: *transparentRenderFacesPool->getTransparentRenderFaces()) {
+			if (groupTransparentRenderFaces.size() == 0) {
+				groupTransparentRenderFaces.push_back(transparentRenderFace);
+			} else if (groupTransparentRenderFaces.size() > 0) {
+				if (groupTransparentRenderFaces.at(0)->object3DGroup == transparentRenderFace->object3DGroup) {
+					groupTransparentRenderFaces.push_back(transparentRenderFace);
+				} else {
+					prepareTransparentFaces(groupTransparentRenderFaces);
+					groupTransparentRenderFaces.clear();
+					groupTransparentRenderFaces.push_back(transparentRenderFace);
 				}
 			}
 		}
-		if (groupTransparentRenderFaces->size() > 0) {
+		if (groupTransparentRenderFaces.size() > 0) {
 			prepareTransparentFaces(groupTransparentRenderFaces);
-			groupTransparentRenderFaces->clear();
+			groupTransparentRenderFaces.clear();
 		}
 		renderTransparentFacesGroups(transparentRenderFacesGroups);
 		renderer->disableBlending();
@@ -280,9 +263,9 @@ void Object3DVBORenderer::render(_ArrayList* objects, bool renderTransparentFace
 	}
 }
 
-void Object3DVBORenderer::prepareTransparentFaces(_ArrayList* transparentRenderFaces)
+void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
 {
-	auto object3DGroup = java_cast< TransparentRenderFace* >(transparentRenderFaces->get(0))->object3DGroup;
+	auto object3DGroup = transparentRenderFaces.at(0)->object3DGroup;
 	auto object3D = java_cast< Object3D* >(object3DGroup->object);
 	modelViewMatrix = (object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(object3DGroup->groupTransformationsMatrix))->multiply(object3D->transformationsMatrix)->multiply(renderer->getModelViewMatrix());
 	auto model = (java_cast< Object3D* >(object3DGroup->object))->getModel();
@@ -294,8 +277,8 @@ void Object3DVBORenderer::prepareTransparentFaces(_ArrayList* transparentRenderF
 	Material* material = nullptr;
 	auto textureCoordinates = false;
 	auto transparentRenderFacesGroupKey = java_cast< Key* >(keyPool->allocate());
-	for (auto i = 0; i < transparentRenderFaces->size(); i++) {
-		auto transparentRenderFace = java_cast< TransparentRenderFace* >(transparentRenderFaces->get(i));
+	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
+		auto transparentRenderFace = transparentRenderFaces.at(i);
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
 		if (facesEntity != (*facesEntities)[facesEntityIdx]) {
 			facesEntity = (*facesEntities)[facesEntityIdx];
@@ -350,10 +333,9 @@ void Object3DVBORenderer::releaseTransparentFacesGroups()
 	transparentRenderFacesGroups->clear();
 }
 
-void Object3DVBORenderer::renderObjectsOfSameType(_ArrayList* objects, bool collectTransparentFaces)
+void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces)
 {
-	for (auto i = 0; i < objects->size(); i++) {
-		auto object = java_cast< Object3D* >(objects->get(i));
+	for (auto object: objects) {
 		for (auto j = 0; j < object->object3dGroups->length; j++) {
 			auto object3DGroup = (*object->object3dGroups)[j];
 			(java_cast< Object3DGroupVBORenderer* >(object3DGroup->renderer))->preRender(this);
@@ -362,7 +344,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(_ArrayList* objects, bool coll
 	auto shadowMapping = engine->getShadowMapping();
 	modelViewMatrixBackup->set(renderer->getModelViewMatrix());
 	auto currentFrontFace = -1;
-	auto firstObject = java_cast< Object3D* >(objects->get(0));
+	auto firstObject = objects.at(0);
 	int32_tArray* boundVBOBaseIds = nullptr;
 	int32_tArray* boundVBOTangentBitangentIds = nullptr;
 	int32_tArray* boundSkinningIds = nullptr;
@@ -383,9 +365,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(_ArrayList* objects, bool coll
 
 			}
 			if (transparentFacesEntity == true) {
-				auto objectCount = objects->size();
+				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = java_cast< Object3D* >(objects->get(objectIdx));
+					auto object = objects.at(objectIdx);
 					auto _object3DGroup = (*object->object3dGroups)[object3DGroupIdx];
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
 					if (collectTransparentFaces == true) {
@@ -406,9 +388,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(_ArrayList* objects, bool coll
 					renderer->renderingTexturingClientState = false;
 				}
 			}
-			auto objectCount = objects->size();
+			auto objectCount = objects.size();
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-				auto object = java_cast< Object3D* >(objects->get(objectIdx));
+				auto object = objects.at(objectIdx);
 				auto _object3DGroup = (*object->object3dGroups)[object3DGroupIdx];
 				if (objectIdx == 0) {
 					setupMaterial(_object3DGroup, faceEntityIdx);
@@ -532,9 +514,9 @@ void Object3DVBORenderer::createPseKey(Key* key, Color4* effectColorAdd, Color4*
 	key->append((sort == true ? u"DS"_j : u"NS"_j));
 }
 
-void Object3DVBORenderer::render(_ArrayList* visiblePses)
+void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visiblePses)
 {
-	if (visiblePses->size() == 0)
+	if (visiblePses.size() == 0)
 		return;
 
 	modelViewMatrix->set(renderer->getModelViewMatrix());
@@ -549,43 +531,47 @@ void Object3DVBORenderer::render(_ArrayList* visiblePses)
 	}
 	renderer->getModelViewMatrix()->identity();
 	renderer->onUpdateModelViewMatrix();
-	for (auto i = 0; i < visiblePses->size(); i++) {
-		PointsParticleSystemEntityInternal* ppse = java_cast< PointsParticleSystemEntity* >(visiblePses->get(i));
+	for (auto i = 0; i < visiblePses.size(); i++) {
+		PointsParticleSystemEntityInternal* ppse = visiblePses.at(i);
 		auto key = java_cast< Key* >(pseKeyPool->allocate());
 		createPseKey(key, ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
-		if (pseKeys->contains(key) == false) {
-			pseKeys->add(key);
+		bool haveKey = false;
+		for (auto pseKey: pseKeys) {
+			if (pseKey->equals(key)) {
+				haveKey = true;
+				break;
+			}
+		}
+		if (haveKey == false) {
+			pseKeys.push_back(key);
 		} else {
 			pseKeyPool->release(key);
 		}
 	}
 	auto innerPseKey = java_cast< Key* >(pseKeyPool->allocate());
-	for (auto i = 0; i < pseKeys->size(); i++) {
-		auto pseKey = java_cast< Key* >(pseKeys->get(i));
+	for (auto i = 0; i < pseKeys.size(); i++) {
+		auto pseKey = pseKeys.at(i);
 		auto pseSort = false;
 		PointsParticleSystemEntityInternal* currentPse = nullptr;
-		for (auto j = 0; j < visiblePses->size(); j++) {
-			PointsParticleSystemEntityInternal* ppse = java_cast< PointsParticleSystemEntity* >(visiblePses->get(j));
+		for (auto j = 0; j < visiblePses.size(); j++) {
+			PointsParticleSystemEntityInternal* ppse = visiblePses.at(j);
 			createPseKey(innerPseKey, ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
 			if (pseKey->equals(innerPseKey) == false) {
 				continue;
 			} else {
-				currentPse = java_cast< PointsParticleSystemEntity* >(visiblePses->get(j));
+				currentPse = visiblePses.at(j);
 				pseSort = ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false;
 			}
 			pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
 		}
-		if (pseSort == true)
-			pseTransparentRenderPointsPool->sort();
 
-		for (auto _i = pseTransparentRenderPointsPool->getTransparentRenderPoints()->iterator(); _i->hasNext(); ) {
-			TransparentRenderPoint* point = java_cast< TransparentRenderPoint* >(_i->next());
-			{
-				if (point->acquired == false)
-					break;
+		if (pseSort == true) pseTransparentRenderPointsPool->sort();
 
-				psePointBatchVBORenderer->addPoint(point);
-			}
+		for (auto point: *pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
+			if (point->acquired == false)
+				break;
+
+			psePointBatchVBORenderer->addPoint(point);
 		}
 		renderer->setEffectColorAdd(currentPse->getEffectColorAdd()->getArray());
 		renderer->setEffectColorMul(currentPse->getEffectColorMul()->getArray());
@@ -600,10 +586,10 @@ void Object3DVBORenderer::render(_ArrayList* visiblePses)
 		psePointBatchVBORenderer->clear();
 		pseTransparentRenderPointsPool->reset();
 	}
-	for (auto i = 0; i < pseKeys->size(); i++) {
-		pseKeyPool->release(java_cast< Key* >(pseKeys->get(i)));
+	for (auto i = 0; i < pseKeys.size(); i++) {
+		pseKeyPool->release(pseKeys.at(i));
 	}
-	pseKeys->clear();
+	pseKeys.clear();
 	pseKeyPool->release(innerPseKey);
 	renderer->disableBlending();
 	if (depthBuffer == false)

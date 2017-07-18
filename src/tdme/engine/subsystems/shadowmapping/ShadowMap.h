@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -39,7 +43,7 @@ public: /* protected */
 	static constexpr int32_t TEXTUREUNIT { 4 };
 
 private:
-	_ArrayList* visibleObjects {  };
+	vector<Object3D*> visibleObjects {  };
 	ShadowMapping* shadowMapping {  };
 	Camera* lightCamera {  };
 	Vector3* lightDirection {  };
@@ -107,7 +111,7 @@ public: /* protected */
 	 * @param gl
 	 * @param objects
 	 */
-	void render(Light* light, _ArrayList* objects);
+	void render(Light* light, const vector<Object3D*>& objects);
 
 	/** 
 	 * Computes shadow texture matrix and stores it

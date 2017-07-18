@@ -231,11 +231,8 @@ void Engine::ctor()
 	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
 	entitiesById = new _HashMap();
-	objects = new _ArrayList();
-	visibleObjects = new _ArrayList();
 	visibleOpses = new _ArrayList();
 	ppses = new _ArrayList();
-	visiblePpses = new _ArrayList();
 	particleSystemEntitiesById = new _HashMap();
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
@@ -548,11 +545,11 @@ void Engine::initRendering()
 {
 	timing->updateTiming();
 	camera->update(width, height);
-	objects->clear();
+	objects.clear();
 	ppses->clear();
-	visibleObjects->clear();
+	visibleObjects.clear();
 	visibleOpses->clear();
-	visiblePpses->clear();
+	visiblePpses.clear();
 	renderingInitiated = true;
 }
 
@@ -579,14 +576,18 @@ void Engine::computeTransformations()
 		if (dynamic_cast< Object3D* >(entity) != nullptr) {
 			auto object = java_cast< Object3D* >(entity);
 			object->computeTransformations();
-			visibleObjects->add(object);
-		} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+			visibleObjects.push_back(object);
+		} else
+		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
 			auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
-			visibleObjects->addAll(opse->getEnabledObjects());
+			for (auto object3D: *opse->getEnabledObjects()) {
+				visibleObjects.push_back(object3D);
+			}
 			visibleOpses->add(opse);
-		} else if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
+		} else
+		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
 			auto ppse = java_cast< PointsParticleSystemEntity* >(entity);
-			visiblePpses->add(ppse);
+			visiblePpses.push_back(ppse);
 		}
 	}
 	renderingComputedTransformations = true;
@@ -679,8 +680,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
-	for (auto i = 0; i < visibleObjects->size(); i++) {
-		auto entity = java_cast< Object3D* >(visibleObjects->get(i));
+	for (auto entity: visibleObjects) {
 		if (entity->isPickable() == false)
 			continue;
 
@@ -718,8 +718,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
-	for (auto i = 0; i < visiblePpses->size(); i++) {
-		auto entity = java_cast< PointsParticleSystemEntity* >(visiblePpses->get(i));
+	for (auto entity: visiblePpses) {
 		if (entity->isPickable() == false)
 			continue;
 

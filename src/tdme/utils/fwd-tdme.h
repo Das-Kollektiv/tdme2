@@ -7,7 +7,6 @@ namespace utils {
 		class Key;
 		class MutableString;
 		class Pool;
-		class QuickSort;
 		class StringConverter;
 		class _ArrayList;
 		class _Console;

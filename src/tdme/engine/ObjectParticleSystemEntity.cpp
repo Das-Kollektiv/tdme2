@@ -1,10 +1,14 @@
 // Generated from /tdme/src/tdme/engine/ObjectParticleSystemEntity.java
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 
+#include <vector>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
@@ -43,9 +47,9 @@ BoundingBox* ObjectParticleSystemEntity::getBoundingBoxTransformed()
 	return boundingBoxTransformed;
 }
 
-_ArrayList* ObjectParticleSystemEntity::getEnabledObjects()
+const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
 {
-	return enabledObjects;
+	return &enabledObjects;
 }
 
 void ObjectParticleSystemEntity::fromTransformations(Transformations* transformations)

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
@@ -9,11 +11,12 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 
@@ -30,7 +33,7 @@ public:
 	typedef Object super;
 
 private:
-	_ArrayList* transparentRenderPoints {  };
+	vector<TransparentRenderPoint*> transparentRenderPoints {  };
 	int32_t poolIdx {  };
 protected:
 
@@ -62,7 +65,7 @@ public:
 	/** 
 	 * @return transparent render points vector
 	 */
-	_ArrayList* getTransparentRenderPoints();
+	const vector<TransparentRenderPoint*>* getTransparentRenderPoints();
 
 	/** 
 	 * Sort transparent render points

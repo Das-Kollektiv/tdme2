@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.java
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
 
+#include <algorithm>
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -25,6 +28,9 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
+using std::remove;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using java::lang::Object;
@@ -91,7 +97,6 @@ void ObjectParticleSystemEntityInternal::ctor(String* id, Model* model, Vector3*
 	this->model = model;
 	this->autoEmit = autoEmit;
 	this->enableDynamicShadows = enableDynamicShadows;
-	this->enabledObjects = new _ArrayList();
 	particles = new ParticleArray(maxCount);
 	for (auto i = 0; i < particles->length; i++) {
 		particles->set(i, new Particle());
@@ -138,7 +143,7 @@ bool ObjectParticleSystemEntityInternal::isEnabled()
 
 bool ObjectParticleSystemEntityInternal::isActive()
 {
-	return enabledObjects->size() > 0;
+	return enabledObjects.size() > 0;
 }
 
 void ObjectParticleSystemEntityInternal::setEnabled(bool enabled)
@@ -239,7 +244,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		object->setEnabled(true);
 		object->getEffectColorAdd()->set(static_cast< Color4Base* >(effectColorAdd));
 		object->getEffectColorMul()->set(static_cast< Color4Base* >(effectColorMul));
-		enabledObjects->add(object);
+		enabledObjects.push_back(object);
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
 			break;
@@ -264,7 +269,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		if (particle->lifeTimeCurrent >= particle->lifeTimeMax) {
 			particle->active = false;
 			object->setEnabled(false);
-			enabledObjects->remove(static_cast< Object* >(object));
+			enabledObjects.erase(remove(enabledObjects.begin(), enabledObjects.end(), object), enabledObjects.end());
 			continue;
 		}
 		if (particle->mass > MathTools::EPSILON)
@@ -327,8 +332,10 @@ String* ObjectParticleSystemEntityInternal::toString()
 		->append(Arrays::toString(static_cast< ObjectArray* >(particles)))
 		->append(u", objects="_j)
 		->append(Arrays::toString(static_cast< ObjectArray* >(objects)))
+		/*
 		->append(u", enabledObjects="_j)
 		->append(static_cast< Object* >(enabledObjects))
+		*/
 		->append(u", boundingBox="_j)
 		->append(static_cast< Object* >(boundingBox))
 		->append(u", boundingBoxTransformed="_j)

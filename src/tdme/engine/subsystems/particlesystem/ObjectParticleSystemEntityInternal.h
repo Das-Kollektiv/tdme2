@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -14,6 +16,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+
+using std::vector;
 
 using tdme::engine::Transformations;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
@@ -87,7 +91,7 @@ public: /* protected */
 	bool enableDynamicShadows {  };
 	ParticleArray* particles {  };
 	Object3DArray* objects {  };
-	_ArrayList* enabledObjects {  };
+	vector<Object3D*> enabledObjects {  };
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
 	Transformations* inverseTransformation {  };

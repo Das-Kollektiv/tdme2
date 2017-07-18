@@ -24,19 +24,9 @@ TransparentRenderFace::TransparentRenderFace()
 	ctor();
 }
 
-int32_t TransparentRenderFace::compareTo(TransparentRenderFace* face2)
+bool TransparentRenderFace::compare(TransparentRenderFace* face1, TransparentRenderFace* face2)
 {
-	if (distanceFromCamera > face2->distanceFromCamera)
-		return -1;
-	else if (distanceFromCamera < face2->distanceFromCamera)
-		return +1;
-	else
-		return 0;
-}
-
-int32_t TransparentRenderFace::compareTo(Object* arg0)
-{ 
-	return compareTo(dynamic_cast< TransparentRenderFace* >(arg0));
+	return face1->distanceFromCamera > face2->distanceFromCamera;
 }
 
 String* TransparentRenderFace::toString()

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -19,6 +21,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::io::InputStream;
@@ -115,17 +119,17 @@ private:
 	_HashMap* entitiesById {  };
 
 public: /* protected */
-	_ArrayList* objects {  };
+	vector<Object3D*> objects {  };
 
 private:
-	_ArrayList* visibleObjects {  };
+	vector<Object3D*> visibleObjects {  };
 	_ArrayList* visibleOpses {  };
 
 public: /* protected */
 	_ArrayList* ppses {  };
 
 private:
-	_ArrayList* visiblePpses {  };
+	vector<PointsParticleSystemEntity*> visiblePpses {  };
 
 public: /* protected */
 	Object3DVBORenderer* object3DVBORenderer {  };

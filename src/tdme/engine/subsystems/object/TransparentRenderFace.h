@@ -6,7 +6,6 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <java/lang/Object.h>
-#include <java/lang/Comparable.h>
 
 using java::lang::Object;
 using java::lang::Comparable;
@@ -23,7 +22,6 @@ struct default_init_tag;
  */
 class tdme::engine::subsystems::object::TransparentRenderFace final
 	: public virtual Object
-	, public Comparable
 {
 
 public:
@@ -36,7 +34,7 @@ public: /* protected */
 	float distanceFromCamera {  };
 
 public:
-	int32_t compareTo(TransparentRenderFace* face2);
+	static bool compare(TransparentRenderFace* face1, TransparentRenderFace* face2);
 	String* toString() override;
 
 	// Generated
@@ -47,7 +45,6 @@ protected:
 
 public:
 	static ::java::lang::Class *class_();
-	virtual int32_t compareTo(Object* arg0) override;
 
 private:
 	virtual ::java::lang::Class* getClass0();

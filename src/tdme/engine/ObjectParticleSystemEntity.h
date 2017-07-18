@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -13,6 +15,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
 #include <tdme/engine/Entity.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
@@ -66,7 +70,7 @@ public:
 	/** 
 	 * @return enabled objects
 	 */
-	_ArrayList* getEnabledObjects();
+	const vector<Object3D*>* getEnabledObjects();
 	void fromTransformations(Transformations* transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;

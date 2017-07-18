@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/shadowmapping/ShadowMap.java
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -18,7 +20,8 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using java::lang::Object;
@@ -38,7 +41,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -65,7 +67,6 @@ constexpr int32_t ShadowMap::TEXTUREUNIT;
 void ShadowMap::ctor(ShadowMapping* shadowMapping, int32_t width, int32_t height)
 {
 	super::ctor();
-	visibleObjects = new _ArrayList();
 	this->shadowMapping = shadowMapping;
 	lightCamera = new Camera(shadowMapping->renderer);
 	frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
@@ -110,9 +111,9 @@ Camera* ShadowMap::getCamera()
 	return lightCamera;
 }
 
-void ShadowMap::render(Light* light, _ArrayList* objects)
+void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
 {
-	visibleObjects->clear();
+	visibleObjects.clear();
 	auto camera = shadowMapping->engine->getCamera();
 	auto lightEyeDistance = lightDirection->set(camera->getLookAt())->sub(camera->getLookFrom())->computeLength() * shadowMapping->lightEyeDistanceScale;
 	lightDirection->set(light->getSpotDirection())->normalize();
@@ -136,13 +137,16 @@ void ShadowMap::render(Light* light, _ArrayList* objects)
 			if (object->isDynamicShadowingEnabled() == false)
 				continue;
 
-			visibleObjects->add(object);
-		} else if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+			visibleObjects.push_back(object);
+		} else
+		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
 			auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
 			if (opse->isDynamicShadowingEnabled() == false)
 				continue;
 
-			visibleObjects->addAll(opse->getEnabledObjects());
+			for (auto object3D: *opse->getEnabledObjects()) {
+				visibleObjects.push_back(object3D);
+			}
 		}
 	}
 	computeDepthBiasMVPMatrix();

@@ -26,25 +26,19 @@ TransparentRenderPoint::TransparentRenderPoint()
 	ctor();
 }
 
-int32_t TransparentRenderPoint::compareTo(TransparentRenderPoint* point2)
+bool TransparentRenderPoint::compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2)
 {
-	if (acquired == false && point2->acquired == false)
-		return 0;
-	else if (acquired == false)
-		return +1;
-	else if (point2->acquired == false)
-		return -1;
-	else if (distanceFromCamera > point2->distanceFromCamera)
-		return -1;
-	else if (distanceFromCamera < point2->distanceFromCamera)
-		return +1;
-	else
-		return 0;
-}
-
-int32_t TransparentRenderPoint::compareTo(Object* arg0)
-{ 
-	return compareTo(dynamic_cast< TransparentRenderPoint* >(arg0));
+	if (point1->acquired == false && point2->acquired == false) {
+		return false;
+	} else
+	if (point1->acquired == false) {
+		return false;
+	} else
+	if (point2->acquired == false) {
+		return true;
+	} else {
+		return point1->distanceFromCamera > point2->distanceFromCamera;
+	}
 }
 
 String* TransparentRenderPoint::toString()

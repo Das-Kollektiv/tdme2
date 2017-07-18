@@ -363,7 +363,6 @@ SRCS = \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Pool.cpp \
-	src/tdme/utils/QuickSort.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/_ArrayList.cpp \
 	src/tdme/utils/_ExceptionBase.cpp \

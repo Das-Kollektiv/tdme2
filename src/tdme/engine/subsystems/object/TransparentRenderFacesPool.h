@@ -2,18 +2,21 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -32,7 +35,7 @@ public:
 
 private:
 	static constexpr int32_t FACES_MAX { 16384 };
-	_ArrayList* transparentRenderFaces {  };
+	vector<TransparentRenderFace*> transparentRenderFaces {  };
 	Pool* transparentRenderFacesPool {  };
 	Vector3* tmpVector3 {  };
 protected:
@@ -72,7 +75,7 @@ public: /* protected */
 	/** 
 	 * @return transparent render faces vector
 	 */
-	_ArrayList* getTransparentRenderFaces();
+	vector<TransparentRenderFace*>* getTransparentRenderFaces();
 
 	// Generated
 	TransparentRenderFacesPool();

@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/shadowmapping/ShadowMapping.java
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -19,6 +21,8 @@
 #include <tdme/utils/_Console.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using java::lang::Object;
@@ -120,7 +124,7 @@ void ShadowMapping::reshape(int32_t width, int32_t height)
 {
 }
 
-void ShadowMapping::createShadowMaps(_ArrayList* objects)
+void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
 {
 	runState = ShadowMapping_RunState::PRE;
 	renderer->setColorMask(false, false, false, false);
@@ -148,7 +152,7 @@ void ShadowMapping::createShadowMaps(_ArrayList* objects)
 	runState = ShadowMapping_RunState::NONE;
 }
 
-void ShadowMapping::renderShadowMaps(_ArrayList* visibleObjects)
+void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
 	runState = ShadowMapping_RunState::RENDER;
 	auto shader = Engine::getShadowMappingShaderRender();

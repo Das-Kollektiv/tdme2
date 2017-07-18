@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesPool.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesPool.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/model/Face.h>
@@ -18,6 +20,8 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 using java::lang::Object;
@@ -71,7 +75,6 @@ TransparentRenderFacesPool::TransparentRenderFacesPool()
 
 void TransparentRenderFacesPool::init()
 {
-	transparentRenderFaces = nullptr;
 	transparentRenderFacesPool = nullptr;
 }
 
@@ -82,7 +85,6 @@ void TransparentRenderFacesPool::ctor()
 	super::ctor();
 	init();
 	tmpVector3 = new Vector3();
-	transparentRenderFaces = new _ArrayList();
 	transparentRenderFacesPool = new TransparentRenderFacesPool_TransparentRenderFacesPool_1(this);
 }
 
@@ -111,7 +113,7 @@ void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4* modelVi
 		transparentRenderFace->facesEntityIdx = facesEntityIdx;
 		transparentRenderFace->faceIdx = faceIdx;
 		transparentRenderFace->distanceFromCamera = distanceFromCamera;
-		transparentRenderFaces->add(transparentRenderFace);
+		transparentRenderFaces.push_back(transparentRenderFace);
 		faceIdx++;
 	}
 }
@@ -124,12 +126,12 @@ int32_t TransparentRenderFacesPool::size()
 void TransparentRenderFacesPool::reset()
 {
 	transparentRenderFacesPool->reset();
-	transparentRenderFaces->clear();
+	transparentRenderFaces.clear();
 }
 
-_ArrayList* TransparentRenderFacesPool::getTransparentRenderFaces()
+vector<TransparentRenderFace*>* TransparentRenderFacesPool::getTransparentRenderFaces()
 {
-	return transparentRenderFaces;
+	return &transparentRenderFaces;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

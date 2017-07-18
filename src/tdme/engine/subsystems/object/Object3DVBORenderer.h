@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +14,10 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::map;
+using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using tdme::engine::Engine;
@@ -49,17 +57,17 @@ private:
 public: /* protected */
 	Engine* engine {  };
 	GLRenderer* renderer {  };
-	_ArrayList* trianglesBatchVBORenderers {  };
 
 private:
-	_HashMap* visibleObjectsByModels {  };
+	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
+	map<wstring, vector<Object3D*>> visibleObjectsByModels {  };
 	Pool* keyPool {  };
-	_ArrayList* groupTransparentRenderFaces {  };
+	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
 	Pool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
 	_HashMap* transparentRenderFacesGroups {  };
 	Pool* pseKeyPool {  };
-	_ArrayList* pseKeys {  };
+	vector<Key*> pseKeys {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4* modelViewMatrixBackup {  };
@@ -102,7 +110,7 @@ public:
 	 * @param objects
 	 * @param render transparent faces  
 	 */
-	void render(_ArrayList* objects, bool renderTransparentFaces);
+	void render(const vector<Object3D*>& objects, bool renderTransparentFaces);
 
 public: /* protected */
 
@@ -112,7 +120,7 @@ public: /* protected */
 	 * skinned mesh is not supported when using GPU
 	 * @param transparent render faces
 	 */
-	void prepareTransparentFaces(_ArrayList* transparentRenderFaces);
+	void prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces);
 
 	/** 
 	 * Render transparent faces groups
@@ -135,7 +143,7 @@ public: /* protected */
 	 * @param collect render faces
 	 * @param skinning shader
 	 */
-	void renderObjectsOfSameType(_ArrayList* objects, bool collectTransparentFaces);
+	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces);
 
 	/** 
 	 * Set ups a material for rendering
@@ -168,7 +176,7 @@ public:
 	 * Render batch VBO renderer points entities
 	 * @param points batch VBO renderer points
 	 */
-	void render(_ArrayList* visiblePses);
+	void render(const vector<PointsParticleSystemEntity*>& visiblePses);
 
 	// Generated
 	Object3DVBORenderer(Engine* engine, GLRenderer* renderer);
