@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesGroup.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -13,9 +15,10 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Key.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using java::lang::Object;
@@ -30,7 +33,6 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Key;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -59,7 +61,6 @@ void TransparentRenderFacesGroup::ctor()
 {
 	super::ctor();
 	this->object3DVBORenderer = nullptr;
-	this->batchVBORenderers = new _ArrayList();
 	this->model = nullptr;
 	this->object3DGroup = nullptr;
 	this->facesEntityIdx = -1;
@@ -72,7 +73,7 @@ void TransparentRenderFacesGroup::ctor()
 void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
 {
 	this->object3DVBORenderer = object3DVBORenderer;
-	java_cast< _ArrayList* >(this->batchVBORenderers)->clear();
+	this->batchVBORenderers.clear();
 	this->model = model;
 	this->object3DGroup = object3DGroup;
 	this->facesEntityIdx = facesEntityIdx;
@@ -111,15 +112,15 @@ void TransparentRenderFacesGroup::createKey(Key* key, Model* model, Object3DGrou
 
 void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate)
 {
-	if (batchVBORenderers->size() == 0) {
+	if (batchVBORenderers.size() == 0) {
 		auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 		if (batchVBORendererTriangles == nullptr) {
 			_Console::println(static_cast< Object* >(u"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"_j));
 			return;
 		}
-		batchVBORenderers->add(batchVBORendererTriangles);
+		batchVBORenderers.push_back(batchVBORendererTriangles);
 	}
-	auto batchVBORendererTriangles = java_cast< BatchVBORendererTriangles* >(batchVBORenderers->get(batchVBORenderers->size() - 1));
+	auto batchVBORendererTriangles = batchVBORenderers.at(batchVBORenderers.size() - 1);
 	if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 		return;
 
@@ -128,7 +129,7 @@ void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, Te
 		_Console::println(static_cast< Object* >(u"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"_j));
 		return;
 	}
-	batchVBORenderers->add(batchVBORendererTriangles);
+	batchVBORenderers.push_back(batchVBORendererTriangles);
 	batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
 }
 
@@ -152,13 +153,12 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx);
 	renderer->getModelViewMatrix()->identity();
 	renderer->onUpdateModelViewMatrix();
-	for (auto i = 0; i < batchVBORenderers->size(); i++) {
-		auto batchVBORendererTriangles = java_cast< BatchVBORendererTriangles* >(batchVBORenderers->get(i));
+	for (auto batchVBORendererTriangles: batchVBORenderers) {
 		batchVBORendererTriangles->render();
 		batchVBORendererTriangles->clear();
 		batchVBORendererTriangles->release();
 	}
-	batchVBORenderers->clear();
+	batchVBORenderers.clear();
 	renderer->unbindBufferObjects();
 	renderer->getModelViewMatrix()->set(modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
@@ -186,7 +186,7 @@ void TransparentRenderFacesGroup::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		modelViewMatrix = new Matrix4x4();
+			modelViewMatrix = new Matrix4x4();
 		}
 	};
 

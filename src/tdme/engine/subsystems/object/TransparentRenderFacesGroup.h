@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -23,8 +27,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 
@@ -43,7 +45,7 @@ public:
 private:
 	static Matrix4x4* modelViewMatrix;
 	Object3DVBORenderer* object3DVBORenderer {  };
-	_ArrayList* batchVBORenderers {  };
+	vector<BatchVBORendererTriangles*> batchVBORenderers {  };
 	Model* model {  };
 	Object3DGroup* object3DGroup {  };
 	int32_t facesEntityIdx {  };

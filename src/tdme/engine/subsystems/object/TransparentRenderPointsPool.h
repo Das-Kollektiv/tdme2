@@ -16,7 +16,6 @@ using std::vector;
 using java::lang::Object;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 struct default_init_tag;
 

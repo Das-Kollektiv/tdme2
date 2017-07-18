@@ -15,7 +15,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <ObjectArray.h>
@@ -36,7 +35,6 @@ using tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRe
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;

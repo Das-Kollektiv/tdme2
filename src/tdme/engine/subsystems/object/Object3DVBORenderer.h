@@ -33,7 +33,6 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 

@@ -11,7 +11,6 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 
 using std::vector;
@@ -24,7 +23,6 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
