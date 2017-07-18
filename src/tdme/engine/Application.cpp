@@ -40,10 +40,10 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 	glutInit(&argc, argv);
 
 #ifdef __APPLE__
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH/* | GLUT_3_2_CORE_PROFILE*/);
 #else
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion(3,2);
+	glutInitContextVersion(2,1);
 #endif
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);

@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GL2Renderer.java
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 
+#include <OpenGL/gl.h>
+
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
 #include <java/io/InputStreamReader.h>
@@ -20,6 +22,9 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
@@ -45,6 +50,9 @@ using java::nio::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemInterface;
+using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -105,24 +113,22 @@ GL2Renderer::GL2Renderer()
 void GL2Renderer::ctor()
 {
 	super::ctor();
-	/*
 	ID_NONE = 0;
-	CLEAR_DEPTH_BUFFER_BIT = GL2::GL_DEPTH_BUFFER_BIT;
-	CLEAR_COLOR_BUFFER_BIT = GL2::GL_COLOR_BUFFER_BIT;
-	CULLFACE_FRONT = GL2::GL_FRONT;
-	CULLFACE_BACK = GL2::GL_BACK;
-	FRONTFACE_CW = GL2::GL_CW;
-	FRONTFACE_CCW = GL2::GL_CCW;
-	CLIENTSTATE_TEXTURECOORD_ARRAY = GL2::GL_TEXTURE_COORD_ARRAY;
-	CLIENTSTATE_VERTEX_ARRAY = GL2::GL_VERTEX_ARRAY;
-	CLIENTSTATE_NORMAL_ARRAY = GL2::GL_NORMAL_ARRAY;
-	CLIENTSTATE_COLOR_ARRAY = GL2::GL_COLOR_ARRAY;
-	SHADER_FRAGMENT_SHADER = GL2::GL_FRAGMENT_SHADER;
-	SHADER_VERTEX_SHADER = GL2::GL_VERTEX_SHADER;
-	DEPTHFUNCTION_LESSEQUAL = GL2::GL_LEQUAL;
-	DEPTHFUNCTION_EQUAL = GL2::GL_EQUAL;
-	bufferObjectsAvailable = false;
-	*/
+	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
+	CLEAR_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
+	CULLFACE_FRONT = GL_FRONT;
+	CULLFACE_BACK = GL_BACK;
+	FRONTFACE_CW = GL_CW;
+	FRONTFACE_CCW = GL_CCW;
+	CLIENTSTATE_TEXTURECOORD_ARRAY = GL_TEXTURE_COORD_ARRAY;
+	CLIENTSTATE_VERTEX_ARRAY = GL_VERTEX_ARRAY;
+	CLIENTSTATE_NORMAL_ARRAY = GL_NORMAL_ARRAY;
+	CLIENTSTATE_COLOR_ARRAY = GL_COLOR_ARRAY;
+	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
+	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	bufferObjectsAvailable = true;
 }
 
 String* GL2Renderer::getGLVersion()
@@ -132,8 +138,8 @@ String* GL2Renderer::getGLVersion()
 
 bool GL2Renderer::checkBufferObjectsAvailable()
 {
-	auto extensionOK = gl->isExtensionAvailable(u"GL_ARB_vertex_buffer_object"_j);
-	auto functionsOK = gl->isFunctionAvailable(u"glGenBuffersARB"_j) && gl->isFunctionAvailable(u"glBindBufferARB"_j) && gl->isFunctionAvailable(u"glBufferDataARB"_j)&& gl->isFunctionAvailable(u"glDeleteBuffersARB"_j);
+	auto extensionOK = true; // isExtensionAvailable(u"GL_ARB_vertex_buffer_object"_j);
+	auto functionsOK = true; // isFunctionAvailable(u"glGenBuffersARB"_j) && isFunctionAvailable(u"glBindBufferARB"_j) && isFunctionAvailable(u"glBufferDataARB"_j)&& isFunctionAvailable(u"glDeleteBuffersARB"_j);
 	return extensionOK == true && functionsOK == true;
 }
 
@@ -144,28 +150,25 @@ bool GL2Renderer::isDepthTextureAvailable()
 
 void GL2Renderer::initialize()
 {
-	gl->glGetError();
-	FRAMEBUFFER_DEFAULT = gl->getContext()->getDefaultDrawFramebuffer();
+	glGetError();
+	FRAMEBUFFER_DEFAULT = 0; // getContext()->getDefaultDrawFramebuffer();
 	bufferObjectsAvailable = checkBufferObjectsAvailable();
-	gl->glShadeModel(GL2::GL_SMOOTH);
-	gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	gl->glClearDepth(1.0f);
-	gl->glEnable(GL2::GL_DEPTH_TEST);
-	gl->glEnable(GL2::GL_CULL_FACE);
-	gl->glDepthFunc(GL2::GL_LEQUAL);
-	gl->glHint(GL2::GL_PERSPECTIVE_CORRECTION_HINT, GL2::GL_NICEST);
-	gl->glBlendFunc(GL2::GL_SRC_ALPHA, GL2::GL_ONE_MINUS_SRC_ALPHA);
-	gl->glBlendEquation(GL2::GL_FUNC_ADD);
-	gl->glDisable(GL2::GL_BLEND);
-	gl->glEnable(GL2::GL_PROGRAM_POINT_SIZE_EXT);
+	glShadeModel(GL_SMOOTH);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+	glDisable(GL_BLEND);
+	glEnable(GL_PROGRAM_POINT_SIZE_EXT);
 	setTextureUnit(0);
 }
 
 void GL2Renderer::initializeFrame()
 {
-	if (gl->getContext()->isCurrent() == false)
-		gl->getContext()->makeCurrent();
-
 }
 
 bool GL2Renderer::isBufferObjectsAvailable()
@@ -195,154 +198,142 @@ bool GL2Renderer::isDisplacementMappingAvailable()
 
 int32_t GL2Renderer::getTextureUnits()
 {
-	auto tmp = IntBuffer::allocate(1);
-	gl->glGetIntegerv(GL2::GL_MAX_TEXTURE_UNITS, tmp);
-	while (tmp->remaining() > 0) {
-		auto textureUnits = tmp->get();
-		return textureUnits;
-	}
 	return -1;
 }
 
 int32_t GL2Renderer::loadShader(int32_t type, String* pathName, String* fileName)
 {
-	auto handle = gl->glCreateShader(type);
-	if (handle == 0)
-		return 0;
+	int32_t handle = glCreateShader(type);
+	if (handle == 0) return 0;
 
-	auto shaderSources = new StringArray(1);
-	shaderSources->set(0, new String());
-	DataInputStream* sourceInputStream = nullptr;
-	{
-		auto finally0 = finally([&] {
-			try {
-				sourceInputStream->close();
-			} catch (IOException* ioe) {
-			}
-		});
-		try {
-			sourceInputStream = new DataInputStream(Engine::getInstance()->getInputStream(pathName, fileName));
-			auto reader = new BufferedReader(new InputStreamReader(sourceInputStream));
-			String* line;
-			while ((line = reader->readLine()) != nullptr) {
-				shaderSources->set(0, ::java::lang::StringBuilder((*shaderSources)[0]).append(::java::lang::StringBuilder().append(line)->append(u"\n"_j)->toString())->toString());
-			}
-			sourceInputStream->close();
-		} catch (IOException* ioe) {
-			gl->glDeleteShader(handle);
-			return 0;
-		}
+	auto shaderSource = _FileSystem::getInstance()->getContent(pathName, fileName);
+	if (shaderSource == nullptr) return 0;
+
+	auto shaderSourceString = new String(shaderSource);
+
+	string sourceString = StringConverter::toString(shaderSourceString->getCPPWString());
+	char *sourceHeap = new char[sourceString.length() + 1];
+	strcpy(sourceHeap, sourceString.c_str());
+	glShaderSource(handle, 1, &sourceHeap, nullptr);
+
+	glCompileShader(handle);
+
+	int32_t compileStatus;
+	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
+	if (compileStatus == 0) {
+		int32_t infoLogLengthBuffer;
+		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
+		char infoLogBuffer[infoLogLengthBuffer];
+		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
+		auto infoLogString = new String(StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer)));
+		_Console::println(
+			static_cast< Object* >(
+				::java::lang::StringBuilder().
+				 	 append(u"GL3Renderer::loadShader"_j)->
+				 	 append(u"["_j)->
+				 	 append(handle)->
+					 append(u"]"_j)->
+					 append(pathName)->
+					 append(u"/"_j)->
+					 append(fileName)->
+					 append(u": failed: "_j)->
+					 append(infoLogString)->
+					 toString()
+			 )
+		 );
+		glDeleteShader(handle);
+		return 0;
 	}
-	gl->glShaderSourceARB(handle, 1, shaderSources, nullptr);
-	gl->glCompileShaderARB(handle);
-	auto compileStatus = IntBuffer::allocate(1);
-	gl->glGetObjectParameterivARB(handle, GL2::GL_OBJECT_COMPILE_STATUS_ARB, compileStatus);
-	while (compileStatus->remaining() > 0) {
-		auto result = compileStatus->get();
-		if (result == 0) {
-			auto infoLogLengthBuffer = Buffers::newDirectIntBuffer(1);
-			auto infoLogBuffer = Buffers::newDirectByteBuffer(2048);
-			gl->glGetShaderInfoLog(handle, infoLogBuffer->limit(), infoLogLengthBuffer, infoLogBuffer);
-			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
-			infoLogBuffer->get(infoLogBytes);
-			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(handle)
-				->append(u"]"_j)
-				->append(pathName)
-				->append(u"/"_j)
-				->append(fileName)
-				->append(u": failed: "_j)
-				->append(infoLogString)->toString()));
-			gl->glDeleteShader(handle);
-			return 0;
-		}
-	}
+
 	return handle;
 }
 
 void GL2Renderer::useProgram(int32_t programId)
 {
-	gl->glUseProgramObjectARB(programId);
+	glUseProgram(programId);
 }
 
 int32_t GL2Renderer::createProgram()
 {
-	auto programId = gl->glCreateProgram();
+	auto programId = glCreateProgram();
 	return programId;
 }
 
 void GL2Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
-	gl->glAttachObjectARB(programId, shaderId);
+	glAttachShader(programId, shaderId);
 }
 
 bool GL2Renderer::linkProgram(int32_t programId)
 {
-	gl->glLinkProgramARB(programId);
-	auto linkStatus = IntBuffer::allocate(1);
-	gl->glGetProgramiv(programId, GL2::GL_LINK_STATUS, linkStatus);
-	while (linkStatus->remaining() > 0) {
-		auto result = linkStatus->get();
-		if (result == 0) {
-			auto infoLogLengthBuffer = Buffers::newDirectIntBuffer(1);
-			auto infoLogBuffer = Buffers::newDirectByteBuffer(2048);
-			gl->glGetProgramInfoLog(programId, infoLogBuffer->limit(), infoLogLengthBuffer, infoLogBuffer);
-			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
-			infoLogBuffer->get(infoLogBytes);
-			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(programId)
-				->append(u"]: failed: "_j)
-				->append(infoLogString)->toString()));
-			return false;
-		}
+	glLinkProgram(programId);
+
+	int32_t linkStatus;
+	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
+	if (linkStatus == 0) {
+		int32_t infoLogLength = 0;
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		char infoLog[infoLogLength];
+		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
+		auto infoLogString = new String(StringConverter::toWideString(string(infoLog, infoLogLength)));
+		_Console::println(static_cast< Object* >(
+			::java::lang::StringBuilder().
+				 append(u"["_j)->
+				 append(programId)->
+				 append(u"]: failed: "_j)->
+				 append(infoLogString)->
+				 toString()
+			 )
+		);
+		return false;
 	}
 	return true;
 }
 
 int32_t GL2Renderer::getProgramUniformLocation(int32_t programId, String* name)
 {
-	auto uniformLocation = gl->glGetUniformLocationARB(programId, name);
+	auto uniformLocation = glGetUniformLocation(programId, StringConverter::toString(name->getCPPWString()).c_str());
 	return uniformLocation;
 }
 
 void GL2Renderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 {
-	gl->glUniform1iARB(uniformId, value);
+	glUniform1i(uniformId, value);
 }
 
 void GL2Renderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
-	gl->glUniform1fARB(uniformId, value);
+	glUniform1f(uniformId, value);
 }
 
 void GL2Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* data)
 {
-	gl->glUniformMatrix3fv(uniformId, 1, false, data, 0);
+	glUniformMatrix3fv(uniformId, 1, false, data->getPointer());
 }
 
 void GL2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
 {
-	gl->glUniformMatrix4fv(uniformId, count, false, data);
+	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
 void GL2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray* data)
 {
-	gl->glUniformMatrix4fv(uniformId, 1, false, data, 0);
+	glUniformMatrix4fv(uniformId, 1, false, data->getPointer());
 }
 
 void GL2Renderer::setProgramUniformFloatVec4(int32_t uniformId, floatArray* data)
 {
-	gl->glUniform4fv(uniformId, 1, data, 0);
+	glUniform4fv(uniformId, 1, data->getPointer());
 }
 
 void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, floatArray* data)
 {
-	gl->glUniform3fv(uniformId, 1, data, 0);
+	glUniform3fv(uniformId, 1, data->getPointer());
 }
 
 void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)
 {
-	gl->glBindAttribLocation(programId, location, name);
+	glBindAttribLocation(programId, location, StringConverter::toString(name->getCPPWString()).c_str());
 }
 
 void GL2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -356,7 +347,7 @@ void GL2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t heigh
 
 void GL2Renderer::updateViewPort()
 {
-	gl->glViewport(viewPortX, viewPortY, viewPortWidth, viewPortHeight);
+	glViewport(viewPortX, viewPortY, viewPortWidth, viewPortHeight);
 }
 
 Matrix4x4* GL2Renderer::getTextureMatrix()
@@ -366,228 +357,221 @@ Matrix4x4* GL2Renderer::getTextureMatrix()
 
 void GL2Renderer::setClearColor(float red, float green, float blue, float alpha)
 {
-	gl->glClearColor(red, green, blue, alpha);
+	glClearColor(red, green, blue, alpha);
 }
 
 void GL2Renderer::enableCulling()
 {
-	gl->glEnable(GL2::GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 }
 
 void GL2Renderer::disableCulling()
 {
-	gl->glDisable(GL2::GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 }
 
 void GL2Renderer::enableBlending()
 {
-	gl->glEnable(GL2::GL_BLEND);
+	glEnable(GL_BLEND);
 }
 
 void GL2Renderer::disableBlending()
 {
-	gl->glDisable(GL2::GL_BLEND);
+	glDisable(GL_BLEND);
 }
 
 void GL2Renderer::enableDepthBuffer()
 {
-	gl->glDepthMask(true);
+	glDepthMask(true);
 }
 
 void GL2Renderer::disableDepthBuffer()
 {
-	gl->glDepthMask(false);
+	glDepthMask(false);
 }
 
 void GL2Renderer::setDepthFunction(int32_t depthFunction)
 {
-	gl->glDepthFunc(depthFunction);
+	glDepthFunc(depthFunction);
 }
 
 void GL2Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 {
-	gl->glColorMask(red, green, blue, alpha);
+	glColorMask(red, green, blue, alpha);
 }
 
 void GL2Renderer::clear(int32_t mask)
 {
-	gl->glClear(mask);
+	glClear(mask);
 }
 
 void GL2Renderer::setCullFace(int32_t cullFace)
 {
-	gl->glCullFace(cullFace);
+	glCullFace(cullFace);
 }
 
 void GL2Renderer::setFrontFace(int32_t frontFace)
 {
-	gl->glFrontFace(frontFace);
+	glFrontFace(frontFace);
 }
 
 int32_t GL2Renderer::createTexture()
 {
-	auto const tmp = new int32_tArray(1);
-	gl->glGenTextures(1, tmp, 0);
-	auto textureId = (*tmp)[0];
+	uint32_t textureId;
+	glGenTextures(1, &textureId);
 	return textureId;
 }
 
 int32_t GL2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
-	int32_t depthTextureGlId;
-	auto const tmp = new int32_tArray(1);
-	gl->glGenTextures(1, tmp, 0);
-	depthTextureGlId = (*tmp)[0];
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, depthTextureGlId);
-	gl->glTexImage2D(GL2::GL_TEXTURE_2D, 0, GL2::GL_DEPTH_COMPONENT, width, height, 0, GL2::GL_DEPTH_COMPONENT, GL2::GL_FLOAT, static_cast< Buffer* >(nullptr));
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MIN_FILTER, GL2::GL_NEAREST);
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MAG_FILTER, GL2::GL_NEAREST);
-	gl->glTexParameterf(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_WRAP_S, GL2::GL_CLAMP_TO_EDGE);
-	gl->glTexParameterf(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_WRAP_T, GL2::GL_CLAMP_TO_EDGE);
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, ID_NONE);
+	uint32_t depthTextureGlId;
+	glGenTextures(1, &depthTextureGlId);
+	glBindTexture(GL_TEXTURE_2D, depthTextureGlId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return depthTextureGlId;
 }
 
 int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 {
-	int32_t colorBufferTextureGlId;
-	auto const tmp = new int32_tArray(1);
-	gl->glGenTextures(1, tmp, 0);
-	colorBufferTextureGlId = (*tmp)[0];
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, colorBufferTextureGlId);
-	gl->glTexImage2D(GL2::GL_TEXTURE_2D, 0, GL2::GL_RGBA, width, height, 0, GL2::GL_RGBA, GL2::GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MIN_FILTER, GL2::GL_NEAREST);
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MAG_FILTER, GL2::GL_NEAREST);
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_WRAP_S, GL2::GL_CLAMP_TO_EDGE);
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_WRAP_T, GL2::GL_CLAMP_TO_EDGE);
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, ID_NONE);
+	uint32_t colorBufferTextureGlId;
+	glGenTextures(1, &colorBufferTextureGlId);
+	glBindTexture(GL_TEXTURE_2D, colorBufferTextureGlId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return colorBufferTextureGlId;
 }
 
 void GL2Renderer::uploadTexture(Texture* texture)
 {
-	gl->glTexImage2D(GL2::GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL2::GL_RGBA : GL2::GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL2::GL_RGBA : GL2::GL_RGB, GL2::GL_UNSIGNED_BYTE, static_cast< Buffer* >(texture->getTextureData()));
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MIN_FILTER, GL2::GL_LINEAR_MIPMAP_LINEAR);
-	gl->glTexParameteri(GL2::GL_TEXTURE_2D, GL2::GL_TEXTURE_MAG_FILTER, GL2::GL_LINEAR);
-	gl->glGenerateMipmap(GL2::GL_TEXTURE_2D);
+	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void GL2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, textureId);
-	gl->glTexImage2D(GL2::GL_TEXTURE_2D, 0, GL2::GL_DEPTH_COMPONENT, width, height, 0, GL2::GL_DEPTH_COMPONENT, GL2::GL_FLOAT, static_cast< Buffer* >(nullptr));
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GL2Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, textureId);
-	gl->glTexImage2D(GL2::GL_TEXTURE_2D, 0, GL2::GL_RGBA, width, height, 0, GL2::GL_RGBA, GL2::GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GL2Renderer::bindTexture(int32_t textureId)
 {
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
 	onBindTexture(textureId);
 }
 
 void GL2Renderer::disposeTexture(int32_t textureId)
 {
-	gl->glDeleteTextures(1, new int32_tArray({textureId}), 0);
+	glDeleteTextures(1, (const uint32_t*)&textureId);
 }
 
 int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
 {
-	int32_t frameBufferGlId;
-	auto fboIds = new int32_tArray(1);
-	gl->glGenFramebuffers(1, fboIds, 0);
-	frameBufferGlId = (*fboIds)[0];
-	gl->glBindFramebuffer(GL2::GL_FRAMEBUFFER, frameBufferGlId);
+	uint32_t frameBufferGlId;
+	glGenFramebuffers(1, &frameBufferGlId);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
 	if (depthBufferTextureGlId != ID_NONE) {
-		gl->glFramebufferTexture2D(GL2::GL_FRAMEBUFFER, GL2::GL_DEPTH_ATTACHMENT, GL2::GL_TEXTURE_2D, depthBufferTextureGlId, 0);
+		glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
 	}
 	if (colorBufferTextureGlId != ID_NONE) {
-		gl->glFramebufferTexture2D(GL2::GL_FRAMEBUFFER, GL2::GL_COLOR_ATTACHMENT0, GL2::GL_TEXTURE_2D, colorBufferTextureGlId, 0);
-		gl->glDrawBuffer(GL2::GL_COLOR_ATTACHMENT0);
-		gl->glReadBuffer(GL2::GL_COLOR_ATTACHMENT0);
+		glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
 	} else {
-		gl->glDrawBuffer(GL2::GL_NONE);
-		gl->glReadBuffer(GL2::GL_NONE);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 	}
-	auto fboStatus = gl->glCheckFramebufferStatus(GL2::GL_FRAMEBUFFER);
-	if (fboStatus != GL2::GL_FRAMEBUFFER_COMPLETE) {
-		_Console::println(static_cast< Object* >(u"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO\n"_j));
+	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
+		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "_j)->append(fboStatus)->toString()));
 	}
-	gl->glBindFramebuffer(GL2::GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
 }
 
 void GL2Renderer::bindFrameBuffer(int32_t frameBufferId)
 {
-	gl->glBindFramebuffer(GL2::GL_FRAMEBUFFER, frameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 }
 
 void GL2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
-	gl->glDeleteFramebuffers(1, new int32_tArray({frameBufferId}), 0);
+	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
 int32_tArray* GL2Renderer::createBufferObjects(int32_t buffers)
 {
 	auto bufferObjectIds = new int32_tArray(buffers);
-	gl->glGenBuffers(buffers, bufferObjectIds, 0);
+	glGenBuffers(buffers, (uint32_t*)bufferObjectIds->getPointer());
 	return bufferObjectIds;
 }
 
 void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glBufferData(GL2::GL_ARRAY_BUFFER, size, data, GL2::GL_STATIC_DRAW);
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, ID_NONE);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	gl->glBindBuffer(GL2::GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
-	gl->glBufferData(GL2::GL_ELEMENT_ARRAY_BUFFER, size, data, GL2::GL_STATIC_DRAW);
-	gl->glBindBuffer(GL2::GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
 void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glBufferData(GL2::GL_ARRAY_BUFFER, size, data, GL2::GL_STATIC_DRAW);
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, ID_NONE);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GL2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
-	gl->glBindBuffer(GL2::GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
 void GL2Renderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glTexCoordPointer(2, GL2::GL_FLOAT, 0, 0LL);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0LL);
 }
 
 void GL2Renderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glVertexPointer(3, GL2::GL_FLOAT, 0, 0LL);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glVertexPointer(3, GL_FLOAT, 0, 0LL);
 }
 
 void GL2Renderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glNormalPointer(GL2::GL_FLOAT, 0, 0LL);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glNormalPointer(GL_FLOAT, 0, 0LL);
 }
 
 void GL2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, bufferObjectId);
-	gl->glColorPointer(4, GL2::GL_FLOAT, 0, 0LL);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glColorPointer(4, GL_FLOAT, 0, 0LL);
 }
 
 void GL2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
@@ -617,27 +601,28 @@ void GL2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
-	gl->glDrawElements(GL2::GL_TRIANGLES, triangles * 3, GL2::GL_UNSIGNED_SHORT, static_cast< int64_t >(trianglesOffset) * 3LL * 2LL);
+	#define BUFFER_OFFSET(i) ((void*)(i))
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
 }
 
 void GL2Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
-	gl->glDrawArrays(GL2::GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
+	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 }
 
 void GL2Renderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
 {
-	gl->glDrawArrays(GL2::GL_POINTS, pointsOffset, points);
+	glDrawArrays(GL_POINTS, pointsOffset, points);
 }
 
 void GL2Renderer::unbindBufferObjects()
 {
-	gl->glBindBuffer(GL2::GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void GL2Renderer::disposeBufferObjects(int32_tArray* bufferObjectIds)
 {
-	gl->glDeleteBuffers(bufferObjectIds->length, bufferObjectIds, 0);
+	glDeleteBuffers(bufferObjectIds->length, (const uint32_t*)bufferObjectIds->getPointer());
 }
 
 int32_t GL2Renderer::getTextureUnit()
@@ -648,51 +633,57 @@ int32_t GL2Renderer::getTextureUnit()
 void GL2Renderer::setTextureUnit(int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
-	gl->glActiveTexture(GL2::GL_TEXTURE0 + textureUnit);
+	glActiveTexture(GL_TEXTURE0 + textureUnit);
 }
 
 void GL2Renderer::enableClientState(int32_t clientState)
 {
-	// gl->glEnableClientState(clientState);
+	glEnableClientState(clientState);
 }
 
 void GL2Renderer::disableClientState(int32_t clientState)
 {
-	// gl->glDisableClientState(clientState);
+	glDisableClientState(clientState);
 }
 
 float GL2Renderer::readPixelDepth(int32_t x, int32_t y)
 {
+	/*
 	pixelDepthBuffer->clear();
-	gl->glReadPixels(x, y, 1, 1, GL2::GL_DEPTH_COMPONENT, GL::GL_FLOAT, static_cast< Buffer* >(pixelDepthBuffer));
+	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL::GL_FLOAT, static_cast< Buffer* >(pixelDepthBuffer));
 	return pixelDepthBuffer->get();
+	*/
+	return -1.0f;
 }
 
 ByteBuffer* GL2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
+	/*
 	auto pixelBuffer = ByteBuffer::allocateDirect(width * height * Byte::SIZE* 4);
-	gl->glPixelStorei(GL2::GL_PACK_ALIGNMENT, 1);
-	gl->glReadPixels(x, y, width, height, GL2::GL_RGBA, GL2::GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
 	return pixelBuffer;
+	*/
+	return nullptr;
 }
 
 void GL2Renderer::initGuiMode()
 {
 	setTextureUnit(0);
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, ID_NONE);
-	gl->glEnable(GL2::GL_BLEND);
-	gl->glDisable(GL2::GL_DEPTH_TEST);
-	gl->glDisable(GL2::GL_CULL_FACE);
-	gl->glGetError();
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glGetError();
 }
 
 void GL2Renderer::doneGuiMode()
 {
-	gl->glGetError();
-	gl->glBindTexture(GL2::GL_TEXTURE_2D, ID_NONE);
-	gl->glDisable(GL2::GL_BLEND);
-	gl->glEnable(GL2::GL_DEPTH_TEST);
-	gl->glEnable(GL2::GL_CULL_FACE);
+	glGetError();
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

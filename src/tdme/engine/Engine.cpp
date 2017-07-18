@@ -430,26 +430,28 @@ void Engine::initialize(bool debug)
 	if (initialized == true)
 		return;
 
-	if (true == true/*GL3*/) {
+	/*
+	// GL3
+	if (true == false) {
 		renderer = new Engine_initialize_1(this);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-	}/* else if (drawable->getGL()->isGL2()) {
-		auto gl = java_cast< GL2* >(drawable->getGL()->getGL2());
-		if (debug == true) {
-			drawable->setGL(new DebugGL2(gl));
-		}
+	} else
+	*/
+	// GL2
+	if (true == true) {
 		renderer = new Engine_initialize_2(this);
-		renderer->setGL(gl);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL2"_j));
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-	} else if (drawable->getGL()->isGLES2()) {
+	} /*else
+	// GLES2
+	if (drawable->getGL()->isGLES2()) {
 		auto gl = java_cast< GLES2* >(drawable->getGL()->getGLES2());
 		if (debug == true) {
 			drawable->setGL(new DebugGLES2(gl));

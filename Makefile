@@ -38,6 +38,7 @@ SRCS = \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/Engine_AnimationProcessingTarget.cpp \
 	src/tdme/engine/Engine_initialize_1.cpp \
+	src/tdme/engine/Engine_initialize_2.cpp \
 	src/tdme/engine/Entity.cpp \
 	src/tdme/engine/EntityPickingFilter.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
@@ -162,6 +163,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer_Light.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer_Material.cpp \
@@ -373,9 +375,7 @@ SRCS = \
 	src/tdme/utils/_HashMap_Pair.cpp \
 	src/tdme/utils/_HashMap_ValuesIterator.cpp \
 
-#	src/tdme/engine/Engine_initialize_2.cpp \
 #	src/tdme/engine/Engine_initialize_3.cpp \
-#	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 #	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
 STUB_SRCS = \

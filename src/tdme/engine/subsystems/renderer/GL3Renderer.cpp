@@ -154,10 +154,6 @@ void GL3Renderer::initialize()
 
 void GL3Renderer::initializeFrame()
 {
-	/*
-	if (getContext()->isCurrent() == false)
-		getContext()->makeCurrent();
-	*/
 }
 
 bool GL3Renderer::isBufferObjectsAvailable()
@@ -682,6 +678,7 @@ ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
 	return pixelBuffer;
 	*/
+	return nullptr;
 }
 
 void GL3Renderer::initGuiMode()
