@@ -1,6 +1,10 @@
 #pragma once
 
-#include <GLUT/glut.h>
+#ifdef __linux__
+	#include <GL/freeglut.h>
+#elif
+	#include <GLUT/glut.h>
+#endif
 
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>

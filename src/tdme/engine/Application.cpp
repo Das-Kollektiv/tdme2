@@ -1,4 +1,8 @@
-#include <GLUT/glut.h>
+#ifdef __linux__
+	#include <GL/freeglut.h>
+#elif
+	#include <GLUT/glut.h>
+#endif
 
 #include <fwd-tdme.h>
 
@@ -34,7 +38,13 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 	Application::inputEventHandler = inputEventHandler;
 	// initialize GLUT
 	glutInit(&argc, argv);
+
+#ifdef __APPLE__
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
+#else
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitContextVersion(3,2);
+#endif
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow(StringConverter::toString(title).c_str());
