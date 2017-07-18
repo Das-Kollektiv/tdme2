@@ -233,7 +233,7 @@ void SharedParticleSystemView::loadSettings()
 		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 		particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -295,7 +295,7 @@ void SharedParticleSystemView::storeSettings()
 		settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
 		auto settingsStringArray = settings->storeToStringArray();
 		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"particlesystem.properties"_j, settingsStringArray);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
 		_Console::println(string(exception.what()));
 	}

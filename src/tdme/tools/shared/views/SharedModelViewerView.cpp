@@ -229,7 +229,7 @@ void SharedModelViewerView::loadSettings()
 		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		modelViewerScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -244,7 +244,7 @@ void SharedModelViewerView::initialize()
 		entityBoundingVolumeView = modelViewerScreenController->getEntityBoundingVolumeSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelViewerScreenController->getScreenNode()->getId(), modelViewerScreenController->getScreenNode());
 		modelViewerScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -275,7 +275,7 @@ void SharedModelViewerView::storeSettings()
 		settings->put(u"model.path"_j, modelViewerScreenController->getModelPath()->getPath());
 		StringArray* settingsStringArray = settings->storeToStringArray();
 		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"modelviewer.properties"_j, settingsStringArray);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}

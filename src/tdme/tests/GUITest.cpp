@@ -105,7 +105,7 @@ void GUITest::initialize()
 		effectScrollIn->start();
 		engine->getGUI()->getScreen(u"test"_j)->addEffect(u"scrollin"_j, effectScrollIn);
 		engine->getGUI()->addRenderScreen(u"test"_j);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("GUITest::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 		exit(0);

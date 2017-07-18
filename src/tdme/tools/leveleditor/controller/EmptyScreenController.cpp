@@ -74,7 +74,7 @@ void EmptyScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}

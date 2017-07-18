@@ -40,7 +40,7 @@ void System::arraycopy(ObjectArray* arg0, int32_t arg1, ObjectArray* arg2, int32
 int64_t System::currentTimeMillis()
 { /* native */
 	struct timeval tv;
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, nullptr);
 	return (tv.tv_sec * 1000ll) + (tv.tv_usec / 1000ll);
 }
 

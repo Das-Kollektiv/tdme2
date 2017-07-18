@@ -10,10 +10,10 @@
 using std::replace;
 using std::string;
 using std::transform;
-using std::toupper;
-using std::tolower;
 using std::to_wstring;
 using std::wstring;
+using std::toupper;
+using std::tolower;
 
 using java::lang::String;
 
@@ -308,8 +308,8 @@ bool String::operator>(const String& b)  const{
 bool String::equalsIgnoreCase(String* arg0) { /* stub */
 	wstring stringA = cppwstring;
 	wstring stringB = arg0->cppwstring;
-	transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
-	transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
+	transform(stringA.begin(), stringA.end(), stringA.begin(), (int(*)(int))toupper);
+	transform(stringB.begin(), stringB.end(), stringB.begin(), (int(*)(int))toupper);
 	return stringA == stringB;
 }
 
@@ -515,7 +515,7 @@ char16_tArray* String::toCharArray() { /* stub */
 
 String* String::toLowerCase() { /* stub */
 	wstring string = cppwstring;
-	transform(string.begin(), string.end(), string.begin(), tolower);
+	transform(string.begin(), string.end(), string.begin(), (int(*)(int))tolower);
 	return new String(string);
 }
 
@@ -530,7 +530,7 @@ String* String::toString() { /* stub */
 
 String* String::toUpperCase() { /* stub */
 	wstring string = cppwstring;
-	transform(string.begin(), string.end(), string.begin(), toupper);
+	transform(string.begin(), string.end(), string.begin(), (int(*)(int))toupper);
 	return new String(string);
 }
 

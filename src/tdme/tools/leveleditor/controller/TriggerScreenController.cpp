@@ -94,7 +94,7 @@ void TriggerScreenController::initialize()
 		triggerHeight = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_height"_j));
 		triggerDepth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_depth"_j));
 		triggerApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_trigger_apply"_j));
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}

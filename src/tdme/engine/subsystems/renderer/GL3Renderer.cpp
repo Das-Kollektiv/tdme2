@@ -1,7 +1,17 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GL3Renderer.java
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
-#include <OpenGL/gl3.h>
+#ifdef __APPLE__
+	#include <OpenGL/gl3.h>
+#elif __linux__
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+	#include <GL/glcorearb.h>
+#endif
+
+
+#include <string.h>
 
 #include <java/io/Serializable.h>
 #include <java/lang/Byte.h>

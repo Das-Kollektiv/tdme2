@@ -731,7 +731,7 @@ void LevelEditorView::loadSettings()
 		gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
 		levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -746,7 +746,7 @@ void LevelEditorView::initialize()
 		levelEditorScreenController->initialize();
 		levelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 		engine->getGUI()->addScreen(levelEditorScreenController->getScreenNode()->getId(), levelEditorScreenController->getScreenNode());
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -796,7 +796,7 @@ void LevelEditorView::storeSettings()
 		settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
 		StringArray* settingsStringArray = settings->storeToStringArray();
 		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"leveleditor.properties"_j, settingsStringArray);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}

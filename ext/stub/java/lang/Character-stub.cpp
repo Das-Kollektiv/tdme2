@@ -4,7 +4,6 @@
 #include <cwctype>
 
 using java::lang::Character;
-using std::tolower;
 
 extern void unimplemented_(const char16_t* name);
 java::lang::Character::Character(const ::default_init_tag&)

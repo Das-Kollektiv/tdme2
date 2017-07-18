@@ -375,7 +375,7 @@ void PhysicsTest3::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody(u"tire2"_j, true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 		exit(0);

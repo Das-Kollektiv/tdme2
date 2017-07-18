@@ -96,7 +96,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					->append(u"<selectbox-option text=\"Option 9\" value=\"9\" />"_j)
 					->append(u"<selectbox-option text=\"Option 10\" value=\"10\" />"_j)->toString(), true);
 			}
-		} catch (_Exception& exception) {
+		} catch (_Exception& exception) {
 			_Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
 			_Console::println(string(exception.what()));
 			exit(0);

@@ -137,7 +137,7 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		entityLibraryListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_library_listbox"_j));
 		buttonEntityPlace = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_place"_j));
 		buttonLevelEdit = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_level_edit"_j));
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
@@ -178,7 +178,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
 		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}

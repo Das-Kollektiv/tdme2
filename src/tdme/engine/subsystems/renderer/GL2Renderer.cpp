@@ -1,7 +1,15 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GL2Renderer.java
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+        #include <OpenGL/gl.h>
+#elif __linux__
+        #define GL_GLEXT_PROTOTYPES
+        #include <GL/gl.h>
+        #include <GL/glext.h>
+#endif
+
+#include <string.h>
 
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>

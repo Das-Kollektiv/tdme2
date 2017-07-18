@@ -460,7 +460,7 @@ void EngineTest::initialize()
 		(java_cast< ParticleSystemEntity* >(engine->getEntity(u"firebase"_j)))->setPickable(true);
 		(java_cast< ParticleSystemEntity* >(engine->getEntity(u"firetop"_j)))->setPickable(true);
 		(java_cast< ParticleSystemEntity* >(engine->getEntity(u"firesmoke"_j)))->setPickable(true);
-	} catch (_Exception& exception) {
+	} catch (_Exception& exception) {
 		_Console::print(string("EngineTest::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
 		exit(0);
