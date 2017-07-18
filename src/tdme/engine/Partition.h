@@ -16,8 +16,6 @@ using tdme::engine::Frustum;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 

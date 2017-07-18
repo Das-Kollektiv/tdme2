@@ -54,7 +54,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -123,10 +122,10 @@ public: /* protected */
 
 private:
 	vector<Object3D*> visibleObjects {  };
-	_ArrayList* visibleOpses {  };
+	vector<ObjectParticleSystemEntity*> visibleOpses {  };
 
 public: /* protected */
-	_ArrayList* ppses {  };
+	vector<PointsParticleSystemEntity*> ppses {  };
 
 private:
 	vector<PointsParticleSystemEntity*> visiblePpses {  };

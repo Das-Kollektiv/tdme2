@@ -22,8 +22,6 @@ using tdme::engine::Light;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 

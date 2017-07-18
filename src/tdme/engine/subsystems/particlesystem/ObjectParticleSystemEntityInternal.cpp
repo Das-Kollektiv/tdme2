@@ -24,7 +24,6 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -53,7 +52,6 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {

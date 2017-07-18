@@ -6,7 +6,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/utils/_ArrayList.h>
 
 using std::vector;
 
@@ -14,7 +13,6 @@ using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
-using tdme::utils::_ArrayList;
 
 ObjectParticleSystemEntity::ObjectParticleSystemEntity(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))

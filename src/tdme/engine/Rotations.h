@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -9,11 +11,12 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::math::Quaternion;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -32,7 +35,7 @@ public:
 
 public: /* protected */
 	Quaternion* quaternion {  };
-	_ArrayList* rotations {  };
+	vector<Rotation*> rotations {  };
 protected:
 	void ctor();
 

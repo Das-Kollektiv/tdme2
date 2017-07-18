@@ -1,12 +1,15 @@
 // Generated from /tdme/src/tdme/engine/Rotations.java
 #include <tdme/engine/Rotations.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::engine::Rotations;
 using java::lang::Object;
@@ -14,7 +17,6 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Rotation;
 using tdme::math::Quaternion;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -39,33 +41,34 @@ Rotations::Rotations()
 void Rotations::ctor()
 {
 	super::ctor();
-	rotations = new _ArrayList();
 	quaternion = new Quaternion();
 }
 
 int32_t Rotations::size()
 {
-	return rotations->size();
+	return rotations.size();
 }
 
 Rotation* Rotations::get(int32_t index)
 {
-	return java_cast< Rotation* >(rotations->get(index));
+	return rotations.at(index);
 }
 
 void Rotations::add(Rotation* rotation)
 {
-	rotations->add(rotation);
+	rotations.push_back(rotation);
 }
 
 void Rotations::set(int32_t index, Rotation* rotation)
 {
-	rotations->set(index, rotation);
+	rotations[index] = rotation;
 }
 
 Rotation* Rotations::remove(int32_t index)
 {
-	return java_cast< Rotation* >(rotations->remove(index));
+	Rotation* rotation = rotations.at(index);
+	rotations.erase(rotations.begin() + index);
+	return rotation;
 }
 
 Quaternion* Rotations::getQuaternion()
@@ -78,15 +81,15 @@ void Rotations::fromRotations(Rotations* transformations)
 	auto rotationIdx = 0;
 	for (; rotationIdx < transformations->size(); rotationIdx++) {
 		auto rotation = transformations->get(rotationIdx);
-		auto _rotation = rotationIdx < java_cast< _ArrayList* >(this->rotations)->size() ? java_cast< Rotation* >(java_cast< _ArrayList* >(this->rotations)->get(rotationIdx)) : static_cast< Rotation* >(nullptr);
+		auto _rotation = rotationIdx < rotations.size() ? rotations.at(rotationIdx) : nullptr;
 		if (_rotation == nullptr) {
 			_rotation = new Rotation();
-			java_cast< _ArrayList* >(this->rotations)->add(_rotation);
+			rotations.push_back(_rotation);
 		}
 		_rotation->fromRotation(rotation);
 	}
-	while (rotationIdx < java_cast< _ArrayList* >(this->rotations)->size()) {
-		java_cast< _ArrayList* >(this->rotations)->remove(java_cast< _ArrayList* >(this->rotations)->size() - 1);
+	while (rotationIdx < rotations.size()) {
+		rotations.erase(rotations.begin() + rotations.size() - 1);
 	}
 	this->quaternion->set(transformations->quaternion);
 }
@@ -94,8 +97,7 @@ void Rotations::fromRotations(Rotations* transformations)
 void Rotations::update()
 {
 	quaternion->identity();
-	for (auto i = 0; i < rotations->size(); i++) {
-		auto rotation = java_cast< Rotation* >(rotations->get(i));
+	for (auto rotation: rotations) {
 		rotation->update();
 		quaternion->multiply(rotation->getQuaternion());
 	}
@@ -103,10 +105,16 @@ void Rotations::update()
 
 String* Rotations::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Rotations [rotations="_j)->append(static_cast< Object* >(rotations))
-		->append(u", quaternion="_j)
-		->append(static_cast< Object* >(quaternion))
-		->append(u"]"_j)->toString();
+	return
+		::java::lang::StringBuilder().
+		 // TODO: Implement me!
+		 /*
+		 append(u"Rotations [rotations="_j)->
+		 append(static_cast< Object* >(rotations))->
+		 */
+		 append(u", quaternion="_j)->
+		 append(static_cast< Object* >(quaternion))->
+		 append(u"]"_j)->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

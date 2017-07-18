@@ -50,7 +50,6 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
@@ -108,7 +107,6 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap_KeysIterator;
 using tdme::utils::_HashMap_ValuesIterator;
@@ -231,8 +229,6 @@ void Engine::ctor()
 	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
 	entitiesById = new _HashMap();
-	visibleOpses = new _ArrayList();
-	ppses = new _ArrayList();
 	particleSystemEntitiesById = new _HashMap();
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
@@ -412,13 +408,13 @@ void Engine::removeEntity(String* id)
 void Engine::reset()
 {
 	Iterator* entityKeys = entitiesById->getKeysIterator();
-	auto entitiesToRemove = new _ArrayList();
+	vector<String*> entitiesToRemove;
 	while (entityKeys->hasNext()) {
 		auto entityKey = java_cast< String* >(entityKeys->next());
-		entitiesToRemove->add(entityKey);
+		entitiesToRemove.push_back(entityKey);
 	}
-	for (auto i = 0; i < entitiesToRemove->size(); i++) {
-		removeEntity(java_cast< String* >(entitiesToRemove->get(i)));
+	for (auto entityKey: entitiesToRemove) {
+		removeEntity(entityKey);
 	}
 	partition->reset();
 	object3DVBORenderer->reset();
@@ -546,9 +542,9 @@ void Engine::initRendering()
 	timing->updateTiming();
 	camera->update(width, height);
 	objects.clear();
-	ppses->clear();
+	ppses.clear();
 	visibleObjects.clear();
-	visibleOpses->clear();
+	visibleOpses.clear();
 	visiblePpses.clear();
 	renderingInitiated = true;
 }
@@ -583,7 +579,7 @@ void Engine::computeTransformations()
 			for (auto object3D: *opse->getEnabledObjects()) {
 				visibleObjects.push_back(object3D);
 			}
-			visibleOpses->add(opse);
+			visibleOpses.push_back(opse);
 		} else
 		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
 			auto ppse = java_cast< PointsParticleSystemEntity* >(entity);
@@ -702,8 +698,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
-	for (auto i = 0; i < visibleOpses->size(); i++) {
-		auto entity = java_cast< ObjectParticleSystemEntity* >(visibleOpses->get(i));
+	for (auto entity: visibleOpses) {
 		if (entity->isPickable() == false)
 			continue;
 
@@ -749,13 +744,13 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 void Engine::dispose()
 {
 	Iterator* entityKeys = entitiesById->getKeysIterator();
-	auto entitiesToRemove = new _ArrayList();
+	vector<String*> entitiesToRemove;
 	while (entityKeys->hasNext()) {
 		auto entityKey = java_cast< String* >(entityKeys->next());
-		entitiesToRemove->add(entityKey);
+		entitiesToRemove.push_back(entityKey);
 	}
-	for (auto i = 0; i < entitiesToRemove->size(); i++) {
-		removeEntity(java_cast< String* >(entitiesToRemove->get(i)));
+	for (auto entityKey: entitiesToRemove) {
+		removeEntity(entityKey);
 	}
 	if (shadowMapping != nullptr) {
 		shadowMapping->dispose();

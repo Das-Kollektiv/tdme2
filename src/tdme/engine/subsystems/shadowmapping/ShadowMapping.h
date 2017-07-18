@@ -26,7 +26,6 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {

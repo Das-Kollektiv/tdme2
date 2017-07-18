@@ -31,8 +31,6 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 

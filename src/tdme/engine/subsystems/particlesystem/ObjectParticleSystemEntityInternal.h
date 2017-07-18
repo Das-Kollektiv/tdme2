@@ -34,7 +34,6 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using java::lang::Object;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
