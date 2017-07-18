@@ -10,7 +10,6 @@
 #include <java/lang/Object.h>
 
 using java::lang::Object;
-using java::lang::Comparable;
 using java::lang::String;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;

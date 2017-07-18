@@ -4,7 +4,7 @@
 
 #ifdef __linux__
 	#include <GL/freeglut.h>
-#elif
+#elif __APPLE__
 	#include <GLUT/glut.h>
 #endif
 
