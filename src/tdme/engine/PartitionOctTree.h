@@ -21,7 +21,6 @@ using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 
