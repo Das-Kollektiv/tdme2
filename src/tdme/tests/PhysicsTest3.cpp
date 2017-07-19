@@ -28,7 +28,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap.h>
@@ -61,7 +60,6 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::_HashMap;

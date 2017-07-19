@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -13,6 +15,8 @@
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -27,7 +31,6 @@ using tdme::engine::Transformations;
 using tdme::engine::model::Model;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -66,11 +69,11 @@ private:
 	Engine* engine {  };
 	Engine* osEngine {  };
 	CollisionResponse* collision {  };
-	_ArrayList* players {  };
-	_ArrayList* playersBoundingVolumeModel {  };
+	vector<Object3D*> players {  };
+	vector<Object3D*> playersBoundingVolumeModel {  };
 	BoundingVolume* playerBoundingVolume {  };
 	Model* playerBoundingVolumeModel {  };
-	_ArrayList* playerBoundingVolumesTransformed {  };
+	vector<BoundingVolume*> playerBoundingVolumesTransformed {  };
 	Object3D* cube {  };
 	Model* cubeBoundingVolumeModel {  };
 	BoundingVolume* cubeBoundingVolume {  };

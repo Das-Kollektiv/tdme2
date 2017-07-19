@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tests/EngineTest.java
 #include <tdme/tests/EngineTest.h>
 
+#include <vector>
+
 #include <java/lang/Character.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -47,11 +49,12 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
+
+using std::vector;
 
 using tdme::tests::EngineTest;
 using java::lang::Character;
@@ -100,7 +103,6 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::_HashMap;
@@ -202,8 +204,8 @@ Model* EngineTest::createWallModel()
 
 void EngineTest::display()
 {
-	circleTransformations->getTranslation()->setX(java_cast< Object3D* >(players->get(0))->getTranslation()->getX());
-	circleTransformations->getTranslation()->setZ(java_cast< Object3D* >(players->get(0))->getTranslation()->getZ());
+	circleTransformations->getTranslation()->setX(players.at(0)->getTranslation()->getX());
+	circleTransformations->getTranslation()->setZ(players.at(0)->getTranslation()->getZ());
 	circleTransformations->getTranslation()->addY(0.1f);
 	if (circleTransformations->getTranslation()->getY() > 1.5f) {
 		circleTransformations->getTranslation()->setY(0.0f);
@@ -212,8 +214,8 @@ void EngineTest::display()
 	(java_cast< ParticleSystemEntity* >(engine->getEntity(u"circle"_j)))->getParticleEmitter()->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
-	for (auto i = 0; i < players->size(); i++) {
-		java_cast< Object3D* >(playersBoundingVolumeModel->get(i))->fromTransformations(java_cast< Object3D* >(players->get(i)));
+	for (auto i = 0; i < players.size(); i++) {
+		playersBoundingVolumeModel.at(i)->fromTransformations(players.at(i));
 	}
 	osEngine->display();
 	engine->display();
@@ -237,8 +239,8 @@ void EngineTest::display()
 void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp)
 {
 	auto fps = engine->getTiming()->getCurrentFPS();
-	auto player = java_cast< Object3D* >(players->get(idx));
-	auto playerBoundingVolumeTransformed = java_cast< BoundingVolume* >(playerBoundingVolumesTransformed->get(idx));
+	auto player = players.at(idx);
+	auto playerBoundingVolumeTransformed = playerBoundingVolumesTransformed.at(idx);
 	auto rotations = player->getRotations();
 	auto r = rotations->get(0);
 	player->update();
@@ -279,11 +281,11 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
-	for (auto i = 0; i < players->size(); i++) {
+	for (auto i = 0; i < players.size(); i++) {
 		if (idx == i)
 			continue;
 
-		if (playerBoundingVolumeTransformed->doesCollideWith(java_cast< BoundingVolume* >(playerBoundingVolumesTransformed->get(i)), movement, collision) == true && collision->hasPenetration()) {
+		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"player: "_j)->append(static_cast< Object* >(collision))->toString()));
 			player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 			player->update();
@@ -344,9 +346,6 @@ void EngineTest::initialize()
 	light2->getPosition()->set(+4.0f, 5.0f, 0.0f, 1.0f);
 	light2->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light2->getPosition()->getArray()));
 	light2->setEnabled(true);
-	players = new _ArrayList();
-	playersBoundingVolumeModel = new _ArrayList();
-	playerBoundingVolumesTransformed = new _ArrayList();
 	try {
 		auto _barrel = DAEReader::read(u"resources/tests/models/barrel"_j, u"barrel.dae"_j);
 		auto barrel = new Object3D(u"barrel"_j, _barrel);
@@ -384,12 +383,12 @@ void EngineTest::initialize()
 		engine->addEntity(player1);
 		auto player1BoundingVolumeTransformed = playerBoundingVolume->clone();
 		player1BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player1);
-		playerBoundingVolumesTransformed->add(player1BoundingVolumeTransformed);
-		players->add(player1);
+		playerBoundingVolumesTransformed.push_back(player1BoundingVolumeTransformed);
+		players.push_back(player1);
 		auto player1BoundingVolume = new Object3D(u"player1_bv"_j, playerBoundingVolumeModel);
 		player1BoundingVolume->fromTransformations(player1);
 		player1BoundingVolume->setEnabled(true);
-		playersBoundingVolumeModel->add(player1BoundingVolume);
+		playersBoundingVolumeModel.push_back(player1BoundingVolume);
 		auto player2 = new Object3D(u"player2"_j, _player);
 		player2->getTranslation()->add(new Vector3(1.5f, 0.0f, 0.0f));
 		player2->setAnimation(u"still"_j);
@@ -398,15 +397,15 @@ void EngineTest::initialize()
 		player2->setEnabled(true);
 		player2->setPickable(true);
 		player2->setDynamicShadowingEnabled(true);
-		players->add(player2);
+		players.push_back(player2);
 		auto player2BoundingVolumeTransformed = playerBoundingVolume->clone();
 		player2BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player2);
-		playerBoundingVolumesTransformed->add(player2BoundingVolumeTransformed);
+		playerBoundingVolumesTransformed.push_back(player2BoundingVolumeTransformed);
 		engine->addEntity(player2);
 		auto player2BoundingVolume = new Object3D(u"player2_bv"_j, playerBoundingVolumeModel);
 		player2BoundingVolume->fromTransformations(player2);
 		player2BoundingVolume->setEnabled(true);
-		playersBoundingVolumeModel->add(player2BoundingVolume);
+		playersBoundingVolumeModel.push_back(player2BoundingVolume);
 		auto _cube = DAEReader::read(u"resources/tests/models/test"_j, u"cube.dae"_j);
 		cube = new Object3D(u"cube"_j, _cube);
 		cube->getTranslation()->add(new Vector3(0.0f, 0.0f, 0.0f));
