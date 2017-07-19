@@ -2,28 +2,32 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;
+using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 
@@ -96,7 +100,7 @@ public:
 	 * @param rigid bodies (will be filled by logic)
 	 * @param translation
 	 */
-	static void addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation);
+	static void addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation);
 
 	/** 
 	 * Add level to physics world
@@ -105,7 +109,7 @@ public:
 	 * @param rigid bodies (will be filled by logic)
 	 * @param translation
 	 */
-	static void addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation, bool enable);
+	static void addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>&, Vector3* translation, bool enable);
 
 	/** 
 	 * Disable level in engine
@@ -119,7 +123,7 @@ public:
 	 * @param world
 	 * @param rigid bodies
 	 */
-	static void disableLevel(World* world, _ArrayList* rigidBodies);
+	static void disableLevel(World* world, vector<RigidBody*>& rigidBodies);
 
 	/** 
 	 * Enable disabled level in engine
@@ -136,7 +140,7 @@ public:
 	 * @param rigid bodies
 	 * @param translation
 	 */
-	static void enableLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation);
+	static void enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation);
 
 	// Generated
 	Level();

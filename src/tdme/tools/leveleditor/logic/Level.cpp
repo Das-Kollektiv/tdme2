@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/logic/Level.java
 #include <tdme/tools/leveleditor/logic/Level.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -45,8 +47,9 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
+
+using std::vector;
 
 using tdme::tools::leveleditor::logic::Level;
 using java::lang::Object;
@@ -93,7 +96,6 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -269,13 +271,13 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation)
+void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
 {
 	clinit();
 	addLevel(world, level, rigidBodies, translation, true);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation, bool enable)
+void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation, bool enable)
 {
 	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
@@ -301,7 +303,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBod
 			}
 			auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 			rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
-			rigidBodies->add(rigidBody);
+			rigidBodies.push_back(rigidBody);
 		}
 	}
 }
@@ -319,11 +321,11 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 	}
 }
 
-void Level::disableLevel(World* world, _ArrayList* rigidBodies)
+void Level::disableLevel(World* world, vector<RigidBody*>& rigidBodies)
 {
 	clinit();
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		java_cast< RigidBody* >(rigidBodies->get(i))->setEnabled(false);
+	for (auto rigidBody: rigidBodies) {
+		rigidBody->setEnabled(false);
 	}
 }
 
@@ -348,14 +350,14 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 	}
 }
 
-void Level::enableLevel(World* world, LevelEditorLevel* level, _ArrayList* rigidBodies, Vector3* translation)
+void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
 {
 	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
-			for (auto k = 0; k < rigidBodies->size(); k++) {
-				auto rigidBody = java_cast< RigidBody* >(rigidBodies->get(k));
+			for (auto k = 0; k < rigidBodies.size(); k++) {
+				auto rigidBody = rigidBodies.at(k);
 				compareMutableString->set(object->getId());
 				compareMutableString->append(u".bv."_j);
 				compareMutableString->append(j);
