@@ -1,6 +1,6 @@
 INCLUDES := $(INCLUDES) -Isrc -Iext/src -I./
-#EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -L/usr/lib -lz
-EXTRA_LIBS ?= -l$(NAME)-ext -L/usr/lib -lz -lGL -lglut
+EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -L/usr/lib -lz
+#EXTRA_LIBS ?= -l$(NAME)-ext -L/usr/lib -lz -lGL -lglut
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 CFLAGS := $(CFLAGS) -g -pipe -MMD -MP

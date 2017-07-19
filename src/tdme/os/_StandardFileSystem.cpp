@@ -30,7 +30,6 @@
 #include <java/util/Iterator.h>
 #include <java/util/StringTokenizer.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 #include <SubArray.h>
@@ -62,7 +61,6 @@ using java::util::Iterator;
 using java::util::StringTokenizer;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
-using tdme::utils::_ArrayList;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -120,7 +118,7 @@ String* _StandardFileSystem::getFileName(String* pathName, String* fileName) thr
 
 StringArray* _StandardFileSystem::list(String* pathName, FilenameFilter* filter) throw (_FileSystemException)
 {
-	auto files = new _ArrayList();
+	vector<String*> files;
 
 	DIR *dir;
 	struct dirent *dirent;
@@ -130,12 +128,15 @@ StringArray* _StandardFileSystem::list(String* pathName, FilenameFilter* filter)
 	while ((dirent = readdir(dir)) != NULL) {
 		String* file = new String(StringConverter::toWideString(dirent->d_name));
 		if (filter != nullptr && filter->accept(pathName, file) == false) continue;
-		files->add(file);
+		files.push_back(file);
 	}
 	closedir(dir);
 
-	auto _files = new StringArray(files->size());
-	files->toArray(_files);
+	auto _files = new StringArray(files.size());
+	int i = 0;
+	for (auto file: files) {
+		_files->set(i++, file);
+	}
 	return _files;
 }
 
@@ -240,24 +241,24 @@ String* _StandardFileSystem::getCanonicalPath(String* pathName, String* fileName
 	auto pathString = getFileName(unixPathName, unixFileName);
 
 	// separate into path components
-	auto pathComponents = new _ArrayList();
+	vector<String*> pathComponents;
 	auto t = new StringTokenizer(pathString, u"/"_j);
 	while (t->hasMoreTokens()) {
-		pathComponents->add(t->nextToken());
+		pathComponents.push_back(t->nextToken());
 	}
 
 	// process path components
-	for (int i = 0; i < pathComponents->size(); i++) {
-		auto pathComponent = pathComponents->get(i);
+	for (int i = 0; i < pathComponents.size(); i++) {
+		auto pathComponent = pathComponents.at(i);
 		if (pathComponent->equals(u"."_j) == true) {
-			pathComponents->set(i, nullptr);
+			pathComponents[i] = nullptr;
 		} else
 		if (pathComponent->equals(u".."_j) == true) {
-			pathComponents->set(i, nullptr);
+			pathComponents[i]= nullptr;
 			int j = i - 1;
 			for (int pathComponentReplaced = 0; pathComponentReplaced < 1 && j >= 0; ) {
-				if (pathComponents->get(j) != nullptr) {
-					pathComponents->set(j, nullptr);
+				if (pathComponents.at(j) != nullptr) {
+					pathComponents[j] = nullptr;
 					pathComponentReplaced++;
 				}
 				j--;
@@ -268,8 +269,8 @@ String* _StandardFileSystem::getCanonicalPath(String* pathName, String* fileName
 	// process path components
 	wstring canonicalPath = L"";
 	bool slash = pathString->startsWith(u"/"_j);
-	for (int i = 0; i < pathComponents->size(); i++) {
-		auto pathComponent = java_cast<String*>(pathComponents->get(i));
+	for (int i = 0; i < pathComponents.size(); i++) {
+		auto pathComponent = pathComponents.at(i);
 		if (pathComponent == nullptr) {
 			// no op
 		} else {
