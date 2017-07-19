@@ -1,6 +1,10 @@
 	// Generated from /tdme/src/tdme/gui/GUI.java
 #include <tdme/gui/GUI.h>
 
+#ifdef __APPLE__
+	#include <Carbon/Carbon.h>
+#endif
+
 #include <string>
 
 #include <java/lang/Object.h>
@@ -607,6 +611,8 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 }
 
 void GUI::onMouseDragged(int x, int y) {
+	fakeKeyboardModifierEvent();
+
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(System::currentTimeMillis());
@@ -625,6 +631,8 @@ void GUI::onMouseDragged(int x, int y) {
 }
 
 void GUI::onMouseMoved(int x, int y) {
+	fakeKeyboardModifierEvent();
+
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(System::currentTimeMillis());
@@ -643,6 +651,8 @@ void GUI::onMouseMoved(int x, int y) {
 }
 
 void GUI::onMouseButton(int button, int state, int x, int y) {
+	fakeKeyboardModifierEvent();
+
 	lockEvents();
 	mouseButtonLast = button + 1;
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
@@ -694,6 +704,50 @@ void GUI::fakeMouseMovedEvent()
 	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
 	mouseEvents->add(guiMouseEvent);
+	unlockEvents();
+}
+
+void GUI::fakeKeyboardModifierEvent() {
+	bool isControlDown = false;
+	bool isAltDown = false;
+	bool isShiftDown = false;
+	#ifdef __linux__
+		// TODO: check if this works with FreeGlut
+		isControlDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL;
+		isAltDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT;
+		isShiftDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT;
+	#elif __APPLE__
+		KeyMap keys;
+		GetKeys(keys);
+		#define IS_KEY_DOWN(key, var) \
+		{ \
+			uint8_t index = key / 32 ; \
+			uint8_t shift = key % 32 ; \
+			var = keys[index].bigEndianValue & (1 << shift); \
+		}
+		IS_KEY_DOWN(kVK_Command, isControlDown);
+		IS_KEY_DOWN(kVK_Option, isAltDown);
+		IS_KEY_DOWN(kVK_Shift, isShiftDown);
+	#endif
+
+	if (isControlDown == false &&
+		isAltDown == false &&
+		isShiftDown == false) {
+		return;
+	}
+
+	lockEvents();
+	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setKeyCode(-1);
+	guiKeyboardEvent->setKeyChar(-1);
+	guiKeyboardEvent->setMetaDown(false);
+	guiKeyboardEvent->setControlDown(isControlDown);
+	guiKeyboardEvent->setAltDown(isAltDown);
+	guiKeyboardEvent->setShiftDown(isShiftDown);
+	guiKeyboardEvent->setProcessed(false);
+	keyboardEvents->add(guiKeyboardEvent);
 	unlockEvents();
 }
 

@@ -345,14 +345,15 @@ void LevelEditorView::handleInputEvents()
 	auto keyCBefore = keyC;
 	auto keyVBefore = keyV;
 	auto keyXBefore = keyX;
+	keyControl = false;
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
 		auto event = java_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->get(i));
 		if (event->isProcessed() == true)
 			continue;
 
+		keyControl = event->isControlDown();
+
 		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED;
-		if (event->isControlDown() == true)
-			keyControl = isKeyDown;
 
 		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE)
 			keyEscape = isKeyDown;

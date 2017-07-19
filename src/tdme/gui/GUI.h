@@ -307,6 +307,11 @@ private:
 	 */
 	void fakeMouseMovedEvent();
 
+	/**
+	 *
+	 */
+	void fakeKeyboardModifierEvent();
+
 public:
 
 	// Generated
