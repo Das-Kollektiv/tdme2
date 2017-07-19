@@ -430,26 +430,28 @@ void Engine::initialize(bool debug)
 	if (initialized == true)
 		return;
 
-	/*
 	// GL3
-	if (true == false) {
+	#ifdef __APPLE__
+	{
 		renderer = new Engine_initialize_1(this);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-	} else
-	*/
+	}
+	#elif __linux__
 	// GL2
-	if (true == true) {
+	{
 		renderer = new Engine_initialize_2(this);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL2"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-	} /*else
+	}
+	#endif
+	/*
 	// GLES2
 	if (drawable->getGL()->isGLES2()) {
 		auto gl = java_cast< GLES2* >(drawable->getGL()->getGLES2());
@@ -468,10 +470,11 @@ void Engine::initialize(bool debug)
 			shadowMappingEnabled = false;
 			animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
 		}
-	}*/ else {
+	} else {
 		_Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
 		return;
 	}
+	*/
 	initialized = true;
 	renderer->initialize();
 	renderer->renderingTexturingClientState = false;

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
@@ -17,6 +19,8 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/utils/_HashMap.h>
+
+using std::vector;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -37,7 +41,6 @@ using tdme::math::Vector4;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 using java::lang::Object;
 
@@ -135,7 +138,6 @@ private:
 	GUIElementNodeArray* lightsEnabled {  };
 	MutableString* value {  };
 	MutableString* selectedObjects {  };
-	_ArrayList* selectedObjectList {  };
 	FileDialogPath* mapPath {  };
 protected:
 

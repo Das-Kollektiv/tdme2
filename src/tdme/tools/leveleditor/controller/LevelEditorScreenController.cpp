@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -39,7 +41,6 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ExceptionBase.h>
@@ -48,6 +49,8 @@
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::vector;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using java::io::Serializable;
@@ -88,7 +91,6 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
 using tdme::utils::_ExceptionBase;
 using tdme::utils::_HashMap;
@@ -259,7 +261,6 @@ void LevelEditorScreenController::initialize()
 		}
 		value = new MutableString();
 		selectedObjects = new MutableString();
-		selectedObjectList = new _ArrayList();
  	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -398,12 +399,12 @@ void LevelEditorScreenController::selectObjectInObjectListbox(String* objectId)
 
 void LevelEditorScreenController::onObjectsSelect()
 {
-	selectedObjectList->clear();
+	vector<String*> selectedObjectList;
 	auto t = new StringTokenizer(objectsListBox->getController()->getValue()->toString(), u"|"_j);
 	while (t->hasMoreTokens()) {
-		selectedObjectList->add(t->nextToken());
+		selectedObjectList.push_back(t->nextToken());
 	}
-	if (selectedObjectList->isEmpty() == false)
+	if (selectedObjectList.empty() == false)
 		view->selectObjects(selectedObjectList);
 
 }

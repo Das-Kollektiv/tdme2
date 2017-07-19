@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -18,6 +20,8 @@
 #include <java/lang/Object.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::tools::shared::views::View;
@@ -40,7 +44,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -142,9 +145,9 @@ public: /* package */
 private:
 	Model* levelEditorGround {  };
 	LevelEditorLevel* level {  };
-	_ArrayList* selectedObjects {  };
+	vector<Entity*> selectedObjects {  };
 	_HashMap* selectedObjectsById {  };
-	_ArrayList* pasteObjects_ {  };
+	vector<LevelEditorObject*> pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
 	Vector3* tmpVector3 {  };
@@ -220,7 +223,7 @@ public:
 	 * Select objects
 	 * @param object ids
 	 */
-	void selectObjects(_ArrayList* objectIds);
+	void selectObjects(vector<String*>& objectIds);
 
 	/** 
 	 * Select objects by id

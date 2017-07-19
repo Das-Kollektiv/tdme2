@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/views/LevelEditorView.java
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 
+#include <algorithm>
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Character.h>
@@ -75,6 +78,10 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::find;
+using std::remove;
+using std::vector;
 
 using tdme::tools::leveleditor::views::LevelEditorView;
 using java::io::Serializable;
@@ -204,9 +211,7 @@ void LevelEditorView::init()
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
 	groundPlateWidth = 1.0f;
 	groundPlateDepth = 1.0f;
-	selectedObjects = nullptr;
 	selectedObjectsById = nullptr;
-	pasteObjects_ = nullptr;
 }
 
 StringArray* LevelEditorView::OBJECTCOLOR_NAMES;
@@ -258,9 +263,7 @@ void LevelEditorView::ctor(PopUps* popUps)
 	objectColors->put(u"magenta"_j, new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f));
 	objectColors->put(u"cyan"_j, new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f));
 	objectColors->put(u"none"_j, new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f));
-	selectedObjects = new _ArrayList();
 	selectedObjectsById = new _HashMap();
-	pasteObjects_ = new _ArrayList();
 	camScale = 1.0f;
 	camLookRotationX->update();
 	camLookRotationY->update();
@@ -292,10 +295,10 @@ LevelEditorEntity* LevelEditorView::getSelectedEntity()
 
 LevelEditorObject* LevelEditorView::getSelectedObject()
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return nullptr;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	return selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
@@ -400,21 +403,15 @@ void LevelEditorView::handleInputEvents()
 			keyR = isKeyDown;
 
 	}
-	if (keyEscape == true && selectedObjects->size() > 0) {
-		auto objectsToRemove = new _ArrayList();
-		for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-			Entity* selectedObject = java_cast< Entity* >(_i->next());
-			{
-				objectsToRemove->add(selectedObject);
-			}
+	if (keyEscape == true && selectedObjects.size() > 0) {
+		vector<Entity*> objectsToRemove;
+		for (auto selectedObject: selectedObjects) {
+			objectsToRemove.push_back(selectedObject);
 		}
-		for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-			Entity* objectToRemove = java_cast< Entity* >(_i->next());
-			{
-				setStandardObjectColorEffect(objectToRemove);
-				selectedObjects->remove(static_cast< Object* >(objectToRemove));
-				selectedObjectsById->remove(objectToRemove->getId());
-			}
+		for (auto objectToRemove: objectsToRemove) {
+			setStandardObjectColorEffect(objectToRemove);
+			selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
+			selectedObjectsById->remove(objectToRemove->getId());
 		}
 		levelEditorScreenController->unselectObjectsInObjectListBox();
 	}
@@ -444,24 +441,18 @@ void LevelEditorView::handleInputEvents()
 				}
 			}
 			if (keyControl == false) {
-				auto objectsToRemove = new _ArrayList();
-				for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-					Entity* selectedObject = java_cast< Entity* >(_i->next());
-					{
-						if (mouseDragging == true && mouseDraggingLastObject == selectedObject) {
-						} else {
-							objectsToRemove->add(selectedObject);
-						}
+				vector<Entity*> objectsToRemove;
+				for (auto selectedObject: selectedObjects) {
+					if (mouseDragging == true && mouseDraggingLastObject == selectedObject) {
+					} else {
+						objectsToRemove.push_back(selectedObject);
 					}
 				}
-				for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-					Entity* objectToRemove = java_cast< Entity* >(_i->next());
-					{
-						setStandardObjectColorEffect(objectToRemove);
-						selectedObjects->remove(static_cast< Object* >(objectToRemove));
-						selectedObjectsById->remove(objectToRemove->getId());
-						levelEditorScreenController->unselectObjectInObjectListBox(objectToRemove->getId());
-					}
+				for (auto objectToRemove: objectsToRemove) {
+					setStandardObjectColorEffect(objectToRemove);
+					selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
+					selectedObjectsById->remove(objectToRemove->getId());
+					levelEditorScreenController->unselectObjectInObjectListBox(objectToRemove->getId());
 				}
 			}
 			auto selectedObject = engine->getObjectByMousePosition(event->getX(), event->getY(), entityPickingFilterNoGrid);
@@ -471,10 +462,10 @@ void LevelEditorView::handleInputEvents()
 			if (selectedObject != nullptr) {
 				if (mouseDragging == true && mouseDraggingLastObject == selectedObject) {
 				} else {
-					if (selectedObjects->contains(selectedObject) == false) {
+					if (find(selectedObjects.begin(), selectedObjects.end(), selectedObject) == selectedObjects.end()) {
 						setStandardObjectColorEffect(selectedObject);
 						setHighlightObjectColorEffect(selectedObject);
-						selectedObjects->add(selectedObject);
+						selectedObjects.push_back(selectedObject);
 						selectedObjectsById->put(selectedObject->getId(), selectedObject);
 						levelEditorScreenController->selectObjectInObjectListbox(selectedObject->getId());
 						auto levelEditorObject = level->getObjectById(selectedObject->getId());
@@ -483,7 +474,7 @@ void LevelEditorView::handleInputEvents()
 						}
 					} else {
 						setStandardObjectColorEffect(selectedObject);
-						selectedObjects->remove(static_cast< Object* >(selectedObject));
+						selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), selectedObject), selectedObjects.end());
 						selectedObjectsById->remove(selectedObject->getId());
 						levelEditorScreenController->unselectObjectInObjectListBox(selectedObject->getId());
 					}
@@ -633,40 +624,31 @@ void LevelEditorView::display()
 	engine->getGUI()->handleEvents();
 }
 
-void LevelEditorView::selectObjects(_ArrayList* objectIds)
+void LevelEditorView::selectObjects(vector<String*>& objectIds)
 {
-	auto objectsToRemove = java_cast< _ArrayList* >(selectedObjects->clone());
-	for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-		Entity* objectToRemove = java_cast< Entity* >(_i->next());
-		{
-			setStandardObjectColorEffect(objectToRemove);
-			selectedObjects->remove(static_cast< Object* >(objectToRemove));
-			selectedObjectsById->remove(objectToRemove->getId());
-		}
+	auto objectsToRemove = selectedObjects;
+	for (auto objectToRemove: objectsToRemove) {
+		setStandardObjectColorEffect(objectToRemove);
+		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
+		selectedObjectsById->remove(objectToRemove->getId());
 	}
-	for (auto _i = objectIds->iterator(); _i->hasNext(); ) {
-		String* objectId = java_cast< String* >(_i->next());
-		{
-			auto selectedObject = engine->getEntity(objectId);
-			setStandardObjectColorEffect(selectedObject);
-			setHighlightObjectColorEffect(selectedObject);
-			selectedObjects->add(selectedObject);
-			selectedObjectsById->put(selectedObject->getId(), selectedObject);
-		}
+	for (auto objectId: objectIds) {
+		auto selectedObject = engine->getEntity(objectId);
+		setStandardObjectColorEffect(selectedObject);
+		setHighlightObjectColorEffect(selectedObject);
+		selectedObjects.push_back(selectedObject);
+		selectedObjectsById->put(selectedObject->getId(), selectedObject);
 	}
 	updateGUIElements();
 }
 
 void LevelEditorView::unselectObjects()
 {
-	auto objectsToRemove = java_cast< _ArrayList* >(selectedObjects->clone());
-	for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-		Entity* objectToRemove = java_cast< Entity* >(_i->next());
-		{
-			setStandardObjectColorEffect(objectToRemove);
-			selectedObjects->remove(static_cast< Object* >(objectToRemove));
-			selectedObjectsById->remove(objectToRemove->getId());
-		}
+	auto objectsToRemove = selectedObjects;
+	for (auto objectToRemove: objectsToRemove) {
+		setStandardObjectColorEffect(objectToRemove);
+		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
+		selectedObjectsById->remove(objectToRemove->getId());
 	}
 	levelEditorScreenController->unselectObjectsInObjectListBox();
 	updateGUIElements();
@@ -676,8 +658,8 @@ void LevelEditorView::updateGUIElements()
 {
 	levelEditorScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Level Editor - "_j)->append(level->getFileName())->toString());
 	levelEditorScreenController->setLevelSize(level->getDimension()->getX(), level->getDimension()->getZ(), level->getDimension()->getY());
-	if (selectedObjects->size() == 1) {
-		auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	if (selectedObjects.size() == 1) {
+		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(u"preset"_j);
@@ -697,11 +679,13 @@ void LevelEditorView::updateGUIElements()
 			levelEditorScreenController->unsetObject();
 			levelEditorScreenController->unsetObjectProperties();
 		}
-	} else if (selectedObjects->size() > 1) {
+	} else
+	if (selectedObjects.size() > 1) {
 		levelEditorScreenController->unsetObjectData();
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 		levelEditorScreenController->unsetObjectProperties();
-	} else if (selectedObjects->size() == 0) {
+	} else
+	if (selectedObjects.size() == 0) {
 		levelEditorScreenController->unsetObjectData();
 		levelEditorScreenController->unsetObject();
 		levelEditorScreenController->unsetObjectProperties();
@@ -839,7 +823,7 @@ void LevelEditorView::loadLevel()
 {
 	removeGrid();
 	engine->reset();
-	selectedObjects->clear();
+	selectedObjects.clear();
 	selectedObjectsById->clear();
 	Level::setLight(engine, level, nullptr);
 	Level::addLevel(engine, level, true, true, false, true, nullptr);
@@ -969,10 +953,10 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 
 bool LevelEditorView::objectDataApply(String* name, String* description)
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return false;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	if (selectedObject->getId()->startsWith(u"leveleditor."_j))
 		return false;
 
@@ -989,7 +973,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		level->removeObject(levelEditorObject->getId());
 		engine->removeEntity(levelEditorObject->getId());
 		selectedObjectsById->clear();
-		selectedObjects->clear();
+		selectedObjects.clear();
 		levelEditorObject->setId(name);
 		level->addObject(levelEditorObject);
 		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
@@ -998,7 +982,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		setStandardObjectColorEffect(object);
 		setHighlightObjectColorEffect(object);
 		engine->addEntity(object);
-		selectedObjects->add(object);
+		selectedObjects.push_back(object);
 		selectedObjectsById->put(object->getId(), object);
 		levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 	}
@@ -1008,11 +992,8 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 
 void LevelEditorView::placeObject()
 {
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* selectedObject = java_cast< Entity* >(_i->next());
-		{
-			placeObject(selectedObject);
-		}
+	for (auto selectedObject: selectedObjects) {
+		placeObject(selectedObject);
 	}
 	level->computeDimension();
 	updateGUIElements();
@@ -1067,22 +1048,16 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 
 void LevelEditorView::removeObject()
 {
-	auto objectsToRemove = new _ArrayList();
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* selectedObject = java_cast< Entity* >(_i->next());
-		{
-			if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
-				level->removeObject(selectedObject->getId());
-				engine->removeEntity(selectedObject->getId());
-				objectsToRemove->add(selectedObject);
-			}
+	vector<Entity*> objectsToRemove;
+	for (auto selectedObject: selectedObjects) {
+		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
+			level->removeObject(selectedObject->getId());
+			engine->removeEntity(selectedObject->getId());
+			objectsToRemove.push_back(selectedObject);
 		}
 	}
-	for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-		Entity* objectToRemove = java_cast< Entity* >(_i->next());
-		{
-			selectedObjects->remove(static_cast< Object* >(objectToRemove));
-		}
+	for (auto objectToRemove: objectsToRemove) {
+		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
 	}
 	level->computeDimension();
 	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
@@ -1091,40 +1066,38 @@ void LevelEditorView::removeObject()
 
 void LevelEditorView::colorObject()
 {
-	if (selectedObjects->size() == 0)
+	if (selectedObjects.size() == 0)
 		return;
 
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* selectedObject = java_cast< Entity* >(_i->next());
-		{
-			auto levelEditorObject = level->getObjectById(selectedObject->getId());
-			if (levelEditorObject == nullptr)
-				continue;
+	for (auto selectedObject: selectedObjects) {
+		auto levelEditorObject = level->getObjectById(selectedObject->getId());
+		if (levelEditorObject == nullptr)
+			continue;
 
-			auto color = (*OBJECTCOLOR_NAMES)[0];
-			auto colorProperty = levelEditorObject->getProperty(u"object.color"_j);
-			if (colorProperty == nullptr) {
-				levelEditorObject->addProperty(u"object.color"_j, color);
-			} else {
-				color = colorProperty->getValue();
-				for (auto i = 0; i < OBJECTCOLOR_NAMES->length; i++) {
-					if (color->equalsIgnoreCase((*OBJECTCOLOR_NAMES)[i])) {
-						color = (*OBJECTCOLOR_NAMES)[(i + 1) % OBJECTCOLOR_NAMES->length];
-						break;
-					}
-				}
-				if (color->equals(u"none"_j)) {
-					levelEditorObject->removeProperty(u"object.color"_j);
-				} else {
-					levelEditorObject->updateProperty(colorProperty->getName(), u"object.color"_j, color);
+		auto color = (*OBJECTCOLOR_NAMES)[0];
+		auto colorProperty = levelEditorObject->getProperty(u"object.color"_j);
+		if (colorProperty == nullptr) {
+			levelEditorObject->addProperty(u"object.color"_j, color);
+		} else {
+			color = colorProperty->getValue();
+			for (auto i = 0; i < OBJECTCOLOR_NAMES->length; i++) {
+				if (color->equalsIgnoreCase((*OBJECTCOLOR_NAMES)[i])) {
+					color = (*OBJECTCOLOR_NAMES)[(i + 1) % OBJECTCOLOR_NAMES->length];
+					break;
 				}
 			}
-			setStandardObjectColorEffect(selectedObject);
-			setHighlightObjectColorEffect(selectedObject);
+			if (color->equals(u"none"_j)) {
+				levelEditorObject->removeProperty(u"object.color"_j);
+			} else {
+				levelEditorObject->updateProperty(colorProperty->getName(), u"object.color"_j, color);
+			}
 		}
+		setStandardObjectColorEffect(selectedObject);
+		setHighlightObjectColorEffect(selectedObject);
 	}
-	if (selectedObjects->size() == 1) {
-		auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+
+	if (selectedObjects.size() == 1) {
+		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(u"preset"_j);
@@ -1132,33 +1105,30 @@ void LevelEditorView::colorObject()
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
 		}
-	} else if (selectedObjects->size() > 1) {
+	} else if (selectedObjects.size() > 1) {
 		levelEditorScreenController->unsetObjectProperties();
 	}
 }
 
 void LevelEditorView::centerObject()
 {
-	if (selectedObjects->size() == 0) {
+	if (selectedObjects.size() == 0) {
 		return;
 	}
 	auto center = new Vector3();
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* selectedObject = java_cast< Entity* >(_i->next());
-		{
-			center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone()->add(selectedObject->getBoundingBoxTransformed()->getMax())->scale(0.5f));
-		}
+	for (auto selectedObject: selectedObjects) {
+		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone()->add(selectedObject->getBoundingBoxTransformed()->getMax())->scale(0.5f));
 	}
-	engine->getCamera()->getLookAt()->set(center->scale(1.0f / selectedObjects->size()));
+	engine->getCamera()->getLookAt()->set(center->scale(1.0f / selectedObjects.size()));
 }
 
 void LevelEditorView::objectTranslationApply(float x, float y, float z)
 {
-	if (selectedObjects->size() == 0)
+	if (selectedObjects.size() == 0)
 		return;
 
-	if (selectedObjects->size() == 1) {
-		auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	if (selectedObjects.size() == 1) {
+		auto selectedObject = selectedObjects.at(0);
 		auto currentEntity = level->getObjectById(selectedObject->getId());
 		if (currentEntity == nullptr)
 			return;
@@ -1166,18 +1136,16 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		currentEntity->getTransformations()->getTranslation()->set(x, y, z);
 		currentEntity->getTransformations()->update();
 		selectedObject->fromTransformations(currentEntity->getTransformations());
-	} else if (selectedObjects->size() > 1) {
-		for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-			Entity* selectedObject = java_cast< Entity* >(_i->next());
-			{
-				auto currentEntity = level->getObjectById(selectedObject->getId());
-				if (currentEntity == nullptr)
-					continue;
+	} else
+	if (selectedObjects.size() > 1) {
+		for (auto selectedObject: selectedObjects) {
+			auto currentEntity = level->getObjectById(selectedObject->getId());
+			if (currentEntity == nullptr)
+				continue;
 
-				currentEntity->getTransformations()->getTranslation()->add(new Vector3(x, y, z));
-				currentEntity->getTransformations()->update();
-				selectedObject->fromTransformations(currentEntity->getTransformations());
-			}
+			currentEntity->getTransformations()->getTranslation()->add(new Vector3(x, y, z));
+			currentEntity->getTransformations()->update();
+			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
@@ -1187,11 +1155,11 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 
 void LevelEditorView::objectScaleApply(float x, float y, float z)
 {
-	if (selectedObjects->size() == 0)
+	if (selectedObjects.size() == 0)
 		return;
 
-	if (selectedObjects->size() == 1) {
-		auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	if (selectedObjects.size() == 1) {
+		auto selectedObject = selectedObjects.at(0);
 		auto currentEntity = level->getObjectById(selectedObject->getId());
 		if (currentEntity == nullptr)
 			return;
@@ -1199,18 +1167,16 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		currentEntity->getTransformations()->getScale()->set(x, y, z);
 		currentEntity->getTransformations()->update();
 		selectedObject->fromTransformations(currentEntity->getTransformations());
-	} else if (selectedObjects->size() > 1) {
-		for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-			Entity* selectedObject = java_cast< Entity* >(_i->next());
-			{
-				auto currentEntity = level->getObjectById(selectedObject->getId());
-				if (currentEntity == nullptr)
-					continue;
+	} else
+	if (selectedObjects.size() > 1) {
+		for (auto selectedObject: selectedObjects) {
+			auto currentEntity = level->getObjectById(selectedObject->getId());
+			if (currentEntity == nullptr)
+				continue;
 
-				currentEntity->getTransformations()->getScale()->scale(new Vector3(x, y, z));
-				currentEntity->getTransformations()->update();
-				selectedObject->fromTransformations(currentEntity->getTransformations());
-			}
+			currentEntity->getTransformations()->getScale()->scale(new Vector3(x, y, z));
+			currentEntity->getTransformations()->update();
+			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
@@ -1220,11 +1186,11 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 
 void LevelEditorView::objectRotationsApply(float x, float y, float z)
 {
-	if (selectedObjects->size() == 0)
+	if (selectedObjects.size() == 0)
 		return;
 
-	if (selectedObjects->size() == 1) {
-		auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	if (selectedObjects.size() == 1) {
+		auto selectedObject = selectedObjects.at(0);
 		auto currentEntity = level->getObjectById(selectedObject->getId());
 		if (currentEntity == nullptr)
 			return;
@@ -1234,20 +1200,18 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(z);
 		currentEntity->getTransformations()->update();
 		selectedObject->fromTransformations(currentEntity->getTransformations());
-	} else if (selectedObjects->size() > 1) {
-		for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-			Entity* selectedObject = java_cast< Entity* >(_i->next());
-			{
-				auto currentEntity = level->getObjectById(selectedObject->getId());
-				if (currentEntity == nullptr)
-					continue;
+	} else
+	if (selectedObjects.size() > 1) {
+		for (auto selectedObject: selectedObjects) {
+			auto currentEntity = level->getObjectById(selectedObject->getId());
+			if (currentEntity == nullptr)
+				continue;
 
-				currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle() + x);
-				currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle() + y);
-				currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle() + z);
-				currentEntity->getTransformations()->update();
-				selectedObject->fromTransformations(currentEntity->getTransformations());
-			}
+			currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle() + x);
+			currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle() + y);
+			currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(currentEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle() + z);
+			currentEntity->getTransformations()->update();
+			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
@@ -1289,10 +1253,10 @@ bool LevelEditorView::mapPropertyRemove(String* name)
 
 bool LevelEditorView::objectPropertyRemove(String* name)
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return false;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	auto levelEditorObject = level->getObjectById(selectedObject->getId());
 	if (levelEditorObject == nullptr)
 		return false;
@@ -1311,10 +1275,10 @@ bool LevelEditorView::objectPropertyRemove(String* name)
 
 void LevelEditorView::objectPropertiesPreset(String* presetId)
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	auto levelEditorObject = level->getObjectById(selectedObject->getId());
 	if (levelEditorObject == nullptr)
 		return;
@@ -1334,10 +1298,10 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 
 bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* value)
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return false;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	auto levelEditorObject = level->getObjectById(selectedObject->getId());
 	if (levelEditorObject == nullptr)
 		return false;
@@ -1351,10 +1315,10 @@ bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* 
 
 bool LevelEditorView::objectPropertyAdd()
 {
-	if (selectedObjects->size() != 1)
+	if (selectedObjects.size() != 1)
 		return false;
 
-	auto selectedObject = java_cast< Entity* >(selectedObjects->get(0));
+	auto selectedObject = selectedObjects.at(0);
 	auto levelEditorObject = level->getObjectById(selectedObject->getId());
 	if (levelEditorObject == nullptr)
 		return false;
@@ -1414,17 +1378,14 @@ void LevelEditorView::saveMap(String* pathName, String* fileName)
 
 void LevelEditorView::copyObjects()
 {
-	pasteObjects_->clear();
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* selectedObject = java_cast< Entity* >(_i->next());
-		{
-			if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
-				auto levelEditorObject = level->getObjectById(selectedObject->getId());
-				if (levelEditorObject == nullptr)
-					continue;
+	pasteObjects_.clear();
+	for (auto selectedObject: selectedObjects) {
+		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
+			auto levelEditorObject = level->getObjectById(selectedObject->getId());
+			if (levelEditorObject == nullptr)
+				continue;
 
-				pasteObjects_->add(levelEditorObject);
-			}
+			pasteObjects_.push_back(levelEditorObject);
 		}
 	}
 }
@@ -1434,83 +1395,72 @@ void LevelEditorView::pasteObjects()
 	auto pasteObjectsMinX = Float::MAX_VALUE;
 	auto pasteObjectsMinZ = Float::MAX_VALUE;
 	auto pasteObjectsMinY = Float::MIN_VALUE;
-	for (auto _i = pasteObjects_->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* object = java_cast< LevelEditorObject* >(_i->next());
-		{
-			BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
-			auto cbv = obv->clone();
-			cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
-			auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
-			if ((*objectBBMinXYZ)[0] < pasteObjectsMinX)
-				pasteObjectsMinX = (*objectBBMinXYZ)[0];
+	for (auto object: pasteObjects_) {
+		BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
+		auto cbv = obv->clone();
+		cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
+		auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		if ((*objectBBMinXYZ)[0] < pasteObjectsMinX)
+			pasteObjectsMinX = (*objectBBMinXYZ)[0];
 
-			if ((*objectBBMinXYZ)[1] < pasteObjectsMinY)
-				pasteObjectsMinY = (*objectBBMinXYZ)[1];
+		if ((*objectBBMinXYZ)[1] < pasteObjectsMinY)
+			pasteObjectsMinY = (*objectBBMinXYZ)[1];
 
-			if ((*objectBBMinXYZ)[2] < pasteObjectsMinZ)
-				pasteObjectsMinZ = (*objectBBMinXYZ)[2];
-
-		}
+		if ((*objectBBMinXYZ)[2] < pasteObjectsMinZ)
+			pasteObjectsMinZ = (*objectBBMinXYZ)[2];
 	}
 	auto selectedObjectsMinX = Float::MAX_VALUE;
 	auto selectedObjectsMinZ = Float::MAX_VALUE;
 	auto selectedObjectsMaxY = Float::MIN_VALUE;
-	for (auto _i = selectedObjects->iterator(); _i->hasNext(); ) {
-		Entity* object = java_cast< Entity* >(_i->next());
-		{
-			auto levelEditorObject = level->getObjectById(object->getId());
-			if (levelEditorObject == nullptr)
-				continue;
+	for (auto object: selectedObjects) {
+		auto levelEditorObject = level->getObjectById(object->getId());
+		if (levelEditorObject == nullptr)
+			continue;
 
-			BoundingVolume* obv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
-			auto cbv = obv->clone();
-			cbv->fromBoundingVolumeWithTransformations(obv, levelEditorObject->getTransformations());
-			auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
-			auto objectBBMaxXYZ = (java_cast< BoundingBox* >(cbv))->getMax()->getArray();
-			if ((*objectBBMinXYZ)[0] < selectedObjectsMinX)
-				selectedObjectsMinX = (*objectBBMinXYZ)[0];
+		BoundingVolume* obv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
+		auto cbv = obv->clone();
+		cbv->fromBoundingVolumeWithTransformations(obv, levelEditorObject->getTransformations());
+		auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		auto objectBBMaxXYZ = (java_cast< BoundingBox* >(cbv))->getMax()->getArray();
+		if ((*objectBBMinXYZ)[0] < selectedObjectsMinX)
+			selectedObjectsMinX = (*objectBBMinXYZ)[0];
 
-			if ((*objectBBMaxXYZ)[1] > selectedObjectsMaxY)
-				selectedObjectsMaxY = (*objectBBMaxXYZ)[1];
+		if ((*objectBBMaxXYZ)[1] > selectedObjectsMaxY)
+			selectedObjectsMaxY = (*objectBBMaxXYZ)[1];
 
-			if ((*objectBBMinXYZ)[2] < selectedObjectsMinZ)
-				selectedObjectsMinZ = (*objectBBMinXYZ)[2];
-
-		}
+		if ((*objectBBMinXYZ)[2] < selectedObjectsMinZ)
+			selectedObjectsMinZ = (*objectBBMinXYZ)[2];
 	}
-	for (auto _i = pasteObjects_->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* pasteObject = java_cast< LevelEditorObject* >(_i->next());
-		{
-			auto pasteModel = pasteObject->getEntity();
-			auto levelEditorObjectTransformations = new Transformations();
-			levelEditorObjectTransformations->fromTransformations(pasteObject->getTransformations());
-			auto objectDiffX = pasteObject->getTransformations()->getTranslation()->getX() - pasteObjectsMinX;
-			auto objectDiffY = pasteObject->getTransformations()->getTranslation()->getY() - pasteObjectsMinY;
-			auto objectDiffZ = pasteObject->getTransformations()->getTranslation()->getZ() - pasteObjectsMinZ;
-			levelEditorObjectTransformations->getTranslation()->setX(selectedObjectsMinX + objectDiffX);
-			levelEditorObjectTransformations->getTranslation()->setY(selectedObjectsMaxY + objectDiffY);
-			levelEditorObjectTransformations->getTranslation()->setZ(selectedObjectsMinZ + objectDiffZ);
-			levelEditorObjectTransformations->update();
-			for (auto i = 0; i < level->getObjectCount(); i++) {
-				auto levelEditorObject = level->getObjectAt(i);
-				if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations()->getTranslation()->equals(levelEditorObjectTransformations->getTranslation())) {
-					return;
-				}
+	for (auto pasteObject: pasteObjects_) {
+		auto pasteModel = pasteObject->getEntity();
+		auto levelEditorObjectTransformations = new Transformations();
+		levelEditorObjectTransformations->fromTransformations(pasteObject->getTransformations());
+		auto objectDiffX = pasteObject->getTransformations()->getTranslation()->getX() - pasteObjectsMinX;
+		auto objectDiffY = pasteObject->getTransformations()->getTranslation()->getY() - pasteObjectsMinY;
+		auto objectDiffZ = pasteObject->getTransformations()->getTranslation()->getZ() - pasteObjectsMinZ;
+		levelEditorObjectTransformations->getTranslation()->setX(selectedObjectsMinX + objectDiffX);
+		levelEditorObjectTransformations->getTranslation()->setY(selectedObjectsMaxY + objectDiffY);
+		levelEditorObjectTransformations->getTranslation()->setZ(selectedObjectsMinZ + objectDiffZ);
+		levelEditorObjectTransformations->update();
+		for (auto i = 0; i < level->getObjectCount(); i++) {
+			auto levelEditorObject = level->getObjectAt(i);
+			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations()->getTranslation()->equals(levelEditorObjectTransformations->getTranslation())) {
+				return;
 			}
-			auto levelEditorObject = new LevelEditorObject(::java::lang::StringBuilder().append(pasteModel->getName())->append(u"_"_j)
-				->append(level->allocateObjectId())->toString(), u""_j, levelEditorObjectTransformations, pasteModel);
-			for (auto _i = pasteObject->getProperties()->iterator(); _i->hasNext(); ) {
-				PropertyModelClass* property = java_cast< PropertyModelClass* >(_i->next());
-				{
-					levelEditorObject->addProperty(property->getName(), property->getValue());
-				}
-			}
-			level->addObject(levelEditorObject);
-			auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
-			object->fromTransformations(levelEditorObjectTransformations);
-			object->setPickable(true);
-			engine->addEntity(object);
 		}
+		auto levelEditorObject = new LevelEditorObject(::java::lang::StringBuilder().append(pasteModel->getName())->append(u"_"_j)
+			->append(level->allocateObjectId())->toString(), u""_j, levelEditorObjectTransformations, pasteModel);
+		for (auto _i = pasteObject->getProperties()->iterator(); _i->hasNext(); ) {
+			PropertyModelClass* property = java_cast< PropertyModelClass* >(_i->next());
+			{
+				levelEditorObject->addProperty(property->getName(), property->getValue());
+			}
+		}
+		level->addObject(levelEditorObject);
+		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
+		object->fromTransformations(levelEditorObjectTransformations);
+		object->setPickable(true);
+		engine->addEntity(object);
 	}
 	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
 }
