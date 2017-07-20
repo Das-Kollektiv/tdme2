@@ -543,24 +543,22 @@ void LevelEditorScreenController::onMapPropertyRemove()
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(_HashMap* objectPresetIds)
+void LevelEditorScreenController::setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds)
 {
 	auto objectPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto objectPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesPresets->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = objectPresetIds->getKeysIterator(); _i->hasNext(); ) {
-		String* modelPresetId = java_cast< String* >(_i->next());
-		{
-			objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(modelPresetId))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(modelPresetId))
-				->append(u"\" "_j)
-				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-				->append(u" />\n"_j)->toString())->toString();
-			idx++;
-		}
+	for (auto it: *objectPresetIds) {
+		auto modelPresetId = new String(it.first);
+		objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(modelPresetId))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(modelPresetId))
+			->append(u"\" "_j)
+			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
+			->append(u" />\n"_j)->toString())->toString();
+		idx++;
 	}
 	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
@@ -766,7 +764,7 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(_HashMap* lightPresetIds)
+void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = java_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*lightsPresets)[i]->getId())->append(u"_inner"_j)->toString())));
@@ -774,17 +772,15 @@ void LevelEditorScreenController::setLightPresetsIds(_HashMap* lightPresetIds)
 		auto lightPresetsInnerNodeSubNodesXML = u""_j;
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append((*lightsPresets)[i]->getId())
 			->append(u"_inner_scrollarea\" width=\"100%\" height=\"50\">\n"_j)->toString())->toString();
-		for (auto _i = lightPresetIds->getKeysIterator(); _i->hasNext(); ) {
-			String* lightPresetId = java_cast< String* >(_i->next());
-			{
-				lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(lightPresetId))
-					->append(u"\" value=\""_j)
-					->append(GUIParser::escapeQuotes(lightPresetId))
-					->append(u"\" "_j)
-					->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-					->append(u" />\n"_j)->toString())->toString();
-				idx++;
-			}
+		for (auto it: *lightPresetIds) {
+			String* lightPresetId = new String(it.first);
+			lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(lightPresetId))
+				->append(u"\" value=\""_j)
+				->append(GUIParser::escapeQuotes(lightPresetId))
+				->append(u"\" "_j)
+				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
+				->append(u" />\n"_j)->toString())->toString();
+			idx++;
 		}
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 		try {
@@ -892,9 +888,11 @@ void LevelEditorScreenController::onLight3PresetApply()
 
 void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
 {
-	auto lightPreset = java_cast< LevelEditorLight* >(LevelPropertyPresets::getInstance()->getLightPresets()->get((*lightsPresets)[lightIdx]->getController()->getValue()->toString()));
-	if (lightPreset == nullptr)
-		return;
+	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
+	LevelEditorLight* lightPreset = nullptr;
+	auto lightPresetIt = lightPresets->find((*lightsPresets)[lightIdx]->getController()->getValue()->toString()->getCPPWString());
+	if (lightPresetIt != lightPresets->end()) lightPreset = lightPresetIt->second;
+	if (lightPreset == nullptr) return;
 
 	view->applyLight(lightIdx, lightPreset->getAmbient(), lightPreset->getDiffuse(), lightPreset->getSpecular(), lightPreset->getPosition(), lightPreset->getConstantAttenuation(), lightPreset->getLinearAttenuation(), lightPreset->getQuadraticAttenuation(), lightPreset->getSpotTo(), lightPreset->getSpotDirection(), lightPreset->getSpotExponent(), lightPreset->getSpotCutOff(), lightPreset->isEnabled());
 }

@@ -61,13 +61,15 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* p
 		return;
 
 	entity->clearProperties();
-	auto entityPropertyPresetArrayList = java_cast< _ArrayList* >(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets()->get(presetId));
+	auto objectPropertiesPreset = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
+	const vector<PropertyModelClass*>* entityPropertyPresetArrayList = nullptr;
+	auto entityPropertyPresetArrayListIt = objectPropertiesPreset->find(presetId->getCPPWString());
+	if (entityPropertyPresetArrayListIt != objectPropertiesPreset->end()) {
+		entityPropertyPresetArrayList = &entityPropertyPresetArrayListIt->second;
+	}
 	if (entityPropertyPresetArrayList != nullptr) {
-		for (auto _i = entityPropertyPresetArrayList->iterator(); _i->hasNext(); ) {
-			PropertyModelClass* entityPropertyPreset = java_cast< PropertyModelClass* >(_i->next());
-			{
-				entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
-			}
+		for (auto entityPropertyPreset: *entityPropertyPresetArrayList) {
+			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
 	entityBaseSubScreenController->setEntityProperties(entity, presetId, entity->getProperties(), nullptr);

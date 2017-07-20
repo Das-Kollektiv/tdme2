@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
@@ -10,19 +12,20 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
-#include <tdme/utils/_HashMap.h>
-
 #include <ext/tinyxml/tinyxml.h>
 
+#include <tdme/tools/shared/model/LevelEditorLight.h>
+
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 using tdme::ext::tinyxml::TiXmlElement;
 
+using tdme::tools::shared::model::LevelEditorLight;
 
 struct default_init_tag;
 
@@ -39,9 +42,9 @@ public:
 	typedef Object super;
 
 private:
-	_ArrayList* mapPropertiesPreset {  };
-	_HashMap* objectPropertiesPresets {  };
-	_HashMap* lightPresets {  };
+	vector<PropertyModelClass*> mapPropertiesPreset {  };
+	map<wstring, vector<PropertyModelClass*>> objectPropertiesPresets {  };
+	map<wstring, LevelEditorLight*> lightPresets {  };
 	static LevelPropertyPresets* instance;
 
 public:
@@ -70,17 +73,17 @@ public:
 	/** 
 	 * @return map properties preset
 	 */
-	_ArrayList* getMapPropertiesPreset();
+	const vector<PropertyModelClass*>* getMapPropertiesPreset() const;
 
 	/** 
 	 * @return object property presets
 	 */
-	_HashMap* getObjectPropertiesPresets();
+	const map<wstring, vector<PropertyModelClass*>>* getObjectPropertiesPresets() const;
 
 	/** 
 	 * @return light presets
 	 */
-	_HashMap* getLightPresets();
+	const map<wstring, LevelEditorLight*>* getLightPresets() const;
 
 private:
 

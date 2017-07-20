@@ -71,10 +71,9 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -151,8 +150,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
 using tdme::utils::_ArrayList;
+using tdme::utils::_Exception;
 using tdme::utils::_Console;
 using tdme::utils::_HashMap;
 
@@ -1285,13 +1284,15 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 		return;
 
 	levelEditorObject->clearProperties();
-	auto objectPropertyPresetVector = java_cast< _ArrayList* >(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets()->get(presetId));
+	auto objectPropertiesPresets = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
+	const vector<PropertyModelClass*>* objectPropertyPresetVector = nullptr;
+	auto objectPropertyPresetVectorIt = objectPropertiesPresets->find(presetId->getCPPWString());
+	if (objectPropertyPresetVectorIt != objectPropertiesPresets->end()) {
+		objectPropertyPresetVector = &objectPropertyPresetVectorIt->second;
+	}
 	if (objectPropertyPresetVector != nullptr) {
-		for (auto _i = objectPropertyPresetVector->iterator(); _i->hasNext(); ) {
-			PropertyModelClass* objectPropertyPreset = java_cast< PropertyModelClass* >(_i->next());
-			{
-				levelEditorObject->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
-			}
+		for (auto objectPropertyPreset: *objectPropertyPresetVector) {
+			levelEditorObject->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
 	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject->getProperties(), nullptr);

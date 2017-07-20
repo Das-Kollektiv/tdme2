@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/EntityBaseSubScreenController.java
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/lang/Iterable.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -28,6 +32,10 @@
 #include <tdme/utils/_HashMap_KeysIterator.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/MutableString.h>
+
+using std::map;
+using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using java::lang::Iterable;
@@ -142,24 +150,22 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(_HashMap* entityPresetIds)
+void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds)
 {
 	auto entityPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto entityPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesPresets->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = entityPresetIds->getKeysIterator(); _i->hasNext(); ) {
-		String* entityPresetId = java_cast< String* >(_i->next());
-		{
-			entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(entityPresetId))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(entityPresetId))
-				->append(u"\" "_j)
-				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-				->append(u" />\n"_j)->toString())->toString();
-			idx++;
-		}
+	for (auto it: *entityPresetIds) {
+		String* entityPresetId = new String(it.first);
+		entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(entityPresetId))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(entityPresetId))
+			->append(u"\" "_j)
+			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
+			->append(u" />\n"_j)->toString())->toString();
+		idx++;
 	}
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {

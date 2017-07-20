@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -20,17 +21,15 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_HashMap.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/StringConverter.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
-using std::vector;
+using std::map;
 using std::string;
+using std::vector;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
 using java::lang::Object;
@@ -49,10 +48,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap;
-using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_Console;
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
@@ -96,20 +92,14 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 
 void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 {
-	for (auto _i = getMapPropertiesPreset()->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* mapProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			level->addProperty(mapProperty->getName(), mapProperty->getValue());
-		}
+	for (auto mapProperty: mapPropertiesPreset) {
+		level->addProperty(mapProperty->getName(), mapProperty->getValue());
 	}
 }
 
 void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Exception) */
 {
 	super::ctor();
-	mapPropertiesPreset = new _ArrayList();
-	objectPropertiesPresets = new _HashMap();
-	lightPresets = new _HashMap();
 
 	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	TiXmlDocument xmlDocument;
@@ -128,7 +118,7 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 
 	for (auto xmlMap: getChildrenByTagName(xmlRoot, "map")) {
 		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {
-			mapPropertiesPreset->add(
+			mapPropertiesPreset.push_back(
 				new PropertyModelClass(
 					new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
 					new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
@@ -140,11 +130,9 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 	for (auto xmlObject: getChildrenByTagName(xmlRoot, "object")) {
 		for (auto xmlType: getChildrenByTagName(xmlObject, "type")) {
 			auto typeId = new String(StringConverter::toWideString(xmlType->Attribute("id")));
-			auto objectPropertiesPreset = new _ArrayList();
-			objectPropertiesPresets->put(typeId, objectPropertiesPreset);
-			objectPropertiesPreset->add(new PropertyModelClass(u"preset"_j, typeId));
+			objectPropertiesPresets[typeId->getCPPWString()].push_back(new PropertyModelClass(u"preset"_j, typeId));
 			for (auto xmlProperty: getChildrenByTagName(xmlType, "property")) {
-				objectPropertiesPreset->add(
+				objectPropertiesPresets[typeId->getCPPWString()].push_back(
 					new PropertyModelClass(
 						new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
 						new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
@@ -172,25 +160,25 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 				light->setSpotExponent(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText()))));
 				light->setSpotCutOff(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText()))));
 				light->setEnabled(true);
-				lightPresets->put(typeId, light);
+				lightPresets[typeId->getCPPWString()] = light;
 			}
 		}
 	}
 }
 
-_ArrayList* LevelPropertyPresets::getMapPropertiesPreset()
+const vector<PropertyModelClass*>* LevelPropertyPresets::getMapPropertiesPreset() const
 {
-	return mapPropertiesPreset;
+	return &mapPropertiesPreset;
 }
 
-_HashMap* LevelPropertyPresets::getObjectPropertiesPresets()
+const map<wstring, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const
 {
-	return objectPropertiesPresets;
+	return &objectPropertiesPresets;
 }
 
-_HashMap* LevelPropertyPresets::getLightPresets()
+const map<wstring, LevelEditorLight*>* LevelPropertyPresets::getLightPresets() const
 {
-	return lightPresets;
+	return &lightPresets;
 }
 
 const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)

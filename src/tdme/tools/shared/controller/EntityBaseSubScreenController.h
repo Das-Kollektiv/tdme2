@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -12,7 +16,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
-#include <tdme/utils/_HashMap.h>
+using std::map;
+using std::wstring;
+using std::vector;
 
 using java::lang::Object;
 using java::lang::Iterable;
@@ -23,6 +29,7 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
@@ -99,7 +106,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param entity property preset ids
 	 */
-	virtual void setEntityPresetIds(_HashMap* entityPresetIds);
+	virtual void setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds);
 
 	/** 
 	 * Set up entity properties

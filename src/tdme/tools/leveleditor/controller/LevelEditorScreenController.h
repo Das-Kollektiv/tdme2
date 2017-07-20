@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -14,12 +16,15 @@
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/utils/_HashMap.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using tdme::tools::shared::controller::ScreenController;
@@ -40,6 +45,8 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
+using tdme::tools::shared::model::LevelEditorLight;
+using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using tdme::utils::_HashMap;
 using java::lang::Object;
@@ -285,7 +292,7 @@ public:
 	 * Set up object property preset ids
 	 * @param object property preset ids
 	 */
-	void setObjectPresetIds(_HashMap* objectPresetIds);
+	void setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds);
 
 	/** 
 	 * Event callback for object properties selection
@@ -376,7 +383,7 @@ public:
 	 * Set up light presets
 	 * @param light presets
 	 */
-	void setLightPresetsIds(_HashMap* lightPresetIds);
+	void setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds);
 
 	/** 
 	 * Unselect light presets
