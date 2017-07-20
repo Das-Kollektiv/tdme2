@@ -328,24 +328,21 @@ void ParticleSystemScreenController::unsetEntityProperties()
 	entityBaseSubScreenController->unsetEntityProperties();
 }
 
-void ParticleSystemScreenController::setParticleSystemTypes(_ArrayList* particleSystemTypesCollection)
+void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
 {
 	auto particleSystemTypesInnerNode = java_cast< GUIParentNode* >((particleSystemTypes->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemTypes->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto particleSystemTypesInnerNodeSubNodesXML = u""_j;
 	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemTypes->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = particleSystemTypesCollection->iterator(); _i->hasNext(); ) {
-		String* particleSystem = java_cast< String* >(_i->next());
-		{
-			particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystem))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(particleSystem))
-				->append(u"\" "_j)
-				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-				->append(u" />\n"_j)->toString())->toString();
-			idx++;
-		}
+	for (auto particleSystem: *particleSystemTypesCollection) {
+		particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystem))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(particleSystem))
+			->append(u"\" "_j)
+			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
+			->append(u" />\n"_j)->toString())->toString();
+		idx++;
 	}
 	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {
@@ -356,24 +353,21 @@ void ParticleSystemScreenController::setParticleSystemTypes(_ArrayList* particle
 	}
 }
 
-void ParticleSystemScreenController::setParticleSystemEmitters(_ArrayList* emittersCollection)
+void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
 {
 	auto particleSystemEmittersInnerNode = java_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemEmitters->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto particleSystemEmittersInnerNodeSubNodesXML = u""_j;
 	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemEmitters->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
-	for (auto _i = emittersCollection->iterator(); _i->hasNext(); ) {
-		String* particleSystemEmitter = java_cast< String* >(_i->next());
-		{
-			particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystemEmitter))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(particleSystemEmitter))
-				->append(u"\" "_j)
-				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-				->append(u" />\n"_j)->toString())->toString();
-			idx++;
-		}
+	for (auto particleSystemEmitter: *emittersCollection) {
+		particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystemEmitter))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(particleSystemEmitter))
+			->append(u"\" "_j)
+			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
+			->append(u" />\n"_j)->toString())->toString();
+		idx++;
 	}
 	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
 	try {

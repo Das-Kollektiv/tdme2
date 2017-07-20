@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+
+using std::vector;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -27,7 +31,6 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -208,13 +211,13 @@ public:
 	 * Set up particle system types
 	 * @param particle system types
 	 */
-	void setParticleSystemTypes(_ArrayList* particleSystemTypesCollection);
+	void setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection);
 
 	/** 
 	 * Set up emitters
 	 * @param emitters
 	 */
-	void setParticleSystemEmitters(_ArrayList* emittersCollection);
+	void setParticleSystemEmitters(const vector<String*>* emittersCollection);
 
 	/** 
 	 * On quit
