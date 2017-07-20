@@ -33,7 +33,6 @@
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 
@@ -70,7 +69,6 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
