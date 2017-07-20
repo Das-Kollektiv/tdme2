@@ -1,8 +1,10 @@
 // Generated from /tdme/src/tdme/engine/PartitionOctTree.java
 #include <tdme/engine/PartitionOctTree.h>
 
-#include <vector>
 #include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
 
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
@@ -10,24 +12,22 @@
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
-#include <tdme/engine/PartitionOctTree_reset_1.h>
 #include <tdme/engine/PartitionOctTree_reset_2.h>
 #include <tdme/engine/PartitionOctTree_reset_3.h>
-#include <tdme/engine/PartitionOctTree_reset_6.h>
 #include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
-#include <tdme/utils/Key.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
 
-using std::vector;
+using std::map;
 using std::remove;
+using std::vector;
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::PartitionOctTree;
 using java::lang::Math;
@@ -36,21 +36,16 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
-using tdme::engine::PartitionOctTree_reset_1;
 using tdme::engine::PartitionOctTree_reset_2;
 using tdme::engine::PartitionOctTree_reset_3;
-using tdme::engine::PartitionOctTree_reset_6;
 using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
-using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -87,7 +82,6 @@ void PartitionOctTree::ctor()
 {
 	super::ctor();
 	init();
-	this->key = new Key();
 	this->boundingBox = new BoundingBox();
 	this->halfExtension = new Vector3();
 	this->sideVector = new Vector3(1.0f, 0.0f, 0.0f);
@@ -98,11 +92,9 @@ void PartitionOctTree::ctor()
 
 void PartitionOctTree::reset()
 {
-	this->entityPartitionNodesPool = new PartitionOctTree_reset_1(this);
 	this->boundingBoxPool = new PartitionOctTree_reset_2(this);
 	this->partitionTreeNodePool = new PartitionOctTree_reset_3(this);
-	this->keyPool = new PartitionOctTree_reset_6(this);
-	this->entityPartitionNodes = new _HashMap();
+	this->entityPartitionNodes.clear();
 	this->visibleEntities.clear();
 	this->treeRoot = new PartitionOctTree_PartitionTreeNode();
 	this->treeRoot->partitionSize = -1;
@@ -112,7 +104,7 @@ void PartitionOctTree::reset()
 	this->treeRoot->parent = nullptr;
 	this->treeRoot->bv = nullptr;
 	this->treeRoot->subNodes.clear();
-	this->treeRoot->subNodesByCoordinate = new _HashMap();
+	this->treeRoot->subNodesByCoordinate.clear();
 	this->treeRoot->partitionEntities.clear();
 }
 
@@ -129,18 +121,12 @@ PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionO
 	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node->bv->update();
 	node->subNodes.clear();
-	node->subNodesByCoordinate = nullptr;
+	node->subNodesByCoordinate.clear();
 	node->partitionEntities.clear();
 	parent->subNodes.push_back(node);
 	if (parent == treeRoot) {
-		auto key = java_cast< Key* >(keyPool->allocate());
-		key->reset();
-		key->append(node->x);
-		key->append(u","_j);
-		key->append(node->y);
-		key->append(u","_j);
-		key->append(node->z);
-		parent->subNodesByCoordinate->put(key, node);
+		wstring key = to_wstring(node->x) + L"," + to_wstring(node->y) + L"," + to_wstring(node->z);
+		parent->subNodesByCoordinate[key] = node;
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
@@ -153,8 +139,12 @@ PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionO
 
 void PartitionOctTree::addEntity(Entity* entity)
 {
-	auto thisEntityPartitions = java_cast< _ArrayList* >(entityPartitionNodes->get(entity->getId()));
-	if (thisEntityPartitions != nullptr && thisEntityPartitions->isEmpty() == false) {
+	vector<PartitionOctTree_PartitionTreeNode*>* thisEntityPartitions = nullptr;
+	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId()->getCPPWString());
+	if (thisEntityPartitionsIt != entityPartitionNodes.end()) {
+		thisEntityPartitions = &thisEntityPartitionsIt->second;
+	}
+	if (thisEntityPartitions != nullptr && thisEntityPartitions->empty() == false) {
 		removeEntity(entity);
 	}
 	auto boundingBox = entity->getBoundingBoxTransformed();
@@ -167,15 +157,10 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-		key->reset();
-		key->append(xPartition);
-		key->append(u","_j);
-		key->append(yPartition);
-		key->append(u","_j);
-		key->append(zPartition);
-		auto node = java_cast< PartitionOctTree_PartitionTreeNode* >(treeRoot->subNodesByCoordinate->get(key));
-		if (node == nullptr) {
-			node = createPartition(treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+		wstring key = to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition);
+		auto nodeIt = treeRoot->subNodesByCoordinate.find(key);
+		if (nodeIt == treeRoot->subNodesByCoordinate.end()) {
+			auto node = createPartition(treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
 	}
 
@@ -189,35 +174,33 @@ void PartitionOctTree::updateEntity(Entity* entity)
 
 void PartitionOctTree::removeEntity(Entity* entity)
 {
-	auto objectPartitionsVector = java_cast< _ArrayList* >(entityPartitionNodes->remove(entity->getId()));
-	if (objectPartitionsVector == nullptr || objectPartitionsVector->isEmpty() == true) {
+	vector<PartitionOctTree_PartitionTreeNode*>* objectPartitionsVector = nullptr;
+	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId()->getCPPWString());
+	if (objectPartitionsVectorIt != entityPartitionNodes.end()) {
+		objectPartitionsVector = &objectPartitionsVectorIt->second;
+	}
+	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"PartitionOctTree::removeEntity(): '"_j)->append(entity->getId())
 			->append(u"' not registered"_j)->toString()));
 		return;
 	}
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
-		auto partitionTreeNode = java_cast< PartitionOctTree_PartitionTreeNode* >(objectPartitionsVector->get(lastIdx));
+		auto partitionTreeNode = objectPartitionsVector->at(lastIdx);
 		auto& partitionObjects = partitionTreeNode->partitionEntities;
 		partitionObjects.erase(remove(partitionObjects.begin(), partitionObjects.end(), entity), partitionObjects.end());
-		objectPartitionsVector->remove(lastIdx);
+		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);
 		if (partitionObjects.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
 				removePartitionNode(rootPartitionTreeNode);
 				treeRoot->subNodes.erase(remove(treeRoot->subNodes.begin(), treeRoot->subNodes.end(), rootPartitionTreeNode), treeRoot->subNodes.end());
-				key->reset();
-				key->append(rootPartitionTreeNode->x);
-				key->append(u","_j);
-				key->append(rootPartitionTreeNode->y);
-				key->append(u","_j);
-				key->append(rootPartitionTreeNode->z);
-				keyPool->release(java_cast< Key* >(treeRoot->subNodesByCoordinate->getKey(key)));
-				treeRoot->subNodesByCoordinate->remove(key);
+				wstring key = to_wstring(rootPartitionTreeNode->x) + L"," + to_wstring(rootPartitionTreeNode->y) + L"," + to_wstring(rootPartitionTreeNode->z);
+				treeRoot->subNodesByCoordinate.erase(key);
 			}
 		}
 	}
-	entityPartitionNodesPool->release(objectPartitionsVector);
+	entityPartitionNodes.erase(objectPartitionsVectorIt);
 }
 
 bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* node)
@@ -304,12 +287,7 @@ void PartitionOctTree::addToPartitionTree(PartitionOctTree_PartitionTreeNode* no
 	}
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionEntities.push_back(entity);
-		auto objectPartitionNodesVector = java_cast< _ArrayList* >(entityPartitionNodes->get(entity->getId()));
-		if (objectPartitionNodesVector == nullptr) {
-			objectPartitionNodesVector = java_cast< _ArrayList* >(entityPartitionNodesPool->allocate());
-			entityPartitionNodes->put(entity->getId(), objectPartitionNodesVector);
-		}
-		objectPartitionNodesVector->add(node);
+		entityPartitionNodes[entity->getId()->getCPPWString()].push_back(node);
 	} else
 	if (node->subNodes.size() > 0) {
 		for (auto i = 0; i < node->subNodes.size(); i++) {

@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
@@ -12,6 +16,10 @@
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
+using std::map;
+using std::vector;
+using std::wstring;
+
 using tdme::engine::physics::PhysicsPartition;
 using java::lang::String;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
@@ -20,10 +28,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
-using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -40,7 +45,6 @@ public:
 	typedef PhysicsPartition super;
 
 private:
-	Key* key {  };
 	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
 	BoundingBox* boundingBox {  };
 	Vector3* halfExtension {  };
@@ -49,9 +53,7 @@ private:
 	Vector3* upVector {  };
 	Pool* boundingBoxPool {  };
 	Pool* partitionTreeNodePool {  };
-	Pool* rigidBodyPartitionNodesPool {  };
-	Pool* keyPool {  };
-	_HashMap* rigidBodyPartitionNodes {  };
+	map<wstring, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode* treeRoot {  };
 
 public:
@@ -179,10 +181,6 @@ private:
 	void init();
 	virtual ::java::lang::Class* getClass0();
 	friend class PhysicsPartitionOctTree_PartitionTreeNode;
-	friend class PhysicsPartitionOctTree_reset_1;
 	friend class PhysicsPartitionOctTree_reset_2;
 	friend class PhysicsPartitionOctTree_reset_3;
-	friend class PhysicsPartitionOctTree_reset_4;
-	friend class PhysicsPartitionOctTree_reset_5;
-	friend class PhysicsPartitionOctTree_reset_6;
 };

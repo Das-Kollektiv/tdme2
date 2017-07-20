@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <java/lang/Object.h>
 #include <tdme/engine/physics/RigidBody.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
@@ -19,7 +23,6 @@ using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -43,7 +46,7 @@ private:
 	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox* bv {  };
 	vector<PhysicsPartitionOctTree_PartitionTreeNode*> subNodes {  };
-	_HashMap* subNodesByCoordinate {  };
+	map<wstring, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<RigidBody*> partitionRidigBodies {  };
 
 	// Generated
@@ -60,10 +63,6 @@ public:
 private:
 	virtual ::java::lang::Class* getClass0();
 	friend class PhysicsPartitionOctTree;
-	friend class PhysicsPartitionOctTree_reset_1;
 	friend class PhysicsPartitionOctTree_reset_2;
 	friend class PhysicsPartitionOctTree_reset_3;
-	friend class PhysicsPartitionOctTree_reset_4;
-	friend class PhysicsPartitionOctTree_reset_5;
-	friend class PhysicsPartitionOctTree_reset_6;
 };

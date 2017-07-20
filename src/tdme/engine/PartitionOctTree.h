@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -11,6 +15,10 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
+using std::map;
+using std::vector;
+using std::wstring;
+
 using tdme::engine::Partition;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
@@ -19,10 +27,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
-using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -39,18 +44,15 @@ public:
 	typedef Partition super;
 
 private:
-	Key* key {  };
 	ArrayListIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox* boundingBox {  };
 	Vector3* halfExtension {  };
 	Vector3* sideVector {  };
 	Vector3* forwardVector {  };
 	Vector3* upVector {  };
-	Pool* entityPartitionNodesPool {  };
 	Pool* boundingBoxPool {  };
 	Pool* partitionTreeNodePool {  };
-	Pool* keyPool {  };
-	_HashMap* entityPartitionNodes {  };
+	map<wstring, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
 	PartitionOctTree_PartitionTreeNode* treeRoot {  };
 

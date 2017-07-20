@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -15,6 +17,8 @@ using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 using tdme::utils::_HashMap;
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 struct default_init_tag;
@@ -39,7 +43,7 @@ private:
 	PartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox* bv {  };
 	vector<PartitionOctTree_PartitionTreeNode*> subNodes {  };
-	_HashMap* subNodesByCoordinate {  };
+	map<wstring, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<Entity*> partitionEntities {  };
 
 	// Generated
@@ -56,10 +60,6 @@ public:
 private:
 	virtual ::java::lang::Class* getClass0();
 	friend class PartitionOctTree;
-	friend class PartitionOctTree_reset_1;
 	friend class PartitionOctTree_reset_2;
 	friend class PartitionOctTree_reset_3;
-	friend class PartitionOctTree_reset_4;
-	friend class PartitionOctTree_reset_5;
-	friend class PartitionOctTree_reset_6;
 };

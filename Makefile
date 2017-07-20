@@ -53,10 +53,8 @@ SRCS = \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PartitionOctTree_PartitionTreeNode.cpp \
-	src/tdme/engine/PartitionOctTree_reset_1.cpp \
 	src/tdme/engine/PartitionOctTree_reset_2.cpp \
 	src/tdme/engine/PartitionOctTree_reset_3.cpp \
-	src/tdme/engine/PartitionOctTree_reset_6.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/Rotations.cpp \
@@ -103,10 +101,8 @@ SRCS = \
 	src/tdme/engine/physics/PhysicsPartitionNone.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_1.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_2.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_3.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree_reset_6.cpp \
 	src/tdme/engine/physics/RigidBody.cpp \
 	src/tdme/engine/physics/Vector6.cpp \
 	src/tdme/engine/physics/World.cpp \
