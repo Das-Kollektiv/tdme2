@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityLibrary.java
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 
+#include <algorithm>
+#include <map>
+#include <vector>
+
 #include <java/lang/CharSequence.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
@@ -20,8 +24,11 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_ExceptionBase.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::remove;
+using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using java::lang::CharSequence;
@@ -41,7 +48,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_ExceptionBase;
 
@@ -71,15 +77,13 @@ void LevelEditorEntityLibrary::ctor(LevelEditorLevel* level)
 {
 	super::ctor();
 	this->level = level;
-	this->entitiesById = new _HashMap();
-	this->entities = new _ArrayList();
 	this->entityIdx = 0;
 }
 
 void LevelEditorEntityLibrary::clear()
 {
-	java_cast< _HashMap* >(this->entitiesById)->clear();
-	java_cast< _ArrayList* >(this->entities)->clear();
+	this->entitiesById.clear();
+	this->entities.clear();
 	this->entityIdx = 0;
 }
 
@@ -193,11 +197,13 @@ LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, Strin
 
 void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /* throws(Exception) */
 {
-	if (java_cast< LevelEditorEntity* >(entitiesById->get(new Integer(levelEditorEntity->getId()))) != nullptr) {
+
+	auto entityByIdIt = entitiesById.find(levelEditorEntity->getId());
+	if (entityByIdIt != entitiesById.end()) {
 		throw _ExceptionBase("Entity id already in use");
 	}
-	entities->add(levelEditorEntity);
-	entitiesById->put(Integer::valueOf(levelEditorEntity->getId()), levelEditorEntity);
+	entities.push_back(levelEditorEntity);
+	entitiesById[levelEditorEntity->getId()] = levelEditorEntity;
 	if (levelEditorEntity->getId() >= entityIdx)
 		entityIdx = levelEditorEntity->getId() + 1;
 
@@ -205,25 +211,30 @@ void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /
 
 LevelEditorEntity* LevelEditorEntityLibrary::getEntityAt(int32_t idx)
 {
-	return java_cast< LevelEditorEntity* >(entities->get(idx));
+	return entities.at(idx);
 }
 
 LevelEditorEntity* LevelEditorEntityLibrary::getEntity(int32_t id)
 {
-	return java_cast< LevelEditorEntity* >(entitiesById->get(new Integer(id)));
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		return entityByIdIt->second;
+	}
+	return nullptr;
 }
 
 void LevelEditorEntityLibrary::removeEntity(int32_t id)
 {
-	auto _model = java_cast< LevelEditorEntity* >(entitiesById->remove(new Integer(id)));
-	if (_model != nullptr) {
-		entities->remove(static_cast< Object* >(_model));
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		entitiesById.erase(entityByIdIt);
+		entities.erase(remove(entities.begin(), entities.end(), entityByIdIt->second), entities.end());
 	}
 }
 
 int32_t LevelEditorEntityLibrary::getEntityCount()
 {
-	return entities->size();
+	return entities.size();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

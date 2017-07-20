@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
@@ -10,12 +13,14 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 
@@ -36,8 +41,8 @@ public:
 
 private:
 	LevelEditorLevel* level {  };
-	_HashMap* entitiesById {  };
-	_ArrayList* entities {  };
+	map<int32_t, LevelEditorEntity*> entitiesById {  };
+	vector<LevelEditorEntity*> entities {  };
 	int32_t entityIdx {  };
 protected:
 
