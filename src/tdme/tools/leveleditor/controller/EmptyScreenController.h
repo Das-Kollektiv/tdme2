@@ -26,7 +26,6 @@ using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::utils::MutableString;
 
-
 struct default_init_tag;
 
 /** 
@@ -86,7 +85,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName);
+	void setEntityProperties(String* presetId, String* selectedName);
 
 	/** 
 	 * Unset entity properties

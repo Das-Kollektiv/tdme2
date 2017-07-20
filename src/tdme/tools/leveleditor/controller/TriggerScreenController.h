@@ -91,7 +91,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName);
+	void setEntityProperties(String* presetId, String* selectedName);
 
 	/** 
 	 * Unset entity properties

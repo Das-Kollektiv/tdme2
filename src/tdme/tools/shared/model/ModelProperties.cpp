@@ -1,20 +1,26 @@
 // Generated from /tdme/src/tdme/tools/shared/model/ModelProperties.java
 #include <tdme/tools/shared/model/ModelProperties.h>
 
+#include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
-#include <tdme/utils/_ArrayList.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::remove;
+using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::tools::shared::model::PropertyModelClass;
-using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -39,35 +45,32 @@ ModelProperties::ModelProperties()
 void ModelProperties::ctor()
 {
 	super::ctor();
-	this->properties = new _ArrayList();
-	this->propertiesByName = new _HashMap();
-}
-
-Iterable* ModelProperties::getProperties()
-{
-	return properties;
 }
 
 void ModelProperties::clearProperties()
 {
-	properties->clear();
-	propertiesByName->clear();
+	properties.clear();
+	propertiesByName.clear();
 }
 
 PropertyModelClass* ModelProperties::getProperty(String* name)
 {
-	return java_cast< PropertyModelClass* >(propertiesByName->get(name));
+	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	if (propertyByNameIt != propertiesByName.end()) {
+		return propertyByNameIt->second;
+	}
+	return nullptr;
 }
 
 int32_t ModelProperties::getPropertyCount()
 {
-	return properties->size();
+	return properties.size();
 }
 
 int32_t ModelProperties::getPropertyIndex(String* name)
 {
-	for (auto i = 0; i < properties->size(); i++) {
-		if (java_cast< PropertyModelClass* >(properties->get(i))->getName()->equals(name) == true) {
+	for (auto i = 0; i < properties.size(); i++) {
+		if (properties.at(i)->getName()->equals(name) == true) {
 			return i;
 		}
 	}
@@ -76,49 +79,63 @@ int32_t ModelProperties::getPropertyIndex(String* name)
 
 PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
 {
-	return idx >= 0 && idx < properties->size() ? java_cast< PropertyModelClass* >(properties->get(idx)) : static_cast< PropertyModelClass* >(nullptr);
+	return idx >= 0 && idx < properties.size() ? properties.at(idx) : nullptr;
 }
 
 bool ModelProperties::addProperty(String* name, String* value)
 {
-	if (propertiesByName->get(name) != nullptr)
+	if (getProperty(name) != nullptr)
 		return false;
 
 	auto property = new PropertyModelClass(name, value);
-	propertiesByName->put(name, property);
-	properties->add(property);
+	propertiesByName[name->getCPPWString()] = property;
+	properties.push_back(property);
 	return true;
 }
 
 bool ModelProperties::updateProperty(String* oldName, String* name, String* value)
 {
-	if (propertiesByName->get(oldName) == nullptr)
+	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	if (propertyByNameIt == propertiesByName.end())
 		return false;
 
-	if (oldName->equals(name) == false && propertiesByName->get(name) != nullptr) {
+	if (oldName->equals(name) == false && getProperty(name) != nullptr) {
 		return false;
 	}
-	auto property = java_cast< PropertyModelClass* >(propertiesByName->remove(oldName));
+
+	propertiesByName.erase(propertyByNameIt);
+
+	PropertyModelClass* property = propertyByNameIt->second;
 	property->setName(name);
 	property->setValue(value);
-	propertiesByName->put(property->getName(), property);
+
+	propertiesByName[property->getName()->getCPPWString()] = property;
+
 	return true;
 }
 
 bool ModelProperties::removeProperty(String* name)
 {
-	if (propertiesByName->get(name) == nullptr)
-		return false;
+	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	if (propertyByNameIt != propertiesByName.end()) {
+		propertiesByName.erase(propertyByNameIt);
+		properties.erase(remove(properties.begin(), properties.end(), propertyByNameIt->second), properties.end());
+		return true;
+	}
 
-	auto property = java_cast< PropertyModelClass* >(propertiesByName->remove(name));
-	properties->remove(static_cast< Object* >(property));
-	return true;
+	return false;
 }
 
 String* ModelProperties::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Properties [properties="_j)->append(static_cast< Object* >(properties))
-		->append(u"]"_j)->toString();
+	return
+		::java::lang::StringBuilder().
+		 /*
+		 append(u"Properties [properties="_j)->
+		 append(static_cast< Object* >(properties))->
+		 append(u"]"_j)->
+		 */
+		 toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

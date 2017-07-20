@@ -72,7 +72,7 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* p
 			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
-	entityBaseSubScreenController->setEntityProperties(entity, presetId, entity->getProperties(), nullptr);
+	entityBaseSubScreenController->setEntityProperties(entity, presetId, nullptr);
 }
 
 bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, String* oldName, String* name, String* value)
@@ -81,7 +81,7 @@ bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, String* oldNa
 		return false;
 
 	if (entity->updateProperty(oldName, name, value) == true) {
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, entity->getProperties(), name);
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, name);
 		return true;
 	}
 	return false;
@@ -93,7 +93,7 @@ bool EntityBaseView::entityPropertyAdd(LevelEditorEntity* entity)
 		return false;
 
 	if (entity->addProperty(u"new.property"_j, u"new.value"_j)) {
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, entity->getProperties(), u"new.property"_j);
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, u"new.property"_j);
 		return true;
 	}
 	return false;
@@ -110,7 +110,7 @@ bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, String* nam
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, entity->getProperties(), property == nullptr ? static_cast< String* >(nullptr) : property->getName());
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? static_cast< String* >(nullptr) : property->getName());
 		return true;
 	}
 	return false;

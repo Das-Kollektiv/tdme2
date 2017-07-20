@@ -104,21 +104,17 @@ void LevelEditorObject::setEntity(LevelEditorEntity* entity)
 ModelProperties* LevelEditorObject::getTotalProperties()
 {
 	auto properties = new ModelProperties();
-	for (auto _i = getEntity()->getProperties()->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* entityProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			properties->addProperty(entityProperty->getName(), entityProperty->getValue());
-		}
+	for (auto i = 0; i < getEntity()->getPropertyCount(); i++) {
+		PropertyModelClass* entityProperty = getEntity()->getPropertyByIndex(i);
+		properties->addProperty(entityProperty->getName(), entityProperty->getValue());
 	}
-	for (auto _i = getProperties()->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* objectProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			auto property = properties->getProperty(objectProperty->getName());
-			if (property != nullptr) {
-				properties->updateProperty(property->getName(), objectProperty->getName(), objectProperty->getValue());
-			} else {
-				properties->addProperty(objectProperty->getName(), objectProperty->getValue());
-			}
+	for (auto i = 0; i < getPropertyCount(); i++) {
+		PropertyModelClass* objectProperty = getPropertyByIndex(i);
+		auto property = properties->getProperty(objectProperty->getName());
+		if (property != nullptr) {
+			properties->updateProperty(property->getName(), objectProperty->getName(), objectProperty->getValue());
+		} else {
+			properties->addProperty(objectProperty->getName(), objectProperty->getValue());
 		}
 	}
 	return properties;

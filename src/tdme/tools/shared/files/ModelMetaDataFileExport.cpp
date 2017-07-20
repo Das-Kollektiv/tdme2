@@ -537,14 +537,12 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	}
 	jEntityRoot["bvs"] = jBoundingVolumes;
 	ext::jsonbox::Array jModelProperties;
-	for (auto _i = entity->getProperties()->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* modelProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			ext::jsonbox::Object jObjectProperty;
-			jObjectProperty["name"] = StringConverter::toString(modelProperty->getName()->getCPPWString());
-			jObjectProperty["value"] = StringConverter::toString(modelProperty->getValue()->getCPPWString());
-			jModelProperties.push_back(jObjectProperty);
-		}
+	for (auto i = 0; entity->getPropertyCount(); i++) {
+		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
+		ext::jsonbox::Object jObjectProperty;
+		jObjectProperty["name"] = StringConverter::toString(modelProperty->getName()->getCPPWString());
+		jObjectProperty["value"] = StringConverter::toString(modelProperty->getValue()->getCPPWString());
+		jModelProperties.push_back(jObjectProperty);
 	}
 	jEntityRoot["properties"] = jModelProperties;
 

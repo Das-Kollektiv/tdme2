@@ -316,9 +316,9 @@ void ParticleSystemScreenController::unsetEntityData()
 	particleSystemSave->getController()->setDisabled(true);
 }
 
-void ParticleSystemScreenController::setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName)
+void ParticleSystemScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, entityProperties, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void ParticleSystemScreenController::unsetEntityProperties()

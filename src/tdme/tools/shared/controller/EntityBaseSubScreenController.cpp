@@ -176,7 +176,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector
 	}
 }
 
-void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* model, String* presetId, Iterable* entityProperties, String* selectedName)
+void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, String* presetId, String* selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	entityPropertyPresetApply->getController()->setDisabled(false);
@@ -192,18 +192,16 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* model
 	auto entityPropertiesListBoxSubNodesXML = u""_j;
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesList->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
-	for (auto _i = entityProperties->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* entityProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(entityProperty->getName()))
-				->append(u": "_j)
-				->append(GUIParser::escapeQuotes(entityProperty->getValue()))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(entityProperty->getName()))
-				->append(u"\" "_j)
-				->append((selectedName != nullptr && entityProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
-				->append(u"/>\n"_j)->toString())->toString();
-		}
+	for (auto i = 0; i < entity->getPropertyCount(); i++) {
+		PropertyModelClass* entityProperty = entity->getPropertyByIndex(i);
+		entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(entityProperty->getName()))
+			->append(u": "_j)
+			->append(GUIParser::escapeQuotes(entityProperty->getValue()))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(entityProperty->getName()))
+			->append(u"\" "_j)
+			->append((selectedName != nullptr && entityProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append(u"/>\n"_j)->toString())->toString();
 	}
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
@@ -212,7 +210,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* model
 		_Console::print(string("EntityBaseSubScreenController::setEntityProperties(): An error occurred: "));
 		_Console::println(string(exception.what()));
 	}
-	onEntityPropertiesSelectionChanged(model);
+	onEntityPropertiesSelectionChanged(entity);
 }
 
 void EntityBaseSubScreenController::unsetEntityProperties()

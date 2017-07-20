@@ -101,9 +101,9 @@ void EmptyScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void EmptyScreenController::setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName)
+void EmptyScreenController::setEntityProperties(String* presetId, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, entityProperties, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void EmptyScreenController::unsetEntityProperties()

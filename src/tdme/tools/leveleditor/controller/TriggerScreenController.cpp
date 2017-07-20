@@ -121,9 +121,9 @@ void TriggerScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void TriggerScreenController::setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName)
+void TriggerScreenController::setEntityProperties(String* presetId, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, entityProperties, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void TriggerScreenController::unsetEntityProperties()

@@ -8,6 +8,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
@@ -28,6 +29,7 @@ using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
+using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::utils::MutableString;
 
@@ -119,7 +121,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName);
+	void setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName);
 
 	/** 
 	 * Unset entity properties

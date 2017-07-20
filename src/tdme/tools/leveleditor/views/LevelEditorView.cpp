@@ -663,7 +663,7 @@ void LevelEditorView::updateGUIElements()
 		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(u"preset"_j);
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : u""_j, levelEditorObject->getProperties(), nullptr);
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : u""_j, levelEditorObject, nullptr);
 			levelEditorScreenController->setObject(selectedObject->getTranslation(), selectedObject->getScale(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle());
 			Vector3* objectCenter = nullptr;
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
@@ -736,7 +736,7 @@ void LevelEditorView::initialize()
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
-	levelEditorScreenController->setMapProperties(level->getProperties(), nullptr);
+	levelEditorScreenController->setMapProperties(level, nullptr);
 	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
@@ -1101,7 +1101,7 @@ void LevelEditorView::colorObject()
 		if (selectedObject != nullptr && selectedObject->getId()->startsWith(u"leveleditor."_j) == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(u"preset"_j);
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : u""_j, levelEditorObject->getProperties(), nullptr);
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : u""_j, levelEditorObject, nullptr);
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
 		}
@@ -1222,7 +1222,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* value)
 {
 	if (level->updateProperty(oldName, name, value) == true) {
-		levelEditorScreenController->setMapProperties(level->getProperties(), name);
+		levelEditorScreenController->setMapProperties(level, name);
 		return true;
 	}
 	return false;
@@ -1231,7 +1231,7 @@ bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* val
 bool LevelEditorView::mapPropertyAdd()
 {
 	if (level->addProperty(u"new.property"_j, u"new.value"_j)) {
-		levelEditorScreenController->setMapProperties(level->getProperties(), u"new.property"_j);
+		levelEditorScreenController->setMapProperties(level, u"new.property"_j);
 		return true;
 	}
 	return false;
@@ -1245,7 +1245,7 @@ bool LevelEditorView::mapPropertyRemove(String* name)
 		if (property == nullptr) {
 			property = level->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setMapProperties(level->getProperties(), property == nullptr ? static_cast< String* >(nullptr) : property->getName());
+		levelEditorScreenController->setMapProperties(level, property == nullptr ? static_cast< String* >(nullptr) : property->getName());
 		return true;
 	}
 	return false;
@@ -1267,7 +1267,7 @@ bool LevelEditorView::objectPropertyRemove(String* name)
 		if (property == nullptr) {
 			property = levelEditorObject->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject->getProperties(), property == nullptr ? static_cast< String* >(nullptr) : property->getName());
+		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, property == nullptr ? static_cast< String* >(nullptr) : property->getName());
 		return true;
 	}
 	return false;
@@ -1295,7 +1295,7 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 			levelEditorObject->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
-	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject->getProperties(), nullptr);
+	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject, nullptr);
 }
 
 bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* value)
@@ -1309,7 +1309,7 @@ bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* 
 		return false;
 
 	if (levelEditorObject->updateProperty(oldName, name, value) == true) {
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject->getProperties(), name);
+		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, name);
 		return true;
 	}
 	return false;
@@ -1326,7 +1326,7 @@ bool LevelEditorView::objectPropertyAdd()
 		return false;
 
 	if (levelEditorObject->addProperty(u"new.property"_j, u"new.value"_j)) {
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject->getProperties(), u"new.property"_j);
+		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, u"new.property"_j);
 		return true;
 	}
 	return false;
@@ -1344,7 +1344,7 @@ void LevelEditorView::loadMap(String* path, String* file)
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}
-		levelEditorScreenController->setMapProperties(level->getProperties(), nullptr);
+		levelEditorScreenController->setMapProperties(level, nullptr);
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
@@ -1452,11 +1452,10 @@ void LevelEditorView::pasteObjects()
 		}
 		auto levelEditorObject = new LevelEditorObject(::java::lang::StringBuilder().append(pasteModel->getName())->append(u"_"_j)
 			->append(level->allocateObjectId())->toString(), u""_j, levelEditorObjectTransformations, pasteModel);
-		for (auto _i = pasteObject->getProperties()->iterator(); _i->hasNext(); ) {
-			PropertyModelClass* property = java_cast< PropertyModelClass* >(_i->next());
-			{
-				levelEditorObject->addProperty(property->getName(), property->getValue());
-			}
+		ModelProperties* properties = pasteObject;
+		for (int i = 0; i < properties->getPropertyCount(); i++) {
+			PropertyModelClass* property = properties->getPropertyByIndex(i);
+			levelEditorObject->addProperty(property->getName(), property->getValue());
 		}
 		level->addObject(levelEditorObject);
 		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());

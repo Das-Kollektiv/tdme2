@@ -191,9 +191,9 @@ void ModelViewerScreenController::unsetEntityData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setEntityProperties(String* presetId, Iterable* entityProperties, String* selectedName)
+void ModelViewerScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, entityProperties, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void ModelViewerScreenController::unsetEntityProperties()

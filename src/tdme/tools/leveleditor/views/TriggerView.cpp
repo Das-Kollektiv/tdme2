@@ -133,7 +133,7 @@ void TriggerView::updateGUIElements()
 	if (entity != nullptr) {
 		triggerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Trigger - "_j)->append(entity->getName())->toString());
 		auto preset = entity->getProperty(u"preset"_j);
-		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity->getProperties(), nullptr);
+		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), nullptr);
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		auto dimension = new Vector3();
 		dimension->set(entity->getModel()->getBoundingBox()->getMax());

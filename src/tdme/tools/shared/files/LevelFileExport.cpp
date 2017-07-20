@@ -149,14 +149,12 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 		jEntityLibrary.push_back(jModel);
 	}
 	ext::jsonbox::Array jMapProperties;
-	for (auto _i = level->getProperties()->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* mapProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			tdme::ext::jsonbox::Object jMapProperty;
-			jMapProperty["name"] = StringConverter::toString(mapProperty->getName()->getCPPWString());
-			jMapProperty["value"] = StringConverter::toString(mapProperty->getValue()->getCPPWString());
-			jMapProperties.push_back(jMapProperty);
-		}
+	for (auto i = 0; i < level->getPropertyCount(); i++) {
+		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
+		tdme::ext::jsonbox::Object jMapProperty;
+		jMapProperty["name"] = StringConverter::toString(mapProperty->getName()->getCPPWString());
+		jMapProperty["value"] = StringConverter::toString(mapProperty->getValue()->getCPPWString());
+		jMapProperties.push_back(jMapProperty);
 	}
 	jRoot["properties"] = jMapProperties;
 	jRoot["models"] = jEntityLibrary;
@@ -183,14 +181,12 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 		jObject["ry"] = static_cast< double >(rotationAroundYAxis->getAngle());
 		jObject["rz"] = static_cast< double >(rotationAroundZAxis->getAngle());
 		tdme::ext::jsonbox::Array jObjectProperties;
-		for (auto _i = levelEditorObject->getProperties()->iterator(); _i->hasNext(); ) {
-			PropertyModelClass* objectProperty = java_cast< PropertyModelClass* >(_i->next());
-			{
-				tdme::ext::jsonbox::Object jObjectProperty;
-				jObjectProperty["name"] = StringConverter::toString(objectProperty->getName()->getCPPWString());
-				jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue()->getCPPWString());
-				jObjectProperties.push_back(jObjectProperty);
-			}
+		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
+			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);
+			tdme::ext::jsonbox::Object jObjectProperty;
+			jObjectProperty["name"] = StringConverter::toString(objectProperty->getName()->getCPPWString());
+			jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue()->getCPPWString());
+			jObjectProperties.push_back(jObjectProperty);
 		}
 		jObject["properties"] = jObjectProperties;
 		jObjects.push_back(jObject);

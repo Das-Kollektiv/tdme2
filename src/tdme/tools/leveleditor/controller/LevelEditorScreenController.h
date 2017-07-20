@@ -46,6 +46,7 @@ using tdme::math::Vector4;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
@@ -271,8 +272,9 @@ public:
 	/** 
 	 * Set up map properties
 	 * @param map properties
+	 * @param selected name
 	 */
-	void setMapProperties(Iterable* mapProperties, String* selectedName);
+	void setMapProperties(LevelEditorLevel* level, String* selectedName);
 
 	/** 
 	 * On map property save
@@ -308,7 +310,7 @@ public:
 	 * @param object properties
 	 * @param selected name
 	 */
-	void setObjectProperties(String* presetId, Iterable* objectProperties, String* selectedName);
+	void setObjectProperties(String* presetId, LevelEditorObject* object, String* selectedName);
 
 	/** 
 	 * On object property save

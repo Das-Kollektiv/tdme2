@@ -110,12 +110,12 @@ public:
 
 	/** 
 	 * Set up entity properties
-	 * @param model
+	 * @param entity
 	 * @param preset id
 	 * @param entity properties
 	 * @param selected name
 	 */
-	virtual void setEntityProperties(LevelEditorEntity* model, String* presetId, Iterable* entityProperties, String* selectedName);
+	virtual void setEntityProperties(LevelEditorEntity* entity, String* presetId, String* selectedName);
 
 	/** 
 	 * Unset entity properties

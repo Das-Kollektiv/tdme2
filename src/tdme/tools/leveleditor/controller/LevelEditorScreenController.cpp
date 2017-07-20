@@ -488,7 +488,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(Iterable* mapProperties, String* selectedName)
+void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, String* selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -498,18 +498,16 @@ void LevelEditorScreenController::setMapProperties(Iterable* mapProperties, Stri
 	auto mapPropertiesListBoxSubNodesXML = u""_j;
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(mapPropertiesListBox->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
-	for (auto _i = mapProperties->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* mapProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(mapProperty->getName()))
-				->append(u": "_j)
-				->append(GUIParser::escapeQuotes(mapProperty->getValue()))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(mapProperty->getName()))
-				->append(u"\" "_j)
-				->append((selectedName != nullptr && mapProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
-				->append(u"/>\n"_j)->toString())->toString();
-		}
+	for (auto i = 0; i < level->getPropertyCount(); i++) {
+		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
+		mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(mapProperty->getName()))
+			->append(u": "_j)
+			->append(GUIParser::escapeQuotes(mapProperty->getValue()))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(mapProperty->getName()))
+			->append(u"\" "_j)
+			->append((selectedName != nullptr && mapProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append(u"/>\n"_j)->toString())->toString();
 	}
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {
@@ -591,7 +589,7 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setObjectProperties(String* presetId, Iterable* objectProperties, String* selectedName)
+void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEditorObject* object, String* selectedName)
 {
 	objectPropertiesPresets->getController()->setDisabled(false);
 	btnObjectPropertyPresetApply->getController()->setDisabled(false);
@@ -607,18 +605,16 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, Iterable
 	auto objectPropertiesListBoxSubNodesXML = u""_j;
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesListBox->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
-	for (auto _i = objectProperties->iterator(); _i->hasNext(); ) {
-		PropertyModelClass* objectProperty = java_cast< PropertyModelClass* >(_i->next());
-		{
-			objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(objectProperty->getName()))
-				->append(u": "_j)
-				->append(GUIParser::escapeQuotes(objectProperty->getValue()))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(objectProperty->getName()))
-				->append(u"\" "_j)
-				->append((selectedName != nullptr && objectProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
-				->append(u"/>\n"_j)->toString())->toString();
-		}
+	for (auto i = 0; i < object->getPropertyCount(); i++) {
+	PropertyModelClass* objectProperty = object->getPropertyByIndex(i);
+		objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(objectProperty->getName()))
+			->append(u": "_j)
+			->append(GUIParser::escapeQuotes(objectProperty->getValue()))
+			->append(u"\" value=\""_j)
+			->append(GUIParser::escapeQuotes(objectProperty->getName()))
+			->append(u"\" "_j)
+			->append((selectedName != nullptr && objectProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append(u"/>\n"_j)->toString())->toString();
 	}
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
 	try {

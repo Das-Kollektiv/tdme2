@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
@@ -9,12 +13,14 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::vector;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::Iterable;
 using java::lang::String;
 using tdme::tools::shared::model::PropertyModelClass;
-using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -32,8 +38,8 @@ public:
 	typedef Object super;
 
 public: /* protected */
-	_HashMap* propertiesByName {  };
-	_ArrayList* properties {  };
+	map<wstring, PropertyModelClass*> propertiesByName {  };
+	vector<PropertyModelClass*> properties {  };
 protected:
 
 	/** 
@@ -42,11 +48,6 @@ protected:
 	void ctor();
 
 public:
-
-	/** 
-	 * @return properties
-	 */
-	virtual Iterable* getProperties();
 
 	/** 
 	 * Clears properties
