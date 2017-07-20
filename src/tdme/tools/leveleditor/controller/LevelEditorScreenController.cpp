@@ -343,7 +343,7 @@ void LevelEditorScreenController::onObjectDataApply()
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(_HashMap* objectsByIds)
+void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
 	auto objectsListBoxInnerNode = java_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectsListBox->getId())->append(u"_inner"_j)->toString())));
@@ -351,9 +351,8 @@ void LevelEditorScreenController::setObjectListbox(_HashMap* objectsByIds)
 	auto objectsListBoxSubNodesXML = u""_j;
 	objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectsListBox->getId())
 		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
-	Iterator* objectsByIdsKeysIterator = objectsByIds->getKeysIterator();
-	while (objectsByIdsKeysIterator->hasNext()) {
-		auto objectId = java_cast< String* >(objectsByIdsKeysIterator->next());
+	for (int i = 0; i < level->getObjectCount(); i++) {
+		auto objectId = level->getObjectAt(i)->getId();
 		objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-multiple-option text=\""_j)->append(GUIParser::escapeQuotes(objectId))
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(objectId))

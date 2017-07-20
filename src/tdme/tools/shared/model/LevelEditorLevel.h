@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/fwd-tdme.h>
@@ -11,6 +15,10 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
+
+using std::map;
+using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
 using java::lang::Object;
@@ -22,8 +30,6 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 
 struct default_init_tag;
 
@@ -44,10 +50,10 @@ private:
 	String* pathName {  };
 	String* fileName {  };
 	RotationOrder* rotationOrder {  };
-	_ArrayList* lights {  };
+	vector<LevelEditorLight*> lights {  };
 	LevelEditorEntityLibrary* entityLibrary {  };
-	_HashMap* objectsById {  };
-	_ArrayList* objects {  };
+	map<wstring, LevelEditorObject*> objectsById {  };
+	vector<LevelEditorObject*> objects {  };
 	int32_t objectIdx {  };
 	BoundingBox* boundingBox {  };
 	Vector3* dimension {  };
@@ -116,11 +122,6 @@ public:
 	 * @return
 	 */
 	LevelEditorLight* getLightAt(int32_t i);
-
-	/** 
-	 * @return lights
-	 */
-	_ArrayList* getLights();
 
 	/** 
 	 * @return entity library
@@ -223,18 +224,6 @@ public:
 	 */
 	LevelEditorObject* getObjectAt(int32_t idx);
 
-	/** 
-	 * @return objects hash map
-	 */
-	_HashMap* getObjectsByIds();
-
-	/** 
-	 * Clone level mainly with prefixed object names
-	 * Note: this is not a deep clone, it basically uses references to original level
-	 * @param object id prefix
-	 * @return cloned level
-	 */
-	LevelEditorLevel* clone(String* objectIdPrefix);
 	String* toString() override;
 
 	// Generated

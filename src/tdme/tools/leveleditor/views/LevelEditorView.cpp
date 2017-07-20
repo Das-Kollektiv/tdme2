@@ -697,7 +697,7 @@ void LevelEditorView::updateGUIElements()
 
 void LevelEditorView::setObjectsListBox()
 {
-	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
+	levelEditorScreenController->setObjectListbox(level);
 }
 
 void LevelEditorView::unselectLightPresets()
@@ -984,7 +984,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		engine->addEntity(object);
 		selectedObjects.push_back(object);
 		selectedObjectsById->put(object->getId(), object);
-		levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
+		levelEditorScreenController->setObjectListbox(level);
 	}
 	levelEditorObject->setDescription(description);
 	return true;
@@ -1042,7 +1042,7 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			object->setPickable(true);
 			engine->addEntity(object);
 		}
-		levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
+		levelEditorScreenController->setObjectListbox(level);
 	}
 }
 
@@ -1060,7 +1060,7 @@ void LevelEditorView::removeObject()
 		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
 	}
 	level->computeDimension();
-	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
+	levelEditorScreenController->setObjectListbox(level);
 	updateGUIElements();
 }
 
@@ -1464,7 +1464,7 @@ void LevelEditorView::pasteObjects()
 		object->setPickable(true);
 		engine->addEntity(object);
 	}
-	levelEditorScreenController->setObjectListbox(level->getObjectsByIds());
+	levelEditorScreenController->setObjectListbox(level);
 }
 
 void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)

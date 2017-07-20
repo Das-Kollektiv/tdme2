@@ -45,6 +45,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
+using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
@@ -217,7 +218,7 @@ public:
 	 * Set up object list box
 	 * @param object by ids hash map
 	 */
-	void setObjectListbox(_HashMap* objectsByIds);
+	void setObjectListbox(LevelEditorLevel* level);
 
 	/** 
 	 * Unselect objects in object list box

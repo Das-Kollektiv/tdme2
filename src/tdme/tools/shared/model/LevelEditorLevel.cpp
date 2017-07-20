@@ -1,6 +1,11 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorLevel.java
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 
+#include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -19,9 +24,12 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::remove;
+using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorLevel;
 using java::lang::Object;
@@ -42,9 +50,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -73,12 +79,11 @@ void LevelEditorLevel::ctor()
 	pathName = u"."_j;
 	fileName = u"untitled.tl"_j;
 	rotationOrder = RotationOrder::XYZ;
-	lights = new _ArrayList();
-	lights->add(new LevelEditorLight(0));
-	lights->add(new LevelEditorLight(1));
-	lights->add(new LevelEditorLight(2));
-	lights->add(new LevelEditorLight(3));
-	auto light = java_cast< LevelEditorLight* >(lights->get(0));
+	lights.push_back(new LevelEditorLight(0));
+	lights.push_back(new LevelEditorLight(1));
+	lights.push_back(new LevelEditorLight(2));
+	lights.push_back(new LevelEditorLight(3));
+	auto light = lights.at(0);
 	light->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -92,8 +97,6 @@ void LevelEditorLevel::ctor()
 	light->setSpotCutOff(180.0f);
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
-	objectsById = new _HashMap();
-	objects = new _ArrayList();
 	objectIdx = 0;
 	dimension = new Vector3();
 	boundingBox = new BoundingBox();
@@ -141,17 +144,12 @@ void LevelEditorLevel::setRotationOrder(RotationOrder* rotationOrder)
 
 int32_t LevelEditorLevel::getLightCount()
 {
-	return lights->size();
+	return lights.size();
 }
 
 LevelEditorLight* LevelEditorLevel::getLightAt(int32_t i)
 {
-	return java_cast< LevelEditorLight* >(lights->get(i));
-}
-
-_ArrayList* LevelEditorLevel::getLights()
-{
-	return lights;
+	return lights.at(i);
 }
 
 LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
@@ -186,57 +184,55 @@ void LevelEditorLevel::computeBoundingBox()
 	auto bbDimension = new Vector3();
 	auto bbMin = new Vector3();
 	auto bbMax = new Vector3();
-	for (auto _i = objects->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* levelEditorObject = java_cast< LevelEditorObject* >(_i->next());
-		{
-			if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
-				continue;
+	for (auto levelEditorObject: objects) {
+		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
+			continue;
 
-			auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
-			auto cbv = bv->clone();
-			cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
-			bbDimension->set(cbv->computeDimensionOnAxis(new Vector3(1.0f, 0.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 0.0f, 1.0f)));
-			bbDimension->scale(0.5f);
-			bbMin->set(cbv->getCenter());
-			bbMin->sub(bbDimension);
-			bbMax->set(cbv->getCenter());
-			bbMax->add(bbDimension);
-			auto objectLeft = bbMin->getX();
-			auto objectRight = bbMax->getX();
-			auto objectNear = bbMin->getZ();
-			auto objectFar = bbMax->getZ();
-			auto objectBottom = bbMin->getY();
-			auto objectTop = bbMax->getY();
-			if (haveDimension == false) {
+		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
+		auto cbv = bv->clone();
+		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
+		bbDimension->set(cbv->computeDimensionOnAxis(new Vector3(1.0f, 0.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 0.0f, 1.0f)));
+		bbDimension->scale(0.5f);
+		bbMin->set(cbv->getCenter());
+		bbMin->sub(bbDimension);
+		bbMax->set(cbv->getCenter());
+		bbMax->add(bbDimension);
+		auto objectLeft = bbMin->getX();
+		auto objectRight = bbMax->getX();
+		auto objectNear = bbMin->getZ();
+		auto objectFar = bbMax->getZ();
+		auto objectBottom = bbMin->getY();
+		auto objectTop = bbMax->getY();
+		if (haveDimension == false) {
+			left = objectLeft;
+			right = objectRight;
+			near = objectNear;
+			far = objectFar;
+			top = objectTop;
+			bottom = objectBottom;
+			haveDimension = true;
+		} else {
+			if (objectLeft < left)
 				left = objectLeft;
+
+			if (objectRight > right)
 				right = objectRight;
+
+			if (objectNear < near)
 				near = objectNear;
+
+			if (objectFar > far)
 				far = objectFar;
+
+			if (objectTop > top)
 				top = objectTop;
+
+			if (objectBottom < bottom)
 				bottom = objectBottom;
-				haveDimension = true;
-			} else {
-				if (objectLeft < left)
-					left = objectLeft;
 
-				if (objectRight > right)
-					right = objectRight;
-
-				if (objectNear < near)
-					near = objectNear;
-
-				if (objectFar > far)
-					far = objectFar;
-
-				if (objectTop > top)
-					top = objectTop;
-
-				if (objectBottom < bottom)
-					bottom = objectBottom;
-
-			}
 		}
 	}
+
 	boundingBox->getMin()->set(left, bottom, near);
 	boundingBox->getMax()->set(right, top, far);
 	boundingBox->update();
@@ -249,15 +245,12 @@ Vector3* LevelEditorLevel::computeCenter()
 {
 	auto center = new Vector3();
 	auto objectCount = 0;
-	for (auto _i = objects->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* levelEditorObject = java_cast< LevelEditorObject* >(_i->next());
-		{
-			if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
-				continue;
+	for (auto levelEditorObject: objects) {
+		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
+			continue;
 
-			center->add(levelEditorObject->getTransformations()->getTranslation());
-			objectCount++;
-		}
+		center->add(levelEditorObject->getTransformations()->getTranslation());
+		objectCount++;
 	}
 	if (objectCount != 0)
 		center->scale(1.0f / objectCount);
@@ -282,27 +275,21 @@ void LevelEditorLevel::setObjectIdx(int32_t entityIdx)
 
 void LevelEditorLevel::clearObjects()
 {
-	objectsById->clear();
-	objects->clear();
+	objectsById.clear();
+	objects.clear();
 	objectIdx = 0;
 }
 
 void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 {
-	auto objectsToRemove = new _ArrayList();
-	for (auto _i = objects->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* object = java_cast< LevelEditorObject* >(_i->next());
-		{
-			if (object->getEntity()->getId() == entityId) {
-				objectsToRemove->add(object->getId());
-			}
+	vector<String*> objectsToRemove;
+	for (auto object: objects) {
+		if (object->getEntity()->getId() == entityId) {
+			objectsToRemove.push_back(object->getId());
 		}
 	}
-	for (auto _i = objectsToRemove->iterator(); _i->hasNext(); ) {
-		String* objectId = java_cast< String* >(_i->next());
-		{
-			removeObject(objectId);
-		}
+	for (auto objectId: objectsToRemove) {
+		removeObject(objectId);
 	}
 }
 
@@ -312,89 +299,61 @@ void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEnti
 	if (replaceEntity == nullptr)
 		return;
 
-	for (auto _i = objects->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* object = java_cast< LevelEditorObject* >(_i->next());
-		{
-			if (object->getEntity()->getId() == searchEntityId) {
-				object->setEntity(replaceEntity);
-			}
+	for (auto object: objects) {
+		if (object->getEntity()->getId() == searchEntityId) {
+			object->setEntity(replaceEntity);
 		}
 	}
 }
 
 void LevelEditorLevel::updatePivot(int32_t modelId, Vector3* pivot)
 {
-	for (auto _i = objects->iterator(); _i->hasNext(); ) {
-		LevelEditorObject* object = java_cast< LevelEditorObject* >(_i->next());
-		{
-			if (object->getEntity()->getId() == modelId) {
-				object->getTransformations()->getPivot()->set(pivot);
-				object->getTransformations()->update();
-			}
+	for (auto object: objects) {
+		if (object->getEntity()->getId() == modelId) {
+			object->getTransformations()->getPivot()->set(pivot);
+			object->getTransformations()->update();
 		}
 	}
 }
 
 void LevelEditorLevel::addObject(LevelEditorObject* object)
 {
-	auto _entity = java_cast< LevelEditorObject* >(objectsById->put(object->getId(), object));
+	auto _entity = getObjectById(object->getId());
 	if (_entity != nullptr) {
-		objects->remove(static_cast< Object* >(_entity));
+		removeObject(object->getId());
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorLevel::addObject():: object with id '"_j)->append(object->getId())
-			->append(u"' already exists"_j)->toString()));
+			->append(u"' already exists. Removing it!"_j)->toString()));
 	}
-	objects->add(object);
+	objectsById[object->getId()->getCPPWString()] = object;
+	objects.push_back(object);
 }
 
 void LevelEditorLevel::removeObject(String* id)
 {
-	auto _entity = java_cast< LevelEditorObject* >(objectsById->remove(id));
-	objects->remove(static_cast< Object* >(_entity));
+	auto objectByIdIt = objectsById.find(id->getCPPWString());
+	if (objectByIdIt != objectsById.end()) {
+		objectsById.erase(objectByIdIt);
+		objects.erase(remove(objects.begin(), objects.end(), objectByIdIt->second), objects.end());
+	}
 }
 
 LevelEditorObject* LevelEditorLevel::getObjectById(String* id)
 {
-	return java_cast< LevelEditorObject* >(objectsById->get(id));
+	auto objectByIdIt = objectsById.find(id->getCPPWString());
+	if (objectByIdIt != objectsById.end()) {
+		return objectByIdIt->second;
+	}
+	return nullptr;
 }
 
 int32_t LevelEditorLevel::getObjectCount()
 {
-	return objects->size();
+	return objects.size();
 }
 
 LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
 {
-	return java_cast< LevelEditorObject* >(objects->get(idx));
-}
-
-_HashMap* LevelEditorLevel::getObjectsByIds()
-{
-	return objectsById;
-}
-
-LevelEditorLevel* LevelEditorLevel::clone(String* objectIdPrefix)
-{
-	auto level = new LevelEditorLevel();
-	level->propertiesByName = propertiesByName;
-	level->properties = properties;
-	level->gameRoot = gameRoot;
-	level->pathName = pathName;
-	level->fileName = fileName;
-	level->rotationOrder = rotationOrder;
-	level->lights = lights;
-	level->entityLibrary = entityLibrary;
-	level->objectsById = new _HashMap();
-	level->objects = new _ArrayList();
-	for (auto i = 0; i < getObjectCount(); i++) {
-		auto object = getObjectAt(i)->clone();
-		object->setId(objectIdPrefix != nullptr ? ::java::lang::StringBuilder().append(objectIdPrefix)->append(object->getId())->toString() : object->getId());
-		level->objectsById->put(object->getId(), object);
-		level->objects->add(object);
-	}
-	level->objectIdx = objectIdx;
-	level->boundingBox = boundingBox;
-	level->dimension = dimension;
-	return level;
+	return objects.at(idx);
 }
 
 String* LevelEditorLevel::toString()
@@ -406,24 +365,31 @@ String* LevelEditorLevel::toString()
 		->append(fileName)
 		->append(u", rotationOrder="_j)
 		->append(static_cast< Object* >(rotationOrder))
+		/*
 		->append(u", lights="_j)
 		->append(static_cast< Object* >(lights))
+		*/
 		->append(u", entityLibrary="_j)
 		->append(static_cast< Object* >(entityLibrary))
+		/*
+		// TODO: implement me!
 		->append(u", objectsById="_j)
 		->append(static_cast< Object* >(objectsById))
 		->append(u", objects="_j)
 		->append(static_cast< Object* >(objects))
+		*/
 		->append(u", objectIdx="_j)
 		->append(objectIdx)
 		->append(u", boundingBox="_j)
 		->append(static_cast< Object* >(boundingBox))
 		->append(u", dimension="_j)
 		->append(static_cast< Object* >(dimension))
+		/*
 		->append(u", propertiesByName="_j)
 		->append(static_cast< Object* >(propertiesByName))
 		->append(u", properties="_j)
 		->append(static_cast< Object* >(properties))
+		*/
 		->append(u"]"_j)->toString();
 }
 
