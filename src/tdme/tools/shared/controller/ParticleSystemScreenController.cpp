@@ -52,7 +52,6 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <SubArray.h>
@@ -110,7 +109,6 @@ using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
