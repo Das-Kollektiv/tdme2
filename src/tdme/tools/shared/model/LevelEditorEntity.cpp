@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntity.java
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -9,7 +11,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
 using java::lang::Object;
@@ -20,7 +23,6 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -59,7 +61,6 @@ void LevelEditorEntity::ctor(int32_t id, LevelEditorEntity_EntityType* entityTyp
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->particleSystem = new LevelEditorEntityParticleSystem();
 	}
-	this->boundingVolumes = new _ArrayList();
 }
 
 int32_t LevelEditorEntity::getId()
@@ -117,11 +118,6 @@ Model* LevelEditorEntity::getModel()
 	return model;
 }
 
-_ArrayList* LevelEditorEntity::getBoundingVolumes()
-{
-	return boundingVolumes;
-}
-
 Vector3* LevelEditorEntity::getPivot()
 {
 	return pivot;
@@ -129,12 +125,12 @@ Vector3* LevelEditorEntity::getPivot()
 
 int32_t LevelEditorEntity::getBoundingVolumeCount()
 {
-	return boundingVolumes->size();
+	return boundingVolumes.size();
 }
 
 LevelEditorEntityBoundingVolume* LevelEditorEntity::getBoundingVolumeAt(int32_t idx)
 {
-	return java_cast< LevelEditorEntityBoundingVolume* >(boundingVolumes->get(idx));
+	return boundingVolumes.at(idx);
 }
 
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
@@ -142,18 +138,18 @@ bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBounding
 	if (idx < 0)
 		return false;
 
-	if (idx > boundingVolumes->size())
+	if (idx > boundingVolumes.size())
 		return false;
 
-	if (idx == boundingVolumes->size()) {
-		boundingVolumes->add(levelEditorEntityBoundingVolume);
+	if (idx == boundingVolumes.size()) {
+		boundingVolumes.push_back(levelEditorEntityBoundingVolume);
 	}
 	return false;
 }
 
 void LevelEditorEntity::setDefaultBoundingVolumes()
 {
-	for (auto i = boundingVolumes->size(); i < 8; i++) {
+	for (auto i = boundingVolumes.size(); i < 8; i++) {
 		auto bv = new LevelEditorEntityBoundingVolume(i, this);
 		addBoundingVolume(i, bv);
 	}
@@ -181,8 +177,11 @@ String* LevelEditorEntity::toString()
 		->append(thumbnail)
 		->append(u", model="_j)
 		->append(static_cast< Object* >(model))
+		/*
+		// TODO: implement me
 		->append(u", boundingVolumes="_j)
 		->append(static_cast< Object* >(boundingVolumes))
+		*/
 		->append(u", pivot="_j)
 		->append(static_cast< Object* >(pivot))
 		->append(u"]"_j)->toString();

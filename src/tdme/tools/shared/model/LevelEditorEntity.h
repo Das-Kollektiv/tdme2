@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
+using std::vector;
+
 using tdme::tools::shared::model::ModelProperties;
 using java::lang::String;
 using tdme::engine::model::Model;
@@ -17,8 +21,6 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::utils::_ArrayList;
-
 
 struct default_init_tag;
 
@@ -46,7 +48,7 @@ public: /* protected */
 	Model* model {  };
 	Vector3* pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
-	_ArrayList* boundingVolumes {  };
+	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 protected:
 
 	/** 
@@ -122,13 +124,6 @@ public:
 	 * @return model
 	 */
 	Model* getModel();
-
-public: /* protected */
-
-	/** 
-	 * @return bounding volumes
-	 */
-	_ArrayList* getBoundingVolumes();
 
 public:
 
