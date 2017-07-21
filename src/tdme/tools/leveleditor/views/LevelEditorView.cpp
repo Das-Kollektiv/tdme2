@@ -945,8 +945,8 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundGroup->setNormals(groundNormals);
 	groundGroup->setTextureCoordinates(groundTextureCoordinates);
 	groundGroup->setFacesEntities(groupFacesEntities);
-	groundPlate->getGroups()->put(groundGroup->getId(), groundGroup);
-	groundPlate->getSubGroups()->put(groundGroup->getId(), groundGroup);
+	(*groundPlate->getGroups())[groundGroup->getId()->getCPPWString()] = groundGroup;
+	(*groundPlate->getSubGroups())[groundGroup->getId()->getCPPWString()] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }

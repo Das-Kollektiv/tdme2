@@ -2,12 +2,18 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::map;
+using std::wstring;
 
 using java::lang::Object;
 using tdme::engine::model::Group;
@@ -81,7 +87,7 @@ private:
 	 * Prepares this group for indexed rendering
 	 * @param groups
 	 */
-	static void prepareForIndexedRendering(_HashMap* groups);
+	static void prepareForIndexedRendering(map<wstring, Group*>* groups);
 
 	/** 
 	 * Maps original vertices to new vertice mapping

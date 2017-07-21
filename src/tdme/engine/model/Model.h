@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -9,6 +12,9 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::map;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -43,8 +49,8 @@ private:
 	Model_UpVector* upVector {  };
 	RotationOrder* rotationOrder {  };
 	_HashMap* materials {  };
-	_HashMap* groups {  };
-	_HashMap* subGroups {  };
+	map<wstring, Group*> groups {  };
+	map<wstring, Group*> subGroups {  };
 	bool hasSkinning_ {  };
 	float fps {  };
 	_HashMap* animationSetups {  };
@@ -100,7 +106,7 @@ public:
 	 * Returns all object's groups
 	 * @return all groups
 	 */
-	_HashMap* getGroups();
+	map<wstring, Group*>* getGroups();
 
 	/** 
 	 * Returns a group by given name or null
@@ -113,7 +119,7 @@ public:
 	 * Returns object's sub groups
 	 * @return sub groups
 	 */
-	_HashMap* getSubGroups();
+	map<wstring, Group*>* getSubGroups();
 
 	/** 
 	 * Returns a sub group by given name or null
@@ -212,7 +218,7 @@ public: /* protected */
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	Matrix4x4* computeTransformationsMatrix(_HashMap* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId);
+	Matrix4x4* computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId);
 
 public:
 

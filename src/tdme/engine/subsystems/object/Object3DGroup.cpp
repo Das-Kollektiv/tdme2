@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroup.java
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -26,6 +30,10 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::map;
+using std::vector;
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DGroup;
 using java::lang::Object;
@@ -123,56 +131,54 @@ Object3DGroupArray* Object3DGroup::createGroups(Object3DBase* object, bool useMe
 	return object3DGroupArray;
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
+void Object3DGroup::createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
 {
 	clinit();
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			if (group->isJoint() == true) {
-				continue;
-			}
-			auto faceCount = group->getFaceCount();
-			if (faceCount > 0) {
-				auto object3DGroup = new Object3DGroup();
-				object3DGroups.push_back(object3DGroup);
-				object3DGroup->id = ::java::lang::StringBuilder().append(group->getModel()->getId())->append(u":"_j)
-					->append(group->getId())
-					->append(u":"_j)
-					->append(animationProcessingTarget->toString()->toLowerCase())->toString();
-				if (animated == true && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING)) {
-					object3DGroup->id = ::java::lang::StringBuilder(object3DGroup->id).append(::java::lang::StringBuilder().append(u":"_j)->append((counter++))->toString())->toString();
-				}
-				object3DGroup->object = object3D;
-				object3DGroup->group = group;
-				object3DGroup->animated = animated;
-				if (useMeshManager == true) {
-					auto meshManager = Engine::getInstance()->getMeshManager();
-					object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
-					if (object3DGroup->mesh == nullptr) {
-						object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
-						meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
-					}
-				} else {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
-				}
-				object3DGroup->materialDiffuseTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
-				object3DGroup->dynamicDiffuseTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
-				object3DGroup->materialSpecularTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
-				object3DGroup->materialDisplacementTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
-				object3DGroup->materialNormalTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
-				for (auto j = 0; j < group->getFacesEntities()->length; j++) {
-					(*object3DGroup->materialDiffuseTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
-					(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
-					(*object3DGroup->materialSpecularTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
-					(*object3DGroup->materialDisplacementTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
-					(*object3DGroup->materialNormalTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
-				}
-				object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
-				object3DGroup->groupTransformationsMatrix = java_cast< Matrix4x4* >(object3D->transformationsMatrices->get(group->getId()));
-			}
-			createGroups(object3D, object3DGroups, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget);
+	for (auto it: *groups) {
+		Group* group = it.second;
+		if (group->isJoint() == true) {
+			continue;
 		}
+		auto faceCount = group->getFaceCount();
+		if (faceCount > 0) {
+			auto object3DGroup = new Object3DGroup();
+			object3DGroups.push_back(object3DGroup);
+			object3DGroup->id = ::java::lang::StringBuilder().append(group->getModel()->getId())->append(u":"_j)
+				->append(group->getId())
+				->append(u":"_j)
+				->append(animationProcessingTarget->toString()->toLowerCase())->toString();
+			if (animated == true && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING)) {
+				object3DGroup->id = ::java::lang::StringBuilder(object3DGroup->id).append(::java::lang::StringBuilder().append(u":"_j)->append((counter++))->toString())->toString();
+			}
+			object3DGroup->object = object3D;
+			object3DGroup->group = group;
+			object3DGroup->animated = animated;
+			if (useMeshManager == true) {
+				auto meshManager = Engine::getInstance()->getMeshManager();
+				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
+				if (object3DGroup->mesh == nullptr) {
+					object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
+					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
+				}
+			} else {
+				object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
+			}
+			object3DGroup->materialDiffuseTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
+			object3DGroup->dynamicDiffuseTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
+			object3DGroup->materialSpecularTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
+			object3DGroup->materialDisplacementTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
+			object3DGroup->materialNormalTextureIdsByEntities = new int32_tArray(group->getFacesEntities()->length);
+			for (auto j = 0; j < group->getFacesEntities()->length; j++) {
+				(*object3DGroup->materialDiffuseTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
+				(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
+				(*object3DGroup->materialSpecularTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
+				(*object3DGroup->materialDisplacementTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
+				(*object3DGroup->materialNormalTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
+			}
+			object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
+			object3DGroup->groupTransformationsMatrix = java_cast< Matrix4x4* >(object3D->transformationsMatrices->get(group->getId()));
+		}
+		createGroups(object3D, object3DGroups, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget);
 	}
 }
 

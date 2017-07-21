@@ -196,8 +196,8 @@ Model* EngineTest::createWallModel()
 	wallGroup->setTextureCoordinates(textureCoordinates);
 	wallGroup->setFacesEntities(groupFacesEntities);
 	wallGroup->determineFeatures();
-	wall->getGroups()->put(u"wall"_j, wallGroup);
-	wall->getSubGroups()->put(u"wall"_j, wallGroup);
+	(*wall->getGroups())[L"wall"] = wallGroup;
+	(*wall->getSubGroups())[L"wall"] = wallGroup;
 	ModelHelper::prepareForIndexedRendering(wall);
 	return wall;
 }

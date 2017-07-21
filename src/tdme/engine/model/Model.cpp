@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/model/Model.java
 #include <tdme/engine/model/Model.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -19,6 +22,9 @@
 #include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::model::Model;
 using java::lang::Object;
@@ -77,8 +83,6 @@ void Model::ctor(String* id, String* name, Model_UpVector* upVector, RotationOrd
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
 	materials = new _HashMap();
-	groups = new _HashMap();
-	subGroups = new _HashMap();
 	hasSkinning_ = false;
 	fps = FPS_DEFAULT;
 	animationSetups = new _HashMap();
@@ -116,24 +120,33 @@ _HashMap* Model::getMaterials()
 	return materials;
 }
 
-_HashMap* Model::getGroups()
+map<wstring, Group*>* Model::getGroups()
 {
-	return groups;
+	return &groups;
 }
 
 Group* Model::getGroupById(String* id)
 {
-	return java_cast< Group* >(groups->get(id));
+	auto groupIt = groups.find(id->getCPPWString());
+	if (groupIt != groups.end()) {
+		return groupIt->second;
+	}
+	return nullptr;
+
 }
 
-_HashMap* Model::getSubGroups()
+map<wstring, Group*>* Model::getSubGroups()
 {
-	return subGroups;
+	return &subGroups;
 }
 
 Group* Model::getSubGroupById(String* id)
 {
-	return java_cast< Group* >(subGroups->get(id));
+	auto groupIt = subGroups.find(id->getCPPWString());
+	if (groupIt != subGroups.end()) {
+		return groupIt->second;
+	}
+	return nullptr;
 }
 
 bool Model::hasSkinning()
@@ -200,49 +213,53 @@ BoundingBox* Model::getBoundingBox()
 
 Matrix4x4* Model::computeTransformationsMatrix(int32_t frame, String* groupId)
 {
-	return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId);
+	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId);
 }
 
-Matrix4x4* Model::computeTransformationsMatrix(_HashMap* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId)
+Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId)
 {
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			Matrix4x4* transformationsMatrix = nullptr;
-			auto animation = group->getAnimation();
-			if (animation != nullptr) {
-				auto animationMatrices = animation->getTransformationsMatrices();
-				transformationsMatrix = (*animationMatrices)[frame % animationMatrices->length]->clone();
-			}
-			if (transformationsMatrix == nullptr) {
-				transformationsMatrix = group->getTransformationsMatrix()->clone();
-			} else {
-				transformationsMatrix->multiply(group->getTransformationsMatrix());
-			}
-			if (parentTransformationsMatrix != nullptr) {
-				transformationsMatrix->multiply(parentTransformationsMatrix);
-			}
-			if (group->getId()->equals(groupId))
-				return transformationsMatrix;
+	for (auto it: *groups) {
+		Group* group = it.second;
+		Matrix4x4* transformationsMatrix = nullptr;
+		auto animation = group->getAnimation();
+		if (animation != nullptr) {
+			auto animationMatrices = animation->getTransformationsMatrices();
+			transformationsMatrix = (*animationMatrices)[frame % animationMatrices->length]->clone();
+		}
+		if (transformationsMatrix == nullptr) {
+			transformationsMatrix = group->getTransformationsMatrix()->clone();
+		} else {
+			transformationsMatrix->multiply(group->getTransformationsMatrix());
+		}
+		if (parentTransformationsMatrix != nullptr) {
+			transformationsMatrix->multiply(parentTransformationsMatrix);
+		}
+		if (group->getId()->equals(groupId))
+			return transformationsMatrix;
 
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				auto tmp = computeTransformationsMatrix(subGroups, transformationsMatrix, frame, groupId);
-				if (tmp != nullptr)
-					return tmp;
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			auto tmp = computeTransformationsMatrix(subGroups, transformationsMatrix, frame, groupId);
+			if (tmp != nullptr)
+				return tmp;
 
-			}
 		}
 	}
+
 	return nullptr;
 }
 
 String* Model::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Model [name="_j)->append(name)
-		->append(u", subGroups="_j)
-		->append(static_cast< Object* >(subGroups))
-		->append(u"]"_j)->toString();
+	return ::java::lang::StringBuilder().
+		append(u"Model [name="_j)->
+		append(name)->
+		/*
+		// TODO: implement me!
+		append(u", subGroups="_j)->
+		append(static_cast< Object* >(subGroups))->
+		*/
+		append(u"]"_j)->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

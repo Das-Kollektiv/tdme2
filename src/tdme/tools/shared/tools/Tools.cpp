@@ -300,8 +300,8 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundGroup->setNormals(groundNormals);
 	groundGroup->setTextureCoordinates(groundTextureCoordinates);
 	groundGroup->setFacesEntities(groupFacesEntities);
-	ground->getGroups()->put(u"ground"_j, groundGroup);
-	ground->getSubGroups()->put(u"ground"_j, groundGroup);
+	(*ground->getGroups())[L"ground"] = groundGroup;
+	(*ground->getSubGroups())[L"ground"] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(ground);
 	return ground;
 }

@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -9,17 +12,20 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -91,7 +97,7 @@ private:
 	 * Set up convex mesh material
 	 * @param groups
 	 */
-	static void setupConvexMeshMaterial(_HashMap* groups, Material* material);
+	static void setupConvexMeshMaterial(map<wstring, Group*>* groups, Material* material);
 
 public:
 

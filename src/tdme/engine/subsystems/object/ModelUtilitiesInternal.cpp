@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/ModelUtilitiesInternal.java
 #include <tdme/engine/subsystems/object/ModelUtilitiesInternal.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -25,6 +28,9 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::subsystems::object::ModelUtilitiesInternal;
 using java::lang::Integer;
@@ -160,17 +166,15 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 	invertNormals(model->getSubGroups());
 }
 
-void ModelUtilitiesInternal::invertNormals(_HashMap* groups)
+void ModelUtilitiesInternal::invertNormals(map<wstring, Group*>* groups)
 {
 	clinit();
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			for (auto normal : *group->getNormals()) {
-				normal->scale(-1.0f);
-			}
-			invertNormals(group->getSubGroups());
+	for (auto it: *groups) {
+		Group* group = it.second;
+		for (auto normal : *group->getNormals()) {
+			normal->scale(-1.0f);
 		}
+		invertNormals(group->getSubGroups());
 	}
 }
 

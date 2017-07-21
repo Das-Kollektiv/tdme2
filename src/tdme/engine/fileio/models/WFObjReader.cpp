@@ -307,8 +307,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();
 					modelGroupTextureCoordinatesMapping.clear();
-					subGroups->put(name, group);
-					groups->put(name, group);
+					(*subGroups)[name->getCPPWString()] = group;
+					(*groups)[name->getCPPWString()] = group;
 				} else
 				if (command->equals(u"usemtl"_j)) {
 					if (group != nullptr) {

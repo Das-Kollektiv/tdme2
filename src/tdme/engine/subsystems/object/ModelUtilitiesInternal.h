@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,13 +13,16 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using tdme::engine::model::Model;
+using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -58,7 +64,7 @@ private:
 	 * Invert normals recursive
 	 * @param groups
 	 */
-	static void invertNormals(_HashMap* groups);
+	static void invertNormals(map<wstring, Group*>* groups);
 
 public:
 

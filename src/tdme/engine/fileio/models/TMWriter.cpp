@@ -299,15 +299,13 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 	}
 }
 
-void TMWriter::writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) throw (ModelFileIOException)
+void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
 {
 	clinit();
 	os->writeInt(subGroups->size());
-	for (auto _i = subGroups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* subGroup = java_cast< Group* >(_i->next());
-		{
-			writeGroup(os, subGroup);
-		}
+	for (auto it: *subGroups) {
+		Group* subGroup = it.second;
+		writeGroup(os, subGroup);
 	}
 }
 

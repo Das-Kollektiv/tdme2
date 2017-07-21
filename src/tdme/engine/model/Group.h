@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -11,7 +13,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -72,7 +76,7 @@ private:
 	Animation* animation {  };
 	Skinning* skinning {  };
 	FacesEntityArray* facesEntities {  };
-	_HashMap* subGroups {  };
+	map<wstring, Group*> subGroups {  };
 protected:
 
 	/** 
@@ -256,7 +260,7 @@ public:
 	/** 
 	 * @return sub sub groups of this group
 	 */
-	_HashMap* getSubGroups();
+	map<wstring, Group*>* getSubGroups();
 
 	/** 
 	 * Returns a sub group by id

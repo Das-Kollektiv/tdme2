@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -11,6 +14,9 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::Transformations;
 using java::lang::String;
@@ -184,7 +190,7 @@ public: /* protected */
 	 * @param matrices
 	 * @param groups
 	 */
-	virtual void createTransformationsMatrices(_HashMap* matrices, _HashMap* groups);
+	virtual void createTransformationsMatrices(_HashMap* matrices, map<wstring, Group*>* groups);
 
 	/** 
 	 * Calculates all groups transformation matrices
@@ -193,14 +199,14 @@ public: /* protected */
 	 * @param animation state
 	 * @param depth
 	 */
-	virtual void computeTransformationsMatrices(_HashMap* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
+	virtual void computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
 
 	/** 
 	 * Calculates all groups transformation matrices
 	 * @param groups
 	 * @param depth
 	 */
-	virtual int32_t determineTransformationsMatricesStackDepth(_HashMap* groups, int32_t depth);
+	virtual int32_t determineTransformationsMatricesStackDepth(map<wstring, Group*>* groups, int32_t depth);
 
 public:
 
@@ -237,14 +243,14 @@ private:
 	 * @param groups
 	 * @param current count
 	 */
-	int32_t determineSkinnedGroupCount(_HashMap* groups);
+	int32_t determineSkinnedGroupCount(map<wstring, Group*>* groups);
 
 	/** 
 	 * Determine skinned group count
 	 * @param groups
 	 * @param current count
 	 */
-	int32_t determineSkinnedGroupCount(_HashMap* groups, int32_t count);
+	int32_t determineSkinnedGroupCount(map<wstring, Group*>*, int32_t count);
 
 	/** 
 	 * Determine skinned groups
@@ -252,7 +258,7 @@ private:
 	 * @param skinning groups
 	 * @param idx
 	 */
-	int32_t determineSkinnedGroups(_HashMap* groups, GroupArray* skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(map<wstring, Group*>*, GroupArray* skinningGroups, int32_t idx);
 
 public: /* protected */
 

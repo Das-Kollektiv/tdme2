@@ -244,8 +244,8 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
 				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
-					model->getSubGroups()->put(group->getId(), group);
-					model->getGroups()->put(group->getId(), group);
+					(*model->getSubGroups())[group->getId()->getCPPWString()] = group;
+					(*model->getGroups())[group->getId()->getCPPWString()] = group;
 				}
 			}
 		}
@@ -435,8 +435,8 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
 					group->getTransformationsMatrix()->identity();
-					model->getSubGroups()->put(group->getId(), group);
-					model->getGroups()->put(group->getId(), group);
+					(*model->getSubGroups())[group->getId()->getCPPWString()] = group;
+					(*model->getGroups())[group->getId()->getCPPWString()] = group;
 				}
 				ModelHelper::setupJoints(model);
 				ModelHelper::fixAnimationLength(model);
@@ -738,8 +738,8 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
 		auto _group = readVisualSceneNode(authoringTool, pathName, model, group, xmlRoot, _xmlNode, fps);
 		if (_group != nullptr) {
-			group->getSubGroups()->put(_group->getId(), _group);
-			model->getGroups()->put(_group->getId(), _group);
+			(*group->getSubGroups())[_group->getId()->getCPPWString()] = _group;
+			(*model->getGroups())[_group->getId()->getCPPWString()] = _group;
 		}
 	}
 
@@ -770,8 +770,8 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
 				auto _group = readVisualSceneNode(authoringTool, pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
 				if (_group != nullptr) {
-					group->getSubGroups()->put(_group->getId(), _group);
-					model->getGroups()->put(_group->getId(), _group);
+					(*group->getSubGroups())[_group->getId()->getCPPWString()] = _group;
+					(*model->getGroups())[_group->getId()->getCPPWString()] = _group;
 				}
 			}
 			for (auto xmlInstanceGeometry: getChildrenByTagName(xmlLibraryNode, "instance_geometry")) {

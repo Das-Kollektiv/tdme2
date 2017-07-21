@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -14,7 +16,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -93,7 +97,7 @@ private:
 	 * @param animated
 	 * @param use mesh manager
 	 */
-	static void createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, _HashMap* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	static void createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
 
 public: /* protected */
 

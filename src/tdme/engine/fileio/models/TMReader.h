@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <Array.h>
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -17,6 +20,8 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::map;
+using std::wstring;
 
 using java::lang::Object;
 using java::io::InputStream;
@@ -285,7 +290,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) throw (ModelFileIOException);
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<wstring, Group*>* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

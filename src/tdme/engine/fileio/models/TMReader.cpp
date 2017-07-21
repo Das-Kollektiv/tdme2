@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 #include <tdme/engine/fileio/models/TMReader.h>
 
+#include <map>
 #include <string>
 
 #include <java/io/Serializable.h>
@@ -36,6 +37,7 @@
 #include <SubArray.h>
 #include <ObjectArray.h>
 
+using std::map;
 using std::wstring;
 using std::to_string;
 
@@ -355,14 +357,14 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, _HashMap* subGroups) throw (ModelFileIOException)
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
 {
 	clinit();
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
-		subGroups->put(subGroup->getId(), subGroup);
-		model->getGroups()->put(subGroup->getId(), subGroup);
+		(*subGroups)[subGroup->getId()->getCPPWString()] = subGroup;
+		(*model->getGroups())[subGroup->getId()->getCPPWString()] = subGroup;
 	}
 }
 

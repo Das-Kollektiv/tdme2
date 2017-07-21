@@ -222,96 +222,94 @@ void ModelHelper::prepareForIndexedRendering(Model* model)
 	prepareForIndexedRendering(model->getSubGroups());
 }
 
-void ModelHelper::prepareForIndexedRendering(_HashMap* groups)
+void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 {
 	clinit();
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			auto groupVertices = group->getVertices();
-			auto groupNormals = group->getNormals();
-			auto groupTextureCoordinates = group->getTextureCoordinates();
-			auto groupTangents = group->getTangents();
-			auto groupBitangents = group->getBitangents();
-			auto groupFaceCount = group->getFaceCount();
-			auto verticeMapping = new int32_tArray(groupFaceCount * 3);
-			auto indexedVertices = new Vector3Array(groupFaceCount * 3);
-			auto indexedNormals = new Vector3Array(groupFaceCount * 3);
-			auto indexedTextureCoordinates = groupTextureCoordinates != nullptr ? new TextureCoordinateArray(groupFaceCount * 3) : static_cast< TextureCoordinateArray* >(nullptr);
-			auto indexedTangents = groupTangents != nullptr ? new Vector3Array(groupFaceCount * 3) : static_cast< Vector3Array* >(nullptr);
-			auto indexedBitangents = groupBitangents != nullptr ? new Vector3Array(groupFaceCount * 3) : static_cast< Vector3Array* >(nullptr);
-			auto preparedIndices = 0;
-			for (auto facesEntity : *group->getFacesEntities()) {
-				for (auto face : *facesEntity->getFaces()) {
-					auto faceVertexIndices = face->getVertexIndices();
-					auto faceNormalIndices = face->getNormalIndices();
-					auto faceTextureIndices = face->getTextureCoordinateIndices();
-					auto faceTangentIndices = face->getTangentIndices();
-					auto faceBitangentIndices = face->getBitangentIndices();
-					auto indexedFaceVertexIndices = new int32_tArray(3);
-					for (auto idx = 0; idx < 3; idx++) {
-						auto groupVertexIndex = (*faceVertexIndices)[idx];
-						auto groupNormalIndex = (*faceNormalIndices)[idx];
-						auto groupTextureCoordinateIndex = faceTextureIndices != nullptr ? (*faceTextureIndices)[idx] : 0;
-						auto groupTangentIndex = faceTangentIndices != nullptr ? (*faceTangentIndices)[idx] : 0;
-						auto groupBitangentIndex = faceBitangentIndices != nullptr ? (*faceBitangentIndices)[idx] : 0;
-						auto vertex = (*groupVertices)[groupVertexIndex];
-						auto normal = (*groupNormals)[groupNormalIndex];
-						auto textureCoordinate = groupTextureCoordinates != nullptr ? (*groupTextureCoordinates)[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
-						auto tangent = groupTangents != nullptr ? (*groupTangents)[groupTangentIndex] : static_cast< Vector3* >(nullptr);
-						auto bitangent = groupBitangents != nullptr ? (*groupBitangents)[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
-						auto newIndex = preparedIndices;
-						for (auto i = 0; i < preparedIndices; i++) 
-														if ((*indexedVertices)[i]->equals(vertex) && (*indexedNormals)[i]->equals(normal) && (groupTextureCoordinates == nullptr || (*indexedTextureCoordinates)[i]->equals(textureCoordinate))&& (groupTangents == nullptr || (*indexedTangents)[i]->equals(tangent))&& (groupBitangents == nullptr || (*indexedBitangents)[i]->equals(bitangent))) {
-								newIndex = i;
-								break;
-							}
-
-						if (newIndex == preparedIndices)
-							preparedIndices++;
-
-						(*verticeMapping)[newIndex] = groupVertexIndex;
-						indexedVertices->set(newIndex, vertex);
-						indexedNormals->set(newIndex, normal);
-						if (groupTextureCoordinates != nullptr)
-							indexedTextureCoordinates->set(newIndex, textureCoordinate);
-
-						if (groupTangents != nullptr)
-							indexedTangents->set(newIndex, tangent);
-
-						if (groupBitangents != nullptr)
-							indexedBitangents->set(newIndex, bitangent);
-
-						(*indexedFaceVertexIndices)[idx] = newIndex;
+	for (auto it: *groups) {
+		Group* group = it.second;
+		auto groupVertices = group->getVertices();
+		auto groupNormals = group->getNormals();
+		auto groupTextureCoordinates = group->getTextureCoordinates();
+		auto groupTangents = group->getTangents();
+		auto groupBitangents = group->getBitangents();
+		auto groupFaceCount = group->getFaceCount();
+		auto verticeMapping = new int32_tArray(groupFaceCount * 3);
+		auto indexedVertices = new Vector3Array(groupFaceCount * 3);
+		auto indexedNormals = new Vector3Array(groupFaceCount * 3);
+		auto indexedTextureCoordinates = groupTextureCoordinates != nullptr ? new TextureCoordinateArray(groupFaceCount * 3) : static_cast< TextureCoordinateArray* >(nullptr);
+		auto indexedTangents = groupTangents != nullptr ? new Vector3Array(groupFaceCount * 3) : static_cast< Vector3Array* >(nullptr);
+		auto indexedBitangents = groupBitangents != nullptr ? new Vector3Array(groupFaceCount * 3) : static_cast< Vector3Array* >(nullptr);
+		auto preparedIndices = 0;
+		for (auto facesEntity : *group->getFacesEntities()) {
+			for (auto face : *facesEntity->getFaces()) {
+				auto faceVertexIndices = face->getVertexIndices();
+				auto faceNormalIndices = face->getNormalIndices();
+				auto faceTextureIndices = face->getTextureCoordinateIndices();
+				auto faceTangentIndices = face->getTangentIndices();
+				auto faceBitangentIndices = face->getBitangentIndices();
+				auto indexedFaceVertexIndices = new int32_tArray(3);
+				for (auto idx = 0; idx < 3; idx++) {
+					auto groupVertexIndex = (*faceVertexIndices)[idx];
+					auto groupNormalIndex = (*faceNormalIndices)[idx];
+					auto groupTextureCoordinateIndex = faceTextureIndices != nullptr ? (*faceTextureIndices)[idx] : 0;
+					auto groupTangentIndex = faceTangentIndices != nullptr ? (*faceTangentIndices)[idx] : 0;
+					auto groupBitangentIndex = faceBitangentIndices != nullptr ? (*faceBitangentIndices)[idx] : 0;
+					auto vertex = (*groupVertices)[groupVertexIndex];
+					auto normal = (*groupNormals)[groupNormalIndex];
+					auto textureCoordinate = groupTextureCoordinates != nullptr ? (*groupTextureCoordinates)[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
+					auto tangent = groupTangents != nullptr ? (*groupTangents)[groupTangentIndex] : static_cast< Vector3* >(nullptr);
+					auto bitangent = groupBitangents != nullptr ? (*groupBitangents)[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
+					auto newIndex = preparedIndices;
+					for (auto i = 0; i < preparedIndices; i++)
+					if ((*indexedVertices)[i]->equals(vertex) && (*indexedNormals)[i]->equals(normal) && (groupTextureCoordinates == nullptr || (*indexedTextureCoordinates)[i]->equals(textureCoordinate))&& (groupTangents == nullptr || (*indexedTangents)[i]->equals(tangent))&& (groupBitangents == nullptr || (*indexedBitangents)[i]->equals(bitangent))) {
+						newIndex = i;
+						break;
 					}
-					face->setIndexedRenderingIndices(indexedFaceVertexIndices);
+
+					if (newIndex == preparedIndices)
+						preparedIndices++;
+
+					(*verticeMapping)[newIndex] = groupVertexIndex;
+					indexedVertices->set(newIndex, vertex);
+					indexedNormals->set(newIndex, normal);
+					if (groupTextureCoordinates != nullptr)
+						indexedTextureCoordinates->set(newIndex, textureCoordinate);
+
+					if (groupTangents != nullptr)
+						indexedTangents->set(newIndex, tangent);
+
+					if (groupBitangents != nullptr)
+						indexedBitangents->set(newIndex, bitangent);
+
+					(*indexedFaceVertexIndices)[idx] = newIndex;
 				}
+				face->setIndexedRenderingIndices(indexedFaceVertexIndices);
 			}
-			auto skinning = group->getSkinning();
-			if (skinning != nullptr) {
-				prepareForIndexedRendering(skinning, verticeMapping, preparedIndices);
-			}
-			auto vertices = new Vector3Array(preparedIndices);
-			System::arraycopy(indexedVertices, 0, vertices, 0, preparedIndices);
-			group->setVertices(vertices);
-			auto normals = new Vector3Array(preparedIndices);
-			System::arraycopy(indexedNormals, 0, normals, 0, preparedIndices);
-			group->setNormals(normals);
-			if (groupTextureCoordinates != nullptr) {
-				auto textureCoordinates = new TextureCoordinateArray(preparedIndices);
-				System::arraycopy(indexedTextureCoordinates, 0, textureCoordinates, 0, preparedIndices);
-				group->setTextureCoordinates(textureCoordinates);
-			}
-			if (groupTangents != nullptr && groupBitangents != nullptr) {
-				auto tangents = new Vector3Array(preparedIndices);
-				System::arraycopy(indexedTangents, 0, tangents, 0, preparedIndices);
-				group->setTangents(tangents);
-				auto bitangents = new Vector3Array(preparedIndices);
-				System::arraycopy(indexedBitangents, 0, bitangents, 0, preparedIndices);
-				group->setBitangents(bitangents);
-			}
-			prepareForIndexedRendering(group->getSubGroups());
 		}
+		auto skinning = group->getSkinning();
+		if (skinning != nullptr) {
+			prepareForIndexedRendering(skinning, verticeMapping, preparedIndices);
+		}
+		auto vertices = new Vector3Array(preparedIndices);
+		System::arraycopy(indexedVertices, 0, vertices, 0, preparedIndices);
+		group->setVertices(vertices);
+		auto normals = new Vector3Array(preparedIndices);
+		System::arraycopy(indexedNormals, 0, normals, 0, preparedIndices);
+		group->setNormals(normals);
+		if (groupTextureCoordinates != nullptr) {
+			auto textureCoordinates = new TextureCoordinateArray(preparedIndices);
+			System::arraycopy(indexedTextureCoordinates, 0, textureCoordinates, 0, preparedIndices);
+			group->setTextureCoordinates(textureCoordinates);
+		}
+		if (groupTangents != nullptr && groupBitangents != nullptr) {
+			auto tangents = new Vector3Array(preparedIndices);
+			System::arraycopy(indexedTangents, 0, tangents, 0, preparedIndices);
+			group->setTangents(tangents);
+			auto bitangents = new Vector3Array(preparedIndices);
+			System::arraycopy(indexedBitangents, 0, bitangents, 0, preparedIndices);
+			group->setBitangents(bitangents);
+		}
+		prepareForIndexedRendering(group->getSubGroups());
 	}
 }
 
@@ -334,13 +332,14 @@ void ModelHelper::setupJoints(Model* model)
 {
 	clinit();
 	auto groups = model->getGroups();
-	for (auto _i = model->getSubGroups()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			auto skinning = group->getSkinning();
-			if (skinning != nullptr) {
-				for (auto joint : *skinning->getJoints()) {
-					setJoint(java_cast< Group* >(groups->get(joint->getGroupId())));
+	for (auto it: *model->getSubGroups()) {
+		Group* group = it.second;
+		auto skinning = group->getSkinning();
+		if (skinning != nullptr) {
+			for (auto joint : *skinning->getJoints()) {
+				auto jointGroupIt = groups->find(joint->getGroupId()->getCPPWString());
+				if (jointGroupIt != groups->end()) {
+					setJoint(jointGroupIt->second);
 				}
 			}
 		}
@@ -351,11 +350,9 @@ void ModelHelper::setJoint(Group* root)
 {
 	clinit();
 	root->setJoint(true);
-	for (auto _i = root->getSubGroups()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			setJoint(group);
-		}
+	for (auto it: *root->getSubGroups()) {
+		Group* group = it.second;
+		setJoint(group);
 	}
 }
 
@@ -364,11 +361,9 @@ void ModelHelper::fixAnimationLength(Model* model)
 	clinit();
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	if (defaultAnimation != nullptr) {
-		for (auto _i = model->getSubGroups()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-			Group* group = java_cast< Group* >(_i->next());
-			{
-				fixAnimationLength(group, defaultAnimation->getFrames());
-			}
+		for (auto it: *model->getSubGroups()) {
+			Group* group = it.second;
+			fixAnimationLength(group, defaultAnimation->getFrames());
 		}
 	}
 }
@@ -385,11 +380,9 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 	for (auto i = 0; i < transformationsMatrices->length; i++) {
 		(*animation->getTransformationsMatrices())[i]->set((*transformationsMatrices)[i]);
 	}
-	for (auto _i = root->getSubGroups()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			fixAnimationLength(group, frames);
-		}
+	for (auto it: *root->getSubGroups()) {
+		Group* group = it.second;
+		fixAnimationLength(group, frames);
 	}
 }
 

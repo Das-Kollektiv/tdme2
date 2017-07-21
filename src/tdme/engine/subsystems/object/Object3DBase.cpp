@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DBase.java
 #include <tdme/engine/subsystems/object/Object3DBase.h>
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <java/lang/Math.h>
@@ -34,7 +36,9 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using java::lang::Math;
@@ -267,94 +271,89 @@ Matrix4x4* Object3DBase::getTransformationsMatrix(String* id)
 	return java_cast< Matrix4x4* >(transformationsMatrices->get(id));
 }
 
-void Object3DBase::createTransformationsMatrices(_HashMap* matrices, _HashMap* groups)
+void Object3DBase::createTransformationsMatrices(_HashMap* matrices, map<wstring, Group*>* groups)
 {
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			matrices->put(group->getId(), (new Matrix4x4())->identity());
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				createTransformationsMatrices(matrices, subGroups);
-			}
+	for (auto it: *groups) {
+		Group* group = it.second;
+		matrices->put(group->getId(), (new Matrix4x4())->identity());
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			createTransformationsMatrices(matrices, subGroups);
 		}
 	}
 }
 
-void Object3DBase::computeTransformationsMatrices(_HashMap* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth)
+void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth)
 {
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			auto overlayAnimation = java_cast< AnimationState* >(overlayAnimationsByJointId->get(group->getId()));
-			if (overlayAnimation != nullptr)
-				animationState = overlayAnimation;
+	for (auto it: *groups) {
+		Group* group = it.second;
+		auto overlayAnimation = java_cast< AnimationState* >(overlayAnimationsByJointId->get(group->getId()));
+		if (overlayAnimation != nullptr)
+			animationState = overlayAnimation;
 
-			Matrix4x4* transformationsMatrix = nullptr;
-			auto animation = group->getAnimation();
-			if (animation != nullptr && animationState->finished == false) {
-				auto animationMatrices = animation->getTransformationsMatrices();
-				auto frames = animationState->setup->getFrames();
-				auto fps = model->getFPS();
-				auto frameAtLast = (animationState->lastAtTime / 1000.0f) * fps;
-				auto frameAtCurrent = (animationState->currentAtTime / 1000.0f) * fps;
-				if (animationState->setup->isLoop() == false && frameAtCurrent >= frames) {
-					frameAtLast = frames - 1;
-					frameAtCurrent = frames - 1;
-					animationState->finished = true;
+		Matrix4x4* transformationsMatrix = nullptr;
+		auto animation = group->getAnimation();
+		if (animation != nullptr && animationState->finished == false) {
+			auto animationMatrices = animation->getTransformationsMatrices();
+			auto frames = animationState->setup->getFrames();
+			auto fps = model->getFPS();
+			auto frameAtLast = (animationState->lastAtTime / 1000.0f) * fps;
+			auto frameAtCurrent = (animationState->currentAtTime / 1000.0f) * fps;
+			if (animationState->setup->isLoop() == false && frameAtCurrent >= frames) {
+				frameAtLast = frames - 1;
+				frameAtCurrent = frames - 1;
+				animationState->finished = true;
+			}
+			auto matrixAtLast = (static_cast< int32_t >(frameAtLast) % frames);
+			auto matrixAtCurrent = (static_cast< int32_t >(frameAtCurrent) % frames);
+			animationState->time = frames <= 1 ? 0.0f : static_cast< float >(matrixAtCurrent) / static_cast< float >((frames - 1));
+			auto t = frameAtCurrent - static_cast< float >(Math::floor(frameAtLast));
+			if (t < 1.0f) {
+				if (matrixAtLast == matrixAtCurrent) {
+					matrixAtCurrent = ((matrixAtCurrent + 1) % frames);
 				}
-				auto matrixAtLast = (static_cast< int32_t >(frameAtLast) % frames);
-				auto matrixAtCurrent = (static_cast< int32_t >(frameAtCurrent) % frames);
-				animationState->time = frames <= 1 ? 0.0f : static_cast< float >(matrixAtCurrent) / static_cast< float >((frames - 1));
-				auto t = frameAtCurrent - static_cast< float >(Math::floor(frameAtLast));
-				if (t < 1.0f) {
-					if (matrixAtLast == matrixAtCurrent) {
-						matrixAtCurrent = ((matrixAtCurrent + 1) % frames);
-					}
-					transformationsMatrix = Matrix4x4::interpolateLinear((*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()], (*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()], t, tmpMatrix1);
+				transformationsMatrix = Matrix4x4::interpolateLinear((*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()], (*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()], t, tmpMatrix1);
+			} else {
+				transformationsMatrix = tmpMatrix1->set((*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()]);
+			}
+		}
+		if (transformationsMatrix == nullptr) {
+			transformationsMatrix = tmpMatrix1->set(group->getTransformationsMatrix());
+		}
+		if (parentTransformationsMatrix != nullptr) {
+			transformationsMatrix->multiply(parentTransformationsMatrix);
+		}
+		java_cast< Matrix4x4* >(transformationsMatrices->get(group->getId()))->set(transformationsMatrix);
+		if (hasSkinning == true) {
+			for (auto i = 0; i < skinningGroups->length; i++) {
+				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(group->getId());
+				if (skinningJoint == nullptr) {
+					java_cast< Matrix4x4* >((*skinningGroupsMatrices)[i]->get(group->getId()))->set(transformationsMatrix);
 				} else {
-					transformationsMatrix = tmpMatrix1->set((*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()]);
+					java_cast< Matrix4x4* >((*skinningGroupsMatrices)[i]->get(group->getId()))->set(skinningJoint->getBindMatrix())->multiply(transformationsMatrix);
 				}
-			}
-			if (transformationsMatrix == nullptr) {
-				transformationsMatrix = tmpMatrix1->set(group->getTransformationsMatrix());
-			}
-			if (parentTransformationsMatrix != nullptr) {
-				transformationsMatrix->multiply(parentTransformationsMatrix);
-			}
-			java_cast< Matrix4x4* >(transformationsMatrices->get(group->getId()))->set(transformationsMatrix);
-			if (hasSkinning == true) {
-				for (auto i = 0; i < skinningGroups->length; i++) {
-					auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(group->getId());
-					if (skinningJoint == nullptr) {
-						java_cast< Matrix4x4* >((*skinningGroupsMatrices)[i]->get(group->getId()))->set(transformationsMatrix);
-					} else {
-						java_cast< Matrix4x4* >((*skinningGroupsMatrices)[i]->get(group->getId()))->set(skinningJoint->getBindMatrix())->multiply(transformationsMatrix);
-					}
-				}
-			}
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				(*transformationsMatricesStack)[depth]->set(transformationsMatrix);
-				computeTransformationsMatrices(subGroups, (*transformationsMatricesStack)[depth], animationState, depth + 1);
 			}
 		}
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			(*transformationsMatricesStack)[depth]->set(transformationsMatrix);
+			computeTransformationsMatrices(subGroups, (*transformationsMatricesStack)[depth], animationState, depth + 1);
+		}
+
 	}
 }
 
-int32_t Object3DBase::determineTransformationsMatricesStackDepth(_HashMap* groups, int32_t depth)
+int32_t Object3DBase::determineTransformationsMatricesStackDepth(map<wstring, Group*>* groups, int32_t depth)
 {
 	auto depthMax = depth;
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				auto _depth = determineTransformationsMatricesStackDepth(subGroups, depth + 1);
-				if (_depth > depthMax)
-					depthMax = _depth;
+	for (auto it: *groups) {
+		Group* group = it.second;
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			auto _depth = determineTransformationsMatricesStackDepth(subGroups, depth + 1);
+			if (_depth > depthMax)
+				depthMax = _depth;
 
-			}
 		}
 	}
 	return depthMax;
@@ -434,40 +433,36 @@ Object3DGroupMesh* Object3DBase::getMesh(String* groupId)
 	return nullptr;
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(_HashMap* groups)
+int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups)
 {
 	return determineSkinnedGroupCount(groups, 0);
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(_HashMap* groups, int32_t count)
+int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups, int32_t count)
 {
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			if (group->getSkinning() != nullptr)
-				count++;
+	for (auto it: *groups) {
+		Group* group = it.second;
+		if (group->getSkinning() != nullptr)
+			count++;
 
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				count = determineSkinnedGroupCount(subGroups, count);
-			}
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			count = determineSkinnedGroupCount(subGroups, count);
 		}
 	}
 	return count;
 }
 
-int32_t Object3DBase::determineSkinnedGroups(_HashMap* groups, GroupArray* skinningGroups, int32_t idx)
+int32_t Object3DBase::determineSkinnedGroups(map<wstring, Group*>* groups, GroupArray* skinningGroups, int32_t idx)
 {
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			if (group->getSkinning() != nullptr) {
-				skinningGroups->set(idx++, group);
-			}
-			auto subGroups = group->getSubGroups();
-			if (subGroups->size() > 0) {
-				idx = determineSkinnedGroups(subGroups, skinningGroups, idx);
-			}
+	for (auto it: *groups) {
+		Group* group = it.second;
+		if (group->getSkinning() != nullptr) {
+			skinningGroups->set(idx++, group);
+		}
+		auto subGroups = group->getSubGroups();
+		if (subGroups->size() > 0) {
+			idx = determineSkinnedGroups(subGroups, skinningGroups, idx);
 		}
 	}
 	return idx;

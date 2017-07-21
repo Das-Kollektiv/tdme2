@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <Array.h>
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -16,6 +19,9 @@
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
+
+using std::map;
+using std::wstring;
 
 using java::lang::Object;
 using java::io::OutputStream;
@@ -297,7 +303,7 @@ private:
 	 * @param sub groups
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, _HashMap* subGroups) throw (ModelFileIOException);
+	static void writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

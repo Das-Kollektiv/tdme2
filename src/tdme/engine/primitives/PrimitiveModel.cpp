@@ -164,8 +164,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
-	model->getGroups()->put(u"group"_j, group);
-	model->getSubGroups()->put(u"group"_j, group);
+	(*model->getGroups())[L"group"] = group;
+	(*model->getSubGroups())[L"group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }
@@ -215,8 +215,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
-	model->getGroups()->put(u"group"_j, group);
-	model->getSubGroups()->put(u"group"_j, group);
+	(*model->getGroups())[L"group"] = group;
+	(*model->getSubGroups())[L"group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }
@@ -284,8 +284,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
-	model->getGroups()->put(u"group"_j, group);
-	model->getSubGroups()->put(u"group"_j, group);
+	(*model->getGroups())[L"group"] = group;
+	(*model->getSubGroups())[L"group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }
@@ -382,8 +382,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
-	model->getGroups()->put(u"group"_j, group);
-	model->getSubGroups()->put(u"group"_j, group);
+	(*model->getGroups())[L"group"] = group;
+	(*model->getSubGroups())[L"group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }
@@ -399,16 +399,13 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
 
-void PrimitiveModel::setupConvexMeshMaterial(_HashMap* groups, Material* material)
+void PrimitiveModel::setupConvexMeshMaterial(map<wstring, Group*>* groups, Material* material)
 {
 	clinit();
-	for (auto _i = groups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Group* group = java_cast< Group* >(_i->next());
-		{
-			for (auto faceEntity : *group->getFacesEntities()) {
-				faceEntity->setMaterial(material);
-			}
-			setupConvexMeshMaterial(group->getSubGroups(), material);
+	for (auto it: *groups) {
+		Group* group = it.second;
+		for (auto faceEntity : *group->getFacesEntities()) {
+			faceEntity->setMaterial(material);
 		}
 	}
 }

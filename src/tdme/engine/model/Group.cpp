@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/model/Group.java
 #include <tdme/engine/model/Group.h>
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <java/lang/Object.h>
@@ -15,11 +17,12 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using tdme::engine::model::Group;
 using java::lang::Object;
@@ -34,7 +37,6 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -87,7 +89,6 @@ void Group::ctor(Model* model, Group* parentGroup, String* id, String* name)
 	this->animation = nullptr;
 	this->skinning = nullptr;
 	this->facesEntities = new FacesEntityArray(0);
-	this->subGroups = new _HashMap();
 }
 
 Model* Group::getModel()
@@ -271,14 +272,18 @@ void Group::setFacesEntities(FacesEntityArray* facesEntities)
 	this->facesEntities = facesEntities;
 }
 
-_HashMap* Group::getSubGroups()
+map<wstring, Group*>* Group::getSubGroups()
 {
-	return subGroups;
+	return &subGroups;
 }
 
 Group* Group::getSubGroupById(String* groupId)
 {
-	return java_cast< Group* >(subGroups->get(groupId));
+	auto groupIt = subGroups.find(groupId->getCPPWString());
+	if (groupIt != subGroups.end()) {
+		return groupIt->second;
+	}
+	return nullptr;
 }
 
 void Group::determineFeatures()
@@ -305,8 +310,11 @@ String* Group::toString()
 		->append(Arrays::toString(static_cast< ObjectArray* >(tangents)))
 		->append(u", bitangents ="_j)
 		->append(Arrays::toString(static_cast< ObjectArray* >(bitangents)))
+		/*
+		// TODO: implement me!
 		->append(u", subgroups ="_j)
 		->append(static_cast< Object* >(subGroups))
+		*/
 		->append(u"]"_j)->toString();
 }
 
