@@ -1,13 +1,18 @@
 // Generated from /tdme/src/tdme/engine/subsystems/manager/VBOManager.java
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using java::lang::Object;
@@ -15,7 +20,6 @@ using java::lang::String;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -41,31 +45,32 @@ void VBOManager::ctor(GLRenderer* renderer)
 {
 	super::ctor();
 	this->renderer = renderer;
-	vbos = new _HashMap();
 }
 
 VBOManager_VBOManaged* VBOManager::addVBO(String* vboId, int32_t ids)
 {
-	auto vboManaged = java_cast< VBOManager_VBOManaged* >(vbos->get(vboId));
-	if (vboManaged != nullptr) {
+	auto vboManagedIt = vbos.find(vboId->getCPPWString());
+	if (vboManagedIt != vbos.end()) {
+		auto vboManaged = vboManagedIt->second;
 		vboManaged->incrementReferenceCounter();
 		return vboManaged;
 	}
 	auto vboIds = renderer->createBufferObjects(ids);
-	vboManaged = new VBOManager_VBOManaged(this, vboId, vboIds);
+	auto vboManaged = new VBOManager_VBOManaged(this, vboId, vboIds);
 	vboManaged->incrementReferenceCounter();
-	vbos->put(vboManaged->getId(), vboManaged);
+	vbos[vboManaged->getId()->getCPPWString()] = vboManaged;
 	return vboManaged;
 }
 
 void VBOManager::removeVBO(String* vboId)
 {
-	auto vboManaged = java_cast< VBOManager_VBOManaged* >(vbos->get(vboId));
-	if (vboManaged != nullptr) {
+	auto vboManagedIt = vbos.find(vboId->getCPPWString());
+	if (vboManagedIt != vbos.end()) {
+		auto vboManaged = vboManagedIt->second;
 		if (vboManaged->decrementReferenceCounter()) {
 			auto vboIds = vboManaged->getVBOGlIds();
 			renderer->disposeBufferObjects(vboIds);
-			vbos->remove(vboId);
+			vbos.erase(vboManagedIt);
 		}
 		return;
 	}

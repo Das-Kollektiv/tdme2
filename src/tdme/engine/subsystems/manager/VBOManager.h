@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
@@ -9,11 +12,13 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -32,7 +37,7 @@ public:
 
 private:
 	GLRenderer* renderer {  };
-	_HashMap* vbos {  };
+	map<wstring, VBOManager_VBOManaged*> vbos {  };
 protected:
 
 	/** 
