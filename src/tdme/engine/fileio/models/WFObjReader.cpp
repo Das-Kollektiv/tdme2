@@ -138,7 +138,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	);
 	vector<Vector3*> vertices;
 	vector<TextureCoordinate*> textureCoordinates;
-	auto materials = model->getMaterials();
+	map<wstring, Material*> materials;
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
 	Group* group = nullptr;
@@ -171,7 +171,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 				auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
 				if (command->equals(u"mtllib"_j)) {
 					auto materialFileName = arguments;
-					materials = WFObjReader::readMaterials(pathName, materialFileName);
+					WFObjReader::readMaterials(pathName, materialFileName, materials);
 				} else
 				if (command->equals(u"v"_j)) {
 					auto t = new StringTokenizer(arguments, u" "_j);
@@ -319,7 +319,12 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString());
 						groupFacesEntityFaces.clear();
 					}
-					groupFacesEntity->setMaterial(java_cast< Material* >(materials->get(arguments)));
+					auto materialIt = materials.find(arguments->getCPPWString());
+					if (materialIt != materials.end()) {
+						Material* material = materialIt->second;
+						group->getModel()->getMaterials()->put(material->getId(), material);
+						groupFacesEntity->setMaterial(material);
+					}
 				} else {
 				}
 			}
@@ -343,10 +348,9 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	return model;
 }
 
-_HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
+void WFObjReader::readMaterials(String* pathName, String* fileName, map<wstring, Material*>& materials) throw (_FileSystemException, ModelFileIOException)
 {
 	clinit();
-	auto materials = new _HashMap();
 	Material* current = nullptr;
 	String* line;
 	auto alpha = 1.0f;
@@ -371,7 +375,7 @@ _HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) throw (
 			if (command->equals(u"newmtl"_j)) {
 				auto name = arguments;
 				current = new Material(name);
-				materials->put(name, current);
+				materials[name->getCPPWString()] = current;
 			} else
 			if (command->equals(u"map_ka"_j)) {
 				current->setDiffuseTexture(pathName, arguments);
@@ -407,7 +411,6 @@ _HashMap* WFObjReader::readMaterials(String* pathName, String* fileName) throw (
 			}
 		}
 	}
-	return materials;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

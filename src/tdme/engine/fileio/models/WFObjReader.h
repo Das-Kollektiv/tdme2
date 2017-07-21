@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -12,12 +15,15 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Model;
+using tdme::engine::model::Material;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::_FileSystemException;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -50,11 +56,11 @@ private:
 	 * Reads a wavefront object material library
 	 * @param path name
 	 * @param file name
+	 * @param materials
 	 * @throws _FileSystemException
 	 * @throws ModelIOException
-	 * @return material
 	 */
-	static _HashMap* readMaterials(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
+	static void readMaterials(String* pathName, String* fileName, map<wstring, Material*>& materials) throw (_FileSystemException, ModelFileIOException);
 
 	// Generated
 
