@@ -1054,8 +1054,11 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				}
 
 				if (xmlMaterialId != nullptr && xmlMaterialId->length() > 0) {
-					auto material = java_cast< Material* >(model->getMaterials()->get(xmlMaterialId));
-					if (material == nullptr) {
+					Material* material = nullptr;
+					auto materialIt = model->getMaterials()->find(xmlMaterialId->getCPPWString());
+					if (materialIt != model->getMaterials()->end()) {
+						material = materialIt->second;
+					} else {
 						material = readMaterial(authoringTool, pathName, model, xmlRoot, xmlMaterialId);
 					}
 					facesEntity->setMaterial(material);
@@ -1441,7 +1444,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		material->getDiffuseColor()->set(material->getDiffuseColor()->getRed() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getGreen() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getBlue() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getAlpha());
 	}
 
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 
 	return material;
 }

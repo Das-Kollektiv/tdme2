@@ -14,8 +14,8 @@
 #include <java/lang/Object.h>
 
 using std::map;
-using std::wstring;
 
+using std::wstring;
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::AnimationSetup;
@@ -48,12 +48,12 @@ private:
 	String* name {  };
 	Model_UpVector* upVector {  };
 	RotationOrder* rotationOrder {  };
-	_HashMap* materials {  };
+	map<wstring, Material*> materials {  };
 	map<wstring, Group*> groups {  };
 	map<wstring, Group*> subGroups {  };
 	bool hasSkinning_ {  };
 	float fps {  };
-	_HashMap* animationSetups {  };
+	map<wstring, AnimationSetup*> animationSetups {  };
 	Matrix4x4* importTransformationsMatrix {  };
 	BoundingBox* boundingBox {  };
 protected:
@@ -100,7 +100,7 @@ public:
 	 * Returns all object materials
 	 * @return materials
 	 */
-	_HashMap* getMaterials();
+	map<wstring, Material*>* getMaterials();
 
 	/** 
 	 * Returns all object's groups
@@ -183,7 +183,7 @@ public:
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	_HashMap* getAnimationSetups();
+	map<wstring, AnimationSetup*>* getAnimationSetups();
 
 	/** 
 	 * @return if model has animations

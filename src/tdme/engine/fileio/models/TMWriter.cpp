@@ -153,11 +153,9 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_F
 	os->writeFloat(model->getFPS());
 	os->writeFloatArray(model->getImportTransformationsMatrix()->getArray());
 	os->writeInt(model->getMaterials()->size());
-	for (auto _i = model->getMaterials()->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Material* material = java_cast< Material* >(_i->next());
-		{
-			writeMaterial(os, material);
-		}
+	for (auto it: *model->getMaterials()) {
+		Material* material = it.second;
+		writeMaterial(os, material);
 	}
 	_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
 	writeSubGroups(os, model->getSubGroups());

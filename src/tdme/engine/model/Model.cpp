@@ -36,6 +36,7 @@ using tdme::engine::Object3DModel;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
+using tdme::engine::model::Material;
 using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
@@ -82,10 +83,8 @@ void Model::ctor(String* id, String* name, Model_UpVector* upVector, RotationOrd
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
-	materials = new _HashMap();
 	hasSkinning_ = false;
 	fps = FPS_DEFAULT;
-	animationSetups = new _HashMap();
 	importTransformationsMatrix = (new Matrix4x4())->identity();
 	this->boundingBox = boundingBox;
 }
@@ -115,9 +114,9 @@ RotationOrder* Model::getRotationOrder()
 	return rotationOrder;
 }
 
-_HashMap* Model::getMaterials()
+map<wstring, Material*>* Model::getMaterials()
 {
-	return materials;
+	return &materials;
 }
 
 map<wstring, Group*>* Model::getGroups()
@@ -172,30 +171,34 @@ void Model::setFPS(float fps)
 AnimationSetup* Model::addAnimationSetup(String* id, int32_t startFrame, int32_t endFrame, bool loop)
 {
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, nullptr);
-	animationSetups->put(id, animationSetup);
+	animationSetups[id->getCPPWString()] = animationSetup;
 	return animationSetup;
 }
 
 AnimationSetup* Model::addOverlayAnimationSetup(String* id, String* overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop)
 {
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromGroupId);
-	animationSetups->put(id, animationSetup);
+	animationSetups[id->getCPPWString()] = animationSetup;
 	return animationSetup;
 }
 
 AnimationSetup* Model::getAnimationSetup(String* id)
 {
-	return java_cast< AnimationSetup* >(animationSetups->get(id));
+	auto animationSetupIt = animationSetups.find(id->getCPPWString());
+	if (animationSetupIt != animationSetups.end()) {
+		return animationSetupIt->second;
+	}
+	return nullptr;
 }
 
-_HashMap* Model::getAnimationSetups()
+map<wstring, AnimationSetup*>* Model::getAnimationSetups()
 {
-	return animationSetups;
+	return &animationSetups;
 }
 
 bool Model::hasAnimations()
 {
-	return animationSetups->size() > 0;
+	return animationSetups.size() > 0;
 }
 
 Matrix4x4* Model::getImportTransformationsMatrix()

@@ -919,7 +919,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundPlateMaterial->getDiffuseColor()->setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseTexture(u"resources/tools/leveleditor/textures"_j, u"groundplate.png"_j);
 	groundPlateMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	groundPlate->getMaterials()->put(u"ground"_j, groundPlateMaterial);
+	(*groundPlate->getMaterials())[L"ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, u"ground"_j, u"ground"_j);
 	auto groupFacesEntityGround = new FacesEntity(groundGroup, u"leveleditor.ground.facesentity"_j);
 	groupFacesEntityGround->setMaterial(groundPlateMaterial);

@@ -202,20 +202,20 @@ void PhysicsTest1::initialize()
 	OrientedBoundingBox::clinit();
 	auto ground = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(8.0f, 1.0f, 8.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, u"ground_model"_j);
-	java_cast< Material* >(groundModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(groundModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D(u"ground"_j, groundModel);
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody(u"ground"_j, true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto side = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(1.0f, 16.0f, 8.0f));
 	auto sideModel = PrimitiveModel::createModel(side, u"side_model"_j);
-	java_cast< Material* >(sideModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(sideModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	auto nearFar = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(8.0f, 16.0f, 1.0f));
 	auto nearFarModel = PrimitiveModel::createModel(nearFar, u"far_model"_j);
-	java_cast< Material* >(nearFarModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(nearFarModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D(u"far"_j, nearFarModel);
 	entity->getTranslation()->addZ(+9.0f);
 	entity->update();
@@ -239,8 +239,8 @@ void PhysicsTest1::initialize()
 	world->addStaticRigidBody(u"sideleft"_j, true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
 	auto box = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(0.6f, 0.6f, 0.6f));
 	auto boxModel = PrimitiveModel::createModel(box, u"box_model"_j);
-	java_cast< Material* >(boxModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
-	java_cast< Material* >(boxModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString(), boxModel);
 		entity->setDynamicShadowingEnabled(true);
@@ -262,8 +262,8 @@ void PhysicsTest1::initialize()
 	}
 	auto sphere = new Sphere(new Vector3(0.0f, 0.0f, 0.0f), 0.4f);
 	auto sphereModel = PrimitiveModel::createModel(sphere, u"sphere_model"_j);
-	java_cast< Material* >(sphereModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.5f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(sphereModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(0.0f, 1.0f, 1.0f, 1.0f);
+	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.5f, 0.8f, 0.8f, 1.0f);
+	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(0.0f, 1.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
 		entity = new Object3D(::java::lang::StringBuilder().append(u"sphere"_j)->append(i)->toString(), sphereModel);
 		entity->setDynamicShadowingEnabled(true);
@@ -276,8 +276,8 @@ void PhysicsTest1::initialize()
 	}
 	auto capsule = new Capsule(new Vector3(0.0f, 0.5f, 0.0f), new Vector3(0.0f, -0.5f, 0.0f), 0.25f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, u"capsule_model"_j);
-	java_cast< Material* >(capsuleModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.0f, 0.8f, 1.0f);
-	java_cast< Material* >(capsuleModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 0.0f, 1.0f, 1.0f);
+	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.0f, 0.8f, 1.0f);
+	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
 		entity = new Object3D(::java::lang::StringBuilder().append(u"capsule"_j)->append(i)->toString(), capsuleModel);
 		entity->setDynamicShadowingEnabled(true);
@@ -289,8 +289,8 @@ void PhysicsTest1::initialize()
 	}
 	auto capsuleBig = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(0.5f, 1.0f, 0.5f));
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, u"capsulebig_model"_j);
-	java_cast< Material* >(capsuleBigModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(1.0f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(capsuleBigModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
+	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(1.0f, 0.8f, 0.8f, 1.0f);
+	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	_Console::println(static_cast< Object* >(capsuleBig->getCenter()));
 	entity = new Object3D(u"capsulebig1"_j, capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);

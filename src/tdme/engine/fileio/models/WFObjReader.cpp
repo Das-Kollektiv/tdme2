@@ -322,7 +322,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					auto materialIt = materials.find(arguments->getCPPWString());
 					if (materialIt != materials.end()) {
 						Material* material = materialIt->second;
-						group->getModel()->getMaterials()->put(material->getId(), material);
+						(*group->getModel()->getMaterials())[material->getId()->getCPPWString()] = material;
 						groupFacesEntity->setMaterial(material);
 					}
 				} else {

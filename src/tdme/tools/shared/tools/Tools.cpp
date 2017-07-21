@@ -274,7 +274,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto ground = new Model(u"ground"_j, u"ground"_j, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material(u"ground"_j);
 	groundMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	ground->getMaterials()->put(u"ground"_j, groundMaterial);
+	(*ground->getMaterials())[L"ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, u"ground"_j, u"ground"_j);
 	auto groupFacesEntityGround = new FacesEntity(groundGroup, u"ground group faces entity ground"_j);
 	groupFacesEntityGround->setMaterial(groundMaterial);

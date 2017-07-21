@@ -195,7 +195,7 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 	auto materialCount = is->readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(is);
-		model->getMaterials()->put(material->getId(), material);
+		(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	}
 	readSubGroups(is, model, nullptr, model->getSubGroups());
 	return model;
@@ -298,7 +298,12 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	for (auto i = 0; i < facesEntities->length; i++) {
 		facesEntities->set(i, new FacesEntity(g, is->readString()));
 		if (is->readBoolean() == true) {
-			(*facesEntities)[i]->setMaterial(java_cast< Material* >(g->getModel()->getMaterials()->get(is->readString())));
+			Material* material = nullptr;
+			auto materialIt = g->getModel()->getMaterials()->find(is->readString()->getCPPWString());
+			if (materialIt != g->getModel()->getMaterials()->end()) {
+				material = materialIt->second;
+			}
+			(*facesEntities)[i]->setMaterial(material);
 		}
 		auto faces = new FaceArray(is->readInt());
 		for (auto j = 0; j < faces->length; j++) {

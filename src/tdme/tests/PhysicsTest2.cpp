@@ -135,8 +135,8 @@ void PhysicsTest2::initialize()
 	OrientedBoundingBox::clinit();
 	auto ground = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(30.0f, 1.0f, 30.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, u"ground_model"_j);
-	java_cast< Material* >(groundModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
-	java_cast< Material* >(groundModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D(u"ground"_j, groundModel);
 	entity->getTranslation()->setY(-1.0f);
 	entity->update();
@@ -144,8 +144,8 @@ void PhysicsTest2::initialize()
 	world->addStaticRigidBody(u"ground"_j, true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto box = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X->clone(), OrientedBoundingBox::AABB_AXIS_Y->clone(), OrientedBoundingBox::AABB_AXIS_Z->clone(), new Vector3(1.0f, 1.0f, 1.0f));
 	auto boxModel = PrimitiveModel::createModel(box, u"box_model"_j);
-	java_cast< Material* >(boxModel->getMaterials()->get(u"tdme.primitive.material"_j))->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
-	java_cast< Material* >(boxModel->getMaterials()->get(u"tdme.primitive.material"_j))->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString(), boxModel);
 		entity->setDynamicShadowingEnabled(true);

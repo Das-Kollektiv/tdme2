@@ -126,7 +126,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
@@ -178,7 +178,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
@@ -231,7 +231,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
@@ -314,7 +314,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
 	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
 	groupFacesEntity->setMaterial(material);
@@ -395,7 +395,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	model->getMaterials()->put(material->getId(), material);
+	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
 
