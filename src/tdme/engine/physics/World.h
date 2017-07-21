@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -13,6 +15,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
@@ -29,7 +33,6 @@ using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-using tdme::utils::_HashMap;
 
 struct default_init_tag;
 
@@ -49,14 +52,17 @@ public: /* protected */
 	PhysicsPartition* partition {  };
 
 private:
+	struct RigidBodyCollisionStruct {
+		int32_t rigidBody1Idx;
+		int32_t rigidBody2Idx;
+	};
+
 	vector<RigidBody*> rigidBodies {  };
 	vector<RigidBody*> rigidBodiesDynamic {  };
-	_HashMap* rigidBodiesById {  };
-	_HashMap* rigidBodyTestedCollisions {  };
-	Pool* rigidBodyCollisionsKeyPoolCurrentFrame {  };
-	_HashMap* rigidBodyCollisionsCurrentFrame {  };
-	Pool* rigidBodyCollisionsKeyPoolLastFrame {  };
-	_HashMap* rigidBodyCollisionsLastFrame {  };
+	map<wstring, RigidBody*> rigidBodiesById {  };
+	map<wstring, RigidBodyCollisionStruct> rigidBodyTestedCollisions {  };
+	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame {  };
+	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame {  };
 	Vector3* collisionMovement {  };
 	Vector3* worldPosForce {  };
 	Vector3* gravityForce {  };

@@ -15,7 +15,6 @@
 using java::lang::Object;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
-using tdme::utils::_HashMap;
 
 using std::map;
 using std::wstring;
