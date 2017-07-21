@@ -32,7 +32,6 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -71,7 +70,6 @@ using tdme::math::Vector3;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
