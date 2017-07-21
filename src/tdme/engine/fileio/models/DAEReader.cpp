@@ -1256,37 +1256,24 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 	for (auto xmlEffect: getChildrenByTagName(xmlLibraryEffects, "effect")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlEffect->Attribute("id")))))->equals(xmlEffectId)) {
 			auto xmlProfile = getChildrenByTagName(xmlEffect, "profile_COMMON").at(0);
-			auto samplerSurfaceMapping = new _HashMap();
-			auto surfaceImageMapping = new _HashMap();
+			map<wstring, wstring> samplerSurfaceMapping;
+			map<wstring, wstring> surfaceImageMapping;
 			for (auto xmlNewParam: getChildrenByTagName(xmlProfile, "newparam")) {
 				auto xmlNewParamSID = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNewParam->Attribute("sid"))));
 				for (auto xmlSurface: getChildrenByTagName(xmlNewParam, "surface"))
 				for (auto xmlSurfaceInitFrom: getChildrenByTagName(xmlSurface, "init_from")) {
-					surfaceImageMapping->put(
-						xmlNewParamSID,
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSurfaceInitFrom->GetText())))
-					);
+					surfaceImageMapping[xmlNewParamSID->getCPPWString()] =
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSurfaceInitFrom->GetText()));
 				}
 				for (auto xmlSampler2D: getChildrenByTagName(xmlNewParam, "sampler2D"))
 				for (auto xmlSampler2DSource: getChildrenByTagName(xmlSampler2D, "source")) {
-					samplerSurfaceMapping->put(
-						xmlNewParamSID,
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSampler2DSource->GetText())))
-					);
+					samplerSurfaceMapping[xmlNewParamSID->getCPPWString()] =
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSampler2DSource->GetText()));
 				}
 			}
 			for (auto xmlTechnique: getChildrenByTagName(xmlProfile, "technique")) {
 				for (auto xmlTechniqueNode: getChildren(xmlTechnique)) {
 					for (auto xmlDiffuse: getChildrenByTagName(xmlTechniqueNode, "diffuse")) {
-						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
-							xmlDiffuseTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
-							auto sample2Surface = java_cast< String* >(samplerSurfaceMapping->get(xmlDiffuseTextureId));
-							String* surface2Image = nullptr;
-							if (sample2Surface != nullptr)
-								surface2Image = java_cast< String* >(surfaceImageMapping->get(sample2Surface));
-							if (surface2Image != nullptr)
-								xmlDiffuseTextureId = surface2Image;
-						}
 						for (auto xmlColor: getChildrenByTagName(xmlDiffuse, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
 							material->getDiffuseColor()->set(
@@ -1295,6 +1282,26 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 								Float::parseFloat(t->nextToken()),
 								Float::parseFloat(t->nextToken())
 							);
+						}
+						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
+							xmlDiffuseTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
+
+							auto sample2SurfaceIt = samplerSurfaceMapping.find(xmlDiffuseTextureId->getCPPWString());
+							String* sample2Surface = nullptr;
+							if (sample2SurfaceIt != samplerSurfaceMapping.end()) {
+								sample2Surface = new String(sample2SurfaceIt->second);
+							}
+							if (sample2Surface == nullptr) continue;
+
+							String* surface2Image = nullptr;
+							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface->getCPPWString());
+							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+								surface2Image = new String(surface2ImageIt->second);
+							}
+
+							if (surface2Image != nullptr) {
+								xmlDiffuseTextureId = surface2Image;
+							}
 						}
 					}
 					for (auto xmlAmbient: getChildrenByTagName(xmlTechniqueNode, "ambient")) {
@@ -1324,11 +1331,24 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					for (auto xmlSpecular: getChildrenByTagName(xmlTechniqueNode, "specular")) {
 						for (auto xmlTexture: getChildrenByTagName(xmlSpecular, "texture")) {
 							xmlSpecularTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
-							auto sample2Surface = samplerSurfaceMapping->get(xmlSpecularTextureId);
+
+							auto sample2SurfaceIt = samplerSurfaceMapping.find(xmlSpecularTextureId->getCPPWString());
+							String* sample2Surface = nullptr;
+							if (sample2SurfaceIt != samplerSurfaceMapping.end()) {
+								sample2Surface = new String(sample2SurfaceIt->second);
+							}
+							if (sample2Surface == nullptr) continue;
+
 							String* surface2Image = nullptr;
-							if (sample2Surface != nullptr) surface2Image = java_cast< String* >(surfaceImageMapping->get(sample2Surface));
-							if (surface2Image != nullptr) xmlSpecularTextureId = surface2Image;
-							hasSpecularMap = true;
+							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface->getCPPWString());
+							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+								surface2Image = new String(surface2ImageIt->second);
+							}
+
+							if (surface2Image != nullptr) {
+								xmlSpecularTextureId = surface2Image;
+								hasSpecularMap = true;
+							}
 						}
 						for (auto xmlColor: getChildrenByTagName(xmlSpecular, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
@@ -1354,9 +1374,24 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 				for (auto xmlBumpTechniqueBump: getChildrenByTagName(xmlBumpTechnique, "bump"))
 				for (auto xmlBumpTexture: getChildrenByTagName(xmlBumpTechniqueBump, "texture")) {
 					xmlBumpTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlBumpTexture->Attribute("texture"))));
-					auto sample2Surface = java_cast< String* >(samplerSurfaceMapping->get(xmlBumpTextureId));
+
+					auto sample2SurfaceIt = samplerSurfaceMapping.find(xmlBumpTextureId->getCPPWString());
+					String* sample2Surface = nullptr;
+					if (sample2SurfaceIt != samplerSurfaceMapping.end()) {
+						sample2Surface = new String(sample2SurfaceIt->second);
+					}
+					if (sample2Surface == nullptr) continue;
+
 					String* surface2Image = nullptr;
-					if (sample2Surface != nullptr) surface2Image = java_cast< String* >(surfaceImageMapping->get(sample2Surface));
+					auto surface2ImageIt = surfaceImageMapping.find(sample2Surface->getCPPWString());
+					if (sample2SurfaceIt != surfaceImageMapping.end()) {
+						surface2Image = new String(surface2ImageIt->second);
+					}
+
+					if (surface2Image != nullptr) {
+						xmlDiffuseTextureId = surface2Image;
+					}
+
 					if (surface2Image != nullptr) xmlBumpTextureId = surface2Image;
 				}
 			}
