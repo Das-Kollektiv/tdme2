@@ -22,7 +22,6 @@ using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
 using tdme::engine::subsystems::object::Object3DModelInternal;
-using tdme::utils::_HashMap;
 
 struct default_init_tag;
 

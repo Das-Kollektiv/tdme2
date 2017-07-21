@@ -23,8 +23,6 @@
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -52,8 +50,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -187,7 +183,7 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal)
 {
 	clinit();
-	auto materialCountById = new _HashMap();
+	map<wstring, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
 	for (auto object3DGroup : *object3DModelInternal->object3dGroups) {
@@ -204,12 +200,7 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 
 			}
 			auto materialId = material == nullptr ? u"tdme.material.none"_j : material->getId();
-			auto materialCount = java_cast< Integer* >(materialCountById->get(materialId));
-			if (materialCount == nullptr) {
-				materialCountById->put(materialId, Integer::valueOf(1));
-			} else {
-				// (materialCount)->intValue()++;
-			}
+			materialCountById[materialId->getCPPWString()]++;
 			if (transparentFacesEntity == true) {
 				transparentFaceCount += faces;
 				continue;
@@ -217,13 +208,7 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 			opaqueFaceCount += faces;
 		}
 	}
-	auto materialCount = 0;
-	for (auto _i = materialCountById->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Integer* material = java_cast< Integer* >(_i->next());
-		{
-			materialCount++;
-		}
-	}
+	auto materialCount = materialCountById.size();
 	return new ModelUtilitiesInternal_ModelStatistics(opaqueFaceCount, transparentFaceCount, materialCount);
 }
 
