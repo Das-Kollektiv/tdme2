@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/WFObjReader.java
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <java/io/Serializable.h>
@@ -32,6 +34,8 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::map;
+using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::WFObjReader;
@@ -138,8 +142,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
 	Group* group = nullptr;
-	_HashMap* modelGroupVerticesMapping = nullptr;
-	_HashMap* modelGroupTextureCoordinatesMapping = nullptr;
+	map<int32_t, int32_t> modelGroupVerticesMapping;
+	map<int32_t, int32_t> modelGroupTextureCoordinatesMapping;
 	vector<Face*> groupFacesEntityFaces;
 	vector<Vector3*> groupVertices;
 	vector<Vector3*> groupNormals;
@@ -209,49 +213,59 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					if (t->hasMoreTokens()) {
 						throw ModelFileIOException("We only support triangulated meshes");
 					}
-					Integer* mappedVertex = nullptr;
-					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v0)));
-					if (mappedVertex == nullptr) {
-						groupVertices.push_back(vertices.at(v0)->clone());
-						v0 = groupVertices.size() - 1;
-					} else {
-						v0 = mappedVertex->intValue();
+					{
+						auto mappedVertexIt = modelGroupVerticesMapping.find(v0);
+						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
+							groupVertices.push_back(vertices.at(v0)->clone());
+							v0 = groupVertices.size() - 1;
+						} else {
+							v0 = mappedVertexIt->second;
+						}
 					}
-					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v1)));
-					if (mappedVertex == nullptr) {
-						groupVertices.push_back(vertices.at(v1)->clone());
-						v1 = groupVertices.size() - 1;
-					} else {
-						v1 = mappedVertex->intValue();
+					{
+						auto mappedVertexIt = modelGroupVerticesMapping.find(v1);
+						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
+							groupVertices.push_back(vertices.at(v1)->clone());
+							v1 = groupVertices.size() - 1;
+						} else {
+							v1 = mappedVertexIt->second;
+						}
 					}
-					mappedVertex = java_cast< Integer* >(modelGroupVerticesMapping->get(Integer::valueOf(v2)));
-					if (mappedVertex == nullptr) {
-						groupVertices.push_back(vertices.at(v2)->clone());
-						v2 = groupVertices.size() - 1;
-					} else {
-						v2 = mappedVertex->intValue();
+					{
+						auto mappedVertexIt = modelGroupVerticesMapping.find(v2);
+						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
+							groupVertices.push_back(vertices.at(v2)->clone());
+							v2 = groupVertices.size() - 1;
+						} else {
+							v2 = mappedVertexIt->second;
+						}
 					}
-					Integer* mappedTextureCoordinate = nullptr;
-					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt0)));
-					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates.push_back(textureCoordinates.at(vt0)->clone());
-						vt0 = groupTextureCoordinates.size() - 1;
-					} else {
-						vt0 = mappedTextureCoordinate->intValue();
+					{
+						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt0);
+						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt0)->clone());
+							vt0 = groupTextureCoordinates.size() - 1;
+						} else {
+							vt0 = mappedTextureCoordinateIt->second;
+						}
 					}
-					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt1)));
-					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates.push_back(textureCoordinates.at(vt1)->clone());
-						vt1 = groupTextureCoordinates.size() - 1;
-					} else {
-						vt1 = mappedTextureCoordinate->intValue();
+					{
+						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt1);
+						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt1)->clone());
+							vt1 = groupTextureCoordinates.size() - 1;
+						} else {
+							vt1 = mappedTextureCoordinateIt->second;
+						}
 					}
-					mappedTextureCoordinate = java_cast< Integer* >(modelGroupTextureCoordinatesMapping->get(Integer::valueOf(vt2)));
-					if (mappedTextureCoordinate == nullptr) {
-						groupTextureCoordinates.push_back(textureCoordinates.at(vt2)->clone());
-						vt2 = groupTextureCoordinates.size() - 1;
-					} else {
-						vt2 = mappedTextureCoordinate->intValue();
+					{
+						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt2);
+						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt2)->clone());
+							vt2 = groupTextureCoordinates.size() - 1;
+						} else {
+							vt2 = mappedTextureCoordinateIt->second;
+						}
 					}
 					auto faceVertexNormals = ModelHelper::computeNormals(new Vector3Array({
 						groupVertices.at(v0),
@@ -291,8 +305,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					group = new Group(model, nullptr, name, name);
 					groupFacesEntity = new FacesEntity(group, name);
 					groupFacesEntities.clear();
-					modelGroupVerticesMapping = new _HashMap();
-					modelGroupTextureCoordinatesMapping = new _HashMap();
+					modelGroupVerticesMapping.clear();
+					modelGroupTextureCoordinatesMapping.clear();
 					subGroups->put(name, group);
 					groups->put(name, group);
 				} else
