@@ -1,6 +1,10 @@
 // Generated from /tdme/src/tdme/engine/model/Skinning.java
 #include <tdme/engine/model/Skinning.h>
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
@@ -14,6 +18,10 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::map;
+using std::wstring;
+using std::vector;
 
 using tdme::engine::model::Skinning;
 using java::io::Serializable;
@@ -74,7 +82,6 @@ void Skinning::ctor()
 	weights = new floatArray(0);
 	joints = new JointArray(0);
 	verticesJointsWeights = __newMultiArray< JointWeightArrayArray >(0,0);
-	jointsByName = new _HashMap();
 }
 
 floatArray* Skinning::getWeights()
@@ -142,13 +149,17 @@ void Skinning::setupJointsByName()
 {
 	for (auto i = 0; i < joints->length; i++) {
 		auto joint = (*joints)[i];
-		jointsByName->put(joint->getGroupId(), joint);
+		jointsByName[joint->getGroupId()->getCPPWString()] = joint;
 	}
 }
 
 Joint* Skinning::getJointByName(String* name)
 {
-	return java_cast< Joint* >(jointsByName->get(name));
+	auto jointIt = jointsByName.find(name->getCPPWString());
+	if (jointIt != jointsByName.end()) {
+		return jointIt->second;
+	}
+	return nullptr;
 }
 
 String* Skinning::toString()

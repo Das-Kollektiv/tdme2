@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
@@ -19,7 +23,6 @@ using java::lang::Cloneable;
 using java::lang::String;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -67,7 +70,7 @@ private:
 	floatArray* weights {  };
 	JointArray* joints {  };
 	JointWeightArrayArray* verticesJointsWeights {  };
-	_HashMap* jointsByName {  };
+	map<wstring, Joint*> jointsByName {  };
 protected:
 
 	/** 
