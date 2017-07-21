@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/DAEReader.java
 #include <tdme/engine/fileio/models/DAEReader.h>
 
+#include <map>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -64,7 +66,9 @@
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 using std::vector;
+using std::map;
 using std::unordered_set;
+using std::wstring;
 
 using tdme::engine::fileio::models::DAEReader;
 using java::io::Serializable;
@@ -744,16 +748,14 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	if (xmlInstanceGeometryElements.empty() == false) {
 		auto xmlInstanceGeometryElement = xmlInstanceGeometryElements.at(0);
 		xmlInstanceGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceGeometryElement->Attribute("url")))))->substring(1);
-		auto materialSymbols = new _HashMap();
+		map<wstring, wstring> materialSymbols;
 		for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometryElement, "bind_material"))
 		for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 		for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
-			materialSymbols->put(
-				new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
-				new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
-			);
+			materialSymbols[StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))] =
+				StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
-		readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlInstanceGeometryId, materialSymbols);
+		readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlInstanceGeometryId, &materialSymbols);
 		return group;
 	}
 
@@ -774,16 +776,14 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			}
 			for (auto xmlInstanceGeometry: getChildrenByTagName(xmlLibraryNode, "instance_geometry")) {
 				auto xmlGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceGeometry->Attribute("url")))))->substring(1);
-				auto materialSymbols = new _HashMap();
+				map<wstring, wstring> materialSymbols;
 				for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometry, "bind_material"))
 				for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 				for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
-					materialSymbols->put(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
-					);
+					materialSymbols[StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))] =
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
-				readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
+				readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
 			}
 		}
 	}
@@ -799,7 +799,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	StringTokenizer* t;
 	auto xmlNodeId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id"))));
 	auto xmlNodeName = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("name"))));
-	auto materialSymbols = new _HashMap();
+	map<wstring, wstring> materialSymbols;
 	String* xmlGeometryId = nullptr;
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	TiXmlElement* xmlSkin = nullptr;
@@ -808,10 +808,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceController, "bind_material"))
 	for (auto xmlTechniqueCommon: getChildrenByTagName(xmlBindMaterial, "technique_common"))
 	for (auto xmlInstanceMaterial: getChildrenByTagName(xmlTechniqueCommon, "instance_material")) {
-		materialSymbols->put(
-			new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))),
-			new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target"))))
-		);
+		materialSymbols[StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("symbol")))] =
+			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 	}
 
 	auto xmlInstanceControllerId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlInstanceController->Attribute("url")))))->substring(1);
@@ -849,7 +847,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 
 	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
 	auto skinning = group->createSkinning();
-	readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
+	readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
 
 	String* xmlJointsSource = nullptr;
 	String* xmlJointsInverseBindMatricesSource = nullptr;
@@ -989,7 +987,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	return group;
 }
 
-void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException)
+void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException)
 {
 	#define ARRAY_TO_VECTOR(array, vector) { \
 		if (array != nullptr) \
@@ -1049,9 +1047,11 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				auto xmlColorOffset = -1;
 				String* xmlColorSource = nullptr;
 				auto xmlMaterialId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlPolygons->Attribute("material"))));
-				auto materialSymbol = java_cast< String* >(materialSymbols->get(xmlMaterialId));
-				if (materialSymbol != nullptr)
-					xmlMaterialId = materialSymbol->substring(1);
+				auto materialSymbolIt = materialSymbols->find(xmlMaterialId->getCPPWString());
+				if (materialSymbolIt != materialSymbols->end()) {
+					xmlMaterialId = new String(materialSymbolIt->second);
+					xmlMaterialId = xmlMaterialId->substring(1);
+				}
 
 				if (xmlMaterialId != nullptr && xmlMaterialId->length() > 0) {
 					auto material = java_cast< Material* >(model->getMaterials()->get(xmlMaterialId));

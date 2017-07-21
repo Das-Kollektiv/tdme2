@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include <map>
 #include <vector>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -18,6 +20,8 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
@@ -31,7 +35,6 @@ using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::Model;
 using tdme::os::_FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_HashMap;
 
 using tdme::ext::tinyxml::TiXmlElement;
 
@@ -159,7 +162,7 @@ private:
 	 * @param material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, _HashMap* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
