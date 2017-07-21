@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include <map>
 #include <vector>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -12,7 +14,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -27,7 +31,6 @@ using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::Vector6;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -105,7 +108,7 @@ private:
 	int32_t constraintsCount {  };
 	int32_t keyCount {  };
 	vector<RigidBody*> rigidBodies {  };
-	_HashMap* constrainedBodies {  };
+	map<wstring, RigidBody*> constrainedBodies {  };
 	ContactCache* contactCache {  };
 	int32_tArrayArray* constraintsBodyIdxMap {  };
 	Matrix1x6ArrayArray* jacobianMatrices {  };

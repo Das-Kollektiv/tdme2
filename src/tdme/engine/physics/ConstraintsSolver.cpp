@@ -22,8 +22,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Key.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -50,8 +48,6 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -119,7 +115,6 @@ void ConstraintsSolver::init()
 	collisionsCount = 0;
 	constraintsCount = 0;
 	keyCount = 0;
-	constrainedBodies = new _HashMap();
 	contactCache = new ContactCache();
 	constraintsBodyIdxMap = new int32_tArrayArray(CONSTRAINTS_MAX);
 	jacobianMatrices = new Matrix1x6ArrayArray(CONSTRAINTS_MAX);
@@ -192,7 +187,7 @@ void ConstraintsSolver::reset()
 	collisionsCount = 0;
 	constraintsCount = 0;
 	keyCount = 0;
-	constrainedBodies->clear();
+	constrainedBodies.clear();
 }
 
 ConstraintsEntity* ConstraintsSolver::allocateConstraintsEntity()
@@ -220,8 +215,8 @@ void ConstraintsSolver::initialize(float dt)
 	constraintsCount = 0;
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto constraintedBody = (*constraintsEntities)[i];
-		constrainedBodies->put(constraintedBody->rb1->id, constraintedBody->rb1);
-		constrainedBodies->put(constraintedBody->rb2->id, constraintedBody->rb2);
+		constrainedBodies[constraintedBody->rb1->id->getCPPWString()] = constraintedBody->rb1;
+		constrainedBodies[constraintedBody->rb2->id->getCPPWString()] = constraintedBody->rb2;
 		constraintsCount += constraintedBody->collision->getHitPointsCount() * 3;
 	}
 	auto currentConstraint = 0;
@@ -252,35 +247,33 @@ void ConstraintsSolver::initialize(float dt)
 
 void ConstraintsSolver::fillMatrices()
 {
-	for (auto _i = constrainedBodies->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		RigidBody* rb = java_cast< RigidBody* >(_i->next());
-		{
-			auto bodyIdx = rb->idx;
-			auto velocityVector = (*velocityVectors)[bodyIdx];
-			velocityVector->setValue(0, rb->linearVelocity);
-			velocityVector->setValue(3, rb->angularVelocity);
-			auto constainedVelocityVector = (*constrainedVelocityVectors)[bodyIdx];
-			constainedVelocityVector->fill(0.0f);
-			auto forcesVector = (*forcesVectors)[bodyIdx];
-			forcesVector->setValue(0, rb->force);
-			forcesVector->setValue(3, rb->torque);
-			auto invInertiaMatrix = (*invInertiaMatrices)[bodyIdx];
-			invInertiaMatrix->fill(0.0f);
-			auto worldInverseInertiaArray = rb->worldInverseInertia->getArray();
-			if (rb->isStatic_ == false) {
-				invInertiaMatrix->setValue(0, 0, rb->inverseMass);
-				invInertiaMatrix->setValue(1, 1, rb->inverseMass);
-				invInertiaMatrix->setValue(2, 2, rb->inverseMass);
-				invInertiaMatrix->setValue(3, 3, (*worldInverseInertiaArray)[0 + 0]);
-				invInertiaMatrix->setValue(3, 4, (*worldInverseInertiaArray)[0 + 1]);
-				invInertiaMatrix->setValue(3, 5, (*worldInverseInertiaArray)[0 + 2]);
-				invInertiaMatrix->setValue(4, 3, (*worldInverseInertiaArray)[4 + 0]);
-				invInertiaMatrix->setValue(4, 4, (*worldInverseInertiaArray)[4 + 1]);
-				invInertiaMatrix->setValue(4, 5, (*worldInverseInertiaArray)[4 + 2]);
-				invInertiaMatrix->setValue(5, 3, (*worldInverseInertiaArray)[8 + 0]);
-				invInertiaMatrix->setValue(5, 4, (*worldInverseInertiaArray)[8 + 1]);
-				invInertiaMatrix->setValue(5, 5, (*worldInverseInertiaArray)[8 + 2]);
-			}
+	for (auto it: constrainedBodies) {
+		RigidBody* rb = it.second;
+		auto bodyIdx = rb->idx;
+		auto velocityVector = (*velocityVectors)[bodyIdx];
+		velocityVector->setValue(0, rb->linearVelocity);
+		velocityVector->setValue(3, rb->angularVelocity);
+		auto constainedVelocityVector = (*constrainedVelocityVectors)[bodyIdx];
+		constainedVelocityVector->fill(0.0f);
+		auto forcesVector = (*forcesVectors)[bodyIdx];
+		forcesVector->setValue(0, rb->force);
+		forcesVector->setValue(3, rb->torque);
+		auto invInertiaMatrix = (*invInertiaMatrices)[bodyIdx];
+		invInertiaMatrix->fill(0.0f);
+		auto worldInverseInertiaArray = rb->worldInverseInertia->getArray();
+		if (rb->isStatic_ == false) {
+			invInertiaMatrix->setValue(0, 0, rb->inverseMass);
+			invInertiaMatrix->setValue(1, 1, rb->inverseMass);
+			invInertiaMatrix->setValue(2, 2, rb->inverseMass);
+			invInertiaMatrix->setValue(3, 3, (*worldInverseInertiaArray)[0 + 0]);
+			invInertiaMatrix->setValue(3, 4, (*worldInverseInertiaArray)[0 + 1]);
+			invInertiaMatrix->setValue(3, 5, (*worldInverseInertiaArray)[0 + 2]);
+			invInertiaMatrix->setValue(4, 3, (*worldInverseInertiaArray)[4 + 0]);
+			invInertiaMatrix->setValue(4, 4, (*worldInverseInertiaArray)[4 + 1]);
+			invInertiaMatrix->setValue(4, 5, (*worldInverseInertiaArray)[4 + 2]);
+			invInertiaMatrix->setValue(5, 3, (*worldInverseInertiaArray)[8 + 0]);
+			invInertiaMatrix->setValue(5, 4, (*worldInverseInertiaArray)[8 + 1]);
+			invInertiaMatrix->setValue(5, 5, (*worldInverseInertiaArray)[8 + 2]);
 		}
 	}
 }
@@ -311,11 +304,9 @@ void ConstraintsSolver::computeMatrixB()
 
 void ConstraintsSolver::computeVectorA()
 {
-	for (auto _i = constrainedBodies->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		RigidBody* rb = java_cast< RigidBody* >(_i->next());
-		{
-			(*a)[rb->idx]->fill(0.0f);
-		}
+	for (auto it: constrainedBodies) {
+		RigidBody* rb = it.second;
+		(*a)[rb->idx]->fill(0.0f);
 	}
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
@@ -566,7 +557,8 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 		}
 		newLinearVelocity->set(0.0f, 0.0f, 0.0f);
 		newAngularVelocity->set(0.0f, 0.0f, 0.0f);
-		if (java_cast< RigidBody* >(constrainedBodies->get(body->id)) != nullptr) {
+
+		if (constrainedBodies.find(body->id->getCPPWString()) != constrainedBodies.end()) {
 			getConstrainedVelocity(body, newLinearVelocity, newAngularVelocity);
 		}
 		force->set(body->force)->scale(body->inverseMass * deltaTime);
