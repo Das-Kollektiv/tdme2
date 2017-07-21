@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
@@ -9,13 +12,15 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ContactCache_ContactCacheInfo;
 using tdme::engine::physics::RigidBody;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -49,12 +54,9 @@ public:
 	typedef Object super;
 
 private:
-	Key* key {  };
-	int32_t keyPoolIdx {  };
-	KeyArray* keyPool {  };
 	int32_t contactCacheInfoPoolIdx {  };
 	ContactCache_ContactCacheInfoArray* contactCacheInfoPool {  };
-	_HashMap* contactCache {  };
+	map<wstring, ContactCache_ContactCacheInfo*> contactCache {  };
 	Vector3* tmpVector3 {  };
 protected:
 

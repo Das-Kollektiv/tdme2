@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/physics/ContactCache.java
 #include <tdme/engine/physics/ContactCache.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/physics/CollisionResponse.h>
@@ -8,11 +11,12 @@
 #include <tdme/engine/physics/ContactCache_ContactCacheInfo.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Key.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::physics::ContactCache;
 using java::lang::Object;
@@ -23,7 +27,6 @@ using tdme::engine::physics::ContactCache_ContactCacheInfo;
 using tdme::engine::physics::RigidBody;
 using tdme::math::Vector3;
 using tdme::utils::Key;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -64,12 +67,8 @@ ContactCache::ContactCache()
 
 void ContactCache::init()
 {
-	key = new Key();
-	keyPoolIdx = 0;
-	keyPool = nullptr;
 	contactCacheInfoPoolIdx = 0;
 	contactCacheInfoPool = nullptr;
-	contactCache = new _HashMap();
 	tmpVector3 = new Vector3();
 }
 
@@ -77,10 +76,8 @@ void ContactCache::ctor()
 {
 	super::ctor();
 	init();
-	keyPool = new KeyArray(ConstraintsSolver::CONSTRAINTS_MAX);
 	contactCacheInfoPool = new ContactCache_ContactCacheInfoArray(ConstraintsSolver::CONSTRAINTS_MAX);
 	for (auto i = 0; i < ConstraintsSolver::CONSTRAINTS_MAX; i++) {
-		keyPool->set(i, new Key());
 		contactCacheInfoPool->set(i, new ContactCache_ContactCacheInfo());
 		(*contactCacheInfoPool)[i]->hitPoints = new Vector3Array(CollisionResponse::HITPOINT_COUNT);
 		(*contactCacheInfoPool)[i]->lamdas = new floatArray(CollisionResponse::HITPOINT_COUNT * 3);
@@ -92,9 +89,8 @@ void ContactCache::ctor()
 
 void ContactCache::clear()
 {
-	keyPoolIdx = 0;
 	contactCacheInfoPoolIdx = 0;
-	contactCache->clear();
+	contactCache.clear();
 }
 
 void ContactCache::add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision, floatArray* lamdaValues)
@@ -107,21 +103,18 @@ void ContactCache::add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collis
 		(*contactCacheInfo->hitPoints)[i]->set(collision->getHitPointAt(i));
 		(*contactCacheInfo->lamdas)[i] = (*lamdaValues)[i];
 	}
-	auto key = (*keyPool)[keyPoolIdx++];
-	key->reset();
-	key->append(rb1->id);
-	key->append(u","_j);
-	key->append(rb2->id);
-	auto oldContactCacheInfo = java_cast< ContactCache_ContactCacheInfo* >(contactCache->put(key, contactCacheInfo));
+	wstring key = rb1->id->getCPPWString() + L"," + rb2->id->getCPPWString();
+	contactCache[key] = contactCacheInfo;
 }
 
 ContactCache_ContactCacheInfo* ContactCache::get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision)
 {
-	key->reset();
-	key->append(rb1->id);
-	key->append(u","_j);
-	key->append(rb2->id);
-	auto contactCacheInfo = java_cast< ContactCache_ContactCacheInfo* >(contactCache->get(key));
+	wstring key = rb1->id->getCPPWString() + L"," + rb2->id->getCPPWString();
+	ContactCache_ContactCacheInfo* contactCacheInfo = nullptr;
+	auto contactCacheInfoIt = contactCache.find(key);
+	if (contactCacheInfoIt != contactCache.end()) {
+		contactCacheInfo = contactCacheInfoIt->second;
+	}
 	if (contactCacheInfo != nullptr) {
 		if (collision->getHitPointsCount() != contactCacheInfo->hitPointCount)
 			return nullptr;
