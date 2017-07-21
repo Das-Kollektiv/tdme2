@@ -2,18 +2,22 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -30,7 +34,7 @@ public:
 	typedef Object super;
 
 private:
-	_HashMap* meshes {  };
+	map<wstring, MeshManager_MeshManaged*> meshes {  };
 protected:
 
 	/** 

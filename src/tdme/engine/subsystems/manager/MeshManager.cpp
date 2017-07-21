@@ -1,13 +1,18 @@
 // Generated from /tdme/src/tdme/engine/subsystems/manager/MeshManager.java
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::subsystems::manager::MeshManager;
 using java::lang::Object;
@@ -16,7 +21,6 @@ using java::lang::StringBuilder;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -41,13 +45,13 @@ MeshManager::MeshManager()
 void MeshManager::ctor()
 {
 	super::ctor();
-	meshes = new _HashMap();
 }
 
 Object3DGroupMesh* MeshManager::getMesh(String* meshId)
 {
-	auto meshManaged = java_cast< MeshManager_MeshManaged* >(meshes->get(meshId));
-	if (meshManaged != nullptr) {
+	auto meshManagedIt = meshes.find(meshId->getCPPWString());
+	if (meshManagedIt != meshes.end()) {
+		auto meshManaged = meshManagedIt->second;
 		meshManaged->incrementReferenceCounter();
 		return meshManaged->getMesh();
 	}
@@ -58,15 +62,16 @@ void MeshManager::addMesh(String* meshId, Object3DGroupMesh* mesh)
 {
 	auto meshManaged = new MeshManager_MeshManaged(this, meshId, mesh);
 	meshManaged->incrementReferenceCounter();
-	meshes->put(meshManaged->getId(), meshManaged);
+	meshes[meshManaged->getId()->getCPPWString()] = meshManaged;
 }
 
 void MeshManager::removeMesh(String* meshId)
 {
-	auto meshManaged = java_cast< MeshManager_MeshManaged* >(meshes->get(meshId));
-	if (meshManaged != nullptr) {
+	auto meshManagedIt = meshes.find(meshId->getCPPWString());
+	if (meshManagedIt != meshes.end()) {
+		auto meshManaged = meshManagedIt->second;
 		if (meshManaged->decrementReferenceCounter()) {
-			meshes->remove(meshId);
+			meshes.erase(meshManagedIt);
 		}
 		return;
 	}
