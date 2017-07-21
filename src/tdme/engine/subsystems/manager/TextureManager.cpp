@@ -1,13 +1,18 @@
 // Generated from /tdme/src/tdme/engine/subsystems/manager/TextureManager.java
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::subsystems::manager::TextureManager;
 using java::lang::Object;
@@ -15,8 +20,7 @@ using java::lang::String;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::utils::_Console;
-using tdme::utils::_HashMap;
+using tdme::utils::_Console;;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -42,13 +46,13 @@ void TextureManager::ctor(GLRenderer* renderer)
 {
 	super::ctor();
 	this->renderer = renderer;
-	textures = new _HashMap();
 }
 
 int32_t TextureManager::addTexture(Texture* texture)
 {
-	auto textureManaged = java_cast< TextureManager_TextureManaged* >(textures->get(texture->getId()));
-	if (textureManaged != nullptr) {
+	auto textureManagedIt = textures.find(texture->getId()->getCPPWString());
+	if (textureManagedIt != textures.end()) {
+		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
 		return textureManaged->getGlId();
 	}
@@ -56,19 +60,20 @@ int32_t TextureManager::addTexture(Texture* texture)
 	renderer->bindTexture(textureId);
 	renderer->uploadTexture(texture);
 	renderer->bindTexture(renderer->ID_NONE);
-	textureManaged = new TextureManager_TextureManaged(this, texture->getId(), textureId);
+	auto textureManaged = new TextureManager_TextureManaged(this, texture->getId(), textureId);
 	textureManaged->incrementReferenceCounter();
-	textures->put(texture->getId(), textureManaged);
+	textures[texture->getId()->getCPPWString()] = textureManaged;
 	return textureId;
 }
 
 void TextureManager::removeTexture(String* textureId)
 {
-	auto textureManaged = java_cast< TextureManager_TextureManaged* >(textures->get(textureId));
-	if (textureManaged != nullptr) {
+	auto textureManagedIt = textures.find(textureId->getCPPWString());
+	if (textureManagedIt != textures.end()) {
+		auto textureManaged = textureManagedIt->second;
 		if (textureManaged->decrementReferenceCounter()) {
 			renderer->disposeTexture(textureManaged->getGlId());
-			textures->remove(textureId);
+			textures.erase(textureManagedIt);
 		}
 		return;
 	}
