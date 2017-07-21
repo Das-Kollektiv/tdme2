@@ -24,7 +24,6 @@ using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;

@@ -21,7 +21,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::model::Skinning;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {

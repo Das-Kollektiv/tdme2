@@ -25,7 +25,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
-using tdme::utils::_HashMap;
 
 struct default_init_tag;
 

@@ -18,8 +18,6 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
 
@@ -42,8 +40,6 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
