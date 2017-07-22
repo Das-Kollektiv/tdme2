@@ -20,7 +20,6 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::tests::PhysicsTest2;
 using java::lang::Object;
@@ -42,7 +41,6 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {

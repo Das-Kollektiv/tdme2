@@ -51,7 +51,6 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 
 using std::vector;
@@ -105,7 +104,6 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
