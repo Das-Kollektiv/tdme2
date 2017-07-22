@@ -93,8 +93,8 @@ public: /* protected */
 	_HashMapArray* skinningGroupsMatrices {  };
 	GroupArray* skinningGroups {  };
 	AnimationState* baseAnimation {  };
-	_HashMap* overlayAnimationsById {  };
-	_HashMap* overlayAnimationsByJointId {  };
+	map<wstring, AnimationState*> overlayAnimationsById {  };
+	map<wstring, AnimationState*> overlayAnimationsByJointId {  };
 	Object3DGroupArray* object3dGroups {  };
 	bool recreateBuffers {  };
 	bool usesMeshManager {  };
@@ -134,12 +134,6 @@ public:
 	 * @param id
 	 */
 	virtual void removeOverlayAnimation(String* id);
-
-	/** 
-	 * Removes a overlay animation
-	 * @param animation stati
-	 */
-	virtual void removeOverlayAnimation(AnimationState* animationState);
 
 	/** 
 	 * Removes all finished overlay animations

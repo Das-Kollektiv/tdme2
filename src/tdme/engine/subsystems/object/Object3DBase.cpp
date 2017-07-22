@@ -132,8 +132,6 @@ void Object3DBase::ctor(Model* model, bool useMeshManager, Engine_AnimationProce
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->baseAnimation = new AnimationState();
-	this->overlayAnimationsById = new _HashMap();
-	this->overlayAnimationsByJointId = new _HashMap();
 	this->usesMeshManager = useMeshManager;
 	transformationsMatrices = new _HashMap();
 	parentTransformationsMatrix = new Matrix4x4();
@@ -199,34 +197,31 @@ void Object3DBase::addOverlayAnimation(String* id)
 	animationState->currentAtTime = 0LL;
 	animationState->time = 0.0f;
 	animationState->finished = false;
-	overlayAnimationsById->put(id, animationState);
-	overlayAnimationsByJointId->put(animationSetup->getOverlayFromGroupId(), animationState);
+	overlayAnimationsById[id->getCPPWString()] = animationState;
+	overlayAnimationsByJointId[animationSetup->getOverlayFromGroupId()->getCPPWString()] = animationState;
 }
 
 void Object3DBase::removeOverlayAnimation(String* id)
 {
-	auto animationState = java_cast< AnimationState* >(overlayAnimationsById->remove(id));
-	if (animationState != nullptr)
-		overlayAnimationsByJointId->remove(animationState->setup->getOverlayFromGroupId());
-
-}
-
-void Object3DBase::removeOverlayAnimation(AnimationState* animationState)
-{
-	auto _animationState = java_cast< AnimationState* >(overlayAnimationsById->remove(animationState->setup->getId()));
-	if (_animationState != nullptr)
-		overlayAnimationsByJointId->remove(_animationState->setup->getOverlayFromGroupId());
+	auto animationStateIt = overlayAnimationsById.find(id->getCPPWString());
+	if (animationStateIt == overlayAnimationsById.end()) return;
+	AnimationState* animationState = animationStateIt->second;
+	overlayAnimationsById.erase(animationStateIt);
+	auto overlayAnimationsByJointIdIt = overlayAnimationsByJointId.find(animationState->setup->getOverlayFromGroupId()->getCPPWString());
+	if (overlayAnimationsByJointIdIt == overlayAnimationsByJointId.end()) return;
+	overlayAnimationsByJointId.erase(overlayAnimationsByJointIdIt);
 
 }
 
 void Object3DBase::removeOverlayAnimationsFinished()
 {
-	vector<AnimationState*> overlayAnimationsToRemove;
-	for (auto _i = overlayAnimationsById->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		AnimationState* animationState = java_cast< AnimationState* >(_i->next());
+	vector<String*> overlayAnimationsToRemove;
+	for (auto it: overlayAnimationsById) {
+		String* id = new String(it.first);
+		AnimationState* animationState = it.second;
 		{
 			if (animationState->finished == true) {
-				overlayAnimationsToRemove.push_back(animationState);
+				overlayAnimationsToRemove.push_back(id);
 			}
 		}
 	}
@@ -237,11 +232,14 @@ void Object3DBase::removeOverlayAnimationsFinished()
 
 void Object3DBase::removeOverlayAnimations()
 {
-	for (auto _i = overlayAnimationsById->getKeysIterator()->iterator(); _i->hasNext(); ) {
-		String* overlayAnimationId = java_cast< String* >(_i->next());
-		{
-			removeOverlayAnimation(overlayAnimationId);
-		}
+	vector<String*> overlayAnimationsToRemove;
+	for (auto it: overlayAnimationsById) {
+		String* id = new String(it.first);
+		AnimationState* animationState = it.second;
+		overlayAnimationsToRemove.push_back(id);
+	}
+	for (auto animationState: overlayAnimationsToRemove) {
+		removeOverlayAnimation(animationState);
 	}
 }
 
@@ -257,12 +255,16 @@ float Object3DBase::getAnimationTime()
 
 bool Object3DBase::hasOverlayAnimation(String* id)
 {
-	return java_cast< AnimationState* >(overlayAnimationsById->get(id)) != nullptr;
+	return overlayAnimationsById.find(id->getCPPWString()) != overlayAnimationsById.end();
 }
 
 float Object3DBase::getOverlayAnimationTime(String* id)
 {
-	auto animationState = java_cast< AnimationState* >(overlayAnimationsById->get(id));
+	AnimationState* animationState = nullptr;
+	auto animationStateIt = overlayAnimationsById.find(id->getCPPWString());
+	if (animationStateIt != overlayAnimationsById.end()) {
+		animationState = animationStateIt->second;
+	}
 	return animationState == nullptr ? 1.0f : animationState->time;
 }
 
@@ -287,7 +289,11 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
-		auto overlayAnimation = java_cast< AnimationState* >(overlayAnimationsByJointId->get(group->getId()));
+		AnimationState* overlayAnimation = nullptr;
+		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId()->getCPPWString());
+		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
+			overlayAnimation = overlayAnimationIt->second;
+		}
 		if (overlayAnimation != nullptr)
 			animationState = overlayAnimation;
 
@@ -371,13 +377,11 @@ void Object3DBase::computeTransformations()
 		if (lastFrameAtTime != Timing::UNDEFINED) {
 			baseAnimation->currentAtTime += currentFrameAtTime - lastFrameAtTime;
 		}
-		for (auto _i = overlayAnimationsById->getValuesIterator()->iterator(); _i->hasNext(); ) {
-			AnimationState* overlayAnimationState = java_cast< AnimationState* >(_i->next());
-			{
-				overlayAnimationState->lastAtTime = overlayAnimationState->currentAtTime;
-				if (lastFrameAtTime != Timing::UNDEFINED) {
-					overlayAnimationState->currentAtTime += currentFrameAtTime - lastFrameAtTime;
-				}
+		for (auto it: overlayAnimationsById) {
+			AnimationState* overlayAnimationState = it.second;
+			overlayAnimationState->lastAtTime = overlayAnimationState->currentAtTime;
+			if (lastFrameAtTime != Timing::UNDEFINED) {
+				overlayAnimationState->currentAtTime += currentFrameAtTime - lastFrameAtTime;
 			}
 		}
 		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
@@ -386,7 +390,8 @@ void Object3DBase::computeTransformations()
 		}
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
 		Object3DGroup::computeTransformations(object3dGroups, transformationsMatrices);
-	} else if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	} else
+	if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
 		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
 		if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
 			parentTransformationsMatrix->multiply(transformationsMatrix);
