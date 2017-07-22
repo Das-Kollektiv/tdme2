@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -13,6 +16,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::io::Serializable;
 using java::lang::Cloneable;
@@ -23,7 +29,6 @@ using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -114,7 +119,7 @@ public: /* protected */
 	 * @param skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, _HashMap* transformationMatrices, _HashMap* skinningMatrices);
+	static Object3DGroupMesh* createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices,map<wstring, Matrix4x4*>* skinningMatrices);
 
 	/** 
 	 * Computes mesh transformations

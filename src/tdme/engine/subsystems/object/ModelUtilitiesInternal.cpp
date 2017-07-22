@@ -113,7 +113,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	animationState->finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
 		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), object3DModelInternal->getModel()->getImportTransformationsMatrix()->clone()->multiply(object3DModelInternal->getTransformationsMatrix()), animationState, 0);
-		Object3DGroup::computeTransformations(object3DModelInternal->object3dGroups, object3DModelInternal->transformationsMatrices);
+		Object3DGroup::computeTransformations(object3DModelInternal->object3dGroups);
 		for (auto object3DGroup : *object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {
 				auto vertexXYZ = vertex->getArray();

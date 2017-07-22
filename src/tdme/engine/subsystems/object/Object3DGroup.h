@@ -29,7 +29,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::_HashMap;
 using tdme::engine::subsystems::object::Object3DGroup;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -104,9 +103,8 @@ public: /* protected */
 	/** 
 	 * Applies transformations to meshes for given object 3d groups
 	 * @param group render data list
-	 * @param transformation matrices
 	 */
-	static void computeTransformations(Object3DGroupArray* object3DGroups, _HashMap* transformationMatrices);
+	static void computeTransformations(Object3DGroupArray* object3DGroups);
 
 	/** 
 	 * Set up textures for given object3d group and faces entity

@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroupMesh.java
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 
+#include <map>
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Byte.h>
 #include <java/lang/Cloneable.h>
@@ -24,10 +27,12 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using java::io::Serializable;
@@ -53,7 +58,6 @@ using tdme::engine::subsystems::object::_Buffer;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -141,7 +145,7 @@ void Object3DGroupMesh::init()
 	skinningJoints = -1;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, _HashMap* transformationMatrices, _HashMap* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices, map<wstring, Matrix4x4*>* skinningMatrices)
 {
 	clinit();
 	auto mesh = new Object3DGroupMesh();
@@ -202,7 +206,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 	}
 	mesh->recreatedBuffers = false;
 	if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
-		mesh->cGroupTransformationsMatrix = java_cast< Matrix4x4* >(transformationMatrices->get(group->getId()));
+		auto transformationMatrixIt = transformationMatrices->find(group->getId()->getCPPWString());
+		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
 	}
 	if ((skinning != nullptr && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING))) {
 		if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
@@ -222,7 +227,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 				for (auto jointWeight : *(*jointsWeights)[vertexIndex]) {
 					auto joint = (*joints)[jointWeight->getJointIndex()];
 					(*(*mesh->cSkinningJointWeight)[vertexIndex])[jointWeightIdx] = (*weights)[jointWeight->getWeightIndex()];
-					(*mesh->cSkinningJointTransformationsMatrices)[vertexIndex]->set(jointWeightIdx, java_cast< Matrix4x4* >(skinningMatrices->get(joint->getGroupId())));
+					auto skinningMatrixIt = skinningMatrices->find(joint->getGroupId()->getCPPWString());
+					(*mesh->cSkinningJointTransformationsMatrices)[vertexIndex]->set(jointWeightIdx, skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr);
 					jointWeightIdx++;
 				}
 			}

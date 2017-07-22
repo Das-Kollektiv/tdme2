@@ -22,8 +22,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-
-
 /** 
  * TDME engine entity
  * @author Andreas Drewke

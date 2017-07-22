@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/engine/Transformations.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 
 using tdme::engine::Transformations;
@@ -30,7 +32,6 @@ using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
-using tdme::utils::_HashMap;
 using java::lang::Object;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -55,10 +56,6 @@ typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::l
 namespace math {
 typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
 }  // namespace math
-
-namespace utils {
-typedef ::SubArray< ::tdme::utils::_HashMap, ::java::lang::ObjectArray > _HashMapArray;
-}  // namespace utils
 }  // namespace tdme
 
 using java::lang::ObjectArray;
@@ -67,7 +64,6 @@ using tdme::engine::primitives::BoundingVolumeArray;
 using tdme::engine::primitives::TriangleArray;
 using tdme::engine::subsystems::object::Object3DGroupArray;
 using tdme::math::Matrix4x4Array;
-using tdme::utils::_HashMapArray;
 
 struct default_init_tag;
 
@@ -84,13 +80,13 @@ public:
 
 public: /* protected */
 	Model* model {  };
-	_HashMap* transformationsMatrices {  };
+	map<wstring, Matrix4x4*> transformationsMatrices {  };
 	Matrix4x4* parentTransformationsMatrix {  };
 	Matrix4x4* transformationsMatrix {  };
-	Matrix4x4Array* transformationsMatricesStack {  };
+	vector<Matrix4x4*> transformationsMatricesStack {  };
 	Matrix4x4* tmpMatrix1 {  };
 	bool hasSkinning {  };
-	_HashMapArray* skinningGroupsMatrices {  };
+	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
 	GroupArray* skinningGroups {  };
 	AnimationState* baseAnimation {  };
 	map<wstring, AnimationState*> overlayAnimationsById {  };
@@ -184,7 +180,7 @@ public: /* protected */
 	 * @param matrices
 	 * @param groups
 	 */
-	virtual void createTransformationsMatrices(_HashMap* matrices, map<wstring, Group*>* groups);
+	virtual void createTransformationsMatrices(map<wstring, Matrix4x4*>* matrices, map<wstring, Group*>* groups);
 
 	/** 
 	 * Calculates all groups transformation matrices
@@ -261,7 +257,7 @@ public: /* protected */
 	 * @param group
 	 * @return matrices
 	 */
-	virtual _HashMap* getSkinningGroupsMatrices(Group* group);
+	virtual map<wstring, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
 
 public:
 
