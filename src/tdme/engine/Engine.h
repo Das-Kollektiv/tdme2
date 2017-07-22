@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -22,7 +24,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::io::InputStream;
@@ -54,7 +58,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -115,7 +118,7 @@ private:
 	Color4* sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
-	_HashMap* entitiesById {  };
+	map<wstring, Entity*> entitiesById {  };
 
 public: /* protected */
 	vector<Object3D*> objects {  };
@@ -132,7 +135,6 @@ private:
 
 public: /* protected */
 	Object3DVBORenderer* object3DVBORenderer {  };
-	_HashMap* particleSystemEntitiesById {  };
 
 private:
 	bool shadowMappingEnabled {  };

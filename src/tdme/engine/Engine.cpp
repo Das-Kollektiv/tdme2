@@ -51,9 +51,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -108,9 +105,6 @@ using tdme::math::Vector4;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -228,8 +222,6 @@ void Engine::ctor()
 	lights = new LightArray(8);
 	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
-	entitiesById = new _HashMap();
-	particleSystemEntitiesById = new _HashMap();
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
 	renderingInitiated = false;
@@ -367,34 +359,43 @@ Color4* Engine::getSceneColor()
 
 int32_t Engine::getEntityCount()
 {
-	return entitiesById->size();
+	return entitiesById.size();
 }
 
 Entity* Engine::getEntity(String* id)
 {
-	return java_cast< Entity* >(entitiesById->get(id));
+	auto entityByIdIt = entitiesById.find(id->getCPPWString());
+	if (entityByIdIt != entitiesById.end()) {
+		return entityByIdIt->second;
+	}
+	return nullptr;
 }
 
 void Engine::addEntity(Entity* entity)
 {
-	entity->setEngine(this);
-	entity->setRenderer(renderer);
-	entity->initialize();
-	auto oldEntity = java_cast< Entity* >(entitiesById->put(entity->getId(), entity));
+	auto oldEntity = getEntity(entity->getId());
 	if (oldEntity != nullptr) {
 		oldEntity->dispose();
 		if (oldEntity->isEnabled() == true)
 			partition->removeEntity(oldEntity);
 
 	}
-	if (entity->isEnabled() == true)
-		partition->addEntity(entity);
 
+	entity->setEngine(this);
+	entity->setRenderer(renderer);
+	entity->initialize();
+	entitiesById[entity->getId()->getCPPWString()] = entity;
+	if (entity->isEnabled() == true) partition->addEntity(entity);
 }
 
 void Engine::removeEntity(String* id)
 {
-	auto entity = java_cast< Entity* >(entitiesById->remove(id));
+	Entity* entity = nullptr;
+	auto entityByIdIt = entitiesById.find(id->getCPPWString());
+	if (entityByIdIt != entitiesById.end()) {
+		entity = entityByIdIt->second;
+	}
+
 	if (entity != nullptr) {
 		if (entity->isEnabled() == true)
 			partition->removeEntity(entity);
@@ -407,11 +408,10 @@ void Engine::removeEntity(String* id)
 
 void Engine::reset()
 {
-	Iterator* entityKeys = entitiesById->getKeysIterator();
 	vector<String*> entitiesToRemove;
-	while (entityKeys->hasNext()) {
-		auto entityKey = java_cast< String* >(entityKeys->next());
-		entitiesToRemove.push_back(entityKey);
+	for (auto it: entitiesById) {
+		auto entityKey = it.first;
+		entitiesToRemove.push_back(new String(entityKey));
 	}
 	for (auto entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
@@ -558,18 +558,16 @@ void Engine::computeTransformations()
 {
 	if (renderingInitiated == false) initRendering();
 
-	for (auto _i = entitiesById->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		Entity* entity = java_cast< Entity* >(_i->next());
-		{
-			if (entity->isEnabled() == false)
-				continue;
+	for (auto it: entitiesById) {
+		Entity* entity = it.second;
+		if (entity->isEnabled() == false)
+			continue;
 
-			if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
-				auto pse = java_cast< ParticleSystemEntity* >(entity);
-				if (pse->isAutoEmit() == true) {
-					pse->emitParticles();
-					pse->updateParticles();
-				}
+		if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
+			auto pse = dynamic_cast< ParticleSystemEntity* >(entity);
+			if (pse->isAutoEmit() == true) {
+				pse->emitParticles();
+				pse->updateParticles();
 			}
 		}
 	}
@@ -748,10 +746,9 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 
 void Engine::dispose()
 {
-	Iterator* entityKeys = entitiesById->getKeysIterator();
 	vector<String*> entitiesToRemove;
-	while (entityKeys->hasNext()) {
-		auto entityKey = java_cast< String* >(entityKeys->next());
+	for (auto it: entitiesById) {
+		auto entityKey = new String(it.first);
 		entitiesToRemove.push_back(entityKey);
 	}
 	for (auto entityKey: entitiesToRemove) {
