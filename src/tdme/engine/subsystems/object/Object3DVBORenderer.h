@@ -33,8 +33,6 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
@@ -60,13 +58,10 @@ public: /* protected */
 private:
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	map<wstring, vector<Object3D*>> visibleObjectsByModels {  };
-	Pool* keyPool {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
 	Pool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
-	_HashMap* transparentRenderFacesGroups {  };
-	Pool* pseKeyPool {  };
-	vector<Key*> pseKeys {  };
+	map<wstring, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4* modelViewMatrixBackup {  };
@@ -123,10 +118,8 @@ public: /* protected */
 
 	/** 
 	 * Render transparent faces groups
-	 * @param transparent render faces groups
-	 * @param depth buffer mode
 	 */
-	void renderTransparentFacesGroups(_HashMap* transparentRenderFacesGroups);
+	void renderTransparentFacesGroups();
 
 	/** 
 	 * Render transparent faces groups
@@ -167,7 +160,7 @@ private:
 	 * @param depthBuffer
 	 * @param sort
 	 */
-	static void createPseKey(Key* key, Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort);
+	static const wstring createPseKey(Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort);
 
 public:
 

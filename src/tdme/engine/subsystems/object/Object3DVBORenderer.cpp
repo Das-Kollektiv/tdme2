@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <set>
 #include <string>
 
 #include <java/lang/Object.h>
@@ -28,7 +29,6 @@
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer_1.h>
 #include <tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_2.h>
 #include <tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_3.h>
 #include <tdme/engine/subsystems/object/TransparentRenderFace.h>
@@ -47,18 +47,17 @@
 #include <tdme/utils/Key.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/_Console.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
 
 using std::find;
 using std::map;
+using std::set;
 using std::sort;
 using std::vector;
 using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::object::Object3DVBORenderer;
 using java::lang::Object;
@@ -102,9 +101,6 @@ using tdme::math::Vector3;
 using tdme::utils::Key;
 using tdme::utils::Pool;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -149,10 +145,7 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 
 void Object3DVBORenderer::init()
 {
-	keyPool = nullptr;
 	transparentRenderFacesPool = nullptr;
-	transparentRenderFacesGroups = nullptr;
-	pseKeyPool = new Object3DVBORenderer_1(this);
 	pseTransparentRenderPointsPool = nullptr;
 	psePointBatchVBORenderer = nullptr;
 	modelViewMatrixBackup = new Matrix4x4();
@@ -170,10 +163,8 @@ void Object3DVBORenderer::ctor(Engine* engine, GLRenderer* renderer)
 	init();
 	this->engine = engine;
 	this->renderer = renderer;
-	keyPool = new Object3DVBORenderer_Object3DVBORenderer_2(this);
 	transparentRenderFacesGroupPool = new Object3DVBORenderer_Object3DVBORenderer_3(this);
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	transparentRenderFacesGroups = new _HashMap();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
 }
@@ -256,7 +247,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 			prepareTransparentFaces(groupTransparentRenderFaces);
 			groupTransparentRenderFaces.clear();
 		}
-		renderTransparentFacesGroups(transparentRenderFacesGroups);
+		renderTransparentFacesGroups();
 		renderer->disableBlending();
 		renderer->enableCulling();
 		renderer->enableDepthBuffer();
@@ -276,7 +267,6 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	auto effectColorMul = (java_cast< Object3D* >(object3D))->getEffectColorMul();
 	Material* material = nullptr;
 	auto textureCoordinates = false;
-	auto transparentRenderFacesGroupKey = java_cast< Key* >(keyPool->allocate());
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
 		auto transparentRenderFace = transparentRenderFaces.at(i);
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
@@ -285,52 +275,37 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			material = facesEntity->getMaterial();
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
-		TransparentRenderFacesGroup::createKey(transparentRenderFacesGroupKey, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
-		auto trfGroup = java_cast< TransparentRenderFacesGroup* >(transparentRenderFacesGroups->get(transparentRenderFacesGroupKey));
+		wstring transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
+		TransparentRenderFacesGroup* trfGroup = nullptr;
+		auto trfGroupIt = transparentRenderFacesGroups.find(transparentRenderFacesGroupKey);
+		if (trfGroupIt != transparentRenderFacesGroups.end()) {
+			trfGroup = trfGroupIt->second;
+		}
 		if (trfGroup == nullptr) {
-			trfGroup = java_cast< TransparentRenderFacesGroup* >(transparentRenderFacesGroupPool->allocate());
+			trfGroup = static_cast<TransparentRenderFacesGroup*>(transparentRenderFacesGroupPool->allocate());
 			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
-			auto hashtableKey = java_cast< Key* >(keyPool->allocate());
-			transparentRenderFacesGroupKey->cloneInto(hashtableKey);
-			if (java_cast< TransparentRenderFacesGroup* >(transparentRenderFacesGroups->put(hashtableKey, trfGroup)) != nullptr) {
-				_Console::println(static_cast< Object* >(u"Object3DVBORenderer::prepareTransparentFaces::key already exists"_j));
-				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"-->"_j)->append(static_cast< Object* >(transparentRenderFacesGroupKey))->toString()));
-				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"-->"_j)->append(static_cast< Object* >(hashtableKey))->toString()));
-			}
+			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = (*transparentRenderFace->object3DGroup->mesh->indices)[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(modelViewMatrix->multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVertex), modelViewMatrix->multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal), transparentRenderFace->object3DGroup->mesh->textureCoordinates != nullptr ? (*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] : static_cast< TextureCoordinate* >(nullptr));
 		}
 	}
-	keyPool->release(transparentRenderFacesGroupKey);
 }
 
-void Object3DVBORenderer::renderTransparentFacesGroups(_HashMap* transparentRenderFacesGroups)
+void Object3DVBORenderer::renderTransparentFacesGroups()
 {
-	for (auto _i = transparentRenderFacesGroups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		TransparentRenderFacesGroup* transparentRenderFacesGroup = java_cast< TransparentRenderFacesGroup* >(_i->next());
-		{
-			transparentRenderFacesGroup->render(renderer);
-		}
+	for (auto it: transparentRenderFacesGroups) {
+		it.second->render(renderer);
 	}
 }
 
 void Object3DVBORenderer::releaseTransparentFacesGroups()
 {
-	for (auto _i = transparentRenderFacesGroups->getKeysIterator()->iterator(); _i->hasNext(); ) {
-		Key* trfgKey = java_cast< Key* >(_i->next());
-		{
-			keyPool->release(trfgKey);
-		}
+	for (auto it: transparentRenderFacesGroups) {
+		transparentRenderFacesGroupPool->release(it.second);
 	}
-	for (auto _i = transparentRenderFacesGroups->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		TransparentRenderFacesGroup* trfg = java_cast< TransparentRenderFacesGroup* >(_i->next());
-		{
-			transparentRenderFacesGroupPool->release(trfg);
-		}
-	}
-	transparentRenderFacesGroups->clear();
+	transparentRenderFacesGroups.clear();
 }
 
 void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces)
@@ -493,25 +468,32 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
 
-void Object3DVBORenderer::createPseKey(Key* key, Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort)
+const wstring Object3DVBORenderer::createPseKey(Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort)
 {
 	clinit();
 	auto efcaData = effectColorAdd->getArray();
 	auto efcmData = effectColorMul->getArray();
-	key->reset();
-	key->append((*efcmData)[0]);
-	key->append((*efcmData)[1]);
-	key->append((*efcmData)[2]);
-	key->append((*efcmData)[3]);
-	key->append(u","_j);
-	key->append((*efcaData)[0]);
-	key->append((*efcaData)[1]);
-	key->append((*efcaData)[2]);
-	key->append((*efcaData)[3]);
-	key->append(u","_j);
-	key->append((depthBuffer == true ? u"DBT"_j : u"DBF"_j));
-	key->append(u","_j);
-	key->append((sort == true ? u"DS"_j : u"NS"_j));
+	wstring key =
+		to_wstring((*efcmData)[0]) +
+		L"," +
+		to_wstring((*efcmData)[1]) +
+		L"," +
+		to_wstring((*efcmData)[2]) +
+		L"," +
+		to_wstring((*efcmData)[3]) +
+		L"," +
+		to_wstring((*efcaData)[0]) +
+		L"," +
+		to_wstring((*efcaData)[1]) +
+		L"," +
+		to_wstring((*efcaData)[2]) +
+		L"," +
+		to_wstring((*efcaData)[3]) +
+		L"," +
+		(depthBuffer == true ? L"DBT" : L"DBF") +
+		L"," +
+		(sort == true ? L"DS" : L"NS");
+	return key;
 }
 
 void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visiblePses)
@@ -531,32 +513,19 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	}
 	renderer->getModelViewMatrix()->identity();
 	renderer->onUpdateModelViewMatrix();
+	set<wstring> pseKeys;
 	for (auto i = 0; i < visiblePses.size(); i++) {
 		PointsParticleSystemEntityInternal* ppse = visiblePses.at(i);
-		auto key = java_cast< Key* >(pseKeyPool->allocate());
-		createPseKey(key, ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
-		bool haveKey = false;
-		for (auto pseKey: pseKeys) {
-			if (pseKey->equals(key)) {
-				haveKey = true;
-				break;
-			}
-		}
-		if (haveKey == false) {
-			pseKeys.push_back(key);
-		} else {
-			pseKeyPool->release(key);
-		}
+		wstring pseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
+		pseKeys.insert(pseKey);
 	}
-	auto innerPseKey = java_cast< Key* >(pseKeyPool->allocate());
-	for (auto i = 0; i < pseKeys.size(); i++) {
-		auto pseKey = pseKeys.at(i);
+	for (auto pseKey: pseKeys) {
 		auto pseSort = false;
 		PointsParticleSystemEntityInternal* currentPse = nullptr;
 		for (auto j = 0; j < visiblePses.size(); j++) {
 			PointsParticleSystemEntityInternal* ppse = visiblePses.at(j);
-			createPseKey(innerPseKey, ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
-			if (pseKey->equals(innerPseKey) == false) {
+			wstring innerPseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart()->equals(static_cast< Color4Base* >(ppse->getParticleEmitter()->getColorEnd())) == false);
+			if (pseKey != innerPseKey) {
 				continue;
 			} else {
 				currentPse = visiblePses.at(j);
@@ -586,11 +555,6 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		psePointBatchVBORenderer->clear();
 		pseTransparentRenderPointsPool->reset();
 	}
-	for (auto i = 0; i < pseKeys.size(); i++) {
-		pseKeyPool->release(pseKeys.at(i));
-	}
-	pseKeys.clear();
-	pseKeyPool->release(innerPseKey);
 	renderer->disableBlending();
 	if (depthBuffer == false)
 		renderer->enableDepthBuffer();

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -14,6 +15,7 @@
 #include <java/lang/Object.h>
 
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -91,7 +93,7 @@ public: /* protected */
 	 * @param texture coordinates
 	 * @return
 	 */
-	static void createKey(Key* key, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates);
+	static const wstring createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates);
 
 	/** 
 	 * Adds a vertex to this transparent render faces group

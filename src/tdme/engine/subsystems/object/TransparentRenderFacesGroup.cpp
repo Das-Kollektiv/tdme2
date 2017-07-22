@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesGroup.h>
 
+#include <string>
 #include <vector>
 
 #include <java/lang/Object.h>
@@ -19,6 +20,8 @@
 #include <Array.h>
 
 using std::vector;
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using java::lang::Object;
@@ -83,31 +86,38 @@ void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, 
 	this->textureCoordinates = textureCoordinates;
 }
 
-void TransparentRenderFacesGroup::createKey(Key* key, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
+const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
 {
 	clinit();
 	auto efcmData = effectColorMul->getArray();
 	auto efcaData = effectColorAdd->getArray();
-	key->reset();
-	key->append(model->getId());
-	key->append(u","_j);
-	key->append(object3DGroup->id);
-	key->append(u","_j);
-	key->append(facesEntityIdx);
-	key->append(u","_j);
-	key->append((*efcmData)[0]);
-	key->append((*efcmData)[1]);
-	key->append((*efcmData)[2]);
-	key->append((*efcmData)[3]);
-	key->append(u","_j);
-	key->append((*efcaData)[0]);
-	key->append((*efcaData)[1]);
-	key->append((*efcaData)[2]);
-	key->append((*efcaData)[3]);
-	key->append(u","_j);
-	key->append((material == nullptr ? u"tdme.material.none"_j : material->getId()));
-	key->append(u","_j);
-	key->append((textureCoordinates == true ? u"TCT"_j : u"TCF"_j));
+	wstring key =
+		model->getId()->getCPPWString() +
+		L"," +
+		object3DGroup->id->getCPPWString() +
+		L"," +
+		to_wstring(facesEntityIdx) +
+		L"," +
+		to_wstring((*efcmData)[0]) +
+		L"," +
+		to_wstring((*efcmData)[1]) +
+		L"," +
+		to_wstring((*efcmData)[2]) +
+		L"," +
+		to_wstring((*efcmData)[3]) +
+		L"," +
+		to_wstring((*efcaData)[0]) +
+		L"," +
+		to_wstring((*efcaData)[1]) +
+		L"," +
+		to_wstring((*efcaData)[2]) +
+		L"," +
+		to_wstring((*efcaData)[3]) +
+		L"," +
+		(material == nullptr ? L"tdme.material.none" : material->getId()->getCPPWString()) +
+		L"," +
+		(textureCoordinates == true ? L"TCT" : L"TCF");
+	return key;
 }
 
 void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate)
