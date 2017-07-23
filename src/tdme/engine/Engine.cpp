@@ -394,6 +394,7 @@ void Engine::removeEntity(String* id)
 	auto entityByIdIt = entitiesById.find(id->getCPPWString());
 	if (entityByIdIt != entitiesById.end()) {
 		entity = entityByIdIt->second;
+		entitiesById.erase(entityByIdIt);
 	}
 
 	if (entity != nullptr) {

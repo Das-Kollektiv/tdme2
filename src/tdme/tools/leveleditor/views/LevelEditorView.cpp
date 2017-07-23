@@ -153,7 +153,6 @@ using tdme::utils::StringConverter;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -210,7 +209,6 @@ void LevelEditorView::init()
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
 	groundPlateWidth = 1.0f;
 	groundPlateDepth = 1.0f;
-	selectedObjectsById = nullptr;
 }
 
 StringArray* LevelEditorView::OBJECTCOLOR_NAMES;
@@ -254,15 +252,13 @@ void LevelEditorView::ctor(PopUps* popUps)
 	gridCenterLast = nullptr;
 	gridEnabled = true;
 	gridY = 0.0f;
-	objectColors = new _HashMap();
-	objectColors->put(u"red"_j, new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f));
-	objectColors->put(u"green"_j, new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f));
-	objectColors->put(u"blue"_j, new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f));
-	objectColors->put(u"yellow"_j, new LevelEditorView_ObjectColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f));
-	objectColors->put(u"magenta"_j, new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f));
-	objectColors->put(u"cyan"_j, new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f));
-	objectColors->put(u"none"_j, new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f));
-	selectedObjectsById = new _HashMap();
+	objectColors[L"red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
+	objectColors[L"green"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
+	objectColors[L"blue"] = new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
+	objectColors[L"yellow"] = new LevelEditorView_ObjectColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f);
+	objectColors[L"magenta"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
+	objectColors[L"cyan"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
+	objectColors[L"none"] = new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 	camScale = 1.0f;
 	camLookRotationX->update();
 	camLookRotationY->update();
@@ -411,7 +407,10 @@ void LevelEditorView::handleInputEvents()
 		for (auto objectToRemove: objectsToRemove) {
 			setStandardObjectColorEffect(objectToRemove);
 			selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
-			selectedObjectsById->remove(objectToRemove->getId());
+			auto selectedObjectByIdIt = selectedObjectsById.find(objectToRemove->getId()->getCPPWString());
+			if (selectedObjectByIdIt != selectedObjectsById.end()) {
+				selectedObjectsById.erase(selectedObjectByIdIt);
+			}
 		}
 		levelEditorScreenController->unselectObjectsInObjectListBox();
 	}
@@ -451,7 +450,10 @@ void LevelEditorView::handleInputEvents()
 				for (auto objectToRemove: objectsToRemove) {
 					setStandardObjectColorEffect(objectToRemove);
 					selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
-					selectedObjectsById->remove(objectToRemove->getId());
+					auto selectedObjectByIdIt = selectedObjectsById.find(objectToRemove->getId()->getCPPWString());
+					if (selectedObjectByIdIt != selectedObjectsById.end()) {
+						selectedObjectsById.erase(selectedObjectByIdIt);
+					}
 					levelEditorScreenController->unselectObjectInObjectListBox(objectToRemove->getId());
 				}
 			}
@@ -466,7 +468,7 @@ void LevelEditorView::handleInputEvents()
 						setStandardObjectColorEffect(selectedObject);
 						setHighlightObjectColorEffect(selectedObject);
 						selectedObjects.push_back(selectedObject);
-						selectedObjectsById->put(selectedObject->getId(), selectedObject);
+						selectedObjectsById[selectedObject->getId()->getCPPWString()] = selectedObject;
 						levelEditorScreenController->selectObjectInObjectListbox(selectedObject->getId());
 						auto levelEditorObject = level->getObjectById(selectedObject->getId());
 						if (levelEditorObject != nullptr) {
@@ -475,7 +477,10 @@ void LevelEditorView::handleInputEvents()
 					} else {
 						setStandardObjectColorEffect(selectedObject);
 						selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), selectedObject), selectedObjects.end());
-						selectedObjectsById->remove(selectedObject->getId());
+						auto selectedObjectsByIdIt = selectedObjectsById.find(selectedObject->getId()->getCPPWString());
+						if (selectedObjectsByIdIt != selectedObjectsById.end()) {
+							selectedObjectsById.erase(selectedObjectsByIdIt);
+						}
 						levelEditorScreenController->unselectObjectInObjectListBox(selectedObject->getId());
 					}
 				}
@@ -630,14 +635,17 @@ void LevelEditorView::selectObjects(vector<String*>& objectIds)
 	for (auto objectToRemove: objectsToRemove) {
 		setStandardObjectColorEffect(objectToRemove);
 		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
-		selectedObjectsById->remove(objectToRemove->getId());
+		auto selectedObjectsByIdIt = selectedObjectsById.find(objectToRemove->getId()->getCPPWString());
+		if (selectedObjectsByIdIt != selectedObjectsById.end()) {
+			selectedObjectsById.erase(selectedObjectsByIdIt);
+		}
 	}
 	for (auto objectId: objectIds) {
 		auto selectedObject = engine->getEntity(objectId);
 		setStandardObjectColorEffect(selectedObject);
 		setHighlightObjectColorEffect(selectedObject);
 		selectedObjects.push_back(selectedObject);
-		selectedObjectsById->put(selectedObject->getId(), selectedObject);
+		selectedObjectsById[selectedObject->getId()->getCPPWString()] = selectedObject;
 	}
 	updateGUIElements();
 }
@@ -648,7 +656,10 @@ void LevelEditorView::unselectObjects()
 	for (auto objectToRemove: objectsToRemove) {
 		setStandardObjectColorEffect(objectToRemove);
 		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
-		selectedObjectsById->remove(objectToRemove->getId());
+		auto selectedObjectsByIdIt = selectedObjectsById.find(objectToRemove->getId()->getCPPWString());
+		if (selectedObjectsByIdIt != selectedObjectsById.end()) {
+			selectedObjectsById.erase(selectedObjectsByIdIt);
+		}
 	}
 	levelEditorScreenController->unselectObjectsInObjectListBox();
 	updateGUIElements();
@@ -794,14 +805,14 @@ void LevelEditorView::dispose()
 
 void LevelEditorView::setHighlightObjectColorEffect(Entity* object)
 {
-	auto red = java_cast< LevelEditorView_ObjectColor* >(objectColors->get(u"red"_j));
+	auto red = objectColors[L"red"];
 	object->getEffectColorAdd()->set(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f);
 	object->getEffectColorMul()->set(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f);
 }
 
 void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 {
-	auto color = java_cast< LevelEditorView_ObjectColor* >(objectColors->get(u"none"_j));
+	auto color = objectColors[L"none"];
 	object->getEffectColorAdd()->set(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f);
 	object->getEffectColorMul()->set(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f);
 	auto levelEditorObject = level->getObjectById(object->getId());
@@ -812,10 +823,13 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	if (colorProperty == nullptr)
 		colorProperty = levelEditorObject->getEntity()->getProperty(u"object.color"_j);
 
-	auto objectColor = colorProperty != nullptr ? java_cast< LevelEditorView_ObjectColor* >(objectColors->get(colorProperty->getValue())) : static_cast< LevelEditorView_ObjectColor* >(nullptr);
-	if (objectColor != nullptr) {
-		object->getEffectColorAdd()->set(object->getEffectColorAdd()->getRed() + objectColor->colorAddR, object->getEffectColorAdd()->getGreen() + objectColor->colorAddG, object->getEffectColorAdd()->getBlue() + objectColor->colorAddB, 0.0f);
-		object->getEffectColorMul()->set(object->getEffectColorMul()->getRed() * objectColor->colorMulR, object->getEffectColorMul()->getGreen() * objectColor->colorMulG, object->getEffectColorMul()->getBlue() * objectColor->colorMulB, 1.0f);
+	if (colorProperty != nullptr) {
+		auto objectColorIt = objectColors.find(colorProperty->getValue()->getCPPWString());
+		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
+		if (objectColor != nullptr) {
+			object->getEffectColorAdd()->set(object->getEffectColorAdd()->getRed() + objectColor->colorAddR, object->getEffectColorAdd()->getGreen() + objectColor->colorAddG, object->getEffectColorAdd()->getBlue() + objectColor->colorAddB, 0.0f);
+			object->getEffectColorMul()->set(object->getEffectColorMul()->getRed() * objectColor->colorMulR, object->getEffectColorMul()->getGreen() * objectColor->colorMulG, object->getEffectColorMul()->getBlue() * objectColor->colorMulB, 1.0f);
+		}
 	}
 }
 
@@ -824,7 +838,7 @@ void LevelEditorView::loadLevel()
 	removeGrid();
 	engine->reset();
 	selectedObjects.clear();
-	selectedObjectsById->clear();
+	selectedObjectsById.clear();
 	Level::setLight(engine, level, nullptr);
 	Level::addLevel(engine, level, true, true, false, true, nullptr);
 	setObjectsListBox();
@@ -852,36 +866,44 @@ void LevelEditorView::updateGrid()
 	auto removedCells = 0;
 	auto reAddedCells = 0;
 	for (auto gridZ = -gridDimensionNear; gridZ < gridDimensionFar; gridZ++) 
-				for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
-			auto objectId = ::java::lang::StringBuilder().append(u"leveleditor.ground@"_j)->append((centerX + gridX))
-				->append(u","_j)
-				->append((centerZ + gridZ))->toString();
-			auto _object = engine->getEntity(objectId);
-			if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
-				if (_object != nullptr) {
-					engine->removeEntity(objectId);
-					removedCells++;
-				}
-			} else if (_object == nullptr) {
-				_object = java_cast< Entity* >(selectedObjectsById->get(objectId));
-				if (_object != nullptr) {
-					engine->addEntity(_object);
-					reAddedCells++;
-				} else {
-					_object = new Object3D(objectId, levelEditorGround);
-					_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
-					_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
-					_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
-					_object->getTranslation()->set(centerX + static_cast< float >(gridX) * groundPlateWidth, gridY - 0.05f, centerZ + static_cast< float >(gridZ) * groundPlateDepth);
-					_object->setEnabled(true);
-					_object->setPickable(true);
-					_object->update();
-					setStandardObjectColorEffect(_object);
-					engine->addEntity(_object);
-					addedCells++;
-				}
+	for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
+		auto objectId =
+			::java::lang::StringBuilder().
+			 append(u"leveleditor.ground@"_j)->
+			 append((centerX + gridX))->
+			 append(u","_j)->
+			 append((centerZ + gridZ))->
+			 toString();
+		auto _object = engine->getEntity(objectId);
+		if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
+			if (_object != nullptr) {
+				engine->removeEntity(objectId);
+				removedCells++;
+			}
+		} else
+		if (_object == nullptr) {
+			auto _objectIt = selectedObjectsById.find(objectId->getCPPWString());
+			if (_objectIt != selectedObjectsById.end()) {
+				_object = _objectIt->second;
+			}
+			if (_object != nullptr) {
+				engine->addEntity(_object);
+				reAddedCells++;
+			} else {
+				_object = new Object3D(objectId, levelEditorGround);
+				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
+				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
+				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
+				_object->getTranslation()->set(centerX + static_cast< float >(gridX) * groundPlateWidth, gridY - 0.05f, centerZ + static_cast< float >(gridZ) * groundPlateDepth);
+				_object->setEnabled(true);
+				_object->setPickable(true);
+				_object->update();
+				setStandardObjectColorEffect(_object);
+				engine->addEntity(_object);
+				addedCells++;
 			}
 		}
+	}
 
 	if (gridCenterLast == nullptr)
 		gridCenterLast = new Vector3();
@@ -972,7 +994,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		auto oldId = levelEditorObject->getId();
 		level->removeObject(levelEditorObject->getId());
 		engine->removeEntity(levelEditorObject->getId());
-		selectedObjectsById->clear();
+		selectedObjectsById.clear();
 		selectedObjects.clear();
 		levelEditorObject->setId(name);
 		level->addObject(levelEditorObject);
@@ -983,7 +1005,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		setHighlightObjectColorEffect(object);
 		engine->addEntity(object);
 		selectedObjects.push_back(object);
-		selectedObjectsById->put(object->getId(), object);
+		selectedObjectsById[object->getId()->getCPPWString()] = object;
 		levelEditorScreenController->setObjectListbox(level);
 	}
 	levelEditorObject->setDescription(description);

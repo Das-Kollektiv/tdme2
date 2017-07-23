@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -16,11 +18,12 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_HashMap.h>
 #include <java/lang/Object.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using java::lang::Object;
@@ -44,7 +47,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -96,7 +98,7 @@ private:
 	Engine* engine {  };
 	LevelEditorEntity* selectedEntity {  };
 	bool reloadEntityLibrary {  };
-	_HashMap* objectColors {  };
+	map<wstring, LevelEditorView_ObjectColor*> objectColors {  };
 	Rotation* camLookRotationX {  };
 	Rotation* camLookRotationY {  };
 	float camScale {  };
@@ -146,7 +148,7 @@ private:
 	Model* levelEditorGround {  };
 	LevelEditorLevel* level {  };
 	vector<Entity*> selectedObjects {  };
-	_HashMap* selectedObjectsById {  };
+	map<wstring, Entity*> selectedObjectsById {  };
 	vector<LevelEditorObject*> pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
