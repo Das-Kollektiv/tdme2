@@ -7,6 +7,7 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
+#include <tdme/engine/ApplicationInputEventsHandler.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <java/lang/Object.h>
@@ -17,6 +18,7 @@ using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
 using tdme::engine::Application;
+using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
 
@@ -47,7 +49,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tests::PhysicsTest3 final
-	: public virtual Object, public virtual Application
+	: public virtual Object, public virtual Application, public virtual ApplicationInputEventsHandler
 {
 
 public:
@@ -94,6 +96,14 @@ public:
 	void dispose();
 	void initialize();
 	void reshape(int32_t width, int32_t height);
+
+	void onKeyDown (unsigned char key, int x, int y) override;
+	void onKeyUp(unsigned char key, int x, int y) override;
+	void onSpecialKeyDown (int key, int x, int y) override;
+	void onSpecialKeyUp(int key, int x, int y) override;
+	void onMouseDragged(int x, int y) override;
+	void onMouseMoved(int x, int y) override;
+	void onMouseButton(int button, int state, int x, int y) override;
 
 	// Generated
 	PhysicsTest3();

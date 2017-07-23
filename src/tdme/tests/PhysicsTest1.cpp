@@ -107,7 +107,7 @@ void PhysicsTest1::main(int argc, char** argv)
 {
 	clinit();
 	auto physicsTest1 = new PhysicsTest1();
-	physicsTest1->run(argc, argv, L"PhysicsTest1");
+	physicsTest1->run(argc, argv, L"PhysicsTest1", physicsTest1);
 }
 
 void PhysicsTest1::ctor()
@@ -376,65 +376,44 @@ void PhysicsTest1::reshape(int32_t width, int32_t height)
 	engine->reshape(0, 0, width, height);
 }
 
-/*
-void PhysicsTest1::keyPressed(KeyEvent* e)
-{
-	int32_t keyCode = e->getKeyCode();
-	if (keyCode == KeyEvent::VK_LEFT)
-		keyLeft = true;
-
-	if (keyCode == KeyEvent::VK_RIGHT)
-		keyRight = true;
-
-	if (keyCode == KeyEvent::VK_UP)
-		keyUp = true;
-
-	if (keyCode == KeyEvent::VK_DOWN)
-		keyDown = true;
-
-	if (keyCode == KeyEvent::VK_A)
-		keyA = true;
-
-	if (keyCode == KeyEvent::VK_D)
-		keyD = true;
-
-	if (keyCode == KeyEvent::VK_W)
-		keyW = true;
-
-	if (keyCode == KeyEvent::VK_S)
-		keyS = true;
-
+void PhysicsTest1::onKeyDown (unsigned char key, int x, int y) {
+	auto keyChar = tolower(key);
+	if (keyChar == u'w') keyW = true;
+	if (keyChar == u'a') keyA = true;
+	if (keyChar == u's') keyS = true;
+	if (keyChar == u'd') keyD = true;
 }
 
-void PhysicsTest1::keyReleased(KeyEvent* e)
-{
-	int32_t keyCode = e->getKeyCode();
-	if (keyCode == KeyEvent::VK_LEFT)
-		keyLeft = false;
-
-	if (keyCode == KeyEvent::VK_RIGHT)
-		keyRight = false;
-
-	if (keyCode == KeyEvent::VK_UP)
-		keyUp = false;
-
-	if (keyCode == KeyEvent::VK_DOWN)
-		keyDown = false;
-
-	if (keyCode == KeyEvent::VK_A)
-		keyA = false;
-
-	if (keyCode == KeyEvent::VK_D)
-		keyD = false;
-
-	if (keyCode == KeyEvent::VK_W)
-		keyW = false;
-
-	if (keyCode == KeyEvent::VK_S)
-		keyS = false;
-
+void PhysicsTest1::onKeyUp(unsigned char key, int x, int y) {
+	auto keyChar = tolower(key);
+	if (keyChar == u'w') keyW = false;
+	if (keyChar == u'a') keyA = false;
+	if (keyChar == u's') keyS = false;
+	if (keyChar == u'd') keyD = false;
 }
-*/
+
+void PhysicsTest1::onSpecialKeyDown (int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
+}
+
+void PhysicsTest1::onSpecialKeyUp(int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+}
+
+void PhysicsTest1::onMouseDragged(int x, int y) {
+}
+
+void PhysicsTest1::onMouseMoved(int x, int y) {
+}
+
+void PhysicsTest1::onMouseButton(int button, int state, int x, int y) {
+}
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 

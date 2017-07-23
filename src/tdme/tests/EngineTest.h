@@ -140,7 +140,6 @@ public:
 	void initialize() ;
 	void reshape(int32_t width, int32_t height);
 
-
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;
 	void onSpecialKeyDown (int key, int x, int y) override;
