@@ -10,7 +10,6 @@
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/_ArrayList.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::tools::shared::views::EntityBaseView;
 using java::lang::Object;
@@ -22,7 +21,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
