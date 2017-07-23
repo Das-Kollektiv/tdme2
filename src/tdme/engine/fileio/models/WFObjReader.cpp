@@ -301,7 +301,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					groupTextureCoordinates.clear();
 					groupFacesEntityFaces.clear();
 					group = new Group(model, nullptr, name, name);
-					groupFacesEntity = new FacesEntity(group, name);
+					groupFacesEntity = new FacesEntity(group, name->getCPPWString());
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();
 					modelGroupTextureCoordinatesMapping.clear();
@@ -314,7 +314,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities.push_back(groupFacesEntity);
 						}
-						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString());
+						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString()->getCPPWString());
 						groupFacesEntityFaces.clear();
 					}
 					auto materialIt = materials.find(arguments->getCPPWString());

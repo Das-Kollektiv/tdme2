@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -11,6 +12,7 @@
 #include <java/lang/Object.h>
 
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -46,7 +48,7 @@ public:
 	typedef Object super;
 
 private:
-	String* id {  };
+	wstring id {  };
 	Group* group {  };
 	Material* material {  };
 	FaceArray* faces {  };
@@ -59,14 +61,14 @@ protected:
 	 * @param id 
 	 * @param group
 	 */
-	void ctor(Group* group, String* id);
+	void ctor(Group* group, const wstring& id);
 
 public:
 
 	/** 
 	 * @return faces entity id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * Set up the entity's material
@@ -117,7 +119,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	FacesEntity(Group* group, String* id);
+	FacesEntity(Group* group, const wstring& id);
 protected:
 	FacesEntity(const ::default_init_tag&);
 

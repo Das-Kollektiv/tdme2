@@ -184,6 +184,24 @@ public:
 	}
 
 	/**
+	 * Writes a string to output stream
+	 * @param string
+	 * @throws model file IO exception
+	 */
+	inline void writeString(const wstring& s) throw (ModelFileIOException) {
+		if (s.size() == 0) {
+			writeBoolean(false);
+		} else {
+			writeBoolean(true);
+			writeInt(s.size());
+			for (auto i = 0; i < s.size(); i++) {
+				// FIXME: actually we use wide string
+				writeByte(static_cast< int8_t >(s[i]));
+			}
+		}
+	}
+
+	/**
 	 * Writes a float array to output stream
 	 * @param float array
 	 * @throws model file IO exception

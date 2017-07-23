@@ -178,7 +178,7 @@ void Object3DInternal::setDynamicDiffuseTexture(String* groupId, String* facesEn
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->length; facesEntityIdx++) {
 			auto facesEntity = (*facesEntities)[facesEntityIdx];
-			if (facesEntityId != nullptr && facesEntityId->equals(facesEntity->getId()) == false)
+			if (facesEntityId != nullptr && facesEntityId->getCPPWString() != facesEntity->getId())
 				continue;
 
 			(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] = textureId;

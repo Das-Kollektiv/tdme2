@@ -169,7 +169,7 @@ Model* EngineTest::createWallModel()
 	auto wallMaterial = new Material(u"wall"_j);
 	(*wall->getMaterials())[L"wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, u"wall"_j, u"wall"_j);
-	auto groupFacesEntityFarPlane = new FacesEntity(wallGroup, u"wall"_j);
+	auto groupFacesEntityFarPlane = new FacesEntity(wallGroup, L"wall");
 	wallMaterial->getAmbientColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	wallMaterial->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	groupFacesEntityFarPlane->setMaterial(wallMaterial);

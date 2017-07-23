@@ -294,7 +294,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	clinit();
 	auto facesEntities = new FacesEntityArray(is->readInt());
 	for (auto i = 0; i < facesEntities->length; i++) {
-		facesEntities->set(i, new FacesEntity(g, is->readString()));
+		facesEntities->set(i, new FacesEntity(g, is->readString()->getCPPWString()));
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
 			auto materialIt = g->getModel()->getMaterials()->find(is->readString()->getCPPWString());

@@ -2,6 +2,7 @@
 #include <tdme/engine/model/FacesEntity.h>
 
 #include <vector>
+#include <string>
 
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -15,6 +16,7 @@
 #include <SubArray.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::engine::model::FacesEntity;
 using java::lang::Object;
@@ -48,13 +50,13 @@ FacesEntity::FacesEntity(const ::default_init_tag&)
 	clinit();
 }
 
-FacesEntity::FacesEntity(Group* group, String* id) 
+FacesEntity::FacesEntity(Group* group, const wstring& id)
 	: FacesEntity(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(group,id);
 }
 
-void FacesEntity::ctor(Group* group, String* id)
+void FacesEntity::ctor(Group* group, const wstring& id)
 {
 	super::ctor();
 	this->id = id;
@@ -65,7 +67,7 @@ void FacesEntity::ctor(Group* group, String* id)
 	this->tangentBitangentAvailable = false;
 }
 
-String* FacesEntity::getId()
+const wstring& FacesEntity::getId()
 {
 	return id;
 }

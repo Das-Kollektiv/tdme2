@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/engine/primitives/PrimitiveModel.java
 #include <tdme/engine/primitives/PrimitiveModel.h>
 
+#include <string>
 #include <vector>
 
 #include <java/io/Serializable.h>
@@ -32,6 +33,7 @@
 #include <ObjectArray.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::engine::primitives::PrimitiveModel;
 using java::io::Serializable;
@@ -124,7 +126,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
-	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
+	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -176,7 +178,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
-	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
+	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -229,7 +231,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
-	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
+	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -312,7 +314,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
 	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
-	auto groupFacesEntity = new FacesEntity(group, u"faces entity"_j);
+	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);

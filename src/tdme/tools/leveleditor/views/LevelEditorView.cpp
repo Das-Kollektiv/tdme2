@@ -943,7 +943,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundPlateMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*groundPlate->getMaterials())[L"ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, u"ground"_j, u"ground"_j);
-	auto groupFacesEntityGround = new FacesEntity(groundGroup, u"leveleditor.ground.facesentity"_j);
+	auto groupFacesEntityGround = new FacesEntity(groundGroup, L"leveleditor.ground.facesentity");
 	groupFacesEntityGround->setMaterial(groundPlateMaterial);
 	vector<FacesEntity*> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntityGround);

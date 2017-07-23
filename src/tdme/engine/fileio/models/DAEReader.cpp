@@ -1021,7 +1021,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 			}
 			for (auto xmlPolygons: xmlPolygonsList) {
 				vector<Face*> faces;
-				facesEntity = new FacesEntity(group, xmlNodeId);
+				facesEntity = new FacesEntity(group, xmlNodeId->getCPPWString());
 				if ((tmpString = new String(StringConverter::toWideString(xmlPolygons->Value())))->toLowerCase()->equals(u"polylist"_j)) {
 					t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText()))));
 					while (t->hasMoreTokens()) {
