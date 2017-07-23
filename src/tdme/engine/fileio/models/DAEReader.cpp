@@ -871,7 +871,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsSource)) {
 			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
-				joints.push_back(new Joint(t->nextToken()));
+				joints.push_back(new Joint(t->nextToken()->getCPPWString()));
 			}
 		}
 	}

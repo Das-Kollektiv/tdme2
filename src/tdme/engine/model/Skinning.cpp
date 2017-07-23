@@ -147,7 +147,7 @@ void Skinning::setupJointsByName()
 {
 	for (auto i = 0; i < joints->length; i++) {
 		auto joint = (*joints)[i];
-		jointsByName[joint->getGroupId()->getCPPWString()] = joint;
+		jointsByName[joint->getGroupId()] = joint;
 	}
 }
 

@@ -333,7 +333,7 @@ void ModelHelper::setupJoints(Model* model)
 		auto skinning = group->getSkinning();
 		if (skinning != nullptr) {
 			for (auto joint : *skinning->getJoints()) {
-				auto jointGroupIt = groups->find(joint->getGroupId()->getCPPWString());
+				auto jointGroupIt = groups->find(joint->getGroupId());
 				if (jointGroupIt != groups->end()) {
 					setJoint(jointGroupIt->second);
 				}

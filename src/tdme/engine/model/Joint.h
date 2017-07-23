@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -11,6 +13,7 @@ using java::lang::Object;
 using java::lang::String;
 using tdme::math::Matrix4x4;
 
+using std::wstring;
 
 struct default_init_tag;
 
@@ -26,7 +29,7 @@ public:
 	typedef Object super;
 
 private:
-	String* groupId {  };
+	wstring groupId {  };
 	Matrix4x4* bindMatrix {  };
 protected:
 
@@ -35,7 +38,7 @@ protected:
 	 * @param group id
 	 * @param bind matrix
 	 */
-	void ctor(String* groupId);
+	void ctor(const wstring& groupId);
 
 public:
 
@@ -43,7 +46,7 @@ public:
 	 * Associated group or bone id
 	 * @return group id
 	 */
-	String* getGroupId();
+	const wstring& getGroupId();
 
 	/** 
 	 * Bind matrix
@@ -57,7 +60,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	Joint(String* groupId);
+	Joint(const wstring& groupId);
 protected:
 	Joint(const ::default_init_tag&);
 

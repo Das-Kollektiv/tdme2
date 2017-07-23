@@ -327,7 +327,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	auto joint = new Joint(is->readString());
+	auto joint = new Joint(is->readWString());
 	joint->getBindMatrix()->set(is->readFloatArray());
 	return joint;
 }

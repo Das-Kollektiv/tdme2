@@ -18,20 +18,20 @@ Joint::Joint(const ::default_init_tag&)
 	clinit();
 }
 
-Joint::Joint(String* groupId) 
+Joint::Joint(const wstring& groupId)
 	: Joint(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(groupId);
 }
 
-void Joint::ctor(String* groupId)
+void Joint::ctor(const wstring& groupId)
 {
 	super::ctor();
 	this->groupId = groupId;
 	this->bindMatrix = (new Matrix4x4())->identity();
 }
 
-String* Joint::getGroupId()
+const wstring& Joint::getGroupId()
 {
 	return groupId;
 }

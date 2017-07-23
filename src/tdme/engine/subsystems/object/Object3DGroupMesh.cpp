@@ -227,7 +227,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 				for (auto jointWeight : *(*jointsWeights)[vertexIndex]) {
 					auto joint = (*joints)[jointWeight->getJointIndex()];
 					(*(*mesh->cSkinningJointWeight)[vertexIndex])[jointWeightIdx] = (*weights)[jointWeight->getWeightIndex()];
-					auto skinningMatrixIt = skinningMatrices->find(joint->getGroupId()->getCPPWString());
+					auto skinningMatrixIt = skinningMatrices->find(joint->getGroupId());
 					(*mesh->cSkinningJointTransformationsMatrices)[vertexIndex]->set(jointWeightIdx, skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr);
 					jointWeightIdx++;
 				}
