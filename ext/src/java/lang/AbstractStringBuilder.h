@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <java/lang/Appendable.h>
 #include <java/lang/CharSequence.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::Appendable;
@@ -35,6 +39,7 @@ protected:
 	void ctor(int32_t arg0);
 
 public:
+	virtual AbstractStringBuilder* append(const wstring& arg0);
 	virtual AbstractStringBuilder* append(Object* arg0);
 	virtual AbstractStringBuilder* append(String* arg0);
 	virtual AbstractStringBuilder* append(StringBuffer* arg0);

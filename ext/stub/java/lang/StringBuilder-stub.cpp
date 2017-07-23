@@ -1,8 +1,11 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/StringBuilder.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 
+using std::wstring;
 using std::to_wstring;
 
 using java::lang::String;
@@ -64,6 +67,12 @@ void StringBuilder::ctor(CharSequence* arg0)
 { /* stub */
 	/* super::ctor(); */
 	unimplemented_(u"void StringBuilder::ctor(CharSequence* arg0)");
+}
+
+StringBuilder* StringBuilder::append(const wstring& arg0)
+{ /* stub */
+	cppwstring+= arg0;
+	return this;
 }
 
 StringBuilder* StringBuilder::append(Object* arg0)

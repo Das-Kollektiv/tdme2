@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -28,12 +32,12 @@ public:
 
 private:
 	Model* model {  };
-	String* id {  };
+	wstring id {  };
 	int32_t startFrame {  };
 	int32_t endFrame {  };
 	int32_t frames {  };
 	bool loop {  };
-	String* overlayFromGroupId {  };
+	wstring overlayFromGroupId {  };
 protected:
 
 	/** 
@@ -45,7 +49,7 @@ protected:
 	 * @param loop
 	 * @param overlay from group id / optional 
 	 */
-	void ctor(Model* model, String* id, int32_t startFrame, int32_t endFrame, bool loop, String* overlayFromGroupId);
+	void ctor(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId);
 
 public:
 
@@ -57,7 +61,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return start frame
@@ -83,7 +87,7 @@ public:
 	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy
 	 * @return group id from which the animation will start in the hierarchy
 	 */
-	String* getOverlayFromGroupId();
+	const wstring& getOverlayFromGroupId();
 
 	/** 
 	 * @return animation duration in milliseconds
@@ -98,7 +102,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	AnimationSetup(Model* model, String* id, int32_t startFrame, int32_t endFrame, bool loop, String* overlayFromGroupId);
+	AnimationSetup(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId);
 protected:
 	AnimationSetup(const ::default_init_tag&);
 

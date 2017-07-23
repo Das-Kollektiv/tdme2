@@ -259,12 +259,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->getTranslation()->add(movement);
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
-		if (player->getAnimation()->equals(u"walk"_j) == false) {
-			player->setAnimation(u"walk"_j);
+		if (player->getAnimation() != L"walk") {
+			player->setAnimation(L"walk");
 		}
 	} else {
-		if (player->getAnimation()->equals(u"walk"_j) == true) {
-			player->setAnimation(u"still"_j);
+		if (player->getAnimation() == L"walk") {
+			player->setAnimation(L"still");
 		}
 	}
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
@@ -366,13 +366,13 @@ void EngineTest::initialize()
 		grass->update();
 		engine->addEntity(grass);
 		auto _player = DAEReader::read(u"resources/tests/models/dummy"_j, u"testDummy_textured.DAE"_j);
-		_player->addAnimationSetup(u"still"_j, 3, 3, true);
-		_player->addAnimationSetup(u"walk"_j, 0, 18, true);
+		_player->addAnimationSetup(L"still", 3, 3, true);
+		_player->addAnimationSetup(L"walk", 0, 18, true);
 		playerBoundingVolume = Capsule::createBoundingVolume(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
 		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, u"player_bv"_j);
 		auto player1 = new Object3D(u"player1"_j, _player);
 		player1->getTranslation()->add(new Vector3(-1.5f, 0.0f, 0.0f));
-		player1->setAnimation(u"still"_j);
+		player1->setAnimation(L"still");
 		player1->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player1->update();
 		player1->setEnabled(true);
@@ -389,7 +389,7 @@ void EngineTest::initialize()
 		playersBoundingVolumeModel.push_back(player1BoundingVolume);
 		auto player2 = new Object3D(u"player2"_j, _player);
 		player2->getTranslation()->add(new Vector3(1.5f, 0.0f, 0.0f));
-		player2->setAnimation(u"still"_j);
+		player2->setAnimation(L"still");
 		player2->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player2->update();
 		player2->setEnabled(true);

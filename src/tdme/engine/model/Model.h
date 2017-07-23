@@ -39,7 +39,7 @@ class tdme::engine::model::Model final
 
 public:
 	typedef Object super;
-	static String* ANIMATIONSETUP_DEFAULT;
+	static wstring ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
 
 private:
@@ -161,7 +161,7 @@ public:
 	 * @param loop
 	 * @return animation setup
 	 */
-	AnimationSetup* addAnimationSetup(String* id, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addAnimationSetup(const wstring& id, int32_t startFrame, int32_t endFrame, bool loop);
 
 	/** 
 	 * Adds an overlay animation setup
@@ -172,12 +172,12 @@ public:
 	 * @param loop
 	 * @return animation setup
 	 */
-	AnimationSetup* addOverlayAnimationSetup(String* id, String* overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addOverlayAnimationSetup(const wstring& id, const wstring& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
 
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	AnimationSetup* getAnimationSetup(String* id);
+	AnimationSetup* getAnimationSetup(const wstring& id);
 
 	/** 
 	 * @return animation setup for given id or null

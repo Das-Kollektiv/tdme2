@@ -68,7 +68,7 @@ Model::Model(String* id, String* name, Model_UpVector* upVector, RotationOrder* 
 	ctor(id,name,upVector,rotationOrder,boundingBox);
 }
 
-String* Model::ANIMATIONSETUP_DEFAULT;
+wstring Model::ANIMATIONSETUP_DEFAULT;
 
 constexpr float Model::FPS_DEFAULT;
 
@@ -164,23 +164,23 @@ void Model::setFPS(float fps)
 	this->fps = fps;
 }
 
-AnimationSetup* Model::addAnimationSetup(String* id, int32_t startFrame, int32_t endFrame, bool loop)
+AnimationSetup* Model::addAnimationSetup(const wstring& id, int32_t startFrame, int32_t endFrame, bool loop)
 {
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, nullptr);
-	animationSetups[id->getCPPWString()] = animationSetup;
+	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, L"");
+	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
 
-AnimationSetup* Model::addOverlayAnimationSetup(String* id, String* overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop)
+AnimationSetup* Model::addOverlayAnimationSetup(const wstring& id, const wstring& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop)
 {
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromGroupId);
-	animationSetups[id->getCPPWString()] = animationSetup;
+	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
 
-AnimationSetup* Model::getAnimationSetup(String* id)
+AnimationSetup* Model::getAnimationSetup(const wstring& id)
 {
-	auto animationSetupIt = animationSetups.find(id->getCPPWString());
+	auto animationSetupIt = animationSetups.find(id);
 	if (animationSetupIt != animationSetups.end()) {
 		return animationSetupIt->second;
 	}
@@ -273,9 +273,9 @@ void Model::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	ANIMATIONSETUP_DEFAULT = u"tdme.default"_j;
+		ANIMATIONSETUP_DEFAULT = L"tdme.default";
 	}
-};
+	};
 
 	static string_init_ string_init_instance;
 

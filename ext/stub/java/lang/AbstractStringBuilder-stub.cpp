@@ -1,8 +1,14 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/lang/AbstractStringBuilder.h>
 
+#include <string>
+
+using std::wstring;
+
 using java::lang::AbstractStringBuilder;
+
 extern void unimplemented_(const char16_t* name);
+
 java::lang::AbstractStringBuilder::AbstractStringBuilder(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -33,6 +39,12 @@ void AbstractStringBuilder::ctor(int32_t arg0)
 { /* stub */
 	/* super::ctor(); */
 	unimplemented_(u"void AbstractStringBuilder::ctor(int32_t arg0)");
+}
+
+AbstractStringBuilder* AbstractStringBuilder::append(const wstring& arg0)
+{ /* stub */
+	unimplemented_(u"AbstractStringBuilder* AbstractStringBuilder::append(const wstring& arg0)");
+	return 0;
 }
 
 AbstractStringBuilder* AbstractStringBuilder::append(Object* arg0)

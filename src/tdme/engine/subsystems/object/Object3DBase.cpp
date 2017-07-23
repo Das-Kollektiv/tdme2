@@ -156,7 +156,7 @@ Model* Object3DBase::getModel()
 	return model;
 }
 
-void Object3DBase::setAnimation(String* id)
+void Object3DBase::setAnimation(const wstring& id)
 {
 	auto _animationActiveSetup = model->getAnimationSetup(id);
 	if (_animationActiveSetup != nullptr) {
@@ -168,14 +168,14 @@ void Object3DBase::setAnimation(String* id)
 	}
 }
 
-void Object3DBase::addOverlayAnimation(String* id)
+void Object3DBase::addOverlayAnimation(const wstring& id)
 {
 	removeOverlayAnimation(id);
 	auto animationSetup = model->getAnimationSetup(id);
 	if (animationSetup == nullptr)
 		return;
 
-	if (animationSetup->getOverlayFromGroupId() == nullptr)
+	if (animationSetup->getOverlayFromGroupId().size() == 0)
 		return;
 
 	auto animationState = new AnimationState();
@@ -184,17 +184,17 @@ void Object3DBase::addOverlayAnimation(String* id)
 	animationState->currentAtTime = 0LL;
 	animationState->time = 0.0f;
 	animationState->finished = false;
-	overlayAnimationsById[id->getCPPWString()] = animationState;
-	overlayAnimationsByJointId[animationSetup->getOverlayFromGroupId()->getCPPWString()] = animationState;
+	overlayAnimationsById[id] = animationState;
+	overlayAnimationsByJointId[animationSetup->getOverlayFromGroupId()] = animationState;
 }
 
-void Object3DBase::removeOverlayAnimation(String* id)
+void Object3DBase::removeOverlayAnimation(const wstring& id)
 {
-	auto animationStateIt = overlayAnimationsById.find(id->getCPPWString());
+	auto animationStateIt = overlayAnimationsById.find(id);
 	if (animationStateIt == overlayAnimationsById.end()) return;
 	AnimationState* animationState = animationStateIt->second;
 	overlayAnimationsById.erase(animationStateIt);
-	auto overlayAnimationsByJointIdIt = overlayAnimationsByJointId.find(animationState->setup->getOverlayFromGroupId()->getCPPWString());
+	auto overlayAnimationsByJointIdIt = overlayAnimationsByJointId.find(animationState->setup->getOverlayFromGroupId());
 	if (overlayAnimationsByJointIdIt == overlayAnimationsByJointId.end()) return;
 	overlayAnimationsByJointId.erase(overlayAnimationsByJointIdIt);
 
@@ -202,9 +202,9 @@ void Object3DBase::removeOverlayAnimation(String* id)
 
 void Object3DBase::removeOverlayAnimationsFinished()
 {
-	vector<String*> overlayAnimationsToRemove;
+	vector<wstring> overlayAnimationsToRemove;
 	for (auto it: overlayAnimationsById) {
-		String* id = new String(it.first);
+		const wstring& id = it.first;
 		AnimationState* animationState = it.second;
 		{
 			if (animationState->finished == true) {
@@ -219,9 +219,9 @@ void Object3DBase::removeOverlayAnimationsFinished()
 
 void Object3DBase::removeOverlayAnimations()
 {
-	vector<String*> overlayAnimationsToRemove;
+	vector<wstring> overlayAnimationsToRemove;
 	for (auto it: overlayAnimationsById) {
-		String* id = new String(it.first);
+		const wstring& id = it.first;
 		AnimationState* animationState = it.second;
 		overlayAnimationsToRemove.push_back(id);
 	}
@@ -230,9 +230,9 @@ void Object3DBase::removeOverlayAnimations()
 	}
 }
 
-String* Object3DBase::getAnimation()
+const wstring Object3DBase::getAnimation()
 {
-	return baseAnimation->setup == nullptr ? u"none"_j : baseAnimation->setup->getId();
+	return baseAnimation->setup == nullptr ? L"none" : baseAnimation->setup->getId();
 }
 
 float Object3DBase::getAnimationTime()
@@ -240,15 +240,15 @@ float Object3DBase::getAnimationTime()
 	return baseAnimation->time;
 }
 
-bool Object3DBase::hasOverlayAnimation(String* id)
+bool Object3DBase::hasOverlayAnimation(const wstring& id)
 {
-	return overlayAnimationsById.find(id->getCPPWString()) != overlayAnimationsById.end();
+	return overlayAnimationsById.find(id) != overlayAnimationsById.end();
 }
 
-float Object3DBase::getOverlayAnimationTime(String* id)
+float Object3DBase::getOverlayAnimationTime(const wstring& id)
 {
 	AnimationState* animationState = nullptr;
-	auto animationStateIt = overlayAnimationsById.find(id->getCPPWString());
+	auto animationStateIt = overlayAnimationsById.find(id);
 	if (animationStateIt != overlayAnimationsById.end()) {
 		animationState = animationStateIt->second;
 	}

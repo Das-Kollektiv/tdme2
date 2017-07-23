@@ -45,6 +45,7 @@ protected:
 	void ctor(CharSequence* arg0);
 
 public:
+	StringBuilder* append(const wstring& arg0) override;
 	StringBuilder* append(Object* arg0) override;
 	StringBuilder* append(String* arg0) override;
 	/*StringBuilder* append(StringBuilder* arg0); (private) */

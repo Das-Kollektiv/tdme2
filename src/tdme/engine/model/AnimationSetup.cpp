@@ -16,13 +16,13 @@ AnimationSetup::AnimationSetup(const ::default_init_tag&)
 	clinit();
 }
 
-AnimationSetup::AnimationSetup(Model* model, String* id, int32_t startFrame, int32_t endFrame, bool loop, String* overlayFromGroupId) 
+AnimationSetup::AnimationSetup(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId)
 	: AnimationSetup(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(model,id,startFrame,endFrame,loop,overlayFromGroupId);
 }
 
-void AnimationSetup::ctor(Model* model, String* id, int32_t startFrame, int32_t endFrame, bool loop, String* overlayFromGroupId)
+void AnimationSetup::ctor(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId)
 {
 	super::ctor();
 	this->model = model;
@@ -39,7 +39,7 @@ Model* AnimationSetup::getModel()
 	return model;
 }
 
-String* AnimationSetup::getId()
+const wstring& AnimationSetup::getId()
 {
 	return id;
 }
@@ -64,7 +64,7 @@ bool AnimationSetup::isLoop()
 	return loop;
 }
 
-String* AnimationSetup::getOverlayFromGroupId()
+const wstring& AnimationSetup::getOverlayFromGroupId()
 {
 	return overlayFromGroupId;
 }

@@ -117,19 +117,19 @@ public:
 	 * Sets up a base animation to play
 	 * @param id
 	 */
-	virtual void setAnimation(String* id);
+	virtual void setAnimation(const wstring& id);
 
 	/** 
 	 * Overlays a animation above the base animation
 	 * @param id
 	 */
-	virtual void addOverlayAnimation(String* id);
+	virtual void addOverlayAnimation(const wstring& id);
 
 	/** 
 	 * Removes a overlay animation
 	 * @param id
 	 */
-	virtual void removeOverlayAnimation(String* id);
+	virtual void removeOverlayAnimation(const wstring& id);
 
 	/** 
 	 * Removes all finished overlay animations
@@ -144,7 +144,7 @@ public:
 	/** 
 	 * @return active animation setup id
 	 */
-	virtual String* getAnimation();
+	virtual const wstring getAnimation();
 
 	/** 
 	 * Returns current base animation time 
@@ -157,14 +157,14 @@ public:
 	 * @param id
 	 * @return animation is running
 	 */
-	virtual bool hasOverlayAnimation(String* id);
+	virtual bool hasOverlayAnimation(const wstring& id);
 
 	/** 
 	 * Returns current overlay animation time
 	 * @param id 
 	 * @return 0.0 <= time <= 1.0
 	 */
-	virtual float getOverlayAnimationTime(String* id);
+	virtual float getOverlayAnimationTime(const wstring& id);
 
 	/** 
 	 * Returns transformation matrix for given group
