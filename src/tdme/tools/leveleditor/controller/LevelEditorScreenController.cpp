@@ -44,9 +44,6 @@
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ExceptionBase.h>
-#include <tdme/utils/_HashMap.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -93,9 +90,6 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 using tdme::utils::_ExceptionBase;
-using tdme::utils::_HashMap;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_Console;
 
 template<typename ComponentType, typename... Bases> struct SubArray;

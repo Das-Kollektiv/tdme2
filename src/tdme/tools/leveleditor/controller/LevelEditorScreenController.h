@@ -21,7 +21,6 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/utils/_HashMap.h>
 
 using std::map;
 using std::wstring;
@@ -50,7 +49,6 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
-using tdme::utils::_HashMap;
 using java::lang::Object;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
