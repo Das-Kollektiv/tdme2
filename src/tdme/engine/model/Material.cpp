@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/model/Material.java
 #include <tdme/engine/model/Material.h>
 
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -9,6 +11,8 @@
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/MathTools.h>
+
+using std::wstring;
 
 using tdme::engine::model::Material;
 using java::lang::Object;
@@ -26,13 +30,13 @@ Material::Material(const ::default_init_tag&)
 	clinit();
 }
 
-Material::Material(String* id) 
+Material::Material(const wstring& id)
 	: Material(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(id);
 }
 
-String* Material::defaultMaterialId;
+wstring Material::defaultMaterialId;
 
 Material* Material::defaultMaterial;
 
@@ -42,7 +46,7 @@ Material* Material::getDefaultMaterial()
 	return defaultMaterial;
 }
 
-void Material::ctor(String* id)
+void Material::ctor(const wstring& id)
 {
 	super::ctor();
 	this->id = id;
@@ -51,22 +55,14 @@ void Material::ctor(String* id)
 	specularColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
 	emissionColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
 	shininess = 0.0f;
-	diffuseTexturePathName = nullptr;
-	diffuseTextureFileName = nullptr;
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
-	specularTexturePathName = nullptr;
-	specularTextureFileName = nullptr;
 	specularTexture = nullptr;
-	normalTexturePathName = nullptr;
-	normalTextureFileName = nullptr;
 	normalTexture = nullptr;
-	displacementTexturePathName = nullptr;
-	displacementTextureFileName = nullptr;
 	displacementTexture = nullptr;
 }
 
-String* Material::getId()
+const wstring& Material::getId()
 {
 	return id;
 }
@@ -101,21 +97,21 @@ void Material::setShininess(float shininess)
 	this->shininess = shininess;
 }
 
-String* Material::getDiffuseTexturePathName()
+const wstring& Material::getDiffuseTexturePathName()
 {
 	return diffuseTexturePathName;
 }
 
-String* Material::getDiffuseTextureFileName()
+const wstring& Material::getDiffuseTextureFileName()
 {
 	return diffuseTextureFileName;
 }
 
-void Material::setDiffuseTexture(String* pathName, String* fileName)
+void Material::setDiffuseTexture(const wstring& pathName, const wstring& fileName)
 {
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
-	diffuseTexture = TextureLoader::loadTexture(pathName, fileName);
+	diffuseTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
 	checkDiffuseTextureTransparency();
 }
 
@@ -149,21 +145,21 @@ void Material::checkDiffuseTextureTransparency()
 	}
 }
 
-String* Material::getSpecularTexturePathName()
+const wstring& Material::getSpecularTexturePathName()
 {
 	return specularTexturePathName;
 }
 
-String* Material::getSpecularTextureFileName()
+const wstring& Material::getSpecularTextureFileName()
 {
 	return specularTextureFileName;
 }
 
-void Material::setSpecularTexture(String* pathName, String* fileName)
+void Material::setSpecularTexture(const wstring& pathName, const wstring& fileName)
 {
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
-	specularTexture = TextureLoader::loadTexture(pathName, fileName);
+	specularTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
 }
 
 bool Material::hasSpecularTexture()
@@ -176,21 +172,21 @@ Texture* Material::getSpecularTexture()
 	return specularTexture;
 }
 
-String* Material::getNormalTexturePathName()
+const wstring& Material::getNormalTexturePathName()
 {
 	return normalTexturePathName;
 }
 
-String* Material::getNormalTextureFileName()
+const wstring& Material::getNormalTextureFileName()
 {
 	return normalTextureFileName;
 }
 
-void Material::setNormalTexture(String* pathName, String* fileName)
+void Material::setNormalTexture(const wstring& pathName, const wstring& fileName)
 {
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
-	normalTexture = TextureLoader::loadTexture(pathName, fileName);
+	normalTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
 }
 
 bool Material::hasNormalTexture()
@@ -203,21 +199,21 @@ Texture* Material::getNormalTexture()
 	return normalTexture;
 }
 
-String* Material::getDisplacementTexturePathName()
+const wstring& Material::getDisplacementTexturePathName()
 {
 	return displacementTexturePathName;
 }
 
-String* Material::getDisplacementTextureFileName()
+const wstring& Material::getDisplacementTextureFileName()
 {
 	return displacementTextureFileName;
 }
 
-void Material::setDisplacementTexture(String* pathName, String* fileName)
+void Material::setDisplacementTexture(const wstring& pathName, const wstring& fileName)
 {
 	displacementTexturePathName = pathName;
 	displacementTextureFileName = fileName;
-	displacementTexture = TextureLoader::loadTexture(pathName, fileName);
+	displacementTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
 }
 
 bool Material::hasDisplacementTexture()
@@ -271,11 +267,11 @@ java::lang::Class* Material::class_()
 
 void Material::clinit()
 {
-struct string_init_ {
-	string_init_() {
-	defaultMaterialId = u"tdme.default_material"_j;
-	}
-};
+	struct string_init_ {
+		string_init_() {
+			defaultMaterialId = L"tdme.default_material";
+		}
+	};
 
 	static string_init_ string_init_instance;
 
@@ -284,7 +280,7 @@ struct string_init_ {
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		defaultMaterial = new Material(defaultMaterialId);
+			defaultMaterial = new Material(defaultMaterialId);
 		}
 	};
 

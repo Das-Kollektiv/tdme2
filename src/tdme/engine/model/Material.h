@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -29,7 +33,7 @@ public:
 	typedef Object super;
 
 private:
-	static String* defaultMaterialId;
+	static wstring defaultMaterialId;
 	static Material* defaultMaterial;
 
 public:
@@ -40,24 +44,24 @@ public:
 	static Material* getDefaultMaterial();
 
 private:
-	String* id {  };
+	wstring id {  };
 	Color4* ambientColor {  };
 	Color4* diffuseColor {  };
 	Color4* specularColor {  };
 	Color4* emissionColor {  };
 	float shininess {  };
-	String* diffuseTexturePathName {  };
-	String* diffuseTextureFileName {  };
+	wstring diffuseTexturePathName {  };
+	wstring diffuseTextureFileName {  };
 	Texture* diffuseTexture {  };
 	bool diffuseTextureTransparency {  };
-	String* specularTexturePathName {  };
-	String* specularTextureFileName {  };
+	wstring specularTexturePathName {  };
+	wstring specularTextureFileName {  };
 	Texture* specularTexture {  };
-	String* normalTexturePathName {  };
-	String* normalTextureFileName {  };
+	wstring normalTexturePathName {  };
+	wstring normalTextureFileName {  };
 	Texture* normalTexture {  };
-	String* displacementTexturePathName {  };
-	String* displacementTextureFileName {  };
+	wstring displacementTexturePathName {  };
+	wstring displacementTextureFileName {  };
 	Texture* displacementTexture {  };
 protected:
 
@@ -65,14 +69,14 @@ protected:
 	 * Public constructor
 	 * @param name
 	 */
-	void ctor(String* id);
+	void ctor(const wstring& id);
 
 public:
 
 	/** 
 	 * @return material id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return ambient color
@@ -108,12 +112,12 @@ public:
 	/** 
 	 * @return diffuse texture path name
 	 */
-	String* getDiffuseTexturePathName();
+	const wstring& getDiffuseTexturePathName();
 
 	/** 
 	 * @return diffuse texture file name
 	 */
-	String* getDiffuseTextureFileName();
+	const wstring& getDiffuseTextureFileName();
 
 	/** 
 	 * Set up a diffuse texture
@@ -121,7 +125,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setDiffuseTexture(String* pathName, String* fileName);
+	void setDiffuseTexture(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * @return if material has a diffuse texture
@@ -150,12 +154,12 @@ public:
 	/** 
 	 * @return specular texture path name
 	 */
-	String* getSpecularTexturePathName();
+	const wstring& getSpecularTexturePathName();
 
 	/** 
 	 * @return specular texture file name
 	 */
-	String* getSpecularTextureFileName();
+	const wstring& getSpecularTextureFileName();
 
 	/** 
 	 * Set up a specular texture
@@ -163,7 +167,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setSpecularTexture(String* pathName, String* fileName);
+	void setSpecularTexture(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * @return if material has a specular texture
@@ -178,12 +182,12 @@ public:
 	/** 
 	 * @return normal texture path name
 	 */
-	String* getNormalTexturePathName();
+	const wstring& getNormalTexturePathName();
 
 	/** 
 	 * @return normal texture file name
 	 */
-	String* getNormalTextureFileName();
+	const wstring& getNormalTextureFileName();
 
 	/** 
 	 * Set up a normal texture
@@ -191,7 +195,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setNormalTexture(String* pathName, String* fileName);
+	void setNormalTexture(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * @return if material has a normal texture
@@ -206,12 +210,12 @@ public:
 	/** 
 	 * @return displacement texture path name
 	 */
-	String* getDisplacementTexturePathName();
+	const wstring& getDisplacementTexturePathName();
 
 	/** 
 	 * @return displacement texture file name
 	 */
-	String* getDisplacementTextureFileName();
+	const wstring& getDisplacementTextureFileName();
 
 	/** 
 	 * Set up a displacement texture
@@ -219,7 +223,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setDisplacementTexture(String* pathName, String* fileName);
+	void setDisplacementTexture(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * @return if material has a displacement texture
@@ -238,7 +242,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	Material(String* id);
+	Material(const wstring& id);
 protected:
 	Material(const ::default_init_tag&);
 

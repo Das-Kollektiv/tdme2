@@ -1249,7 +1249,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		 );
 		return nullptr;
 	}
-	auto material = new Material(xmlNodeId);
+	auto material = new Material(xmlNodeId->getCPPWString());
 	String* xmlDiffuseTextureId = nullptr;
 	String* xmlSpecularTextureId = nullptr;
 	String* xmlBumpTextureId = nullptr;
@@ -1404,7 +1404,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlDiffuseTextureFilename = getTextureFileNameById(xmlRoot, xmlDiffuseTextureId);
 		if (xmlDiffuseTextureFilename != nullptr) {
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
-			material->setDiffuseTexture(pathName, xmlDiffuseTextureFilename);
+			material->setDiffuseTexture(pathName->getCPPWString(), xmlDiffuseTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1413,7 +1413,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlSpecularTextureFilename = getTextureFileNameById(xmlRoot, xmlSpecularTextureId);
 		if (xmlSpecularTextureFilename != nullptr) {
 			xmlSpecularTextureFilename = makeFileNameRelative(xmlSpecularTextureFilename);
-			material->setSpecularTexture(pathName, xmlSpecularTextureFilename);
+			material->setSpecularTexture(pathName->getCPPWString(), xmlSpecularTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1422,7 +1422,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlBumpTextureFilename = getTextureFileNameById(xmlRoot, xmlBumpTextureId);
 		if (xmlBumpTextureFilename != nullptr) {
 			xmlBumpTextureFilename = makeFileNameRelative(xmlBumpTextureFilename);
-			material->setNormalTexture(pathName, xmlBumpTextureFilename);
+			material->setNormalTexture(pathName->getCPPWString(), xmlBumpTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1434,7 +1434,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlDisplacementFilename = determineDisplacementFilename(pathName, u"normal"_j, xmlBumpTextureFilename);
 	}
 	if (xmlDisplacementFilename != nullptr) {
-		material->setDisplacementTexture(pathName, xmlDisplacementFilename);
+		material->setDisplacementTexture(pathName->getCPPWString(), xmlDisplacementFilename->getCPPWString());
 	}
 
 	if (authoringTool == DAEReader_AuthoringTool::BLENDER && material->getAmbientColor()->equals(static_cast< Color4Base* >(BLENDER_AMBIENT_NONE))) {
@@ -1442,7 +1442,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		material->getDiffuseColor()->set(material->getDiffuseColor()->getRed() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getGreen() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getBlue() * BLENDER_DIFFUSE_SCALE, material->getDiffuseColor()->getAlpha());
 	}
 
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 
 	return material;
 }

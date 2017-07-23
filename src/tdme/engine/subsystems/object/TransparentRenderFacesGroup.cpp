@@ -114,7 +114,7 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 		L"," +
 		to_wstring((*efcaData)[3]) +
 		L"," +
-		(material == nullptr ? L"tdme.material.none" : material->getId()->getCPPWString()) +
+		(material == nullptr ? L"tdme.material.none" : material->getId()) +
 		L"," +
 		(textureCoordinates == true ? L"TCT" : L"TCF");
 	return key;

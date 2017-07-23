@@ -320,7 +320,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					auto materialIt = materials.find(arguments->getCPPWString());
 					if (materialIt != materials.end()) {
 						Material* material = materialIt->second;
-						(*group->getModel()->getMaterials())[material->getId()->getCPPWString()] = material;
+						(*group->getModel()->getMaterials())[material->getId()] = material;
 						groupFacesEntity->setMaterial(material);
 					}
 				} else {
@@ -372,14 +372,14 @@ void WFObjReader::readMaterials(String* pathName, String* fileName, map<wstring,
 			auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
 			if (command->equals(u"newmtl"_j)) {
 				auto name = arguments;
-				current = new Material(name);
+				current = new Material(name->getCPPWString());
 				materials[name->getCPPWString()] = current;
 			} else
 			if (command->equals(u"map_ka"_j)) {
-				current->setDiffuseTexture(pathName, arguments);
+				current->setDiffuseTexture(pathName->getCPPWString(), arguments->getCPPWString());
 			} else
 			if (command->equals(u"map_kd"_j)) {
-				current->setDiffuseTexture(pathName, arguments);
+				current->setDiffuseTexture(pathName->getCPPWString(), arguments->getCPPWString());
 			} else
 			if (command->equals(u"ka"_j)) {
 				auto t = new StringTokenizer(arguments, u" "_j);

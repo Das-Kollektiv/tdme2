@@ -199,8 +199,8 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 					transparentFacesEntity = true;
 
 			}
-			auto materialId = material == nullptr ? u"tdme.material.none"_j : material->getId();
-			materialCountById[materialId->getCPPWString()]++;
+			auto materialId = material == nullptr ? L"tdme.material.none" : material->getId();
+			materialCountById[materialId]++;
 			if (transparentFacesEntity == true) {
 				transparentFaceCount += faces;
 				continue;
@@ -244,7 +244,8 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 			if (facesEntityModel1->getMaterial() != nullptr && facesEntityModel2->getMaterial() == nullptr)
 				return false;
 
-			if (facesEntityModel1->getMaterial() != nullptr && facesEntityModel2->getMaterial() != nullptr && facesEntityModel1->getMaterial()->getId()->equals(facesEntityModel2->getMaterial()->getId()) == false) {
+			if (facesEntityModel1->getMaterial() != nullptr && facesEntityModel2->getMaterial() != nullptr &&
+				facesEntityModel1->getMaterial()->getId() != facesEntityModel2->getMaterial()->getId()) {
 				return false;
 			}
 			auto facesModel1 = facesEntityModel1->getFaces();

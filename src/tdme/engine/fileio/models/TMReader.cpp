@@ -193,7 +193,7 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 	auto materialCount = is->readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(is);
-		(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+		(*model->getMaterials())[material->getId()] = material;
 	}
 	readSubGroups(is, model, nullptr, model->getSubGroups());
 	return model;
@@ -202,31 +202,31 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	auto id = is->readString();
+	auto id = is->readWString();
 	auto m = new Material(id);
 	m->getAmbientColor()->set(is->readFloatArray());
 	m->getDiffuseColor()->set(is->readFloatArray());
 	m->getSpecularColor()->set(is->readFloatArray());
 	m->getEmissionColor()->set(is->readFloatArray());
 	m->setShininess(is->readFloat());
-	auto diffuseTexturePathName = is->readString();
-	auto diffuseTextureFileName = is->readString();
-	if (diffuseTextureFileName != nullptr && diffuseTexturePathName != nullptr) {
+	auto diffuseTexturePathName = is->readWString();
+	auto diffuseTextureFileName = is->readWString();
+	if (diffuseTextureFileName.size() != 0) {
 		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName);
 	}
-	auto specularTexturePathName = is->readString();
-	auto specularTextureFileName = is->readString();
-	if (specularTextureFileName != nullptr && specularTexturePathName != nullptr) {
+	auto specularTexturePathName = is->readWString();
+	auto specularTextureFileName = is->readWString();
+	if (specularTextureFileName.size() != 0) {
 		m->setSpecularTexture(specularTexturePathName, specularTextureFileName);
 	}
-	auto normalTexturePathName = is->readString();
-	auto normalTextureFileName = is->readString();
-	if (normalTextureFileName != nullptr && normalTexturePathName != nullptr) {
+	auto normalTexturePathName = is->readWString();
+	auto normalTextureFileName = is->readWString();
+	if (normalTextureFileName.size() != 0) {
 		m->setNormalTexture(normalTexturePathName, normalTextureFileName);
 	}
-	auto displacementTexturePathName = is->readString();
-	auto displacementTextureFileName = is->readString();
-	if (displacementTextureFileName != nullptr && displacementTexturePathName != nullptr) {
+	auto displacementTexturePathName = is->readWString();
+	auto displacementTextureFileName = is->readWString();
+	if (displacementTextureFileName.size() != 0) {
 		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
 	}
 	return m;

@@ -120,11 +120,11 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 {
 	clinit();
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material(u"tdme.primitive.material"_j);
+	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
@@ -172,11 +172,11 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 {
 	clinit();
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material(u"tdme.primitive.material"_j);
+	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
@@ -225,11 +225,11 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	auto radius = sphere->radius;
 	auto center = sphere->center;
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material(u"tdme.primitive.material"_j);
+	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
@@ -308,11 +308,11 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion->rotate(angle, rotationAxis);
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material(u"tdme.primitive.material"_j);
+	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
@@ -389,11 +389,11 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 void PrimitiveModel::setupConvexMeshModel(Model* model)
 {
 	clinit();
-	auto material = new Material(u"tdme.primitive.material"_j);
+	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
+	(*model->getMaterials())[material->getId()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
 
