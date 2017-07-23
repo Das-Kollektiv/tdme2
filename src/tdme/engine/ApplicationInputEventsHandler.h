@@ -22,6 +22,13 @@ using java::lang::Object;
 #define MOUSE_BUTTON_DOWN GLUT_DOWN
 #define MOUSE_BUTTON_UP GLUT_UP
 
+#define KEYBOARD_KEYCODE_LEFT GLUT_KEY_LEFT
+#define KEYBOARD_KEYCODE_UP GLUT_KEY_UP
+#define KEYBOARD_KEYCODE_RIGHT GLUT_KEY_RIGHT
+#define KEYBOARD_KEYCODE_DOWN GLUT_KEY_DOWN
+
+
+
 /** 
  * Application input events handler
  * @author Andreas Drewke

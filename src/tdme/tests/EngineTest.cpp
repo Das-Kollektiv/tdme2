@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/tests/EngineTest.java
 #include <tdme/tests/EngineTest.h>
 
+#include <cctype>
 #include <vector>
 
 #include <java/lang/Character.h>
@@ -53,6 +54,7 @@
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 
+using std::tolower;
 using std::vector;
 
 using tdme::tests::EngineTest;
@@ -142,7 +144,7 @@ void EngineTest::main(int argc, char** argv)
 {
 	clinit();
 	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, L"EngineTest");
+	engineTest->run(argc, argv, L"EngineTest", engineTest);
 }
 
 void EngineTest::ctor()
@@ -469,69 +471,48 @@ void EngineTest::reshape(int32_t width, int32_t height)
 	engine->reshape(0, 0, width, height);
 }
 
-/*
-void EngineTest::mousePressed(MouseEvent* e)
-{
-	mouseClicked_ = new int32_tArray({
-		e->getX(),
-		e->getY()
-	});
+void EngineTest::onKeyDown (unsigned char key, int x, int y) {
+	auto keyChar = tolower(key);
+	if (keyChar == u'w') keyW = true;
+	if (keyChar == u'a') keyA = true;
+	if (keyChar == u's') keyS = true;
+	if (keyChar == u'd') keyD = true;
 }
 
-void EngineTest::keyPressed(KeyEvent* e)
-{
-	int32_t keyCode = e->getKeyCode();
-	auto keyChar = Character::toLowerCase(e->getKeyChar());
-	if (keyChar == u'w')
-		keyW = true;
-
-	if (keyChar == u'a')
-		keyA = true;
-
-	if (keyChar == u's')
-		keyS = true;
-
-	if (keyChar == u'd')
-		keyD = true;
-
-	if (keyCode == KeyEvent::VK_LEFT)
-		keyLeft = true;
-
-	if (keyCode == KeyEvent::VK_RIGHT)
-		keyRight = true;
-
-	if (keyCode == KeyEvent::VK_UP)
-		keyUp = true;
-
+void EngineTest::onKeyUp(unsigned char key, int x, int y) {
+	auto keyChar = tolower(key);
+	if (keyChar == u'w') keyW = false;
+	if (keyChar == u'a') keyA = false;
+	if (keyChar == u's') keyS = false;
+	if (keyChar == u'd') keyD = false;
 }
 
-void EngineTest::keyReleased(KeyEvent* e)
-{
-	int32_t keyCode = e->getKeyCode();
-	auto keyChar = Character::toLowerCase(e->getKeyChar());
-	if (keyChar == u'w')
-		keyW = false;
-
-	if (keyChar == u'a')
-		keyA = false;
-
-	if (keyChar == u's')
-		keyS = false;
-
-	if (keyChar == u'd')
-		keyD = false;
-
-	if (keyCode == KeyEvent::VK_LEFT)
-		keyLeft = false;
-
-	if (keyCode == KeyEvent::VK_RIGHT)
-		keyRight = false;
-
-	if (keyCode == KeyEvent::VK_UP)
-		keyUp = false;
-
+void EngineTest::onSpecialKeyDown (int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
 }
-*/
+
+void EngineTest::onSpecialKeyUp(int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
+}
+
+void EngineTest::onMouseDragged(int x, int y) {
+}
+
+void EngineTest::onMouseMoved(int x, int y) {
+}
+
+void EngineTest::onMouseButton(int button, int state, int x, int y) {
+	if (state == MOUSE_BUTTON_DOWN) {
+		mouseClicked_ = new int32_tArray({
+			x,
+			y
+		});
+	}
+}
 
 extern java::lang::Class* class_(const char16_t* c, int n);
 
