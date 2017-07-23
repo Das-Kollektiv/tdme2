@@ -67,13 +67,13 @@ Group::Group(const ::default_init_tag&)
 	clinit();
 }
 
-Group::Group(Model* model, Group* parentGroup, String* id, String* name) 
+Group::Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name)
 	: Group(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(model,parentGroup,id,name);
 }
 
-void Group::ctor(Model* model, Group* parentGroup, String* id, String* name)
+void Group::ctor(Model* model, Group* parentGroup, const wstring& id, const wstring& name)
 {
 	super::ctor();
 	this->model = model;
@@ -101,12 +101,12 @@ Group* Group::getParentGroup()
 	return parentGroup;
 }
 
-String* Group::getId()
+const wstring& Group::getId()
 {
 	return id;
 }
 
-String* Group::getName()
+const wstring& Group::getName()
 {
 	return name;
 }

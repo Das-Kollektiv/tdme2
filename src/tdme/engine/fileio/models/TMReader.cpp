@@ -366,15 +366,15 @@ void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* paren
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
-		(*subGroups)[subGroup->getId()->getCPPWString()] = subGroup;
-		(*model->getGroups())[subGroup->getId()->getCPPWString()] = subGroup;
+		(*subGroups)[subGroup->getId()] = subGroup;
+		(*model->getGroups())[subGroup->getId()] = subGroup;
 	}
 }
 
 Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException)
 {
 	clinit();
-	auto group = new Group(model, parentGroup, is->readString(), is->readString());
+	auto group = new Group(model, parentGroup, is->readWString(), is->readWString());
 	group->setJoint(is->readBoolean());
 	group->getTransformationsMatrix()->set(is->readFloatArray());
 	group->setVertices(readVertices(is));

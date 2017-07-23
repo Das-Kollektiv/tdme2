@@ -270,7 +270,7 @@ void Object3DBase::createTransformationsMatrices(map<wstring, Matrix4x4*>* matri
 		Group* group = it.second;
 		Matrix4x4* matrix = new Matrix4x4();
 		matrix->identity();
-		(*matrices)[group->getId()->getCPPWString()] = matrix;
+		(*matrices)[group->getId()] = matrix;
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
 			createTransformationsMatrices(matrices, subGroups);
@@ -283,7 +283,7 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 	for (auto it: *groups) {
 		Group* group = it.second;
 		AnimationState* overlayAnimation = nullptr;
-		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId()->getCPPWString());
+		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
 			overlayAnimation = overlayAnimationIt->second;
 		}
@@ -322,20 +322,20 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 		if (parentTransformationsMatrix != nullptr) {
 			transformationsMatrix->multiply(parentTransformationsMatrix);
 		}
-		auto transformationMatrixIt = transformationsMatrices.find(group->getId()->getCPPWString());
+		auto transformationMatrixIt = transformationsMatrices.find(group->getId());
 		if (transformationMatrixIt != transformationsMatrices.end()) {
 			transformationMatrixIt->second->set(transformationsMatrix);
 		}
 		if (hasSkinning == true) {
 			for (auto i = 0; i < skinningGroups->length; i++) {
-				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(group->getId());
+				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(new String(group->getId()));
 				if (skinningJoint == nullptr) {
-					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId()->getCPPWString());
+					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
 					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {
 						skinningGroupMatrixIt->second->set(transformationsMatrix);
 					}
 				} else {
-					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId()->getCPPWString());
+					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
 					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {
 						skinningGroupMatrixIt->second->set(skinningJoint->getBindMatrix())->multiply(transformationsMatrix);
 					}
@@ -433,7 +433,7 @@ Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator
 Object3DGroupMesh* Object3DBase::getMesh(String* groupId)
 {
 	for (auto object3DGroup : *object3dGroups) {
-		if (object3DGroup->group->getId()->equals(groupId)) {
+		if (object3DGroup->group->getId() == groupId->getCPPWString()) {
 			return object3DGroup->mesh;
 		}
 	}

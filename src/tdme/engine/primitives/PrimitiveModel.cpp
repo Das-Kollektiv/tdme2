@@ -125,7 +125,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
-	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
+	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
@@ -177,7 +177,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
-	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
+	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
@@ -230,7 +230,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
-	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
+	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;
@@ -313,7 +313,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()->getCPPWString()] = material;
-	auto group = new Group(model, nullptr, u"group"_j, u"group"_j);
+	auto group = new Group(model, nullptr, L"group", L"group");
 	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
 	groupFacesEntity->setMaterial(material);
 	vector<FacesEntity*> groupFacesEntities;

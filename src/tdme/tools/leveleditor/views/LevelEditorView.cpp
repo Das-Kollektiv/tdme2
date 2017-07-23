@@ -942,7 +942,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundPlateMaterial->setDiffuseTexture(u"resources/tools/leveleditor/textures"_j, u"groundplate.png"_j);
 	groundPlateMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*groundPlate->getMaterials())[L"ground"] = groundPlateMaterial;
-	auto groundGroup = new Group(groundPlate, nullptr, u"ground"_j, u"ground"_j);
+	auto groundGroup = new Group(groundPlate, nullptr, L"ground", L"ground");
 	auto groupFacesEntityGround = new FacesEntity(groundGroup, L"leveleditor.ground.facesentity");
 	groupFacesEntityGround->setMaterial(groundPlateMaterial);
 	vector<FacesEntity*> groupFacesEntities;
@@ -967,8 +967,8 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundGroup->setNormals(groundNormals);
 	groundGroup->setTextureCoordinates(groundTextureCoordinates);
 	groundGroup->setFacesEntities(groupFacesEntities);
-	(*groundPlate->getGroups())[groundGroup->getId()->getCPPWString()] = groundGroup;
-	(*groundPlate->getSubGroups())[groundGroup->getId()->getCPPWString()] = groundGroup;
+	(*groundPlate->getGroups())[groundGroup->getId()] = groundGroup;
+	(*groundPlate->getSubGroups())[groundGroup->getId()] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }

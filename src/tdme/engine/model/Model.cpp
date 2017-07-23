@@ -233,7 +233,7 @@ Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Mat
 		if (parentTransformationsMatrix != nullptr) {
 			transformationsMatrix->multiply(parentTransformationsMatrix);
 		}
-		if (group->getId()->equals(groupId))
+		if (group->getId() == groupId->getCPPWString())
 			return transformationsMatrix;
 
 		auto subGroups = group->getSubGroups();

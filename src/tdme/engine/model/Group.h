@@ -63,8 +63,8 @@ public:
 private:
 	Model* model {  };
 	Group* parentGroup {  };
-	String* id {  };
-	String* name {  };
+	wstring id {  };
+	wstring name {  };
 	bool isJoint_ {  };
 	Matrix4x4* transformationsMatrix {  };
 	Vector3Array* vertices {  };
@@ -85,7 +85,7 @@ protected:
 	 * @param id
 	 * @param name
 	 */
-	void ctor(Model* model, Group* parentGroup, String* id, String* name);
+	void ctor(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
 
 public:
 
@@ -103,12 +103,12 @@ public:
 	 * Returns id
 	 * @return id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return group's name
 	 */
-	String* getName();
+	const wstring& getName();
 
 	/** 
 	 * @return if this group is a joint/bone
@@ -280,7 +280,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	Group(Model* model, Group* parentGroup, String* id, String* name);
+	Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
 protected:
 	Group(const ::default_init_tag&);
 

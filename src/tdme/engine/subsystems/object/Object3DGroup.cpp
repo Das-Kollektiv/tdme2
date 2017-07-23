@@ -172,7 +172,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, vector<Object3DGroup*>&
 				(*object3DGroup->materialNormalTextureIdsByEntities)[j] = GLTEXTUREID_NONE;
 			}
 			object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
-			auto groupTransformationsMatrixIt = object3D->transformationsMatrices.find(group->getId()->getCPPWString());
+			auto groupTransformationsMatrixIt = object3D->transformationsMatrices.find(group->getId());
 			object3DGroup->groupTransformationsMatrix = groupTransformationsMatrixIt != object3D->transformationsMatrices.end()?groupTransformationsMatrixIt->second:nullptr;
 		}
 		createGroups(object3D, object3DGroups, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget);

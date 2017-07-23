@@ -300,7 +300,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					groupNormals.clear();
 					groupTextureCoordinates.clear();
 					groupFacesEntityFaces.clear();
-					group = new Group(model, nullptr, name, name);
+					group = new Group(model, nullptr, name->getCPPWString(), name->getCPPWString());
 					groupFacesEntity = new FacesEntity(group, name->getCPPWString());
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();

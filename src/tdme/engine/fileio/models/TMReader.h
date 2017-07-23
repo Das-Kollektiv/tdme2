@@ -158,6 +158,25 @@ public:
 	}
 
 	/**
+	 * Reads a string from input stream
+	 * @throws model file IO exception
+	 * @return string
+	 */
+	inline const wstring readWString() throw (ModelFileIOException) {
+		if (readBoolean() == false) {
+			return L"";
+		} else {
+			auto l = readInt();
+			wstring s;
+			for (auto i = 0; i < l; i++) {
+				// FIXME: actually we use wide string
+				s+= static_cast< char16_t >(readByte());
+			}
+			return s;
+		}
+	}
+
+	/**
 	 * Reads a float array from input stream
 	 * @throws model file IO exception
 	 * @return float array

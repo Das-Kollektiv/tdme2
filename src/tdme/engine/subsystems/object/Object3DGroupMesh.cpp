@@ -206,7 +206,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 	}
 	mesh->recreatedBuffers = false;
 	if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
-		auto transformationMatrixIt = transformationMatrices->find(group->getId()->getCPPWString());
+		auto transformationMatrixIt = transformationMatrices->find(group->getId());
 		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
 	}
 	if ((skinning != nullptr && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING))) {

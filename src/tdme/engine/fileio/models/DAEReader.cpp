@@ -242,8 +242,8 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
 				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
-					(*model->getSubGroups())[group->getId()->getCPPWString()] = group;
-					(*model->getGroups())[group->getId()->getCPPWString()] = group;
+					(*model->getSubGroups())[group->getId()] = group;
+					(*model->getGroups())[group->getId()] = group;
 				}
 			}
 		}
@@ -433,8 +433,8 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
 					group->getTransformationsMatrix()->identity();
-					(*model->getSubGroups())[group->getId()->getCPPWString()] = group;
-					(*model->getGroups())[group->getId()->getCPPWString()] = group;
+					(*model->getSubGroups())[group->getId()] = group;
+					(*model->getGroups())[group->getId()] = group;
 				}
 				ModelHelper::setupJoints(model);
 				ModelHelper::fixAnimationLength(model);
@@ -623,7 +623,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 		))->transpose();
 	}
 
-	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
+	auto group = new Group(model, parentGroup, xmlNodeId->getCPPWString(), xmlNodeName->getCPPWString());
 	if (transformationsMatrix != nullptr) {
 		group->getTransformationsMatrix()->multiply(transformationsMatrix);
 	}
@@ -736,8 +736,8 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
 		auto _group = readVisualSceneNode(authoringTool, pathName, model, group, xmlRoot, _xmlNode, fps);
 		if (_group != nullptr) {
-			(*group->getSubGroups())[_group->getId()->getCPPWString()] = _group;
-			(*model->getGroups())[_group->getId()->getCPPWString()] = _group;
+			(*group->getSubGroups())[_group->getId()] = _group;
+			(*model->getGroups())[_group->getId()] = _group;
 		}
 	}
 
@@ -768,8 +768,8 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
 				auto _group = readVisualSceneNode(authoringTool, pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
 				if (_group != nullptr) {
-					(*group->getSubGroups())[_group->getId()->getCPPWString()] = _group;
-					(*model->getGroups())[_group->getId()->getCPPWString()] = _group;
+					(*group->getSubGroups())[_group->getId()] = _group;
+					(*model->getGroups())[_group->getId()] = _group;
 				}
 			}
 			for (auto xmlInstanceGeometry: getChildrenByTagName(xmlLibraryNode, "instance_geometry")) {
@@ -843,7 +843,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
 		))->transpose();
 
-	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
+	auto group = new Group(model, parentGroup, xmlNodeId->getCPPWString(), xmlNodeName->getCPPWString());
 	auto skinning = group->createSkinning();
 	readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
 
