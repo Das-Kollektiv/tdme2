@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/math/TriangleTriangleIntersection.java
 #include <tdme/math/TriangleTriangleIntersection_ReturnValue.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::math::TriangleTriangleIntersection_ReturnValue;
 using java::io::Serializable;
@@ -38,15 +42,15 @@ TriangleTriangleIntersection_ReturnValue::TriangleTriangleIntersection_ReturnVal
 	clinit();
 }
 
-TriangleTriangleIntersection_ReturnValue::TriangleTriangleIntersection_ReturnValue(::java::lang::String* name, int ordinal)
+TriangleTriangleIntersection_ReturnValue::TriangleTriangleIntersection_ReturnValue(const wstring& name, int ordinal)
 	: TriangleTriangleIntersection_ReturnValue(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::NOINTERSECTION = new TriangleTriangleIntersection_ReturnValue(u"NOINTERSECTION"_j, 0);
-TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::COPLANAR_INTERSECTION = new TriangleTriangleIntersection_ReturnValue(u"COPLANAR_INTERSECTION"_j, 1);
-TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::INTERSECTION = new TriangleTriangleIntersection_ReturnValue(u"INTERSECTION"_j, 2);
+TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::NOINTERSECTION = new TriangleTriangleIntersection_ReturnValue(L"NOINTERSECTION", 0);
+TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::COPLANAR_INTERSECTION = new TriangleTriangleIntersection_ReturnValue(L"COPLANAR_INTERSECTION", 1);
+TriangleTriangleIntersection_ReturnValue* tdme::math::TriangleTriangleIntersection_ReturnValue::INTERSECTION = new TriangleTriangleIntersection_ReturnValue(L"INTERSECTION", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* TriangleTriangleIntersection_ReturnValue::class_()
@@ -55,14 +59,11 @@ java::lang::Class* TriangleTriangleIntersection_ReturnValue::class_()
     return c;
 }
 
-TriangleTriangleIntersection_ReturnValue* TriangleTriangleIntersection_ReturnValue::valueOf(String* a0)
+TriangleTriangleIntersection_ReturnValue* TriangleTriangleIntersection_ReturnValue::valueOf(const wstring& a0)
 {
-	if (COPLANAR_INTERSECTION->toString()->equals(a0))
-		return COPLANAR_INTERSECTION;
-	if (INTERSECTION->toString()->equals(a0))
-		return INTERSECTION;
-	if (NOINTERSECTION->toString()->equals(a0))
-		return NOINTERSECTION;
+	if (COPLANAR_INTERSECTION->name() == a0) return COPLANAR_INTERSECTION;
+	if (INTERSECTION->name() == a0) return INTERSECTION;
+	if (NOINTERSECTION->name() == a0) return NOINTERSECTION;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

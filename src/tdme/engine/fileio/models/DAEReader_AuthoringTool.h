@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -58,14 +62,14 @@ public: /* package */
 	// Generated
 
 public:
-	DAEReader_AuthoringTool(::java::lang::String* name, int ordinal);
+	DAEReader_AuthoringTool(const wstring& name, int ordinal);
 protected:
 	DAEReader_AuthoringTool(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static DAEReader_AuthoringTool* valueOf(String* a0);
+	static DAEReader_AuthoringTool* valueOf(const wstring& a0);
 	static DAEReader_AuthoringToolArray* values();
 
 private:

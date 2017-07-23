@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode_Flow.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode_Flow;
 using java::io::Serializable;
@@ -40,14 +44,14 @@ GUINode_Flow::GUINode_Flow(const ::default_init_tag&)
 	clinit();
 }
 
-GUINode_Flow::GUINode_Flow(::java::lang::String* name, int ordinal)
+GUINode_Flow::GUINode_Flow(const wstring& name, int ordinal)
 	: GUINode_Flow(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUINode_Flow* tdme::gui::nodes::GUINode_Flow::INTEGRATED = new GUINode_Flow(u"INTEGRATED"_j, 0);
-GUINode_Flow* tdme::gui::nodes::GUINode_Flow::FLOATING = new GUINode_Flow(u"FLOATING"_j, 1);
+GUINode_Flow* tdme::gui::nodes::GUINode_Flow::INTEGRATED = new GUINode_Flow(L"INTEGRATED", 0);
+GUINode_Flow* tdme::gui::nodes::GUINode_Flow::FLOATING = new GUINode_Flow(L"FLOATING", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUINode_Flow::class_()
@@ -56,12 +60,10 @@ java::lang::Class* GUINode_Flow::class_()
     return c;
 }
 
-GUINode_Flow* GUINode_Flow::valueOf(String* a0)
+GUINode_Flow* GUINode_Flow::valueOf(const wstring& a0)
 {
-	if (FLOATING->toString()->equals(a0))
-		return FLOATING;
-	if (INTEGRATED->toString()->equals(a0))
-		return INTEGRATED;
+	if (FLOATING->name() == a0) return FLOATING;
+	if (INTEGRATED->name() == a0) return INTEGRATED;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

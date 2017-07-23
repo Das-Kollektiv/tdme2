@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -60,14 +64,14 @@ public: /* package */
 	// Generated
 
 public:
-	LevelEditorEntity_EntityType(::java::lang::String* name, int ordinal);
+	LevelEditorEntity_EntityType(const wstring& name, int ordinal);
 protected:
 	LevelEditorEntity_EntityType(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static LevelEditorEntity_EntityType* valueOf(String* a0);
+	static LevelEditorEntity_EntityType* valueOf(const wstring& a0);
 	static LevelEditorEntity_EntityTypeArray* values();
 
 private:

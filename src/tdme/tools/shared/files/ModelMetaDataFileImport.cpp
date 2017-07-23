@@ -131,7 +131,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		static_cast< float >(jEntityRoot["py"].getDouble()),
 		static_cast< float >(jEntityRoot["pz"].getDouble())
 	);
-	auto modelType = LevelEditorEntity_EntityType::valueOf(new String(StringConverter::toWideString(jEntityRoot["type"].getString())));
+	auto modelType = LevelEditorEntity_EntityType::valueOf(StringConverter::toWideString(jEntityRoot["type"].getString()));
 	String* modelFile = nullptr;
 	if (jEntityRoot["file"].isNull() == false) {
 		auto modelFileString = new String(StringConverter::toWideString(jEntityRoot["file"].getString()));
@@ -219,7 +219,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();
 		auto& jParticleSystem = jEntityRoot["ps"];
-		particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf(new String(StringConverter::toWideString(jParticleSystem["t"].getString()))));
+		particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf(StringConverter::toWideString(jParticleSystem["t"].getString())));
 		{
 			auto v = particleSystem->getType();
 			if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
@@ -278,7 +278,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 			end_switch0:;
 		}
 
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf(new String(StringConverter::toWideString(jParticleSystem["e"].getString()))));
+		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf(StringConverter::toWideString(jParticleSystem["e"].getString())));
 		{
 			auto v = particleSystem->getEmitter();
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {

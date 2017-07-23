@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using java::io::Serializable;
@@ -40,16 +44,16 @@ GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstrai
 	clinit();
 }
 
-GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstraints_RequestedConstraintsType(::java::lang::String* name, int ordinal)
+GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstraints_RequestedConstraintsType(const wstring& name, int ordinal)
 	: GUINode_RequestedConstraints_RequestedConstraintsType(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL = new GUINode_RequestedConstraints_RequestedConstraintsType(u"PIXEL"_j, 0);
-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT = new GUINode_RequestedConstraints_RequestedConstraintsType(u"PERCENT"_j, 1);
-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType(u"STAR"_j, 2);
-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType(u"AUTO"_j, 3);
+GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL = new GUINode_RequestedConstraints_RequestedConstraintsType(L"PIXEL", 0);
+GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT = new GUINode_RequestedConstraints_RequestedConstraintsType(L"PERCENT", 1);
+GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType(L"STAR", 2);
+GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType(L"AUTO", 3);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUINode_RequestedConstraints_RequestedConstraintsType::class_()
@@ -58,16 +62,12 @@ java::lang::Class* GUINode_RequestedConstraints_RequestedConstraintsType::class_
     return c;
 }
 
-GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(String* a0)
+GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(const wstring& a0)
 {
-	if (AUTO->toString()->equals(a0))
-		return AUTO;
-	if (PERCENT->toString()->equals(a0))
-		return PERCENT;
-	if (PIXEL->toString()->equals(a0))
-		return PIXEL;
-	if (STAR->toString()->equals(a0))
-		return STAR;
+	if (AUTO->name() == a0) return AUTO;
+	if (PERCENT->name() == a0) return PERCENT;
+	if (PIXEL->name() == a0) return PIXEL;
+	if (STAR->name() == a0) return STAR;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

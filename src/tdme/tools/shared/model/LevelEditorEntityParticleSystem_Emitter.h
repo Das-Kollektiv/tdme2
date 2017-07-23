@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -70,14 +74,14 @@ public: /* package */
 	// Generated
 
 public:
-	LevelEditorEntityParticleSystem_Emitter(::java::lang::String* name, int ordinal);
+	LevelEditorEntityParticleSystem_Emitter(const wstring& name, int ordinal);
 protected:
 	LevelEditorEntityParticleSystem_Emitter(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static LevelEditorEntityParticleSystem_Emitter* valueOf(String* a0);
+	static LevelEditorEntityParticleSystem_Emitter* valueOf(const wstring& a0);
 	static LevelEditorEntityParticleSystem_EmitterArray* values();
 
 private:

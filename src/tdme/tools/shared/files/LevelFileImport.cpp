@@ -102,7 +102,7 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
 	auto version = Float::parseFloat(new String(StringConverter::toWideString(jRoot["version"].getString())));
-	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(new String(StringConverter::toWideString(jRoot["ro"].getString()))) : RotationOrder::XYZ);
+	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(StringConverter::toWideString(jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
 	auto jMapProperties = jRoot["properties"].getArray();
 	for (auto i = 0; i < jMapProperties.size(); i++) {

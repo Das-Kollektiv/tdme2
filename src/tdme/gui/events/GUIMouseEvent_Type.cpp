@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/events/GUIMouseEvent.java
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::events::GUIMouseEvent_Type;
 using java::io::Serializable;
@@ -40,18 +44,18 @@ GUIMouseEvent_Type::GUIMouseEvent_Type(const ::default_init_tag&)
 	clinit();
 }
 
-GUIMouseEvent_Type::GUIMouseEvent_Type(::java::lang::String* name, int ordinal)
+GUIMouseEvent_Type::GUIMouseEvent_Type(const wstring& name, int ordinal)
 	: GUIMouseEvent_Type(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::NONE = new GUIMouseEvent_Type(u"NONE"_j, 0);
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_WHEEL_MOVED = new GUIMouseEvent_Type(u"MOUSE_WHEEL_MOVED"_j, 1);
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_PRESSED = new GUIMouseEvent_Type(u"MOUSE_PRESSED"_j, 2);
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_RELEASED = new GUIMouseEvent_Type(u"MOUSE_RELEASED"_j, 3);
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_MOVED = new GUIMouseEvent_Type(u"MOUSE_MOVED"_j, 4);
-GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_DRAGGED = new GUIMouseEvent_Type(u"MOUSE_DRAGGED"_j, 5);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::NONE = new GUIMouseEvent_Type(L"NONE", 0);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_WHEEL_MOVED = new GUIMouseEvent_Type(L"MOUSE_WHEEL_MOVED", 1);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_PRESSED = new GUIMouseEvent_Type(L"MOUSE_PRESSED", 2);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_RELEASED = new GUIMouseEvent_Type(L"MOUSE_RELEASED", 3);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_MOVED = new GUIMouseEvent_Type(L"MOUSE_MOVED", 4);
+GUIMouseEvent_Type* tdme::gui::events::GUIMouseEvent_Type::MOUSE_DRAGGED = new GUIMouseEvent_Type(L"MOUSE_DRAGGED", 5);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIMouseEvent_Type::class_()
@@ -60,20 +64,14 @@ java::lang::Class* GUIMouseEvent_Type::class_()
     return c;
 }
 
-GUIMouseEvent_Type* GUIMouseEvent_Type::valueOf(String* a0)
+GUIMouseEvent_Type* GUIMouseEvent_Type::valueOf(const wstring& a0)
 {
-	if (MOUSE_DRAGGED->toString()->equals(a0))
-		return MOUSE_DRAGGED;
-	if (MOUSE_MOVED->toString()->equals(a0))
-		return MOUSE_MOVED;
-	if (MOUSE_PRESSED->toString()->equals(a0))
-		return MOUSE_PRESSED;
-	if (MOUSE_RELEASED->toString()->equals(a0))
-		return MOUSE_RELEASED;
-	if (MOUSE_WHEEL_MOVED->toString()->equals(a0))
-		return MOUSE_WHEEL_MOVED;
-	if (NONE->toString()->equals(a0))
-		return NONE;
+	if (MOUSE_DRAGGED->name() == a0) return MOUSE_DRAGGED;
+	if (MOUSE_MOVED->name() == a0) return MOUSE_MOVED;
+	if (MOUSE_PRESSED->name() == a0) return MOUSE_PRESSED;
+	if (MOUSE_RELEASED->name() == a0) return MOUSE_RELEASED;
+	if (MOUSE_WHEEL_MOVED->name() == a0) return MOUSE_WHEEL_MOVED;
+	if (NONE->name() == a0) return NONE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

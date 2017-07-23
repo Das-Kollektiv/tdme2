@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUILayoutNode.java
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using java::io::Serializable;
@@ -40,15 +44,15 @@ GUILayoutNode_Alignment::GUILayoutNode_Alignment(const ::default_init_tag&)
 	clinit();
 }
 
-GUILayoutNode_Alignment::GUILayoutNode_Alignment(::java::lang::String* name, int ordinal)
+GUILayoutNode_Alignment::GUILayoutNode_Alignment(const wstring& name, int ordinal)
 	: GUILayoutNode_Alignment(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::VERTICAL = new GUILayoutNode_Alignment(u"VERTICAL"_j, 0);
-GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::HORIZONTAL = new GUILayoutNode_Alignment(u"HORIZONTAL"_j, 1);
-GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::NONE = new GUILayoutNode_Alignment(u"NONE"_j, 2);
+GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::VERTICAL = new GUILayoutNode_Alignment(L"VERTICAL", 0);
+GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::HORIZONTAL = new GUILayoutNode_Alignment(L"HORIZONTAL", 1);
+GUILayoutNode_Alignment* tdme::gui::nodes::GUILayoutNode_Alignment::NONE = new GUILayoutNode_Alignment(L"NONE", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUILayoutNode_Alignment::class_()
@@ -57,14 +61,11 @@ java::lang::Class* GUILayoutNode_Alignment::class_()
     return c;
 }
 
-GUILayoutNode_Alignment* GUILayoutNode_Alignment::valueOf(String* a0)
+GUILayoutNode_Alignment* GUILayoutNode_Alignment::valueOf(const wstring& a0)
 {
-	if (HORIZONTAL->toString()->equals(a0))
-		return HORIZONTAL;
-	if (NONE->toString()->equals(a0))
-		return NONE;
-	if (VERTICAL->toString()->equals(a0))
-		return VERTICAL;
+	if (HORIZONTAL->name() == a0) return HORIZONTAL;
+	if (NONE->name() == a0) return NONE;
+	if (VERTICAL->name() == a0) return VERTICAL;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

@@ -316,7 +316,7 @@ void GUILayoutNode::setLeft(int32_t left)
 GUILayoutNode_Alignment* GUILayoutNode::createAlignment(String* alignment)
 {
 	clinit();
-	return GUILayoutNode_Alignment::valueOf(alignment != nullptr && alignment->length() > 0 ? alignment->toUpperCase() : u"NONE"_j);
+	return GUILayoutNode_Alignment::valueOf(alignment != nullptr && alignment->length() > 0 ? alignment->toUpperCase()->getCPPWString() : L"NONE");
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

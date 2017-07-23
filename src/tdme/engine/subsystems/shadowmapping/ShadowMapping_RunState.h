@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -59,14 +63,14 @@ public: /* package */
 	// Generated
 
 public:
-	ShadowMapping_RunState(::java::lang::String* name, int ordinal);
+	ShadowMapping_RunState(const wstring& name, int ordinal);
 protected:
 	ShadowMapping_RunState(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static ShadowMapping_RunState* valueOf(String* a0);
+	static ShadowMapping_RunState* valueOf(const wstring& a0);
 	static ShadowMapping_RunStateArray* values();
 
 private:

@@ -11,14 +11,14 @@ java::lang::Enum::Enum(const ::default_init_tag&)
 	clinit();
 }
 
-java::lang::Enum::Enum(String* arg0, int32_t arg1)
+java::lang::Enum::Enum(const wstring& arg0, int32_t arg1)
 	: Enum(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(arg0, arg1);
 }
 
 
-void Enum::ctor(String* arg0, int32_t arg1)
+void Enum::ctor(const wstring& arg0, int32_t arg1)
 { /* stub */
 	name_ = arg0;
 	ordinal_ = arg1;
@@ -63,7 +63,7 @@ int32_t Enum::hashCode()
 	return 0;
 }
 
-String* Enum::name()
+const wstring& Enum::name()
 { /* stub */
 	return name_;
 }
@@ -77,7 +77,7 @@ int32_t Enum::ordinal()
 /* private: void Enum::readObjectNoData() */
 String* Enum::toString()
 { /* stub */
-	return name_;
+	return new String(name_);
 }
 
 Enum* Enum::valueOf(Class* arg0, String* arg1)

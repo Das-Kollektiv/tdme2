@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -57,14 +61,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUIKeyboardEvent_Type(::java::lang::String* name, int ordinal);
+	GUIKeyboardEvent_Type(const wstring& name, int ordinal);
 protected:
 	GUIKeyboardEvent_Type(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUIKeyboardEvent_Type* valueOf(String* a0);
+	static GUIKeyboardEvent_Type* valueOf(const wstring& a0);
 	static GUIKeyboardEvent_TypeArray* values();
 
 private:

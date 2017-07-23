@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -80,7 +84,7 @@ protected:
 	 * @param axis Y index
 	 * @param axis Z index
 	 */
-	void ctor(::java::lang::String* name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
+	void ctor(const wstring& name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
 
 public:
 
@@ -132,14 +136,14 @@ public:
 	// Generated
 
 private:
-	RotationOrder(::java::lang::String* name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
+	RotationOrder(const wstring& name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
 protected:
 	RotationOrder(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static RotationOrder* valueOf(String* a0);
+	static RotationOrder* valueOf(const wstring& a0);
 	static RotationOrderArray* values();
 
 private:

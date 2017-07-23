@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <java/lang/Comparable.h>
 #include <java/io/Serializable.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::Comparable;
@@ -28,11 +32,11 @@ public:
 	typedef Object super;
 
 private:
-	String* name_ {  };
+	wstring name_ {  };
 	int32_t ordinal_ {  };
 
 protected:
-	void ctor(String* arg0, int32_t arg1);
+	void ctor(const wstring& arg0, int32_t arg1);
 
 public: /* protected */
 	Object* clone() override;
@@ -47,7 +51,7 @@ public: /* protected */
 public:
 	Class* getDeclaringClass();
 	int32_t hashCode() override;
-	String* name();
+	const wstring& name();
 	int32_t ordinal();
 	/*void readObject(ObjectInputStream* arg0); (private) */
 	/*void readObjectNoData(); (private) */
@@ -57,7 +61,7 @@ public:
 	// Generated
 
 public: /* protected */
-	Enum(String* arg0, int32_t arg1);
+	Enum(const wstring& arg0, int32_t arg1);
 protected:
 	Enum(const ::default_init_tag&);
 

@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -65,14 +69,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUINode_AlignmentHorizontal(::java::lang::String* name, int ordinal);
+	GUINode_AlignmentHorizontal(const wstring& name, int ordinal);
 protected:
 	GUINode_AlignmentHorizontal(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUINode_AlignmentHorizontal* valueOf(String* a0);
+	static GUINode_AlignmentHorizontal* valueOf(const wstring& a0);
 	static GUINode_AlignmentHorizontalArray* values();
 
 private:

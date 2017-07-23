@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/events/GUIActionListener.java
 #include <tdme/gui/events/GUIActionListener_Type.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::events::GUIActionListener_Type;
 using java::io::Serializable;
@@ -40,14 +44,14 @@ GUIActionListener_Type::GUIActionListener_Type(const ::default_init_tag&)
 	clinit();
 }
 
-GUIActionListener_Type::GUIActionListener_Type(::java::lang::String* name, int ordinal)
+GUIActionListener_Type::GUIActionListener_Type(const wstring& name, int ordinal)
 	: GUIActionListener_Type(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIActionListener_Type* tdme::gui::events::GUIActionListener_Type::PERFORMED = new GUIActionListener_Type(u"PERFORMED"_j, 0);
-GUIActionListener_Type* tdme::gui::events::GUIActionListener_Type::PERFORMING = new GUIActionListener_Type(u"PERFORMING"_j, 1);
+GUIActionListener_Type* tdme::gui::events::GUIActionListener_Type::PERFORMED = new GUIActionListener_Type(L"PERFORMED", 0);
+GUIActionListener_Type* tdme::gui::events::GUIActionListener_Type::PERFORMING = new GUIActionListener_Type(L"PERFORMING", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIActionListener_Type::class_()
@@ -56,12 +60,10 @@ java::lang::Class* GUIActionListener_Type::class_()
     return c;
 }
 
-GUIActionListener_Type* GUIActionListener_Type::valueOf(String* a0)
+GUIActionListener_Type* GUIActionListener_Type::valueOf(const wstring& a0)
 {
-	if (PERFORMED->toString()->equals(a0))
-		return PERFORMED;
-	if (PERFORMING->toString()->equals(a0))
-		return PERFORMING;
+	if (PERFORMED->name() == a0) return PERFORMED;
+	if (PERFORMING->name() == a0) return PERFORMING;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

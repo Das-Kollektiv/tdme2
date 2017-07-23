@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/engine/model/Model.java
 #include <tdme/engine/model/Model_UpVector.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::engine::model::Model_UpVector;
 using java::io::Serializable;
@@ -40,14 +44,14 @@ Model_UpVector::Model_UpVector(const ::default_init_tag&)
 	clinit();
 }
 
-Model_UpVector::Model_UpVector(::java::lang::String* name, int ordinal)
+Model_UpVector::Model_UpVector(const wstring& name, int ordinal)
 	: Model_UpVector(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-Model_UpVector* tdme::engine::model::Model_UpVector::Y_UP = new Model_UpVector(u"Y_UP"_j, 0);
-Model_UpVector* tdme::engine::model::Model_UpVector::Z_UP = new Model_UpVector(u"Z_UP"_j, 1);
+Model_UpVector* tdme::engine::model::Model_UpVector::Y_UP = new Model_UpVector(L"Y_UP", 0);
+Model_UpVector* tdme::engine::model::Model_UpVector::Z_UP = new Model_UpVector(L"Z_UP", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* Model_UpVector::class_()
@@ -56,12 +60,10 @@ java::lang::Class* Model_UpVector::class_()
     return c;
 }
 
-Model_UpVector* Model_UpVector::valueOf(String* a0)
+Model_UpVector* Model_UpVector::valueOf(const wstring& a0)
 {
-	if (Y_UP->toString()->equals(a0))
-		return Y_UP;
-	if (Z_UP->toString()->equals(a0))
-		return Z_UP;
+	if (Y_UP->name() == a0) return Y_UP;
+	if (Z_UP->name() == a0) return Z_UP;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.java
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
 using java::io::Serializable;
@@ -42,18 +46,18 @@ EntityBoundingVolumeSubScreenController_BoundingVolumeType::EntityBoundingVolume
 	clinit();
 }
 
-EntityBoundingVolumeSubScreenController_BoundingVolumeType::EntityBoundingVolumeSubScreenController_BoundingVolumeType(::java::lang::String* name, int ordinal)
+EntityBoundingVolumeSubScreenController_BoundingVolumeType::EntityBoundingVolumeSubScreenController_BoundingVolumeType(const wstring& name, int ordinal)
 	: EntityBoundingVolumeSubScreenController_BoundingVolumeType(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"NONE"_j, 0);
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"SPHERE"_j, 1);
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"CAPSULE"_j, 2);
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"BOUNDINGBOX"_j, 3);
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"ORIENTEDBOUNDINGBOX"_j, 4);
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(u"CONVEXMESH"_j, 5);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"NONE", 0);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"SPHERE", 1);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"CAPSULE", 2);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"BOUNDINGBOX", 3);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"ORIENTEDBOUNDINGBOX", 4);
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH = new EntityBoundingVolumeSubScreenController_BoundingVolumeType(L"CONVEXMESH", 5);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* EntityBoundingVolumeSubScreenController_BoundingVolumeType::class_()
@@ -62,20 +66,14 @@ java::lang::Class* EntityBoundingVolumeSubScreenController_BoundingVolumeType::c
     return c;
 }
 
-EntityBoundingVolumeSubScreenController_BoundingVolumeType* EntityBoundingVolumeSubScreenController_BoundingVolumeType::valueOf(String* a0)
+EntityBoundingVolumeSubScreenController_BoundingVolumeType* EntityBoundingVolumeSubScreenController_BoundingVolumeType::valueOf(const wstring& a0)
 {
-	if (BOUNDINGBOX->toString()->equals(a0))
-		return BOUNDINGBOX;
-	if (CAPSULE->toString()->equals(a0))
-		return CAPSULE;
-	if (CONVEXMESH->toString()->equals(a0))
-		return CONVEXMESH;
-	if (NONE->toString()->equals(a0))
-		return NONE;
-	if (ORIENTEDBOUNDINGBOX->toString()->equals(a0))
-		return ORIENTEDBOUNDINGBOX;
-	if (SPHERE->toString()->equals(a0))
-		return SPHERE;
+	if (BOUNDINGBOX->name() == a0) return BOUNDINGBOX;
+	if (CAPSULE->name() == a0) return CAPSULE;
+	if (CONVEXMESH->name() == a0) return CONVEXMESH;
+	if (NONE->name() == a0) return NONE;
+	if (ORIENTEDBOUNDINGBOX->name() == a0) return ORIENTEDBOUNDINGBOX;
+	if (SPHERE->name() == a0) return SPHERE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

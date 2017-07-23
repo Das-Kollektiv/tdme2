@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using java::io::Serializable;
@@ -42,15 +46,15 @@ LevelEditorEntityParticleSystem_Type::LevelEditorEntityParticleSystem_Type(const
 	clinit();
 }
 
-LevelEditorEntityParticleSystem_Type::LevelEditorEntityParticleSystem_Type(::java::lang::String* name, int ordinal)
+LevelEditorEntityParticleSystem_Type::LevelEditorEntityParticleSystem_Type(const wstring& name, int ordinal)
 	: LevelEditorEntityParticleSystem_Type(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::NONE = new LevelEditorEntityParticleSystem_Type(u"NONE"_j, 0);
-LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM = new LevelEditorEntityParticleSystem_Type(u"OBJECT_PARTICLE_SYSTEM"_j, 1);
-LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM = new LevelEditorEntityParticleSystem_Type(u"POINT_PARTICLE_SYSTEM"_j, 2);
+LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::NONE = new LevelEditorEntityParticleSystem_Type(L"NONE", 0);
+LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM = new LevelEditorEntityParticleSystem_Type(L"OBJECT_PARTICLE_SYSTEM", 1);
+LevelEditorEntityParticleSystem_Type* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM = new LevelEditorEntityParticleSystem_Type(L"POINT_PARTICLE_SYSTEM", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* LevelEditorEntityParticleSystem_Type::class_()
@@ -59,14 +63,11 @@ java::lang::Class* LevelEditorEntityParticleSystem_Type::class_()
     return c;
 }
 
-LevelEditorEntityParticleSystem_Type* LevelEditorEntityParticleSystem_Type::valueOf(String* a0)
+LevelEditorEntityParticleSystem_Type* LevelEditorEntityParticleSystem_Type::valueOf(const wstring& a0)
 {
-	if (NONE->toString()->equals(a0))
-		return NONE;
-	if (OBJECT_PARTICLE_SYSTEM->toString()->equals(a0))
-		return OBJECT_PARTICLE_SYSTEM;
-	if (POINT_PARTICLE_SYSTEM->toString()->equals(a0))
-		return POINT_PARTICLE_SYSTEM;
+	if (NONE->name() == a0) return NONE;
+	if (OBJECT_PARTICLE_SYSTEM->name() == a0) return OBJECT_PARTICLE_SYSTEM;
+	if (POINT_PARTICLE_SYSTEM->name() == a0) return POINT_PARTICLE_SYSTEM;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

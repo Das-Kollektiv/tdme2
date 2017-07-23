@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalController.java
 #include <tdme/gui/nodes/GUIInputInternalController_CursorMode.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using java::io::Serializable;
@@ -40,14 +44,14 @@ GUIInputInternalController_CursorMode::GUIInputInternalController_CursorMode(con
 	clinit();
 }
 
-GUIInputInternalController_CursorMode::GUIInputInternalController_CursorMode(::java::lang::String* name, int ordinal)
+GUIInputInternalController_CursorMode::GUIInputInternalController_CursorMode(const wstring& name, int ordinal)
 	: GUIInputInternalController_CursorMode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIInputInternalController_CursorMode* tdme::gui::nodes::GUIInputInternalController_CursorMode::SHOW = new GUIInputInternalController_CursorMode(u"SHOW"_j, 0);
-GUIInputInternalController_CursorMode* tdme::gui::nodes::GUIInputInternalController_CursorMode::HIDE = new GUIInputInternalController_CursorMode(u"HIDE"_j, 1);
+GUIInputInternalController_CursorMode* tdme::gui::nodes::GUIInputInternalController_CursorMode::SHOW = new GUIInputInternalController_CursorMode(L"SHOW", 0);
+GUIInputInternalController_CursorMode* tdme::gui::nodes::GUIInputInternalController_CursorMode::HIDE = new GUIInputInternalController_CursorMode(L"HIDE", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIInputInternalController_CursorMode::class_()
@@ -56,12 +60,10 @@ java::lang::Class* GUIInputInternalController_CursorMode::class_()
     return c;
 }
 
-GUIInputInternalController_CursorMode* GUIInputInternalController_CursorMode::valueOf(String* a0)
+GUIInputInternalController_CursorMode* GUIInputInternalController_CursorMode::valueOf(const wstring& a0)
 {
-	if (HIDE->toString()->equals(a0))
-		return HIDE;
-	if (SHOW->toString()->equals(a0))
-		return SHOW;
+	if (HIDE->name() == a0) return HIDE;
+	if (SHOW->name() == a0) return SHOW;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

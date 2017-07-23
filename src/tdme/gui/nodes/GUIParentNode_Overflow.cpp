@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIParentNode.java
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using java::io::Serializable;
@@ -40,15 +44,15 @@ GUIParentNode_Overflow::GUIParentNode_Overflow(const ::default_init_tag&)
 	clinit();
 }
 
-GUIParentNode_Overflow::GUIParentNode_Overflow(::java::lang::String* name, int ordinal)
+GUIParentNode_Overflow::GUIParentNode_Overflow(const wstring& name, int ordinal)
 	: GUIParentNode_Overflow(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::HIDDEN = new GUIParentNode_Overflow(u"HIDDEN"_j, 0);
-GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::DOWNSIZE_CHILDREN = new GUIParentNode_Overflow(u"DOWNSIZE_CHILDREN"_j, 1);
-GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::SCROLL = new GUIParentNode_Overflow(u"SCROLL"_j, 2);
+GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::HIDDEN = new GUIParentNode_Overflow(L"HIDDEN", 0);
+GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::DOWNSIZE_CHILDREN = new GUIParentNode_Overflow(L"DOWNSIZE_CHILDREN", 1);
+GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::SCROLL = new GUIParentNode_Overflow(L"SCROLL", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIParentNode_Overflow::class_()
@@ -57,14 +61,11 @@ java::lang::Class* GUIParentNode_Overflow::class_()
     return c;
 }
 
-GUIParentNode_Overflow* GUIParentNode_Overflow::valueOf(String* a0)
+GUIParentNode_Overflow* GUIParentNode_Overflow::valueOf(const wstring& a0)
 {
-	if (DOWNSIZE_CHILDREN->toString()->equals(a0))
-		return DOWNSIZE_CHILDREN;
-	if (HIDDEN->toString()->equals(a0))
-		return HIDDEN;
-	if (SCROLL->toString()->equals(a0))
-		return SCROLL;
+	if (DOWNSIZE_CHILDREN->name() == a0) return DOWNSIZE_CHILDREN;
+	if (HIDDEN->name() == a0) return HIDDEN;
+	if (SCROLL->name() == a0) return SCROLL;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

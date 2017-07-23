@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using java::io::Serializable;
@@ -40,15 +44,15 @@ GUINode_AlignmentHorizontal::GUINode_AlignmentHorizontal(const ::default_init_ta
 	clinit();
 }
 
-GUINode_AlignmentHorizontal::GUINode_AlignmentHorizontal(::java::lang::String* name, int ordinal)
+GUINode_AlignmentHorizontal::GUINode_AlignmentHorizontal(const wstring& name, int ordinal)
 	: GUINode_AlignmentHorizontal(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::LEFT = new GUINode_AlignmentHorizontal(u"LEFT"_j, 0);
-GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::CENTER = new GUINode_AlignmentHorizontal(u"CENTER"_j, 1);
-GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::RIGHT = new GUINode_AlignmentHorizontal(u"RIGHT"_j, 2);
+GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::LEFT = new GUINode_AlignmentHorizontal(L"LEFT", 0);
+GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::CENTER = new GUINode_AlignmentHorizontal(L"CENTER", 1);
+GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::RIGHT = new GUINode_AlignmentHorizontal(L"RIGHT", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUINode_AlignmentHorizontal::class_()
@@ -57,14 +61,11 @@ java::lang::Class* GUINode_AlignmentHorizontal::class_()
     return c;
 }
 
-GUINode_AlignmentHorizontal* GUINode_AlignmentHorizontal::valueOf(String* a0)
+GUINode_AlignmentHorizontal* GUINode_AlignmentHorizontal::valueOf(const wstring& a0)
 {
-	if (CENTER->toString()->equals(a0))
-		return CENTER;
-	if (LEFT->toString()->equals(a0))
-		return LEFT;
-	if (RIGHT->toString()->equals(a0))
-		return RIGHT;
+	if (CENTER->name() == a0) return CENTER;
+	if (LEFT->name() == a0) return LEFT;
+	if (RIGHT->name() == a0) return RIGHT;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

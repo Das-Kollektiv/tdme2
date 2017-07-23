@@ -42,14 +42,14 @@ DAEReader_AuthoringTool::DAEReader_AuthoringTool(const ::default_init_tag&)
 	clinit();
 }
 
-DAEReader_AuthoringTool::DAEReader_AuthoringTool(::java::lang::String* name, int ordinal)
+DAEReader_AuthoringTool::DAEReader_AuthoringTool(const wstring& name, int ordinal)
 	: DAEReader_AuthoringTool(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-DAEReader_AuthoringTool* tdme::engine::fileio::models::DAEReader_AuthoringTool::UNKNOWN = new DAEReader_AuthoringTool(u"UNKNOWN"_j, 0);
-DAEReader_AuthoringTool* tdme::engine::fileio::models::DAEReader_AuthoringTool::BLENDER = new DAEReader_AuthoringTool(u"BLENDER"_j, 1);
+DAEReader_AuthoringTool* tdme::engine::fileio::models::DAEReader_AuthoringTool::UNKNOWN = new DAEReader_AuthoringTool(L"UNKNOWN", 0);
+DAEReader_AuthoringTool* tdme::engine::fileio::models::DAEReader_AuthoringTool::BLENDER = new DAEReader_AuthoringTool(L"BLENDER", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* DAEReader_AuthoringTool::class_()
@@ -58,12 +58,10 @@ java::lang::Class* DAEReader_AuthoringTool::class_()
     return c;
 }
 
-DAEReader_AuthoringTool* DAEReader_AuthoringTool::valueOf(String* a0)
+DAEReader_AuthoringTool* DAEReader_AuthoringTool::valueOf(const wstring& a0)
 {
-	if (BLENDER->toString()->equals(a0))
-		return BLENDER;
-	if (UNKNOWN->toString()->equals(a0))
-		return UNKNOWN;
+	if (BLENDER->name() == a0) return BLENDER;
+	if (UNKNOWN->name() == a0) return UNKNOWN;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

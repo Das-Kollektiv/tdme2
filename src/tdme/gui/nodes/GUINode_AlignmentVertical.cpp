@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using java::io::Serializable;
@@ -40,15 +44,15 @@ GUINode_AlignmentVertical::GUINode_AlignmentVertical(const ::default_init_tag&)
 	clinit();
 }
 
-GUINode_AlignmentVertical::GUINode_AlignmentVertical(::java::lang::String* name, int ordinal)
+GUINode_AlignmentVertical::GUINode_AlignmentVertical(const wstring& name, int ordinal)
 	: GUINode_AlignmentVertical(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::TOP = new GUINode_AlignmentVertical(u"TOP"_j, 0);
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::CENTER = new GUINode_AlignmentVertical(u"CENTER"_j, 1);
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::BOTTOM = new GUINode_AlignmentVertical(u"BOTTOM"_j, 2);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::TOP = new GUINode_AlignmentVertical(L"TOP", 0);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::CENTER = new GUINode_AlignmentVertical(L"CENTER", 1);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::BOTTOM = new GUINode_AlignmentVertical(L"BOTTOM", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUINode_AlignmentVertical::class_()
@@ -57,14 +61,11 @@ java::lang::Class* GUINode_AlignmentVertical::class_()
     return c;
 }
 
-GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(String* a0)
+GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(const wstring& a0)
 {
-	if (BOTTOM->toString()->equals(a0))
-		return BOTTOM;
-	if (CENTER->toString()->equals(a0))
-		return CENTER;
-	if (TOP->toString()->equals(a0))
-		return TOP;
+	if (BOTTOM->name() == a0) return BOTTOM;
+	if (CENTER->name() == a0) return CENTER;
+	if (TOP->name() == a0) return TOP;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

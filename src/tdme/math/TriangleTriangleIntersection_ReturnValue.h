@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -55,14 +59,14 @@ public: /* package */
 	// Generated
 
 public:
-	TriangleTriangleIntersection_ReturnValue(::java::lang::String* name, int ordinal);
+	TriangleTriangleIntersection_ReturnValue(const wstring& name, int ordinal);
 protected:
 	TriangleTriangleIntersection_ReturnValue(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static TriangleTriangleIntersection_ReturnValue* valueOf(String* a0);
+	static TriangleTriangleIntersection_ReturnValue* valueOf(const wstring& a0);
 	static TriangleTriangleIntersection_ReturnValueArray* values();
 
 private:

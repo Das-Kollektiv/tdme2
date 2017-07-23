@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -60,14 +64,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUIMouseEvent_Type(::java::lang::String* name, int ordinal);
+	GUIMouseEvent_Type(const wstring& name, int ordinal);
 protected:
 	GUIMouseEvent_Type(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUIMouseEvent_Type* valueOf(String* a0);
+	static GUIMouseEvent_Type* valueOf(const wstring& a0);
 	static GUIMouseEvent_TypeArray* values();
 
 private:

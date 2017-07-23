@@ -56,14 +56,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUIActionListener_Type(::java::lang::String* name, int ordinal);
+	GUIActionListener_Type(const wstring& name, int ordinal);
 protected:
 	GUIActionListener_Type(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUIActionListener_Type* valueOf(String* a0);
+	static GUIActionListener_Type* valueOf(const wstring& a0);
 	static GUIActionListener_TypeArray* values();
 
 private:

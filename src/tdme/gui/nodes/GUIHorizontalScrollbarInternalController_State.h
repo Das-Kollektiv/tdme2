@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -57,14 +61,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUIHorizontalScrollbarInternalController_State(::java::lang::String* name, int ordinal);
+	GUIHorizontalScrollbarInternalController_State(const wstring& name, int ordinal);
 protected:
 	GUIHorizontalScrollbarInternalController_State(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUIHorizontalScrollbarInternalController_State* valueOf(String* a0);
+	static GUIHorizontalScrollbarInternalController_State* valueOf(const wstring& a0);
 	static GUIHorizontalScrollbarInternalController_StateArray* values();
 
 private:

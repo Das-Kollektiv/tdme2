@@ -40,15 +40,15 @@ GUIKeyboardEvent_Type::GUIKeyboardEvent_Type(const ::default_init_tag&)
 	clinit();
 }
 
-GUIKeyboardEvent_Type::GUIKeyboardEvent_Type(::java::lang::String* name, int ordinal)
+GUIKeyboardEvent_Type::GUIKeyboardEvent_Type(const wstring& name, int ordinal)
 	: GUIKeyboardEvent_Type(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::NONE = new GUIKeyboardEvent_Type(u"NONE"_j, 0);
-GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::KEY_PRESSED = new GUIKeyboardEvent_Type(u"KEY_PRESSED"_j, 1);
-GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::KEY_RELEASED = new GUIKeyboardEvent_Type(u"KEY_RELEASED"_j, 2);
+GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::NONE = new GUIKeyboardEvent_Type(L"NONE", 0);
+GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::KEY_PRESSED = new GUIKeyboardEvent_Type(L"KEY_PRESSED", 1);
+GUIKeyboardEvent_Type* tdme::gui::events::GUIKeyboardEvent_Type::KEY_RELEASED = new GUIKeyboardEvent_Type(L"KEY_RELEASED", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIKeyboardEvent_Type::class_()
@@ -57,14 +57,11 @@ java::lang::Class* GUIKeyboardEvent_Type::class_()
     return c;
 }
 
-GUIKeyboardEvent_Type* GUIKeyboardEvent_Type::valueOf(String* a0)
+GUIKeyboardEvent_Type* GUIKeyboardEvent_Type::valueOf(const wstring& a0)
 {
-	if (KEY_PRESSED->toString()->equals(a0))
-		return KEY_PRESSED;
-	if (KEY_RELEASED->toString()->equals(a0))
-		return KEY_RELEASED;
-	if (NONE->toString()->equals(a0))
-		return NONE;
+	if (KEY_PRESSED->name() == a0) return KEY_PRESSED;
+	if (KEY_RELEASED->name() == a0) return KEY_RELEASED;
+	if (NONE->name() == a0) return NONE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

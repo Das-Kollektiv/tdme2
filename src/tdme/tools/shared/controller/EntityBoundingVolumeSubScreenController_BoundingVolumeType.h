@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -62,14 +66,14 @@ public: /* package */
 	// Generated
 
 public:
-	EntityBoundingVolumeSubScreenController_BoundingVolumeType(::java::lang::String* name, int ordinal);
+	EntityBoundingVolumeSubScreenController_BoundingVolumeType(const wstring& name, int ordinal);
 protected:
 	EntityBoundingVolumeSubScreenController_BoundingVolumeType(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static EntityBoundingVolumeSubScreenController_BoundingVolumeType* valueOf(String* a0);
+	static EntityBoundingVolumeSubScreenController_BoundingVolumeType* valueOf(const wstring& a0);
 	static EntityBoundingVolumeSubScreenController_BoundingVolumeTypeArray* values();
 
 private:

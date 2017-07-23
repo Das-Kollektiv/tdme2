@@ -233,8 +233,8 @@ GUINode_Alignments* GUINode::createAlignments(String* horizontal, String* vertic
 {
 	clinit();
 	auto alignments = new GUINode_Alignments();
-	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal != nullptr && horizontal->length() > 0 ? horizontal->toUpperCase() : u"LEFT"_j);
-	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical != nullptr && vertical->length() > 0 ? vertical->toUpperCase() : u"TOP"_j);
+	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal != nullptr && horizontal->length() > 0 ? horizontal->toUpperCase()->getCPPWString() : L"LEFT");
+	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical != nullptr && vertical->length() > 0 ? vertical->toUpperCase()->getCPPWString() : L"TOP");
 	return alignments;
 }
 
@@ -308,7 +308,7 @@ GUIColor* GUINode::getRequestedColor(String* color, GUIColor* defaultColor) /* t
 GUINode_Flow* GUINode::createFlow(String* flow)
 {
 	clinit();
-	return GUINode_Flow::valueOf(flow != nullptr && flow->length() > 0 ? flow->toUpperCase() : u"INTEGRATED"_j);
+	return GUINode_Flow::valueOf(flow != nullptr && flow->length() > 0 ? flow->toUpperCase()->getCPPWString() : L"INTEGRATED");
 }
 
 GUINode_Border* GUINode::createBorder(String* allBorder, String* left, String* top, String* right, String* bottom, String* allBorderColor, String* leftColor, String* topColor, String* rightColor, String* bottomColor) /* throws(GUIParserException) */

@@ -42,15 +42,15 @@ ShadowMapping_RunState::ShadowMapping_RunState(const ::default_init_tag&)
 	clinit();
 }
 
-ShadowMapping_RunState::ShadowMapping_RunState(::java::lang::String* name, int ordinal)
+ShadowMapping_RunState::ShadowMapping_RunState(const wstring& name, int ordinal)
 	: ShadowMapping_RunState(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::NONE = new ShadowMapping_RunState(u"NONE"_j, 0);
-ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::PRE = new ShadowMapping_RunState(u"PRE"_j, 1);
-ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::RENDER = new ShadowMapping_RunState(u"RENDER"_j, 2);
+ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::NONE = new ShadowMapping_RunState(L"NONE", 0);
+ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::PRE = new ShadowMapping_RunState(L"PRE", 1);
+ShadowMapping_RunState* tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState::RENDER = new ShadowMapping_RunState(L"RENDER", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* ShadowMapping_RunState::class_()
@@ -59,14 +59,11 @@ java::lang::Class* ShadowMapping_RunState::class_()
     return c;
 }
 
-ShadowMapping_RunState* ShadowMapping_RunState::valueOf(String* a0)
+ShadowMapping_RunState* ShadowMapping_RunState::valueOf(const wstring& a0)
 {
-	if (NONE->toString()->equals(a0))
-		return NONE;
-	if (PRE->toString()->equals(a0))
-		return PRE;
-	if (RENDER->toString()->equals(a0))
-		return RENDER;
+	if (NONE->name() == a0) return NONE;
+	if (PRE->name() == a0) return PRE;
+	if (RENDER->name() == a0) return RENDER;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

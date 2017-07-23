@@ -40,14 +40,14 @@ ModelHelper_VertexOrder::ModelHelper_VertexOrder(const ::default_init_tag&)
 	clinit();
 }
 
-ModelHelper_VertexOrder::ModelHelper_VertexOrder(::java::lang::String* name, int ordinal)
+ModelHelper_VertexOrder::ModelHelper_VertexOrder(const wstring& name, int ordinal)
 	: ModelHelper_VertexOrder(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-ModelHelper_VertexOrder* tdme::engine::model::ModelHelper_VertexOrder::CLOCKWISE = new ModelHelper_VertexOrder(u"CLOCKWISE"_j, 0);
-ModelHelper_VertexOrder* tdme::engine::model::ModelHelper_VertexOrder::COUNTERCLOCKWISE = new ModelHelper_VertexOrder(u"COUNTERCLOCKWISE"_j, 1);
+ModelHelper_VertexOrder* tdme::engine::model::ModelHelper_VertexOrder::CLOCKWISE = new ModelHelper_VertexOrder(L"CLOCKWISE", 0);
+ModelHelper_VertexOrder* tdme::engine::model::ModelHelper_VertexOrder::COUNTERCLOCKWISE = new ModelHelper_VertexOrder(L"COUNTERCLOCKWISE", 1);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* ModelHelper_VertexOrder::class_()
@@ -56,12 +56,10 @@ java::lang::Class* ModelHelper_VertexOrder::class_()
     return c;
 }
 
-ModelHelper_VertexOrder* ModelHelper_VertexOrder::valueOf(String* a0)
+ModelHelper_VertexOrder* ModelHelper_VertexOrder::valueOf(const wstring& a0)
 {
-	if (CLOCKWISE->toString()->equals(a0))
-		return CLOCKWISE;
-	if (COUNTERCLOCKWISE->toString()->equals(a0))
-		return COUNTERCLOCKWISE;
+	if (CLOCKWISE->name() == a0) return CLOCKWISE;
+	if (COUNTERCLOCKWISE->name() == a0) return COUNTERCLOCKWISE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

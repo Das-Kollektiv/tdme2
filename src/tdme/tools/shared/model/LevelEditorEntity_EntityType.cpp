@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntity.java
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using java::io::Serializable;
@@ -42,16 +46,16 @@ LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(const ::default_init_
 	clinit();
 }
 
-LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(::java::lang::String* name, int ordinal)
+LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(const wstring& name, int ordinal)
 	: LevelEditorEntity_EntityType(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::TRIGGER = new LevelEditorEntity_EntityType(u"TRIGGER"_j, 0);
-LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::MODEL = new LevelEditorEntity_EntityType(u"MODEL"_j, 1);
-LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::EMPTY = new LevelEditorEntity_EntityType(u"EMPTY"_j, 2);
-LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::PARTICLESYSTEM = new LevelEditorEntity_EntityType(u"PARTICLESYSTEM"_j, 3);
+LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::TRIGGER = new LevelEditorEntity_EntityType(L"TRIGGER", 0);
+LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::MODEL = new LevelEditorEntity_EntityType(L"MODEL", 1);
+LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::EMPTY = new LevelEditorEntity_EntityType(L"EMPTY", 2);
+LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::PARTICLESYSTEM = new LevelEditorEntity_EntityType(L"PARTICLESYSTEM", 3);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* LevelEditorEntity_EntityType::class_()
@@ -60,16 +64,12 @@ java::lang::Class* LevelEditorEntity_EntityType::class_()
     return c;
 }
 
-LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(String* a0)
+LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(const wstring& a0)
 {
-	if (EMPTY->toString()->equals(a0))
-		return EMPTY;
-	if (MODEL->toString()->equals(a0))
-		return MODEL;
-	if (PARTICLESYSTEM->toString()->equals(a0))
-		return PARTICLESYSTEM;
-	if (TRIGGER->toString()->equals(a0))
-		return TRIGGER;
+	if (EMPTY->name() == a0) return EMPTY;
+	if (MODEL->name() == a0) return MODEL;
+	if (PARTICLESYSTEM->name() == a0) return PARTICLESYSTEM;
+	if (TRIGGER->name() == a0) return TRIGGER;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

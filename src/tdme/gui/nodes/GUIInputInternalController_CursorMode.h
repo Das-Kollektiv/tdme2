@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <java/lang/Enum.h>
+
+using std::wstring;
 
 using java::lang::Enum;
 using java::io::Serializable;
@@ -56,14 +60,14 @@ public: /* package */
 	// Generated
 
 public:
-	GUIInputInternalController_CursorMode(::java::lang::String* name, int ordinal);
+	GUIInputInternalController_CursorMode(const wstring& name, int ordinal);
 protected:
 	GUIInputInternalController_CursorMode(const ::default_init_tag&);
 
 
 public:
 	static ::java::lang::Class *class_();
-	static GUIInputInternalController_CursorMode* valueOf(String* a0);
+	static GUIInputInternalController_CursorMode* valueOf(const wstring& a0);
 	static GUIInputInternalController_CursorModeArray* values();
 
 private:

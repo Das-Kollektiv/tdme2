@@ -174,8 +174,8 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 		);
 	}
 	auto name = is->readString();
-	auto upVector = Model_UpVector::valueOf(is->readString());
-	auto rotationOrder = RotationOrder::valueOf(is->readString());
+	auto upVector = Model_UpVector::valueOf(is->readWString());
+	auto rotationOrder = RotationOrder::valueOf(is->readWString());
 	auto boundingBox = new BoundingBox(new Vector3(is->readFloatArray()), new Vector3(is->readFloatArray()));
 	auto model = new Model(
 		::java::lang::StringBuilder().

@@ -1,12 +1,16 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
 #include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using java::io::Serializable;
@@ -40,15 +44,15 @@ GUIVerticalScrollbarInternalController_State::GUIVerticalScrollbarInternalContro
 	clinit();
 }
 
-GUIVerticalScrollbarInternalController_State::GUIVerticalScrollbarInternalController_State(::java::lang::String* name, int ordinal)
+GUIVerticalScrollbarInternalController_State::GUIVerticalScrollbarInternalController_State(const wstring& name, int ordinal)
 	: GUIVerticalScrollbarInternalController_State(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(name, ordinal);
 }
 
-GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::NONE = new GUIVerticalScrollbarInternalController_State(u"NONE"_j, 0);
-GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::MOUSEOVER = new GUIVerticalScrollbarInternalController_State(u"MOUSEOVER"_j, 1);
-GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::DRAGGING = new GUIVerticalScrollbarInternalController_State(u"DRAGGING"_j, 2);
+GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::NONE = new GUIVerticalScrollbarInternalController_State(L"NONE", 0);
+GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::MOUSEOVER = new GUIVerticalScrollbarInternalController_State(L"MOUSEOVER", 1);
+GUIVerticalScrollbarInternalController_State* tdme::gui::nodes::GUIVerticalScrollbarInternalController_State::DRAGGING = new GUIVerticalScrollbarInternalController_State(L"DRAGGING", 2);
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* GUIVerticalScrollbarInternalController_State::class_()
@@ -57,14 +61,11 @@ java::lang::Class* GUIVerticalScrollbarInternalController_State::class_()
     return c;
 }
 
-GUIVerticalScrollbarInternalController_State* GUIVerticalScrollbarInternalController_State::valueOf(String* a0)
+GUIVerticalScrollbarInternalController_State* GUIVerticalScrollbarInternalController_State::valueOf(const wstring& a0)
 {
-	if (DRAGGING->toString()->equals(a0))
-		return DRAGGING;
-	if (MOUSEOVER->toString()->equals(a0))
-		return MOUSEOVER;
-	if (NONE->toString()->equals(a0))
-		return NONE;
+	if (DRAGGING->name() == a0) return DRAGGING;
+	if (MOUSEOVER->name() == a0) return MOUSEOVER;
+	if (NONE->name() == a0) return NONE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }
