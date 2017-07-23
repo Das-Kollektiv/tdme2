@@ -24,7 +24,6 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_ExceptionBase.h>
-#include <tdme/utils/_HashMap.h>
 
 using std::map;
 using std::remove;

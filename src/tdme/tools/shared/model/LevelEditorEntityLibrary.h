@@ -21,8 +21,6 @@ using java::lang::String;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
