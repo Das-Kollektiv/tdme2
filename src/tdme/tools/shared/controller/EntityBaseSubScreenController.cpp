@@ -28,9 +28,6 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_HashMap.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/MutableString.h>
 
 using std::map;
@@ -62,9 +59,6 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap_ValuesIterator;
 
 template<typename T, typename U>
 static T java_cast(U* u)

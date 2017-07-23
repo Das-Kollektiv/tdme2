@@ -33,8 +33,6 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
-using tdme::utils::_HashMap;
-
 
 struct default_init_tag;
 
