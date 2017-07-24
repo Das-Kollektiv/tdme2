@@ -206,8 +206,8 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 
 	String* tmpString = nullptr;
 	auto model = new Model(
-		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
-		fileName,
+		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName)->getCPPWString(),
+		fileName->getCPPWString(),
 		upVector,
 		rotationOrder,
 		nullptr
@@ -367,15 +367,16 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				}
 				// FIXME: use canonical path
 				auto model = new Model(
-					modelPathName,
+					modelPathName->getCPPWString(),
 					::java::lang::StringBuilder().
 					 append(fileName)->
 					 append(u'-')->
 					 append(modelName)->
-					 toString(),
-					 upVector,
-					 rotationOrder,
-					 nullptr
+					 toString()->
+					 getCPPWString(),
+					upVector,
+					rotationOrder,
+					nullptr
 				);
 				setupModelImportRotationMatrix(xmlRoot, model);
 				auto modelImportRotationMatrix = new Matrix4x4(model->getImportTransformationsMatrix());

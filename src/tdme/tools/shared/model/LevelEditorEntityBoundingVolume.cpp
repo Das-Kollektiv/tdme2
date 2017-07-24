@@ -110,10 +110,18 @@ void LevelEditorEntityBoundingVolume::setupNone()
 void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 {
 	boundingVolume = new Sphere(center, radius);
-	model = PrimitiveModel::createModel(boundingVolume, ::java::lang::StringBuilder().append(static_cast< Object* >((levelEditorEntity->getModel() != nullptr ? static_cast< Serializable* >(levelEditorEntity->getModel()->getId()) : Integer::valueOf(levelEditorEntity->getId()))))->append(u"_model_bv."_j)
-		->append(id)
-		->append(u"."_j)
-		->append((staticIdx++))->toString());
+	model = PrimitiveModel::createModel(
+		boundingVolume,
+		::java::lang::StringBuilder().
+		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
+		 append(L",")->
+		 append(Integer::valueOf(levelEditorEntity->getId()))->
+		 append(u"_model_bv."_j)->
+		 append(id)->
+		 append(u"."_j)->
+		 append((staticIdx++))->
+		 toString()
+	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
 }
@@ -121,10 +129,18 @@ void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float radius)
 {
 	boundingVolume = new Capsule(a, b, radius);
-	model = PrimitiveModel::createModel(boundingVolume, ::java::lang::StringBuilder().append(static_cast< Object* >((levelEditorEntity->getModel() != nullptr ? static_cast< Serializable* >(levelEditorEntity->getModel()->getId()) : Integer::valueOf(levelEditorEntity->getId()))))->append(u"_model_bv."_j)
-		->append(id)
-		->append(u"."_j)
-		->append((staticIdx++))->toString());
+	model = PrimitiveModel::createModel(
+		boundingVolume,
+		::java::lang::StringBuilder().
+		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
+		 append(L",")->
+		 append(Integer::valueOf(levelEditorEntity->getId()))->
+		 append(u"_model_bv."_j)->
+		 append(id)->
+		 append(u"."_j)->
+		 append((staticIdx++))->
+		 toString()
+	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
 }
@@ -132,10 +148,18 @@ void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float
 void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
 {
 	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
-	model = PrimitiveModel::createModel(boundingVolume, ::java::lang::StringBuilder().append(static_cast< Object* >((levelEditorEntity->getModel() != nullptr ? static_cast< Serializable* >(levelEditorEntity->getModel()->getId()) : Integer::valueOf(levelEditorEntity->getId()))))->append(u"_model_bv."_j)
-		->append(id)
-		->append(u"."_j)
-		->append((staticIdx++))->toString());
+	model = PrimitiveModel::createModel(
+		boundingVolume,
+		::java::lang::StringBuilder().
+		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
+		 append(L",")->
+		 append(Integer::valueOf(levelEditorEntity->getId()))->
+		 append(u"_model_bv."_j)->
+		 append(id)->
+		 append(u"."_j)->
+		 append((staticIdx++))->
+		 toString()
+	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
 }
@@ -143,10 +167,18 @@ void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, 
 void LevelEditorEntityBoundingVolume::setupAabb(Vector3* min, Vector3* max)
 {
 	boundingVolume = new BoundingBox(min, max);
-	model = PrimitiveModel::createModel(boundingVolume, ::java::lang::StringBuilder().append(static_cast< Object* >((levelEditorEntity->getModel() != nullptr ? static_cast< Serializable* >(levelEditorEntity->getModel()->getId()) : Integer::valueOf(levelEditorEntity->getId()))))->append(u"_model_bv."_j)
-		->append(id)
-		->append(u"."_j)
-		->append((staticIdx++))->toString());
+	model = PrimitiveModel::createModel(
+		boundingVolume,
+		::java::lang::StringBuilder().
+		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
+		 append(L",")->
+		 append(Integer::valueOf(levelEditorEntity->getId()))->
+		 append(u"_model_bv."_j)->
+		 append(id)->
+		 append(u"."_j)->
+		 append((staticIdx++))->
+		 toString()
+	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
 }
@@ -169,10 +201,6 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(String* pathName, String* 
 			);
 		}
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
-		convexMeshModel->setId(::java::lang::StringBuilder().append(convexMeshModel->getId())->append(u"_model_bv."_j)
-			->append(id)
-			->append(u"."_j)
-			->append((staticIdx++))->toString());
 		convexMeshModel->getImportTransformationsMatrix()->scale(1.01f);
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
@@ -196,7 +224,7 @@ String* LevelEditorEntityBoundingVolume::toString()
 		->append(u", modelMeshFile="_j)
 		->append(modelMeshFile)
 		->append(u", model="_j)
-		->append((model != nullptr ? model->getId() : static_cast< String* >(nullptr)))
+		->append((model != nullptr ? model->getId() : L"none"))
 		->append(u", boundingVolume="_j)
 		->append(static_cast< Object* >(boundingVolume))
 		->append(u"]"_j)->toString();

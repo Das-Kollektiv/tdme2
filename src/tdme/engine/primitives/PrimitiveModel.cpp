@@ -119,7 +119,7 @@ constexpr int32_t PrimitiveModel::CAPSULE_SEGMENTS_Y;
 Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* id)
 {
 	clinit();
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -171,7 +171,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, String* id)
 {
 	clinit();
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -224,7 +224,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	clinit();
 	auto radius = sphere->radius;
 	auto center = sphere->center;
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -307,7 +307,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion->rotate(angle, rotationAxis);
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);

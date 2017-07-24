@@ -332,7 +332,7 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 				toString(),
 			::java::lang::StringBuilder().
 				append(
-			  		model->getId()->
+			  		(new String(model->getId()))->
 						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j))
@@ -362,7 +362,7 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 				append(fileName)->toString(),
 			::java::lang::StringBuilder().
 			 	 append(
-					model->getId()->
+					(new String(model->getId()))->
 						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j))

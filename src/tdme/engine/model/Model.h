@@ -14,6 +14,7 @@
 #include <java/lang/Object.h>
 
 using std::map;
+using std::wstring;
 
 using std::wstring;
 using java::lang::Object;
@@ -43,8 +44,8 @@ public:
 	static constexpr float FPS_DEFAULT { 30.0f };
 
 private:
-	String* id {  };
-	String* name {  };
+	wstring id {  };
+	wstring name {  };
 	Model_UpVector* upVector {  };
 	RotationOrder* rotationOrder {  };
 	map<wstring, Material*> materials {  };
@@ -65,25 +66,19 @@ protected:
 	 * @param rotation order
 	 * @param bounding box
 	 */
-	void ctor(String* id, String* name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	void ctor(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
 
 public:
 
 	/** 
 	 * @return model id
 	 */
-	String* getId();
-
-	/** 
-	 * Set up model id, can only be modified before usage as object 3d, ...
-	 * @param id
-	 */
-	void setId(String* id);
+	const wstring& getId();
 
 	/** 
 	 * @return model name
 	 */
-	String* getName();
+	const wstring& getName();
 
 	/** 
 	 * @return up vector
@@ -112,7 +107,7 @@ public:
 	 * @param id
 	 * @return
 	 */
-	Group* getGroupById(String* id);
+	Group* getGroupById(const wstring& id);
 
 	/** 
 	 * Returns object's sub groups
@@ -125,7 +120,7 @@ public:
 	 * @param id
 	 * @return
 	 */
-	Group* getSubGroupById(String* id);
+	Group* getSubGroupById(const wstring& id);
 
 	/** 
 	 * @return has skinning
@@ -205,7 +200,7 @@ public:
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	Matrix4x4* computeTransformationsMatrix(int32_t frame, String* groupId);
+	Matrix4x4* computeTransformationsMatrix(int32_t frame, const wstring& groupId);
 
 public: /* protected */
 
@@ -217,7 +212,7 @@ public: /* protected */
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	Matrix4x4* computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId);
+	Matrix4x4* computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId);
 
 public:
 
@@ -227,7 +222,7 @@ public:
 	String* toString() override;
 
 	// Generated
-	Model(String* id, String* name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
 protected:
 	Model(const ::default_init_tag&);
 

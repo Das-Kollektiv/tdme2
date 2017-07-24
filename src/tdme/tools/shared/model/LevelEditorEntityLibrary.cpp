@@ -109,7 +109,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 				 toString()
 			, ::java::lang::StringBuilder().
 				append(
-					model->getId()->
+					(new String(model->getId()))->
 						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->
@@ -134,7 +134,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 				 toString(),
 			::java::lang::StringBuilder().
 			 	 append(
-			 		model->getId()->
+			 		(new String(model->getId()))->
 			 			replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
 						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->
@@ -169,7 +169,22 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, String* name
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(new Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), new Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto model = PrimitiveModel::createModel(boundingBox, ::java::lang::StringBuilder().append(cacheId)->append(u"_bv"_j)->toString());
-	levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::TRIGGER, name, description, nullptr, cacheId, ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3());
+	levelEditorEntity = new LevelEditorEntity(
+		id == ID_ALLOCATE ? allocateEntityId() : id,
+		LevelEditorEntity_EntityType::TRIGGER,
+		name,
+		description,
+		nullptr,
+		cacheId,
+		::java::lang::StringBuilder().append(
+			(new String(model->getId()))->
+				replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
+				replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
+				replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j))
+		)->append(u".png"_j)->toString(),
+		model,
+		new Vector3()
+	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
 	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
 	id = levelEditorEntity->getId();
@@ -182,14 +197,40 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, String* name, 
 	auto cacheId = u"leveleditor.empty"_j;
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto model = DAEReader::read(u"resources/tools/leveleditor/models"_j, u"arrow.dae"_j);
-	levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::EMPTY, name, description, nullptr, cacheId, ::java::lang::StringBuilder().append(model->getId()->replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->append(u".png"_j)->toString(), model, new Vector3());
+	levelEditorEntity = new LevelEditorEntity(
+		id == ID_ALLOCATE ? allocateEntityId() : id,
+		LevelEditorEntity_EntityType::EMPTY,
+		name,
+		description,
+		nullptr,
+		cacheId,
+		::java::lang::StringBuilder().
+		 append(
+			(new String(model->getId()))->
+				replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
+				replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
+				replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j)))->
+				append(u".png"_j)->toString(),
+		model,
+		new Vector3()
+	);
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }
 
 LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, String* name, String* description) /* throws(Exception) */
 {
-	auto levelEditorEntity = new LevelEditorEntity(id == ID_ALLOCATE ? allocateEntityId() : id, LevelEditorEntity_EntityType::PARTICLESYSTEM, name, description, nullptr, nullptr, nullptr, nullptr, new Vector3());
+	auto levelEditorEntity = new LevelEditorEntity(
+		id == ID_ALLOCATE ? allocateEntityId() : id,
+		LevelEditorEntity_EntityType::PARTICLESYSTEM,
+		name,
+		description,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		new Vector3()
+	);
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }

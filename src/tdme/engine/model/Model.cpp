@@ -62,7 +62,7 @@ Model::Model(const ::default_init_tag&)
 	clinit();
 }
 
-Model::Model(String* id, String* name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox) 
+Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
 	: Model(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(id,name,upVector,rotationOrder,boundingBox);
@@ -72,7 +72,7 @@ wstring Model::ANIMATIONSETUP_DEFAULT;
 
 constexpr float Model::FPS_DEFAULT;
 
-void Model::ctor(String* id, String* name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
+void Model::ctor(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
 {
 	super::ctor();
 	this->id = id;
@@ -85,17 +85,12 @@ void Model::ctor(String* id, String* name, Model_UpVector* upVector, RotationOrd
 	this->boundingBox = boundingBox;
 }
 
-String* Model::getId()
+const wstring& Model::getId()
 {
 	return id;
 }
 
-void Model::setId(String* id)
-{
-	this->id = id;
-}
-
-String* Model::getName()
+const wstring& Model::getName()
 {
 	return name;
 }
@@ -120,9 +115,9 @@ map<wstring, Group*>* Model::getGroups()
 	return &groups;
 }
 
-Group* Model::getGroupById(String* id)
+Group* Model::getGroupById(const wstring& id)
 {
-	auto groupIt = groups.find(id->getCPPWString());
+	auto groupIt = groups.find(id);
 	if (groupIt != groups.end()) {
 		return groupIt->second;
 	}
@@ -135,9 +130,9 @@ map<wstring, Group*>* Model::getSubGroups()
 	return &subGroups;
 }
 
-Group* Model::getSubGroupById(String* id)
+Group* Model::getSubGroupById(const wstring& id)
 {
-	auto groupIt = subGroups.find(id->getCPPWString());
+	auto groupIt = subGroups.find(id);
 	if (groupIt != subGroups.end()) {
 		return groupIt->second;
 	}
@@ -210,12 +205,12 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-Matrix4x4* Model::computeTransformationsMatrix(int32_t frame, String* groupId)
+Matrix4x4* Model::computeTransformationsMatrix(int32_t frame, const wstring& groupId)
 {
 	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId);
 }
 
-Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, String* groupId)
+Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -233,7 +228,7 @@ Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Mat
 		if (parentTransformationsMatrix != nullptr) {
 			transformationsMatrix->multiply(parentTransformationsMatrix);
 		}
-		if (group->getId() == groupId->getCPPWString())
+		if (group->getId() == groupId)
 			return transformationsMatrix;
 
 		auto subGroups = group->getSubGroups();

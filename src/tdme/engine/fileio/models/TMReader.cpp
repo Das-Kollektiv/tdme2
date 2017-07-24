@@ -182,8 +182,9 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 		 append(pathName)->
 		 append(L'/')->
 		 append(fileName)->
-		 toString(),
-		fileName,
+		 toString()->
+		 getCPPWString(),
+		fileName->getCPPWString(),
 		upVector,
 		rotationOrder,
 		boundingBox

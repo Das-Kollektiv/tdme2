@@ -92,7 +92,7 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 	auto efcmData = effectColorMul->getArray();
 	auto efcaData = effectColorAdd->getArray();
 	wstring key =
-		model->getId()->getCPPWString() +
+		model->getId() +
 		L"," +
 		object3DGroup->id->getCPPWString() +
 		L"," +

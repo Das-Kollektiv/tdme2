@@ -165,7 +165,7 @@ void EngineTest::ctor()
 
 Model* EngineTest::createWallModel()
 {
-	auto wall = new Model(u"wall"_j, u"wall"_j, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto wall = new Model(L"wall", L"wall", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto wallMaterial = new Material(L"wall");
 	(*wall->getMaterials())[L"wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, L"wall", L"wall");

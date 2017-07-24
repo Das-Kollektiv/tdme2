@@ -128,8 +128,9 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 		 	 append(pathName)->
 			 append(u"/"_j)->
 			 append(fileName)->
-			 toString(),
-		fileName,
+			 toString()->
+			 getCPPWString(),
+		fileName->getCPPWString(),
 		Model_UpVector::Y_UP,
 		RotationOrder::XYZ,
 		nullptr

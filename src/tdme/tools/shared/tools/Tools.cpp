@@ -269,7 +269,7 @@ float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	clinit();
-	auto ground = new Model(u"ground"_j, u"ground"_j, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto ground = new Model(L"ground", L"ground", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material(L"ground");
 	groundMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*ground->getMaterials())[L"ground"] = groundMaterial;

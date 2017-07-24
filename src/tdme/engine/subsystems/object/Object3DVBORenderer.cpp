@@ -213,7 +213,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 		auto object = java_cast< Object3D* >(objects.at(objectIdx));
 		auto modelId = object->getModel()->getId();
-		auto& visibleObjectsByModel = visibleObjectsByModels[modelId->getCPPWString()];
+		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
 		visibleObjectsByModel.push_back(object);
 	}
 	for (auto& objectsByModelIt: visibleObjectsByModels) {
