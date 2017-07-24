@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
@@ -11,6 +13,7 @@ using java::lang::Object;
 using java::lang::String;
 using tdme::engine::subsystems::manager::TextureManager;
 
+using std::wstring;
 
 struct default_init_tag;
 
@@ -26,7 +29,7 @@ public:
 	typedef Object super;
 
 public: /* package */
-	String* id {  };
+	wstring id {  };
 	int32_t glId {  };
 	int32_t referenceCounter {  };
 protected:
@@ -36,14 +39,14 @@ protected:
 	 * @param id
 	 * @param gl id
 	 */
-	void ctor(String* id, int32_t glId);
+	void ctor(const wstring& id, int32_t glId);
 
 private:
 
 	/** 
 	 * @return texture id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return texture open gl id
@@ -67,7 +70,7 @@ private:
 	void incrementReferenceCounter();
 
 	// Generated
-	TextureManager_TextureManaged(TextureManager *TextureManager_this, String* id, int32_t glId);
+	TextureManager_TextureManaged(TextureManager *TextureManager_this, const wstring& id, int32_t glId);
 protected:
 	TextureManager_TextureManaged(TextureManager *TextureManager_this, const ::default_init_tag&);
 

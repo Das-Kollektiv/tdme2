@@ -50,7 +50,7 @@ void TextureManager::ctor(GLRenderer* renderer)
 
 int32_t TextureManager::addTexture(Texture* texture)
 {
-	auto textureManagedIt = textures.find(texture->getId()->getCPPWString());
+	auto textureManagedIt = textures.find(texture->getId());
 	if (textureManagedIt != textures.end()) {
 		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
@@ -62,13 +62,13 @@ int32_t TextureManager::addTexture(Texture* texture)
 	renderer->bindTexture(renderer->ID_NONE);
 	auto textureManaged = new TextureManager_TextureManaged(this, texture->getId(), textureId);
 	textureManaged->incrementReferenceCounter();
-	textures[texture->getId()->getCPPWString()] = textureManaged;
+	textures[texture->getId()] = textureManaged;
 	return textureId;
 }
 
-void TextureManager::removeTexture(String* textureId)
+void TextureManager::removeTexture(const wstring& textureId)
 {
-	auto textureManagedIt = textures.find(textureId->getCPPWString());
+	auto textureManagedIt = textures.find(textureId);
 	if (textureManagedIt != textures.end()) {
 		auto textureManaged = textureManagedIt->second;
 		if (textureManaged->decrementReferenceCounter()) {

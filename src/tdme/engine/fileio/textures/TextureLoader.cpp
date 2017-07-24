@@ -191,7 +191,7 @@ Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSyst
 
 	// thats it
 	return new Texture(
-		canonicalFileName,
+		canonicalFileName->getCPPWString(),
 		bytesPerPixel * 8,
 		width,
 		height,

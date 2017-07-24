@@ -21,7 +21,7 @@ java::lang::Class* Texture::class_()
 }
 
 Texture::Texture(
-	String* id,
+	const wstring& id,
 	int32_t depth,
 	int32_t width, int32_t height,
 	int32_t textureWidth, int32_t textureHeight,
@@ -37,7 +37,7 @@ Texture::Texture(
 	//
 }
 
-String* Texture::getId() {
+const wstring& Texture::getId() {
 	return id;
 }
 
@@ -69,7 +69,7 @@ String* Texture::toString() {
 	return new String(
 		wstring(
 			L"Material["
-			L"id=" + id->getCPPWString() + L", " +
+			L"id=" + id + L", " +
 			L"depth=" + to_wstring(depth) + L", " +
 			L"width=" + to_wstring(width) + L", " +
 			L"height=" + to_wstring(height) + L", " +

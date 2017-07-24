@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -33,7 +37,7 @@ struct tdme::engine::fileio::textures::Texture
 	 * @param texture data
 	 */
 	Texture(
-		String* id,
+		const wstring& id,
 		int32_t depth,
 		int32_t width,
 		int32_t height,
@@ -45,7 +49,7 @@ struct tdme::engine::fileio::textures::Texture
 	/** 
 	 * @return id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return depth in bits per pixel
@@ -86,7 +90,7 @@ struct tdme::engine::fileio::textures::Texture
 	static ::java::lang::Class *class_();
 
 private:
-	String* id;
+	wstring id;
 	int32_t depth;
 	int32_t width;
 	int32_t height;

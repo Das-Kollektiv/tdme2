@@ -61,7 +61,7 @@ public:
 	 * Removes a texture from manager / open gl stack
 	 * @param texture id
 	 */
-	void removeTexture(String* textureId);
+	void removeTexture(const wstring& textureId);
 
 	// Generated
 	TextureManager(GLRenderer* renderer);

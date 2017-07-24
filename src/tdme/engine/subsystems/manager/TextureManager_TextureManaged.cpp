@@ -15,13 +15,13 @@ TextureManager_TextureManaged::TextureManager_TextureManaged(TextureManager *Tex
 	clinit();
 }
 
-TextureManager_TextureManaged::TextureManager_TextureManaged(TextureManager *TextureManager_this, String* id, int32_t glId) 
+TextureManager_TextureManaged::TextureManager_TextureManaged(TextureManager *TextureManager_this, const wstring& id, int32_t glId)
 	: TextureManager_TextureManaged(TextureManager_this, *static_cast< ::default_init_tag* >(0))
 {
 	ctor(id,glId);
 }
 
-void TextureManager_TextureManaged::ctor(String* id, int32_t glId)
+void TextureManager_TextureManaged::ctor(const wstring& id, int32_t glId)
 {
 	super::ctor();
 	this->id = id;
@@ -29,7 +29,7 @@ void TextureManager_TextureManaged::ctor(String* id, int32_t glId)
 	this->referenceCounter = 0;
 }
 
-String* TextureManager_TextureManaged::getId()
+const wstring& TextureManager_TextureManaged::getId()
 {
 	return id;
 }
