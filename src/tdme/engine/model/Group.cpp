@@ -277,9 +277,9 @@ map<wstring, Group*>* Group::getSubGroups()
 	return &subGroups;
 }
 
-Group* Group::getSubGroupById(String* groupId)
+Group* Group::getSubGroupById(const wstring& groupId)
 {
-	auto groupIt = subGroups.find(groupId->getCPPWString());
+	auto groupIt = subGroups.find(groupId);
 	if (groupIt != subGroups.end()) {
 		return groupIt->second;
 	}

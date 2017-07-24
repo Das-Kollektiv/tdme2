@@ -266,7 +266,7 @@ public:
 	 * @param groupId
 	 * @return sub group or null
 	 */
-	Group* getSubGroupById(String* groupId);
+	Group* getSubGroupById(const wstring& groupId);
 
 	/** 
 	 * Post set up faces
