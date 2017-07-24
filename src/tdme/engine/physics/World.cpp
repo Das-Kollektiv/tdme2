@@ -254,8 +254,21 @@ void World::update(float deltaTime)
 	}
 
 	for (auto it: rigidBodyCollisionsLastFrame) {
-		auto rigidBody1 = rigidBodies.at(it.second.rigidBody1Idx);
-		auto rigidBody2 = rigidBodies.at(it.second.rigidBody2Idx);
+		RigidBodyCollisionStruct* rigidBodyCollisionStruct = &it.second;
+		{
+			wstring rigidBodyKey = to_wstring(rigidBodyCollisionStruct->rigidBody1Idx) + L"," + to_wstring(rigidBodyCollisionStruct->rigidBody2Idx);
+			auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
+			if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
+		}
+
+		{
+			wstring rigidBodyKey = to_wstring(rigidBodyCollisionStruct->rigidBody2Idx) + L"," + to_wstring(rigidBodyCollisionStruct->rigidBody1Idx);
+			auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
+			if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
+		}
+
+		auto rigidBody1 = rigidBodies.at(rigidBodyCollisionStruct->rigidBody1Idx);
+		auto rigidBody2 = rigidBodies.at(rigidBodyCollisionStruct->rigidBody2Idx);
 		rigidBody1->fireOnCollisionEnd(rigidBody2);
 	}
 
