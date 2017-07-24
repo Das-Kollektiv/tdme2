@@ -151,9 +151,9 @@ void Skinning::setupJointsByName()
 	}
 }
 
-Joint* Skinning::getJointByName(String* name)
+Joint* Skinning::getJointByName(const wstring& name)
 {
-	auto jointIt = jointsByName.find(name->getCPPWString());
+	auto jointIt = jointsByName.find(name);
 	if (jointIt != jointsByName.end()) {
 		return jointIt->second;
 	}

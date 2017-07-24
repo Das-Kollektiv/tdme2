@@ -16,7 +16,6 @@ using std::wstring;
 using java::lang::Enum;
 using java::io::Serializable;
 using java::lang::Comparable;
-using java::lang::String;
 using tdme::math::Vector3;
 using java::lang::Object;
 using tdme::engine::model::RotationOrder;

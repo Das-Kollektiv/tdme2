@@ -328,7 +328,7 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 		}
 		if (hasSkinning == true) {
 			for (auto i = 0; i < skinningGroups->length; i++) {
-				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(new String(group->getId()));
+				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(group->getId());
 				if (skinningJoint == nullptr) {
 					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
 					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {

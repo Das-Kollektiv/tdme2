@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/String.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -12,7 +11,6 @@ using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using java::io::Serializable;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::String;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {

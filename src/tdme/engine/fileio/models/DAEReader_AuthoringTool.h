@@ -14,7 +14,6 @@ using std::wstring;
 using java::lang::Enum;
 using java::io::Serializable;
 using java::lang::Comparable;
-using java::lang::String;
 using tdme::engine::fileio::models::DAEReader;
 using java::lang::Object;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;

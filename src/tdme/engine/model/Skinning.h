@@ -145,7 +145,7 @@ public:
 	 * @param name
 	 * @return joint
 	 */
-	Joint* getJointByName(String* name);
+	Joint* getJointByName(const wstring& name);
 
 	/** 
 	 * @return string representation

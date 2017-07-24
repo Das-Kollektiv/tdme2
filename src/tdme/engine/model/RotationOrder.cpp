@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Enum.h>
-#include <java/lang/String.h>
 #include <tdme/math/Vector3.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
@@ -13,7 +12,6 @@ using tdme::engine::model::RotationOrder;
 using java::io::Serializable;
 using java::lang::Comparable;
 using java::lang::Enum;
-using java::lang::String;
 using tdme::math::Vector3;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
