@@ -111,7 +111,7 @@ void Material::setDiffuseTexture(const wstring& pathName, const wstring& fileNam
 {
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
-	diffuseTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
+	diffuseTexture = TextureLoader::loadTexture(pathName, fileName);
 	checkDiffuseTextureTransparency();
 }
 
@@ -159,7 +159,7 @@ void Material::setSpecularTexture(const wstring& pathName, const wstring& fileNa
 {
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
-	specularTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
+	specularTexture = TextureLoader::loadTexture(pathName, fileName);
 }
 
 bool Material::hasSpecularTexture()
@@ -186,7 +186,7 @@ void Material::setNormalTexture(const wstring& pathName, const wstring& fileName
 {
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
-	normalTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
+	normalTexture = TextureLoader::loadTexture(pathName, fileName);
 }
 
 bool Material::hasNormalTexture()
@@ -213,7 +213,7 @@ void Material::setDisplacementTexture(const wstring& pathName, const wstring& fi
 {
 	displacementTexturePathName = pathName;
 	displacementTextureFileName = fileName;
-	displacementTexture = TextureLoader::loadTexture(new String(pathName), new String(fileName));
+	displacementTexture = TextureLoader::loadTexture(pathName, fileName);
 }
 
 bool Material::hasDisplacementTexture()

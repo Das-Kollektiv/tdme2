@@ -240,7 +240,7 @@ Texture* GUI::getImage(String* fileName)
 	auto image = java_cast< Texture* >(imageCache->get(canonicalFile));
 	if (image == nullptr) {
 		try {
-			image = TextureLoader::loadTexture(path, file);
+			image = TextureLoader::loadTexture(path->getCPPWString(), file->getCPPWString());
 		} catch (_Exception& exception) {
 			_Console::print(string("GUI::getImage(): An error occurred: "));
 			_Console::println(string(exception.what()));

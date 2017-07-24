@@ -41,11 +41,11 @@ TextureLoader::TextureLoader()
 	ctor();
 }
 
-Texture* TextureLoader::loadTexture(String* path, String* fileName) throw (_FileSystemException)
+Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException)
 {
 	clinit();
 	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
-	if (fileName->toLowerCase()->endsWith(new String(L".png")) == true) {
+	if ((new String(fileName))->toLowerCase()->endsWith(new String(L".png")) == true) {
 		Texture* texture = TextureLoader::loadPNG(path, fileName);
 		return texture;
 	}
@@ -60,15 +60,15 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureLoader::loadPNG(String* path, String* fileName) throw (_FileSystemException) {
+Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 	clinit();
 
 	// canonical file name for id
-	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
+	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(new String(path), new String(fileName));
 
 	// create PNG input stream
-	PNGInputStream* pngInputStream = new PNGInputStream(_FileSystem::getInstance()->getContent(path, fileName));
+	PNGInputStream* pngInputStream = new PNGInputStream(_FileSystem::getInstance()->getContent(new String(path), new String(fileName)));
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];

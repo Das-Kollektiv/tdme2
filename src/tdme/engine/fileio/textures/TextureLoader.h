@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/os/_FileSystemException.h>
 
 #include <ext/libpng/png.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -89,7 +93,7 @@ public:
 	 * @throws _FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(String* path, String* fileName) throw (_FileSystemException);
+	static Texture* loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException);
 
 	// Generated
 	TextureLoader();
@@ -115,7 +119,7 @@ private:
 	 * @param path name
 	 * @param file name
 	 */
-	static Texture* loadPNG(String* path, String* fileName) throw (_FileSystemException);
+	static Texture* loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException);
 
 	//
 	virtual ::java::lang::Class* getClass0();

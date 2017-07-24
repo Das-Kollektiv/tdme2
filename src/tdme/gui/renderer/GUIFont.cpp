@@ -77,7 +77,7 @@ GUIFont* GUIFont::parse(String* pathName, String* fileName) throw (_FileSystemEx
 	auto info = in->get(lineIdx++);
 	auto common = in->get(lineIdx++);
 	auto page = in->get(lineIdx++);
-	font->texture = TextureLoader::loadTexture(pathName, page->substring(page->indexOf(u"file="_j) + u"file=\""_j->length(), page->lastIndexOf(u"\""_j)));
+	font->texture = TextureLoader::loadTexture(pathName->getCPPWString(), page->substring(page->indexOf(u"file="_j) + u"file=\""_j->length(), page->lastIndexOf(u"\""_j))->getCPPWString());
 	auto done = false;
 	while (lineIdx < in->length) {
 		String* line = in->get(lineIdx++);

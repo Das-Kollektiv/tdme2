@@ -92,7 +92,7 @@ void ParticlesShader::initialize()
 	if (uniformEffectColorAdd == -1)
 		return;
 
-	pointTextureId = engine->getTextureManager()->addTexture(TextureLoader::loadTexture(u"resources/textures"_j, u"point.png"_j));
+	pointTextureId = engine->getTextureManager()->addTexture(TextureLoader::loadTexture(L"resources/textures", L"point.png"));
 	initialized = true;
 }
 
