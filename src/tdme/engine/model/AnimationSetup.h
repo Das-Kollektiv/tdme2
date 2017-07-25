@@ -5,18 +5,11 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::Model;
-
-
-struct default_init_tag;
 
 /** 
  * AnimationSetup
@@ -24,11 +17,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::AnimationSetup final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	Model* model {  };
@@ -38,18 +27,6 @@ private:
 	int32_t frames {  };
 	bool loop {  };
 	wstring overlayFromGroupId {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 * @param id
-	 * @param start frame
-	 * @param end frame
-	 * @param loop
-	 * @param overlay from group id / optional 
-	 */
-	void ctor(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId);
 
 public:
 
@@ -99,17 +76,7 @@ public:
 	 * @return animation duration in milliseconds
 	 */
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);
-	String* toString() override;
 
 	// Generated
 	AnimationSetup(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId);
-protected:
-	AnimationSetup(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
