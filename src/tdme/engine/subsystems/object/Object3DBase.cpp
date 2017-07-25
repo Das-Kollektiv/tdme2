@@ -311,9 +311,14 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 				if (matrixAtLast == matrixAtCurrent) {
 					matrixAtCurrent = ((matrixAtCurrent + 1) % frames);
 				}
-				transformationsMatrix = Matrix4x4::interpolateLinear((*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()], (*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()], t, tmpMatrix1);
+				transformationsMatrix = Matrix4x4::interpolateLinear(
+					&(*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()],
+					&(*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()],
+					t,
+					tmpMatrix1
+				);
 			} else {
-				transformationsMatrix = tmpMatrix1->set((*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()]);
+				transformationsMatrix = tmpMatrix1->set(&(*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()]);
 			}
 		}
 		if (transformationsMatrix == nullptr) {

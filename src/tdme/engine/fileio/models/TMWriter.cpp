@@ -225,9 +225,9 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (Mod
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(a->getTransformationsMatrices()->length);
-		for (auto i = 0; i < a->getTransformationsMatrices()->length; i++) {
-			os->writeFloatArray((*a->getTransformationsMatrices())[i]->getArray());
+		os->writeInt(a->getTransformationsMatrices()->size());
+		for (auto i = 0; i < a->getTransformationsMatrices()->size(); i++) {
+			os->writeFloatArray((*a->getTransformationsMatrices())[i].getArray());
 		}
 	}
 }

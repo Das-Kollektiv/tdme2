@@ -2,27 +2,15 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::vector;
+
 using tdme::math::Matrix4x4;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::math::Matrix4x4Array;
-
-struct default_init_tag;
 
 /** 
  * AnimationSetup
@@ -30,22 +18,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::Animation final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	int32_t frames {  };
-	Matrix4x4Array* transformationsMatrices {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param frames
-	 */
-	void ctor(int32_t frames);
+	vector<tdme::math::Matrix4x4> transformationsMatrices {  };
 
 public:
 
@@ -58,22 +34,8 @@ public:
 	 * Returns transformation matrices
 	 * @return transformation matrices
 	 */
-	Matrix4x4Array* getTransformationsMatrices();
-
-	/** 
-	 * @return string representation
-	 */
-	String* toString() override;
+	vector<Matrix4x4>* getTransformationsMatrices();
 
 	// Generated
 	Animation(int32_t frames);
-protected:
-	Animation(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

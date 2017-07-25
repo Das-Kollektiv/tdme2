@@ -368,13 +368,13 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 {
 	clinit();
 	auto animation = root->getAnimation();
-	auto transformationsMatrices = new Matrix4x4Array(0);
+	vector<Matrix4x4>* transformationsMatrices;
 	if (animation != nullptr) {
 		transformationsMatrices = root->getAnimation()->getTransformationsMatrices();
-	}
-	animation = root->createAnimation(frames);
-	for (auto i = 0; i < transformationsMatrices->length; i++) {
-		(*animation->getTransformationsMatrices())[i]->set((*transformationsMatrices)[i]);
+		animation = root->createAnimation(frames);
+		for (auto i = 0; i < transformationsMatrices->size(); i++) {
+			(*animation->getTransformationsMatrices())[i].set(&(*transformationsMatrices)[i]);
+		}
 	}
 	for (auto it: *root->getSubGroups()) {
 		Group* group = it.second;

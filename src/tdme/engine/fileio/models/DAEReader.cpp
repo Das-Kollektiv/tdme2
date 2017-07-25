@@ -148,7 +148,6 @@ typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::Obje
 }  // namespace engine
 
 namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
 typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
 }  // namespace math
 }  // namespace tdme
@@ -662,34 +661,33 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 					"'"
 				);
 			}
-			floatArray* keyFrameTimes = nullptr;
+			vector<float> keyFrameTimes;
 			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
 				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id")))))->equals(xmlSamplerInputSource)) {
 					auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
 					auto frames = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count")))));
 					auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
 					auto keyFrameIdx = 0;
-					keyFrameTimes = new floatArray(frames);
+					keyFrameTimes.resize(frames);
 					t = new StringTokenizer(valueString, u" \n\r"_j);
 					while (t->hasMoreTokens()) {
-						(*keyFrameTimes)[keyFrameIdx++] = Float::parseFloat(t->nextToken());
+						keyFrameTimes[keyFrameIdx++] = Float::parseFloat(t->nextToken());
 					}
 				}
 			}
-			Matrix4x4Array* keyFrameMatrices = nullptr;
-			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
-				if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id")))))->equals(xmlSamplerOutputSource)) {
-					auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
-					auto keyFrames = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count"))))) / 16;
-					if (keyFrames > 0) {
-						auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
-						t = new StringTokenizer(valueString, u" \n\r"_j);
-						auto keyFrameIdx = 0;
-						keyFrameMatrices = new Matrix4x4Array(keyFrames);
-						while (t->hasMoreTokens()) {
-							keyFrameMatrices->set(
-								keyFrameIdx,
-								(new Matrix4x4(
+			if (keyFrameTimes.size() > 0) {
+				for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
+					if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id")))))->equals(xmlSamplerOutputSource)) {
+						auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
+						auto keyFrames = Integer::parseInt(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count"))))) / 16;
+						if (keyFrames > 0) {
+							auto valueString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlFloatArray->GetText())));
+							t = new StringTokenizer(valueString, u" \n\r"_j);
+							int32_t keyFrameIdx = 0;
+							vector<Matrix4x4> keyFrameMatrices;
+							keyFrameMatrices.resize(keyFrames);
+							while (t->hasMoreTokens()) {
+								keyFrameMatrices[keyFrameIdx].set(
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
@@ -698,37 +696,39 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-								)
-							)->transpose());
-							keyFrameIdx++;
+								);
+								keyFrameMatrices[keyFrameIdx].transpose();
+								keyFrameIdx++;
+							}
+
+							auto frames = static_cast< int32_t >(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
+							if (frames > 0) {
+								ModelHelper::createDefaultAnimation(model, frames);
+								auto animation = group->createAnimation(frames);
+								auto transformationsMatrices = animation->getTransformationsMatrices();
+								auto tansformationsMatrixLast = &keyFrameMatrices[0];
+								keyFrameIdx = 0;
+								auto frameIdx = 0;
+								auto timeStampLast = 0.0f;
+								for (auto keyFrameTime : keyFrameTimes) {
+									auto transformationsMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
+									float timeStamp;
+									for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
+										if (frameIdx >= frames) {
+											_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Warning: skipping frame: "_j)->append(frameIdx)->toString()));
+											frameIdx++;
+											continue;
+										}
+										Matrix4x4::interpolateLinear(tansformationsMatrixLast, transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), &(*transformationsMatrices)[frameIdx]);
+										frameIdx++;
+									}
+									timeStampLast = timeStamp;
+									tansformationsMatrixLast = transformationsMatrixCurrent;
+									keyFrameIdx++;
+								}
+							}
 						}
 					}
-				}
-			}
-			if (keyFrameTimes != nullptr && keyFrameMatrices != nullptr) {
-				auto frames = static_cast< int32_t >(Math::ceil((*keyFrameTimes)[keyFrameTimes->length - 1] * fps));
-				ModelHelper::createDefaultAnimation(model, frames);
-				auto animation = group->createAnimation(frames);
-				auto transformationsMatrices = animation->getTransformationsMatrices();
-				auto tansformationsMatrixLast = (*keyFrameMatrices)[0];
-				auto keyFrameIdx = 0;
-				auto frameIdx = 0;
-				auto timeStampLast = 0.0f;
-				for (auto keyFrameTime : *keyFrameTimes) {
-					auto transformationsMatrixCurrent = (*keyFrameMatrices)[(keyFrameIdx) % keyFrameMatrices->length];
-					float timeStamp;
-					for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
-						if (frameIdx >= frames) {
-							_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Warning: skipping frame: "_j)->append(frameIdx)->toString()));
-							frameIdx++;
-							continue;
-						}
-						Matrix4x4::interpolateLinear(tansformationsMatrixLast, transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), (*transformationsMatrices)[frameIdx]);
-						frameIdx++;
-					}
-					timeStampLast = timeStamp;
-					tansformationsMatrixLast = transformationsMatrixCurrent;
-					keyFrameIdx++;
 				}
 			}
 		}

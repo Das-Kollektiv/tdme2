@@ -282,10 +282,10 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 		return nullptr;
 	} else {
 		g->createAnimation(is->readInt());
-		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->length; i++) {
-			(*g->getAnimation()->getTransformationsMatrices())[i]->set(is->readFloatArray());
+		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
+			(*g->getAnimation()->getTransformationsMatrices())[i].set(is->readFloatArray());
 		}
-		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->length);
+		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->size());
 		return g->getAnimation();
 	}
 }

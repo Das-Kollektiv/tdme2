@@ -218,7 +218,7 @@ Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Mat
 		auto animation = group->getAnimation();
 		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
-			transformationsMatrix = (*animationMatrices)[frame % animationMatrices->length]->clone();
+			transformationsMatrix = (*animationMatrices)[frame % animationMatrices->size()].clone();
 		}
 		if (transformationsMatrix == nullptr) {
 			transformationsMatrix = group->getTransformationsMatrix()->clone();
