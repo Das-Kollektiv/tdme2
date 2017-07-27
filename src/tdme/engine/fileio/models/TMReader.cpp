@@ -301,10 +301,10 @@ Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOEx
 	return joint;
 }
 
-JointWeight* TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
+JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	return new JointWeight(is->readInt(), is->readInt());
+	return JointWeight(is->readInt(), is->readInt());
 }
 
 void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
@@ -319,7 +319,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 			joints[i] = readSkinningJoint(is);
 		}
 		skinning->setJoints(joints);
-		vector<vector<JointWeight*>> verticesJointsWeight;
+		vector<vector<JointWeight>> verticesJointsWeight;
 		verticesJointsWeight.resize(is->readInt());
 		for (auto i = 0; i < verticesJointsWeight.size(); i++) {
 			verticesJointsWeight[i].resize(is->readInt());

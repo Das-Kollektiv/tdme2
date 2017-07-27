@@ -179,9 +179,9 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 				mesh->cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
 				mesh->cSkinningJointTransformationsMatrices[vertexIndex].resize(vertexJointWeights);
 				auto jointWeightIdx = 0;
-				for (auto jointWeight : (*jointsWeights)[vertexIndex]) {
-					auto joint = (*joints)[jointWeight->getJointIndex()];
-					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = (*weights)[jointWeight->getWeightIndex()];
+				for (auto& jointWeight : (*jointsWeights)[vertexIndex]) {
+					auto joint = (*joints)[jointWeight.getJointIndex()];
+					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = (*weights)[jointWeight.getWeightIndex()];
 					auto skinningMatrixIt = skinningMatrices->find(joint->getGroupId());
 					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr;
 					jointWeightIdx++;

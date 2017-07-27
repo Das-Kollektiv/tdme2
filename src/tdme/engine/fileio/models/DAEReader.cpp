@@ -961,10 +961,10 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	t = new StringTokenizer(vertexJointsInfluenceCountString, u" \n\r"_j);
 	auto t2 = new StringTokenizer(vertexJointsInfluencesString, u" \n\r"_j);
 	auto offset = 0;
-	vector<vector<JointWeight*>> verticesJointsWeights;
+	vector<vector<JointWeight>> verticesJointsWeights;
 	while (t->hasMoreTokens()) {
 		auto vertexJointsInfluencesCount = Integer::parseInt(t->nextToken());
-		vector<JointWeight*>vertexJointsWeights;
+		vector<JointWeight>vertexJointsWeights;
 		for (auto i = 0; i < vertexJointsInfluencesCount; i++) {
 			auto vertexJoint = -1;
 			auto vertexWeight = -1;
@@ -977,7 +977,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 				}
 				offset++;
 			}
-			vertexJointsWeights.push_back(new JointWeight(vertexJoint, vertexWeight));
+			vertexJointsWeights.push_back(JointWeight(vertexJoint, vertexWeight));
 		}
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}

@@ -233,7 +233,7 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 void ModelHelper::prepareForIndexedRendering(Skinning* skinning, vector<int32_t>* vertexMapping, int32_t vertices)
 {
 	auto originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
-	vector<vector<JointWeight*>> verticesJointsWeights;
+	vector<vector<JointWeight>> verticesJointsWeights;
 	verticesJointsWeights.resize(vertices);
 	for (auto i = 0; i < vertices; i++) {
 		auto vertexOriginalMappedToIdx = (*vertexMapping)[i];

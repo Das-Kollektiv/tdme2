@@ -5,26 +5,14 @@
 #include <string>
 #include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Cloneable.h>
-#include <java/lang/Float.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::map;
 using std::wstring;
 using std::vector;
 
 using tdme::engine::model::Skinning;
-using java::lang::Float;
-using java::util::Arrays;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 
@@ -61,12 +49,12 @@ void Skinning::setJoints(const vector<Joint*>& joints)
 	setupJointsByName();
 }
 
-vector<vector<JointWeight*>>* Skinning::getVerticesJointsWeights()
+vector<vector<JointWeight>>* Skinning::getVerticesJointsWeights()
 {
 	return &verticesJointsWeights;
 }
 
-void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight*>>* verticesJointsWeights)
+void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>* verticesJointsWeights)
 {
 	this->verticesJointsWeights.resize(verticesJointsWeights->size());
 	for (auto i = 0; i < verticesJointsWeights->size(); i++) {

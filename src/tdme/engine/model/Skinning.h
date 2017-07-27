@@ -7,22 +7,16 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/JointWeight.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
-
-struct default_init_tag;
 
 /** 
  * Skinning definition for groups
@@ -34,15 +28,8 @@ class tdme::engine::model::Skinning final
 private:
 	vector<float> weights {  };
 	vector<Joint*> joints {  };
-	vector<vector<JointWeight*>> verticesJointsWeights {  };
+	vector<vector<JointWeight>> verticesJointsWeights {  };
 	map<wstring, Joint*> jointsByName {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
 public:
 
 	/** 
@@ -71,13 +58,13 @@ public:
 	/** 
 	 * @return all vertex joints
 	 */
-	vector<vector<JointWeight*>>* getVerticesJointsWeights();
+	vector<vector<JointWeight>>* getVerticesJointsWeights();
 
 	/** 
 	 * Sets up vertices joints weights 
 	 * @param verticesJointsWeights
 	 */
-	void setVerticesJointsWeights(const vector<vector<JointWeight*>>* verticesJointsWeights);
+	void setVerticesJointsWeights(const vector<vector<JointWeight>>* verticesJointsWeights);
 
 	/** 
 	 * Get joint by name
