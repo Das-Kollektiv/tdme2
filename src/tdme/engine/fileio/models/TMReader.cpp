@@ -293,11 +293,11 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	g->setFacesEntities(&facesEntities);
 }
 
-Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
+Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	auto joint = new Joint(is->readWString());
-	joint->getBindMatrix()->set(is->readFloatArray());
+	Joint joint(is->readWString());
+	joint.getBindMatrix()->set(is->readFloatArray());
 	return joint;
 }
 
@@ -313,12 +313,12 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 	if (is->readBoolean() == true) {
 		auto skinning = g->createSkinning();
 		skinning->setWeights(is->readFloatVector());
-		vector<Joint*> joints;
+		vector<Joint> joints;
 		joints.resize(is->readInt());
 		for (auto i = 0; i < joints.size(); i++) {
 			joints[i] = readSkinningJoint(is);
 		}
-		skinning->setJoints(joints);
+		skinning->setJoints(&joints);
 		vector<vector<JointWeight>> verticesJointsWeight;
 		verticesJointsWeight.resize(is->readInt());
 		for (auto i = 0; i < verticesJointsWeight.size(); i++) {

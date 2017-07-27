@@ -7,6 +7,7 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 
 using java::lang::Object;
 using java::lang::String;
@@ -22,7 +23,7 @@ class tdme::engine::model::Joint final
 {
 private:
 	wstring groupId {  };
-	Matrix4x4* bindMatrix {  };
+	Matrix4x4 bindMatrix {  };
 public:
 	/** 
 	 * Associated group or bone id
@@ -38,6 +39,12 @@ public:
 
 	/**
 	 * Public constructor
+	 */
+	Joint();
+
+	/**
+	 * Public constructor
+	 * @param group id
 	 */
 	Joint(const wstring& groupId);
 };

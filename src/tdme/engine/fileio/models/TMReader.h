@@ -278,7 +278,7 @@ private:
 	 * @throws model file IO exception
 	 * @return joint
 	 */
-	static Joint* readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException);
+	static Joint readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read skinning joint weight

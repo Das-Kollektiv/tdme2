@@ -252,8 +252,8 @@ void ModelHelper::setupJoints(Model* model)
 		Group* group = it.second;
 		auto skinning = group->getSkinning();
 		if (skinning != nullptr) {
-			for (auto joint : *skinning->getJoints()) {
-				auto jointGroupIt = groups->find(joint->getGroupId());
+			for (auto& joint : *skinning->getJoints()) {
+				auto jointGroupIt = groups->find(joint.getGroupId());
 				if (jointGroupIt != groups->end()) {
 					setJoint(jointGroupIt->second);
 				}

@@ -8,6 +8,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -27,7 +28,7 @@ class tdme::engine::model::Skinning final
 {
 private:
 	vector<float> weights {  };
-	vector<Joint*> joints {  };
+	vector<Joint> joints {  };
 	vector<vector<JointWeight>> verticesJointsWeights {  };
 	map<wstring, Joint*> jointsByName {  };
 public:
@@ -47,13 +48,13 @@ public:
 	/** 
 	 * @return all joints
 	 */
-	vector<Joint*>* getJoints();
+	vector<Joint>* getJoints();
 
 	/** 
 	 * Set up joints
 	 * @param joints
 	 */
-	void setJoints(const vector<Joint*>& joints);
+	void setJoints(const vector<Joint>* joints);
 
 	/** 
 	 * @return all vertex joints

@@ -867,16 +867,16 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		);
 	}
 
-	vector<Joint*> joints;
+	vector<Joint> joints;
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsSource)) {
 			t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText()))), u" \n\r"_j);
 			while (t->hasMoreTokens()) {
-				joints.push_back(new Joint(t->nextToken()->getCPPWString()));
+				joints.push_back(Joint(t->nextToken()->getCPPWString()));
 			}
 		}
 	}
-	skinning->setJoints(joints);
+	skinning->setJoints(&joints);
 
 	if (xmlJointsInverseBindMatricesSource == nullptr) {
 		throw ModelFileIOException(
@@ -891,8 +891,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 			t = new StringTokenizer((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())))), u" \n\r"_j);
 			auto _joints = skinning->getJoints();
 			for (auto i = 0; i < _joints->size(); i++) {
-				(*_joints)[i]->getBindMatrix()->multiply(bindShapeMatrix);
-				(*_joints)[i]->getBindMatrix()->multiply(
+				(*_joints)[i].getBindMatrix()->multiply(bindShapeMatrix);
+				(*_joints)[i].getBindMatrix()->multiply(
 					(new Matrix4x4(
 						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),

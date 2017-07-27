@@ -281,7 +281,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 		os->writeFloatArray(skinning->getWeights());
 		os->writeInt(skinning->getJoints()->size());
 		for (auto i = 0; i < skinning->getJoints()->size(); i++) {
-			writeSkinningJoint(os, (*skinning->getJoints())[i]);
+			writeSkinningJoint(os, &(*skinning->getJoints())[i]);
 		}
 		os->writeInt(skinning->getVerticesJointsWeights()->size());
 		for (auto i = 0; i < skinning->getVerticesJointsWeights()->size(); i++) {
