@@ -3,16 +3,9 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::Group;
-
-
-struct default_init_tag;
 
 /** 
  * Represents a object group face, consisting of vertex indices and texture coordinate indices
@@ -20,12 +13,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::Face final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	Group* group {  };
 	int32_tArray* vertexIndices {  };
@@ -33,38 +21,12 @@ private:
 	int32_tArray* textureCoordinateIndices {  };
 	int32_tArray* tangentIndices {  };
 	int32_tArray* bitangentIndices {  };
-protected:
-
-	/** 
-	 * Public constructor, requires vertex, normals indices
-	 * we only support triangulated faces
-	 * @param model
-	 * @param vertex index 0
-	 * @param vertex index 1
-	 * @param vertex index 2
-	 * @param normal index 0
-	 * @param normal index 1
-	 * @param normal index 2
-	 */
-	void ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2);
-
-	/** 
-	 * Public constructor, requires vertex, normals indices, texture coordinate indices
-	 * we only support triangulated faces
-	 * @param model
-	 * @param vertex index 0
-	 * @param vertex index 1
-	 * @param vertex index 2
-	 * @param normal index 0
-	 * @param normal index 1
-	 * @param normal index 2
-	 * @param texture coordinate index 0
-	 * @param texture coordinate index 1
-	 * @param texture coordinate index 2
-	 */
-	void ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
-
 public:
+
+	/**
+	 * Init
+	 */
+	void init();
 
 	/** 
 	 * @return group
@@ -130,22 +92,37 @@ public: /* protected */
 
 public:
 
-	/** 
-	 * string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
+	Face();
 
-	// Generated
+	/**
+	 * Public constructor, requires vertex, normals indices
+	 * we only support triangulated faces
+	 * @param model
+	 * @param vertex index 0
+	 * @param vertex index 1
+	 * @param vertex index 2
+	 * @param normal index 0
+	 * @param normal index 1
+	 * @param normal index 2
+	 */
 	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2);
+
+	/**
+	 * Public constructor, requires vertex, normals indices, texture coordinate indices
+	 * we only support triangulated faces
+	 * @param model
+	 * @param vertex index 0
+	 * @param vertex index 1
+	 * @param vertex index 2
+	 * @param normal index 0
+	 * @param normal index 1
+	 * @param normal index 2
+	 * @param texture coordinate index 0
+	 * @param texture coordinate index 1
+	 * @param texture coordinate index 2
+	 */
 	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
-protected:
-	Face(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

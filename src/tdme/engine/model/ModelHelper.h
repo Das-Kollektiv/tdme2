@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -12,52 +14,38 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::array;
 using std::map;
+using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::model::Skinning;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
-
 /** 
  * Model Helper
  * @author Andreas Drewke
  */
 class tdme::engine::model::ModelHelper final
-	: public Object
 {
 
 public:
-	typedef Object super;
-
 	/** 
 	 * Determines vertex order of face
 	 * @param vertices
 	 * @return vertex order
 	 */
-	static ModelHelper_VertexOrder* determineVertexOrder(Vector3Array* vertices);
+	static ModelHelper_VertexOrder* determineVertexOrder(array<Vector3,3> vertices);
 
 	/** 
 	 * Computes face normal for given face vertices
 	 * @param face vertices
 	 * @return face normal
 	 */
-	static Vector3* computeNormal(Vector3Array* vertices);
+	static Vector3* computeNormal(array<Vector3,3> vertices);
 
 	/** 
 	 * Computes face normals for given face vertices
@@ -65,7 +53,7 @@ public:
 	 * @param face vertices
 	 * @return face normals
 	 */
-	static Vector3Array* computeNormals(Vector3Array* vertices);
+	static array<Vector3,3> computeNormals(array<Vector3,3> vertices);
 
 	/** 
 	 * Create normal tangents and bitangents for groups with normal mapping
@@ -94,7 +82,7 @@ private:
 	 * @param vertice mapping / new vertex index to old vertex index
 	 * @param vertice count
 	 */
-	static void prepareForIndexedRendering(Skinning* skinning, int32_tArray* vertexMapping, int32_t vertices);
+	static void prepareForIndexedRendering(Skinning* skinning, vector<int32_t>* vertexMapping, int32_t vertices);
 
 public:
 
@@ -137,17 +125,4 @@ public:
 	 * @param frames
 	 */
 	static void createDefaultAnimation(Model* model, int32_t frames);
-
-	// Generated
-	ModelHelper();
-protected:
-	ModelHelper(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class ModelHelper_VertexOrder;
 };

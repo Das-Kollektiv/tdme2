@@ -5,6 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Model.h>
@@ -22,6 +23,7 @@ using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
@@ -170,15 +172,15 @@ void Object3DInternal::unbindDiffuseTexture(String* groupId, String* facesEntity
 
 void Object3DInternal::setDynamicDiffuseTexture(String* groupId, String* facesEntityId, int32_t textureId)
 {
-	for (auto i = 0; i < object3dGroups->length; i++) {
-		auto object3DGroup = (*object3dGroups)[i];
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		auto object3DGroup = object3dGroups[i];
 		if (groupId != nullptr && groupId->getCPPWString() != object3DGroup->group->getId())
 			continue;
 
 		auto facesEntities = object3DGroup->group->getFacesEntities();
-		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->length; facesEntityIdx++) {
-			auto facesEntity = (*facesEntities)[facesEntityIdx];
-			if (facesEntityId != nullptr && facesEntityId->getCPPWString() != facesEntity->getId())
+		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->size(); facesEntityIdx++) {
+			auto& facesEntity = (*facesEntities)[facesEntityIdx];
+			if (facesEntityId != nullptr && facesEntityId->getCPPWString() != facesEntity.getId())
 				continue;
 
 			(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] = textureId;
@@ -194,8 +196,8 @@ void Object3DInternal::initialize()
 void Object3DInternal::dispose()
 {
 	super::dispose();
-	for (auto i = 0; i < object3dGroups->length; i++) {
-		auto object3DGroup = (*object3dGroups)[i];
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		auto object3DGroup = object3dGroups[i];
 		object3DGroup->renderer->dispose();
 		object3DGroup->dispose();
 	}

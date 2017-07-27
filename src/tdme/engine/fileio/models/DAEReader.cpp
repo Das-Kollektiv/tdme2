@@ -890,7 +890,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id")))))->equals(xmlJointsInverseBindMatricesSource)) {
 			t = new StringTokenizer((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())))), u" \n\r"_j);
 			auto _joints = skinning->getJoints();
-			for (auto i = 0; i < _joints->length; i++) {
+			for (auto i = 0; i < _joints->size(); i++) {
 				(*_joints)[i]->getBindMatrix()->multiply(bindShapeMatrix);
 				(*_joints)[i]->getBindMatrix()->multiply(
 					(new Matrix4x4(
@@ -981,31 +981,23 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		}
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
-	skinning->setVerticesJointsWeights(verticesJointsWeights);
+	skinning->setVerticesJointsWeights(&verticesJointsWeights);
 
 	return group;
 }
 
 void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException)
 {
-	#define ARRAY_TO_VECTOR(array, vector) { \
-		if (array != nullptr) \
-		for (int i = 0; i < array->length; i++) { \
-			vector.push_back(array->get(i)); \
-		} \
-	}
-
 	clinit();
 	StringTokenizer* t;
 	String* tmpString = nullptr;
-	FacesEntity* facesEntity = nullptr;
-	vector<FacesEntity*> facesEntities; ARRAY_TO_VECTOR(group->getFacesEntities(), facesEntities);
-	auto verticesOffset = group->getVertices()->length;
-	vector<Vector3*> vertices; ARRAY_TO_VECTOR(group->getVertices(), vertices);
-	auto normalsOffset = group->getNormals()->length;
-	vector<Vector3*> normals; ARRAY_TO_VECTOR(group->getNormals(), normals);
-	auto textureCoordinatesOffset = group->getTextureCoordinates() != nullptr ? group->getTextureCoordinates()->length : 0;
-	vector<TextureCoordinate*> textureCoordinates; ARRAY_TO_VECTOR(group->getTextureCoordinates(), textureCoordinates);
+	vector<FacesEntity> facesEntities = *group->getFacesEntities();
+	auto verticesOffset = group->getVertices()->size();
+	vector<Vector3> vertices = *group->getVertices();
+	auto normalsOffset = group->getNormals()->size();
+	vector<Vector3> normals = *group->getNormals();;
+	auto textureCoordinatesOffset = group->getTextureCoordinates()->size();
+	vector<TextureCoordinate> textureCoordinates = *group->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
 		if ((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id")))))->equals(xmlNodeId)) {
@@ -1021,8 +1013,8 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 				xmlPolygonsList.push_back(xmlPolygonsElement);
 			}
 			for (auto xmlPolygons: xmlPolygonsList) {
-				vector<Face*> faces;
-				facesEntity = new FacesEntity(group, xmlNodeId->getCPPWString());
+				vector<Face> faces;
+				FacesEntity facesEntity(group, xmlNodeId->getCPPWString());
 				if ((tmpString = new String(StringConverter::toWideString(xmlPolygons->Value())))->toLowerCase()->equals(u"polylist"_j)) {
 					t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText()))));
 					while (t->hasMoreTokens()) {
@@ -1060,7 +1052,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 					} else {
 						material = readMaterial(authoringTool, pathName, model, xmlRoot, xmlMaterialId);
 					}
-					facesEntity->setMaterial(material);
+					facesEntity.setMaterial(material);
 				}
 				unordered_set<Integer*> xmlInputSet;
 				for (auto xmlTrianglesInput: getChildrenByTagName(xmlPolygons, "input")) {
@@ -1182,7 +1174,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 						}
 						if (viIdx == 3 && niIdx == 3 && (ti == nullptr || tiIdx == 3)) {
 							if (valid == true) {
-								auto f = new Face(
+								Face f(
 									group,
 									(*vi)[0] + verticesOffset,
 									(*vi)[1] + verticesOffset,
@@ -1192,7 +1184,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 									(*ni)[2] + normalsOffset
 								);
 								if (ti != nullptr) {
-									f->setTextureCoordinateIndices(
+									f.setTextureCoordinateIndices(
 										(*ti)[0] + textureCoordinatesOffset,
 										(*ti)[1] + textureCoordinatesOffset,
 										(*ti)[2] + textureCoordinatesOffset
@@ -1209,19 +1201,19 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 					}
 				}
 				if (faces.empty() == false) {
-					facesEntity->setFaces(faces);
+					facesEntity.setFaces(&faces);
 					facesEntities.push_back(facesEntity);
 				}
 			}
 		}
 	}
 
-	group->setVertices(vertices);
-	group->setNormals(normals);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
 	if (textureCoordinates.size() > 0)
-		group->setTextureCoordinates(textureCoordinates);
+		group->setTextureCoordinates(&textureCoordinates);
 
-	group->setFacesEntities(facesEntities);
+	group->setFacesEntities(&facesEntities);
 	ModelHelper::createNormalTangentsAndBitangents(group);
 	group->determineFeatures();
 }

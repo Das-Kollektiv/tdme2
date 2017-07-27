@@ -8,7 +8,6 @@
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Engine_AnimationProcessingTarget.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -63,41 +62,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Face, ::java::lang::ObjectArray > FaceArray;
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::Group, ::java::lang::ObjectArray > GroupArray;
-}  // namespace model
-
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::BoundingVolume, ::java::lang::ObjectArray > BoundingVolumeArray;
-typedef ::SubArray< ::tdme::engine::primitives::Triangle, ::java::lang::ObjectArray, BoundingVolumeArray > TriangleArray;
-}  // namespace primitives
-
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::lang::ObjectArray > Object3DGroupArray;
-}  // namespace object
-}  // namespace subsystems
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 Object3DBase::Object3DBase(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -110,15 +74,9 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine_AnimationPr
 	ctor(model,useMeshManager,animationProcessingTarget);
 }
 
-void Object3DBase::init()
-{
-	object3dGroups = nullptr;
-}
-
 void Object3DBase::ctor(Model* model, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
 {
 	super::ctor();
-	init();
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->baseAnimation = new AnimationState();
@@ -128,26 +86,25 @@ void Object3DBase::ctor(Model* model, bool useMeshManager, Engine_AnimationProce
 	tmpMatrix1 = new Matrix4x4();
 	transformedFacesIterator = nullptr;
 	hasSkinning = false;
-	skinningGroups = nullptr;
 	if (model->hasSkinning() == true) {
 		hasSkinning = true;
-		skinningGroups = new GroupArray(determineSkinnedGroupCount(model->getSubGroups()));
-		determineSkinnedGroups(model->getSubGroups(), skinningGroups, 0);
-		skinningGroupsMatrices.resize(skinningGroups->length);
-		for (auto i = 0; i < skinningGroups->length; i++) {
+		skinningGroups.resize(determineSkinnedGroupCount(model->getSubGroups()));
+		determineSkinnedGroups(model->getSubGroups(), &skinningGroups, 0);
+		skinningGroupsMatrices.resize(skinningGroups.size());
+		for (auto i = 0; i < skinningGroups.size(); i++) {
 			createTransformationsMatrices(&skinningGroupsMatrices[i], model->getSubGroups());
 		}
 	}
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	createTransformationsMatrices(&transformationsMatrices, model->getSubGroups());
-	object3dGroups = Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget);
+	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
 	auto transformationsMatricesStackDepth = determineTransformationsMatricesStackDepth(model->getSubGroups(), 0);
 	transformationsMatricesStack.resize(transformationsMatricesStackDepth);
 	for (auto i = 0; i < transformationsMatricesStack.size(); i++) {
 		transformationsMatricesStack[i] = new Matrix4x4();
 	}
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimation, 0);
-	Object3DGroup::computeTransformations(object3dGroups);
+	Object3DGroup::computeTransformations(&object3dGroups);
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
 
@@ -332,8 +289,8 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 			transformationMatrixIt->second->set(transformationsMatrix);
 		}
 		if (hasSkinning == true) {
-			for (auto i = 0; i < skinningGroups->length; i++) {
-				auto skinningJoint = (*skinningGroups)[i]->getSkinning()->getJointByName(group->getId());
+			for (auto i = 0; i < skinningGroups.size(); i++) {
+				auto skinningJoint = skinningGroups[i]->getSkinning()->getJointByName(group->getId());
 				if (skinningJoint == nullptr) {
 					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
 					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {
@@ -396,7 +353,7 @@ void Object3DBase::computeTransformations()
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
-		Object3DGroup::computeTransformations(object3dGroups);
+		Object3DGroup::computeTransformations(&object3dGroups);
 	} else
 	if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
 		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
@@ -404,27 +361,26 @@ void Object3DBase::computeTransformations()
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
-		Object3DGroup::computeTransformations(object3dGroups);
+		Object3DGroup::computeTransformations(&object3dGroups);
 	}
 }
 
-TriangleArray* Object3DBase::getFaceTriangles()
+void Object3DBase::getFaceTriangles(vector<Triangle>* faceTriangles)
 {
-	vector<Triangle*> triangles;
-	for (auto object3DGroup : *object3dGroups) {
+	for (auto object3DGroup : object3dGroups) {
 		auto groupVerticesTransformed = object3DGroup->mesh->vertices;
 		for (auto facesEntity : *object3DGroup->group->getFacesEntities()) 
-		for (auto face : *facesEntity->getFaces()) {
-			auto faceVertexIndices = face->getVertexIndices();
-			triangles.push_back(new Triangle((*groupVerticesTransformed)[(*faceVertexIndices)[0]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[1]]->clone(), (*groupVerticesTransformed)[(*faceVertexIndices)[2]]->clone()));
+		for (auto& face : *facesEntity.getFaces()) {
+			auto faceVertexIndices = face.getVertexIndices();
+			faceTriangles->push_back(
+				Triangle(
+					(*groupVerticesTransformed)[(*faceVertexIndices)[0]].clone(),
+					(*groupVerticesTransformed)[(*faceVertexIndices)[1]].clone(),
+					(*groupVerticesTransformed)[(*faceVertexIndices)[2]].clone()
+				)
+			);
 		}
 	}
-	auto triangleArray = new TriangleArray(triangles.size());
-	int i = 0;
-	for (auto triangle: triangles) {
-		triangleArray->set(i++, triangle);
-	}
-	return triangleArray;
 }
 
 Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator()
@@ -437,7 +393,7 @@ Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator
 
 Object3DGroupMesh* Object3DBase::getMesh(String* groupId)
 {
-	for (auto object3DGroup : *object3dGroups) {
+	for (auto object3DGroup : object3dGroups) {
 		if (object3DGroup->group->getId() == groupId->getCPPWString()) {
 			return object3DGroup->mesh;
 		}
@@ -465,12 +421,12 @@ int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups, i
 	return count;
 }
 
-int32_t Object3DBase::determineSkinnedGroups(map<wstring, Group*>* groups, GroupArray* skinningGroups, int32_t idx)
+int32_t Object3DBase::determineSkinnedGroups(map<wstring, Group*>* groups, vector<Group*>* skinningGroups, int32_t idx)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
 		if (group->getSkinning() != nullptr) {
-			skinningGroups->set(idx++, group);
+			(*skinningGroups)[idx++] = group;
 		}
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
@@ -485,8 +441,8 @@ map<wstring, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 	if (hasSkinning == false)
 		return nullptr;
 
-	for (auto i = 0; i < skinningGroups->length; i++) {
-		if (skinningGroups->get(i) == group) {
+	for (auto i = 0; i < skinningGroups.size(); i++) {
+		if (skinningGroups.at(i) == group) {
 			return &skinningGroupsMatrices.at(i);
 		}
 	}
@@ -496,8 +452,8 @@ map<wstring, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 void Object3DBase::initialize()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
-	for (auto i = 0; i < object3dGroups->length; i++) {
-		auto object3DGroup = (*object3dGroups)[i];
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		auto object3DGroup = object3dGroups[i];
 		if (object3DGroup->mesh == nullptr) {
 			if (usesMeshManager == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
@@ -514,8 +470,8 @@ void Object3DBase::initialize()
 void Object3DBase::dispose()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
-	for (auto i = 0; i < object3dGroups->length; i++) {
-		auto object3DGroup = (*object3dGroups)[i];
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		auto object3DGroup = object3dGroups[i];
 		meshManager->removeMesh(object3DGroup->id);
 		object3DGroup->mesh = nullptr;
 	}

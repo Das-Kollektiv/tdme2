@@ -18,39 +18,9 @@ using std::wstring;
 using std::vector;
 
 using java::lang::Object;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::lang::String;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Joint, ::java::lang::ObjectArray > JointArray;
-typedef ::SubArray< ::tdme::engine::model::JointWeight, ::java::lang::ObjectArray > JointWeightArray;
-typedef ::SubArray< ::tdme::engine::model::JointWeightArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > JointWeightArrayArray;
-}  // namespace model
-}  // namespace engine
-}  // namespace tdme
-
-using java::io::SerializableArray;
-using java::lang::CloneableArray;
-using java::lang::ObjectArray;
-using tdme::engine::model::JointArray;
-using tdme::engine::model::JointWeightArray;
-using tdme::engine::model::JointWeightArrayArray;
 
 struct default_init_tag;
 
@@ -60,16 +30,11 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::Skinning final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
-	floatArray* weights {  };
-	JointArray* joints {  };
-	JointWeightArrayArray* verticesJointsWeights {  };
+	vector<float> weights {  };
+	vector<Joint*> joints {  };
+	vector<vector<JointWeight*>> verticesJointsWeights {  };
 	map<wstring, Joint*> jointsByName {  };
 protected:
 
@@ -83,13 +48,8 @@ public:
 	/** 
 	 * @return weights
 	 */
-	floatArray* getWeights();
+	vector<float>* getWeights();
 
-	/** 
-	 * Set up weights
-	 * @param weights
-	 */
-	void setWeights(floatArray* weights);
 
 	/** 
 	 * Set up weights
@@ -100,13 +60,7 @@ public:
 	/** 
 	 * @return all joints
 	 */
-	JointArray* getJoints();
-
-	/** 
-	 * Set up joints
-	 * @param joints
-	 */
-	void setJoints(JointArray* joints);
+	vector<Joint*>* getJoints();
 
 	/** 
 	 * Set up joints
@@ -117,28 +71,13 @@ public:
 	/** 
 	 * @return all vertex joints
 	 */
-	JointWeightArrayArray* getVerticesJointsWeights();
-
-	/** 
-	 * Set vertices joints weight
-	 * @param verticesJointsWeights
-	 */
-	void setVerticesJointsWeights(JointWeightArrayArray* verticesJointsWeights);
+	vector<vector<JointWeight*>>* getVerticesJointsWeights();
 
 	/** 
 	 * Sets up vertices joints weights 
 	 * @param verticesJointsWeights
 	 */
-	void setVerticesJointsWeights(const vector<vector<JointWeight*>>& verticesJointsWeights);
-
-private:
-
-	/** 
-	 * Set up joints by name
-	 */
-	void setupJointsByName();
-
-public:
+	void setVerticesJointsWeights(const vector<vector<JointWeight*>>* verticesJointsWeights);
 
 	/** 
 	 * Get joint by name
@@ -147,20 +86,14 @@ public:
 	 */
 	Joint* getJointByName(const wstring& name);
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Skinning();
-protected:
-	Skinning(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	virtual ::java::lang::Class* getClass0();
+
+	/**
+	 * Set up joints by name
+	 */
+	void setupJointsByName();
 };

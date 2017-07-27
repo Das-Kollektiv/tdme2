@@ -151,12 +151,15 @@ String* LevelEditorLight::toString()
 	return ::java::lang::StringBuilder().append(u"LevelEditorLight [id="_j)->append(id)
 		->append(u", enabled="_j)
 		->append(enabled)
+		/*
+		// TODO: Implement me!
 		->append(u", ambient="_j)
 		->append(static_cast< Object* >(ambient))
 		->append(u", diffuse="_j)
 		->append(static_cast< Object* >(diffuse))
 		->append(u", specular="_j)
 		->append(static_cast< Object* >(specular))
+		*/
 		->append(u", position="_j)
 		->append(static_cast< Object* >(position))
 		->append(u", spotDirection="_j)

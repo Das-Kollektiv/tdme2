@@ -4,10 +4,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/model/Animation.h>
@@ -18,17 +14,11 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::map;
 using std::wstring;
 
 using tdme::engine::model::Model;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Object3DModel;
 using tdme::engine::model::Animation;
@@ -41,40 +31,8 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Model::Model(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
-	: Model(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(id,name,upVector,rotationOrder,boundingBox);
-}
-
-wstring Model::ANIMATIONSETUP_DEFAULT;
-
-constexpr float Model::FPS_DEFAULT;
-
-void Model::ctor(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
-{
-	super::ctor();
 	this->id = id;
 	this->name = name;
 	this->upVector = upVector;
@@ -84,6 +42,10 @@ void Model::ctor(const wstring& id, const wstring& name, Model_UpVector* upVecto
 	importTransformationsMatrix = (new Matrix4x4())->identity();
 	this->boundingBox = boundingBox;
 }
+
+wstring Model::ANIMATIONSETUP_DEFAULT = L"tdme.default";
+
+constexpr float Model::FPS_DEFAULT;
 
 const wstring& Model::getId()
 {
@@ -242,43 +204,3 @@ Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Mat
 
 	return nullptr;
 }
-
-String* Model::toString()
-{
-	return ::java::lang::StringBuilder().
-		append(u"Model [name="_j)->
-		append(name)->
-		/*
-		// TODO: implement me!
-		append(u", subGroups="_j)->
-		append(static_cast< Object* >(subGroups))->
-		*/
-		append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Model::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.model.Model", 23);
-    return c;
-}
-
-void Model::clinit()
-{
-struct string_init_ {
-	string_init_() {
-		ANIMATIONSETUP_DEFAULT = L"tdme.default";
-	}
-	};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* Model::getClass0()
-{
-	return class_();
-}
-

@@ -4,10 +4,10 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <Array.h>
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/StringBuffer.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
@@ -22,6 +22,7 @@
 
 using std::map;
 using std::wstring;
+using std::vector;
 
 using java::lang::Object;
 using java::io::InputStream;
@@ -37,23 +38,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 using tdme::os::_FileSystemException;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::model::TextureCoordinateArray;
-using tdme::math::Vector3Array;
 
 struct default_init_tag;
 
@@ -189,6 +173,20 @@ public:
 		return f;
 	}
 
+	/**
+	 * Reads a float array from input stream
+	 * @throws model file IO exception
+	 * @return float array
+	 */
+	inline const vector<float> readFloatVector() throw (ModelFileIOException) {
+		vector<float> f;
+		f.resize(readInt());
+		for (auto i = 0; i < f.size(); i++) {
+			f[i] = readFloat();
+		}
+		return f;
+	}
+
 };
 
 };
@@ -236,7 +234,7 @@ private:
 	 * @throws model file IO exception
 	 * @return vector3 array
 	 */
-	static Vector3Array* readVertices(TMReaderInputStream* is) throw (ModelFileIOException);
+	static const vector<Vector3> readVertices(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read texture coordinates from input stream
@@ -245,7 +243,7 @@ private:
 	 * @throws model file IO exception
 	 * @return texture coordinates array
 	 */
-	static TextureCoordinateArray* readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException);
+	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/** 
 	 * Read indices from input stream

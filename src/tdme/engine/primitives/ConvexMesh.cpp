@@ -84,18 +84,19 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	ctor(model);
 }
 
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh*>& convexMeshes)
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes)
 {
 	clinit();
-	auto triangles = model->getFaceTriangles();
-	for (auto i = 0; i < triangles->length; i++) {
+	vector<Triangle> faceTriangles;
+	model->getFaceTriangles(&faceTriangles);
+	for (auto i = 0; i < faceTriangles.size(); i++) {
 		auto convexMeshTriangles = new TriangleArray(2);
-		convexMeshTriangles->set(0, java_cast< Triangle* >((*triangles)[i]->clone()));
-		convexMeshTriangles->set(1, java_cast< Triangle* >((*convexMeshTriangles)[0]->clone()));
+		convexMeshTriangles->set(0, faceTriangles[i].clone());
+		convexMeshTriangles->set(1, faceTriangles[i].clone());
 		(*(*convexMeshTriangles)[1]->getVertices())[0]->addY(-1.0f);
 		(*(*convexMeshTriangles)[1]->getVertices())[1]->addY(-1.0f);
 		(*(*convexMeshTriangles)[1]->getVertices())[2]->addY(-1.0f);
-		convexMeshes.push_back(new ConvexMesh(convexMeshTriangles));
+		convexMeshes->push_back(ConvexMesh(convexMeshTriangles));
 	}
 }
 
@@ -122,7 +123,13 @@ void ConvexMesh::ctor(Object3DModel* model)
 	center = new Vector3();
 	distanceVector = new Vector3();
 	closestsPoint = new Vector3();
-	triangles = model->getFaceTriangles();
+	vector<Triangle> faceTriangles;
+	model->getFaceTriangles(&faceTriangles);
+	triangles = new TriangleArray(faceTriangles.size());
+	int faceTriangleIdx = 0;
+	for (auto& triangle: faceTriangles) {
+		triangles->set(faceTriangleIdx++, triangle.clone());
+	}
 	triangleEdge1 = new Vector3();
 	triangleEdge2 = new Vector3();
 	triangleEdge3 = new Vector3();

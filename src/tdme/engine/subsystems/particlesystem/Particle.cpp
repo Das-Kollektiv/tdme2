@@ -54,10 +54,13 @@ String* Particle::toString()
 		->append(lifeTimeMax)
 		->append(u", lifeTimeCurrent="_j)
 		->append(lifeTimeCurrent)
+		/*
+		// TODO: implement me!
 		->append(u", color="_j)
 		->append(static_cast< Object* >(color))
 		->append(u", colorAdd="_j)
 		->append(static_cast< Object* >(colorAdd))
+		*/
 		->append(u"]"_j)->toString();
 }
 

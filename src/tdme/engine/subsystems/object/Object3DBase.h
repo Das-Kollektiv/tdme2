@@ -34,37 +34,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using java::lang::Object;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Group, ::java::lang::ObjectArray > GroupArray;
-}  // namespace model
-
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::BoundingVolume, ::java::lang::ObjectArray > BoundingVolumeArray;
-typedef ::SubArray< ::tdme::engine::primitives::Triangle, ::java::lang::ObjectArray, BoundingVolumeArray > TriangleArray;
-}  // namespace primitives
-
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::lang::ObjectArray > Object3DGroupArray;
-}  // namespace object
-}  // namespace subsystems
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::model::GroupArray;
-using tdme::engine::primitives::BoundingVolumeArray;
-using tdme::engine::primitives::TriangleArray;
-using tdme::engine::subsystems::object::Object3DGroupArray;
-using tdme::math::Matrix4x4Array;
-
 struct default_init_tag;
 
 /** 
@@ -87,11 +56,11 @@ public: /* protected */
 	Matrix4x4* tmpMatrix1 {  };
 	bool hasSkinning {  };
 	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
-	GroupArray* skinningGroups {  };
+	vector<Group*> skinningGroups {  };
 	AnimationState* baseAnimation {  };
 	map<wstring, AnimationState*> overlayAnimationsById {  };
 	map<wstring, AnimationState*> overlayAnimationsByJointId {  };
-	Object3DGroupArray* object3dGroups {  };
+	vector<Object3DGroup*> object3dGroups {  };
 	bool recreateBuffers {  };
 	bool usesMeshManager {  };
 	Engine_AnimationProcessingTarget* animationProcessingTarget {  };
@@ -210,9 +179,9 @@ public:
 	 * TODO: 
 	 * these are untransformed, so even without group transformation, check later if this makes really sense in all cases
 	 * as it is working with physics test 1 + 3 I currently leave it as it is
-	 * @return faces
+	 * @param face triangles
 	 */
-	virtual TriangleArray* getFaceTriangles();
+	virtual void getFaceTriangles(vector<Triangle>* faceTriangles);
 
 	/** 
 	 * @return transformed faces iterator
@@ -248,7 +217,7 @@ private:
 	 * @param skinning groups
 	 * @param idx
 	 */
-	int32_t determineSkinnedGroups(map<wstring, Group*>*, GroupArray* skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(map<wstring, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
 
 public: /* protected */
 
@@ -281,9 +250,6 @@ protected:
 
 public:
 	static ::java::lang::Class *class_();
-
-private:
-	void init();
 
 public:
 	virtual Matrix4x4* getTransformationsMatrix();

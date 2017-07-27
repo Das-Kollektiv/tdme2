@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <Array.h>
 #include <fwd-tdme.h>
@@ -21,6 +22,7 @@
 #include <tdme/os/_FileSystemException.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 
 using java::lang::Object;
@@ -213,6 +215,18 @@ public:
 		}
 	}
 
+	/**
+	 * Writes a float array to output stream
+	 * @param float array
+	 * @throws model file IO exception
+	 */
+	inline void writeFloatArray(const vector<float>* f) throw (ModelFileIOException) {
+		writeInt(f->size());
+		for (auto i = 0; i < f->size(); i++) {
+			writeFloat((*f)[i]);
+		}
+	}
+
 };
 
 };
@@ -256,7 +270,7 @@ private:
 	 * @param vertices
 	 * @throws model file IO exception
 	 */
-	static void writeVertices(TMWriterOutputStream* os, Vector3Array* v) throw (ModelFileIOException);
+	static void writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException);
 
 	/** 
 	 * Write texture coordinates to output stream
@@ -264,7 +278,7 @@ private:
 	 * @param texture coordinates
 	 * @throws model file IO exception
 	 */
-	static void writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) throw (ModelFileIOException);
+	static void writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException);
 
 	/** 
 	 * Write indices to output stream
@@ -288,7 +302,7 @@ private:
 	 * @param faces entities
 	 * @throws model file IO exception
 	 */
-	static void writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) throw (ModelFileIOException);
+	static void writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint

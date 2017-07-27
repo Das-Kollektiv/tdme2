@@ -3,15 +3,7 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Color 4 base definition
@@ -19,41 +11,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::Color4Base
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
 
 public: /* protected */
 	floatArray* data {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param color
-	 */
-	void ctor(Color4Base* color);
-
-	/** 
-	 * Public constructor
-	 * @param color
-	 */
-	void ctor(floatArray* color);
-
-	/** 
-	 * Public constructor
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
-	 */
-	void ctor(float r, float g, float b, float a);
 
 public:
 
@@ -137,21 +98,32 @@ public:
 	 * @return equality
 	 */
 	virtual bool equals(Color4Base* c);
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	Color4Base();
+
+	/**
+	 * Public constructor
+	 * @param color
+	 */
 	Color4Base(Color4Base* color);
+
+	/**
+	 * Public constructor
+	 * @param color
+	 */
 	Color4Base(floatArray* color);
+
+	/**
+	 * Public constructor
+	 * @param red
+	 * @param green
+	 * @param blue
+	 * @param alpha
+	 */
 	Color4Base(float r, float g, float b, float a);
-protected:
-	Color4Base(const ::default_init_tag&);
 
 
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* arg0);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

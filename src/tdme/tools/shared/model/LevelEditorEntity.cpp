@@ -175,8 +175,11 @@ String* LevelEditorEntity::toString()
 		->append(fileName)
 		->append(u", thumbnail="_j)
 		->append(thumbnail)
+		/*
+		// TODO: implement me
 		->append(u", model="_j)
 		->append(static_cast< Object* >(model))
+		*/
 		/*
 		// TODO: implement me
 		->append(u", boundingVolumes="_j)

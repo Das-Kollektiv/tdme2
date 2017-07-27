@@ -133,10 +133,13 @@ String* LevelEditorEntityParticleSystem_PointParticleEmitter::toString()
 		->append(static_cast< Object* >(velocity))
 		->append(u", velocityRnd="_j)
 		->append(static_cast< Object* >(velocityRnd))
+		/*
+		// TODO: Implement me!
 		->append(u", colorStart="_j)
 		->append(static_cast< Object* >(colorStart))
 		->append(u", colorEnd="_j)
 		->append(static_cast< Object* >(colorEnd))
+		*/
 		->append(u"]"_j)->toString();
 }
 

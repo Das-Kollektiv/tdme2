@@ -6,19 +6,15 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 
 using std::wstring;
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model_UpVector;
@@ -26,20 +22,15 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 
-
-struct default_init_tag;
-
 /** 
  * Represents a 3d model
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::engine::model::Model final
-	: public Object
 {
 
 public:
-	typedef Object super;
 	static wstring ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
 
@@ -56,18 +47,6 @@ private:
 	map<wstring, AnimationSetup*> animationSetups {  };
 	Matrix4x4* importTransformationsMatrix {  };
 	BoundingBox* boundingBox {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param id
-	 * @param name
-	 * @param up vector
-	 * @param rotation order
-	 * @param bounding box
-	 */
-	void ctor(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
-
 public:
 
 	/** 
@@ -214,24 +193,13 @@ public: /* protected */
 	 */
 	Matrix4x4* computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId);
 
-public:
-
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param name
+	 * @param up vector
+	 * @param rotation order
+	 * @param bounding box
 	 */
-	String* toString() override;
-
-	// Generated
 	Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
-protected:
-	Model(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class Model_UpVector;
 };

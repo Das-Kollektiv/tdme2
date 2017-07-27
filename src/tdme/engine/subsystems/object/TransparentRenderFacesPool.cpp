@@ -89,20 +89,20 @@ void TransparentRenderFacesPool::ctor()
 void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4* modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto facesEntity = (*facesEntities)[facesEntityIdx];
-	auto faces = facesEntity->getFaces();
+	auto& facesEntity = (*facesEntities)[facesEntityIdx];
+	auto faces = facesEntity.getFaces();
 	auto groupTransformedVertices = object3DGroup->mesh->vertices;
 	float distanceFromCamera;
-	for (auto i = 0; i < faces->length; i++) {
+	for (auto i = 0; i < faces->size(); i++) {
 		if (size() >= FACES_MAX) {
 			_Console::println(static_cast< Object* >(u"TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"_j));
 			break;
 		}
-		auto faceVertexIndices = (*faces)[i]->getVertexIndices();
+		auto faceVertexIndices = (*faces)[i].getVertexIndices();
 		tmpVector3->set(0.0f, 0.0f, 0.0f);
-		tmpVector3->add((*groupTransformedVertices)[(*faceVertexIndices)[0]]);
-		tmpVector3->add((*groupTransformedVertices)[(*faceVertexIndices)[1]]);
-		tmpVector3->add((*groupTransformedVertices)[(*faceVertexIndices)[2]]);
+		tmpVector3->add(&(*groupTransformedVertices)[(*faceVertexIndices)[0]]);
+		tmpVector3->add(&(*groupTransformedVertices)[(*faceVertexIndices)[1]]);
+		tmpVector3->add(&(*groupTransformedVertices)[(*faceVertexIndices)[2]]);
 		tmpVector3->scale(1.0f / 3.0f);
 		modelViewMatrix->multiply(tmpVector3, tmpVector3);
 		distanceFromCamera = -tmpVector3->getZ();

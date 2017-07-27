@@ -31,20 +31,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::engine::subsystems::object::Object3DGroup;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::lang::ObjectArray > Object3DGroupArray;
-}  // namespace object
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::subsystems::object::Object3DGroupArray;
-
 struct default_init_tag;
 
 /** 
@@ -82,21 +68,24 @@ public: /* protected */
 	 * Creates object 3d groups from given object3d base object
 	 * @param object 3d base
 	 * @param use mesh manager
-	 * @return object 3d group array
+	 * @param animation processing target
+	 * @param object 3d groups array
+	 * @return object 3d group
 	 */
-	static Object3DGroupArray* createGroups(Object3DBase* object, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	static void createGroups(Object3DBase* object, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 private:
 
 	/** 
 	 * Creates a object 3d groups recursively for given group and it sub groups
 	 * @param object 3D base
-	 * @param object 3D groups
 	 * @param groups
 	 * @param animated
 	 * @param use mesh manager
+	 * @param animation processing target
+	 * @param object 3D groups
 	 */
-	static void createGroups(Object3DBase* object3D, vector<Object3DGroup*>& object3DGroups, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	static void createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 public: /* protected */
 
@@ -104,7 +93,7 @@ public: /* protected */
 	 * Applies transformations to meshes for given object 3d groups
 	 * @param group render data list
 	 */
-	static void computeTransformations(Object3DGroupArray* object3DGroups);
+	static void computeTransformations(vector<Object3DGroup*>* object3DGroups);
 
 	/** 
 	 * Set up textures for given object3d group and faces entity

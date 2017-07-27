@@ -13,36 +13,13 @@ using java::lang::StringBuilder;
 using java::util::Arrays;
 using tdme::engine::model::Group;
 
-Face::Face(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+Face::Face()
 {
-	clinit();
+	init();
 }
 
 Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2) 
-	: Face(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(group,vi0,vi1,vi2,ni0,ni1,ni2);
-}
-
-Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2) 
-	: Face(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(group,vi0,vi1,vi2,ni0,ni1,ni2,vt0,vt1,vt2);
-}
-
-void Face::init()
-{
-	vertexIndices = nullptr;
-	normalIndices = nullptr;
-	textureCoordinateIndices = nullptr;
-	tangentIndices = nullptr;
-	bitangentIndices = nullptr;
-}
-
-void Face::ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2)
-{
-	super::ctor();
 	init();
 	this->group = group;
 	vertexIndices = new int32_tArray(3);
@@ -55,9 +32,8 @@ void Face::ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0
 	(*normalIndices)[2] = ni2;
 }
 
-void Face::ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2)
+Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2) 
 {
-	super::ctor();
 	init();
 	this->group = group;
 	vertexIndices = new int32_tArray(3);
@@ -72,6 +48,15 @@ void Face::ctor(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0
 	(*textureCoordinateIndices)[0] = vt0;
 	(*textureCoordinateIndices)[1] = vt1;
 	(*textureCoordinateIndices)[2] = vt2;
+}
+
+void Face::init()
+{
+	vertexIndices = nullptr;
+	normalIndices = nullptr;
+	textureCoordinateIndices = nullptr;
+	tangentIndices = nullptr;
+	bitangentIndices = nullptr;
 }
 
 Group* Face::getGroup()
@@ -134,7 +119,6 @@ void Face::setIndexedRenderingIndices(int32_tArray* faceVertexIndices)
 	normalIndices = faceVertexIndices;
 	if (textureCoordinateIndices != nullptr)
 		textureCoordinateIndices = faceVertexIndices;
-
 	if (tangentIndices != nullptr && bitangentIndices != nullptr) {
 		tangentIndices = faceVertexIndices;
 		bitangentIndices = faceVertexIndices;
@@ -142,27 +126,5 @@ void Face::setIndexedRenderingIndices(int32_tArray* faceVertexIndices)
 		tangentIndices = nullptr;
 		bitangentIndices = nullptr;
 	}
-}
-
-String* Face::toString()
-{
-	return ::java::lang::StringBuilder().append(u"vI = "_j)->append(Arrays::toString(vertexIndices))
-		->append(u", nI = "_j)
-		->append(Arrays::toString(normalIndices))
-		->append(u", vtI = "_j)
-		->append(Arrays::toString(textureCoordinateIndices))->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Face::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.model.Face", 22);
-    return c;
-}
-
-java::lang::Class* Face::getClass0()
-{
-	return class_();
 }
 

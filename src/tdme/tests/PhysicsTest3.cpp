@@ -305,12 +305,12 @@ void PhysicsTest3::initialize()
 		entity->getTranslation()->setY(-4.0f);
 		entity->update();
 		engine->addEntity(entity);
-		vector<ConvexMesh*> groundConvexMeshes;
-		ConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), groundConvexMeshes);
+		vector<ConvexMesh> groundConvexMeshes;
+		ConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), &groundConvexMeshes);
 		{
 			int i = 0;
 			for (auto convexMesh: groundConvexMeshes) {
-				world->addStaticRigidBody(::java::lang::StringBuilder().append(u"ground"_j)->append(i++)->toString(), true, RIGID_TYPEID_STANDARD, entity, convexMesh, 0.5f);
+				world->addStaticRigidBody(::java::lang::StringBuilder().append(u"ground"_j)->append(i++)->toString(), true, RIGID_TYPEID_STANDARD, entity, &convexMesh, 0.5f);
 			}
 		}
 		auto _barrel = DAEReader::read(u"resources/tests/models/barrel"_j, u"barrel.dae"_j);

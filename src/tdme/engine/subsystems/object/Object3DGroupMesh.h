@@ -4,9 +4,9 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -17,11 +17,10 @@
 #include <java/lang/Object.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 
 using java::lang::Object;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
 using tdme::engine::Engine_AnimationProcessingTarget;
@@ -29,48 +28,6 @@ using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-namespace  {
-typedef ::SubArray< ::floatArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > floatArrayArray;
-}  // namespace 
-
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4Array, ::java::lang::CloneableArray, ::java::io::SerializableArray > Matrix4x4ArrayArray;
-}  // namespace math
-}  // namespace tdme
-
-using java::io::SerializableArray;
-using java::lang::CloneableArray;
-using java::lang::ObjectArray;
-using tdme::engine::model::TextureCoordinateArray;
-using tdme::math::Matrix4x4Array;
-using tdme::math::Matrix4x4ArrayArray;
-using tdme::math::Vector3Array;
 
 struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DGroupMesh final
@@ -83,23 +40,27 @@ public:
 public: /* protected */
 	Group* group {  };
 	int32_t faceCount {  };
-	int16_tArray* indices {  };
-	Vector3Array* vertices {  };
-	Vector3Array* normals {  };
-	Vector3Array* tangents {  };
-	Vector3Array* bitangents {  };
-	TextureCoordinateArray* textureCoordinates {  };
+	vector<int16_t> indices {  };
+	vector<TextureCoordinate>* textureCoordinates;
+	vector<Vector3>* vertices {  };
+	vector<Vector3>* normals {  };
+	vector<Vector3>* tangents {  };
+	vector<Vector3>* bitangents {  };
+	vector<Vector3> transformedVertices;
+	vector<Vector3> transformedNormals;
+	vector<Vector3> transformedTangents;
+	vector<Vector3> transformedBitangents;
 	Engine_AnimationProcessingTarget* animationProcessingTarget {  };
 
 private:
 	int32_t cSkinningMaxVertexWeights {  };
-	floatArrayArray* cSkinningJointWeight {  };
+	vector<vector<float>> cSkinningJointWeight {  };
 
 public: /* protected */
 	Matrix4x4* cGroupTransformationsMatrix {  };
 
 private:
-	Matrix4x4ArrayArray* cSkinningJointTransformationsMatrices {  };
+	vector<vector<Matrix4x4*>> cSkinningJointTransformationsMatrices {  };
 	Vector3* tmpVector3 {  };
 
 public: /* protected */

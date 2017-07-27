@@ -5,13 +5,6 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Class representing a UV data
@@ -19,35 +12,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::TextureCoordinate final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	floatArray* data {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param texture coordinate
-	 */
-	void ctor(TextureCoordinate* textureCoordinate);
-
-	/** 
-	 * Public constructor
-	 * @param float array containing u, v values
-	 */
-	void ctor(floatArray* uv);
-
-	/** 
-	 * Public constructor
-	 * @param u
-	 * @param v
-	 */
-	void ctor(float u, float v);
-
 public:
 
 	/** 
@@ -69,7 +36,7 @@ public:
 	 * Clones the texture coordinate
 	 * @return new texture coordinate
 	 */
-	TextureCoordinate* clone() override;
+	TextureCoordinate* clone();
 
 	/** 
 	 * Compares this texture coordinate with given texture coordinate
@@ -77,23 +44,27 @@ public:
 	 */
 	bool equals(TextureCoordinate* textureCoordinate);
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
+	TextureCoordinate();
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param texture coordinate
+	 */
 	TextureCoordinate(TextureCoordinate* textureCoordinate);
+
+	/**
+	 * Public constructor
+	 * @param texture coordinate
+	 */
 	TextureCoordinate(floatArray* uv);
+
+	/**
+	 * Public constructor
+	 * @param u
+	 * @param v
+	 */
 	TextureCoordinate(float u, float v);
-protected:
-	TextureCoordinate(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* arg0);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

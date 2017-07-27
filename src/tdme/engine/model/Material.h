@@ -5,20 +5,13 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
-
-
-struct default_init_tag;
 
 /** 
  * Represents a object material
@@ -26,12 +19,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::model::Material final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static wstring defaultMaterialId;
 	static Material* defaultMaterial;
@@ -63,13 +51,6 @@ private:
 	wstring displacementTexturePathName {  };
 	wstring displacementTextureFileName {  };
 	Texture* displacementTexture {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param name
-	 */
-	void ctor(const wstring& id);
 
 public:
 
@@ -239,18 +220,10 @@ public:
 	 * @return if material is transparent
 	 */
 	bool hasTransparency();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param id
+	 */
 	Material(const wstring& id);
-protected:
-	Material(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

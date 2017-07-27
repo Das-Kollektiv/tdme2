@@ -5,10 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -17,18 +13,12 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
 using tdme::engine::model::Group;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -38,58 +28,17 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Face, ::java::lang::ObjectArray > FaceArray;
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Group::Group(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Group::Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name)
-	: Group(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(model,parentGroup,id,name);
-}
-
-void Group::ctor(Model* model, Group* parentGroup, const wstring& id, const wstring& name)
-{
-	super::ctor();
 	this->model = model;
 	this->parentGroup = parentGroup;
 	this->id = id;
 	this->name = name;
 	this->transformationsMatrix = (new Matrix4x4())->identity();
-	this->vertices = new Vector3Array(0);
-	this->normals = new Vector3Array(0);
-	this->textureCoordinates = nullptr;
-	this->tangents = nullptr;
-	this->bitangents = nullptr;
 	this->animation = nullptr;
 	this->skinning = nullptr;
-	this->facesEntities = new FacesEntityArray(0);
 }
+
 
 Model* Group::getModel()
 {
@@ -126,98 +75,73 @@ Matrix4x4* Group::getTransformationsMatrix()
 	return transformationsMatrix;
 }
 
-void Group::setVertices(const vector<Vector3*>& vertices)
+vector<Vector3>* Group::getVertices()
 {
-	this->vertices = new Vector3Array(vertices.size());
+	return &vertices;
+}
+
+void Group::setVertices(const vector<Vector3>* vertices)
+{
+	this->vertices.resize(vertices->size());
 	int i = 0;
-	for (Vector3* vertex: vertices) {
-		this->vertices->set(i++, vertex);
+	for (auto& vertex: *vertices) {
+		this->vertices[i++] = vertex;
 	}
 }
 
-Vector3Array* Group::getVertices()
+vector<Vector3>* Group::getNormals()
 {
-	return vertices;
+	return &normals;
 }
 
-void Group::setVertices(Vector3Array* vertices)
+void Group::setNormals(const vector<Vector3>* normals)
 {
-	this->vertices = vertices;
-}
-
-Vector3Array* Group::getNormals()
-{
-	return normals;
-}
-
-void Group::setNormals(Vector3Array* normals)
-{
-	this->normals = normals;
-}
-
-void Group::setNormals(const vector<Vector3*>& normals)
-{
-	this->normals = new Vector3Array(normals.size());
+	this->normals.resize(normals->size());
 	int i = 0;
-	for (Vector3* normal: normals) {
-		this->normals->set(i++, normal);
+	for (auto& normal: *normals) {
+		this->normals[i++] = normal;
 	}
 }
 
-TextureCoordinateArray* Group::getTextureCoordinates()
+vector<TextureCoordinate>* Group::getTextureCoordinates()
 {
-	return textureCoordinates;
+	return &textureCoordinates;
 }
 
-void Group::setTextureCoordinates(TextureCoordinateArray* textureCoordinates)
+void Group::setTextureCoordinates(const vector<TextureCoordinate>* textureCoordinates)
 {
-	this->textureCoordinates = textureCoordinates;
-}
-
-void Group::setTextureCoordinates(const vector<TextureCoordinate*>& textureCoordinates)
-{
-	this->textureCoordinates = new TextureCoordinateArray(textureCoordinates.size());
+	this->textureCoordinates.resize(textureCoordinates->size());
 	int i = 0;
-	for (TextureCoordinate* textureCoordinate: textureCoordinates) {
-		this->textureCoordinates->set(i++, textureCoordinate);
+	for (auto& textureCoordinate: *textureCoordinates) {
+		this->textureCoordinates[i++] = textureCoordinate;
 	}
 }
 
-Vector3Array* Group::getTangents()
+vector<Vector3>* Group::getTangents()
 {
-	return tangents;
+	return &tangents;
 }
 
-void Group::setTangents(Vector3Array* tangents)
+void Group::setTangents(const vector<Vector3>* tangents)
 {
-	this->tangents = tangents;
-}
-
-void Group::setTangents(const vector<Vector3*>& tangents)
-{
-	this->tangents = new Vector3Array(tangents.size());
+	this->tangents.resize(tangents->size());
 	int i = 0;
-	for (Vector3* tangent: tangents) {
-		this->tangents->set(i++, tangent);
+	for (auto& tangent: *tangents) {
+		this->tangents[i++] = tangent;
 	}
 }
 
-Vector3Array* Group::getBitangents()
+vector<Vector3>* Group::getBitangents()
 {
-	return bitangents;
+	return &bitangents;
 }
 
-void Group::setBitangents(Vector3Array* bitangents)
+void Group::setBitangents(const vector<Vector3>* bitangents)
 {
-	this->bitangents = bitangents;
-}
-
-void Group::setBitangents(const vector<Vector3*>& bitangents)
-{
-	this->bitangents = new Vector3Array(bitangents.size());
+	this->bitangents.resize(bitangents->size());
 	int i = 0;
-	for (Vector3* bitangent: bitangents) {
-		this->bitangents->set(i++, bitangent);
+	for (auto& bitangent: *bitangents) {
+		this->bitangents[i++] = bitangent;
 	}
 }
 
@@ -247,29 +171,24 @@ Skinning* Group::createSkinning()
 int32_t Group::getFaceCount()
 {
 	auto faceCount = 0;
-	for (auto facesEntity : *facesEntities) {
-		faceCount += facesEntity->getFaces()->length;
+	for (auto& facesEntity : facesEntities) {
+		faceCount += facesEntity.getFaces()->size();
 	}
 	return faceCount;
 }
 
-FacesEntityArray* Group::getFacesEntities()
+vector<FacesEntity>* Group::getFacesEntities()
 {
-	return facesEntities;
+	return &facesEntities;
 }
 
-void Group::setFacesEntities(const vector<FacesEntity*>& facesEntities)
+void Group::setFacesEntities(const vector<FacesEntity>* facesEntities)
 {
-	this->facesEntities = new FacesEntityArray(facesEntities.size());
+	this->facesEntities.resize(facesEntities->size());
 	int i = 0;
-	for (FacesEntity* facesEntity: facesEntities) {
-		this->facesEntities->set(i++, facesEntity);
+	for (auto& facesEntity: *facesEntities) {
+		this->facesEntities[i++] = facesEntity;
 	}
-}
-
-void Group::setFacesEntities(FacesEntityArray* facesEntities)
-{
-	this->facesEntities = facesEntities;
 }
 
 map<wstring, Group*>* Group::getSubGroups()
@@ -288,46 +207,7 @@ Group* Group::getSubGroupById(const wstring& groupId)
 
 void Group::determineFeatures()
 {
-	for (auto facesEntity : *facesEntities) {
-		facesEntity->determineFeatures();
+	for (auto& facesEntity : facesEntities) {
+		facesEntity.determineFeatures();
 	}
 }
-
-String* Group::toString()
-{
-	return ::java::lang::StringBuilder().append(u"ObjectGroup [id="_j)->append(id)
-		->append(u", name="_j)
-		->append(name)
-		->append(u", faces entities="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(facesEntities)))
-		->append(u", vertices ="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(vertices)))
-		->append(u", normals ="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(normals)))
-		->append(u", texture coordinates ="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(textureCoordinates)))
-		->append(u", tangents ="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(tangents)))
-		->append(u", bitangents ="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(bitangents)))
-		/*
-		// TODO: implement me!
-		->append(u", subgroups ="_j)
-		->append(static_cast< Object* >(subGroups))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Group::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.model.Group", 23);
-    return c;
-}
-
-java::lang::Class* Group::getClass0()
-{
-	return class_();
-}
-

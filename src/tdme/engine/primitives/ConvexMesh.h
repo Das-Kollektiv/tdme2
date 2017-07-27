@@ -82,7 +82,7 @@ public:
 	 * @param model
 	 * @param convex meshes
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh*>& convexMeshes);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes);
 protected:
 
 	/** 

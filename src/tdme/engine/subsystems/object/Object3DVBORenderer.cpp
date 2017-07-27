@@ -270,8 +270,8 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
 		auto transparentRenderFace = transparentRenderFaces.at(i);
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
-		if (facesEntity != (*facesEntities)[facesEntityIdx]) {
-			facesEntity = (*facesEntities)[facesEntityIdx];
+		if (facesEntity != &(*facesEntities)[facesEntityIdx]) {
+			facesEntity = &(*facesEntities)[facesEntityIdx];
 			material = facesEntity->getMaterial();
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
@@ -287,8 +287,14 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
-			auto arrayIdx = (*transparentRenderFace->object3DGroup->mesh->indices)[transparentRenderFace->faceIdx * 3 + vertexIdx];
-			trfGroup->addVertex(modelViewMatrix->multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVertex), modelViewMatrix->multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal), transparentRenderFace->object3DGroup->mesh->textureCoordinates != nullptr ? (*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] : static_cast< TextureCoordinate* >(nullptr));
+			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
+			trfGroup->addVertex(
+				modelViewMatrix->multiply(&(*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVertex),
+				modelViewMatrix->multiplyNoTranslation(&(*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
+				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
+					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
+					static_cast< TextureCoordinate* >(nullptr)
+			);
 		}
 	}
 }
@@ -311,9 +317,9 @@ void Object3DVBORenderer::releaseTransparentFacesGroups()
 void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces)
 {
 	for (auto object: objects) {
-		for (auto j = 0; j < object->object3dGroups->length; j++) {
-			auto object3DGroup = (*object->object3dGroups)[j];
-			(java_cast< Object3DGroupVBORenderer* >(object3DGroup->renderer))->preRender(this);
+		for (auto j = 0; j < object->object3dGroups.size(); j++) {
+			auto object3DGroup = object->object3dGroups[j];
+			object3DGroup->renderer->preRender(this);
 		}
 	}
 	auto shadowMapping = engine->getShadowMapping();
@@ -323,15 +329,15 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 	int32_tArray* boundVBOBaseIds = nullptr;
 	int32_tArray* boundVBOTangentBitangentIds = nullptr;
 	int32_tArray* boundSkinningIds = nullptr;
-	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups->length; object3DGroupIdx++) {
-		auto object3DGroup = (*firstObject->object3dGroups)[object3DGroupIdx];
+	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
+		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
-		auto facesEntityIdxCount = facesEntities->length;
+		auto facesEntityIdxCount = facesEntities->size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto facesEntity = (*facesEntities)[faceEntityIdx];
+			auto facesEntity = &(*facesEntities)[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces()->length;
+			auto faces = facesEntity->getFaces()->size();
 			auto material = facesEntity->getMaterial();
 			auto transparentFacesEntity = false;
 			if (material != nullptr) {
@@ -343,10 +349,20 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objects.at(objectIdx);
-					auto _object3DGroup = (*object->object3dGroups)[object3DGroupIdx];
+					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
 					if (collectTransparentFaces == true) {
-						transparentRenderFacesPool->createTransparentRenderFaces((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix)->multiply(modelViewMatrixBackup), (*object->object3dGroups)[object3DGroupIdx], faceEntityIdx, faceIdx);
+						transparentRenderFacesPool->createTransparentRenderFaces(
+							(_object3DGroup->mesh->skinning == true ?
+								modelViewMatrix->identity() :
+								modelViewMatrix->
+									set(_object3DGroup->groupTransformationsMatrix))->
+									multiply(object->transformationsMatrix)->
+									multiply(modelViewMatrixBackup),
+								object->object3dGroups[object3DGroupIdx],
+								faceEntityIdx,
+								faceIdx
+							);
 					}
 				}
 				faceIdx += faces;
@@ -366,7 +382,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 			auto objectCount = objects.size();
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 				auto object = objects.at(objectIdx);
-				auto _object3DGroup = (*object->object3dGroups)[object3DGroupIdx];
+				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 				if (objectIdx == 0) {
 					setupMaterial(_object3DGroup, faceEntityIdx);
 				} else {
@@ -421,7 +437,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto material = (*facesEntities)[facesEntityIdx]->getMaterial();
+	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
 	if (material == nullptr)
 		material = Material::getDefaultMaterial();
 

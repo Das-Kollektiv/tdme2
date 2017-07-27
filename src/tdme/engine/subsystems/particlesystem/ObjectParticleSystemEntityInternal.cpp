@@ -320,8 +320,11 @@ String* ObjectParticleSystemEntityInternal::toString()
 	return ::java::lang::StringBuilder().append(u"ObjectParticleSystemEntityInternal [id="_j)->append(id)
 		->append(u", enabled="_j)
 		->append(enabled)
+		/*
+		// TODO: implement me!
 		->append(u", model="_j)
 		->append(static_cast< Object* >(model))
+		*/
 		->append(u", autoEmit="_j)
 		->append(autoEmit)
 		->append(u", enableDynamicShadows="_j)
@@ -344,10 +347,13 @@ String* ObjectParticleSystemEntityInternal::toString()
 		->append(static_cast< Object* >(emitter))
 		->append(u", pickable="_j)
 		->append(pickable)
+		/*
+		// TODO: implement me
 		->append(u", effectColorMul="_j)
 		->append(static_cast< Object* >(effectColorMul))
 		->append(u", effectColorAdd="_j)
 		->append(static_cast< Object* >(effectColorAdd))
+		*/
 		->append(u", velocityForTime="_j)
 		->append(static_cast< Object* >(velocityForTime))
 		->append(u", particlesToSpawnRemainder="_j)

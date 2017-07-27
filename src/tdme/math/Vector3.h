@@ -278,6 +278,12 @@ public:
 	Vector3* clone() override;
 
 	/** 
+	 * Clones the vector
+	 * @return new cloned vector
+	 */
+	Vector3 clone2();
+
+	/**
 	 * Compares this vector with given vector
 	 * @param vector v
 	 * @return equality

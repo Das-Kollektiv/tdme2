@@ -155,10 +155,13 @@ String* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::toString()
 		->append(static_cast< Object* >(velocity))
 		->append(u", velocityRnd="_j)
 		->append(static_cast< Object* >(velocityRnd))
+		/*
+		// TODO: implement me!
 		->append(u", colorStart="_j)
 		->append(static_cast< Object* >(colorStart))
 		->append(u", colorEnd="_j)
 		->append(static_cast< Object* >(colorEnd))
+		*/
 		->append(u", obbCenter="_j)
 		->append(static_cast< Object* >(obbCenter))
 		->append(u", obbHalfextension="_j)

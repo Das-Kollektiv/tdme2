@@ -302,6 +302,11 @@ Vector3* Vector3::clone()
 	return new Vector3(data);
 }
 
+Vector3 Vector3::clone2()
+{
+	return Vector3(data);
+}
+
 bool Vector3::equals(Vector3* v)
 {
 	return (this == v) || (Math::abs((*data)[0] - (*v->data)[0]) < MathTools::EPSILON && Math::abs((*data)[1] - (*v->data)[1]) < MathTools::EPSILON && Math::abs((*data)[2] - (*v->data)[2]) < MathTools::EPSILON);

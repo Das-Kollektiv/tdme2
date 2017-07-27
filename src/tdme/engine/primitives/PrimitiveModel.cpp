@@ -1,11 +1,10 @@
 // Generated from /tdme/src/tdme/engine/primitives/PrimitiveModel.java
 #include <tdme/engine/primitives/PrimitiveModel.h>
 
+#include <array>
 #include <string>
 #include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Cloneable.h>
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -32,12 +31,11 @@
 #include <SubArray.h>
 #include <ObjectArray.h>
 
+using std::array;
 using std::vector;
 using std::wstring;
 
 using tdme::engine::primitives::PrimitiveModel;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::lang::Math;
 using java::lang::Object;
 using java::lang::String;
@@ -60,33 +58,6 @@ using tdme::math::MathTools;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-namespace  {
-typedef ::SubArray< ::int32_tArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > int32_tArrayArray;
-}  // namespace 
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -126,41 +97,41 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
-	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
-	groupFacesEntity->setMaterial(material);
-	vector<FacesEntity*> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
 	// FIXME: Have initializing static classes on engine startup
 	OrientedBoundingBox::clinit();
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
-	vector<Vector3*> vertices;
+	vector<Vector3> vertices;
 	for (auto vertex : *boundingBox->getVertices()) {
-		vertices.push_back(vertex->clone());
+		vertices.push_back(*vertex);
 	}
-	vector<Vector3*> normals;
-	normals.push_back(new Vector3(-1.0f, 0.0f, 0.0f));
-	normals.push_back(new Vector3(+1.0f, 0.0f, 0.0f));
-	normals.push_back(new Vector3(0.0f, -1.0f, 0.0f));
-	normals.push_back(new Vector3(0.0f, +1.0f, 0.0f));
-	normals.push_back(new Vector3(0.0f, 0.0f, -1.0f));
-	normals.push_back(new Vector3(0.0f, 0.0f, +1.0f));
-	vector<Face*> faces;
-	faces.push_back(new Face(group, (*(*fvi)[0])[0], (*(*fvi)[0])[1], (*(*fvi)[0])[2], 0, 0, 0));
-	faces.push_back(new Face(group, (*(*fvi)[1])[0], (*(*fvi)[1])[1], (*(*fvi)[1])[2], 0, 0, 0));
-	faces.push_back(new Face(group, (*(*fvi)[2])[0], (*(*fvi)[2])[1], (*(*fvi)[2])[2], 1, 1, 1));
-	faces.push_back(new Face(group, (*(*fvi)[3])[0], (*(*fvi)[3])[1], (*(*fvi)[3])[2], 1, 1, 1));
-	faces.push_back(new Face(group, (*(*fvi)[4])[0], (*(*fvi)[4])[1], (*(*fvi)[4])[2], 2, 2, 2));
-	faces.push_back(new Face(group, (*(*fvi)[5])[0], (*(*fvi)[5])[1], (*(*fvi)[5])[2], 2, 2, 2));
-	faces.push_back(new Face(group, (*(*fvi)[6])[0], (*(*fvi)[6])[1], (*(*fvi)[6])[2], 3, 3, 3));
-	faces.push_back(new Face(group, (*(*fvi)[7])[0], (*(*fvi)[7])[1], (*(*fvi)[7])[2], 3, 3, 3));
-	faces.push_back(new Face(group, (*(*fvi)[8])[0], (*(*fvi)[8])[1], (*(*fvi)[8])[2], 4, 4, 4));
-	faces.push_back(new Face(group, (*(*fvi)[9])[0], (*(*fvi)[9])[1], (*(*fvi)[9])[2], 4, 4, 4));
-	faces.push_back(new Face(group, (*(*fvi)[10])[0], (*(*fvi)[10])[1], (*(*fvi)[10])[2], 5, 5, 5));
-	faces.push_back(new Face(group, (*(*fvi)[11])[0], (*(*fvi)[11])[1], (*(*fvi)[11])[2], 5, 5, 5));
-	groupFacesEntity->setFaces(faces);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
+	vector<Vector3> normals;
+	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(+1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, +1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, +1.0f));
+	vector<Face> faces;
+	faces.push_back(Face(group, (*(*fvi)[0])[0], (*(*fvi)[0])[1], (*(*fvi)[0])[2], 0, 0, 0));
+	faces.push_back(Face(group, (*(*fvi)[1])[0], (*(*fvi)[1])[1], (*(*fvi)[1])[2], 0, 0, 0));
+	faces.push_back(Face(group, (*(*fvi)[2])[0], (*(*fvi)[2])[1], (*(*fvi)[2])[2], 1, 1, 1));
+	faces.push_back(Face(group, (*(*fvi)[3])[0], (*(*fvi)[3])[1], (*(*fvi)[3])[2], 1, 1, 1));
+	faces.push_back(Face(group, (*(*fvi)[4])[0], (*(*fvi)[4])[1], (*(*fvi)[4])[2], 2, 2, 2));
+	faces.push_back(Face(group, (*(*fvi)[5])[0], (*(*fvi)[5])[1], (*(*fvi)[5])[2], 2, 2, 2));
+	faces.push_back(Face(group, (*(*fvi)[6])[0], (*(*fvi)[6])[1], (*(*fvi)[6])[2], 3, 3, 3));
+	faces.push_back(Face(group, (*(*fvi)[7])[0], (*(*fvi)[7])[1], (*(*fvi)[7])[2], 3, 3, 3));
+	faces.push_back(Face(group, (*(*fvi)[8])[0], (*(*fvi)[8])[1], (*(*fvi)[8])[2], 4, 4, 4));
+	faces.push_back(Face(group, (*(*fvi)[9])[0], (*(*fvi)[9])[1], (*(*fvi)[9])[2], 4, 4, 4));
+	faces.push_back(Face(group, (*(*fvi)[10])[0], (*(*fvi)[10])[1], (*(*fvi)[10])[2], 5, 5, 5));
+	faces.push_back(Face(group, (*(*fvi)[11])[0], (*(*fvi)[11])[1], (*(*fvi)[11])[2], 5, 5, 5));
+	FacesEntity groupFacesEntity(group, L"faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())[L"group"] = group;
 	(*model->getSubGroups())[L"group"] = group;
@@ -178,40 +149,40 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
-	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
-	groupFacesEntity->setMaterial(material);
-	vector<FacesEntity*> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
-	vector<Vector3*> vertices;
+	vector<Vector3> vertices;
 	for (auto vertex : *orientedBoundingBox->vertices) {
-		vertices.push_back(vertex->clone());
+		vertices.push_back(*vertex);
 	}
 	auto axes = orientedBoundingBox->axes;
-	vector<Vector3*> normals;
-	normals.push_back((*axes)[0]->clone()->scale(-1.0f));
-	normals.push_back((*axes)[0]->clone());
-	normals.push_back((*axes)[1]->clone()->scale(-1.0f));
-	normals.push_back((*axes)[1]->clone());
-	normals.push_back((*axes)[2]->clone()->scale(-1.0f));
-	normals.push_back((*axes)[2]->clone());
-	vector<Face*> faces;
-	faces.push_back(new Face(group, (*(*fvi)[0])[0], (*(*fvi)[0])[1], (*(*fvi)[0])[2], 0, 0, 0));
-	faces.push_back(new Face(group, (*(*fvi)[1])[0], (*(*fvi)[1])[1], (*(*fvi)[1])[2], 0, 0, 0));
-	faces.push_back(new Face(group, (*(*fvi)[2])[0], (*(*fvi)[2])[1], (*(*fvi)[2])[2], 1, 1, 1));
-	faces.push_back(new Face(group, (*(*fvi)[3])[0], (*(*fvi)[3])[1], (*(*fvi)[3])[2], 1, 1, 1));
-	faces.push_back(new Face(group, (*(*fvi)[4])[0], (*(*fvi)[4])[1], (*(*fvi)[4])[2], 2, 2, 2));
-	faces.push_back(new Face(group, (*(*fvi)[5])[0], (*(*fvi)[5])[1], (*(*fvi)[5])[2], 2, 2, 2));
-	faces.push_back(new Face(group, (*(*fvi)[6])[0], (*(*fvi)[6])[1], (*(*fvi)[6])[2], 3, 3, 3));
-	faces.push_back(new Face(group, (*(*fvi)[7])[0], (*(*fvi)[7])[1], (*(*fvi)[7])[2], 3, 3, 3));
-	faces.push_back(new Face(group, (*(*fvi)[8])[0], (*(*fvi)[8])[1], (*(*fvi)[8])[2], 4, 4, 4));
-	faces.push_back(new Face(group, (*(*fvi)[9])[0], (*(*fvi)[9])[1], (*(*fvi)[9])[2], 4, 4, 4));
-	faces.push_back(new Face(group, (*(*fvi)[10])[0], (*(*fvi)[10])[1], (*(*fvi)[10])[2], 5, 5, 5));
-	faces.push_back(new Face(group, (*(*fvi)[11])[0], (*(*fvi)[11])[1], (*(*fvi)[11])[2], 5, 5, 5));
-	groupFacesEntity->setFaces(faces);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
+	vector<Vector3> normals;
+	normals.push_back(*(*axes)[0]->clone2().scale(-1.0f));
+	normals.push_back((*axes)[0]->clone2());
+	normals.push_back(*(*axes)[1]->clone2().scale(-1.0f));
+	normals.push_back((*axes)[1]->clone2());
+	normals.push_back(*(*axes)[2]->clone2().scale(-1.0f));
+	normals.push_back((*axes)[2]->clone2());
+	vector<Face> faces;
+	faces.push_back(Face(group, (*(*fvi)[0])[0], (*(*fvi)[0])[1], (*(*fvi)[0])[2], 0, 0, 0));
+	faces.push_back(Face(group, (*(*fvi)[1])[0], (*(*fvi)[1])[1], (*(*fvi)[1])[2], 0, 0, 0));
+	faces.push_back(Face(group, (*(*fvi)[2])[0], (*(*fvi)[2])[1], (*(*fvi)[2])[2], 1, 1, 1));
+	faces.push_back(Face(group, (*(*fvi)[3])[0], (*(*fvi)[3])[1], (*(*fvi)[3])[2], 1, 1, 1));
+	faces.push_back(Face(group, (*(*fvi)[4])[0], (*(*fvi)[4])[1], (*(*fvi)[4])[2], 2, 2, 2));
+	faces.push_back(Face(group, (*(*fvi)[5])[0], (*(*fvi)[5])[1], (*(*fvi)[5])[2], 2, 2, 2));
+	faces.push_back(Face(group, (*(*fvi)[6])[0], (*(*fvi)[6])[1], (*(*fvi)[6])[2], 3, 3, 3));
+	faces.push_back(Face(group, (*(*fvi)[7])[0], (*(*fvi)[7])[1], (*(*fvi)[7])[2], 3, 3, 3));
+	faces.push_back(Face(group, (*(*fvi)[8])[0], (*(*fvi)[8])[1], (*(*fvi)[8])[2], 4, 4, 4));
+	faces.push_back(Face(group, (*(*fvi)[9])[0], (*(*fvi)[9])[1], (*(*fvi)[9])[2], 4, 4, 4));
+	faces.push_back(Face(group, (*(*fvi)[10])[0], (*(*fvi)[10])[1], (*(*fvi)[10])[2], 5, 5, 5));
+	faces.push_back(Face(group, (*(*fvi)[11])[0], (*(*fvi)[11])[1], (*(*fvi)[11])[2], 5, 5, 5));
+	FacesEntity groupFacesEntity(group, L"faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())[L"group"] = group;
 	(*model->getSubGroups())[L"group"] = group;
@@ -231,13 +202,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
-	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
-	groupFacesEntity->setMaterial(material);
-	vector<FacesEntity*> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	vector<Vector3*> vertices;
-	for (auto i = 0; i < (segmentsY + 1) * segmentsX; i++) 
-		vertices.push_back(nullptr);
+	vector<Vector3> vertices;
+	vertices.resize((segmentsY + 1) * segmentsX);
 
 	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
@@ -245,8 +211,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 
-	vector<Vector3*> normals;
-	vector<Face*> faces;
+	vector<Vector3> normals;
+	vector<Face> faces;
 	int32_t vi0, vi1, vi2;
 	int32_t ni;
 	for (auto y = 0; y <= segmentsY; y++) {
@@ -255,32 +221,36 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : *ModelHelper::computeNormals(new Vector3Array({
-				vertices.at(vi0),
-				vertices.at(vi1),
-				vertices.at(vi2)
-			}))) {
+			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
+				&vertices.at(vi0),
+				&vertices.at(vi1),
+				&vertices.at(vi2)
+			})) {
 				normals.push_back(normal);
 			}
-			faces.push_back(new Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : *ModelHelper::computeNormals(new Vector3Array({
-				vertices.at(vi0),
-				vertices.at(vi1),
-				vertices.at(vi2)
-			}))) {
+			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
+				&vertices.at(vi0),
+				&vertices.at(vi1),
+				&vertices.at(vi2)
+			})) {
 				normals.push_back(normal);
 			}
-			faces.push_back(new Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}
 	}
-	groupFacesEntity->setFaces(faces);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
+	FacesEntity groupFacesEntity(group, L"faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())[L"group"] = group;
 	(*model->getSubGroups())[L"group"] = group;
@@ -314,37 +284,40 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 	material->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, L"group", L"group");
-	auto groupFacesEntity = new FacesEntity(group, L"faces entity");
-	groupFacesEntity->setMaterial(material);
-	vector<FacesEntity*> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	vector<Vector3*> vertices;
-	for (auto i = 0; i < (segmentsY + 2) * segmentsX; i++) 
-		vertices.push_back(nullptr);
+	vector<Vector3> vertices;
+	vertices.resize((segmentsY + 2) * segmentsX);
 
 	for (auto ySegment = segmentsY / 2; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-			auto vertex = new Vector3();
-			rotationQuaternion->multiply(new Vector3(static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))), static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))), vertex);
-			vertex->scale(radius);
-			vertex->add(a);
+			auto vertex = Vector3();
+			rotationQuaternion->multiply(
+				new Vector3(
+					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))),
+					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
+					&vertex
+				);
+			vertex.scale(radius);
+			vertex.add(a);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
-
-	for (auto i = 0; i < (segmentsY + 1) * segmentsX; i++) 
-		vertices.push_back(nullptr);
-
 	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-			auto vertex = new Vector3();
-			rotationQuaternion->multiply(new Vector3(static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))), static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))), vertex);
-			vertex->scale(radius);
-			vertex->add(b);
+			auto vertex = Vector3();
+			rotationQuaternion->multiply(
+				new Vector3(
+					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))),
+					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
+					&vertex
+				);
+			vertex.scale(radius);
+			vertex.add(b);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 
-	vector<Vector3*> normals;
-	vector<Face*> faces;
+	vector<Vector3> normals;
+	vector<Face> faces;
 	int32_t vi0, vi1, vi2;
 	int32_t ni;
 	for (auto y = 0; y <= segmentsY + 1; y++) {
@@ -353,32 +326,36 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : *ModelHelper::computeNormals(new Vector3Array({
-				vertices.at(vi0),
-				vertices.at(vi1),
-				vertices.at(vi2)
-			}))) {
+			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
+				&vertices.at(vi0),
+				&vertices.at(vi1),
+				&vertices.at(vi2)
+			})) {
 				normals.push_back(normal);
 			}
-			faces.push_back(new Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : *ModelHelper::computeNormals(new Vector3Array({
-				vertices.at(vi0),
-				vertices.at(vi1),
-				vertices.at(vi2)
-			}))) {
+			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
+				&vertices.at(vi0),
+				&vertices.at(vi1),
+				&vertices.at(vi2)
+			})) {
 				normals.push_back(normal);
 			}
-			faces.push_back(new Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}
 	}
-	groupFacesEntity->setFaces(faces);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
+	FacesEntity groupFacesEntity(group, L"faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())[L"group"] = group;
 	(*model->getSubGroups())[L"group"] = group;
@@ -402,8 +379,8 @@ void PrimitiveModel::setupConvexMeshMaterial(map<wstring, Group*>* groups, Mater
 	clinit();
 	for (auto it: *groups) {
 		Group* group = it.second;
-		for (auto faceEntity : *group->getFacesEntities()) {
-			faceEntity->setMaterial(material);
+		for (auto& faceEntity : *group->getFacesEntities()) {
+			faceEntity.setMaterial(material);
 		}
 	}
 }

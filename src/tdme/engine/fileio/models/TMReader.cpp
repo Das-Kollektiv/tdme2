@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
@@ -37,6 +38,7 @@
 #include <ObjectArray.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 using std::to_string;
 
@@ -70,40 +72,6 @@ using tdme::math::Vector3;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Face, ::java::lang::ObjectArray > FaceArray;
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::Joint, ::java::lang::ObjectArray > JointArray;
-typedef ::SubArray< ::tdme::engine::model::JointWeight, ::java::lang::ObjectArray > JointWeightArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::JointWeightArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > JointWeightArrayArray;
-}  // namespace model
-}  // namespace engine
-}  // namespace tdme
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -233,32 +201,30 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	return m;
 }
 
-Vector3Array* TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
+const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	if (is->readBoolean() == false) {
-		return nullptr;
-	} else {
-		auto v = new Vector3Array(is->readInt());
-		for (auto i = 0; i < v->length; i++) {
-			v->set(i, new Vector3(is->readFloatArray()));
+	vector<Vector3> v;
+	if (is->readBoolean() == true) {
+		v.resize(is->readInt());
+		for (auto i = 0; i < v.size(); i++) {
+			v[i].set(is->readFloatArray());
 		}
-		return v;
 	}
+	return v;
 }
 
-TextureCoordinateArray* TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
+const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
-	if (is->readBoolean() == false) {
-		return nullptr;
-	} else {
-		auto tc = new TextureCoordinateArray(is->readInt());
-		for (auto i = 0; i < tc->length; i++) {
-			tc->set(i, new TextureCoordinate(is->readFloatArray()));
+	vector<TextureCoordinate> tc;
+	if (is->readBoolean() == true) {
+		tc.resize(is->readInt());
+		for (auto i = 0; i < tc.size(); i++) {
+			tc[i] = TextureCoordinate(is->readFloatArray());
 		}
-		return tc;
 	}
+	return tc;
 }
 
 int32_tArray* TMReader::readIndices(TMReaderInputStream* is) throw (ModelFileIOException)
@@ -293,36 +259,38 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
 	clinit();
-	auto facesEntities = new FacesEntityArray(is->readInt());
-	for (auto i = 0; i < facesEntities->length; i++) {
-		facesEntities->set(i, new FacesEntity(g, is->readString()->getCPPWString()));
+	vector<FacesEntity> facesEntities;
+	facesEntities.resize(is->readInt());
+	for (auto i = 0; i < facesEntities.size(); i++) {
+		facesEntities[i] = FacesEntity(g, is->readString()->getCPPWString());
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
 			auto materialIt = g->getModel()->getMaterials()->find(is->readString()->getCPPWString());
 			if (materialIt != g->getModel()->getMaterials()->end()) {
 				material = materialIt->second;
 			}
-			(*facesEntities)[i]->setMaterial(material);
+			facesEntities[i].setMaterial(material);
 		}
-		auto faces = new FaceArray(is->readInt());
-		for (auto j = 0; j < faces->length; j++) {
+		vector<Face> faces;
+		faces.resize(is->readInt());
+		for (auto j = 0; j < faces.size(); j++) {
 			auto vertexIndices = readIndices(is);
 			auto normalIndices = readIndices(is);
-			faces->set(j, new Face(g, (*vertexIndices)[0], (*vertexIndices)[1], (*vertexIndices)[2], (*normalIndices)[0], (*normalIndices)[1], (*normalIndices)[2]));
+			faces[j] = Face(g, (*vertexIndices)[0], (*vertexIndices)[1], (*vertexIndices)[2], (*normalIndices)[0], (*normalIndices)[1], (*normalIndices)[2]);
 			auto textureCoordinateIndices = readIndices(is);
 			if (textureCoordinateIndices != nullptr && textureCoordinateIndices->length > 0) {
-				(*faces)[j]->setTextureCoordinateIndices((*textureCoordinateIndices)[0], (*textureCoordinateIndices)[1], (*textureCoordinateIndices)[2]);
+				faces[j].setTextureCoordinateIndices((*textureCoordinateIndices)[0], (*textureCoordinateIndices)[1], (*textureCoordinateIndices)[2]);
 			}
 			auto tangentIndices = readIndices(is);
 			auto bitangentIndices = readIndices(is);
 			if (tangentIndices != nullptr && tangentIndices->length > 0 && bitangentIndices != nullptr && bitangentIndices->length > 0) {
-				(*faces)[j]->setTangentIndices((*tangentIndices)[0], (*tangentIndices)[1], (*tangentIndices)[2]);
-				(*faces)[j]->setBitangentIndices((*bitangentIndices)[0], (*bitangentIndices)[1], (*bitangentIndices)[2]);
+				faces[j].setTangentIndices((*tangentIndices)[0], (*tangentIndices)[1], (*tangentIndices)[2]);
+				faces[j].setBitangentIndices((*bitangentIndices)[0], (*bitangentIndices)[1], (*bitangentIndices)[2]);
 			}
 		}
-		(*facesEntities)[i]->setFaces(faces);
+		facesEntities[i].setFaces(&faces);
 	}
-	g->setFacesEntities(facesEntities);
+	g->setFacesEntities(&facesEntities);
 }
 
 Joint* TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
@@ -344,20 +312,22 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 	clinit();
 	if (is->readBoolean() == true) {
 		auto skinning = g->createSkinning();
-		skinning->setWeights(is->readFloatArray());
-		auto joints = new JointArray(is->readInt());
-		for (auto i = 0; i < joints->length; i++) {
-			joints->set(i, readSkinningJoint(is));
+		skinning->setWeights(is->readFloatVector());
+		vector<Joint*> joints;
+		joints.resize(is->readInt());
+		for (auto i = 0; i < joints.size(); i++) {
+			joints[i] = readSkinningJoint(is);
 		}
 		skinning->setJoints(joints);
-		auto verticesJointsWeight = new JointWeightArrayArray(is->readInt());
-		for (auto i = 0; i < verticesJointsWeight->length; i++) {
-			verticesJointsWeight->set(i, new JointWeightArray(is->readInt()));
-			for (auto j = 0; j < (*verticesJointsWeight)[i]->length; j++) {
-				(*verticesJointsWeight)[i]->set(j, readSkinningJointWeight(is));
+		vector<vector<JointWeight*>> verticesJointsWeight;
+		verticesJointsWeight.resize(is->readInt());
+		for (auto i = 0; i < verticesJointsWeight.size(); i++) {
+			verticesJointsWeight[i].resize(is->readInt());
+			for (auto j = 0; j < verticesJointsWeight[i].size(); j++) {
+				verticesJointsWeight[i][j] = readSkinningJointWeight(is);
 			}
 		}
-		skinning->setVerticesJointsWeights(verticesJointsWeight);
+		skinning->setVerticesJointsWeights(&verticesJointsWeight);
 	}
 }
 
@@ -378,11 +348,16 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	auto group = new Group(model, parentGroup, is->readWString(), is->readWString());
 	group->setJoint(is->readBoolean());
 	group->getTransformationsMatrix()->set(is->readFloatArray());
-	group->setVertices(readVertices(is));
-	group->setNormals(readVertices(is));
-	group->setTextureCoordinates(readTextureCoordinates(is));
-	group->setTangents(readVertices(is));
-	group->setBitangents(readVertices(is));
+	vector<Vector3> vertices = readVertices(is);
+	group->setVertices(&vertices);
+	vector<Vector3> normals = readVertices(is);
+	group->setNormals(&normals);
+	vector<TextureCoordinate> textureCoordinates = readTextureCoordinates(is);
+	group->setTextureCoordinates(&textureCoordinates);
+	vector<Vector3> tangents = readVertices(is);
+	group->setTangents(&tangents);
+	vector<Vector3> bitangents = readVertices(is);
+	group->setBitangents(&bitangents);
 	readAnimation(is, group);
 	readSkinning(is, group);
 	readFacesEntities(is, group);

@@ -7,18 +7,14 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::Animation;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
@@ -27,39 +23,13 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::model::FacesEntityArray;
-using tdme::engine::model::TextureCoordinateArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
-
 /** 
  * 3d object group
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::engine::model::Group final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	Model* model {  };
 	Group* parentGroup {  };
@@ -67,28 +37,16 @@ private:
 	wstring name {  };
 	bool isJoint_ {  };
 	Matrix4x4* transformationsMatrix {  };
-	Vector3Array* vertices {  };
-	Vector3Array* normals {  };
-	TextureCoordinateArray* textureCoordinates {  };
-	Vector3Array* tangents {  };
-	Vector3Array* bitangents {  };
+	vector<Vector3> vertices;
+	vector<Vector3> normals;
+	vector<TextureCoordinate> textureCoordinates;
+	vector<Vector3> tangents;
+	vector<Vector3> bitangents;
 	Animation* animation {  };
 	Skinning* skinning {  };
-	FacesEntityArray* facesEntities {  };
+	vector<FacesEntity> facesEntities;
 	map<wstring, Group*> subGroups {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 * @param parent group 
-	 * @param id
-	 * @param name
-	 */
-	void ctor(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
-
 public:
-
 	/** 
 	 * @return model
 	 */
@@ -130,86 +88,62 @@ public:
 	 * Set up vertices
 	 * @param vertices
 	 */
-	void setVertices(const vector<Vector3*>& vertices);
+	void setVertices(vector<Vector3*>* vertices);
 
 	/** 
 	 * @return vertices
 	 */
-	Vector3Array* getVertices();
+	vector<Vector3>* getVertices();
 
 	/** 
 	 * Set vertices
 	 * @param vertices
 	 */
-	void setVertices(Vector3Array* vertices);
+	void setVertices(const vector<Vector3>* vertices);
 
 	/** 
 	 * @return normals
 	 */
-	Vector3Array* getNormals();
+	vector<Vector3>* getNormals();
 
 	/** 
 	 * Set normals
 	 * @param normals
 	 */
-	void setNormals(Vector3Array* normals);
-
-	/** 
-	 * Set up normals
-	 * @param normals
-	 */
-	void setNormals(const vector<Vector3*>& normals);
+	void setNormals(const vector<Vector3>* normals);
 
 	/** 
 	 * @return texture coordinates or null (optional)
 	 */
-	TextureCoordinateArray* getTextureCoordinates();
+	vector<TextureCoordinate>* getTextureCoordinates();
 
 	/** 
 	 * Set texture coordinates
 	 * @param texture coordinates
 	 */
-	void setTextureCoordinates(TextureCoordinateArray* textureCoordinates);
-
-	/** 
-	 * Set texture coordinates
-	 * @param textureCoordinates
-	 */
-	void setTextureCoordinates(const vector<TextureCoordinate*>& textureCoordinates);
+	void setTextureCoordinates(const vector<TextureCoordinate>* textureCoordinates);
 
 	/** 
 	 * @return tangents
 	 */
-	Vector3Array* getTangents();
+	vector<Vector3>* getTangents();
 
 	/** 
 	 * Set tangents
 	 * @param tangents
 	 */
-	void setTangents(Vector3Array* tangents);
-
-	/** 
-	 * Set up tangents
-	 * @param tangents
-	 */
-	void setTangents(const vector<Vector3*>& tangents);
+	void setTangents(const vector<Vector3>* tangents);
 
 	/** 
 	 * @return bitangents
 	 */
-	Vector3Array* getBitangents();
+	vector<Vector3>* getBitangents();
 
 	/** 
 	 * Set bitangents
 	 * @param bitangents
 	 */
-	void setBitangents(Vector3Array* bitangents);
-
-	/** 
-	 * Set up bitangents
-	 * @param bitangents
-	 */
-	void setBitangents(const vector<Vector3*>& bitangents);
+	void setBitangents(const vector<Vector3>* bitangents);
 
 	/** 
 	 * @return animation
@@ -242,19 +176,13 @@ public:
 	/** 
 	 * @return faces entities
 	 */
-	FacesEntityArray* getFacesEntities();
+	vector<FacesEntity>* getFacesEntities();
 
 	/** 
 	 * Set up faces entities
 	 * @param faces entity
 	 */
-	void setFacesEntities(const vector<FacesEntity*>& facesEntities);
-
-	/** 
-	 * Set up faces entities
-	 * @param faces entity
-	 */
-	void setFacesEntities(FacesEntityArray* facesEntities);
+	void setFacesEntities(const vector<FacesEntity>* facesEntities);
 
 	/** 
 	 * @return sub sub groups of this group
@@ -274,20 +202,12 @@ public:
 	 */
 	void determineFeatures();
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
+	 * @param model
+	 * @param parent group
+	 * @param id
+	 * @param name
 	 */
-	String* toString() override;
-
-	// Generated
 	Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
-protected:
-	Group(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -176,30 +176,30 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 	os->writeString(m->getDisplacementTextureFileName());
 }
 
-void TMWriter::writeVertices(TMWriterOutputStream* os, Vector3Array* v) throw (ModelFileIOException)
+void TMWriter::writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException)
 {
 	clinit();
-	if (v == nullptr) {
+	if (v->size() == 0) {
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(v->length);
-		for (auto i = 0; i < v->length; i++) {
-			os->writeFloatArray((*v)[i]->getArray());
+		os->writeInt(v->size());
+		for (auto i = 0; i < v->size(); i++) {
+			os->writeFloatArray((*v)[i].getArray());
 		}
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, TextureCoordinateArray* tc) throw (ModelFileIOException)
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException)
 {
 	clinit();
 	if (tc == nullptr) {
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(tc->length);
-		for (auto i = 0; i < tc->length; i++) {
-			os->writeFloatArray((*tc)[i]->getArray());
+		os->writeInt(tc->size());
+		for (auto i = 0; i < tc->size(); i++) {
+			os->writeFloatArray((*tc)[i].getArray());
 		}
 	}
 }
@@ -232,27 +232,27 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (Mod
 	}
 }
 
-void TMWriter::writeFacesEntities(TMWriterOutputStream* os, FacesEntityArray* facesEntities) throw (ModelFileIOException)
+void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException)
 {
 	clinit();
-	os->writeInt(facesEntities->length);
-	for (auto i = 0; i < facesEntities->length; i++) {
-		auto fe = (*facesEntities)[i];
-		os->writeString(fe->getId());
-		if (fe->getMaterial() == nullptr) {
+	os->writeInt(facesEntities->size());
+	for (auto i = 0; i < facesEntities->size(); i++) {
+		auto& fe = (*facesEntities)[i];
+		os->writeString(fe.getId());
+		if (fe.getMaterial() == nullptr) {
 			os->writeBoolean(false);
 		} else {
 			os->writeBoolean(true);
-			os->writeString(fe->getMaterial()->getId());
+			os->writeString(fe.getMaterial()->getId());
 		}
-		os->writeInt(fe->getFaces()->length);
-		for (auto j = 0; j < fe->getFaces()->length; j++) {
-			auto f = (*fe->getFaces())[j];
-			writeIndices(os, f->getVertexIndices());
-			writeIndices(os, f->getNormalIndices());
-			writeIndices(os, f->getTextureCoordinateIndices());
-			writeIndices(os, f->getTangentIndices());
-			writeIndices(os, f->getBitangentIndices());
+		os->writeInt(fe.getFaces()->size());
+		for (auto j = 0; j < fe.getFaces()->size(); j++) {
+			auto& f = (*fe.getFaces())[j];
+			writeIndices(os, f.getVertexIndices());
+			writeIndices(os, f.getNormalIndices());
+			writeIndices(os, f.getTextureCoordinateIndices());
+			writeIndices(os, f.getTangentIndices());
+			writeIndices(os, f.getBitangentIndices());
 		}
 	}
 }
@@ -279,15 +279,15 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 	} else {
 		os->writeBoolean(true);
 		os->writeFloatArray(skinning->getWeights());
-		os->writeInt(skinning->getJoints()->length);
-		for (auto i = 0; i < skinning->getJoints()->length; i++) {
+		os->writeInt(skinning->getJoints()->size());
+		for (auto i = 0; i < skinning->getJoints()->size(); i++) {
 			writeSkinningJoint(os, (*skinning->getJoints())[i]);
 		}
-		os->writeInt(skinning->getVerticesJointsWeights()->length);
-		for (auto i = 0; i < skinning->getVerticesJointsWeights()->length; i++) {
-			os->writeInt((*skinning->getVerticesJointsWeights())[i]->length);
-			for (auto j = 0; j < (*skinning->getVerticesJointsWeights())[i]->length; j++) {
-				writeSkinningJointWeight(os, (*(*skinning->getVerticesJointsWeights())[i])[j]);
+		os->writeInt(skinning->getVerticesJointsWeights()->size());
+		for (auto i = 0; i < skinning->getVerticesJointsWeights()->size(); i++) {
+			os->writeInt((*skinning->getVerticesJointsWeights())[i].size());
+			for (auto j = 0; j < (*skinning->getVerticesJointsWeights())[i].size(); j++) {
+				writeSkinningJointWeight(os, (*skinning->getVerticesJointsWeights())[i][j]);
 			}
 		}
 	}

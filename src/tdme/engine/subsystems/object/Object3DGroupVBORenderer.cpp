@@ -83,7 +83,7 @@ void Object3DGroupVBORenderer::preRender(Object3DVBORenderer* object3DVBORendere
 		vboBaseIds = vboManaged->getVBOGlIds();
 		meshUploaded = vboManaged->isUploaded();
 	}
-	if (object3DVBORenderer->renderer->isNormalMappingAvailable() && object3DGroup->mesh->group->getTangents() != nullptr && object3DGroup->mesh->group->getBitangents() != nullptr && vboTangentBitangentIds == nullptr) {
+	if (object3DVBORenderer->renderer->isNormalMappingAvailable() && object3DGroup->mesh->group->getTangents()->size() > 0 && object3DGroup->mesh->group->getBitangents()->size() > 0 && vboTangentBitangentIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(::java::lang::StringBuilder().append(object3DGroup->id)->append(u".tangentbitangent"_j)->toString(), 2);
 		vboTangentBitangentIds = vboManaged->getVBOGlIds();
 	}

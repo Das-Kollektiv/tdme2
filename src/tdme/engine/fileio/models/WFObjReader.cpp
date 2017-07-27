@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/WFObjReader.java
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::array;
 using std::map;
 using std::string;
 using std::vector;
@@ -143,11 +145,11 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	Group* group = nullptr;
 	map<int32_t, int32_t> modelGroupVerticesMapping;
 	map<int32_t, int32_t> modelGroupTextureCoordinatesMapping;
-	vector<Face*> groupFacesEntityFaces;
-	vector<Vector3*> groupVertices;
-	vector<Vector3*> groupNormals;
-	vector<TextureCoordinate*> groupTextureCoordinates;
-	vector<FacesEntity*> groupFacesEntities;
+	vector<Face> groupFacesEntityFaces;
+	vector<Vector3> groupVertices;
+	vector<Vector3> groupNormals;
+	vector<TextureCoordinate> groupTextureCoordinates;
+	vector<FacesEntity> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
 	StringArray* lines = nullptr;
 	{
@@ -266,33 +268,33 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 							vt2 = mappedTextureCoordinateIt->second;
 						}
 					}
-					auto faceVertexNormals = ModelHelper::computeNormals(new Vector3Array({
+					auto faceVertexNormals = ModelHelper::computeNormals(array<Vector3, 3>{
 						groupVertices.at(v0),
 						groupVertices.at(v1),
 						groupVertices.at(v2)
-					}));
+					});
 					auto n0 = groupNormals.size();
-					groupNormals.push_back((*faceVertexNormals)[0]);
+					groupNormals.push_back(faceVertexNormals[0]);
 					auto n1 = groupNormals.size();
-					groupNormals.push_back((*faceVertexNormals)[1]);
+					groupNormals.push_back(faceVertexNormals[1]);
 					auto n2 = groupNormals.size();
-					groupNormals.push_back((*faceVertexNormals)[2]);
-					auto face = new Face(group, v0, v1, v2, n0, n1, n2);
+					groupNormals.push_back(faceVertexNormals[2]);
+					Face face(group, v0, v1, v2, n0, n1, n2);
 					if (vt0 != -1 && vt1 != -1 && vt2 != -1) {
-						face->setTextureCoordinateIndices(vt0, vt1, vt2);
+						face.setTextureCoordinateIndices(vt0, vt1, vt2);
 					}
 					groupFacesEntityFaces.push_back(face);
 				} else
 				if (command->equals(u"g"_j)) {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(groupFacesEntityFaces);
-							groupFacesEntities.push_back(groupFacesEntity);
+							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntities.push_back(*groupFacesEntity);
 						}
-						group->setVertices(groupVertices);
-						group->setNormals(groupNormals);
-						group->setTextureCoordinates(groupTextureCoordinates);
-						group->setFacesEntities(groupFacesEntities);
+						group->setVertices(&groupVertices);
+						group->setNormals(&groupNormals);
+						group->setTextureCoordinates(&groupTextureCoordinates);
+						group->setFacesEntities(&groupFacesEntities);
 						group->determineFeatures();
 					}
 					auto t = new StringTokenizer(arguments, u" "_j);
@@ -312,8 +314,8 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 				if (command->equals(u"usemtl"_j)) {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(groupFacesEntityFaces);
-							groupFacesEntities.push_back(groupFacesEntity);
+							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString()->getCPPWString());
 						groupFacesEntityFaces.clear();
@@ -329,15 +331,15 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 			}
 			if (group != nullptr) {
 				if (groupFacesEntityFaces.empty() == false) {
-					groupFacesEntity->setFaces(groupFacesEntityFaces);
-					groupFacesEntities.push_back(groupFacesEntity);
+					groupFacesEntity->setFaces(&groupFacesEntityFaces);
+					groupFacesEntities.push_back(*groupFacesEntity);
 				}
-				group->setVertices(groupVertices);
-				group->setNormals(groupNormals);
+				group->setVertices(&groupVertices);
+				group->setNormals(&groupNormals);
 				if (groupTextureCoordinates.size() > 0) {
-					group->setTextureCoordinates(groupTextureCoordinates);
+					group->setTextureCoordinates(&groupTextureCoordinates);
 				}
-				group->setFacesEntities(groupFacesEntities);
+				group->setFacesEntities(&groupFacesEntities);
 				group->determineFeatures();
 			}
 		}
