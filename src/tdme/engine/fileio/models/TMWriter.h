@@ -312,7 +312,7 @@ private:
 	 * @param indices
 	 * @throws model file IO exception
 	 */
-	static void writeIndices(TMWriterOutputStream* os, int32_tArray* indices) throw (ModelFileIOException);
+	static void writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException);
 
 	/** 
 	 * Write animation to output stream

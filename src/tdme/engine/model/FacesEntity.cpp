@@ -7,6 +7,8 @@
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/math/Vector3.h>
 
 using std::vector;
 using std::wstring;
@@ -15,6 +17,8 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Face;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
+using tdme::engine::model::TextureCoordinate;
+using tdme::math::Vector3;
 
 FacesEntity::FacesEntity()
 {
@@ -68,16 +72,10 @@ void FacesEntity::setFaces(const vector<Face>* faces)
 
 void FacesEntity::determineFeatures()
 {
-	textureCoordinatesAvailable = true;
-	tangentBitangentAvailable = true;
-	for (auto& face : faces) {
-		if (face.getTangentIndices() == nullptr || face.getBitangentIndices() == nullptr) {
-			tangentBitangentAvailable = false;
-		}
-		if (face.getTextureCoordinateIndices() == nullptr) {
-			textureCoordinatesAvailable = false;
-		}
-	}
+	textureCoordinatesAvailable = group->getTextureCoordinates()->size() > 0;
+	tangentBitangentAvailable =
+		group->getTangents()->size() > 0 && group->getBitangents()->size() > 0 &&
+		group->getTangents()->size() == group->getBitangents()->size();
 }
 
 bool FacesEntity::isTextureCoordinatesAvailable()

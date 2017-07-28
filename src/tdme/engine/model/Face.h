@@ -2,8 +2,12 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+
+using std::array;
 
 using tdme::engine::model::Group;
 
@@ -16,11 +20,11 @@ class tdme::engine::model::Face final
 {
 private:
 	Group* group {  };
-	int32_tArray* vertexIndices {  };
-	int32_tArray* normalIndices {  };
-	int32_tArray* textureCoordinateIndices {  };
-	int32_tArray* tangentIndices {  };
-	int32_tArray* bitangentIndices {  };
+	array<int32_t, 3> vertexIndices {  };
+	array<int32_t, 3> normalIndices {  };
+	array<int32_t, 3> textureCoordinateIndices {  };
+	array<int32_t, 3> tangentIndices {  };
+	array<int32_t, 3> bitangentIndices {  };
 public:
 
 	/**
@@ -36,12 +40,12 @@ public:
 	/** 
 	 * @return vertex indices
 	 */
-	int32_tArray* getVertexIndices();
+	array<int32_t, 3>* getVertexIndices();
 
 	/** 
 	 * @return normal indices
 	 */
-	int32_tArray* getNormalIndices();
+	array<int32_t, 3>* getNormalIndices();
 
 	/** 
 	 * Set up optional texture coordinate indices
@@ -54,7 +58,7 @@ public:
 	/** 
 	 * @return texture coordinate indices or null (optional)
 	 */
-	int32_tArray* getTextureCoordinateIndices();
+	array<int32_t, 3>* getTextureCoordinateIndices();
 
 	/** 
 	 * Set tangent indices
@@ -67,7 +71,7 @@ public:
 	/** 
 	 * @return tangent indices
 	 */
-	int32_tArray* getTangentIndices();
+	array<int32_t, 3>* getTangentIndices();
 
 	/** 
 	 * Set bitangent indices
@@ -80,15 +84,17 @@ public:
 	/** 
 	 * @return bi tangent indices
 	 */
-	int32_tArray* getBitangentIndices();
+	array<int32_t, 3>* getBitangentIndices();
 
 public: /* protected */
 
 	/** 
 	 * Prepared this face for indexed rendering
-	 * @param new face vertex indices
+	 * @param index 0
+	 * @param index 1
+	 * @param index 2
 	 */
-	void setIndexedRenderingIndices(int32_tArray* faceVertexIndices);
+	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
 
 public:
 

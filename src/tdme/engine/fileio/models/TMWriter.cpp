@@ -214,15 +214,15 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureC
 	}
 }
 
-void TMWriter::writeIndices(TMWriterOutputStream* os, int32_tArray* indices) throw (ModelFileIOException)
+void TMWriter::writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException)
 {
 	clinit();
 	if (indices == nullptr) {
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(indices->length);
-		for (auto i = 0; i < indices->length; i++) {
+		os->writeInt(indices->size());
+		for (auto i = 0; i < indices->size(); i++) {
 			os->writeInt((*indices)[i]);
 		}
 	}

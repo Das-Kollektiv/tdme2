@@ -177,7 +177,7 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 				auto faceTextureIndices = face.getTextureCoordinateIndices();
 				auto faceTangentIndices = face.getTangentIndices();
 				auto faceBitangentIndices = face.getBitangentIndices();
-				auto indexedFaceVertexIndices = new int32_tArray(3);
+				array<int32_t, 3> indexedFaceVertexIndices;
 				for (int16_t idx = 0; idx < 3; idx++) {
 					auto groupVertexIndex = (*faceVertexIndices)[idx];
 					auto groupNormalIndex = (*faceNormalIndices)[idx];
@@ -208,9 +208,9 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 						if (bitangent != nullptr) indexedBitangents.push_back(bitangent);
 						preparedIndices++;
 					}
-					(*indexedFaceVertexIndices)[idx] = newIndex;
+					indexedFaceVertexIndices[idx] = newIndex;
 				}
-				face.setIndexedRenderingIndices(indexedFaceVertexIndices);
+				face.setIndexedRenderingIndices(&indexedFaceVertexIndices);
 			}
 		}
 		auto skinning = group->getSkinning();
