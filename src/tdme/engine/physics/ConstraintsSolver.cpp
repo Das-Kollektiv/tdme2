@@ -117,8 +117,8 @@ void ConstraintsSolver::init()
 	keyCount = 0;
 	contactCache = new ContactCache();
 	constraintsBodyIdxMap = new int32_tArrayArray(CONSTRAINTS_MAX);
-	jacobianMatrices = new Matrix1x6ArrayArray(CONSTRAINTS_MAX);
-	bVectors = new Vector6ArrayArray(CONSTRAINTS_MAX);
+	jacobianMatrices.resize(CONSTRAINTS_MAX);
+	bVectors.resize(CONSTRAINTS_MAX);
 	lambda = new DynamicVector(CONSTRAINTS_MAX);
 	lambdaInit = new DynamicVector(CONSTRAINTS_MAX);
 	errorValues = new DynamicVector(CONSTRAINTS_MAX);
@@ -129,11 +129,11 @@ void ConstraintsSolver::init()
 	constraintsEntities = new ConstraintsEntityArray(BODIES_MAX);
 	collisions = new CollisionResponseArray(BODIES_MAX);
 	keys = new KeyArray(BODIES_MAX * 2);
-	invInertiaMatrices = new Matrix6x6Array(BODIES_MAX);
-	velocityVectors = new Vector6Array(BODIES_MAX);
-	constrainedVelocityVectors = new Vector6Array(BODIES_MAX);
-	forcesVectors = new Vector6Array(BODIES_MAX);
-	a = new Vector6Array(BODIES_MAX);
+	invInertiaMatrices.resize(BODIES_MAX);
+	velocityVectors.resize(BODIES_MAX);
+	constrainedVelocityVectors.resize(BODIES_MAX);
+	forcesVectors.resize(BODIES_MAX);
+	a.resize(BODIES_MAX);
 	tmpLamdaValues = new floatArray(CollisionResponse::HITPOINT_COUNT * 3);
 	tmpMatrix1x6 = new Matrix1x6();
 	tmpVector6 = new Vector6();
@@ -154,19 +154,17 @@ void ConstraintsSolver::ctor(const vector<RigidBody*>& rigidBodies)
 	this->rigidBodies = rigidBodies;
 	for (auto i = 0; i < CONSTRAINTS_MAX; i++) {
 		constraintsBodyIdxMap->set(i, new int32_tArray(2));
-		jacobianMatrices->set(i, new Matrix1x6Array(2));
-		(*jacobianMatrices)[i]->set(0, new Matrix1x6());
-		(*jacobianMatrices)[i]->set(1, new Matrix1x6());
-		bVectors->set(i, new Vector6Array(2));
-		(*bVectors)[i]->set(0, new Vector6());
-		(*bVectors)[i]->set(1, new Vector6());
+		jacobianMatrices[i][0] = new Matrix1x6();
+		jacobianMatrices[i][1] = new Matrix1x6();
+		bVectors[i][0] = new Vector6();
+		bVectors[i][1] = new Vector6();
 	}
 	for (auto i = 0; i < BODIES_MAX; i++) {
-		invInertiaMatrices->set(i, new Matrix6x6());
-		velocityVectors->set(i, new Vector6());
-		constrainedVelocityVectors->set(i, new Vector6());
-		forcesVectors->set(i, new Vector6());
-		a->set(i, new Vector6());
+		invInertiaMatrices[i] = new Matrix6x6();
+		velocityVectors[i] = new Vector6();
+		constrainedVelocityVectors[i] = new Vector6();
+		forcesVectors[i] = new Vector6();
+		a[i] = new Vector6();
 		constraintsEntities->set(i, new ConstraintsEntity());
 		collisions->set(i, new CollisionResponse());
 	}
@@ -227,7 +225,7 @@ void ConstraintsSolver::initialize(float dt)
 			(*(*constraintsBodyIdxMap)[currentConstraint + j])[0] = constraintedBody->rb1->idx;
 			(*(*constraintsBodyIdxMap)[currentConstraint + j])[1] = constraintedBody->rb2->idx;
 		}
-		constraintedBody->computeJacobian(currentConstraint, jacobianMatrices);
+		constraintedBody->computeJacobian(currentConstraint, &jacobianMatrices);
 		constraintedBody->computeLowerBound(currentConstraint, lowerBounds);
 		constraintedBody->computeUpperBound(currentConstraint, upperBounds);
 		constraintedBody->computeBaumgarte(currentConstraint, errorValues);
@@ -250,15 +248,15 @@ void ConstraintsSolver::fillMatrices()
 	for (auto it: constrainedBodies) {
 		RigidBody* rb = it.second;
 		auto bodyIdx = rb->idx;
-		auto velocityVector = (*velocityVectors)[bodyIdx];
+		auto velocityVector = velocityVectors[bodyIdx];
 		velocityVector->setValue(0, rb->linearVelocity);
 		velocityVector->setValue(3, rb->angularVelocity);
-		auto constainedVelocityVector = (*constrainedVelocityVectors)[bodyIdx];
+		auto constainedVelocityVector = constrainedVelocityVectors[bodyIdx];
 		constainedVelocityVector->fill(0.0f);
-		auto forcesVector = (*forcesVectors)[bodyIdx];
+		auto forcesVector = forcesVectors[bodyIdx];
 		forcesVector->setValue(0, rb->force);
 		forcesVector->setValue(3, rb->torque);
-		auto invInertiaMatrix = (*invInertiaMatrices)[bodyIdx];
+		auto invInertiaMatrix = invInertiaMatrices[bodyIdx];
 		invInertiaMatrix->fill(0.0f);
 		auto worldInverseInertiaArray = rb->worldInverseInertia->getArray();
 		if (rb->isStatic_ == false) {
@@ -285,8 +283,8 @@ void ConstraintsSolver::computeVectorB(float dt)
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
 		auto body2Idx = (*(*constraintsBodyIdxMap)[i])[1];
-		auto t1 = (*(*jacobianMatrices)[i])[0]->multiply((*velocityVectors)[body1Idx]) + (*(*jacobianMatrices)[i])[1]->multiply((*velocityVectors)[body2Idx]) * oneOverDT;
-		auto t2 = (*(*jacobianMatrices)[i])[0]->multiply((*invInertiaMatrices)[body1Idx], tmpMatrix1x6)->multiply((*forcesVectors)[body1Idx]) + (*(*jacobianMatrices)[i])[1]->multiply((*invInertiaMatrices)[body2Idx], tmpMatrix1x6)->multiply((*forcesVectors)[body2Idx]);
+		auto t1 = jacobianMatrices[i][0]->multiply(velocityVectors[body1Idx]) + jacobianMatrices[i][1]->multiply(velocityVectors[body2Idx]) * oneOverDT;
+		auto t2 = jacobianMatrices[i][0]->multiply(invInertiaMatrices[body1Idx], tmpMatrix1x6)->multiply(forcesVectors[body1Idx]) + jacobianMatrices[i][1]->multiply(invInertiaMatrices[body2Idx], tmpMatrix1x6)->multiply(forcesVectors[body2Idx]);
 		auto result = b->getValue(i) + t1 + t2;
 		b->setValue(i, result);
 	}
@@ -297,8 +295,8 @@ void ConstraintsSolver::computeMatrixB()
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
 		auto body2Idx = (*(*constraintsBodyIdxMap)[i])[1];
-		(*invInertiaMatrices)[body1Idx]->multiply((*(*jacobianMatrices)[i])[0]->getTranspose(tmpVector6), (*(*bVectors)[i])[0]);
-		(*invInertiaMatrices)[body2Idx]->multiply((*(*jacobianMatrices)[i])[1]->getTranspose(tmpVector6), (*(*bVectors)[i])[1]);
+		invInertiaMatrices[body1Idx]->multiply(jacobianMatrices[i][0]->getTranspose(tmpVector6), bVectors[i][0]);
+		invInertiaMatrices[body2Idx]->multiply(jacobianMatrices[i][1]->getTranspose(tmpVector6), bVectors[i][1]);
 	}
 }
 
@@ -306,13 +304,13 @@ void ConstraintsSolver::computeVectorA()
 {
 	for (auto it: constrainedBodies) {
 		RigidBody* rb = it.second;
-		(*a)[rb->idx]->fill(0.0f);
+		a[rb->idx]->fill(0.0f);
 	}
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
 		auto body2Idx = (*(*constraintsBodyIdxMap)[i])[1];
-		(*a)[body1Idx]->add(tmpVector6->set((*(*bVectors)[i])[0])->scale(lambda->getValue(i)));
-		(*a)[body2Idx]->add(tmpVector6->set((*(*bVectors)[i])[1])->scale(lambda->getValue(i)));
+		a[body1Idx]->add(tmpVector6->set(bVectors[i][0])->scale(lambda->getValue(i)));
+		a[body2Idx]->add(tmpVector6->set(bVectors[i][1])->scale(lambda->getValue(i)));
 	}
 }
 
@@ -323,20 +321,20 @@ void ConstraintsSolver::PGLCP()
 	}
 	computeVectorA();
 	for (auto i = 0; i < constraintsCount; i++) {
-		(*d)[i] = (*(*jacobianMatrices)[i])[0]->multiply((*(*bVectors)[i])[0]) + (*(*jacobianMatrices)[i])[1]->multiply((*(*bVectors)[i])[1]);
+		(*d)[i] = jacobianMatrices[i][0]->multiply(bVectors[i][0]) + jacobianMatrices[i][1]->multiply(bVectors[i][1]);
 	}
 	for (auto iteration = 0; iteration < 20; iteration++) {
 		for (auto i = 0; i < constraintsCount; i++) {
 			auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
 			auto body2Idx = (*(*constraintsBodyIdxMap)[i])[1];
-			auto xDelta = (b->getValue(i) - (*(*jacobianMatrices)[i])[0]->multiply((*a)[body1Idx]) - (*(*jacobianMatrices)[i])[1]->multiply((*a)[body2Idx])) / (*d)[i];
+			auto xDelta = (b->getValue(i) - jacobianMatrices[i][0]->multiply(a[body1Idx]) - jacobianMatrices[i][1]->multiply(a[body2Idx])) / (*d)[i];
 			auto xTemp = lambda->getValue(i);
 			auto min = Math::min(xTemp + xDelta, upperBounds->getValue(i));
 			auto max = Math::max(lowerBounds->getValue(i), min);
 			lambda->setValue(i, max);
 			xDelta = lambda->getValue(i) - xTemp;
-			(*a)[body1Idx]->add(tmpVector6->set((*(*bVectors)[i])[0])->scale(xDelta));
-			(*a)[body2Idx]->add(tmpVector6->set((*(*bVectors)[i])[1])->scale(xDelta));
+			a[body1Idx]->add(tmpVector6->set(bVectors[i][0])->scale(xDelta));
+			a[body2Idx]->add(tmpVector6->set(bVectors[i][1])->scale(xDelta));
 		}
 	}
 }
@@ -346,8 +344,8 @@ void ConstraintsSolver::computeVectorVelocityConstraints(float dt)
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = (*(*constraintsBodyIdxMap)[i])[0];
 		auto body2Idx = (*(*constraintsBodyIdxMap)[i])[1];
-		(*constrainedVelocityVectors)[body1Idx]->sub(tmpVector6->set((*(*bVectors)[i])[0])->scale(lambda->getValue(i) * dt));
-		(*constrainedVelocityVectors)[body2Idx]->sub(tmpVector6->set((*(*bVectors)[i])[1])->scale(lambda->getValue(i) * dt));
+		constrainedVelocityVectors[body1Idx]->sub(tmpVector6->set(bVectors[i][0])->scale(lambda->getValue(i) * dt));
+		constrainedVelocityVectors[body2Idx]->sub(tmpVector6->set(bVectors[i][1])->scale(lambda->getValue(i) * dt));
 	}
 }
 
@@ -542,10 +540,10 @@ void ConstraintsSolver::compute(float dt)
 
 void ConstraintsSolver::getConstrainedVelocity(RigidBody* body, Vector3* linearVelocity, Vector3* angularVelocity)
 {
-	auto vector6 = (*constrainedVelocityVectors)[body->idx];
+	auto vector6 = constrainedVelocityVectors[body->idx];
 	auto vector6Array = vector6->data;
-	linearVelocity->set((*vector6Array)[0], (*vector6Array)[1], (*vector6Array)[2]);
-	angularVelocity->set((*vector6Array)[3], (*vector6Array)[4], (*vector6Array)[5]);
+	linearVelocity->set(vector6Array[0], vector6Array[1], vector6Array[2]);
+	angularVelocity->set(vector6Array[3], vector6Array[4], vector6Array[5]);
 }
 
 void ConstraintsSolver::updateAllBodies(float deltaTime)

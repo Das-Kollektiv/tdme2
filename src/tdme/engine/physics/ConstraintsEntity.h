@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -13,6 +14,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::vector;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -124,7 +126,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param jacobian matrices
 	 */
-	void computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArray* jacobianMatrices);
+	void computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6*, 2>>* jacobianMatrices);
 
 	/** 
 	 * Compute lower bounds

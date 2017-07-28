@@ -2,19 +2,16 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::array;
+
 using tdme::engine::physics::Vector6;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Matrix 6x6
@@ -22,16 +19,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::Matrix6x6 final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-	void ctor();
+	array<float, 36> data {  };
 
 public: /* protected */
 
@@ -65,7 +55,7 @@ public: /* protected */
 	/** 
 	 * @return data array
 	 */
-	floatArray* getArray();
+	array<float, 36>* getArray();
 
 	/** 
 	 * Multiplies this matrix 6x6 with given vector 6
@@ -75,21 +65,9 @@ public: /* protected */
 	 */
 	Vector6* multiply(Vector6* vector6, Vector6* dest);
 
-public:
-	String* toString() override;
-
-	// Generated
-
 public: /* protected */
+	/**
+	 * Public constructor
+	 */
 	Matrix6x6();
-protected:
-	Matrix6x6(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

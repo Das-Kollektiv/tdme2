@@ -2,41 +2,26 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::array;
+
 using tdme::engine::physics::Matrix6x6;
 using tdme::engine::physics::Vector6;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Matrix 1x6
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::physics::Matrix1x6 final
-	: public Object
-{
-
-public:
-	typedef Object super;
-
+class tdme::engine::physics::Matrix1x6 final {
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 */
-	void ctor();
+	array<float, 6> data {  };
 
 public: /* protected */
 
@@ -86,22 +71,10 @@ public: /* protected */
 	 * @return destination vector 6
 	 */
 	Vector6* getTranspose(Vector6* dest);
-
 public:
-	String* toString() override;
 
-	// Generated
-
-public: /* protected */
+	/**
+	 * Public constructor
+	 */
 	Matrix1x6();
-protected:
-	Matrix1x6(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

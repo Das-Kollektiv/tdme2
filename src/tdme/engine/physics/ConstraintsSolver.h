@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <vector>
 #include <string>
@@ -14,6 +15,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::array;
 using std::map;
 using std::vector;
 using std::wstring;
@@ -111,8 +113,8 @@ private:
 	map<wstring, RigidBody*> constrainedBodies {  };
 	ContactCache* contactCache {  };
 	int32_tArrayArray* constraintsBodyIdxMap {  };
-	Matrix1x6ArrayArray* jacobianMatrices {  };
-	Vector6ArrayArray* bVectors {  };
+	vector<array<Matrix1x6*, 2>> jacobianMatrices {  };
+	vector<array<Vector6*, 2>> bVectors {  };
 	DynamicVector* lambda {  };
 	DynamicVector* lambdaInit {  };
 	DynamicVector* errorValues {  };
@@ -123,11 +125,11 @@ private:
 	ConstraintsEntityArray* constraintsEntities {  };
 	CollisionResponseArray* collisions {  };
 	KeyArray* keys {  };
-	Matrix6x6Array* invInertiaMatrices {  };
-	Vector6Array* velocityVectors {  };
-	Vector6Array* constrainedVelocityVectors {  };
-	Vector6Array* forcesVectors {  };
-	Vector6Array* a {  };
+	vector<Matrix6x6*> invInertiaMatrices {  };
+	vector<Vector6*> velocityVectors {  };
+	vector<Vector6*> constrainedVelocityVectors {  };
+	vector<Vector6*> forcesVectors {  };
+	vector<Vector6*> a {  };
 	vector<RigidBody*> rigidBodiesVelocityChange {  };
 	vector<RigidBody*> rigidBodiesCurrentChain {  };
 	vector<RigidBody*> rigidBodiesChainsResult {  };

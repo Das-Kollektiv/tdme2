@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/physics/ConstraintsEntity.java
 #include <tdme/engine/physics/ConstraintsEntity.h>
 
+#include <array>
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
@@ -17,6 +20,9 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
+using std::vector;
 
 using tdme::engine::physics::ConstraintsEntity;
 using java::io::Serializable;
@@ -114,7 +120,7 @@ void ConstraintsEntity::set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* c
 	computeCrossProduct(collision->getNormal(), this->frictionVectors[0], this->frictionVectors[1]);
 }
 
-void ConstraintsEntity::computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArray* jacobianMatrices)
+void ConstraintsEntity::computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6*, 2>>* jacobianMatrices)
 {
 	auto body1Position = rb1->getPosition();
 	auto body2Position = rb2->getPosition();
@@ -129,10 +135,10 @@ void ConstraintsEntity::computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArr
 		r2->set(point)->sub(body2Position);
 		computeCrossProduct(r1, n, r1CrossN);
 		computeCrossProduct(r2, n, r2CrossN);
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[0];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][0];
 		jacobianMatrix->setValue(0, tmpVector3->set(n)->scale(-1.0f));
 		jacobianMatrix->setValue(3, tmpVector3->set(r1CrossN)->scale(-1.0f));
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[1];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][1];
 		jacobianMatrix->setValue(0, n);
 		jacobianMatrix->setValue(3, r2CrossN);
 		currentConstraintIdx++;
@@ -140,17 +146,17 @@ void ConstraintsEntity::computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArr
 		computeCrossProduct(r2, t1, r2CrossU1);
 		computeCrossProduct(r1, t2, r1CrossU2);
 		computeCrossProduct(r2, t2, r2CrossU2);
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[0];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][0];
 		jacobianMatrix->setValue(0, tmpVector3->set(t1)->scale(-1.0f));
 		jacobianMatrix->setValue(3, tmpVector3->set(r1CrossU1)->scale(-1.0f));
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[1];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][1];
 		jacobianMatrix->setValue(0, t1);
 		jacobianMatrix->setValue(3, r2CrossU1);
 		currentConstraintIdx++;
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[0];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][0];
 		jacobianMatrix->setValue(0, tmpVector3->set(t2)->scale(-1.0f));
 		jacobianMatrix->setValue(3, tmpVector3->set(r1CrossU2)->scale(-1.0f));
-		jacobianMatrix = (*(*jacobianMatrices)[currentConstraintIdx])[1];
+		jacobianMatrix = (*jacobianMatrices)[currentConstraintIdx][1];
 		jacobianMatrix->setValue(0, t2);
 		jacobianMatrix->setValue(3, r2CrossU2);
 		currentConstraintIdx++;

@@ -2,18 +2,15 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::array;
+
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Vector6
@@ -21,20 +18,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::Vector6 final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
+	array<float, 6> data {  };
 
 public: /* protected */
 
@@ -89,23 +75,10 @@ public: /* protected */
 	/** 
 	 * @return data array
 	 */
-	floatArray* getArray();
+	array<float, 6>* getArray();
 
-public:
-	String* toString() override;
-
-	// Generated
-
-public: /* protected */
+	/**
+	 * Public constructor
+	 */
 	Vector6();
-protected:
-	Vector6(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
