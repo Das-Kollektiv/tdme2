@@ -21,10 +21,10 @@ using tdme::math::MathTools;
 Material::Material(const wstring& id)
 {
 	this->id = id;
-	ambientColor = new Color4(0.2f, 0.2f, 0.2f, 0.0f);
-	diffuseColor = new Color4(0.8f, 0.8f, 0.8f, 1.0f);
-	specularColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
-	emissionColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+	ambientColor.set(0.2f, 0.2f, 0.2f, 0.0f);
+	diffuseColor.set(0.8f, 0.8f, 0.8f, 1.0f);
+	specularColor.set(0.0f, 0.0f, 0.0f, 0.0f);
+	emissionColor.set(0.0f, 0.0f, 0.0f, 0.0f);
 	shininess = 0.0f;
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
@@ -45,22 +45,22 @@ const wstring& Material::getId()
 
 Color4* Material::getAmbientColor()
 {
-	return ambientColor;
+	return &ambientColor;
 }
 
 Color4* Material::getDiffuseColor()
 {
-	return diffuseColor;
+	return &diffuseColor;
 }
 
 Color4* Material::getSpecularColor()
 {
-	return specularColor;
+	return &specularColor;
 }
 
 Color4* Material::getEmissionColor()
 {
-	return emissionColor;
+	return &emissionColor;
 }
 
 float Material::getShininess()
@@ -204,7 +204,7 @@ Texture* Material::getDisplacementTexture()
 
 bool Material::hasTransparency()
 {
-	return diffuseColor->getAlpha() < 1.0f - MathTools::EPSILON || diffuseTextureTransparency;
+	return diffuseColor.getAlpha() < 1.0f - MathTools::EPSILON || diffuseTextureTransparency;
 }
 
 wstring Material::defaultMaterialId = L"tdme.default_material";

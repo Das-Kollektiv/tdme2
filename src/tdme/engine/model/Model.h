@@ -9,6 +9,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -45,7 +46,7 @@ private:
 	bool hasSkinning_ {  };
 	float fps {  };
 	map<wstring, AnimationSetup*> animationSetups {  };
-	Matrix4x4* importTransformationsMatrix {  };
+	Matrix4x4 importTransformationsMatrix {  };
 	BoundingBox* boundingBox {  };
 public:
 

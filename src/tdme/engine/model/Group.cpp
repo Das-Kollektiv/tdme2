@@ -34,7 +34,7 @@ Group::Group(Model* model, Group* parentGroup, const wstring& id, const wstring&
 	this->parentGroup = parentGroup;
 	this->id = id;
 	this->name = name;
-	this->transformationsMatrix = (new Matrix4x4())->identity();
+	this->transformationsMatrix.identity();
 	this->animation = nullptr;
 	this->skinning = nullptr;
 }
@@ -72,7 +72,7 @@ void Group::setJoint(bool isJoint)
 
 Matrix4x4* Group::getTransformationsMatrix()
 {
-	return transformationsMatrix;
+	return &transformationsMatrix;
 }
 
 vector<Vector3>* Group::getVertices()

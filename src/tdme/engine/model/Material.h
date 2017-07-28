@@ -7,6 +7,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 
 using std::wstring;
 
@@ -33,10 +34,10 @@ public:
 
 private:
 	wstring id {  };
-	Color4* ambientColor {  };
-	Color4* diffuseColor {  };
-	Color4* specularColor {  };
-	Color4* emissionColor {  };
+	Color4 ambientColor {  };
+	Color4 diffuseColor {  };
+	Color4 specularColor {  };
+	Color4 emissionColor {  };
 	float shininess {  };
 	wstring diffuseTexturePathName {  };
 	wstring diffuseTextureFileName {  };

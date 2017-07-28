@@ -9,6 +9,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -36,7 +37,7 @@ private:
 	wstring id {  };
 	wstring name {  };
 	bool isJoint_ {  };
-	Matrix4x4* transformationsMatrix {  };
+	Matrix4x4 transformationsMatrix {  };
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;

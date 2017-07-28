@@ -39,7 +39,7 @@ Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, R
 	this->rotationOrder = rotationOrder;
 	hasSkinning_ = false;
 	fps = FPS_DEFAULT;
-	importTransformationsMatrix = (new Matrix4x4())->identity();
+	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
 }
 
@@ -156,7 +156,7 @@ bool Model::hasAnimations()
 
 Matrix4x4* Model::getImportTransformationsMatrix()
 {
-	return importTransformationsMatrix;
+	return &importTransformationsMatrix;
 }
 
 BoundingBox* Model::getBoundingBox()
@@ -169,7 +169,7 @@ BoundingBox* Model::getBoundingBox()
 
 Matrix4x4* Model::computeTransformationsMatrix(int32_t frame, const wstring& groupId)
 {
-	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId);
+	return computeTransformationsMatrix(&subGroups, &importTransformationsMatrix, frame, groupId);
 }
 
 Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId)
