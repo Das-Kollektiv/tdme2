@@ -33,6 +33,13 @@ public: /* protected */
 	 * @param float array containing x,y values
 	 * @return this vector
 	 */
+	Vector2* set(array<float, 2>* v);
+
+	/**
+	 * Set up vector
+	 * @param float array containing x,y values
+	 * @return this vector
+	 */
 	Vector2* set(floatArray* v);
 
 	/** 
@@ -113,6 +120,12 @@ public: /* protected */
 	 * @param y
 	 */
 	Vector2(float x, float y);
+
+	/**
+	 * Public constructor
+	 * @param float values
+	 */
+	Vector2(array<float, 2>* v);
 
 	/**
 	 * Public constructor

@@ -51,6 +51,12 @@ Buffer* FloatBuffer::put(floatArray* arg0) {
 	}
 }
 
+Buffer* FloatBuffer::put(array<float, 2>* arg0) {
+	for (int i = 0; i < arg0->size(); i++) {
+		put((*arg0)[i]);
+	}
+}
+
 Buffer* FloatBuffer::put(array<float, 3>* arg0) {
 	for (int i = 0; i < arg0->size(); i++) {
 		put((*arg0)[i]);

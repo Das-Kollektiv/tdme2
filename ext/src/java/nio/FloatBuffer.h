@@ -29,6 +29,7 @@ public:
 	float get(int32_t position);
 	Buffer* put(float arg0);
 	Buffer* put(floatArray* arg0);
+	Buffer* put(array<float, 2>* arg0);
 	Buffer* put(array<float, 3>* arg0);
 	Buffer* put(array<float, 4>* arg0);
 

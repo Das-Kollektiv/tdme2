@@ -2,9 +2,13 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+
+using std::array;
 
 /** 
  * Class representing a UV data
@@ -14,7 +18,7 @@
 class tdme::engine::model::TextureCoordinate final
 {
 private:
-	floatArray* data {  };
+	array<float, 2> data {  };
 public:
 
 	/** 
@@ -30,7 +34,7 @@ public:
 	/** 
 	 * @return texture data as array
 	 */
-	floatArray* getArray();
+	array<float, 2>* getArray();
 
 	/** 
 	 * Clones the texture coordinate
