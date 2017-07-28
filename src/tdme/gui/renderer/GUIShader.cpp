@@ -103,8 +103,8 @@ void GUIShader::updateEffect(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, &renderer->effectColorMul);
+	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, &renderer->effectColorAdd);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

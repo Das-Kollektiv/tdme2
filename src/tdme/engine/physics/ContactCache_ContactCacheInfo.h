@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::engine::physics::ContactCache;
@@ -42,7 +46,7 @@ public: /* protected */
 	RigidBody* rb1 {  };
 	RigidBody* rb2 {  };
 	int32_t hitPointCount {  };
-	Vector3Array* hitPoints {  };
+	vector<Vector3*> hitPoints {  };
 	floatArray* lamdas {  };
 
 	// Generated

@@ -2,16 +2,12 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
+using std::array;
 
 /** 
  * Vector3 class
@@ -19,41 +15,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::Vector3 final
-	: public Object
 {
 
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	void ctor(float x, float y, float z);
-
-	/** 
-	 * Public constructor
-	 * @param float array containing x,y,z values
-	 */
-	void ctor(floatArray* v);
-
-	/** 
-	 * Public constructor
-	 * @param float array containing x,y,z values
-	 */
-	void ctor(Vector3* v);
-
+	array<float, 3> data {  };
 public:
 
 	/** 
@@ -78,6 +43,13 @@ public:
 	Vector3* set(Vector3* v);
 
 	/** 
+	 * Set up vector
+	 * @param v
+	 * @return this vector
+	 */
+	Vector3* set(Vector4* v);
+
+	/**
 	 * @return x
 	 */
 	float getX();
@@ -157,7 +129,7 @@ public:
 	/** 
 	 * @return vector as array
 	 */
-	floatArray* getArray();
+	array<float,3>* getArray();
 
 	/** 
 	 * Compute the cross product of vector v1 and v2
@@ -275,7 +247,7 @@ public:
 	 * Clones the vector
 	 * @return new cloned vector
 	 */
-	Vector3* clone() override;
+	Vector3* clone();
 
 	/** 
 	 * Clones the vector
@@ -298,24 +270,40 @@ public:
 	 */
 	bool equals(Vector3* v, float tolerance);
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Vector3();
+
+	/**
+	 * Public constructor
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	Vector3(float x, float y, float z);
+
+	/**
+	 * Public constructor
+	 * @param values
+	 */
 	Vector3(floatArray* v);
+
+	/**
+	 * Public constructor
+	 * @param values
+	 */
+	Vector3(array<float,3> v);
+
+	/**
+	 * Public constructor
+	 * @param vector
+	 */
 	Vector3(Vector3* v);
-protected:
-	Vector3(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* obj);
-
-private:
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Public constructor
+	 * @param vector
+	 */
+	Vector3(Vector4* v);
 };

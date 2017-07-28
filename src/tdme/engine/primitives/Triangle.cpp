@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/primitives/Triangle.java
 #include <tdme/engine/primitives/Triangle.h>
 
+#include <vector>
+
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -20,6 +22,8 @@
 #include <tdme/utils/_Console.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::primitives::Triangle;
 using java::lang::Math;
@@ -76,10 +80,10 @@ BoundingVolume* Triangle::createBoundingVolume(Vector3* vertex0, Vector3* vertex
 void Triangle::ctor(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
 {
 	super::ctor();
-	this->vertices = new Vector3Array(3);
-	this->vertices->set(0, vertex0);
-	this->vertices->set(1, vertex1);
-	this->vertices->set(2, vertex2);
+	this->vertices.resize(3);
+	this->vertices[0] = vertex0;
+	this->vertices[1] = vertex1;
+	this->vertices[2] = vertex2;
 	this->center = new Vector3();
 	this->closestPoint = new Vector3();
 	this->distanceVector = new Vector3();
@@ -89,9 +93,9 @@ void Triangle::ctor(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
 	update();
 }
 
-Vector3Array* Triangle::getVertices()
+vector<Vector3*>* Triangle::getVertices()
 {
-	return vertices;
+	return &vertices;
 }
 
 void Triangle::fromBoundingVolume(BoundingVolume* original)
@@ -101,8 +105,8 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 		return;
 	}
 	auto triangle = java_cast< Triangle* >(original);
-	for (auto i = 0; i < vertices->length; i++) 
-				(*vertices)[i]->set((*triangle->vertices)[i]);
+	for (auto i = 0; i < vertices.size(); i++)
+		vertices[i]->set(triangle->vertices[i]);
 
 	center->set(triangle->center);
 	sphereRadius = triangle->sphereRadius;
@@ -117,16 +121,16 @@ void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, T
 	auto triangle = java_cast< Triangle* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	for (auto i = 0; i < 3; i++) {
-		transformationsMatrix->multiply((*triangle->vertices)[i], (*vertices)[i]);
+		transformationsMatrix->multiply(triangle->vertices[i], vertices[i]);
 	}
 	update();
 }
 
 void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
 {
-	edge0->set((*vertices)[1])->sub((*vertices)[0]);
-	edge1->set((*vertices)[2])->sub((*vertices)[0]);
-	v0Point->set((*vertices)[0])->sub(point);
+	edge0->set(vertices[1])->sub(vertices[0]);
+	edge1->set(vertices[2])->sub(vertices[0]);
+	v0Point->set(vertices[0])->sub(point);
 	auto a = Vector3::computeDotProduct(edge0, edge0);
 	auto b = Vector3::computeDotProduct(edge0, edge1);
 	auto c = Vector3::computeDotProduct(edge1, edge1);
@@ -187,7 +191,7 @@ void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* clos
 			t = 1.0f - s;
 		}
 	}
-	closestPoint->set((*vertices)[0])->add(edge0->scale(s))->add(edge1->scale(t));
+	closestPoint->set(vertices[0])->add(edge0->scale(s))->add(edge1->scale(t));
 }
 
 bool Triangle::containsPoint(Vector3* point)
@@ -228,11 +232,11 @@ float Triangle::getSphereRadius()
 
 float Triangle::computeDimensionOnAxis(Vector3* axis)
 {
-	auto vertexOnAxis = Vector3::computeDotProduct((*vertices)[0], axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
-	for (auto i = 1; i < vertices->length; i++) {
-		vertexOnAxis = Vector3::computeDotProduct((*vertices)[i], axis);
+	for (auto i = 1; i < vertices.size(); i++) {
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min)
 			min = vertexOnAxis;
 
@@ -245,10 +249,10 @@ float Triangle::computeDimensionOnAxis(Vector3* axis)
 
 void Triangle::update()
 {
-	this->center->set((*vertices)[0])->add((*vertices)[1])->add((*vertices)[2])->scale(1.0f / 3.0f);
+	this->center->set(vertices[0])->add(vertices[1])->add(vertices[2])->scale(1.0f / 3.0f);
 	this->sphereRadius = 0.0f;
-	for (auto i = 0; i < vertices->length; i++) {
-		auto _sphereRadius = distanceVector->set(center)->sub((*vertices)[i])->computeLength();
+	for (auto i = 0; i < vertices.size(); i++) {
+		auto _sphereRadius = distanceVector->set(center)->sub(vertices[i])->computeLength();
 		if (_sphereRadius > sphereRadius)
 			sphereRadius = _sphereRadius;
 
@@ -257,13 +261,17 @@ void Triangle::update()
 
 BoundingVolume* Triangle::clone()
 {
-	return new Triangle((*vertices)[0]->clone(), (*vertices)[1]->clone(), (*vertices)[2]->clone());
+	return new Triangle(vertices[0]->clone(), vertices[1]->clone(), vertices[2]->clone());
 }
 
 String* Triangle::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Triangle [vertices="_j)->append(Arrays::toString(static_cast< ObjectArray* >(vertices)))
-		->append(u"]"_j)->toString();
+	return ::java::lang::StringBuilder().append(u"Triangle [vertices="_j)
+		/*
+		->append(Arrays::toString(static_cast< ObjectArray* >(vertices)))
+		*/
+		->append(u"]"_j)
+		->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

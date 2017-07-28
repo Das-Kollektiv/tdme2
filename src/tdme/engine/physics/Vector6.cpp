@@ -63,7 +63,9 @@ void Vector6::setValue(int32_t idx, float value)
 
 void Vector6::setValue(int32_t startIdx, Vector3* vector3)
 {
-	System::arraycopy(vector3->getArray(), 0, data, startIdx, 3);
+	(*data)[startIdx + 0] = vector3->data[0];
+	(*data)[startIdx + 1] = vector3->data[1];
+	(*data)[startIdx + 2] = vector3->data[2];
 }
 
 Vector6* Vector6::add(Vector6* vector6)

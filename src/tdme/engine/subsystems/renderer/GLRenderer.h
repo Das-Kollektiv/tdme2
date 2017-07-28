@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using java::lang::String;
@@ -69,8 +73,8 @@ public:
 	int32_t FRAMEBUFFER_DEFAULT {  };
 	int32_t FRONTFACE_CW {  };
 	int32_t FRONTFACE_CCW {  };
-	floatArray* effectColorMul {  };
-	floatArray* effectColorAdd {  };
+	array<float, 4> effectColorMul { 1.0f, 1.0f, 1.0f, 1.0f };
+	array<float, 4> effectColorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
 	GLRenderer_Material* material {  };
 	GLRenderer_LightArray* lights {  };
 
@@ -238,14 +242,14 @@ public:
 	 * @param uniform id
 	 * @param data
 	 */
-	virtual void setProgramUniformFloatVec4(int32_t uniformId, floatArray* data) = 0;
+	virtual void setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data) = 0;
 
 	/** 
 	 * Set up a float vec3 uniform value
 	 * @param uniform id
 	 * @param data
 	 */
-	virtual void setProgramUniformFloatVec3(int32_t uniformId, floatArray* data) = 0;
+	virtual void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data) = 0;
 
 	/** 
 	 * Bind attribute to a input location
@@ -631,28 +635,28 @@ public:
 	 * @param light id
 	 * @param ambient
 	 */
-	virtual void setLightAmbient(int32_t lightId, floatArray* ambient);
+	virtual void setLightAmbient(int32_t lightId, array<float, 4>* ambient);
 
 	/** 
 	 * Set light diffuse color
 	 * @param light id
 	 * @param diffuse
 	 */
-	virtual void setLightDiffuse(int32_t lightId, floatArray* diffuse);
+	virtual void setLightDiffuse(int32_t lightId, array<float, 4>* diffuse);
 
 	/** 
 	 * Set light position
 	 * @param light id
 	 * @param position
 	 */
-	virtual void setLightPosition(int32_t lightId, floatArray* position);
+	virtual void setLightPosition(int32_t lightId, array<float, 4>* position);
 
 	/** 
 	 * Set light spot direction
 	 * @param light id
 	 * @param spot direction
 	 */
-	virtual void setLightSpotDirection(int32_t lightId, floatArray* spotDirection);
+	virtual void setLightSpotDirection(int32_t lightId, array<float, 3>* spotDirection);
 
 	/** 
 	 * Set light spot exponent
@@ -699,13 +703,13 @@ public:
 	 * Set up effect color multiplication
 	 * @param effect color for multiplication
 	 */
-	virtual void setEffectColorMul(floatArray* effectColorMul);
+	virtual void setEffectColorMul(array<float, 4>* effectColorMul);
 
 	/** 
 	 * Set up effect color addition
 	 * @param effect color for addition
 	 */
-	virtual void setEffectColorAdd(floatArray* effectColorAdd);
+	virtual void setEffectColorAdd(array<float, 4>* effectColorAdd);
 
 	/** 
 	 * Update material
@@ -726,25 +730,25 @@ public:
 	 * Set material ambient color
 	 * @param ambient
 	 */
-	virtual void setMaterialAmbient(floatArray* ambient);
+	virtual void setMaterialAmbient(array<float, 4>* ambient);
 
 	/** 
 	 * Set material diffuse color
 	 * @param diffuse
 	 */
-	virtual void setMaterialDiffuse(floatArray* diffuse);
+	virtual void setMaterialDiffuse(array<float, 4>* diffuse);
 
 	/** 
 	 * Set material specular color
 	 * @param specular
 	 */
-	virtual void setMaterialSpecular(floatArray* specular);
+	virtual void setMaterialSpecular(array<float, 4>* specular);
 
 	/** 
 	 * Set material emission color
 	 * @param emission
 	 */
-	virtual void setMaterialEmission(floatArray* emission);
+	virtual void setMaterialEmission(array<float, 4>* emission);
 
 	/** 
 	 * Set material shininess

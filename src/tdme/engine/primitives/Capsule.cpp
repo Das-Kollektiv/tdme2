@@ -200,9 +200,12 @@ BoundingVolume* Capsule::clone()
 
 String* Capsule::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Capsule [a="_j)->append(static_cast< Object* >(a))
+	return ::java::lang::StringBuilder().append(u"Capsule [a="_j)
+		/*
+		->append(static_cast< Object* >(a))
 		->append(u", b="_j)
 		->append(static_cast< Object* >(b))
+		*/
 		->append(u", radius="_j)
 		->append(radius)
 		->append(u"]"_j)->toString();

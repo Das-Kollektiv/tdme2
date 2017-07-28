@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/tools/shared/tools/Tools.java
 #include <tdme/tools/shared/tools/Tools.h>
 
+#include <array>
 #include <string>
 
 #include <java/lang/Float.h>
@@ -47,6 +48,7 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::array;
 using std::wstring;
 using std::to_wstring;
 
@@ -144,12 +146,22 @@ String* Tools::formatColor4(Color4* value)
 		->append(formatFloat(value->getAlpha()))->toString();
 }
 
-void Tools::convertToArray(String* text, int32_t length, floatArray* array) /* throws(NumberFormatException) */
+void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */
 {
 	clinit();
 	auto i = 0;
 	auto t = new StringTokenizer(text, u","_j);
-	while (t->hasMoreTokens() && i < length) {
+	while (t->hasMoreTokens() && i < array->size()) {
+		(*array)[i++] = Float::parseFloat(t->nextToken());
+	}
+}
+
+void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */
+{
+	clinit();
+	auto i = 0;
+	auto t = new StringTokenizer(text, u","_j);
+	while (t->hasMoreTokens() && i < array->size()) {
 		(*array)[i++] = Float::parseFloat(t->nextToken());
 	}
 }
@@ -158,7 +170,7 @@ Vector3* Tools::convertToVector3(String* text) /* throws(NumberFormatException) 
 {
 	clinit();
 	auto v = new Vector3();
-	convertToArray(text, 3, v->getArray());
+	convertToArray(text, v->getArray());
 	return v;
 }
 
@@ -166,7 +178,7 @@ Vector4* Tools::convertToVector4(String* text) /* throws(NumberFormatException) 
 {
 	clinit();
 	auto v = new Vector4();
-	convertToArray(text, 4, v->getArray());
+	convertToArray(text, v->getArray());
 	return v;
 }
 
@@ -174,7 +186,7 @@ Color4* Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
 {
 	clinit();
 	auto color = new Color4();
-	convertToArray(text, 4, color->getArray());
+	convertToArray(text, color->getArray());
 	return color;
 }
 
@@ -207,7 +219,7 @@ void Tools::setDefaultLight(Light* light)
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()->getArray()));
+	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -342,7 +354,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition()->set(entityBoundingBox->getMin()->getX() + ((entityBoundingBox->getMax()->getX() - entityBoundingBox->getMin()->getX()) / 2.0f), entityBoundingBox->getMin()->getY() + ((entityBoundingBox->getMax()->getY() - entityBoundingBox->getMin()->getY()) / 2.0f), -entityBoundingBox->getMin()->getZ() * 4.0f, 1.0f);
-	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()->getArray()));
+	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);

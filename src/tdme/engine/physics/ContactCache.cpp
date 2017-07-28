@@ -79,10 +79,10 @@ void ContactCache::ctor()
 	contactCacheInfoPool = new ContactCache_ContactCacheInfoArray(ConstraintsSolver::CONSTRAINTS_MAX);
 	for (auto i = 0; i < ConstraintsSolver::CONSTRAINTS_MAX; i++) {
 		contactCacheInfoPool->set(i, new ContactCache_ContactCacheInfo());
-		(*contactCacheInfoPool)[i]->hitPoints = new Vector3Array(CollisionResponse::HITPOINT_COUNT);
+		(*contactCacheInfoPool)[i]->hitPoints.resize(CollisionResponse::HITPOINT_COUNT);
 		(*contactCacheInfoPool)[i]->lamdas = new floatArray(CollisionResponse::HITPOINT_COUNT * 3);
 		for (auto j = 0; j < CollisionResponse::HITPOINT_COUNT; j++) {
-			(*contactCacheInfoPool)[i]->hitPoints->set(j, new Vector3());
+			(*contactCacheInfoPool)[i]->hitPoints[j] = new Vector3();
 		}
 	}
 }
@@ -100,7 +100,7 @@ void ContactCache::add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collis
 	contactCacheInfo->rb2 = rb2;
 	contactCacheInfo->hitPointCount = collision->getHitPointsCount();
 	for (auto i = 0; i < contactCacheInfo->hitPointCount; i++) {
-		(*contactCacheInfo->hitPoints)[i]->set(collision->getHitPointAt(i));
+		contactCacheInfo->hitPoints[i]->set(collision->getHitPointAt(i));
 		(*contactCacheInfo->lamdas)[i] = (*lamdaValues)[i];
 	}
 	wstring key = rb1->id->getCPPWString() + L"," + rb2->id->getCPPWString();
@@ -120,7 +120,7 @@ ContactCache_ContactCacheInfo* ContactCache::get(RigidBody* rb1, RigidBody* rb2,
 			return nullptr;
 
 		for (auto i = 0; i < contactCacheInfo->hitPointCount; i++) {
-			tmpVector3->set(collision->getHitPointAt(i))->sub((*contactCacheInfo->hitPoints)[i]);
+			tmpVector3->set(collision->getHitPointAt(i))->sub(contactCacheInfo->hitPoints[i]);
 			if (tmpVector3->computeLength() > 0.1f)
 				return nullptr;
 

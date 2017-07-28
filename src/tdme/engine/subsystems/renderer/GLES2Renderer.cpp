@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GLES2Renderer.java
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
+#include <array>
+
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
 #include <java/io/InputStreamReader.h>
@@ -24,6 +26,8 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using java::io::BufferedReader;
@@ -311,14 +315,14 @@ void GLES2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t
 	gl->glUniformMatrix4fv(uniformId, count, false, data);
 }
 
-void GLES2Renderer::setProgramUniformFloatVec4(int32_t uniformId, floatArray* data)
+void GLES2Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data)
 {
-	gl->glUniform4fv(uniformId, 1, data, 0);
+	gl->glUniform4fv(uniformId, 1, data->data(), 0);
 }
 
-void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, floatArray* data)
+void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data)
 {
-	gl->glUniform3fv(uniformId, 1, data, 0);
+	gl->glUniform3fv(uniformId, 1, data->data(), 0);
 }
 
 void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::engine::primitives::BoundingVolume;
@@ -70,7 +74,7 @@ public: /* protected */
 
 private:
 	float sphereRadius {  };
-	Vector3Array* vertices {  };
+	vector<Vector3*> vertices {  };
 	Vector3* halfExtension {  };
 
 public:
@@ -123,7 +127,7 @@ public:
 	 * @param bounding box
 	 * @return vertices
 	 */
-	Vector3Array* getVertices();
+	vector<Vector3*>* getVertices();
 
 	/** 
 	 * @return faces vertices indexes

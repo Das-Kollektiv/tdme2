@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using java::nio::FloatBuffer;
@@ -58,16 +62,13 @@ private:
 	float renderOffsetX {  };
 	float renderOffsetY {  };
 	GUIScreenNode* screenNode {  };
-	floatArray* quadVertices {  };
-	floatArray* quadColors {  };
-	floatArray* quadTextureCoordinates {  };
-	floatArray* fontColor {  };
-	floatArray* effectColorMul {  };
-	floatArray* effectColorAdd {  };
-	floatArray* guiEffectColorMul {  };
-	floatArray* guiEffectColorAdd {  };
-	floatArray* effectColorMulFinal {  };
-	floatArray* effectColorAddFinal {  };
+	array<float, 4> fontColor {  };
+	array<float, 4> effectColorMul {  };
+	array<float, 4> effectColorAdd {  };
+	array<float, 4> guiEffectColorMul {  };
+	array<float, 4> guiEffectColorAdd {  };
+	array<float, 4> effectColorMulFinal {  };
+	array<float, 4> effectColorAddFinal {  };
 	float guiEffectOffsetX {  };
 	float guiEffectOffsetY {  };
 protected:

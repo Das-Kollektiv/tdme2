@@ -10,8 +10,9 @@
 	#include <GL/glcorearb.h>
 #endif
 
-
 #include <string.h>
+
+#include <array>
 
 #include <java/io/Serializable.h>
 #include <java/lang/Byte.h>
@@ -38,6 +39,8 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
 using java::io::Serializable;
@@ -322,14 +325,14 @@ void GL3Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t c
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GL3Renderer::setProgramUniformFloatVec4(int32_t uniformId, floatArray* data)
+void GL3Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data)
 {
-	glUniform4fv(uniformId, 1, data->getPointer());
+	glUniform4fv(uniformId, 1, data->data());
 }
 
-void GL3Renderer::setProgramUniformFloatVec3(int32_t uniformId, floatArray* data)
+void GL3Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data)
 {
-	glUniform3fv(uniformId, 1, data->getPointer());
+	glUniform3fv(uniformId, 1, data->data());
 }
 
 void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)

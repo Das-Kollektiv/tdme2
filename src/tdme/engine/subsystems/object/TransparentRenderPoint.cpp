@@ -45,9 +45,8 @@ String* TransparentRenderPoint::toString()
 {
 	return ::java::lang::StringBuilder().append(u"TransparentPoint [acquired="_j)->append(acquired)
 		->append(u", point="_j)
-		->append(static_cast< Object* >(point))
 		/*
-		// TODO: implement me
+		->append(static_cast< Object* >(point))
 		->append(u", color="_j)
 		->append(static_cast< Object* >(color))
 		*/

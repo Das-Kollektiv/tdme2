@@ -50,6 +50,7 @@ void Light::ctor(GLRenderer* renderer, int32_t id)
 	this->lightPositionTransformed = new Vector4();
 	this->spotDirection4 = new Vector4();
 	this->spotDirection4Transformed = new Vector4();
+	this->tmpVector3 = new Vector3();
 }
 
 int32_t Light::getId()
@@ -149,7 +150,7 @@ void Light::update()
 		renderer->setLightAmbient(id, ambient->getArray());
 		renderer->setLightDiffuse(id, diffuse->getArray());
 		renderer->setLightPosition(id, renderer->getCameraMatrix()->multiply(position, lightPositionTransformed)->scale(1.0f / lightPositionTransformed->getW())->getArray());
-		renderer->setLightSpotDirection(id, renderer->getCameraMatrix()->multiply(spotDirection4->set(spotDirection, 0.0f), spotDirection4Transformed)->getArray());
+		renderer->setLightSpotDirection(id, tmpVector3->set(renderer->getCameraMatrix()->multiply(spotDirection4->set(spotDirection, 0.0f), spotDirection4Transformed))->getArray());
 		renderer->setLightSpotExponent(id, spotExponent);
 		renderer->setLightSpotCutOff(id, spotCutOff);
 		renderer->setLightConstantAttenuation(id, constantAttenuation);

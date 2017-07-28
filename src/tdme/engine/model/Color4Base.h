@@ -2,8 +2,12 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+
+using std::array;
 
 /** 
  * Color 4 base definition
@@ -14,7 +18,7 @@ class tdme::engine::model::Color4Base
 {
 
 public: /* protected */
-	floatArray* data {  };
+	array<float, 4> data {  };
 
 public:
 
@@ -91,7 +95,7 @@ public:
 	/** 
 	 * @return rgba as float array 
 	 */
-	virtual floatArray* getArray();
+	virtual array<float, 4>* getArray();
 
 	/** 
 	 * Compares this color with given color

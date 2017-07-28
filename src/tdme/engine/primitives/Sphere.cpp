@@ -188,7 +188,10 @@ BoundingVolume* Sphere::clone()
 
 String* Sphere::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Sphere [center="_j)->append(static_cast< Object* >(center))
+	return ::java::lang::StringBuilder().append(u"Sphere [center="_j)
+		/*
+		->append(static_cast< Object* >(center))
+		*/
 		->append(u", radius="_j)
 		->append(radius)
 		->append(u"]"_j)->toString();

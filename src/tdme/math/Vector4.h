@@ -2,17 +2,14 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::array;
+
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Vector 4 class
@@ -20,45 +17,11 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::Vector4 final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param vector v
-	 * @param weight
-	 */
-	void ctor(Vector3* v, float w);
-
-	/** 
-	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
-	 */
-	void ctor(float x, float y, float z, float w);
-
-	/** 
-	 * Public constructor
-	 * @param float array containing x,y,z,w values
-	 */
-	void ctor(floatArray* v);
+	array<float, 4> data {  };
 
 public:
-
 	/** 
 	 * Set up vector
 	 * @param x
@@ -152,31 +115,44 @@ public:
 	/** 
 	 * @return vector as array
 	 */
-	floatArray* getArray();
+	array<float, 4>* getArray();
 
 	/** 
 	 * Clones the vector
 	 * @return new cloned vector
 	 */
-	Vector4* clone() override;
+	Vector4* clone();
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Vector4();
+
+	/**
+	 * Public constructor
+	 * @param vector
+	 */
+	Vector4(Vector4* v);
+
+	/**
+	 * Public constructor
+	 * @param vector
+	 * @param w
+	 */
 	Vector4(Vector3* v, float w);
+
+	/**
+	 * Public constructor
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param w
+	 */
 	Vector4(float x, float y, float z, float w);
+
+	/**
+	 * Public constructor
+	 * @param v
+	 */
 	Vector4(floatArray* v);
-protected:
-	Vector4(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

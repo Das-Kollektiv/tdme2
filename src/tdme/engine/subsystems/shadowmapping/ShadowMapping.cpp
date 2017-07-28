@@ -102,6 +102,7 @@ void ShadowMapping::ctor(Engine* engine, GLRenderer* renderer, Object3DVBORender
 	spotDirection4 = new Vector4();
 	spotDirection4Transformed = new Vector4();
 	spotDirection3Transformed = new Vector3();
+	tmpVector3 = new Vector3();
 	runState = ShadowMapping_RunState::NONE;
 }
 
@@ -166,8 +167,8 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		auto shadowMap = (*shadowMaps)[i];
 		auto light = engine->getLightAt(i);
-		shader->setProgramLightPosition(lightPosition3Transformed->set(renderer->getCameraMatrix()->multiply(light->getPosition(), lightPosition4Transformed)->scale(1.0f / lightPosition4Transformed->getW())->getArray()));
-		shader->setProgramLightDirection(spotDirection3Transformed->set(renderer->getCameraMatrix()->multiply(spotDirection4->set(light->getSpotDirection(), 0.0f), spotDirection4Transformed)->getArray()));
+		shader->setProgramLightPosition(lightPosition3Transformed->set(tmpVector3->set(renderer->getCameraMatrix()->multiply(light->getPosition(), lightPosition4Transformed)->scale(1.0f / lightPosition4Transformed->getW()))));
+		shader->setProgramLightDirection(spotDirection3Transformed->set(tmpVector3->set(renderer->getCameraMatrix()->multiply(spotDirection4->set(light->getSpotDirection(), 0.0f), spotDirection4Transformed))));
 		shader->setProgramLightSpotExponent(light->getSpotExponent());
 		shader->setProgramLightSpotCosCutOff(light->getSpotCutOff());
 		shader->setProgramLightConstantAttenuation(light->getConstantAttenuation());

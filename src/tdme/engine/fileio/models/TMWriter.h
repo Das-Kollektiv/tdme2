@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -21,6 +22,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::array;
 using std::map;
 using std::vector;
 using std::wstring;
@@ -211,6 +213,30 @@ public:
 	inline void writeFloatArray(floatArray* f) throw (ModelFileIOException) {
 		writeInt(f->length);
 		for (auto i = 0; i < f->length; i++) {
+			writeFloat((*f)[i]);
+		}
+	}
+
+	/**
+	 * Writes a float array to output stream
+	 * @param float array
+	 * @throws model file IO exception
+	 */
+	inline void writeFloatArray(array<float,3>* f) throw (ModelFileIOException) {
+		writeInt(f->size());
+		for (auto i = 0; i < f->size(); i++) {
+			writeFloat((*f)[i]);
+		}
+	}
+
+	/**
+	 * Writes a float array to output stream
+	 * @param float array
+	 * @throws model file IO exception
+	 */
+	inline void writeFloatArray(array<float,4>* f) throw (ModelFileIOException) {
+		writeInt(f->size());
+		for (auto i = 0; i < f->size(); i++) {
 			writeFloat((*f)[i]);
 		}
 	}

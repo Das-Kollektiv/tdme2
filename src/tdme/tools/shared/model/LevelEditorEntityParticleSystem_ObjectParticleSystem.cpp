@@ -109,11 +109,13 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(String* 
 
 String* LevelEditorEntityParticleSystem_ObjectParticleSystem::toString()
 {
-	return ::java::lang::StringBuilder().append(u"ObjectParticleSystem [scale="_j)->append(static_cast< Object* >(scale))
+	return ::java::lang::StringBuilder().append(u"ObjectParticleSystem [scale="_j)
+		/*
+		->append(static_cast< Object* >(scale))
+		*/
 		->append(u", maxCount="_j)
 		->append(maxCount)
 		/*
-		// TODO: implement me!
 		->append(u", model="_j)
 		->append(static_cast< Object* >(model))
 		*/

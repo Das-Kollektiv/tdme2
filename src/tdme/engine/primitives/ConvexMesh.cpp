@@ -140,23 +140,17 @@ void ConvexMesh::ctor(Object3DModel* model)
 
 void ConvexMesh::createVertices()
 {
-	vector<Vector3*> vertices;
 	for (auto i = 0; i < triangles->length; i++) {
-		for (auto j = 0; j < (*triangles)[i]->vertices->length; j++) {
+		for (auto j = 0; j < (*triangles)[i]->vertices.size(); j++) {
 			auto haveVertex = false;
 			for (auto k = 0; k < vertices.size(); k++) {
-				if (vertices.at(k)->equals((*(*triangles)[i]->vertices)[j]) == true) {
+				if (vertices.at(k)->equals((*triangles)[i]->vertices[j]) == true) {
 					haveVertex = true;
 				}
 			}
 			if (haveVertex == false)
-				vertices.push_back((*(*triangles)[i]->vertices)[j]);
-
+				vertices.push_back((*triangles)[i]->vertices[j]);
 		}
-	}
-	this->vertices = new Vector3Array(vertices.size());
-	for (int i = 0; i < vertices.size(); i++) {
-		this->vertices->set(i, vertices.at(i));
 	}
 }
 
@@ -165,9 +159,9 @@ TriangleArray* ConvexMesh::getTriangles()
 	return triangles;
 }
 
-Vector3Array* ConvexMesh::getVertices()
+vector<Vector3*>* ConvexMesh::getVertices()
 {
-	return vertices;
+	return &vertices;
 }
 
 void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
@@ -200,9 +194,9 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 		return;
 	}
 	for (auto i = 0; i < triangles->length; i++) {
-		transformations->getTransformationsMatrix()->multiply((*(*mesh->triangles)[i]->vertices)[0], (*(*triangles)[i]->vertices)[0]);
-		transformations->getTransformationsMatrix()->multiply((*(*mesh->triangles)[i]->vertices)[1], (*(*triangles)[i]->vertices)[1]);
-		transformations->getTransformationsMatrix()->multiply((*(*mesh->triangles)[i]->vertices)[2], (*(*triangles)[i]->vertices)[2]);
+		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[0], (*triangles)[i]->vertices[0]);
+		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[1], (*triangles)[i]->vertices[1]);
+		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[2], (*triangles)[i]->vertices[2]);
 		(*triangles)[i]->update();
 	}
 	update();
@@ -239,16 +233,16 @@ bool ConvexMesh::containsPoint(Vector3* point)
 		triangleEdge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
 		triangleEdge3->set((*triangleVertices)[0])->sub((*triangleVertices)[2])->normalize();
 		Vector3::computeCrossProduct(triangleEdge1, triangleEdge2, triangleNormal)->normalize();
-		if (sat->checkPointInVerticesOnAxis(vertices, point, triangleEdge1) == false)
+		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge1) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(vertices, point, triangleEdge2) == false)
+		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge2) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(vertices, point, triangleEdge3) == false)
+		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge3) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(vertices, point, triangleNormal) == false)
+		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleNormal) == false)
 			return false;
 
 	}
@@ -301,20 +295,18 @@ void ConvexMesh::update()
 {
 	center->set(0.0f, 0.0f, 0.0f);
 	for (auto i = 0; i < triangles->length; i++) {
-		center->add((*(*triangles)[i]->vertices)[0]);
-		center->add((*(*triangles)[i]->vertices)[1]);
-		center->add((*(*triangles)[i]->vertices)[2]);
+		center->add((*triangles)[i]->vertices[0]);
+		center->add((*triangles)[i]->vertices[1]);
+		center->add((*triangles)[i]->vertices[2]);
 	}
 	center->scale(1.0f / (triangles->length * 3.0f));
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < triangles->length; i++) 
-				for (auto j = 0; j < 3; j++) {
-			auto _sphereRadius = distanceVector->set(center)->sub((*(*triangles)[i]->vertices)[j])->computeLength();
-			if (_sphereRadius > sphereRadius)
-				sphereRadius = _sphereRadius;
-
-		}
-
+	for (auto j = 0; j < 3; j++) {
+		auto _sphereRadius = distanceVector->set(center)->sub((*triangles)[i]->vertices[j])->computeLength();
+		if (_sphereRadius > sphereRadius)
+			sphereRadius = _sphereRadius;
+	}
 }
 
 BoundingVolume* ConvexMesh::clone()
@@ -328,7 +320,10 @@ BoundingVolume* ConvexMesh::clone()
 
 String* ConvexMesh::toString()
 {
-	return ::java::lang::StringBuilder().append(u"ConvexMesh [center="_j)->append(static_cast< Object* >(center))
+	return ::java::lang::StringBuilder().append(u"ConvexMesh [center="_j)
+		/*
+		->append(static_cast< Object* >(center))
+		*/
 		->append(u", sphereRadius="_j)
 		->append(sphereRadius)
 		->append(u", triangles="_j)

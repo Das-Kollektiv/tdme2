@@ -654,7 +654,7 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	tmpMatrix4x4->set(modelViewMatrix)->multiply(projectionMatrix)->invert();
 	tmpMatrix4x4->multiply(tmpVector4a->set((2.0f * mouseX / width) - 1.0f, 1.0f - (2.0f * mouseY / height), 2.0f * z - 1.0f, 1.0f), tmpVector4b);
 	tmpVector4b->scale(1.0f / tmpVector4b->getW());
-	worldCoordinate->set(tmpVector4b->getArray());
+	worldCoordinate->set(tmpVector4b->getX(), tmpVector4b->getY(), tmpVector4b->getZ());
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3* worldCoordinate)

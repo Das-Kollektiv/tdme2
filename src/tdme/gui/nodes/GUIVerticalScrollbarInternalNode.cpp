@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 
+#include <array>
+
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -11,6 +13,8 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <Array.h>
+
+using std::array;
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using java::lang::String;
@@ -87,7 +91,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, _ArrayLi
 	auto top = barTop;
 	float width = computedConstraints->width - border->left - border->right;
 	auto height = barHeight;
-	floatArray* barColorArray = nullptr;
+	array<float, 4>* barColorArray = nullptr;
 	{
 		auto v = controller->getState();
 		if ((v == GUIVerticalScrollbarInternalController_State::NONE)) {
@@ -102,7 +106,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, _ArrayLi
 			barColorArray = barColorDragging->getArray();
 			goto end_switch0;;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	guiRenderer->bindTexture(0);

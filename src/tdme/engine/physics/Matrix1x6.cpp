@@ -66,7 +66,9 @@ void Matrix1x6::setValue(int32_t idx, float value)
 
 void Matrix1x6::setValue(int32_t startIdx, Vector3* vector3)
 {
-	System::arraycopy(vector3->getArray(), 0, data, startIdx, 3);
+	(*data)[startIdx + 0] = vector3->data[0];
+	(*data)[startIdx + 1] = vector3->data[1];
+	(*data)[startIdx + 2] = vector3->data[2];
 }
 
 float Matrix1x6::multiply(Vector6* vector)

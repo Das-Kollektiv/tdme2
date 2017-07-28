@@ -69,7 +69,7 @@ private:
 	Vector3* triangleNormal {  };
 
 public: /* protected */
-	Vector3Array* vertices {  };
+	vector<Vector3*> vertices {  };
 	Vector3* center {  };
 	Vector3* distanceVector {  };
 	Vector3* closestsPoint {  };
@@ -114,7 +114,7 @@ public:
 	/** 
 	 * @return mesh vertices
 	 */
-	Vector3Array* getVertices();
+	vector<Vector3*>* getVertices();
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint) override;

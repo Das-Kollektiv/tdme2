@@ -11,6 +11,8 @@
 
 #include <string.h>
 
+#include <array>
+
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
 #include <java/io/InputStreamReader.h>
@@ -37,6 +39,8 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
 using java::io::BufferedReader;
@@ -329,14 +333,14 @@ void GL2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray*
 	glUniformMatrix4fv(uniformId, 1, false, data->getPointer());
 }
 
-void GL2Renderer::setProgramUniformFloatVec4(int32_t uniformId, floatArray* data)
+void GL2Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data)
 {
-	glUniform4fv(uniformId, 1, data->getPointer());
+	glUniform4fv(uniformId, 1, data->data());
 }
 
-void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, floatArray* data)
+void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data)
 {
-	glUniform3fv(uniformId, 1, data->getPointer());
+	glUniform3fv(uniformId, 1, data->data());
 }
 
 void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)

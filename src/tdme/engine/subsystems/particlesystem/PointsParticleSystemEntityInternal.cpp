@@ -245,28 +245,16 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		distanceFromCamera = -point->getZ();
 		auto positionXYZ = particle->position->getArray();
 		if (haveBoundingBox == false) {
-			System::arraycopy(positionXYZ, 0, bbMinXYZ, 0, 3);
-			System::arraycopy(positionXYZ, 0, bbMaxXYZ, 0, 3);
+			*bbMinXYZ = *positionXYZ;
+			*bbMaxXYZ = *positionXYZ;
 			haveBoundingBox = true;
 		} else {
-			if ((*positionXYZ)[0] < (*bbMinXYZ)[0])
-				(*bbMinXYZ)[0] = (*positionXYZ)[0];
-
-			if ((*positionXYZ)[1] < (*bbMinXYZ)[1])
-				(*bbMinXYZ)[1] = (*positionXYZ)[1];
-
-			if ((*positionXYZ)[2] < (*bbMinXYZ)[2])
-				(*bbMinXYZ)[2] = (*positionXYZ)[2];
-
-			if ((*positionXYZ)[0] > (*bbMaxXYZ)[0])
-				(*bbMaxXYZ)[0] = (*positionXYZ)[0];
-
-			if ((*positionXYZ)[1] > (*bbMaxXYZ)[1])
-				(*bbMaxXYZ)[1] = (*positionXYZ)[1];
-
-			if ((*positionXYZ)[2] > (*bbMaxXYZ)[2])
-				(*bbMaxXYZ)[2] = (*positionXYZ)[2];
-
+			if ((*positionXYZ)[0] < (*bbMinXYZ)[0]) (*bbMinXYZ)[0] = (*positionXYZ)[0];
+			if ((*positionXYZ)[1] < (*bbMinXYZ)[1]) (*bbMinXYZ)[1] = (*positionXYZ)[1];
+			if ((*positionXYZ)[2] < (*bbMinXYZ)[2]) (*bbMinXYZ)[2] = (*positionXYZ)[2];
+			if ((*positionXYZ)[0] > (*bbMaxXYZ)[0]) (*bbMaxXYZ)[0] = (*positionXYZ)[0];
+			if ((*positionXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*positionXYZ)[1];
+			if ((*positionXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*positionXYZ)[2];
 		}
 		pointsRenderPool->addPoint(point, particle->color, distanceFromCamera);
 	}

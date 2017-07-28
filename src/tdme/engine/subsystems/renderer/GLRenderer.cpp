@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/renderer/GLRenderer.java
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
+#include <algorithm>
+
 #include <java/lang/Math.h>
 #include <java/lang/System.h>
 #include <java/nio/ByteOrder.h>
@@ -11,6 +13,10 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::copy;
+using std::begin;
+using std::end;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::Math;
@@ -73,82 +79,11 @@ void GLRenderer::ctor()
 {
 	super::ctor();
 	init();
-	effectColorMul = new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	});
-	effectColorAdd = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	});
 	material = new GLRenderer_Material(this);
-	material->ambient = new floatArray({
-		0.2f,
-		0.2f,
-		0.2f,
-		1.0f
-	});
-	material->diffuse = new floatArray({
-		0.8f,
-		0.8f,
-		0.8f,
-		1.0f
-	});
-	material->specular = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		1.0f
-	});
-	material->emission = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		1.0f
-	});
-	material->shininess = 0.0f;
 	lights = new GLRenderer_LightArray(8);
 	for (auto i = 0; i < lights->length; i++) {
 		lights->set(i, new GLRenderer_Light(this));
-		(*lights)[i]->enabled = 0;
-		(*lights)[i]->ambient = new floatArray({
-			0.0f,
-			0.0f,
-			0.0f,
-			1.0f
-		});
-		(*lights)[i]->diffuse = new floatArray({
-			1.0f,
-			1.0f,
-			1.0f,
-			1.0f
-		});
-		(*lights)[i]->specular = new floatArray({
-			1.0f,
-			1.0f,
-			1.0f,
-			1.0f
-		});
-		(*lights)[i]->position = new floatArray({
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f
-		});
-		(*lights)[i]->spotDirection = new floatArray({
-			0.0f,
-			0.0f,
-			-1.0f
-		});
-		(*lights)[i]->spotExponent = 0.0f;
 		(*lights)[i]->spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
-		(*lights)[i]->constantAttenuation = 1.0f;
-		(*lights)[i]->linearAttenuation = 0.0f;
-		(*lights)[i]->quadraticAttenuation = 0.0f;
 	}
 	projectionMatrix = (new Matrix4x4())->identity();
 	cameraMatrix = (new Matrix4x4())->identity();
@@ -196,24 +131,24 @@ void GLRenderer::setLightDisabled(int32_t lightId)
 	(*lights)[lightId]->enabled = 0;
 }
 
-void GLRenderer::setLightAmbient(int32_t lightId, floatArray* ambient)
+void GLRenderer::setLightAmbient(int32_t lightId, array<float, 4>* ambient)
 {
-	System::arraycopy(ambient, 0, (*lights)[lightId]->ambient, 0, Math::min(ambient->length, (*lights)[lightId]->ambient->length));
+	copy(begin(*ambient), end(*ambient), begin((*lights)[lightId]->ambient));
 }
 
-void GLRenderer::setLightDiffuse(int32_t lightId, floatArray* diffuse)
+void GLRenderer::setLightDiffuse(int32_t lightId, array<float, 4>* diffuse)
 {
-	System::arraycopy(diffuse, 0, (*lights)[lightId]->diffuse, 0, Math::min(diffuse->length, (*lights)[lightId]->diffuse->length));
+	copy(begin(*diffuse), end(*diffuse), begin((*lights)[lightId]->diffuse));
 }
 
-void GLRenderer::setLightPosition(int32_t lightId, floatArray* position)
+void GLRenderer::setLightPosition(int32_t lightId, array<float, 4>* position)
 {
-	System::arraycopy(position, 0, (*lights)[lightId]->position, 0, Math::min(position->length, (*lights)[lightId]->position->length));
+	copy(begin(*position), end(*position), begin((*lights)[lightId]->position));
 }
 
-void GLRenderer::setLightSpotDirection(int32_t lightId, floatArray* spotDirection)
+void GLRenderer::setLightSpotDirection(int32_t lightId, array<float, 3>* spotDirection)
 {
-	System::arraycopy(spotDirection, 0, (*lights)[lightId]->spotDirection, 0, Math::min(spotDirection->length, (*lights)[lightId]->spotDirection->length));
+	copy(begin(*spotDirection), end(*spotDirection), begin((*lights)[lightId]->spotDirection));
 }
 
 void GLRenderer::setLightSpotExponent(int32_t lightId, float spotExponent)
@@ -241,14 +176,14 @@ void GLRenderer::setLightQuadraticAttenuation(int32_t lightId, float QuadraticAt
 	(*lights)[lightId]->quadraticAttenuation = QuadraticAttenuation;
 }
 
-void GLRenderer::setEffectColorMul(floatArray* effectColorMul)
+void GLRenderer::setEffectColorMul(array<float, 4>* effectColorMul)
 {
-	System::arraycopy(effectColorMul, 0, this->effectColorMul, 0, Math::min(effectColorMul->length, this->effectColorMul->length));
+	copy(begin(*effectColorMul), end(*effectColorMul), begin(this->effectColorMul));
 }
 
-void GLRenderer::setEffectColorAdd(floatArray* effectColorAdd)
+void GLRenderer::setEffectColorAdd(array<float, 4>* effectColorAdd)
 {
-	System::arraycopy(effectColorAdd, 0, this->effectColorAdd, 0, Math::min(effectColorAdd->length, this->effectColorAdd->length));
+	copy(begin(*effectColorAdd), end(*effectColorAdd), begin(this->effectColorAdd));
 }
 
 void GLRenderer::setMaterialEnabled()
@@ -259,24 +194,24 @@ void GLRenderer::setMaterialDisabled()
 {
 }
 
-void GLRenderer::setMaterialAmbient(floatArray* ambient)
+void GLRenderer::setMaterialAmbient(array<float, 4>* ambient)
 {
-	System::arraycopy(ambient, 0, material->ambient, 0, Math::min(ambient->length, material->ambient->length));
+	copy(begin(*ambient), end(*ambient), begin(material->ambient));
 }
 
-void GLRenderer::setMaterialDiffuse(floatArray* diffuse)
+void GLRenderer::setMaterialDiffuse(array<float, 4>* diffuse)
 {
-	System::arraycopy(diffuse, 0, material->diffuse, 0, Math::min(diffuse->length, material->diffuse->length));
+	copy(begin(*diffuse), end(*diffuse), begin(material->diffuse));
 }
 
-void GLRenderer::setMaterialSpecular(floatArray* specular)
+void GLRenderer::setMaterialSpecular(array<float, 4>* specular)
 {
-	System::arraycopy(specular, 0, material->specular, 0, Math::min(specular->length, material->specular->length));
+	copy(begin(*specular), end(*specular), begin(material->specular));
 }
 
-void GLRenderer::setMaterialEmission(floatArray* emission)
+void GLRenderer::setMaterialEmission(array<float, 4>* emission)
 {
-	System::arraycopy(emission, 0, material->emission, 0, Math::min(emission->length, material->emission->length));
+	copy(begin(*emission), end(*emission), begin(material->emission));
 }
 
 void GLRenderer::setMaterialShininess(float shininess)

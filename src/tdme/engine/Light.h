@@ -46,6 +46,7 @@ private:
 	Vector4* lightPositionTransformed {  };
 	Vector4* spotDirection4 {  };
 	Vector4* spotDirection4Transformed {  };
+	Vector3* tmpVector3 {  };
 	GLRenderer* renderer {  };
 protected:
 

@@ -151,10 +151,10 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto fvi = OrientedBoundingBox::facesVerticesIndexes;
 	vector<Vector3> vertices;
-	for (auto vertex : *orientedBoundingBox->vertices) {
+	for (auto vertex : *orientedBoundingBox->getVertices()) {
 		vertices.push_back(*vertex);
 	}
-	auto axes = orientedBoundingBox->axes;
+	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
 	normals.push_back(*(*axes)[0]->clone2().scale(-1.0f));
 	normals.push_back((*axes)[0]->clone2());

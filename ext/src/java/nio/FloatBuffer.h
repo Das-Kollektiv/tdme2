@@ -1,10 +1,14 @@
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <java/nio/Buffer.h>
 #include <Array.h>
+
+using std::array;
 
 using java::nio::Buffer;
 using java::lang::Object;
@@ -25,6 +29,8 @@ public:
 	float get(int32_t position);
 	Buffer* put(float arg0);
 	Buffer* put(floatArray* arg0);
+	Buffer* put(array<float, 3>* arg0);
+	Buffer* put(array<float, 4>* arg0);
 
 public: /* package */
 	FloatBuffer(int32_t capacity);

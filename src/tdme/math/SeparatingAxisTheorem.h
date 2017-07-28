@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using tdme::math::Vector3;
@@ -66,7 +70,7 @@ private:
 	 * @param axis
 	 * @return float[] containing min and max
 	 */
-	void doCalculateInterval(Vector3Array* vertices, Vector3* axis, floatArray* result);
+	void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, floatArray* result);
 
 public:
 
@@ -77,7 +81,7 @@ public:
 	 * @param axis
 	 * @return point in vertices
 	 */
-	bool checkPointInVerticesOnAxis(Vector3Array* vertices, Vector3* point, Vector3* axis);
+	bool checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis);
 
 	/** 
 	 * Determines penetration of given vertices for both objects on a given axis
@@ -88,7 +92,7 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	bool doSpanIntersect(Vector3Array* vertices1, Vector3Array* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
+	bool doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
 
 	// Generated
 	SeparatingAxisTheorem();

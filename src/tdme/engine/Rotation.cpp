@@ -107,8 +107,11 @@ void Rotation::update()
 String* Rotation::toString()
 {
 	return ::java::lang::StringBuilder().append(u"Rotation [angle="_j)->append(angle)
+		/*
+		// TODO: implement me!
 		->append(u", axis="_j)
 		->append(static_cast< Object* >(axis))
+		*/
 		->append(u", quaternion="_j)
 		->append(static_cast< Object* >(quaternion))
 		->append(u"]"_j)->toString();

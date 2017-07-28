@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/engine/primitives/OrientedBoundingBox.java
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 
+#include <array>
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Math.h>
@@ -23,6 +26,9 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
+using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
 using java::io::Serializable;
@@ -101,11 +107,11 @@ OrientedBoundingBox::OrientedBoundingBox()
 void OrientedBoundingBox::init()
 {
 	axis = new Vector3();
-	axisTransformed = new Vector3Array({
+	axisTransformed = {
 		new Vector3(),
 		new Vector3(),
 		new Vector3()
-	});
+	};
 	direction = new Vector3();
 	scale = new Vector3();
 }
@@ -129,14 +135,13 @@ void OrientedBoundingBox::ctor(Vector3* center, Vector3* axis0, Vector3* axis1, 
 	super::ctor();
 	init();
 	this->center = center;
-	this->axes = new Vector3Array(3);
-	this->axes->set(0, axis0);
-	this->axes->set(1, axis1);
-	this->axes->set(2, axis2);
+	this->axes[0] = axis0;
+	this->axes[1] = axis1;
+	this->axes[2] = axis2;
 	this->halfExtension = halfExtension;
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	update();
 }
@@ -147,13 +152,12 @@ void OrientedBoundingBox::ctor(BoundingBox* bb)
 	init();
 	this->halfExtension = (new Vector3())->set(bb->getMax())->sub(bb->getMin())->scale(0.5f);
 	this->center = (new Vector3())->set(bb->getMin())->add(halfExtension);
-	this->axes = new Vector3Array(3);
-	this->axes->set(0, AABB_AXIS_X->clone());
-	this->axes->set(1, AABB_AXIS_Y->clone());
-	this->axes->set(2, AABB_AXIS_Z->clone());
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	this->axes[0] = AABB_AXIS_X->clone();
+	this->axes[1] = AABB_AXIS_Y->clone();
+	this->axes[2] = AABB_AXIS_Z->clone();
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	update();
 }
@@ -164,13 +168,12 @@ void OrientedBoundingBox::ctor()
 	init();
 	this->halfExtension = new Vector3(0.0f, 0.0f, 0.0f);
 	this->center = new Vector3(0.0f, 0.0f, 0.0f);
-	this->axes = new Vector3Array(3);
-	this->axes->set(0, AABB_AXIS_X->clone());
-	this->axes->set(1, AABB_AXIS_Y->clone());
-	this->axes->set(2, AABB_AXIS_Z->clone());
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	this->axes[0] = AABB_AXIS_X->clone();
+	this->axes[1] = AABB_AXIS_Y->clone();
+	this->axes[2] = AABB_AXIS_Z->clone();
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	update();
 }
@@ -185,9 +188,9 @@ float OrientedBoundingBox::getSphereRadius()
 	return sphereRadius;
 }
 
-Vector3Array* OrientedBoundingBox::getAxes()
+array<Vector3*, 3>* OrientedBoundingBox::getAxes()
 {
-	return axes;
+	return &axes;
 }
 
 Vector3* OrientedBoundingBox::getHalfExtension()
@@ -199,9 +202,9 @@ void OrientedBoundingBox::fromBoundingBox(BoundingBox* bb)
 {
 	this->halfExtension->set(bb->getMax())->sub(bb->getMin())->scale(0.5f);
 	this->center->set(bb->getMin())->add(halfExtension);
-	(*this->axes)[0]->set(AABB_AXIS_X);
-	(*this->axes)[1]->set(AABB_AXIS_Y);
-	(*this->axes)[2]->set(AABB_AXIS_Z);
+	this->axes[0]->set(AABB_AXIS_X);
+	this->axes[1]->set(AABB_AXIS_Y);
+	this->axes[2]->set(AABB_AXIS_Z);
 	update();
 }
 
@@ -209,9 +212,9 @@ void OrientedBoundingBox::fromOrientedBoundingBox(OrientedBoundingBox* obb)
 {
 	this->halfExtension->set(obb->halfExtension);
 	this->center->set(obb->center);
-	(*this->axes)[0]->set((*obb->axes)[0]);
-	(*this->axes)[1]->set((*obb->axes)[1]);
-	(*this->axes)[2]->set((*obb->axes)[2]);
+	this->axes[0]->set(obb->axes[0]);
+	this->axes[1]->set(obb->axes[1]);
+	this->axes[2]->set(obb->axes[2]);
 	update();
 }
 
@@ -223,12 +226,12 @@ void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 	}
 	auto obb = java_cast< OrientedBoundingBox* >(original);
 	center->set(obb->center);
-	for (auto i = 0; i < axes->length; i++) 
-				(*axes)[i]->set((*obb->axes)[i]);
+	for (auto i = 0; i < axes.size(); i++)
+		axes[i]->set(obb->axes[i]);
 
 	halfExtension->set(obb->halfExtension);
-	for (auto i = 0; i < vertices->length; i++) 
-				(*vertices)[i]->set((*obb->vertices)[i]);
+	for (auto i = 0; i < vertices.size(); i++)
+		vertices[i]->set(obb->vertices[i]);
 
 }
 
@@ -241,58 +244,64 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 	auto obb = java_cast< OrientedBoundingBox* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	transformationsMatrix->multiply(obb->center, center);
-	transformationsMatrix->multiplyNoTranslation((*obb->axes)[0], (*axisTransformed)[0]);
-	transformationsMatrix->multiplyNoTranslation((*obb->axes)[1], (*axisTransformed)[1]);
-	transformationsMatrix->multiplyNoTranslation((*obb->axes)[2], (*axisTransformed)[2]);
-	(*axes)[0]->set((*axisTransformed)[0])->normalize();
-	(*axes)[1]->set((*axisTransformed)[1])->normalize();
-	(*axes)[2]->set((*axisTransformed)[2])->normalize();
+	transformationsMatrix->multiplyNoTranslation(obb->axes[0], axisTransformed[0]);
+	transformationsMatrix->multiplyNoTranslation(obb->axes[1], axisTransformed[1]);
+	transformationsMatrix->multiplyNoTranslation(obb->axes[2], axisTransformed[2]);
+	axes[0]->set(axisTransformed[0]->normalize());
+	axes[1]->set(axisTransformed[1]->normalize());
+	axes[2]->set(axisTransformed[2]->normalize());
 	halfExtension->set(obb->halfExtension);
-	halfExtension->scale(scale->set((*axisTransformed)[0]->computeLength(), (*axisTransformed)[1]->computeLength(), (*axisTransformed)[2]->computeLength()));
+	halfExtension->scale(
+		scale->set(
+			axisTransformed[0]->computeLength(),
+			axisTransformed[1]->computeLength(),
+			axisTransformed[2]->computeLength()
+		)
+	);
 	update();
 }
 
 void OrientedBoundingBox::update()
 {
 	auto halfExtensionXYZ = halfExtension->getArray();
-	(*vertices)[0]->set(center);
-	(*vertices)[0]->add(axis->set((*axes)[0])->scale(-(*halfExtensionXYZ)[0]));
-	(*vertices)[0]->add(axis->set((*axes)[1])->scale(-(*halfExtensionXYZ)[1]));
-	(*vertices)[0]->add(axis->set((*axes)[2])->scale(-(*halfExtensionXYZ)[2]));
-	(*vertices)[1]->set(center);
-	(*vertices)[1]->add(axis->set((*axes)[0])->scale(+(*halfExtensionXYZ)[0]));
-	(*vertices)[1]->add(axis->set((*axes)[1])->scale(-(*halfExtensionXYZ)[1]));
-	(*vertices)[1]->add(axis->set((*axes)[2])->scale(-(*halfExtensionXYZ)[2]));
-	(*vertices)[2]->set(center);
-	(*vertices)[2]->add(axis->set((*axes)[0])->scale(+(*halfExtensionXYZ)[0]));
-	(*vertices)[2]->add(axis->set((*axes)[1])->scale(+(*halfExtensionXYZ)[1]));
-	(*vertices)[2]->add(axis->set((*axes)[2])->scale(-(*halfExtensionXYZ)[2]));
-	(*vertices)[3]->set(center);
-	(*vertices)[3]->add(axis->set((*axes)[0])->scale(-(*halfExtensionXYZ)[0]));
-	(*vertices)[3]->add(axis->set((*axes)[1])->scale(+(*halfExtensionXYZ)[1]));
-	(*vertices)[3]->add(axis->set((*axes)[2])->scale(-(*halfExtensionXYZ)[2]));
-	(*vertices)[4]->set(center);
-	(*vertices)[4]->add(axis->set((*axes)[0])->scale(-(*halfExtensionXYZ)[0]));
-	(*vertices)[4]->add(axis->set((*axes)[1])->scale(-(*halfExtensionXYZ)[1]));
-	(*vertices)[4]->add(axis->set((*axes)[2])->scale(+(*halfExtensionXYZ)[2]));
-	(*vertices)[5]->set(center);
-	(*vertices)[5]->add(axis->set((*axes)[0])->scale(+(*halfExtensionXYZ)[0]));
-	(*vertices)[5]->add(axis->set((*axes)[1])->scale(-(*halfExtensionXYZ)[1]));
-	(*vertices)[5]->add(axis->set((*axes)[2])->scale(+(*halfExtensionXYZ)[2]));
-	(*vertices)[6]->set(center);
-	(*vertices)[6]->add(axis->set((*axes)[0])->scale(+(*halfExtensionXYZ)[0]));
-	(*vertices)[6]->add(axis->set((*axes)[1])->scale(+(*halfExtensionXYZ)[1]));
-	(*vertices)[6]->add(axis->set((*axes)[2])->scale(+(*halfExtensionXYZ)[2]));
-	(*vertices)[7]->set(center);
-	(*vertices)[7]->add(axis->set((*axes)[0])->scale(-(*halfExtensionXYZ)[0]));
-	(*vertices)[7]->add(axis->set((*axes)[1])->scale(+(*halfExtensionXYZ)[1]));
-	(*vertices)[7]->add(axis->set((*axes)[2])->scale(+(*halfExtensionXYZ)[2]));
+	vertices[0]->set(center);
+	vertices[0]->add(axis->set(axes[0])->scale(-(*halfExtensionXYZ)[0]));
+	vertices[0]->add(axis->set(axes[1])->scale(-(*halfExtensionXYZ)[1]));
+	vertices[0]->add(axis->set(axes[2])->scale(-(*halfExtensionXYZ)[2]));
+	vertices[1]->set(center);
+	vertices[1]->add(axis->set(axes[0])->scale(+(*halfExtensionXYZ)[0]));
+	vertices[1]->add(axis->set(axes[1])->scale(-(*halfExtensionXYZ)[1]));
+	vertices[1]->add(axis->set(axes[2])->scale(-(*halfExtensionXYZ)[2]));
+	vertices[2]->set(center);
+	vertices[2]->add(axis->set(axes[0])->scale(+(*halfExtensionXYZ)[0]));
+	vertices[2]->add(axis->set(axes[1])->scale(+(*halfExtensionXYZ)[1]));
+	vertices[2]->add(axis->set(axes[2])->scale(-(*halfExtensionXYZ)[2]));
+	vertices[3]->set(center);
+	vertices[3]->add(axis->set(axes[0])->scale(-(*halfExtensionXYZ)[0]));
+	vertices[3]->add(axis->set(axes[1])->scale(+(*halfExtensionXYZ)[1]));
+	vertices[3]->add(axis->set(axes[2])->scale(-(*halfExtensionXYZ)[2]));
+	vertices[4]->set(center);
+	vertices[4]->add(axis->set(axes[0])->scale(-(*halfExtensionXYZ)[0]));
+	vertices[4]->add(axis->set(axes[1])->scale(-(*halfExtensionXYZ)[1]));
+	vertices[4]->add(axis->set(axes[2])->scale(+(*halfExtensionXYZ)[2]));
+	vertices[5]->set(center);
+	vertices[5]->add(axis->set(axes[0])->scale(+(*halfExtensionXYZ)[0]));
+	vertices[5]->add(axis->set(axes[1])->scale(-(*halfExtensionXYZ)[1]));
+	vertices[5]->add(axis->set(axes[2])->scale(+(*halfExtensionXYZ)[2]));
+	vertices[6]->set(center);
+	vertices[6]->add(axis->set(axes[0])->scale(+(*halfExtensionXYZ)[0]));
+	vertices[6]->add(axis->set(axes[1])->scale(+(*halfExtensionXYZ)[1]));
+	vertices[6]->add(axis->set(axes[2])->scale(+(*halfExtensionXYZ)[2]));
+	vertices[7]->set(center);
+	vertices[7]->add(axis->set(axes[0])->scale(-(*halfExtensionXYZ)[0]));
+	vertices[7]->add(axis->set(axes[1])->scale(+(*halfExtensionXYZ)[1]));
+	vertices[7]->add(axis->set(axes[2])->scale(+(*halfExtensionXYZ)[2]));
 	sphereRadius = halfExtension->computeLength();
 }
 
-Vector3Array* OrientedBoundingBox::getVertices()
+vector<Vector3*>* OrientedBoundingBox::getVertices()
 {
-	return vertices;
+	return &vertices;
 }
 
 int32_tArrayArray* OrientedBoundingBox::getFacesVerticesIndexes()
@@ -306,15 +315,15 @@ void OrientedBoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Ve
 	direction->set(point)->sub(center);
 	closestPoint->set(center);
 	auto halfExtensionXYZ = halfExtension->getArray();
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > (*halfExtensionXYZ)[i])
 			distance = (*halfExtensionXYZ)[i];
 
 		if (distance < -(*halfExtensionXYZ)[i])
 			distance = -(*halfExtensionXYZ)[i];
 
-		closestPoint->add(axis->set((*axes)[i])->scale(distance));
+		closestPoint->add(axis->set(axes[i])->scale(distance));
 	}
 }
 
@@ -324,8 +333,8 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(Vector3* point
 	auto halfExtensionXYZ = halfExtension->getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > (*halfExtensionXYZ)[i])
 			distance = (*halfExtensionXYZ)[i];
 
@@ -351,8 +360,8 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolumeAxis(int32_t ax
 	direction->set(pointInObb)->sub(center);
 	auto halfExtensionXYZ = halfExtension->getArray();
 	pointOnFace->set(center);
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > (*halfExtensionXYZ)[i])
 			distance = (*halfExtensionXYZ)[i];
 
@@ -361,12 +370,12 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolumeAxis(int32_t ax
 
 		if (i == axisIdx) {
 			if (distance >= 0.0f) {
-				pointOnFace->add(axis->set((*axes)[i])->scale(+(*halfExtensionXYZ)[i]));
+				pointOnFace->add(axis->set(axes[i])->scale(+(*halfExtensionXYZ)[i]));
 			} else {
-				pointOnFace->add(axis->set((*axes)[i])->scale(-(*halfExtensionXYZ)[i]));
+				pointOnFace->add(axis->set(axes[i])->scale(-(*halfExtensionXYZ)[i]));
 			}
 		} else {
-			pointOnFace->add(axis->set((*axes)[i])->scale(distance));
+			pointOnFace->add(axis->set(axes[i])->scale(distance));
 		}
 	}
 }
@@ -377,8 +386,8 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(Vector3* poin
 	auto halfExtensionXYZ = halfExtension->getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > (*halfExtensionXYZ)[i])
 			distance = (*halfExtensionXYZ)[i];
 
@@ -404,8 +413,8 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolumeAxis(int32_t a
 	direction->set(pointInObb)->sub(center);
 	auto halfExtensionXYZ = halfExtension->getArray();
 	pointOnFace->set(center);
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > (*halfExtensionXYZ)[i])
 			distance = (*halfExtensionXYZ)[i];
 
@@ -414,12 +423,12 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolumeAxis(int32_t a
 
 		if (i == axisIdx) {
 			if (distance >= 0.0f) {
-				pointOnFace->add(axis->set((*axes)[i])->scale(-(*halfExtensionXYZ)[i]));
+				pointOnFace->add(axis->set(axes[i])->scale(-(*halfExtensionXYZ)[i]));
 			} else {
-				pointOnFace->add(axis->set((*axes)[i])->scale(+(*halfExtensionXYZ)[i]));
+				pointOnFace->add(axis->set(axes[i])->scale(+(*halfExtensionXYZ)[i]));
 			}
 		} else {
-			pointOnFace->add(axis->set((*axes)[i])->scale(distance));
+			pointOnFace->add(axis->set(axes[i])->scale(distance));
 		}
 	}
 }
@@ -428,8 +437,8 @@ bool OrientedBoundingBox::containsPoint(Vector3* point)
 {
 	direction->set(point)->sub(center);
 	auto halfExtensionXYZ = halfExtension->getArray();
-	for (auto i = 0; i < axes->length; i++) {
-		auto distance = Vector3::computeDotProduct(direction, (*axes)[i]);
+	for (auto i = 0; i < axes.size(); i++) {
+		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > 0.0f)
 			distance += -MathTools::EPSILON;
 
@@ -450,15 +459,20 @@ bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
-	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
+	} else
+	if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
-	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
+	} else
+	if (dynamic_cast< Sphere* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
-	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
+	} else
+	if (dynamic_cast< Capsule* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
-	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
+	} else
+	if (dynamic_cast< Triangle* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
-	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
+	} else
+	if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
 		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"OrientedBoundingBox::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
@@ -468,11 +482,11 @@ bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement
 
 float OrientedBoundingBox::computeDimensionOnAxis(Vector3* axis)
 {
-	auto vertexOnAxis = Vector3::computeDotProduct((*vertices)[0], axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
-	for (auto i = 1; i < vertices->length; i++) {
-		vertexOnAxis = Vector3::computeDotProduct((*vertices)[i], axis);
+	for (auto i = 1; i < vertices.size(); i++) {
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min)
 			min = vertexOnAxis;
 
@@ -485,17 +499,21 @@ float OrientedBoundingBox::computeDimensionOnAxis(Vector3* axis)
 
 BoundingVolume* OrientedBoundingBox::clone()
 {
-	return new OrientedBoundingBox(center->clone(), (*axes)[0]->clone(), (*axes)[1]->clone(), (*axes)[2]->clone(), halfExtension->clone());
+	return new OrientedBoundingBox(center->clone(), axes[0]->clone(), axes[1]->clone(), axes[2]->clone(), halfExtension->clone());
 }
 
 String* OrientedBoundingBox::toString()
 {
-	return ::java::lang::StringBuilder().append(u"OrientedBoundingBox [center="_j)->append(static_cast< Object* >(center))
+	return ::java::lang::StringBuilder().append(u"OrientedBoundingBox [center="_j)
+			/*
+		->append(static_cast< Object* >(center))
 		->append(u", axes="_j)
 		->append(Arrays::toString(static_cast< ObjectArray* >(axes)))
 		->append(u", halfExtension="_j)
 		->append(static_cast< Object* >(halfExtension))
-		->append(u"]"_j)->toString();
+		->append(u"]"_j)
+		*/
+		->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

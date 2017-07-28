@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <array>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -11,6 +14,9 @@
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+
+using std::array;
+using std::vector;
 
 using java::lang::Object;
 using tdme::engine::primitives::BoundingVolume;
@@ -69,11 +75,11 @@ public:
 public: /* protected */
 	static int32_tArrayArray* facesVerticesIndexes;
 	Vector3* center {  };
-	Vector3Array* axes {  };
+	array<Vector3*, 3> axes {  };
 	Vector3* halfExtension {  };
-	Vector3Array* vertices {  };
+	vector<Vector3*> vertices {  };
 	Vector3* axis {  };
-	Vector3Array* axisTransformed {  };
+	array<Vector3*, 3> axisTransformed {  };
 	Vector3* direction {  };
 	Vector3* scale {  };
 	float sphereRadius {  };
@@ -123,7 +129,7 @@ public:
 	/** 
 	 * @return 3 axes
 	 */
-	Vector3Array* getAxes();
+	array<Vector3*, 3>* getAxes();
 
 	/** 
 	 * @return half extension
@@ -148,7 +154,7 @@ public:
 	/** 
 	 * @return oriented bounding box vertices
 	 */
-	Vector3Array* getVertices();
+	vector<Vector3*>* getVertices();
 
 	/** 
 	 * @return faces vertices indexes

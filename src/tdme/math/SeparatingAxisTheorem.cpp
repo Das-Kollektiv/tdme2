@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/math/SeparatingAxisTheorem.java
 #include <tdme/math/SeparatingAxisTheorem.h>
 
+#include <vector>
+
 #include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/math/MathTools.h>
@@ -8,6 +10,8 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::vector;
 
 using tdme::math::SeparatingAxisTheorem;
 using java::lang::Float;
@@ -65,12 +69,12 @@ float SeparatingAxisTheorem::doCalculatePoint(Vector3* point, Vector3* axis)
 	return distance;
 }
 
-void SeparatingAxisTheorem::doCalculateInterval(Vector3Array* vertices, Vector3* axis, floatArray* result)
+void SeparatingAxisTheorem::doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, floatArray* result)
 {
 	auto distance = Vector3::computeDotProduct((*vertices)[0], axis);
 	auto min = distance;
 	auto max = distance;
-	for (auto i = 1; i < vertices->length; i++) {
+	for (auto i = 1; i < vertices->size(); i++) {
 		distance = Vector3::computeDotProduct((*vertices)[i], axis);
 		if (distance < min)
 			min = distance;
@@ -83,7 +87,7 @@ void SeparatingAxisTheorem::doCalculateInterval(Vector3Array* vertices, Vector3*
 	(*result)[1] = max;
 }
 
-bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(Vector3Array* vertices, Vector3* point, Vector3* axis)
+bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis)
 {
 	if (checkAxis(axis) == false)
 		return true;
@@ -93,7 +97,7 @@ bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(Vector3Array* vertices, V
 	return pOnAxis >= (*minMax1)[0] && pOnAxis <= (*minMax1)[1];
 }
 
-bool SeparatingAxisTheorem::doSpanIntersect(Vector3Array* vertices1, Vector3Array* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset)
+bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset)
 {
 	axis->set(axisTest)->normalize();
 	doCalculateInterval(vertices1, axis, minMax1);

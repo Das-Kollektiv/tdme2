@@ -88,8 +88,8 @@ void LevelEditorLevel::ctor()
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()->getArray()));
-	light->getSpotTo()->set(light->getPosition()->getArray())->add(light->getSpotDirection());
+	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()));
+	light->getSpotTo()->set(light->getPosition())->add(light->getSpotDirection());
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -372,7 +372,6 @@ String* LevelEditorLevel::toString()
 		->append(u", entityLibrary="_j)
 		->append(static_cast< Object* >(entityLibrary))
 		/*
-		// TODO: implement me!
 		->append(u", objectsById="_j)
 		->append(static_cast< Object* >(objectsById))
 		->append(u", objects="_j)
@@ -382,9 +381,9 @@ String* LevelEditorLevel::toString()
 		->append(objectIdx)
 		->append(u", boundingBox="_j)
 		->append(static_cast< Object* >(boundingBox))
+		/*
 		->append(u", dimension="_j)
 		->append(static_cast< Object* >(dimension))
-		/*
 		->append(u", propertiesByName="_j)
 		->append(static_cast< Object* >(propertiesByName))
 		->append(u", properties="_j)

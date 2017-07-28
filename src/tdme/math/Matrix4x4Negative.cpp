@@ -35,9 +35,9 @@ void Matrix4x4Negative::ctor()
 bool Matrix4x4Negative::isNegative(Matrix4x4* matrix)
 {
 	auto transformationsMatrixData = matrix->getArray();
-	System::arraycopy(transformationsMatrixData, 0, xAxis->getArray(), 0, 3);
-	System::arraycopy(transformationsMatrixData, 4, yAxis->getArray(), 0, 3);
-	System::arraycopy(transformationsMatrixData, 8, zAxis->getArray(), 0, 3);
+	xAxis->set((*transformationsMatrixData)[0], (*transformationsMatrixData)[1], (*transformationsMatrixData)[2]);
+	yAxis->set((*transformationsMatrixData)[4], (*transformationsMatrixData)[5], (*transformationsMatrixData)[6]);
+	zAxis->set((*transformationsMatrixData)[8], (*transformationsMatrixData)[9], (*transformationsMatrixData)[10]);
 	return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f;
 }
 

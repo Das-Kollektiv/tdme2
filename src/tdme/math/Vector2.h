@@ -2,16 +2,13 @@
 
 #pragma once
 
+#include <array>
+
+#include <Array.h>
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
+using std::array;
 
 /** 
  * Vector 2 class
@@ -19,41 +16,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::Vector2 final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param x
-	 * @param y
-	 */
-	void ctor(float x, float y);
-
-	/** 
-	 * Public constructor
-	 * @param float array containing x,y values
-	 */
-	void ctor(floatArray* v);
-
-	/** 
-	 * Public constructor
-	 * @param vector 2
-	 */
-	void ctor(Vector2* v);
-
-public:
+	array<float, 2> data {  };
 
 	/** 
 	 * Set up vector
@@ -135,25 +100,29 @@ public:
 	/** 
 	 * @return vector as array
 	 */
-	floatArray* getArray();
+	array<float, 2>* getArray();
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Vector2();
+
+	/**
+	 * Public constructor
+	 * @param x
+	 * @param y
+	 */
 	Vector2(float x, float y);
+
+	/**
+	 * Public constructor
+	 * @param float values
+	 */
 	Vector2(floatArray* v);
+
+	/**
+	 * Public constructor
+	 * @param v
+	 */
 	Vector2(Vector2* v);
-protected:
-	Vector2(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

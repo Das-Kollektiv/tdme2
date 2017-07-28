@@ -69,90 +69,6 @@ void GUIRenderer::init()
 	renderAreaBottom = 0.0f;
 	renderOffsetX = 0.0f;
 	renderOffsetY = 0.0f;
-	quadVertices = (new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	}));
-	quadColors = (new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	}));
-	quadTextureCoordinates = (new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	}));
-	fontColor = new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	});
-	effectColorMul = new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	});
-	effectColorAdd = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	});
-	guiEffectColorMul = new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	});
-	guiEffectColorAdd = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	});
-	effectColorMulFinal = new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	});
-	effectColorAddFinal = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	});
 	guiEffectOffsetX = 0.0f;
 	guiEffectOffsetY = 0.0f;
 }
@@ -247,33 +163,33 @@ void GUIRenderer::initScreen(GUIScreenNode* screenNode)
 void GUIRenderer::doneScreen()
 {
 	this->screenNode = nullptr;
-	System::arraycopy(GUIColor::WHITE->getArray(), 0, guiEffectColorMul, 0, 4);
-	System::arraycopy(GUIColor::BLACK->getArray(), 0, guiEffectColorAdd, 0, 4);
+	guiEffectColorMul = *GUIColor::WHITE->getArray();
+	guiEffectColorAdd = *GUIColor::BLACK->getArray();
 }
 
 void GUIRenderer::setFontColor(GUIColor* color)
 {
-	System::arraycopy(color->getArray(), 0, fontColor, 0, 4);
+	fontColor = *color->getArray();
 }
 
 void GUIRenderer::setEffectColorMul(GUIColor* color)
 {
-	System::arraycopy(color->getArray(), 0, effectColorMul, 0, 4);
+	effectColorMul = *color->getArray();
 }
 
 void GUIRenderer::setEffectColorAdd(GUIColor* color)
 {
-	System::arraycopy(color->getArray(), 0, effectColorAdd, 0, 4);
+	effectColorAdd = *color->getArray();
 }
 
 void GUIRenderer::setGUIEffectColorMul(GUIColor* color)
 {
-	System::arraycopy(color->getArray(), 0, guiEffectColorMul, 0, 4);
+	guiEffectColorMul = *color->getArray();
 }
 
 void GUIRenderer::setGUIEffectColorAdd(GUIColor* color)
 {
-	System::arraycopy(color->getArray(), 0, guiEffectColorAdd, 0, 4);
+	guiEffectColorAdd = *color->getArray();
 }
 
 float GUIRenderer::getGuiEffectOffsetX()
@@ -448,49 +364,42 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 		x2 = renderAreaRight;
 		x3 = renderAreaRight;
 	}
-	auto quad = 0;
-	(*quadVertices)[quad * 3 + 0] = x1;
-	(*quadVertices)[quad * 3 + 1] = y1;
-	(*quadVertices)[quad * 3 + 2] = 0.0f;
-	(*quadColors)[quad * 4 + 0] = colorR1;
-	(*quadColors)[quad * 4 + 1] = colorG1;
-	(*quadColors)[quad * 4 + 2] = colorB1;
-	(*quadColors)[quad * 4 + 3] = colorA1;
-	(*quadTextureCoordinates)[quad * 2 + 0] = tu1;
-	(*quadTextureCoordinates)[quad * 2 + 1] = tv1;
-	quad++;
-	(*quadVertices)[quad * 3 + 0] = x2;
-	(*quadVertices)[quad * 3 + 1] = y2;
-	(*quadVertices)[quad * 3 + 2] = 0.0f;
-	(*quadColors)[quad * 4 + 0] = colorR2;
-	(*quadColors)[quad * 4 + 1] = colorG2;
-	(*quadColors)[quad * 4 + 2] = colorB2;
-	(*quadColors)[quad * 4 + 3] = colorA2;
-	(*quadTextureCoordinates)[quad * 2 + 0] = tu2;
-	(*quadTextureCoordinates)[quad * 2 + 1] = tv2;
-	quad++;
-	(*quadVertices)[quad * 3 + 0] = x3;
-	(*quadVertices)[quad * 3 + 1] = y3;
-	(*quadVertices)[quad * 3 + 2] = 0.0f;
-	(*quadColors)[quad * 4 + 0] = colorR3;
-	(*quadColors)[quad * 4 + 1] = colorG3;
-	(*quadColors)[quad * 4 + 2] = colorB3;
-	(*quadColors)[quad * 4 + 3] = colorA3;
-	(*quadTextureCoordinates)[quad * 2 + 0] = tu3;
-	(*quadTextureCoordinates)[quad * 2 + 1] = tv3;
-	quad++;
-	(*quadVertices)[quad * 3 + 0] = x4;
-	(*quadVertices)[quad * 3 + 1] = y4;
-	(*quadVertices)[quad * 3 + 2] = 0.0f;
-	(*quadColors)[quad * 4 + 0] = colorR4;
-	(*quadColors)[quad * 4 + 1] = colorG4;
-	(*quadColors)[quad * 4 + 2] = colorB4;
-	(*quadColors)[quad * 4 + 3] = colorA4;
-	(*quadTextureCoordinates)[quad * 2 + 0] = tu4;
-	(*quadTextureCoordinates)[quad * 2 + 1] = tv4;
-	fbVertices->put(quadVertices);
-	fbColors->put(quadColors);
-	fbTextureCoordinates->put(quadTextureCoordinates);
+	fbVertices->put(x1);
+	fbVertices->put(y1);
+	fbVertices->put(0.0f);
+	fbColors->put(colorR1);
+	fbColors->put(colorG1);
+	fbColors->put(colorB1);
+	fbColors->put(colorA1);
+	fbTextureCoordinates->put(tu1);
+	fbTextureCoordinates->put(tv1);
+	fbVertices->put(x2);
+	fbVertices->put(y2);
+	fbVertices->put(0.0f);
+	fbColors->put(colorR2);
+	fbColors->put(colorG2);
+	fbColors->put(colorB2);
+	fbColors->put(colorA2);
+	fbTextureCoordinates->put(tu2);
+	fbTextureCoordinates->put(tv2);
+	fbVertices->put(x3);
+	fbVertices->put(y3);
+	fbVertices->put(0.0f);
+	fbColors->put(colorR3);
+	fbColors->put(colorG3);
+	fbColors->put(colorB3);
+	fbColors->put(colorA3);
+	fbTextureCoordinates->put(tu3);
+	fbTextureCoordinates->put(tv3);
+	fbVertices->put(x4);
+	fbVertices->put(y4);
+	fbVertices->put(0.0f);
+	fbColors->put(colorR4);
+	fbColors->put(colorG4);
+	fbColors->put(colorB4);
+	fbColors->put(colorA4);
+	fbTextureCoordinates->put(tu4);
+	fbTextureCoordinates->put(tv4);
 	quadCount++;
 }
 
@@ -502,9 +411,9 @@ void GUIRenderer::bindTexture(int32_t textureId)
 void GUIRenderer::render()
 {
 	if (quadCount == 0) {
-		System::arraycopy(GUIColor::WHITE->getArray(), 0, fontColor, 0, 4);
-		System::arraycopy(GUIColor::WHITE->getArray(), 0, effectColorMul, 0, 4);
-		System::arraycopy(GUIColor::BLACK->getArray(), 0, effectColorAdd, 0, 4);
+		fontColor = *GUIColor::WHITE->getArray();
+		effectColorMul = *GUIColor::WHITE->getArray();
+		effectColorAdd = *GUIColor::BLACK->getArray();
 		return;
 	}
 	/*
@@ -515,27 +424,27 @@ void GUIRenderer::render()
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
 	renderer->uploadBufferObject((*vboIds)[2], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
 	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
-	(*effectColorMulFinal)[0] = (*guiEffectColorMul)[0] * (*effectColorMul)[0] * (*fontColor)[0];
-	(*effectColorMulFinal)[1] = (*guiEffectColorMul)[1] * (*effectColorMul)[1] * (*fontColor)[1];
-	(*effectColorMulFinal)[2] = (*guiEffectColorMul)[2] * (*effectColorMul)[2] * (*fontColor)[2];
-	(*effectColorMulFinal)[3] = (*guiEffectColorMul)[3] * (*effectColorMul)[3] * (*fontColor)[3];
-	(*effectColorAddFinal)[0] = (*guiEffectColorAdd)[0] + (*effectColorAdd)[0];
-	(*effectColorAddFinal)[1] = (*guiEffectColorAdd)[1] + (*effectColorAdd)[1];
-	(*effectColorAddFinal)[2] = (*guiEffectColorAdd)[2] + (*effectColorAdd)[2];
-	(*effectColorAddFinal)[3] = 0.0f;
-	renderer->setEffectColorMul(effectColorMulFinal);
-	renderer->setEffectColorAdd(effectColorAddFinal);
+	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
+	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
+	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
+	effectColorMulFinal[3] = guiEffectColorMul[3] * effectColorMul[3] * fontColor[3];
+	effectColorAddFinal[0] = guiEffectColorAdd[0] + effectColorAdd[0];
+	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
+	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
+	effectColorAddFinal[3] = 0.0f;
+	renderer->setEffectColorMul(&effectColorMulFinal);
+	renderer->setEffectColorAdd(&effectColorAddFinal);
 	renderer->onUpdateEffect();
 	renderer->drawIndexedTrianglesFromBufferObjects(quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices->clear();
 	fbColors->clear();
 	fbTextureCoordinates->clear();
-	System::arraycopy(GUIColor::WHITE->getArray(), 0, fontColor, 0, 4);
-	System::arraycopy(GUIColor::WHITE->getArray(), 0, effectColorMul, 0, 4);
-	System::arraycopy(GUIColor::BLACK->getArray(), 0, effectColorAdd, 0, 4);
-	(*effectColorAdd)[3] = 0.0f;
-	(*guiEffectColorAdd)[3] = 0.0f;
+	fontColor = *GUIColor::WHITE->getArray();
+	effectColorMul = *GUIColor::WHITE->getArray();
+	effectColorAdd = *GUIColor::BLACK->getArray();
+	effectColorAdd[3] = 0.0f;
+	guiEffectColorAdd[3] = 0.0f;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

@@ -116,18 +116,26 @@ void Transformations::update()
 
 String* Transformations::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Transformations [translation="_j)->append(static_cast< Object* >(translation))
-		->append(u", translationMatrix="_j)
-		->append(static_cast< Object* >(translationMatrix))
-		->append(u", scale="_j)
-		->append(static_cast< Object* >(scale))
-		->append(u", scaleMatrix="_j)
-		->append(static_cast< Object* >(scaleMatrix))
-		->append(u", rotations="_j)
-		->append(static_cast< Object* >(rotations))
-		->append(u", transformationsMatrix="_j)
-		->append(static_cast< Object* >(transformationsMatrix))
-		->append(u"]"_j)->toString();
+	return ::java::lang::StringBuilder().append(
+		u"Transformations [translation="_j)->
+			/*
+		append(static_cast< Object* >(translation))
+		*/
+		append(u", translationMatrix="_j)->
+		append(static_cast< Object* >(translationMatrix))->
+		/*
+		// TODO: implement me!
+		append(u", scale="_j)
+		append(static_cast< Object* >(scale))
+		append(u", scaleMatrix="_j)
+		append(static_cast< Object* >(scaleMatrix))
+		*/
+		append(u", rotations="_j)->
+		append(static_cast< Object* >(rotations))->
+		append(u", transformationsMatrix="_j)->
+		append(static_cast< Object* >(transformationsMatrix))->
+		append(u"]"_j)->
+		toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

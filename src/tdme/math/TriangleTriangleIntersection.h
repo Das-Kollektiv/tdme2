@@ -2,9 +2,13 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using tdme::math::TriangleTriangleIntersection_ReturnValue;
@@ -55,7 +59,7 @@ private:
 	 * @param Ay
 	 * @return
 	 */
-	static bool EDGE_EDGE_TEST(floatArray* V0, floatArray* U0, floatArray* U1, int32_t i0, int32_t i1, float Ax, float Ay);
+	static bool EDGE_EDGE_TEST(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, int32_t i0, int32_t i1, float Ax, float Ay);
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -69,7 +73,7 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool EDGE_AGAINST_TRI_EDGES(floatArray* V0, floatArray* V1, floatArray* U0, floatArray* U1, floatArray* U2, int32_t i0, int32_t i1);
+	static bool EDGE_AGAINST_TRI_EDGES(array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1);
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -82,7 +86,7 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool POINT_IN_TRI(floatArray* V0, floatArray* U0, floatArray* U1, floatArray* U2, int32_t i0, int32_t i1);
+	static bool POINT_IN_TRI(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1);
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -96,7 +100,7 @@ private:
 	 * @param U2
 	 * @return
 	 */
-	bool coplanar_tri_tri(floatArray* N, floatArray* V0, floatArray* V1, floatArray* V2, floatArray* U0, floatArray* U1, floatArray* U2);
+	bool coplanar_tri_tri(array<float, 3>* N, array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* V2, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2);
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -146,7 +150,7 @@ private:
 	 * @param values
 	 * @return smallest value index
 	 */
-	static int32_t SORT2(floatArray* values);
+	static int32_t SORT2(array<float, 2>* values);
 
 public:
 

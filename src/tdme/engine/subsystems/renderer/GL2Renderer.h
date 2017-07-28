@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
+
+using std::array;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::String;
@@ -96,8 +100,8 @@ public:
 	void setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* data) override;
 	void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) override;
 	void setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray* data) override;
-	void setProgramUniformFloatVec4(int32_t uniformId, floatArray* data) override;
-	void setProgramUniformFloatVec3(int32_t uniformId, floatArray* data) override;
+	void setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data) override;
+	void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data) override;
 	void setProgramAttributeLocation(int32_t programId, int32_t location, String* name) override;
 	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void updateViewPort() override;

@@ -76,6 +76,7 @@ private:
 	Vector4* spotDirection4 {  };
 	Vector4* spotDirection4Transformed {  };
 	Vector3* spotDirection3Transformed {  };
+	Vector3* tmpVector3;
 
 public: /* package */
 	Engine* engine {  };

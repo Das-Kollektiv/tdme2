@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/primitives/BoundingBox.java
 #include <tdme/engine/primitives/BoundingBox.h>
 
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Math.h>
@@ -21,6 +23,8 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
 using java::io::Serializable;
@@ -108,9 +112,9 @@ void BoundingBox::ctor()
 	min = new Vector3();
 	max = new Vector3();
 	center = new Vector3();
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	halfExtension = new Vector3();
 	update();
@@ -122,9 +126,9 @@ void BoundingBox::ctor(BoundingBox* boundingBox)
 	this->min = boundingBox->min->clone();
 	this->max = boundingBox->max->clone();
 	this->center = new Vector3();
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	halfExtension = new Vector3();
 	update();
@@ -136,9 +140,9 @@ void BoundingBox::ctor(Vector3* min, Vector3* max)
 	this->min = min;
 	this->max = max;
 	this->center = new Vector3();
-	this->vertices = new Vector3Array(8);
-	for (auto i = 0; i < vertices->length; i++) {
-		vertices->set(i, new Vector3());
+	vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
 	}
 	halfExtension = new Vector3();
 	update();
@@ -154,9 +158,9 @@ Vector3* BoundingBox::getMax()
 	return max;
 }
 
-Vector3Array* BoundingBox::getVertices()
+vector<Vector3*>* BoundingBox::getVertices()
 {
-	return vertices;
+	return &vertices;
 }
 
 int32_tArrayArray* BoundingBox::getFacesVerticesIndexes()
@@ -175,8 +179,8 @@ void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 	min->set(boundingBox->min);
 	max->set(boundingBox->max);
 	center->set(boundingBox->center);
-	for (auto i = 0; i < vertices->length; i++) 
-				(*vertices)[i]->set((*boundingBox->vertices)[i]);
+	for (auto i = 0; i < vertices.size(); i++)
+		vertices[i]->set(boundingBox->vertices[i]);
 
 }
 
@@ -189,14 +193,14 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 	auto boundingBox = java_cast< BoundingBox* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
-	for (auto i = 0; i < vertices->length; i++) {
-		transformationsMatrix->multiply((*_vertices)[i], (*vertices)[i]);
+	for (auto i = 0; i < vertices.size(); i++) {
+		transformationsMatrix->multiply((*_vertices)[i], vertices[i]);
 	}
-	auto vertexXYZ = (*vertices)[0]->getArray();
+	auto vertexXYZ = vertices[0]->getArray();
 	float minX = (*vertexXYZ)[0], minY = (*vertexXYZ)[1], minZ = (*vertexXYZ)[2];
 	float maxX = (*vertexXYZ)[0], maxY = (*vertexXYZ)[1], maxZ = (*vertexXYZ)[2];
-	for (auto vertexIndex = 1; vertexIndex < vertices->length; vertexIndex++) {
-		auto vertex = (*vertices)[vertexIndex];
+	for (auto vertexIndex = 1; vertexIndex < vertices.size(); vertexIndex++) {
+		auto vertex = vertices[vertexIndex];
 		vertexXYZ = vertex->getArray();
 		if ((*vertexXYZ)[0] < minX)
 			minX = (*vertexXYZ)[0];
@@ -281,11 +285,11 @@ float BoundingBox::getSphereRadius()
 
 float BoundingBox::computeDimensionOnAxis(Vector3* axis)
 {
-	auto vertexOnAxis = Vector3::computeDotProduct((*vertices)[0], axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
-	for (auto i = 1; i < vertices->length; i++) {
-		vertexOnAxis = Vector3::computeDotProduct((*vertices)[i], axis);
+	for (auto i = 1; i < vertices.size(); i++) {
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min)
 			min = vertexOnAxis;
 
@@ -300,14 +304,14 @@ void BoundingBox::update()
 {
 	auto minXYZ = min->getArray();
 	auto maxXYZ = max->getArray();
-	(*vertices)[0]->set((*minXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
-	(*vertices)[1]->set((*maxXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
-	(*vertices)[2]->set((*maxXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
-	(*vertices)[3]->set((*minXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
-	(*vertices)[4]->set((*minXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
-	(*vertices)[5]->set((*maxXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
-	(*vertices)[6]->set((*maxXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
-	(*vertices)[7]->set((*minXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
+	vertices[0]->set((*minXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
+	vertices[1]->set((*maxXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
+	vertices[2]->set((*maxXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
+	vertices[3]->set((*minXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
+	vertices[4]->set((*minXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
+	vertices[5]->set((*maxXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
+	vertices[6]->set((*maxXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
+	vertices[7]->set((*minXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
 	center->set(min)->add(max)->scale(0.5f);
 	halfExtension->set(max)->sub(min)->scale(0.5f);
 	sphereRadius = halfExtension->computeLength();
@@ -320,9 +324,12 @@ BoundingVolume* BoundingBox::clone()
 
 String* BoundingBox::toString()
 {
-	return ::java::lang::StringBuilder().append(u"BoundingBox [min="_j)->append(static_cast< Object* >(min))
+	return ::java::lang::StringBuilder().append(u"BoundingBox [min="_j)
+		/*
+		append(static_cast< Object* >(min))
 		->append(u", max="_j)
 		->append(static_cast< Object* >(max))
+		*/
 		->append(u"]"_j)->toString();
 }
 

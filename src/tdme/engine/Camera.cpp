@@ -179,12 +179,15 @@ String* Camera::toString()
 		->append(zNear)
 		->append(u", zFar="_j)
 		->append(zFar)
+		/*
+		// implement me!
 		->append(u", upVector="_j)
 		->append(static_cast< Object* >(upVector))
 		->append(u", lookFrom="_j)
 		->append(static_cast< Object* >(lookFrom))
 		->append(u", lookAt="_j)
 		->append(static_cast< Object* >(lookAt))
+		*/
 		->append(u"]"_j)->toString();
 }
 

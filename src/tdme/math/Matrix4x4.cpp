@@ -130,17 +130,17 @@ Matrix4x4* Matrix4x4::getAxes(Vector3* xAxis, Vector3* yAxis, Vector3* zAxis)
 
 Matrix4x4* Matrix4x4::setAxes(Vector3* xAxis, Vector3* yAxis, Vector3* zAxis)
 {
-	(*data)[0] = (*xAxis->data)[0];
-	(*data)[1] = (*xAxis->data)[1];
-	(*data)[2] = (*xAxis->data)[2];
+	(*data)[0] = xAxis->data[0];
+	(*data)[1] = xAxis->data[1];
+	(*data)[2] = xAxis->data[2];
 	(*data)[3] = 0.0f;
-	(*data)[4] = (*yAxis->data)[0];
-	(*data)[5] = (*yAxis->data)[1];
-	(*data)[6] = (*yAxis->data)[2];
+	(*data)[4] = yAxis->data[0];
+	(*data)[5] = yAxis->data[1];
+	(*data)[6] = yAxis->data[2];
 	(*data)[7] = 0.0f;
-	(*data)[8] = (*zAxis->data)[0];
-	(*data)[9] = (*zAxis->data)[1];
-	(*data)[10] = (*zAxis->data)[2];
+	(*data)[8] = zAxis->data[0];
+	(*data)[9] = zAxis->data[1];
+	(*data)[10] = zAxis->data[2];
 	(*data)[11] = 0.0f;
 	return this;
 }
@@ -153,20 +153,20 @@ Matrix4x4* Matrix4x4::getTranslation(Vector3* translation)
 
 Matrix4x4* Matrix4x4::setTranslation(Vector3* translation)
 {
-	(*data)[12] = (*translation->data)[0];
-	(*data)[13] = (*translation->data)[1];
-	(*data)[14] = (*translation->data)[2];
+	(*data)[12] = translation->data[0];
+	(*data)[13] = translation->data[1];
+	(*data)[14] = translation->data[2];
 	return this;
 }
 
 Matrix4x4* Matrix4x4::getScale(Vector3* scale)
 {
 	tmpVector3->set((*data)[0], (*data)[1], (*data)[2]);
-	(*scale->data)[0] = tmpVector3->computeLength();
+	scale->data[0] = tmpVector3->computeLength();
 	tmpVector3->set((*data)[4], (*data)[5], (*data)[6]);
-	(*scale->data)[1] = tmpVector3->computeLength();
+	scale->data[1] = tmpVector3->computeLength();
 	tmpVector3->set((*data)[8], (*data)[9], (*data)[10]);
-	(*scale->data)[2] = tmpVector3->computeLength();
+	scale->data[2] = tmpVector3->computeLength();
 	return this;
 }
 
@@ -174,22 +174,22 @@ Matrix4x4* Matrix4x4::setScale(Vector3* scale)
 {
 	tmpVector3->set((*data)[0], (*data)[1], (*data)[2]);
 	tmpVector3->normalize();
-	tmpVector3->scale((*scale->data)[0]);
-	(*data)[0] = (*tmpVector3->data)[0];
-	(*data)[1] = (*tmpVector3->data)[1];
-	(*data)[2] = (*tmpVector3->data)[2];
+	tmpVector3->scale(scale->data[0]);
+	(*data)[0] = tmpVector3->data[0];
+	(*data)[1] = tmpVector3->data[1];
+	(*data)[2] = tmpVector3->data[2];
 	tmpVector3->set((*data)[4], (*data)[5], (*data)[6]);
 	tmpVector3->normalize();
-	tmpVector3->scale((*scale->data)[1]);
-	(*data)[4] = (*tmpVector3->data)[0];
-	(*data)[5] = (*tmpVector3->data)[1];
-	(*data)[6] = (*tmpVector3->data)[2];
+	tmpVector3->scale(scale->data[1]);
+	(*data)[4] = tmpVector3->data[0];
+	(*data)[5] = tmpVector3->data[1];
+	(*data)[6] = tmpVector3->data[2];
 	tmpVector3->set((*data)[8], (*data)[9], (*data)[10]);
 	tmpVector3->normalize();
-	tmpVector3->scale((*scale->data)[2]);
-	(*data)[8] = (*tmpVector3->data)[0];
-	(*data)[9] = (*tmpVector3->data)[1];
-	(*data)[10] = (*tmpVector3->data)[2];
+	tmpVector3->scale(scale->data[2]);
+	(*data)[8] = tmpVector3->data[0];
+	(*data)[9] = tmpVector3->data[1];
+	(*data)[10] = tmpVector3->data[2];
 	return this;
 }
 
@@ -216,17 +216,30 @@ Matrix4x4* Matrix4x4::identity()
 
 Vector3* Matrix4x4::multiply(Vector3* v, Vector3* dest)
 {
-	return dest->set((*v->data)[0] * (*data)[0] + (*v->data)[1] * (*data)[4] + (*v->data)[2] * (*data)[8] + (*data)[12], (*v->data)[0] * (*data)[1] + (*v->data)[1] * (*data)[5] + (*v->data)[2] * (*data)[9] + (*data)[13], (*v->data)[0] * (*data)[2] + (*v->data)[1] * (*data)[6] + (*v->data)[2] * (*data)[10] + (*data)[14]);
+	return dest->set(
+		v->data[0] * (*data)[0] + v->data[1] * (*data)[4] + v->data[2] * (*data)[8] + (*data)[12],
+		v->data[0] * (*data)[1] + v->data[1] * (*data)[5] + v->data[2] * (*data)[9] + (*data)[13],
+		v->data[0] * (*data)[2] + v->data[1] * (*data)[6] + v->data[2] * (*data)[10] + (*data)[14]
+	);
 }
 
 Vector3* Matrix4x4::multiplyNoTranslation(Vector3* v, Vector3* dest)
 {
-	return dest->set((*v->data)[0] * (*data)[0] + (*v->data)[1] * (*data)[4] + (*v->data)[2] * (*data)[8], (*v->data)[0] * (*data)[1] + (*v->data)[1] * (*data)[5] + (*v->data)[2] * (*data)[9], (*v->data)[0] * (*data)[2] + (*v->data)[1] * (*data)[6] + (*v->data)[2] * (*data)[10]);
+	return dest->set(
+		v->data[0] * (*data)[0] + v->data[1] * (*data)[4] + v->data[2] * (*data)[8],
+		v->data[0] * (*data)[1] + v->data[1] * (*data)[5] + v->data[2] * (*data)[9],
+		v->data[0] * (*data)[2] + v->data[1] * (*data)[6] + v->data[2] * (*data)[10]
+	);
 }
 
 Vector4* Matrix4x4::multiply(Vector4* v, Vector4* dest)
 {
-	dest->set((*v->data)[0] * (*data)[0] + (*v->data)[1] * (*data)[4] + (*v->data)[2] * (*data)[8] + (*v->data)[3] * (*data)[12], (*v->data)[0] * (*data)[1] + (*v->data)[1] * (*data)[5] + (*v->data)[2] * (*data)[9] + (*v->data)[3] * (*data)[13], (*v->data)[0] * (*data)[2] + (*v->data)[1] * (*data)[6] + (*v->data)[2] * (*data)[10] + (*v->data)[3] * (*data)[14], (*v->data)[0] * (*data)[3] + (*v->data)[1] * (*data)[7] + (*v->data)[2] * (*data)[11] + (*v->data)[3] * (*data)[15]);
+	dest->set(
+		v->data[0] * (*data)[0] + v->data[1] * (*data)[4] + v->data[2] * (*data)[8] + v->data[3] * (*data)[12],
+		v->data[0] * (*data)[1] + v->data[1] * (*data)[5] + v->data[2] * (*data)[9] + v->data[3] * (*data)[13],
+		v->data[0] * (*data)[2] + v->data[1] * (*data)[6] + v->data[2] * (*data)[10] + v->data[3] * (*data)[14],
+		v->data[0] * (*data)[3] + v->data[1] * (*data)[7] + v->data[2] * (*data)[11] + v->data[3] * (*data)[15]
+	);
 	return dest;
 }
 
@@ -271,26 +284,26 @@ Matrix4x4* Matrix4x4::scale(float s)
 
 Matrix4x4* Matrix4x4::scale(Vector3* v)
 {
-	(*data)[0] *= (*v->data)[0];
-	(*data)[1] *= (*v->data)[0];
-	(*data)[2] *= (*v->data)[0];
-	(*data)[3] *= (*v->data)[0];
-	(*data)[4] *= (*v->data)[1];
-	(*data)[5] *= (*v->data)[1];
-	(*data)[6] *= (*v->data)[1];
-	(*data)[7] *= (*v->data)[1];
-	(*data)[8] *= (*v->data)[2];
-	(*data)[9] *= (*v->data)[2];
-	(*data)[10] *= (*v->data)[2];
-	(*data)[11] *= (*v->data)[2];
+	(*data)[0] *= v->data[0];
+	(*data)[1] *= v->data[0];
+	(*data)[2] *= v->data[0];
+	(*data)[3] *= v->data[0];
+	(*data)[4] *= v->data[1];
+	(*data)[5] *= v->data[1];
+	(*data)[6] *= v->data[1];
+	(*data)[7] *= v->data[1];
+	(*data)[8] *= v->data[2];
+	(*data)[9] *= v->data[2];
+	(*data)[10] *= v->data[2];
+	(*data)[11] *= v->data[2];
 	return this;
 }
 
 Matrix4x4* Matrix4x4::translate(Vector3* v)
 {
-	(*data)[12] += (*v->data)[0] * (*data)[0] + (*v->data)[1] * (*data)[4] + (*v->data)[2] * (*data)[8];
-	(*data)[13] += (*v->data)[0] * (*data)[1] + (*v->data)[1] * (*data)[5] + (*v->data)[2] * (*data)[9];
-	(*data)[14] += (*v->data)[0] * (*data)[2] + (*v->data)[1] * (*data)[6] + (*v->data)[2] * (*data)[10];
+	(*data)[12] += v->data[0] * (*data)[0] + v->data[1] * (*data)[4] + v->data[2] * (*data)[8];
+	(*data)[13] += v->data[0] * (*data)[1] + v->data[1] * (*data)[5] + v->data[2] * (*data)[9];
+	(*data)[14] += v->data[0] * (*data)[2] + v->data[1] * (*data)[6] + v->data[2] * (*data)[10];
 	return this;
 }
 

@@ -2,16 +2,19 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::array;
+
 using java::lang::Object;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-
 
 struct default_init_tag;
 
@@ -69,8 +72,8 @@ private:
 	Matrix4x4* mvMatrix {  };
 	Matrix4x4* mvpMatrix {  };
 	Matrix4x4* normalMatrix {  };
-	floatArray* defaultSceneColor {  };
-	floatArray* tmpColor4 {  };
+	array<float, 4> defaultSceneColor { 0.0f, 0.0f, 0.0f, 0.0f };
+	array<float, 4> tmpColor4 { 0.0f, 0.0f, 0.0f, 0.0f };
 	bool isRunning {  };
 	bool initialized {  };
 	GLRenderer* renderer {  };

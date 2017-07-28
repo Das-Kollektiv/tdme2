@@ -2,12 +2,17 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -78,7 +83,7 @@ public: /* protected */
 	CollisionResponse* collision {  };
 
 private:
-	Vector3Array* frictionVectors {  };
+	array<Vector3*, 2> frictionVectors { new Vector3(), new Vector3() };
 	float muMg {  };
 	Vector3* tmpVector3 {  };
 	Vector3* r1 {  };

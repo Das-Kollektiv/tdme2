@@ -25,9 +25,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator
 {
 
-public:
-	typedef Object super;
-
 private:
 	Object3DBase* object3DBase {  };
 	array<Vector3, 3> vertices {  };

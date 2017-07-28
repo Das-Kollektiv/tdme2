@@ -1,6 +1,11 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMWriter.java
 #include <tdme/engine/fileio/models/TMWriter.h>
 
+#include <array>
+#include <map>
+#include <string>
+#include <vector>
+
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
@@ -29,6 +34,11 @@
 #include <Array.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::array;
+using std::map;
+using std::vector;
+using std::wstring;
 
 using tdme::engine::fileio::models::TMWriter;
 using java::io::Serializable;

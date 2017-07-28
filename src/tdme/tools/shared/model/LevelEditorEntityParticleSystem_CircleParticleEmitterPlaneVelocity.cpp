@@ -165,12 +165,10 @@ String* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::toSt
 		->append(u", velocityRnd="_j)
 		->append(velocityRnd)
 		/*
-		// TODO: implement me!
 		->append(u", colorStart="_j)
 		->append(static_cast< Object* >(colorStart))
 		->append(u", colorEnd="_j)
 		->append(static_cast< Object* >(colorEnd))
-		*/
 		->append(u", center="_j)
 		->append(static_cast< Object* >(center))
 		->append(u", radius="_j)
@@ -179,6 +177,7 @@ String* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::toSt
 		->append(static_cast< Object* >(axis0))
 		->append(u", axis1="_j)
 		->append(static_cast< Object* >(axis1))
+		 */
 		->append(u"]"_j)->toString();
 }
 

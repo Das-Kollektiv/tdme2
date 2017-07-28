@@ -189,7 +189,7 @@ void PhysicsTest1::initialize()
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()->getArray()));
+	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
@@ -289,7 +289,6 @@ void PhysicsTest1::initialize()
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, u"capsulebig_model"_j);
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(1.0f, 0.8f, 0.8f, 1.0f);
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
-	_Console::println(static_cast< Object* >(capsuleBig->getCenter()));
 	entity = new Object3D(u"capsulebig1"_j, capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->getTranslation()->addY(5.0f);

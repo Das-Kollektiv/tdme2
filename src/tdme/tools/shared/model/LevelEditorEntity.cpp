@@ -184,9 +184,9 @@ String* LevelEditorEntity::toString()
 		// TODO: implement me
 		->append(u", boundingVolumes="_j)
 		->append(static_cast< Object* >(boundingVolumes))
-		*/
 		->append(u", pivot="_j)
 		->append(static_cast< Object* >(pivot))
+		*/
 		->append(u"]"_j)->toString();
 }
 

@@ -2,14 +2,19 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -114,14 +119,19 @@ private:
 	Vector3* triangle2Edge2 {  };
 	Vector3* triangle2Edge3 {  };
 	Vector3* triangle2Normal {  };
-	Vector3Array* closestPointsOnCapsuleSegment {  };
-	Vector3Array* closestPointsOnTriangleSegments {  };
+	array<Vector3*, 5> closestPointsOnCapsuleSegment { new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() };
+	array<Vector3*, 5> closestPointsOnTriangleSegments { new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() };
 	int32_t testTriangleCount {  };
 	TriangleArrayArray* testTriangles {  };
 	Vector3* satAxis {  };
 	int32_t satAxesCount {  };
 	floatArray* satPenetrations {  };
-	Vector3Array* satAxes {  };
+	array<Vector3*, 20> satAxes {
+		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
+		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
+		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
+		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
+	};
 	bool haveSatAxisBestFit {  };
 	Vector3* satAxisBestFit {  };
 	float satAxisBestFitPenetration {  };

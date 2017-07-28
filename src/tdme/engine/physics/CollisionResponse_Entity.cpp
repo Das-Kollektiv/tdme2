@@ -87,12 +87,14 @@ String* CollisionResponse_Entity::toString()
 		if (tmp->length() > 0)
 			tmp = ::java::lang::StringBuilder(tmp).append(u","_j)->toString();
 
-		tmp = ::java::lang::StringBuilder(tmp).append(hitPoints.at(i)->toString())->toString();
+		//tmp = ::java::lang::StringBuilder(tmp).append(hitPoints.at(i)->toString())->toString();
 	}
 	tmp = ::java::lang::StringBuilder(tmp).append(u"]"_j)->toString();
 	return ::java::lang::StringBuilder().append(u"Entity [distance="_j)->append(distance)
+		/*
 		->append(u", normal="_j)
 		->append(static_cast< Object* >(normal))
+		*/
 		->append(u", hasPenetration() = "_j)
 		->append((distance < 0.0f))
 		->append(u", hit points="_j)

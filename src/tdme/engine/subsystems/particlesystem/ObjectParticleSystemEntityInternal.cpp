@@ -348,14 +348,13 @@ String* ObjectParticleSystemEntityInternal::toString()
 		->append(u", pickable="_j)
 		->append(pickable)
 		/*
-		// TODO: implement me
 		->append(u", effectColorMul="_j)
 		->append(static_cast< Object* >(effectColorMul))
 		->append(u", effectColorAdd="_j)
 		->append(static_cast< Object* >(effectColorAdd))
-		*/
 		->append(u", velocityForTime="_j)
 		->append(static_cast< Object* >(velocityForTime))
+		*/
 		->append(u", particlesToSpawnRemainder="_j)
 		->append(particlesToSpawnRemainder)
 		->append(u"]"_j)->toString();

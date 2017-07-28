@@ -159,11 +159,11 @@ String* LevelEditorLight::toString()
 		->append(static_cast< Object* >(diffuse))
 		->append(u", specular="_j)
 		->append(static_cast< Object* >(specular))
-		*/
 		->append(u", position="_j)
 		->append(static_cast< Object* >(position))
 		->append(u", spotDirection="_j)
 		->append(static_cast< Object* >(spotDirection))
+		*/
 		->append(u", spotExponent="_j)
 		->append(spotExponent)
 		->append(u", spotCutOff="_j)

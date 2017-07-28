@@ -44,10 +44,12 @@ void Particle::init()
 String* Particle::toString()
 {
 	return ::java::lang::StringBuilder().append(u"Particle [active="_j)->append(active)
+		/*
 		->append(u", velocity="_j)
 		->append(static_cast< Object* >(velocity))
 		->append(u", position="_j)
 		->append(static_cast< Object* >(position))
+		*/
 		->append(u", mass="_j)
 		->append(mass)
 		->append(u", lifeTimeMax="_j)
@@ -55,7 +57,6 @@ String* Particle::toString()
 		->append(u", lifeTimeCurrent="_j)
 		->append(lifeTimeCurrent)
 		/*
-		// TODO: implement me!
 		->append(u", color="_j)
 		->append(static_cast< Object* >(color))
 		->append(u", colorAdd="_j)

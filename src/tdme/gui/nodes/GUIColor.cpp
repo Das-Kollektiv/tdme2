@@ -50,12 +50,10 @@ GUIColor::GUIColor(String* colorString) throw (GUIParserException) : Color4Base(
 	}
 	for (auto i = 0; i < COLOR_NAMES.size(); i++) {
 		if (COLOR_NAMES[i]->equalsIgnoreCase(colorString) == true) {
-			this->data = new floatArray({
-				(*COLOR_INSTANCES[i]->data)[0],
-				(*COLOR_INSTANCES[i]->data)[1],
-				(*COLOR_INSTANCES[i]->data)[2],
-				(*COLOR_INSTANCES[i]->data)[3]
-			});
+			this->data[0] = COLOR_INSTANCES[i]->data[0];
+			this->data[1] = COLOR_INSTANCES[i]->data[1];
+			this->data[2] = COLOR_INSTANCES[i]->data[2];
+			this->data[3] = COLOR_INSTANCES[i]->data[3];
 			return;
 		}
 	}
@@ -66,23 +64,16 @@ GUIColor::GUIColor(String* colorString) throw (GUIParserException) : Color4Base(
 			"'"
 		);
 	}
-	data = new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		1.0f
-	});
-
 	int colorValue;
 	swscanf(colorString->substring(1, 3)->getCPPWString().c_str(), L"%02x", &colorValue);
-	(*data)[0] = colorValue / 255.0f;
+	data[0] = colorValue / 255.0f;
 	swscanf(colorString->substring(3, 5)->getCPPWString().c_str(), L"%02x", &colorValue);
-	(*data)[1] = colorValue / 255.0f;
+	data[1] = colorValue / 255.0f;
 	swscanf(colorString->substring(5, 7)->getCPPWString().c_str(), L"%02x", &colorValue);
-	(*data)[2] = colorValue / 255.0f;
+	data[2] = colorValue / 255.0f;
 	if (colorString->length() > 7) {
 		swscanf(colorString->substring(7, 9)->getCPPWString().c_str(), L"%02x", &colorValue);
-		(*data)[3] = colorValue / 255.0f;
+		data[3] = colorValue / 255.0f;
 	}
 }
 

@@ -1,11 +1,15 @@
 // Generated from /tdme/src/tdme/math/TriangleTriangleIntersection.java
 #include <tdme/math/TriangleTriangleIntersection.h>
 
+#include <array>
+
 #include <java/lang/Math.h>
 #include <tdme/math/TriangleTriangleIntersection_ReturnValue.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <Array.h>
+
+using std::array;
 
 using tdme::math::TriangleTriangleIntersection;
 using java::lang::Math;
@@ -54,7 +58,7 @@ void TriangleTriangleIntersection::init()
 
 constexpr float TriangleTriangleIntersection::EPSILON;
 
-bool TriangleTriangleIntersection::EDGE_EDGE_TEST(floatArray* V0, floatArray* U0, floatArray* U1, int32_t i0, int32_t i1, float Ax, float Ay)
+bool TriangleTriangleIntersection::EDGE_EDGE_TEST(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, int32_t i0, int32_t i1, float Ax, float Ay)
 {
 	clinit();
 	float Bx, By, Cx, Cy, e, d, f;
@@ -79,7 +83,7 @@ bool TriangleTriangleIntersection::EDGE_EDGE_TEST(floatArray* V0, floatArray* U0
 	return false;
 }
 
-bool TriangleTriangleIntersection::EDGE_AGAINST_TRI_EDGES(floatArray* V0, floatArray* V1, floatArray* U0, floatArray* U1, floatArray* U2, int32_t i0, int32_t i1)
+bool TriangleTriangleIntersection::EDGE_AGAINST_TRI_EDGES(array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1)
 {
 	clinit();
 	float Ax, Ay;
@@ -97,7 +101,7 @@ bool TriangleTriangleIntersection::EDGE_AGAINST_TRI_EDGES(floatArray* V0, floatA
 	return false;
 }
 
-bool TriangleTriangleIntersection::POINT_IN_TRI(floatArray* V0, floatArray* U0, floatArray* U1, floatArray* U2, int32_t i0, int32_t i1)
+bool TriangleTriangleIntersection::POINT_IN_TRI(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1)
 {
 	clinit();
 	float a, b, c, d0, d1, d2;
@@ -121,7 +125,7 @@ bool TriangleTriangleIntersection::POINT_IN_TRI(floatArray* V0, floatArray* U0, 
 	return false;
 }
 
-bool TriangleTriangleIntersection::coplanar_tri_tri(floatArray* N, floatArray* V0, floatArray* V1, floatArray* V2, floatArray* U0, floatArray* U1, floatArray* U2)
+bool TriangleTriangleIntersection::coplanar_tri_tri(array<float, 3>* N, array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* V2, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2)
 {
 	int32_t i0, i1;
 	(*A)[0] = Math::abs((*N)[0]);
@@ -194,7 +198,7 @@ bool TriangleTriangleIntersection::compute_intervals_isectline(Vector3* VERT0, V
 	return false;
 }
 
-int32_t TriangleTriangleIntersection::SORT2(floatArray* values)
+int32_t TriangleTriangleIntersection::SORT2(array<float, 2>* values)
 {
 	clinit();
 	if ((*values)[0] > (*values)[1]) {

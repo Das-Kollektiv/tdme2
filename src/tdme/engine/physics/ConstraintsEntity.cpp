@@ -101,9 +101,6 @@ void ConstraintsEntity::ctor()
 {
 	super::ctor();
 	init();
-	this->frictionVectors = new Vector3Array(2);
-	this->frictionVectors->set(0, new Vector3());
-	this->frictionVectors->set(1, new Vector3());
 }
 
 void ConstraintsEntity::set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision)
@@ -113,8 +110,8 @@ void ConstraintsEntity::set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* c
 	this->collision = collision;
 	muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * MathTools::g;
 	collision->getNormal()->scale(-1.0f);
-	collision->getNormal()->computeOrthogonalVector((*this->frictionVectors)[0]);
-	computeCrossProduct(collision->getNormal(), (*this->frictionVectors)[0], (*this->frictionVectors)[1]);
+	collision->getNormal()->computeOrthogonalVector(this->frictionVectors[0]);
+	computeCrossProduct(collision->getNormal(), this->frictionVectors[0], this->frictionVectors[1]);
 }
 
 void ConstraintsEntity::computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArray* jacobianMatrices)
@@ -122,8 +119,8 @@ void ConstraintsEntity::computeJacobian(int32_t constraintIdx, Matrix1x6ArrayArr
 	auto body1Position = rb1->getPosition();
 	auto body2Position = rb2->getPosition();
 	auto n = collision->getNormal();
-	auto t1 = (*frictionVectors)[0];
-	auto t2 = (*frictionVectors)[1];
+	auto t1 = frictionVectors[0];
+	auto t2 = frictionVectors[1];
 	Matrix1x6* jacobianMatrix;
 	auto currentConstraintIdx = constraintIdx;
 	for (auto hitPointIdx = 0; hitPointIdx < collision->getHitPointsCount(); hitPointIdx++) {

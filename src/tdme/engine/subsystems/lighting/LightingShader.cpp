@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/lighting/LightingShader.java
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
+#include <algorithm>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -11,6 +13,10 @@
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
+
+using std::copy;
+using std::begin;
+using std::end;
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using java::lang::String;
@@ -46,18 +52,6 @@ LightingShader::LightingShader(GLRenderer* renderer)
 
 void LightingShader::init()
 {
-	defaultSceneColor = (new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	}));
-	tmpColor4 = (new floatArray({
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f
-	}));
 }
 
 constexpr int32_t LightingShader::MAX_LIGHTS;
@@ -278,7 +272,7 @@ void LightingShader::useProgram()
 	if (renderer->isDisplacementMappingAvailable() == true) {
 		renderer->setProgramUniformInteger(uniformDisplacementTextureUnit, TEXTUREUNIT_DISPLACEMENT);
 	}
-	renderer->setProgramUniformFloatVec4(uniformSceneColor, defaultSceneColor);
+	renderer->setProgramUniformFloatVec4(uniformSceneColor, &defaultSceneColor);
 	updateEffect(renderer);
 	updateMaterial(renderer);
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
@@ -296,8 +290,8 @@ void LightingShader::updateEffect(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, &renderer->effectColorMul);
+	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, &renderer->effectColorAdd);
 }
 
 void LightingShader::updateMaterial(GLRenderer* renderer)
@@ -305,14 +299,14 @@ void LightingShader::updateMaterial(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	(*tmpColor4)[3] = 0.0f;
-	System::arraycopy(renderer->material->ambient, 0, tmpColor4, 0, 3);
-	renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, tmpColor4);
-	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, renderer->material->diffuse);
-	System::arraycopy(renderer->material->specular, 0, tmpColor4, 0, 3);
-	renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, tmpColor4);
-	System::arraycopy(renderer->material->emission, 0, tmpColor4, 0, 3);
-	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, tmpColor4);
+	tmpColor4[3] = 0.0f;
+	copy(begin(renderer->material->ambient), end(renderer->material->ambient), begin(tmpColor4));
+	renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, &tmpColor4);
+	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, &renderer->material->diffuse);
+	copy(begin(renderer->material->specular), end(renderer->material->specular), begin(tmpColor4));
+	renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, &tmpColor4);
+	copy(begin(renderer->material->emission), end(renderer->material->emission), begin(tmpColor4));
+	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, &tmpColor4);
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material->shininess);
 }
 
@@ -323,11 +317,11 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 
 	renderer->setProgramUniformInteger((*uniformLightEnabled)[lightId], (*renderer->lights)[lightId]->enabled);
 	if ((*renderer->lights)[lightId]->enabled == 1) {
-		renderer->setProgramUniformFloatVec4((*uniformLightAmbient)[lightId], (*renderer->lights)[lightId]->ambient);
-		renderer->setProgramUniformFloatVec4((*uniformLightDiffuse)[lightId], (*renderer->lights)[lightId]->diffuse);
-		renderer->setProgramUniformFloatVec4((*uniformLightSpecular)[lightId], (*renderer->lights)[lightId]->specular);
-		renderer->setProgramUniformFloatVec4((*uniformLightPosition)[lightId], (*renderer->lights)[lightId]->position);
-		renderer->setProgramUniformFloatVec3((*uniformLightSpotDirection)[lightId], (*renderer->lights)[lightId]->spotDirection);
+		renderer->setProgramUniformFloatVec4((*uniformLightAmbient)[lightId], &(*renderer->lights)[lightId]->ambient);
+		renderer->setProgramUniformFloatVec4((*uniformLightDiffuse)[lightId], &(*renderer->lights)[lightId]->diffuse);
+		renderer->setProgramUniformFloatVec4((*uniformLightSpecular)[lightId], &(*renderer->lights)[lightId]->specular);
+		renderer->setProgramUniformFloatVec4((*uniformLightPosition)[lightId], &(*renderer->lights)[lightId]->position);
+		renderer->setProgramUniformFloatVec3((*uniformLightSpotDirection)[lightId], &(*renderer->lights)[lightId]->spotDirection);
 		renderer->setProgramUniformFloat((*uniformLightSpotExponent)[lightId], (*renderer->lights)[lightId]->spotExponent);
 		renderer->setProgramUniformFloat((*uniformLightSpotCosCutoff)[lightId], (*renderer->lights)[lightId]->spotCosCutoff);
 		renderer->setProgramUniformFloat((*uniformLightConstantAttenuation)[lightId], (*renderer->lights)[lightId]->constantAttenuation);

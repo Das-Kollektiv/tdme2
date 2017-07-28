@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/tools/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::array;
 
 using java::lang::Object;
 using java::lang::String;
@@ -70,10 +74,16 @@ public:
 	/** 
 	 * Convert string to array
 	 * @param text
-	 * @param length
 	 * @param array
 	 */
-	static void convertToArray(String* text, int32_t length, floatArray* array) /* throws(NumberFormatException) */;
+	static void convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */;
+
+	/**
+	 * Convert string to array
+	 * @param text
+	 * @param array
+	 */
+	static void convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to vector 3

@@ -61,7 +61,10 @@ Vector3* Plane::getNormal()
 
 String* Plane::toString()
 {
-	return ::java::lang::StringBuilder().append(u"Plane [normal="_j)->append(static_cast< Object* >(normal))
+	return ::java::lang::StringBuilder().append(u"Plane [normal="_j)
+		/*
+		->append(static_cast< Object* >(normal))
+		*/
 		->append(u", distance="_j)
 		->append(distance)
 		->append(u"]"_j)->toString();
