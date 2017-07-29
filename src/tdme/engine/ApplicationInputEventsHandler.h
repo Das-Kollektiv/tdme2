@@ -8,12 +8,6 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-struct default_init_tag;
-
-using java::lang::Object;
 
 #define KEYBOARD_MODIFIER_SHIFT	GLUT_ACTIVE_SHIFT
 #define KEYBOARD_MODIFIER_CTRL GLUT_ACTIVE_CTRL
@@ -34,8 +28,7 @@ using java::lang::Object;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::ApplicationInputEventsHandler:
-	public virtual Object
+class tdme::engine::ApplicationInputEventsHandler
 {
 public:
 	/**
