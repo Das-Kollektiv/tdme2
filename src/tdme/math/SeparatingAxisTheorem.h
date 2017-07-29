@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include <Array.h>
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -11,20 +12,7 @@
 
 using std::vector;
 
-using java::lang::Object;
 using tdme::math::Vector3;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
 
 /** 
  * Separated axis test
@@ -33,20 +21,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::SeparatingAxisTheorem final
-	: public Object
 {
-
 public:
-	typedef Object super;
-
-private:
-	floatArray* minMax1 {  };
-	floatArray* minMax2 {  };
-	Vector3* axis {  };
-
-public:
-
-	/** 
+	/**
 	 * Check axix
 	 * @param axis
 	 * @return valididy
@@ -70,7 +47,7 @@ private:
 	 * @param axis
 	 * @return float[] containing min and max
 	 */
-	void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, floatArray* result);
+	void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, float& min, float& max);
 
 public:
 
@@ -94,17 +71,8 @@ public:
 	 */
 	bool doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	SeparatingAxisTheorem();
-protected:
-	void ctor();
-	SeparatingAxisTheorem(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
