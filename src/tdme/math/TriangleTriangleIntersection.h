@@ -6,17 +6,11 @@
 
 #include <fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::array;
 
-using java::lang::Object;
-using tdme::math::TriangleTriangleIntersection_ReturnValue;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Triangle Triangle Intersection see:
@@ -25,27 +19,13 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::TriangleTriangleIntersection final
-	: public Object
 {
 
 public:
-	typedef Object super;
+	enum ReturnValue { NOINTERSECTION, COPLANAR_INTERSECTION, INTERSECTION };
 
 private:
 	static constexpr float EPSILON { 0.01f };
-	Vector3* E1 {  };
-	Vector3* E2 {  };
-	Vector3* N1 {  };
-	Vector3* N2 {  };
-	Vector3* D {  };
-	Vector2* isect1 {  };
-	Vector2* isect2_ {  };
-	Vector3* isectpointA1 {  };
-	Vector3* isectpointA2 {  };
-	Vector3* isectpointB1 {  };
-	Vector3* isectpointB2 {  };
-	Vector3* diff {  };
-	floatArray* A {  };
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -100,7 +80,7 @@ private:
 	 * @param U2
 	 * @return
 	 */
-	bool coplanar_tri_tri(array<float, 3>* N, array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* V2, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2);
+	static bool coplanar_tri_tri(array<float, 3>* N, array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* V2, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2);
 
 	/** 
 	 * Triangle Triangle Intersection see:
@@ -121,7 +101,7 @@ private:
 	 * @param isectpoint0
 	 * @param isectpoint1
 	 */
-	void isect2(Vector3* VTX0, Vector3* VTX1, Vector3* VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1);
+	static void isect2(Vector3* VTX0, Vector3* VTX1, Vector3* VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1);
 
 	/** 
 	 * @param VERT0
@@ -143,7 +123,7 @@ private:
 	 * @param isectpoint1
 	 * @return
 	 */
-	bool compute_intervals_isectline(Vector3* VERT0, Vector3* VERT1, Vector3* VERT2, float VV0, float VV1, float VV2, float D0, float D1, float D2, float D0D1, float D0D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1);
+	static bool compute_intervals_isectline(Vector3* VERT0, Vector3* VERT1, Vector3* VERT2, float VV0, float VV1, float VV2, float D0, float D1, float D2, float D0D1, float D0D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1);
 
 	/** 
 	 * Sort values and return smallest value index
@@ -166,20 +146,6 @@ public:
 	 * @param isectpt2 intersection point 2 if not coplanar
 	 * @return
 	 */
-	TriangleTriangleIntersection_ReturnValue* computeTriangleTriangleIntersection(Vector3* V0, Vector3* V1, Vector3* V2, Vector3* U0, Vector3* U1, Vector3* U2, Vector3* isectpt1, Vector3* isectpt2);
+	static ReturnValue computeTriangleTriangleIntersection(Vector3* V0, Vector3* V1, Vector3* V2, Vector3* U0, Vector3* U1, Vector3* U2, Vector3* isectpt1, Vector3* isectpt2);
 
-	// Generated
-	TriangleTriangleIntersection();
-protected:
-	void ctor();
-	TriangleTriangleIntersection(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class TriangleTriangleIntersection_ReturnValue;
 };

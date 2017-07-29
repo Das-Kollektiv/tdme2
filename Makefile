@@ -274,7 +274,6 @@ SRCS = \
 	src/tdme/math/Quaternion.cpp \
 	src/tdme/math/SeparatingAxisTheorem.cpp \
 	src/tdme/math/TriangleTriangleIntersection.cpp \
-	src/tdme/math/TriangleTriangleIntersection_ReturnValue.cpp \
 	src/tdme/math/Vector2.cpp \
 	src/tdme/math/Vector3.cpp \
 	src/tdme/math/Vector4.cpp \

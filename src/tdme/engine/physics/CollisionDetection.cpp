@@ -22,7 +22,6 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/SeparatingAxisTheorem.h>
-#include <tdme/math/TriangleTriangleIntersection_ReturnValue.h>
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
@@ -52,7 +51,6 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
 using tdme::math::MathTools;
 using tdme::math::SeparatingAxisTheorem;
-using tdme::math::TriangleTriangleIntersection_ReturnValue;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
@@ -162,7 +160,6 @@ void CollisionDetection::init()
 	satAxisBestFit = new Vector3();
 	satAxisBestFitPenetration = 0.0f;
 	hitPoint = new Vector3();
-	triangleTriangleIntersection = new TriangleTriangleIntersection();
 	triangle1 = new Triangle(new Vector3(), new Vector3(), new Vector3());
 	triangle2 = new Triangle(new Vector3(), new Vector3(), new Vector3());
 	hitPointTriangle1 = new Vector3();
@@ -1074,21 +1071,21 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 	auto obb2FacesVerticesIndexes = OrientedBoundingBox::getFacesVerticesIndexes();
 	for (auto triangleObb1Idx = 0; triangleObb1Idx < obb1FacesVerticesIndexes->length; triangleObb1Idx++) 
 				for (auto triangleObb2Idx = 0; triangleObb2Idx < obb2FacesVerticesIndexes->length; triangleObb2Idx++) {
-			auto tritriReturn = triangleTriangleIntersection->computeTriangleTriangleIntersection((*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[0]], (*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[1]], (*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[2]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[0]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[1]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[2]], hitPointTriangle1, hitPointTriangle2);
+			auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection((*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[0]], (*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[1]], (*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[2]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[0]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[1]], (*obb2Vertices)[(*(*obb2FacesVerticesIndexes)[triangleObb2Idx])[2]], hitPointTriangle1, hitPointTriangle2);
 			{
 				Vector3Array* _triangle1Vertices;
 				Vector3Array* _triangle2Vertices;
 				{
 					auto v = tritriReturn;
-					if ((v == TriangleTriangleIntersection_ReturnValue::NOINTERSECTION)) {
+					if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
 						goto end_switch0;;
 					}
-					if ((v == TriangleTriangleIntersection_ReturnValue::INTERSECTION)) {
+					if ((v == TriangleTriangleIntersection::INTERSECTION)) {
 						collisionEntity->addHitPoint(hitPointTriangle1);
 						collisionEntity->addHitPoint(hitPointTriangle2);
 						goto end_switch0;;
 					}
-					if ((v == TriangleTriangleIntersection_ReturnValue::COPLANAR_INTERSECTION)) {
+					if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 						auto _triangle1Vertices = triangle1->getVertices();
 						auto _triangle2Vertices = triangle2->getVertices();
 						(*_triangle1Vertices)[0]->set((*obb1Vertices)[(*(*obb1FacesVerticesIndexes)[triangleObb1Idx])[0]]);
@@ -1102,7 +1099,7 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 						computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 						goto end_switch0;;
 					}
-end_switch0:;
+					end_switch0:;
 				}
 			}
 
@@ -1116,21 +1113,21 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 	auto obbVertices = obb->getVertices();
 	auto obbFacesVerticesIndexes = OrientedBoundingBox::getFacesVerticesIndexes();
 	for (auto triangleObbIdx = 0; triangleObbIdx < obbFacesVerticesIndexes->length; triangleObbIdx++) {
-		auto tritriReturn = triangleTriangleIntersection->computeTriangleTriangleIntersection((*triangleVertices)[0], (*triangleVertices)[1], (*triangleVertices)[2], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[0]], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[1]], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[2]], hitPointTriangle1, hitPointTriangle2);
+		auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection((*triangleVertices)[0], (*triangleVertices)[1], (*triangleVertices)[2], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[0]], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[1]], (*obbVertices)[(*(*obbFacesVerticesIndexes)[triangleObbIdx])[2]], hitPointTriangle1, hitPointTriangle2);
 		{
 			Vector3Array* _triangle1Vertices;
 			Vector3Array* _triangle2Vertices;
 			{
 				auto v = tritriReturn;
-				if ((v == TriangleTriangleIntersection_ReturnValue::NOINTERSECTION)) {
+				if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
 					goto end_switch1;;
 				}
-				if ((v == TriangleTriangleIntersection_ReturnValue::INTERSECTION)) {
+				if ((v == TriangleTriangleIntersection::INTERSECTION)) {
 					collisionEntity->addHitPoint(hitPointTriangle1);
 					collisionEntity->addHitPoint(hitPointTriangle2);
 					goto end_switch1;;
 				}
-				if ((v == TriangleTriangleIntersection_ReturnValue::COPLANAR_INTERSECTION)) {
+				if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 					auto _triangle1Vertices = triangle1->getVertices();
 					auto _triangle2Vertices = triangle2->getVertices();
 					(*_triangle1Vertices)[0]->set((*triangleVertices)[0]);
@@ -1144,7 +1141,7 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 					computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 					goto end_switch1;;
 				}
-end_switch1:;
+				end_switch1:;
 			}
 		}
 
@@ -1155,21 +1152,21 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 {
 	auto triangle1Vertices = triangle1->getVertices();
 	auto triangle2Vertices = triangle2->getVertices();
-	auto tritriReturn = triangleTriangleIntersection->computeTriangleTriangleIntersection((*triangle1Vertices)[0], (*triangle1Vertices)[1], (*triangle1Vertices)[2], (*triangle2Vertices)[0], (*triangle2Vertices)[1], (*triangle2Vertices)[2], hitPointTriangle1, hitPointTriangle2);
+	auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection((*triangle1Vertices)[0], (*triangle1Vertices)[1], (*triangle1Vertices)[2], (*triangle2Vertices)[0], (*triangle2Vertices)[1], (*triangle2Vertices)[2], hitPointTriangle1, hitPointTriangle2);
 	{
 		Vector3Array* _triangle1Vertices;
 		Vector3Array* _triangle2Vertices;
 		{
 			auto v = tritriReturn;
-			if ((v == TriangleTriangleIntersection_ReturnValue::NOINTERSECTION)) {
+			if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
 				goto end_switch2;;
 			}
-			if ((v == TriangleTriangleIntersection_ReturnValue::INTERSECTION)) {
+			if ((v == TriangleTriangleIntersection::INTERSECTION)) {
 				collisionEntity->addHitPoint(hitPointTriangle1);
 				collisionEntity->addHitPoint(hitPointTriangle2);
 				goto end_switch2;;
 			}
-			if ((v == TriangleTriangleIntersection_ReturnValue::COPLANAR_INTERSECTION)) {
+			if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 				auto _triangle1Vertices = triangle1->getVertices();
 				auto _triangle2Vertices = triangle2->getVertices();
 				(*_triangle1Vertices)[0]->set((*triangle1Vertices)[0]);
@@ -1183,7 +1180,7 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 				computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 				goto end_switch2;;
 			}
-end_switch2:;
+			end_switch2:;
 		}
 	}
 
