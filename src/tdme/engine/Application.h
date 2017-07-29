@@ -12,16 +12,12 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 #include "ApplicationInputEventsHandler.h"
 
 using std::wstring;
 
 using tdme::engine::ApplicationInputEventsHandler;
-
-struct default_init_tag;
 
 /** 
  * Application
