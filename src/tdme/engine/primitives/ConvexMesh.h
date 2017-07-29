@@ -61,7 +61,6 @@ public:
 	typedef Object super;
 
 private:
-	SeparatingAxisTheorem* sat {  };
 	TriangleArray* triangles {  };
 	Vector3* triangleEdge1 {  };
 	Vector3* triangleEdge2 {  };

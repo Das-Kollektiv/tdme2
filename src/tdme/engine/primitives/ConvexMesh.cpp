@@ -103,7 +103,6 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 void ConvexMesh::ctor(TriangleArray* triangles)
 {
 	super::ctor();
-	this->sat = new SeparatingAxisTheorem();
 	this->center = new Vector3();
 	this->distanceVector = new Vector3();
 	this->closestsPoint = new Vector3();
@@ -119,7 +118,6 @@ void ConvexMesh::ctor(TriangleArray* triangles)
 void ConvexMesh::ctor(Object3DModel* model)
 {
 	super::ctor();
-	sat = new SeparatingAxisTheorem();
 	center = new Vector3();
 	distanceVector = new Vector3();
 	closestsPoint = new Vector3();
@@ -233,16 +231,16 @@ bool ConvexMesh::containsPoint(Vector3* point)
 		triangleEdge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
 		triangleEdge3->set((*triangleVertices)[0])->sub((*triangleVertices)[2])->normalize();
 		Vector3::computeCrossProduct(triangleEdge1, triangleEdge2, triangleNormal)->normalize();
-		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge1) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge1) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge2) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge2) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleEdge3) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge3) == false)
 			return false;
 
-		if (sat->checkPointInVerticesOnAxis(&vertices, point, triangleNormal) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleNormal) == false)
 			return false;
 
 	}

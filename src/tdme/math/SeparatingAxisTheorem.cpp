@@ -17,10 +17,6 @@ using java::lang::Math;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
 
-SeparatingAxisTheorem::SeparatingAxisTheorem()
-{
-}
-
 bool SeparatingAxisTheorem::checkAxis(Vector3* axis)
 {
 	auto axisXYZ = axis->getArray();

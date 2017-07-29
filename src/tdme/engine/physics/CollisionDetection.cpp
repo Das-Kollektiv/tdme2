@@ -161,7 +161,6 @@ void CollisionDetection::init()
 	haveSatAxisBestFit = false;
 	satAxisBestFit = new Vector3();
 	satAxisBestFitPenetration = 0.0f;
-	separatingAxisTheorem = new SeparatingAxisTheorem();
 	hitPoint = new Vector3();
 	triangleTriangleIntersection = new TriangleTriangleIntersection();
 	triangle1 = new Triangle(new Vector3(), new Vector3(), new Vector3());
@@ -215,7 +214,7 @@ void CollisionDetection::resetSATAxes()
 
 void CollisionDetection::addSATAxis(Vector3* axis)
 {
-	if (separatingAxisTheorem->checkAxis(axis) == false)
+	if (SeparatingAxisTheorem::checkAxis(axis) == false)
 		return;
 
 	for (auto i = 0; i < satAxesCount; i++) {
@@ -411,49 +410,49 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBo
 	auto axes2 = obb2->getAxes();
 	auto obb1Vertices = obb1->getVertices();
 	auto obb2Vertices = obb2->getVertices();
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[0]->set((*axes1)[0]), satPenetrations, 0) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[0]->set((*axes1)[0]), satPenetrations, 0) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[1]->set((*axes1)[1]), satPenetrations, 1) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[1]->set((*axes1)[1]), satPenetrations, 1) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[2]->set((*axes1)[2]), satPenetrations, 2) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[2]->set((*axes1)[2]), satPenetrations, 2) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[3]->set((*axes2)[0]), satPenetrations, 3) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[3]->set((*axes2)[0]), satPenetrations, 3) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[4]->set((*axes2)[1]), satPenetrations, 4) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[4]->set((*axes2)[1]), satPenetrations, 4) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[5]->set((*axes2)[2]), satPenetrations, 5) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[5]->set((*axes2)[2]), satPenetrations, 5) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[0], satAxes[6]), satPenetrations, 6) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[0], satAxes[6]), satPenetrations, 6) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[1], satAxes[7]), satPenetrations, 7) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[1], satAxes[7]), satPenetrations, 7) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[2], satAxes[8]), satPenetrations, 8) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[2], satAxes[8]), satPenetrations, 8) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[0], satAxes[9]), satPenetrations, 9) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[0], satAxes[9]), satPenetrations, 9) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[1], satAxes[10]), satPenetrations, 10) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[1], satAxes[10]), satPenetrations, 10) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[2], satAxes[11]), satPenetrations, 11) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[2], satAxes[11]), satPenetrations, 11) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[0], satAxes[12]), satPenetrations, 12) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[0], satAxes[12]), satPenetrations, 12) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[1], satAxes[13]), satPenetrations, 13) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[1], satAxes[13]), satPenetrations, 13) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[2], satAxes[14]), satPenetrations, 14) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[2], satAxes[14]), satPenetrations, 14) == false)
 		return false;
 
 	auto selectedEntityIdx = -1;
@@ -691,43 +690,43 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 	triangle1Edge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
 	triangle1Edge3->set((*triangleVertices)[0])->sub((*triangleVertices)[2])->normalize();
 	triangle1Normal = Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2)->normalize();
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, satAxes[1]->set((*obbAxes)[0]), satPenetrations, 1) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[1]->set((*obbAxes)[0]), satPenetrations, 1) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, satAxes[2]->set((*obbAxes)[1]), satPenetrations, 2) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[2]->set((*obbAxes)[1]), satPenetrations, 2) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, satAxes[3]->set((*obbAxes)[2]), satPenetrations, 3) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[3]->set((*obbAxes)[2]), satPenetrations, 3) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge1, satAxes[4]), satPenetrations, 4) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge1, satAxes[4]), satPenetrations, 4) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge2, satAxes[5]), satPenetrations, 5) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge2, satAxes[5]), satPenetrations, 5) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge3, satAxes[6]), satPenetrations, 6) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge3, satAxes[6]), satPenetrations, 6) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge1, satAxes[7]), satPenetrations, 7) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge1, satAxes[7]), satPenetrations, 7) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge2, satAxes[8]), satPenetrations, 8) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge2, satAxes[8]), satPenetrations, 8) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge3, satAxes[9]), satPenetrations, 9) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge3, satAxes[9]), satPenetrations, 9) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge1, satAxes[10]), satPenetrations, 10) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge1, satAxes[10]), satPenetrations, 10) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge2, satAxes[11]), satPenetrations, 11) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge2, satAxes[11]), satPenetrations, 11) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge3, satAxes[12]), satPenetrations, 12) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge3, satAxes[12]), satPenetrations, 12) == false)
 		return false;
 
 	auto selectedEntityIdx = -1;
@@ -807,7 +806,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, V
 		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge2, satAxis));
 		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge3, satAxis));
 		for (auto satAxisIdx = 0; satAxisIdx < satAxesCount; satAxisIdx++) {
-			if (separatingAxisTheorem->doSpanIntersect(meshVertices, obbVertices, satAxes[satAxisIdx], satPenetrations, satAxisIdx) == false) {
+			if (SeparatingAxisTheorem::doSpanIntersect(meshVertices, obbVertices, satAxes[satAxisIdx], satPenetrations, satAxisIdx) == false) {
 				resetSATAxes();
 				resetTriangles();
 				return false;
@@ -854,37 +853,37 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, Vec
 	triangle2Edge2->set((*triangle2Vertices)[2])->sub((*triangle2Vertices)[1])->normalize();
 	triangle2Edge3->set((*triangle2Vertices)[0])->sub((*triangle2Vertices)[2])->normalize();
 	Vector3::computeCrossProduct(triangle2Edge1, triangle2Edge2, triangle2Normal)->normalize();
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, satAxes[1]->set(triangle2Normal), satPenetrations, 1) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, satAxes[1]->set(triangle2Normal), satPenetrations, 1) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge1, satAxes[2]), satPenetrations, 2) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge1, satAxes[2]), satPenetrations, 2) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge2, satAxes[3]), satPenetrations, 3) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge2, satAxes[3]), satPenetrations, 3) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge3, satAxes[4]), satPenetrations, 4) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge1, triangle2Edge3, satAxes[4]), satPenetrations, 4) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge1, satAxes[5]), satPenetrations, 5) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge1, satAxes[5]), satPenetrations, 5) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge2, satAxes[6]), satPenetrations, 6) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge2, satAxes[6]), satPenetrations, 6) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge3, satAxes[7]), satPenetrations, 7) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge2, triangle2Edge3, satAxes[7]), satPenetrations, 7) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge1, satAxes[8]), satPenetrations, 8) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge1, satAxes[8]), satPenetrations, 8) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge2, satAxes[9]), satPenetrations, 9) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge2, satAxes[9]), satPenetrations, 9) == false)
 		return false;
 
-	if (separatingAxisTheorem->doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge3, satAxes[10]), satPenetrations, 10) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge3, satAxes[10]), satPenetrations, 10) == false)
 		return false;
 
 	auto selectedEntityIdx = -1;
@@ -944,7 +943,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3
 			addSATAxis(Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge2, satAxis));
 			addSATAxis(Vector3::computeCrossProduct(triangle1Edge3, triangle2Edge3, satAxis));
 			for (auto satAxisIdx = 0; satAxisIdx < satAxesCount; satAxisIdx++) {
-				if (separatingAxisTheorem->doSpanIntersect(mesh1Vertices, mesh2Vertices, satAxes[satAxisIdx], satPenetrations, satAxisIdx) == false) {
+				if (SeparatingAxisTheorem::doSpanIntersect(mesh1Vertices, mesh2Vertices, satAxes[satAxisIdx], satPenetrations, satAxisIdx) == false) {
 					resetSATAxes();
 					resetTriangles();
 					return false;

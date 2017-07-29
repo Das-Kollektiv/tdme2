@@ -6,9 +6,7 @@
 
 #include <Array.h>
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
@@ -28,7 +26,7 @@ public:
 	 * @param axis
 	 * @return valididy
 	 */
-	bool checkAxis(Vector3* axis);
+	static bool checkAxis(Vector3* axis);
 
 private:
 
@@ -38,7 +36,7 @@ private:
 	 * @param axis
 	 * @return
 	 */
-	float doCalculatePoint(Vector3* point, Vector3* axis);
+	static float doCalculatePoint(Vector3* point, Vector3* axis);
 
 	/** 
 	 * Projects the vertices onto the plane and returns the minimum and maximum values
@@ -47,7 +45,7 @@ private:
 	 * @param axis
 	 * @return float[] containing min and max
 	 */
-	void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, float& min, float& max);
+	static void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, float& min, float& max);
 
 public:
 
@@ -58,7 +56,7 @@ public:
 	 * @param axis
 	 * @return point in vertices
 	 */
-	bool checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis);
+	static bool checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis);
 
 	/** 
 	 * Determines penetration of given vertices for both objects on a given axis
@@ -69,10 +67,6 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	bool doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
+	static bool doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
 
-	/**
-	 * Public constructor
-	 */
-	SeparatingAxisTheorem();
 };
