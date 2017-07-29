@@ -111,9 +111,9 @@ String* Rotations::toString()
 		 /*
 		 append(u"Rotations [rotations="_j)->
 		 append(static_cast< Object* >(rotations))->
-		 */
 		 append(u", quaternion="_j)->
 		 append(static_cast< Object* >(quaternion))->
+		 */
 		 append(u"]"_j)->toString();
 }
 

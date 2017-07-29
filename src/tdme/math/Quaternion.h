@@ -2,18 +2,15 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <array>
 
-using java::lang::Object;
-using java::lang::String;
+#include <fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
+
+using std::array;
+
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Quaternion
@@ -21,42 +18,9 @@ struct default_init_tag;
  * @see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
  */
 class tdme::math::Quaternion final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-	floatArray* _data {  };
-
-private:
-	Vector3* t {  };
-	Vector3* q {  };
-	Vector3* qxt {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * P
-	 * @param q
-	 * @return
-	 */
-	void ctor(Quaternion* q);
-
-	/** 
-	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
-	 */
-	void ctor(float x, float y, float z, float w);
+	array<float, 4> data {  };
 
 public:
 
@@ -68,18 +32,6 @@ public:
 	 * @param w
 	 */
 	Quaternion* set(float x, float y, float z, float w);
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
-	 */
-	void ctor(Vector3* v, float w);
-
-public:
 
 	/** 
 	 * Sets up this quaternion by quaternion q
@@ -162,25 +114,32 @@ public:
 	 * Returns array data
 	 * @return array data
 	 */
-	floatArray* getArray();
+	array<float, 4>* getArray();
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Quaternion();
+
+	/**
+	 * Public constructor
+	 * @param quaternion
+	 */
 	Quaternion(Quaternion* q);
+
+	/**
+	 * Public constructor
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param w
+	 */
 	Quaternion(float x, float y, float z, float w);
+
+	/**
+	 * Public constructor
+	 * @param vector
+	 * @param w
+	 */
 	Quaternion(Vector3* v, float w);
-protected:
-	Quaternion(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

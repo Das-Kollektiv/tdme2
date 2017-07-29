@@ -111,9 +111,9 @@ String* Rotation::toString()
 		// TODO: implement me!
 		->append(u", axis="_j)
 		->append(static_cast< Object* >(axis))
-		*/
 		->append(u", quaternion="_j)
 		->append(static_cast< Object* >(quaternion))
+		*/
 		->append(u"]"_j)->toString();
 }
 
