@@ -305,9 +305,9 @@ void GLES2Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArra
 	gl->glUniformMatrix3fv(uniformId, 1, false, data, 0);
 }
 
-void GLES2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray* data)
+void GLES2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
 {
-	gl->glUniformMatrix4fv(uniformId, 1, false, data, 0);
+	gl->glUniformMatrix4fv(uniformId, 1, false, data->data(), 0);
 }
 
 void GLES2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
@@ -342,11 +342,6 @@ void GLES2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t hei
 void GLES2Renderer::updateViewPort()
 {
 	gl->glViewport(viewPortX, viewPortY, viewPortWidth, viewPortHeight);
-}
-
-Matrix4x4* GLES2Renderer::getTextureMatrix()
-{
-	return (*textureMatrix)[activeTextureUnit];
 }
 
 void GLES2Renderer::setClearColor(float red, float green, float blue, float alpha)

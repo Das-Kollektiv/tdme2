@@ -94,10 +94,6 @@ void GLRenderer::ctor()
 	viewPortWidth = 0;
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;
-	textureMatrix = new Matrix4x4Array(TEXTUREUNITS_MAX);
-	for (auto i = 0; i < textureMatrix->length; i++) {
-		textureMatrix->set(i, (new Matrix4x4())->identity());
-	}
 	activeTextureUnit = 0;
 }
 

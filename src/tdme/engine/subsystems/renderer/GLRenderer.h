@@ -83,7 +83,6 @@ public: /* protected */
 	int32_t viewPortY {  };
 	int32_t viewPortWidth {  };
 	int32_t viewPortHeight {  };
-	Matrix4x4Array* textureMatrix {  };
 	int32_t activeTextureUnit {  };
 	Matrix4x4* projectionMatrix {  };
 	Matrix4x4* cameraMatrix {  };
@@ -227,7 +226,7 @@ public:
 	 * @param uniform id
 	 * @param value
 	 */
-	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray* value) = 0;
+	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* value) = 0;
 
 	/** 
 	 * Set up a float matrices 4x4 uniform values
@@ -307,11 +306,6 @@ public:
 	 * @return view port matrix
 	 */
 	virtual Matrix4x4* getViewportMatrix();
-
-	/** 
-	 * @return texture matrix
-	 */
-	virtual Matrix4x4* getTextureMatrix() = 0;
 
 	/** 
 	 * Update texture matrix for active texture unit event

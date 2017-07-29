@@ -2,18 +2,15 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <array>
 
-using java::lang::Object;
-using java::lang::String;
+#include <fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
+
+using std::array;
+
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-
-
-struct default_init_tag;
 
 /** 
  * 4x4 Matrix class
@@ -21,56 +18,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::math::Matrix4x4 final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-	floatArray* _data {  };
-	Vector3* tmpVector3 {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param float array m
-	 */
-	void ctor(floatArray* m);
-
-	/** 
-	 * Public constructor
-	 * @param matrix
-	 */
-	void ctor(Matrix4x4* matrix);
-
-	/** 
-	 * Public constructor
-	 * @param row 0, column 0
-	 * @param row 1, column 0
-	 * @param row 2, column 0
-	 * @param row 3, column 0
-	 * @param row 0, column 1
-	 * @param row 1, column 1
-	 * @param row 2, column 1
-	 * @param row 3, column 1
-	 * @param row 0, column 2
-	 * @param row 1, column 2
-	 * @param row 2, column 2
-	 * @param row 3, column 2
-	 * @param row 0, column 3
-	 * @param row 1, column 3
-	 * @param row 2, column 3
-	 * @param row 3, column 3
-	 */
-	void ctor(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3);
-
+	array<float, 16> data {  };
 public:
 	/** 
 	 * Set up matrix by values
@@ -259,13 +209,13 @@ public:
 	 * Returns array data
 	 * @return array data
 	 */
-	floatArray* getArray();
+	array<float, 16>* getArray();
 
 	/** 
 	 * Clones this matrix
 	 * @return new cloned matrix
 	 */
-	Matrix4x4* clone() override;
+	Matrix4x4* clone();
 
 	/** 
 	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly 
@@ -293,24 +243,41 @@ public:
 	 */
 	void computeEulerAngles(Vector3* euler);
 
-	/** 
-	 * @return string representation
+	/**
+	 * Public constructor
 	 */
-	String* toString() override;
-
-	// Generated
 	Matrix4x4();
+
+	/**
+	 * Public constructor
+	 * @param matrix as float values
+	 */
 	Matrix4x4(floatArray* m);
+
+	/**
+	 * Public constructor
+	 * @param matrix
+	 */
 	Matrix4x4(Matrix4x4* matrix);
+
+	/**
+	 * Public constructor
+	 * @param r0c0
+	 * @param r1c0
+	 * @param r2c0
+	 * @param r3c0
+	 * @param r0c1
+	 * @param r1c1
+	 * @param r2c1
+	 * @param r3c1
+	 * @param r0c2
+	 * @param r1c2
+	 * @param r2c2
+	 * @param r3c2
+	 * @param r0c3
+	 * @param r1c3
+	 * @param r2c3
+	 * @param r3c3
+	 */
 	Matrix4x4(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3);
-protected:
-	Matrix4x4(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* obj);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

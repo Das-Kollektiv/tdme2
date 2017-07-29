@@ -315,9 +315,9 @@ void GL3Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray*
 	glUniformMatrix3fv(uniformId, 1, false, data->getPointer());
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, floatArray* data)
+void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
 {
-	glUniformMatrix4fv(uniformId, 1, false, data->getPointer());
+	glUniformMatrix4fv(uniformId, 1, false, data->data());
 }
 
 void GL3Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
@@ -352,12 +352,6 @@ void GL3Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t heigh
 void GL3Renderer::updateViewPort()
 {
 	glViewport(viewPortX, viewPortY, viewPortWidth, viewPortHeight);
-}
-
-Matrix4x4* GL3Renderer::getTextureMatrix()
-{
-	return (*textureMatrix)[activeTextureUnit];
-	return nullptr;
 }
 
 void GL3Renderer::setClearColor(float red, float green, float blue, float alpha)

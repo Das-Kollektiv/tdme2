@@ -120,10 +120,8 @@ String* Transformations::toString()
 		u"Transformations [translation="_j)->
 			/*
 		append(static_cast< Object* >(translation))
-		*/
 		append(u", translationMatrix="_j)->
 		append(static_cast< Object* >(translationMatrix))->
-		/*
 		// TODO: implement me!
 		append(u", scale="_j)
 		append(static_cast< Object* >(scale))
@@ -132,8 +130,10 @@ String* Transformations::toString()
 		*/
 		append(u", rotations="_j)->
 		append(static_cast< Object* >(rotations))->
+		/*
 		append(u", transformationsMatrix="_j)->
 		append(static_cast< Object* >(transformationsMatrix))->
+		*/
 		append(u"]"_j)->
 		toString();
 }
