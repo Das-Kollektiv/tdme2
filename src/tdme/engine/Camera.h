@@ -5,19 +5,17 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Camera
@@ -25,14 +23,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::Camera final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
-	static Vector3* defaultUp;
+	static Vector3 defaultUp;
 	GLRenderer* renderer {  };
 	int32_t width {  };
 	int32_t height {  };
@@ -40,25 +33,12 @@ private:
 	float fovY {  };
 	float zNear {  };
 	float zFar {  };
-	Vector3* upVector {  };
-	Vector3* lookFrom {  };
-	Vector3* lookAt {  };
-	Matrix4x4* projectionMatrix {  };
-	Matrix4x4* modelViewMatrix {  };
-	Matrix4x4* tmpAxesMatrix {  };
-	Vector3* tmpLookFromInverted {  };
-	Vector3* tmpForward {  };
-	Vector3* tmpSide {  };
-	Vector3* tmpUp {  };
+	Vector3 upVector {  };
+	Vector3 lookFrom {  };
+	Vector3 lookAt {  };
+	Matrix4x4 projectionMatrix {  };
+	Matrix4x4 modelViewMatrix {  };
 	Frustum* frustum {  };
-protected:
-
-	/** 
-	 * Public default constructor
-	 * @param renderer
-	 */
-	void ctor(GLRenderer* renderer);
-
 public:
 
 	/** 
@@ -164,18 +144,10 @@ public:
 	 * @param height
 	 */
 	void update(int32_t width, int32_t height);
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param renderer
+	 */
 	Camera(GLRenderer* renderer);
-protected:
-	Camera(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
