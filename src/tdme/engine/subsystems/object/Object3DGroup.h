@@ -9,6 +9,7 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -22,7 +23,7 @@ using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
-using tdme::engine::Engine_AnimationProcessingTarget;
+using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
@@ -72,7 +73,7 @@ public: /* protected */
 	 * @param object 3d groups array
 	 * @return object 3d group
 	 */
-	static void createGroups(Object3DBase* object, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
+	static void createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 private:
 
@@ -85,7 +86,7 @@ private:
 	 * @param animation processing target
 	 * @param object 3D groups
 	 */
-	static void createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
+	static void createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 public: /* protected */
 

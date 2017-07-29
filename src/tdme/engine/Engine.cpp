@@ -13,7 +13,6 @@
 #include <tdme/engine/Engine_initialize_1.h>
 #include <tdme/engine/Engine_initialize_2.h>
 #include <tdme/engine/Engine_initialize_3.h>
-#include <tdme/engine/Engine_AnimationProcessingTarget.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -68,7 +67,6 @@ using tdme::engine::Camera;
 using tdme::engine::Engine_initialize_1;
 using tdme::engine::Engine_initialize_2;
 using tdme::engine::Engine_initialize_3;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
@@ -165,7 +163,7 @@ MeshManager* Engine::meshManager;
 
 GUIRenderer* Engine::guiRenderer;
 
-Engine_AnimationProcessingTarget* Engine::animationProcessingTarget;
+Engine::AnimationProcessingTarget Engine::animationProcessingTarget;
 
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre;
 
@@ -438,7 +436,7 @@ void Engine::initialize(bool debug)
 		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	#elif __linux__
@@ -448,7 +446,7 @@ void Engine::initialize(bool debug)
 		_Console::println(static_cast< Object* >(u"TDME::Using GL2"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	#endif
@@ -465,11 +463,11 @@ void Engine::initialize(bool debug)
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 			shadowMappingEnabled = true;
-			animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 			ShadowMapping::setShadowMapSize(512, 512);
 		} else {
 			shadowMappingEnabled = false;
-			animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
 	} else {
 		_Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
@@ -521,7 +519,6 @@ void Engine::initialize(bool debug)
 	} else {
 		_Console::println(static_cast< Object* >(u"TDME::Not using shadow mapping"_j));
 	}
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME: animation processing target: "_j)->append(static_cast< Object* >(animationProcessingTarget))->toString()));
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -817,17 +814,17 @@ void Engine::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		instance = nullptr;
-		textureManager = nullptr;
-		vboManager = nullptr;
-		meshManager = nullptr;
-		guiRenderer = nullptr;
-		animationProcessingTarget = Engine_AnimationProcessingTarget::CPU;
-		shadowMappingShaderPre = nullptr;
-		shadowMappingShaderRender = nullptr;
-		lightingShader = nullptr;
-		particlesShader = nullptr;
-		guiShader = nullptr;
+			instance = nullptr;
+			textureManager = nullptr;
+			vboManager = nullptr;
+			meshManager = nullptr;
+			guiRenderer = nullptr;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+			shadowMappingShaderPre = nullptr;
+			shadowMappingShaderRender = nullptr;
+			lightingShader = nullptr;
+			particlesShader = nullptr;
+			guiShader = nullptr;
 		}
 	};
 

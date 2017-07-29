@@ -9,7 +9,6 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <tdme/engine/Engine_AnimationProcessingTarget.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Face.h>
@@ -36,7 +35,6 @@ using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Face;
@@ -88,14 +86,14 @@ constexpr int32_t Object3DGroup::GLTEXTUREID_NONE;
 
 constexpr int32_t Object3DGroup::GLTEXTUREID_NOTUSED;
 
-void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
 {
 	clinit();
 	auto model = object->getModel();
 	createGroups(object, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget, object3DGroups);
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
 {
 	clinit();
 	for (auto it: *groups) {
@@ -110,8 +108,9 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* g
 			object3DGroup->id = ::java::lang::StringBuilder().append(group->getModel()->getId())->append(u":"_j)
 				->append(group->getId())
 				->append(u":"_j)
-				->append(animationProcessingTarget->toString()->toLowerCase())->toString();
-			if (animated == true && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING)) {
+				->append(animationProcessingTarget)
+				->toString();
+			if (animated == true && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
 				object3DGroup->id = ::java::lang::StringBuilder(object3DGroup->id).append(::java::lang::StringBuilder().append(u":"_j)->append((counter++))->toString())->toString();
 			}
 			object3DGroup->object = object3D;

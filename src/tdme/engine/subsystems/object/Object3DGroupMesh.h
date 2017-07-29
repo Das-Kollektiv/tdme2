@@ -10,6 +10,7 @@
 #include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -23,7 +24,7 @@ using std::wstring;
 using java::lang::Object;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
-using tdme::engine::Engine_AnimationProcessingTarget;
+using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
@@ -50,7 +51,7 @@ public: /* protected */
 	vector<Vector3> transformedNormals;
 	vector<Vector3> transformedTangents;
 	vector<Vector3> transformedBitangents;
-	Engine_AnimationProcessingTarget* animationProcessingTarget {  };
+	Engine::AnimationProcessingTarget animationProcessingTarget {  };
 
 private:
 	int32_t cSkinningMaxVertexWeights {  };
@@ -80,7 +81,7 @@ public: /* protected */
 	 * @param skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices,map<wstring, Matrix4x4*>* skinningMatrices);
+	static Object3DGroupMesh* createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices,map<wstring, Matrix4x4*>* skinningMatrices);
 
 	/** 
 	 * Computes mesh transformations

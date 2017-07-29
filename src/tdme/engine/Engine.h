@@ -32,7 +32,6 @@ using java::lang::Object;
 using java::io::InputStream;
 using java::lang::String;
 using tdme::engine::Camera;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
@@ -83,6 +82,8 @@ class tdme::engine::Engine final
 public:
 	typedef Object super;
 
+	enum AnimationProcessingTarget {CPU, CPU_NORENDERING};
+
 public: /* protected */
 	static Engine* instance;
 	static GLRenderer* renderer;
@@ -94,7 +95,7 @@ private:
 	static GUIRenderer* guiRenderer;
 
 public:
-	static Engine_AnimationProcessingTarget* animationProcessingTarget;
+	static AnimationProcessingTarget animationProcessingTarget;
 
 public: /* protected */
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
@@ -450,7 +451,6 @@ public:
 
 private:
 	virtual ::java::lang::Class* getClass0();
-	friend class Engine_AnimationProcessingTarget;
 	friend class Engine_initialize_1;
 	friend class Engine_initialize_2;
 	friend class Engine_initialize_3;

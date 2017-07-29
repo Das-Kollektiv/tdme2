@@ -43,7 +43,6 @@ SRCS = \
 	src/tdme/engine/ApplicationInputEventsHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
-	src/tdme/engine/Engine_AnimationProcessingTarget.cpp \
 	src/tdme/engine/Engine_initialize_1.cpp \
 	src/tdme/engine/Engine_initialize_2.cpp \
 	src/tdme/engine/Entity.cpp \

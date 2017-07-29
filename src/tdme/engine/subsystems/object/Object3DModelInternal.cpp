@@ -1,10 +1,7 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DModelInternal.java
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 
-#include <tdme/engine/Engine_AnimationProcessingTarget.h>
-
 using tdme::engine::subsystems::object::Object3DModelInternal;
-using tdme::engine::Engine_AnimationProcessingTarget;
 
 Object3DModelInternal::Object3DModelInternal(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -20,7 +17,7 @@ Object3DModelInternal::Object3DModelInternal(Model* model)
 
 void Object3DModelInternal::ctor(Model* model)
 {
-	super::ctor(model, false, Engine_AnimationProcessingTarget::CPU_NORENDERING);
+	super::ctor(model, false, Engine::AnimationProcessingTarget::CPU_NORENDERING);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

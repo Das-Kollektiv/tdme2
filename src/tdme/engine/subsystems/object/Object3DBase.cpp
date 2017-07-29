@@ -8,7 +8,6 @@
 #include <java/lang/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <tdme/engine/Engine_AnimationProcessingTarget.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Animation.h>
@@ -41,7 +40,6 @@ using java::lang::Math;
 using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::model::Animation;
@@ -68,13 +66,13 @@ Object3DBase::Object3DBase(const ::default_init_tag&)
 	clinit();
 }
 
-Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget) 
+Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
 	: Object3DBase(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(model,useMeshManager,animationProcessingTarget);
 }
 
-void Object3DBase::ctor(Model* model, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget)
+void Object3DBase::ctor(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
 {
 	super::ctor();
 	this->model = model;
@@ -349,15 +347,15 @@ void Object3DBase::computeTransformations()
 			}
 		}
 		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
-		if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
 		Object3DGroup::computeTransformations(&object3dGroups);
 	} else
-	if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
-		if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);

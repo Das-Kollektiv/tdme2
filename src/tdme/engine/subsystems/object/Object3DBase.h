@@ -9,6 +9,7 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
@@ -20,9 +21,9 @@ using std::map;
 using std::vector;
 using std::wstring;
 
+using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using java::lang::String;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
@@ -63,7 +64,7 @@ public: /* protected */
 	vector<Object3DGroup*> object3dGroups {  };
 	bool recreateBuffers {  };
 	bool usesMeshManager {  };
-	Engine_AnimationProcessingTarget* animationProcessingTarget {  };
+	Engine::AnimationProcessingTarget animationProcessingTarget {  };
 
 private:
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
@@ -73,7 +74,7 @@ protected:
 	 * Public constructor
 	 * @param model
 	 */
-	void ctor(Model* model, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	void ctor(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
 
 public:
 
@@ -243,7 +244,7 @@ public:
 	// Generated
 
 public: /* protected */
-	Object3DBase(Model* model, bool useMeshManager, Engine_AnimationProcessingTarget* animationProcessingTarget);
+	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
 protected:
 	Object3DBase(const ::default_init_tag&);
 

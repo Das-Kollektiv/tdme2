@@ -7,7 +7,6 @@
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::Engine;
 
 
@@ -35,7 +34,6 @@ public:
 private:
 	virtual ::java::lang::Class* getClass0();
 	friend class Engine;
-	friend class Engine_AnimationProcessingTarget;
 	friend class Engine_initialize_2;
 	friend class Engine_initialize_3;
 };

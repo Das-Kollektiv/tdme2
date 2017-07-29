@@ -14,7 +14,6 @@
 #include <java/nio/ByteBuffer.h>
 #include <java/nio/FloatBuffer.h>
 #include <java/nio/ShortBuffer.h>
-#include <tdme/engine/Engine_AnimationProcessingTarget.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
@@ -45,7 +44,6 @@ using java::lang::String;
 using java::nio::ByteBuffer;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
-using tdme::engine::Engine_AnimationProcessingTarget;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
@@ -96,7 +94,7 @@ void Object3DGroupMesh::init()
 	skinningJoints = -1;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarget* animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices, map<wstring, Matrix4x4*>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices, map<wstring, Matrix4x4*>* skinningMatrices)
 {
 	clinit();
 	auto mesh = new Object3DGroupMesh();
@@ -110,7 +108,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 	mesh->animationProcessingTarget = animationProcessingTarget;
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
-	if ((skinning != nullptr && animationProcessingTarget == Engine_AnimationProcessingTarget::CPU) || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		mesh->transformedVertices.resize(groupVertices->size());
 		mesh->vertices = &mesh->transformedVertices;
 		for (auto j = 0; j < mesh->vertices->size(); j++) {
@@ -160,12 +158,12 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine_AnimationProcessingTarge
 	}
 	mesh->textureCoordinates = groupTextureCoordinates;
 	mesh->recreatedBuffers = false;
-	if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		auto transformationMatrixIt = transformationMatrices->find(group->getId());
 		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
 	}
-	if ((skinning != nullptr && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING))) {
-		if (mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	if ((skinning != nullptr && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING))) {
+		if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			mesh->cSkinningJointWeight.resize(groupVertices->size());
 			mesh->cSkinningJointTransformationsMatrices.resize(groupVertices->size());
 			auto joints = skinning->getJoints();
@@ -201,8 +199,8 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 	auto groupTangent = group->getTangents();
 	auto groupBitangent = group->getBitangents();
 	auto skinning = group->getSkinning();
-	if (skinning != nullptr && (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING)) {
-		if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU || animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	if (skinning != nullptr && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
+		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto jointsWeights = skinning->getVerticesJointsWeights();
 			Vector3* vertex;
 			Vector3* transformedVertex;
@@ -252,7 +250,7 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 			}
 			recreateBuffers();
 		}
-	} else if (animationProcessingTarget == Engine_AnimationProcessingTarget::CPU_NORENDERING) {
+	} else if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
 			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply(&(*groupVertices)[vertexIndex], tmpVector3));
 		}
