@@ -119,19 +119,19 @@ private:
 	Vector3* triangle2Edge2 {  };
 	Vector3* triangle2Edge3 {  };
 	Vector3* triangle2Normal {  };
-	array<Vector3*, 5> closestPointsOnCapsuleSegment { new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() };
-	array<Vector3*, 5> closestPointsOnTriangleSegments { new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() };
+	array<Vector3*, 5> closestPointsOnCapsuleSegment {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
+	array<Vector3*, 5> closestPointsOnTriangleSegments {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
 	int32_t testTriangleCount {  };
 	TriangleArrayArray* testTriangles {  };
 	Vector3* satAxis {  };
 	int32_t satAxesCount {  };
 	floatArray* satPenetrations {  };
-	array<Vector3*, 20> satAxes {
+	array<Vector3*, 20> satAxes {{
 		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
 		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
 		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
 		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
-	};
+	}};
 	bool haveSatAxisBestFit {  };
 	Vector3* satAxisBestFit {  };
 	float satAxisBestFitPenetration {  };

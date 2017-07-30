@@ -73,8 +73,8 @@ public:
 	int32_t FRAMEBUFFER_DEFAULT {  };
 	int32_t FRONTFACE_CW {  };
 	int32_t FRONTFACE_CCW {  };
-	array<float, 4> effectColorMul { 1.0f, 1.0f, 1.0f, 1.0f };
-	array<float, 4> effectColorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
+	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	GLRenderer_Material* material {  };
 	GLRenderer_LightArray* lights {  };
 

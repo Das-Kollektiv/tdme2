@@ -85,7 +85,7 @@ public: /* protected */
 	CollisionResponse* collision {  };
 
 private:
-	array<Vector3*, 2> frictionVectors { new Vector3(), new Vector3() };
+	array<Vector3*, 2> frictionVectors {{ new Vector3(), new Vector3() }};
 	float muMg {  };
 	Vector3* tmpVector3 {  };
 	Vector3* r1 {  };
