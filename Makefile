@@ -5,7 +5,7 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -L/usr/lib -lz
 else ifeq ($(OS), Linux)
-	EXTRA_LIBS ?= -l$(NAME)-ext -L/usr/lib64 -lz -lGL -lglut
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lglut
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
