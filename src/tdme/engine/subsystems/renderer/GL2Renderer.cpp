@@ -496,10 +496,18 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 	glGenFramebuffers(1, &frameBufferGlId);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
 	if (depthBufferTextureGlId != ID_NONE) {
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
+		#ifdef __APPLE__
+			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
+		#else
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
+		#endif
 	}
 	if (colorBufferTextureGlId != ID_NONE) {
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
+		#ifdef __APPLE__
+			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
+		#else
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
+		#endif
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
 	} else {
