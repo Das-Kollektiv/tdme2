@@ -2,15 +2,11 @@
 #include <tdme/engine/Camera.h>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
 
 using tdme::engine::Camera;
 using java::lang::Math;
