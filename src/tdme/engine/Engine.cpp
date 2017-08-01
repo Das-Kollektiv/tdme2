@@ -768,14 +768,6 @@ bool Engine::makeScreenshot(String* pathName, String* fileName)
 	return true;
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Engine::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.Engine", 18);
-    return c;
-}
-
 void Engine::clinit()
 {
 	static bool in_cl_init = false;
@@ -799,10 +791,5 @@ void Engine::clinit()
 	if (!in_cl_init) {
 		static clinit_ clinit_instance;
 	}
-}
-
-java::lang::Class* Engine::getClass0()
-{
-	return class_();
 }
 

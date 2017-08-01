@@ -422,16 +422,9 @@ public:
 
 private:
 	Engine();
-protected:
-	Engine(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class EngineGL3Renderer;
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
