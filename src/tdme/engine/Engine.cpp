@@ -135,17 +135,6 @@ Engine::Engine()
 	shadowMapping = nullptr;
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
-	modelViewMatrix = new Matrix4x4();
-	projectionMatrix = new Matrix4x4();
-	tmpMatrix4x4 = new Matrix4x4();
-	tmpVector3a = new Vector3();
-	tmpVector3b = new Vector3();
-	tmpVector3c = new Vector3();
-	tmpVector3d = new Vector3();
-	tmpVector3e = new Vector3();
-	tmpVector3f = new Vector3();
-	tmpVector4a = new Vector4();
-	tmpVector4b = new Vector4();
 	lineSegment = new LineSegment();
 	initialized = false;
 }
@@ -608,8 +597,8 @@ void Engine::display()
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
 	renderer->renderingTexturingClientState = false;
-	modelViewMatrix->set(renderer->getModelViewMatrix());
-	projectionMatrix->set(renderer->getProjectionMatrix());
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+	projectionMatrix.set(renderer->getProjectionMatrix());
 	if (frameBuffer != nullptr)
 		FrameBuffer::disableFrameBuffer();
 
@@ -617,10 +606,24 @@ void Engine::display()
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3* worldCoordinate)
 {
-	tmpMatrix4x4->set(modelViewMatrix)->multiply(projectionMatrix)->invert();
-	tmpMatrix4x4->multiply(tmpVector4a->set((2.0f * mouseX / width) - 1.0f, 1.0f - (2.0f * mouseY / height), 2.0f * z - 1.0f, 1.0f), tmpVector4b);
-	tmpVector4b->scale(1.0f / tmpVector4b->getW());
-	worldCoordinate->set(tmpVector4b->getX(), tmpVector4b->getY(), tmpVector4b->getZ());
+	Matrix4x4 tmpMatrix4x4;
+	Vector4 tmpVector4a;
+	Vector4 tmpVector4b;
+	tmpMatrix4x4.set(&modelViewMatrix)->multiply(&projectionMatrix)->invert();
+	tmpMatrix4x4.multiply(
+		tmpVector4a.set(
+			(2.0f * mouseX / width) - 1.0f,
+			1.0f - (2.0f * mouseY / height),
+			2.0f * z - 1.0f, 1.0f
+		),
+		&tmpVector4b
+	);
+	tmpVector4b.scale(1.0f / tmpVector4b.getW());
+	worldCoordinate->set(
+		tmpVector4b.getX(),
+		tmpVector4b.getY(),
+		tmpVector4b.getZ()
+	);
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3* worldCoordinate)
@@ -642,8 +645,13 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY)
 
 Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter)
 {
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, tmpVector3a);
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
+	Vector3 tmpVector3a;
+	Vector3 tmpVector3b;
+	Vector3 tmpVector3c;
+	Vector3 tmpVector3d;
+	Vector3 tmpVector3e;
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, &tmpVector3a);
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, &tmpVector3b);
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
 	for (auto entity: visibleObjects) {
@@ -653,12 +661,12 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
 			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
 				auto vertices = _i->next();
 				{
-					if (lineSegment->doesLineSegmentCollideWithTriangle(&(*vertices)[0], &(*vertices)[1], &(*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e->sub(tmpVector3a)->computeLength();
+					if (lineSegment->doesLineSegmentCollideWithTriangle(&(*vertices)[0], &(*vertices)[1], &(*vertices)[2], &tmpVector3a, &tmpVector3b, &tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(&tmpVector3a)->computeLength();
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
 							selectedEntityDistance = entityDistance;
@@ -675,8 +683,8 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e->set(entity->getBoundingBoxTransformed()->getCenter())->sub(tmpVector3a)->computeLength();
+		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter())->sub(&tmpVector3a)->computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
@@ -690,8 +698,8 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e->set(entity->getBoundingBoxTransformed()->getCenter())->sub(tmpVector3a)->computeLength();
+		if (lineSegment->doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter())->sub(&tmpVector3a)->computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
@@ -703,10 +711,13 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 
 void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, Vector2* screenCoordinate)
 {
-	tmpMatrix4x4->set(modelViewMatrix)->multiply(projectionMatrix);
-	tmpMatrix4x4->multiply(new Vector4(worldCoordinate, 1.0f), tmpVector4a);
-	tmpVector4a->scale(1.0f / tmpVector4a->getW());
-	auto screenCoordinateXYZW = tmpVector4a->getArray();
+	Matrix4x4 tmpMatrix4x4;
+	Vector4 tmpVector4a;
+	Vector4 tmpVector4b;
+	tmpMatrix4x4.set(&modelViewMatrix)->multiply(&projectionMatrix);
+	tmpMatrix4x4.multiply(tmpVector4b.set(worldCoordinate, 1.0f), &tmpVector4a);
+	tmpVector4a.scale(1.0f / tmpVector4a.getW());
+	auto screenCoordinateXYZW = tmpVector4a.getArray();
 	screenCoordinate->setX(((*screenCoordinateXYZW)[0] + 1.0f) * width / 2.0f);
 	screenCoordinate->setY(height - (((*screenCoordinateXYZW)[1] + 1.0f) * height / 2.0f));
 }

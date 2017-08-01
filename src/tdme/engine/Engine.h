@@ -20,6 +20,7 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
@@ -122,17 +123,8 @@ private:
 	bool shadowMappingEnabled {  };
 	bool renderingInitiated {  };
 	bool renderingComputedTransformations {  };
-	Matrix4x4* modelViewMatrix {  };
-	Matrix4x4* projectionMatrix {  };
-	Matrix4x4* tmpMatrix4x4 {  };
-	Vector3* tmpVector3a {  };
-	Vector3* tmpVector3b {  };
-	Vector3* tmpVector3c {  };
-	Vector3* tmpVector3d {  };
-	Vector3* tmpVector3f {  };
-	Vector3* tmpVector3e {  };
-	Vector4* tmpVector4a {  };
-	Vector4* tmpVector4b {  };
+	Matrix4x4 modelViewMatrix {  };
+	Matrix4x4 projectionMatrix {  };
 	LineSegment* lineSegment {  };
 
 public: /* protected */
