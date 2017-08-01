@@ -1,14 +1,10 @@
 // Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 
-#include <java/lang/Class.h>
-#include <java/lang/ClassLoader.h>
 #include <java/lang/Float.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/nio/ByteBuffer.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/EngineGL2Renderer.h>
 #include <tdme/engine/EngineGL3Renderer.h>
@@ -55,10 +51,7 @@
 #include <SubArray.h>
 
 using tdme::engine::Engine;
-using java::lang::Class;
-using java::lang::ClassLoader;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::nio::ByteBuffer;
@@ -104,17 +97,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-typedef ::SubArray< ::tdme::engine::Light, ::java::lang::ObjectArray > LightArray;
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
 template<typename T, typename U>
 static T java_cast(U* u)
 {
@@ -139,16 +121,33 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-Engine::Engine(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
 
 Engine::Engine() 
-	: Engine(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
+	width = 0;
+	height = 0;
+	timing = new Timing();
+	camera = nullptr;
+	lights.resize(8);
+	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+	frameBuffer = nullptr;
+	shadowMappingEnabled = false;
+	shadowMapping = nullptr;
+	renderingInitiated = false;
+	renderingComputedTransformations = false;
+	modelViewMatrix = new Matrix4x4();
+	projectionMatrix = new Matrix4x4();
+	tmpMatrix4x4 = new Matrix4x4();
+	tmpVector3a = new Vector3();
+	tmpVector3b = new Vector3();
+	tmpVector3c = new Vector3();
+	tmpVector3d = new Vector3();
+	tmpVector3e = new Vector3();
+	tmpVector3f = new Vector3();
+	tmpVector4a = new Vector4();
+	tmpVector4b = new Vector4();
+	lineSegment = new LineSegment();
+	initialized = false;
 }
 
 Engine* Engine::instance;
@@ -200,43 +199,14 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	offScreenEngine->frameBuffer->initialize();
 	offScreenEngine->camera = new Camera(renderer);
 	offScreenEngine->partition = new PartitionOctTree();
-	for (auto i = 0; i < offScreenEngine->lights->length; i++) 
-				offScreenEngine->lights->set(i, new Light(renderer, i));
+	for (auto i = 0; i < offScreenEngine->lights.size(); i++)
+		offScreenEngine->lights[i] = new Light(renderer, i);
 
 	if (instance->shadowMappingEnabled == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
 	}
 	offScreenEngine->reshape(0, 0, width, height);
 	return offScreenEngine;
-}
-
-void Engine::ctor()
-{
-	super::ctor();
-	width = 0;
-	height = 0;
-	timing = new Timing();
-	camera = nullptr;
-	lights = new LightArray(8);
-	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	frameBuffer = nullptr;
-	shadowMappingEnabled = false;
-	shadowMapping = nullptr;
-	renderingInitiated = false;
-	renderingComputedTransformations = false;
-	modelViewMatrix = new Matrix4x4();
-	projectionMatrix = new Matrix4x4();
-	tmpMatrix4x4 = new Matrix4x4();
-	tmpVector3a = new Vector3();
-	tmpVector3b = new Vector3();
-	tmpVector3c = new Vector3();
-	tmpVector3d = new Vector3();
-	tmpVector3e = new Vector3();
-	tmpVector3f = new Vector3();
-	tmpVector4a = new Vector4();
-	tmpVector4b = new Vector4();
-	lineSegment = new LineSegment();
-	initialized = false;
 }
 
 bool Engine::isInitialized()
@@ -284,9 +254,9 @@ void Engine::setPartition(Partition* partition)
 	this->partition = partition;
 }
 
-LightArray* Engine::getLights()
+vector<Light*>* Engine::getLights()
 {
-	return lights;
+	return &lights;
 }
 
 FrameBuffer* Engine::getFrameBuffer()
@@ -296,8 +266,7 @@ FrameBuffer* Engine::getFrameBuffer()
 
 Light* Engine::getLightAt(int32_t idx)
 {
-	/* assert((idx >= 0 && idx < 8)) */ ;
-	return (*lights)[idx];
+	return lights[idx];
 }
 
 TextureManager* Engine::getTextureManager()
@@ -488,8 +457,8 @@ void Engine::initialize(bool debug)
 	gui->initialize();
 	camera = new Camera(renderer);
 	partition = new PartitionOctTree();
-	for (auto i = 0; i < lights->length; i++) 
-		lights->set(i, new Light(renderer, i));
+	for (auto i = 0; i < lights.size(); i++)
+		lights[i] = new Light(renderer, i);
 
 	lightingShader = new LightingShader(renderer);
 	lightingShader->initialize();
@@ -615,8 +584,8 @@ void Engine::display()
 	if (lightingShader != nullptr) {
 		lightingShader->useProgram();
 	}
-	for (auto j = 0; j < lights->length; j++) {
-		(*lights)[j]->update();
+	for (auto j = 0; j < lights.size(); j++) {
+		lights[j]->update();
 	}
 	object3DVBORenderer->render(visibleObjects, true);
 	if (lightingShader != nullptr) {
@@ -809,7 +778,6 @@ java::lang::Class* Engine::class_()
 
 void Engine::clinit()
 {
-	super::clinit();
 	static bool in_cl_init = false;
 	struct clinit_ {
 		clinit_() {

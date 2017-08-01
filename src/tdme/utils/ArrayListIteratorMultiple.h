@@ -32,8 +32,6 @@ namespace utils {
  */
 template<typename T>
 class ArrayListIteratorMultiple final
-	: public Iterator
-	, public Iterable
 {
 
 public:
@@ -76,12 +74,12 @@ public:
 		return this;
 	}
 
-	bool hasNext() override {
+	bool hasNext() {
 		auto hasNext = (vectorIdx < arrayLists.size() - 1) || (vectorIdx == arrayLists.size() - 1 && elementIdx < arrayLists.at(vectorIdx)->size());
 		return hasNext;
 	}
 
-	T next() override {
+	T next() {
 		auto element = arrayLists.at(vectorIdx)->at(elementIdx++);
 		if (elementIdx == arrayLists.at(vectorIdx)->size()) {
 			elementIdx = 0;
@@ -90,11 +88,11 @@ public:
 		return element;
 	}
 
-	void remove() override {
+	void remove() {
 
 	}
 
-	Iterator* iterator() {
+	ArrayListIteratorMultiple* iterator() {
 		reset();
 		return this;
 	}
@@ -102,7 +100,7 @@ public:
 	/** 
 	 * Clones this iterator
 	 */
-	ArrayListIteratorMultiple<T>* clone() override {
+	ArrayListIteratorMultiple<T>* clone() {
 		return new ArrayListIteratorMultiple<T>(arrayLists);
 	}
 

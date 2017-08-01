@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -28,9 +27,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
-using java::io::InputStream;
-using java::lang::String;
 using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
@@ -58,30 +54,15 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-typedef ::SubArray< ::tdme::engine::Light, ::java::lang::ObjectArray > LightArray;
-}  // namespace engine
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::LightArray;
-
-struct default_init_tag;
-
 /** 
  * Engine main class
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::Engine final
-	: public Object
 {
 
 public:
-	typedef Object super;
-
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING};
 
 public: /* protected */
@@ -115,7 +96,7 @@ public: /* protected */
 	Partition* partition {  };
 
 private:
-	LightArray* lights {  };
+	vector<Light*> lights {  };
 	Color4* sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
@@ -234,7 +215,7 @@ public:
 	/** 
 	 * @return lights
 	 */
-	LightArray* getLights();
+	vector<Light*>* getLights();
 
 	/** 
 	 * @return frame buffer or null

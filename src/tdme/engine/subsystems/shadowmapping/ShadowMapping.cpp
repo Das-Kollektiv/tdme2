@@ -87,7 +87,7 @@ void ShadowMapping::ctor(Engine* engine, GLRenderer* renderer, Object3DVBORender
 	this->renderer = renderer;
 	this->object3DVBORenderer = object3DVBORenderer;
 	this->lightEyeDistanceScale = 4.0f;
-	shadowMaps = new ShadowMapArray(engine->getLights()->length);
+	shadowMaps = new ShadowMapArray(engine->getLights()->size());
 	for (auto i = 0; i < shadowMaps->length; i++) {
 		shadowMaps->set(i, nullptr);
 	}
@@ -131,7 +131,7 @@ void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
 	renderer->setColorMask(false, false, false, false);
 	renderer->setCullFace(renderer->CULLFACE_FRONT);
 	Engine::getShadowMappingShaderPre()->useProgram();
-	for (auto i = 0; i < engine->getLights()->length; i++) {
+	for (auto i = 0; i < engine->getLights()->size(); i++) {
 		auto light = engine->getLightAt(i);
 		if (light->isEnabled()) {
 			if ((*shadowMaps)[i] == nullptr) {
