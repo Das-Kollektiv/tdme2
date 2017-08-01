@@ -3,14 +3,12 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <java/lang/Object.h>
 
 using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::GLRenderer;
