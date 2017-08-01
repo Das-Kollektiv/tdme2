@@ -451,7 +451,7 @@ public:
 
 private:
 	virtual ::java::lang::Class* getClass0();
-	friend class Engine_initialize_1;
-	friend class Engine_initialize_2;
-	friend class Engine_initialize_3;
+	friend class EngineGL3Renderer;
+	friend class EngineGL2Renderer;
+	friend class EngineGLES2Renderer;
 };

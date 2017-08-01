@@ -10,9 +10,9 @@
 #include <java/nio/ByteBuffer.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/Camera.h>
-#include <tdme/engine/Engine_initialize_1.h>
-#include <tdme/engine/Engine_initialize_2.h>
-#include <tdme/engine/Engine_initialize_3.h>
+#include <tdme/engine/EngineGL2Renderer.h>
+#include <tdme/engine/EngineGL3Renderer.h>
+#include <tdme/engine/EngineGLES2Renderer.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -64,9 +64,9 @@ using java::lang::StringBuilder;
 using java::nio::ByteBuffer;
 using java::util::Iterator;
 using tdme::engine::Camera;
-using tdme::engine::Engine_initialize_1;
-using tdme::engine::Engine_initialize_2;
-using tdme::engine::Engine_initialize_3;
+using tdme::engine::EngineGL3Renderer;
+using tdme::engine::EngineGL2Renderer;
+using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
@@ -432,7 +432,7 @@ void Engine::initialize(bool debug)
 	// GL3
 	#ifdef __APPLE__
 	{
-		renderer = new Engine_initialize_1(this);
+		renderer = new EngineGL3Renderer(this);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;
@@ -442,7 +442,7 @@ void Engine::initialize(bool debug)
 	#elif __linux__
 	// GL2
 	{
-		renderer = new Engine_initialize_2(this);
+		renderer = new EngineGL2Renderer(this);
 		_Console::println(static_cast< Object* >(u"TDME::Using GL2"_j));
 		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		shadowMappingEnabled = true;

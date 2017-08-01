@@ -1,28 +1,24 @@
 // Generated from /tdme/src/tdme/engine/Engine.java
-#include <tdme/engine/Engine_initialize_2.h>
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/engine/EngineGLES2Renderer.h>
 
-using tdme::engine::Engine_initialize_2;
+using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::gui::renderer::GUIShader;
 
-Engine_initialize_2::Engine_initialize_2(Engine *Engine_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, Engine_this(Engine_this)
+EngineGLES2Renderer::EngineGLES2Renderer(Engine *engine) :
+	engine(engine)
 {
-	clinit();
-	ctor();
 }
 
-void Engine_initialize_2::onUpdateProjectionMatrix()
+void EngineGLES2Renderer::onUpdateProjectionMatrix()
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(this);
@@ -30,12 +26,12 @@ void Engine_initialize_2::onUpdateProjectionMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (Engine_this->shadowMapping != nullptr)
-		Engine_this->shadowMapping->updateMVPMatrices(this);
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateMVPMatrices(this);
 
 }
 
-void Engine_initialize_2::onUpdateCameraMatrix()
+void EngineGLES2Renderer::onUpdateCameraMatrix()
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(this);
@@ -43,12 +39,12 @@ void Engine_initialize_2::onUpdateCameraMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (Engine_this->shadowMapping != nullptr)
-		Engine_this->shadowMapping->updateMVPMatrices(this);
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateMVPMatrices(this);
 
 }
 
-void Engine_initialize_2::onUpdateModelViewMatrix()
+void EngineGLES2Renderer::onUpdateModelViewMatrix()
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(this);
@@ -56,12 +52,12 @@ void Engine_initialize_2::onUpdateModelViewMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (Engine_this->shadowMapping != nullptr)
-		Engine_this->shadowMapping->updateMVPMatrices(this);
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateMVPMatrices(this);
 
 }
 
-void Engine_initialize_2::onBindTexture(int32_t textureId)
+void EngineGLES2Renderer::onBindTexture(int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(this, textureId);
@@ -71,11 +67,11 @@ void Engine_initialize_2::onBindTexture(int32_t textureId)
 
 }
 
-void Engine_initialize_2::onUpdateTextureMatrix()
+void EngineGLES2Renderer::onUpdateTextureMatrix()
 {
 }
 
-void Engine_initialize_2::onUpdateEffect()
+void EngineGLES2Renderer::onUpdateEffect()
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateEffect(this);
@@ -88,30 +84,17 @@ void Engine_initialize_2::onUpdateEffect()
 
 }
 
-void Engine_initialize_2::onUpdateLight(int32_t lightId)
+void EngineGLES2Renderer::onUpdateLight(int32_t lightId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateLight(this, lightId);
 
 }
 
-void Engine_initialize_2::onUpdateMaterial()
+void EngineGLES2Renderer::onUpdateMaterial()
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(this);
 
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Engine_initialize_2::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* Engine_initialize_2::getClass0()
-{
-	return class_();
 }
 

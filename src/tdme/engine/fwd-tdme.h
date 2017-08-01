@@ -9,9 +9,9 @@ namespace engine {
 		class Camera;
 		class Engine;
 		class Engine_AnimationProcessingTarget;
-		class Engine_initialize_1;
-		class Engine_initialize_2;
-		class Engine_initialize_3;
+		class EngineGL3Renderer;
+		class EngineGL2Renderer;
+		class EngineGLES2Renderer;
 		struct Entity;
 		struct EntityPickingFilter;
 		class FrameBuffer;
@@ -25,12 +25,8 @@ namespace engine {
 		class PartitionNone;
 		class PartitionOctTree;
 		class PartitionOctTree_PartitionTreeNode;
-		class PartitionOctTree_reset_1;
 		class PartitionOctTree_reset_2;
 		class PartitionOctTree_reset_3;
-		class PartitionOctTree_reset_4;
-		class PartitionOctTree_reset_5;
-		class PartitionOctTree_reset_6;
 		class PointsParticleSystemEntity;
 		class Rotation;
 		class Rotations;

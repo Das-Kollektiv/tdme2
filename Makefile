@@ -43,8 +43,8 @@ SRCS = \
 	src/tdme/engine/ApplicationInputEventsHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
-	src/tdme/engine/Engine_initialize_1.cpp \
-	src/tdme/engine/Engine_initialize_2.cpp \
+	src/tdme/engine/EngineGL3Renderer.cpp \
+	src/tdme/engine/EngineGL2Renderer.cpp \
 	src/tdme/engine/Entity.cpp \
 	src/tdme/engine/EntityPickingFilter.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
@@ -375,7 +375,7 @@ SRCS = \
 	src/tdme/utils/_HashMap_Pair.cpp \
 	src/tdme/utils/_HashMap_ValuesIterator.cpp \
 
-#	src/tdme/engine/Engine_initialize_3.cpp \
+#	src/tdme/engine/EngineGLES2Renderer.cpp \
 #	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
 STUB_SRCS = \
