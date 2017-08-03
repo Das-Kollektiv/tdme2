@@ -3,15 +3,7 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Timing
@@ -19,11 +11,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::Timing final
-	: public Object
 {
-
 public:
-	typedef Object super;
 	static constexpr int64_t UNDEFINED { -1LL };
 
 private:
@@ -32,12 +21,6 @@ private:
 	int64_t lastFrameAtTime {  };
 	int64_t currentFrameAtTime {  };
 	float currentFPS {  };
-protected:
-
-	/** 
-	 * Public default constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -83,20 +66,10 @@ public:
 	 * @return average fps
 	 */
 	float getAverageFPS();
-	String* toString() override;
-
-	// Generated
 
 public: /* protected */
+	/**
+	 * Public constructor
+	 */
 	Timing();
-protected:
-	Timing(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

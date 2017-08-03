@@ -3,7 +3,10 @@
 #pragma once
 
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Rotations.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::Rotations;
 using tdme::math::Matrix4x4;
@@ -16,17 +19,17 @@ using tdme::math::Vector3;
  */
 class tdme::engine::Transformations {
 public: /* protected */
-	Vector3* translation {  };
-	Matrix4x4* translationMatrix {  };
-	Vector3* scale {  };
-	Matrix4x4* scaleMatrix {  };
-	Rotations* rotations {  };
-	Matrix4x4* rotationsQuaternionMatrix {  };
-	Matrix4x4* rotationsMatrix {  };
-	Vector3* rotationsPivot {  };
-	Matrix4x4* rotationsTranslationsMatrix {  };
-	Vector3* pivot {  };
-	Matrix4x4* transformationsMatrix {  };
+	Vector3 translation {  };
+	Matrix4x4 translationMatrix {  };
+	Vector3 scale {  };
+	Matrix4x4 scaleMatrix {  };
+	Rotations rotations {  };
+	Matrix4x4 rotationsQuaternionMatrix {  };
+	Matrix4x4 rotationsMatrix {  };
+	Vector3 rotationsPivot {  };
+	Matrix4x4 rotationsTranslationsMatrix {  };
+	Vector3 pivot {  };
+	Matrix4x4 transformationsMatrix {  };
 public:
 
 	/** 

@@ -5,21 +5,16 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::math::Quaternion;
-
-
-struct default_init_tag;
 
 /** 
  * Rotations
@@ -27,20 +22,12 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::Rotations final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	Quaternion* quaternion {  };
+	Quaternion quaternion {  };
 	vector<Rotation*> rotations {  };
-protected:
-	void ctor();
 
 public:
-
 	/** 
 	 * @return number of rotations
 	 */
@@ -90,17 +77,9 @@ public:
 	 * Update rotation quaternion
 	 */
 	void update();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	Rotations();
-protected:
-	Rotations(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
