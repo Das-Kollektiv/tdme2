@@ -9,10 +9,9 @@ using tdme::engine::physics::World;
 using tdme::utils::Key;
 
 World_2::World_2(World *World_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, World_this(World_this)
 {
-	clinit();
 	ctor();
 }
 

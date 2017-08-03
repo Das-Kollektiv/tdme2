@@ -9,10 +9,9 @@ using tdme::engine::subsystems::object::TransparentRenderFace;
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 
 TransparentRenderFacesPool_TransparentRenderFacesPool_1::TransparentRenderFacesPool_TransparentRenderFacesPool_1(TransparentRenderFacesPool *TransparentRenderFacesPool_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, TransparentRenderFacesPool_this(TransparentRenderFacesPool_this)
 {
-	clinit();
 	ctor();
 }
 

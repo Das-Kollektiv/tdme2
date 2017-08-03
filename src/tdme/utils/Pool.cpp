@@ -2,18 +2,21 @@
 #include <tdme/utils/Pool.h>
 
 #include <vector>
+#include <string>
 
-#include <java/lang/Object.h>
+#include <java/lang/fwd-tdme.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <java/lang/Object.h>
+
 #include <tdme/utils/_Console.h>
 
 using std::vector;
+using std::wstring;
 
-using tdme::utils::Pool;
 using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
+
+using tdme::utils::Pool;
 using tdme::utils::_Console;
 
 template<typename T, typename U>
@@ -24,21 +27,12 @@ static T java_cast(U* u)
     return t;
 }
 
-Pool::Pool(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Pool::Pool() 
-	: Pool(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
 }
 
 void Pool::ctor()
 {
-	super::ctor();
 }
 
 Object* Pool::allocate()
@@ -63,7 +57,7 @@ void Pool::release(Object* element)
 			return;
 		}
 	}
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Pool::release()::did not find:"_j)->append(element->toString())));
+	_Console::println(wstring(L"Pool::release()::did not find:") + element->toString()->getCPPWString());
 }
 
 int32_t Pool::capacity()
@@ -83,25 +77,3 @@ void Pool::reset()
 	}
 	usedElements.clear();
 }
-
-String* Pool::toString()
-{
-	return ::java::lang::StringBuilder().append(u"Pool [size="_j)->append(size())
-		->append(u", capacity="_j)
-		->append(capacity())
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Pool::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.utils.Pool", 15);
-    return c;
-}
-
-java::lang::Class* Pool::getClass0()
-{
-	return class_();
-}
-

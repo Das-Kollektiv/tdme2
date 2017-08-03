@@ -14,26 +14,8 @@ using java::lang::Object;
 using tdme::engine::Entity;
 using tdme::utils::ArrayListIteratorMultiple;
 
-PartitionNone::PartitionNone(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 PartitionNone::PartitionNone() 
-	: PartitionNone(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void PartitionNone::init()
-{
-}
-
-void PartitionNone::ctor()
-{
-	super::ctor();
-	init();
 	arrayListIteratorMultiple.addArrayList(&entities);
 }
 
@@ -78,17 +60,3 @@ ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(Vector3* cen
 {
 	return &arrayListIteratorMultiple;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PartitionNone::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.PartitionNone", 25);
-    return c;
-}
-
-java::lang::Class* PartitionNone::getClass0()
-{
-	return class_();
-}
-

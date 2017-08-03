@@ -7,9 +7,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/PartitionOctTree_reset_2.h>
@@ -31,9 +28,6 @@ using std::to_wstring;
 
 using tdme::engine::PartitionOctTree;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::PartitionOctTree_reset_2;
@@ -55,33 +49,9 @@ static T java_cast(U* u)
     return t;
 }
 
-PartitionOctTree::PartitionOctTree(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 PartitionOctTree::PartitionOctTree() 
-	: PartitionOctTree(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void PartitionOctTree::init()
 {
 	treeRoot = nullptr;
-}
-
-constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
-
-constexpr float PartitionOctTree::PARTITION_SIZE_MID;
-
-constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
-
-void PartitionOctTree::ctor()
-{
-	super::ctor();
-	init();
 	this->boundingBox = new BoundingBox();
 	this->halfExtension = new Vector3();
 	this->sideVector = new Vector3(1.0f, 0.0f, 0.0f);
@@ -89,6 +59,12 @@ void PartitionOctTree::ctor()
 	this->forwardVector = new Vector3(0.0f, 0.0f, 1.0f);
 	reset();
 }
+
+constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
+
+constexpr float PartitionOctTree::PARTITION_SIZE_MID;
+
+constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
 
 void PartitionOctTree::reset()
 {
@@ -180,8 +156,11 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
 	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"PartitionOctTree::removeEntity(): '"_j)->append(entity->getId())
-			->append(u"' not registered"_j)->toString()));
+		_Console::println(
+			L"PartitionOctTree::removeEntity(): '" +
+			entity->getId() +
+			L"' not registered"
+		);
 		return;
 	}
 	while (objectPartitionsVector->size() > 0) {
@@ -220,7 +199,7 @@ bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* 
 void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionEntities.size() > 0) {
-		_Console::println(static_cast< Object* >(u"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"_j));
+		_Console::println(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
 		node->partitionEntities.clear();
 	} else {
 		for (auto i = 0; i < node->subNodes.size(); i++) {
@@ -353,17 +332,3 @@ ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(Vector3* 
 	}
 	return &entityIterator;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PartitionOctTree::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.PartitionOctTree", 28);
-    return c;
-}
-
-java::lang::Class* PartitionOctTree::getClass0()
-{
-	return class_();
-}
-

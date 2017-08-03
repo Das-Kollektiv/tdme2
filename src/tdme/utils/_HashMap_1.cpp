@@ -9,10 +9,9 @@ using tdme::utils::_HashMap_Pair;
 using tdme::utils::_HashMap;
 
 _HashMap_1::_HashMap_1(_HashMap *_HashMap_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, _HashMap_this(_HashMap_this)
 {
-	clinit();
 	ctor();
 }
 

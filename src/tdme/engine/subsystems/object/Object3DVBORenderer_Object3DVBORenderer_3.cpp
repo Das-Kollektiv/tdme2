@@ -9,10 +9,9 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 
 Object3DVBORenderer_Object3DVBORenderer_3::Object3DVBORenderer_Object3DVBORenderer_3(Object3DVBORenderer *Object3DVBORenderer_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, Object3DVBORenderer_this(Object3DVBORenderer_this)
 {
-	clinit();
 	ctor();
 }
 

@@ -21,8 +21,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 
-struct default_init_tag;
-
 /** 
  * PartitionQuadTree none implementation
  * @author Andreas Drewke
@@ -31,19 +29,9 @@ struct default_init_tag;
 class tdme::engine::PartitionNone final
 	: public Partition
 {
-
-public:
-	typedef Partition super;
-
 private:
 	vector<Entity*> entities;
 	ArrayListIteratorMultiple<Entity*> arrayListIteratorMultiple;
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
 
 public: /* protected */
 	void reset() override;
@@ -56,16 +44,8 @@ public:
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	PartitionNone();
-protected:
-	PartitionNone(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -9,10 +9,9 @@ using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
 PhysicsPartitionOctTree_reset_2::PhysicsPartitionOctTree_reset_2(PhysicsPartitionOctTree *PhysicsPartitionOctTree_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, PhysicsPartitionOctTree_this(PhysicsPartitionOctTree_this)
 {
-	clinit();
 	ctor();
 }
 

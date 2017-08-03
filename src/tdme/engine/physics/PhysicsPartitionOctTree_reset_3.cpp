@@ -9,10 +9,9 @@ using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::PhysicsPartitionOctTree;
 
 PhysicsPartitionOctTree_reset_3::PhysicsPartitionOctTree_reset_3(PhysicsPartitionOctTree *PhysicsPartitionOctTree_this)
-	: super(*static_cast< ::default_init_tag* >(0))
+	: super()
 	, PhysicsPartitionOctTree_this(PhysicsPartitionOctTree_this)
 {
-	clinit();
 	ctor();
 }
 

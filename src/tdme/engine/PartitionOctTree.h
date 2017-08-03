@@ -29,8 +29,6 @@ using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
 
-struct default_init_tag;
-
 /** 
  * Partition oct tree implementation
  * @author Andreas Drewke
@@ -39,10 +37,6 @@ struct default_init_tag;
 class tdme::engine::PartitionOctTree final
 	: public Partition
 {
-
-public:
-	typedef Partition super;
-
 private:
 	ArrayListIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox* boundingBox {  };
@@ -60,12 +54,6 @@ public:
 	static constexpr float PARTITION_SIZE_MIN { 4.0f };
 	static constexpr float PARTITION_SIZE_MID { 8.0f };
 	static constexpr float PARTITION_SIZE_MAX { 16.0f };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
 
 public: /* protected */
 	void reset() override;
@@ -142,23 +130,12 @@ public:
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	PartitionOctTree();
-protected:
-	PartitionOctTree(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 	friend class PartitionOctTree_PartitionTreeNode;
-	friend class PartitionOctTree_reset_1;
 	friend class PartitionOctTree_reset_2;
 	friend class PartitionOctTree_reset_3;
-	friend class PartitionOctTree_reset_4;
-	friend class PartitionOctTree_reset_5;
-	friend class PartitionOctTree_reset_6;
 };
