@@ -37,13 +37,6 @@ class tdme::engine::PointsParticleSystemEntity final
 	: public PointsParticleSystemEntityInternal
 	, public Entity
 {
-
-public:
-	typedef PointsParticleSystemEntityInternal super;
-protected:
-
-	void ctor(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
-
 public:
 	void initialize() override;
 	BoundingBox* getBoundingBox() override;
