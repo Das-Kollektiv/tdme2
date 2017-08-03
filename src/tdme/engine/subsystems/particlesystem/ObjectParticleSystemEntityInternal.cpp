@@ -2,6 +2,7 @@
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
 #include <java/lang/Object.h>
@@ -30,12 +31,10 @@
 
 using std::vector;
 using std::remove;
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
@@ -53,61 +52,30 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-typedef ::SubArray< ::tdme::engine::Entity, ::java::lang::ObjectArray > EntityArray;
-typedef ::SubArray< ::tdme::engine::Transformations, ::java::lang::ObjectArray > TransformationsArray;
-
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DBase, ::tdme::engine::TransformationsArray > Object3DBaseArray;
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DInternal, Object3DBaseArray > Object3DInternalArray;
-}  // namespace object
-}  // namespace subsystems
-typedef ::SubArray< ::tdme::engine::Object3D, ::tdme::engine::subsystems::object::Object3DInternalArray, EntityArray > Object3DArray;
-
-namespace subsystems {
-namespace particlesystem {
-typedef ::SubArray< ::tdme::engine::subsystems::particlesystem::Particle, ::java::lang::ObjectArray > ParticleArray;
-}  // namespace particlesystem
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
-
-ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
 {
-	clinit();
-}
-
-ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) 
-	: ObjectParticleSystemEntityInternal(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,model,scale,autoEmit,enableDynamicShadows,maxCount,emitter);
-}
-
-void ObjectParticleSystemEntityInternal::ctor(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
-{
-	super::ctor();
 	this->id = id;
 	this->enabled = true;
 	this->model = model;
 	this->autoEmit = autoEmit;
 	this->enableDynamicShadows = enableDynamicShadows;
-	particles = new ParticleArray(maxCount);
-	for (auto i = 0; i < particles->length; i++) {
-		particles->set(i, new Particle());
+	particles.resize(maxCount);
+	for (auto i = 0; i < particles.size(); i++) {
+		particles[i] = new Particle();
 	}
-	objects = new Object3DArray(maxCount);
-	for (auto i = 0; i < objects->length; i++) {
-		objects->set(i, new Object3D(::java::lang::StringBuilder().append(u"tdme.opse."_j)->append(this->hashCode())
-			->append(u":"_j)
-			->append(i)->toString(), model));
-		(*objects)[i]->setEnabled(false);
-		(*objects)[i]->getScale()->set(scale);
-		(*objects)[i]->setDynamicShadowingEnabled(enableDynamicShadows);
-		(*objects)[i]->setPickable(false);
+	objects.resize(maxCount);
+	for (auto i = 0; i < objects.size(); i++) {
+		objects[i] = new Object3D(
+			L"tdme.opse." +
+				id +
+				L":" +
+				to_wstring(i),
+			model
+		);
+		objects[i]->setEnabled(false);
+		objects[i]->getScale()->set(scale);
+		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
+		objects[i]->setPickable(false);
 	}
 	this->boundingBox = new BoundingBox();
 	this->boundingBoxTransformed = new BoundingBox();
@@ -120,7 +88,7 @@ void ObjectParticleSystemEntityInternal::ctor(String* id, Model* model, Vector3*
 	this->particlesToSpawnRemainder = 0.0f;
 }
 
-String* ObjectParticleSystemEntityInternal::getId()
+const wstring& ObjectParticleSystemEntityInternal::getId()
 {
 	return id;
 }
@@ -187,8 +155,8 @@ bool ObjectParticleSystemEntityInternal::isDynamicShadowingEnabled()
 void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 {
 	enableDynamicShadows = dynamicShadowing;
-	for (auto i = 0; i < objects->length; i++) {
-		(*objects)[i]->setDynamicShadowingEnabled(enableDynamicShadows);
+	for (auto i = 0; i < objects.size(); i++) {
+		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 	}
 }
 
@@ -230,13 +198,13 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		return 0;
 
 	auto particlesSpawned = 0;
-	for (auto i = 0; i < particles->length; i++) {
-		auto particle = (*particles)[i];
+	for (auto i = 0; i < particles.size(); i++) {
+		auto particle = particles[i];
 		if (particle->active == true)
 			continue;
 
 		emitter->emit(particle);
-		auto object = (*objects)[i];
+		auto object = objects[i];
 		object->getTranslation()->set(particle->position);
 		object->update();
 		object->setEnabled(true);
@@ -257,12 +225,12 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 	auto bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
 	auto bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
-	for (auto i = 0; i < particles->length; i++) {
-		auto particle = (*particles)[i];
+	for (auto i = 0; i < particles.size(); i++) {
+		auto particle = particles[i];
 		if (particle->active == false)
 			continue;
 
-		auto object = (*objects)[i];
+		auto object = objects[i];
 		particle->lifeTimeCurrent += timeDelta;
 		if (particle->lifeTimeCurrent >= particle->lifeTimeMax) {
 			particle->active = false;
@@ -284,24 +252,12 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		} else {
 			auto objBbMinXYZ = object->getBoundingBoxTransformed()->getMin()->getArray();
 			auto objBbMaxXYZ = object->getBoundingBoxTransformed()->getMax()->getArray();
-			if ((*objBbMinXYZ)[0] < (*bbMinXYZ)[0])
-				(*bbMinXYZ)[0] = (*objBbMinXYZ)[0];
-
-			if ((*objBbMinXYZ)[1] < (*bbMinXYZ)[1])
-				(*bbMinXYZ)[1] = (*objBbMinXYZ)[1];
-
-			if ((*objBbMinXYZ)[2] < (*bbMinXYZ)[2])
-				(*bbMinXYZ)[2] = (*objBbMinXYZ)[2];
-
-			if ((*objBbMaxXYZ)[0] > (*bbMaxXYZ)[0])
-				(*bbMaxXYZ)[0] = (*objBbMaxXYZ)[0];
-
-			if ((*objBbMaxXYZ)[1] > (*bbMaxXYZ)[1])
-				(*bbMaxXYZ)[1] = (*objBbMaxXYZ)[1];
-
-			if ((*objBbMaxXYZ)[2] > (*bbMaxXYZ)[2])
-				(*bbMaxXYZ)[2] = (*objBbMaxXYZ)[2];
-
+			if ((*objBbMinXYZ)[0] < (*bbMinXYZ)[0]) (*bbMinXYZ)[0] = (*objBbMinXYZ)[0];
+			if ((*objBbMinXYZ)[1] < (*bbMinXYZ)[1]) (*bbMinXYZ)[1] = (*objBbMinXYZ)[1];
+			if ((*objBbMinXYZ)[2] < (*bbMinXYZ)[2]) (*bbMinXYZ)[2] = (*objBbMinXYZ)[2];
+			if ((*objBbMaxXYZ)[0] > (*bbMaxXYZ)[0]) (*bbMaxXYZ)[0] = (*objBbMaxXYZ)[0];
+			if ((*objBbMaxXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*objBbMaxXYZ)[1];
+			if ((*objBbMaxXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*objBbMaxXYZ)[2];
 		}
 	}
 	boundingBoxTransformed->update();
@@ -310,66 +266,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 
 void ObjectParticleSystemEntityInternal::dispose()
 {
-	for (auto i = 0; i < objects->length; i++) {
-		(*objects)[i]->dispose();
+	for (auto i = 0; i < objects.size(); i++) {
+		objects[i]->dispose();
 	}
-}
-
-String* ObjectParticleSystemEntityInternal::toString()
-{
-	return ::java::lang::StringBuilder().append(u"ObjectParticleSystemEntityInternal [id="_j)->append(id)
-		->append(u", enabled="_j)
-		->append(enabled)
-		/*
-		// TODO: implement me!
-		->append(u", model="_j)
-		->append(static_cast< Object* >(model))
-		*/
-		->append(u", autoEmit="_j)
-		->append(autoEmit)
-		->append(u", enableDynamicShadows="_j)
-		->append(enableDynamicShadows)
-		->append(u", particles="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(particles)))
-		->append(u", objects="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(objects)))
-		/*
-		->append(u", enabledObjects="_j)
-		->append(static_cast< Object* >(enabledObjects))
-		*/
-		->append(u", boundingBox="_j)
-		->append(static_cast< Object* >(boundingBox))
-		->append(u", boundingBoxTransformed="_j)
-		->append(static_cast< Object* >(boundingBoxTransformed))
-		->append(u", inverseTransformation="_j)
-		->append(static_cast< Object* >(inverseTransformation))
-		->append(u", emitter="_j)
-		->append(static_cast< Object* >(emitter))
-		->append(u", pickable="_j)
-		->append(pickable)
-		/*
-		->append(u", effectColorMul="_j)
-		->append(static_cast< Object* >(effectColorMul))
-		->append(u", effectColorAdd="_j)
-		->append(static_cast< Object* >(effectColorAdd))
-		->append(u", velocityForTime="_j)
-		->append(static_cast< Object* >(velocityForTime))
-		*/
-		->append(u", particlesToSpawnRemainder="_j)
-		->append(particlesToSpawnRemainder)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ObjectParticleSystemEntityInternal::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.particlesystem.ObjectParticleSystemEntityInternal", 72);
-    return c;
-}
-
-java::lang::Class* ObjectParticleSystemEntityInternal::getClass0()
-{
-	return class_();
 }
 

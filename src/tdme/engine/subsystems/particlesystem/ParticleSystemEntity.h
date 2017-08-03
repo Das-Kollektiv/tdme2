@@ -2,15 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
@@ -23,13 +24,12 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
  * @version $Id$
  */
 struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
-	: public virtual Object
 {
 
 	/** 
 	 * @return object id
 	 */
-	virtual String* getId() = 0;
+	virtual const wstring& getId() = 0;
 
 	/** 
 	 * @return true if enabled to be rendered
@@ -106,7 +106,4 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	 * Update transformations
 	 */
 	virtual void update() = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };

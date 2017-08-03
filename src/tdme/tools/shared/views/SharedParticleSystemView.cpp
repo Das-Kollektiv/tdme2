@@ -190,7 +190,7 @@ void SharedParticleSystemView::display()
 		particleSystemScreenController->setParticleSystemEmitter();
 		initParticleSystemRequested = false;
 	}
-	auto particleSystemEntity = java_cast< ParticleSystemEntity* >(engine->getEntity(u"model"_j));
+	auto particleSystemEntity = java_cast< ParticleSystemEntity* >(engine->getEntity(L"model"));
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == false) {
 		particleSystemEntity->emitParticles();
 		particleSystemEntity->updateParticles();

@@ -1,11 +1,15 @@
 // Generated from /tdme/src/tdme/utils/MutableString.java
 #include <tdme/utils/MutableString.h>
 
+#include <string>
+
 #include <java/lang/Math.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
 #include <java/util/Arrays.h>
 #include <Array.h>
+
+using std::wstring;
 
 using tdme::utils::MutableString;
 using java::lang::Math;
@@ -31,6 +35,12 @@ MutableString::MutableString(String* s)
 	ctor(s);
 }
 
+MutableString::MutableString(const wstring& s)
+	: MutableString(*static_cast< ::default_init_tag* >(0))
+{
+	ctor(s);
+}
+
 void MutableString::ctor()
 {
 	super::ctor();
@@ -40,6 +50,15 @@ void MutableString::ctor()
 }
 
 void MutableString::ctor(String* s)
+{
+	super::ctor();
+	this->data = new char16_tArray(64);
+	this->length_ = 0;
+	this->hash = 0;
+	append(s);
+}
+
+void MutableString::ctor(const wstring& s)
 {
 	super::ctor();
 	this->data = new char16_tArray(64);
@@ -109,6 +128,13 @@ MutableString* MutableString::set(String* s)
 	return this;
 }
 
+MutableString* MutableString::set(const wstring& s)
+{
+	reset();
+	append(s);
+	return this;
+}
+
 MutableString* MutableString::append(String* s)
 {
 	for (auto i = 0; i < s->length(); i++) {
@@ -116,6 +142,15 @@ MutableString* MutableString::append(String* s)
 	}
 	return this;
 }
+
+MutableString* MutableString::append(const wstring& s)
+{
+	for (auto i = 0; i < s.length(); i++) {
+		append(s[i]);
+	}
+	return this;
+}
+
 
 MutableString* MutableString::insert(int32_t idx, String* s)
 {

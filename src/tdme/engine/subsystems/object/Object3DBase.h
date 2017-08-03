@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -35,8 +34,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using java::lang::Object;
 
-struct default_init_tag;
-
 /** 
  * Object3DInternal base class, contains 
  * @author Andreas Drewke
@@ -44,9 +41,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DBase
 	: public Transformations
 {
-
-public:
-	typedef Transformations super;
 
 public: /* protected */
 	Model* model {  };
@@ -68,13 +62,6 @@ public: /* protected */
 
 private:
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 */
-	void ctor(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
 
 public:
 
@@ -244,18 +231,17 @@ public:
 	// Generated
 
 public: /* protected */
+	/**
+	 * Public constructor
+	 * @param model
+	 * @param use mesh manager
+	 * @param animation processing target
+	 */
 	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
-protected:
-	Object3DBase(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
 
 public:
 	virtual Matrix4x4* getTransformationsMatrix();
 
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class Object3DBase_TransformedFacesIterator;
 };

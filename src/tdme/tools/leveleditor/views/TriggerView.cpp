@@ -101,11 +101,11 @@ void TriggerView::initModel()
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	auto model = engine->getEntity(u"model"_j);
-	auto ground = engine->getEntity(u"ground"_j);
+	auto model = engine->getEntity(L"model");
+	auto ground = engine->getEntity(L"ground");
 	model->setDynamicShadowingEnabled(false);
 	ground->setEnabled(false);
-	auto modelBoundingVolume = engine->getEntity(u"model_bv"_j);
+	auto modelBoundingVolume = engine->getEntity(L"model_bv");
 	if (modelBoundingVolume != nullptr) {
 		modelBoundingVolume->setEnabled(false);
 	}

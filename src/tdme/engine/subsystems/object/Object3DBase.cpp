@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -27,9 +26,6 @@
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::map;
 using std::vector;
@@ -37,7 +33,6 @@ using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using java::lang::Math;
-using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::Engine;
@@ -60,27 +55,14 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase::Object3DBase(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
-	: Object3DBase(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(model,useMeshManager,animationProcessingTarget);
-}
-
-void Object3DBase::ctor(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
-{
-	super::ctor();
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->baseAnimation = new AnimationState();
 	this->usesMeshManager = useMeshManager;
 	parentTransformationsMatrix = new Matrix4x4();
-	transformationsMatrix = super::getTransformationsMatrix();
+	transformationsMatrix = Transformations::getTransformationsMatrix();
 	tmpMatrix1 = new Matrix4x4();
 	transformedFacesIterator = nullptr;
 	hasSkinning = false;
@@ -475,21 +457,8 @@ void Object3DBase::dispose()
 	}
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Object3DBase::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.Object3DBase", 42);
-    return c;
-}
-
 Matrix4x4* Object3DBase::getTransformationsMatrix()
 {
-	return super::getTransformationsMatrix();
-}
-
-java::lang::Class* Object3DBase::getClass0()
-{
-	return class_();
+	return Transformations::getTransformationsMatrix();
 }
 

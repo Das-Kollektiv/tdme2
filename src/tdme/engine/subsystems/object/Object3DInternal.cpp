@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DInternal.java
 #include <tdme/engine/subsystems/object/Object3DInternal.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -14,9 +16,8 @@
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
+
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DInternal;
 using java::lang::String;
@@ -33,21 +34,6 @@ using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-}  // namespace model
-
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::lang::ObjectArray > Object3DGroupArray;
-}  // namespace object
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
-
 template<typename T, typename U>
 static T java_cast(U* u)
 {
@@ -56,21 +42,9 @@ static T java_cast(U* u)
     return t;
 }
 
-Object3DInternal::Object3DInternal(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
+	Object3DBase(model, true, Engine::animationProcessingTarget)
 {
-	clinit();
-}
-
-Object3DInternal::Object3DInternal(String* id, Model* model) 
-	: Object3DInternal(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,model);
-}
-
-void Object3DInternal::ctor(String* id, Model* model)
-{
-	super::ctor(model, true, Engine::animationProcessingTarget);
 	this->id = id;
 	enabled = true;
 	pickable = false;
@@ -85,7 +59,7 @@ void Object3DInternal::ctor(String* id, Model* model)
 	boundingBoxTransformed->update();
 }
 
-String* Object3DInternal::getId()
+const wstring& Object3DInternal::getId()
 {
 	return id;
 }
@@ -190,12 +164,12 @@ void Object3DInternal::setDynamicDiffuseTexture(String* groupId, String* facesEn
 
 void Object3DInternal::initialize()
 {
-	super::initialize();
+	Object3DBase::initialize();
 }
 
 void Object3DInternal::dispose()
 {
-	super::dispose();
+	Object3DBase::dispose();
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
 		object3DGroup->renderer->dispose();
@@ -205,7 +179,7 @@ void Object3DInternal::dispose()
 
 void Object3DInternal::fromTransformations(Transformations* transformations)
 {
-	super::fromTransformations(transformations);
+	Object3DBase::fromTransformations(transformations);
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
 	boundingBoxTransformed->getMin()->sub(0.05f);
 	boundingBoxTransformed->getMax()->add(0.05f);
@@ -214,23 +188,10 @@ void Object3DInternal::fromTransformations(Transformations* transformations)
 
 void Object3DInternal::update()
 {
-	super::update();
+	Object3DBase::update();
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
 	boundingBoxTransformed->getMin()->sub(0.05f);
 	boundingBoxTransformed->getMax()->add(0.05f);
 	boundingBoxTransformed->update();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Object3DInternal::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.Object3DInternal", 46);
-    return c;
-}
-
-java::lang::Class* Object3DInternal::getClass0()
-{
-	return class_();
 }
 

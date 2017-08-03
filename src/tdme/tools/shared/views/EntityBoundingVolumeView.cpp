@@ -239,14 +239,14 @@ void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* enti
 {
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	auto id = (*EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS)[idx];
-	auto modelBoundingVolumeObject = engine->getEntity(id);
+	auto modelBoundingVolumeObject = engine->getEntity(id->getCPPWString());
 	if (modelBoundingVolumeObject != nullptr) {
-		engine->removeEntity(id);
+		engine->removeEntity(id->getCPPWString());
 	}
 	if (entityBoundingVolume->getModel() == nullptr)
 		return;
 
-	modelBoundingVolumeObject = new Object3D(id, entityBoundingVolume->getModel());
+	modelBoundingVolumeObject = new Object3D(id->getCPPWString(), entityBoundingVolume->getModel());
 	modelBoundingVolumeObject->setEnabled(false);
 	engine->addEntity(modelBoundingVolumeObject);
 }

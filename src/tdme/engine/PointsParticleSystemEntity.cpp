@@ -1,30 +1,22 @@
 // Generated from /tdme/src/tdme/engine/PointsParticleSystemEntity.java
 #include <tdme/engine/PointsParticleSystemEntity.h>
 
+#include <string>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+
+using std::wstring;
 
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
 
-PointsParticleSystemEntity::PointsParticleSystemEntity(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+PointsParticleSystemEntity::PointsParticleSystemEntity(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) :
+	PointsParticleSystemEntityInternal(id, doCollisionTests, emitter, maxPoints, autoEmit)
 {
-	clinit();
-}
-
-PointsParticleSystemEntity::PointsParticleSystemEntity(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) 
-	: PointsParticleSystemEntity(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,doCollisionTests,emitter,maxPoints,autoEmit);
-}
-
-void PointsParticleSystemEntity::ctor(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
-{
-	super::ctor(id, doCollisionTests, emitter, maxPoints, autoEmit);
 }
 
 void PointsParticleSystemEntity::initialize()
@@ -43,7 +35,7 @@ BoundingBox* PointsParticleSystemEntity::getBoundingBoxTransformed()
 
 void PointsParticleSystemEntity::fromTransformations(Transformations* transformations)
 {
-	super::fromTransformations(transformations);
+	PointsParticleSystemEntityInternal::fromTransformations(transformations);
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
@@ -51,7 +43,7 @@ void PointsParticleSystemEntity::fromTransformations(Transformations* transforma
 
 void PointsParticleSystemEntity::update()
 {
-	super::update();
+	PointsParticleSystemEntityInternal::update();
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
@@ -71,23 +63,15 @@ void PointsParticleSystemEntity::setEnabled(bool enabled)
 			engine->partition->removeEntity(this);
 
 	}
-	super::setEnabled(enabled);
+	PointsParticleSystemEntityInternal::setEnabled(enabled);
 }
 
 void PointsParticleSystemEntity::updateParticles()
 {
-	super::updateParticles();
+	PointsParticleSystemEntityInternal::updateParticles();
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PointsParticleSystemEntity::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.PointsParticleSystemEntity", 38);
-    return c;
 }
 
 void PointsParticleSystemEntity::dispose()
@@ -105,7 +89,7 @@ Color4* PointsParticleSystemEntity::getEffectColorMul()
 	return PointsParticleSystemEntityInternal::getEffectColorMul();
 }
 
-String* PointsParticleSystemEntity::getId()
+const wstring& PointsParticleSystemEntity::getId()
 {
 	return PointsParticleSystemEntityInternal::getId();
 }
@@ -168,10 +152,5 @@ void PointsParticleSystemEntity::setPickable(bool pickable)
 void PointsParticleSystemEntity::setRenderer(GLRenderer* renderer)
 {
 	PointsParticleSystemEntityInternal::setRenderer(renderer);
-}
-
-java::lang::Class* PointsParticleSystemEntity::getClass0()
-{
-	return class_();
 }
 

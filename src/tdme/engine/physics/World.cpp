@@ -314,7 +314,7 @@ void World::synch(Engine* engine)
 		if (rigidBody->isSleeping_ == true)
 			continue;
 
-		auto engineEntity = engine->getEntity(rigidBody->id);
+		auto engineEntity = engine->getEntity(rigidBody->id->getCPPWString());
 		if (engineEntity == nullptr) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"World::entity '"_j)->append(rigidBody->id)
 				->append(u"' not found"_j)->toString()));

@@ -2,33 +2,23 @@
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 
 #include <vector>
+#include <string>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
 
-ObjectParticleSystemEntity::ObjectParticleSystemEntity(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+ObjectParticleSystemEntity::ObjectParticleSystemEntity(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
+	ObjectParticleSystemEntityInternal(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter)
 {
-	clinit();
-}
-
-ObjectParticleSystemEntity::ObjectParticleSystemEntity(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) 
-	: ObjectParticleSystemEntity(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,model,scale,autoEmit,enableDynamicShadows,maxCount,emitter);
-}
-
-void ObjectParticleSystemEntity::ctor(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
-{
-	super::ctor(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter);
 }
 
 void ObjectParticleSystemEntity::initialize()
@@ -52,7 +42,7 @@ const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
 
 void ObjectParticleSystemEntity::fromTransformations(Transformations* transformations)
 {
-	super::fromTransformations(transformations);
+	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
@@ -60,7 +50,7 @@ void ObjectParticleSystemEntity::fromTransformations(Transformations* transforma
 
 void ObjectParticleSystemEntity::update()
 {
-	super::update();
+	ObjectParticleSystemEntityInternal::update();
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
@@ -80,23 +70,15 @@ void ObjectParticleSystemEntity::setEnabled(bool enabled)
 			engine->partition->removeEntity(this);
 
 	}
-	super::setEnabled(enabled);
+	ObjectParticleSystemEntityInternal::setEnabled(enabled);
 }
 
 void ObjectParticleSystemEntity::updateParticles()
 {
-	super::updateParticles();
+	ObjectParticleSystemEntityInternal::updateParticles();
 	if (engine != nullptr && enabled == true)
 		engine->partition->updateEntity(this);
 
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ObjectParticleSystemEntity::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.ObjectParticleSystemEntity", 38);
-    return c;
 }
 
 void ObjectParticleSystemEntity::dispose()
@@ -114,7 +96,7 @@ Color4* ObjectParticleSystemEntity::getEffectColorMul()
 	return ObjectParticleSystemEntityInternal::getEffectColorMul();
 }
 
-String* ObjectParticleSystemEntity::getId()
+const wstring& ObjectParticleSystemEntity::getId()
 {
 	return ObjectParticleSystemEntityInternal::getId();
 }
@@ -177,10 +159,5 @@ void ObjectParticleSystemEntity::setPickable(bool pickable)
 void ObjectParticleSystemEntity::setRenderer(GLRenderer* renderer)
 {
 	ObjectParticleSystemEntityInternal::setRenderer(renderer);
-}
-
-java::lang::Class* ObjectParticleSystemEntity::getClass0()
-{
-	return class_();
 }
 

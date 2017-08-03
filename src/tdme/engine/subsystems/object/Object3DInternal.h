@@ -2,24 +2,24 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/Object3DBase.h>
+#include <Array.h>
+
+using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DBase;
-using java::lang::String;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-
-
-struct default_init_tag;
 
 /** 
  * TDME Object 3D
@@ -29,12 +29,8 @@ struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DInternal
 	: public Object3DBase
 {
-
-public:
-	typedef Object3DBase super;
-
 public: /* protected */
-	String* id {  };
+	wstring id {  };
 	bool enabled {  };
 	bool pickable {  };
 	bool dynamicShadowing {  };
@@ -42,20 +38,12 @@ public: /* protected */
 	Color4* effectColorAdd {  };
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 */
-	void ctor(String* id, Model* model);
-
 public:
 
 	/** 
 	 * @return object id
 	 */
-	virtual String* getId();
+	virtual const wstring& getId();
 
 	/** 
 	 * @return true if enabled to be rendered
@@ -179,15 +167,10 @@ public:
 	void fromTransformations(Transformations* transformations) override;
 	void update() override;
 
-	// Generated
-	Object3DInternal(String* id, Model* model);
-protected:
-	Object3DInternal(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param model
+	 */
+	Object3DInternal(const wstring& id, Model* model);
 };

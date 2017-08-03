@@ -203,14 +203,14 @@ public:
 	 * Removes an object from level 
 	 * @param id
 	 */
-	void removeObject(String* id);
+	void removeObject(const wstring& id);
 
 	/** 
 	 * Returns level editor object by id
 	 * @param id
 	 * @return level editor object or null
 	 */
-	LevelEditorObject* getObjectById(String* id);
+	LevelEditorObject* getObjectById(const wstring& id);
 
 	/** 
 	 * @return number of objects

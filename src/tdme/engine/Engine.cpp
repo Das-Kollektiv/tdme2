@@ -318,9 +318,9 @@ int32_t Engine::getEntityCount()
 	return entitiesById.size();
 }
 
-Entity* Engine::getEntity(String* id)
+Entity* Engine::getEntity(const wstring& id)
 {
-	auto entityByIdIt = entitiesById.find(id->getCPPWString());
+	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
 		return entityByIdIt->second;
 	}
@@ -340,14 +340,14 @@ void Engine::addEntity(Entity* entity)
 	entity->setEngine(this);
 	entity->setRenderer(renderer);
 	entity->initialize();
-	entitiesById[entity->getId()->getCPPWString()] = entity;
+	entitiesById[entity->getId()] = entity;
 	if (entity->isEnabled() == true) partition->addEntity(entity);
 }
 
-void Engine::removeEntity(String* id)
+void Engine::removeEntity(const wstring& id)
 {
 	Entity* entity = nullptr;
-	auto entityByIdIt = entitiesById.find(id->getCPPWString());
+	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
 		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
@@ -365,10 +365,10 @@ void Engine::removeEntity(String* id)
 
 void Engine::reset()
 {
-	vector<String*> entitiesToRemove;
+	vector<wstring> entitiesToRemove;
 	for (auto it: entitiesById) {
 		auto entityKey = it.first;
-		entitiesToRemove.push_back(new String(entityKey));
+		entitiesToRemove.push_back(entityKey);
 	}
 	for (auto entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
@@ -724,9 +724,9 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 
 void Engine::dispose()
 {
-	vector<String*> entitiesToRemove;
+	vector<wstring> entitiesToRemove;
 	for (auto it: entitiesById) {
-		auto entityKey = new String(it.first);
+		auto entityKey = it.first;
 		entitiesToRemove.push_back(entityKey);
 	}
 	for (auto entityKey: entitiesToRemove) {

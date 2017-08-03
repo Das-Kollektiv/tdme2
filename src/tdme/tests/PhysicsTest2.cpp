@@ -135,7 +135,7 @@ void PhysicsTest2::initialize()
 	auto groundModel = PrimitiveModel::createModel(ground, u"ground_model"_j);
 	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	entity = new Object3D(u"ground"_j, groundModel);
+	entity = new Object3D(L"ground", groundModel);
 	entity->getTranslation()->setY(-1.0f);
 	entity->update();
 	engine->addEntity(entity);
@@ -145,7 +145,7 @@ void PhysicsTest2::initialize()
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString(), boxModel);
+		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString()->getCPPWString(), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(i * 2.0f + 1.0f);
 		entity->update();

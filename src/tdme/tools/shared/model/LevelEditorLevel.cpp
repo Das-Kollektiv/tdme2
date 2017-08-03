@@ -289,7 +289,7 @@ void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 		}
 	}
 	for (auto objectId: objectsToRemove) {
-		removeObject(objectId);
+		removeObject(objectId->getCPPWString());
 	}
 }
 
@@ -318,9 +318,9 @@ void LevelEditorLevel::updatePivot(int32_t modelId, Vector3* pivot)
 
 void LevelEditorLevel::addObject(LevelEditorObject* object)
 {
-	auto _entity = getObjectById(object->getId());
+	auto _entity = getObjectById(object->getId()->getCPPWString());
 	if (_entity != nullptr) {
-		removeObject(object->getId());
+		removeObject(object->getId()->getCPPWString());
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorLevel::addObject():: object with id '"_j)->append(object->getId())
 			->append(u"' already exists. Removing it!"_j)->toString()));
 	}
@@ -328,18 +328,18 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	objects.push_back(object);
 }
 
-void LevelEditorLevel::removeObject(String* id)
+void LevelEditorLevel::removeObject(const wstring& id)
 {
-	auto objectByIdIt = objectsById.find(id->getCPPWString());
+	auto objectByIdIt = objectsById.find(id);
 	if (objectByIdIt != objectsById.end()) {
 		objectsById.erase(objectByIdIt);
 		objects.erase(remove(objects.begin(), objects.end(), objectByIdIt->second), objects.end());
 	}
 }
 
-LevelEditorObject* LevelEditorLevel::getObjectById(String* id)
+LevelEditorObject* LevelEditorLevel::getObjectById(const wstring& id)
 {
-	auto objectByIdIt = objectsById.find(id->getCPPWString());
+	auto objectByIdIt = objectsById.find(id);
 	if (objectByIdIt != objectsById.end()) {
 		return objectByIdIt->second;
 	}

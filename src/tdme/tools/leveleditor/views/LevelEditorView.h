@@ -225,7 +225,7 @@ public:
 	 * Select objects
 	 * @param object ids
 	 */
-	void selectObjects(vector<String*>& objectIds);
+	void selectObjects(vector<wstring>* objectIds);
 
 	/** 
 	 * Select objects by id

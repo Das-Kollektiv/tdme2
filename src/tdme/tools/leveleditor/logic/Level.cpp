@@ -156,45 +156,51 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 	{
 		auto v = particleSystem->getEmitter();
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-{
+			{
 				return nullptr;
-			}		}
+			}		
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-{
+			{
 				auto emitter = particleSystem->getPointParticleEmitter();
 				engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 				goto end_switch0;;
-			}		}
+			}		
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-{
+			{
 				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 				engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 				goto end_switch0;;
-			}		}
+			}		
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-{
+			{
 				auto emitter = particleSystem->getCircleParticleEmitter();
 				engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 				goto end_switch0;;
-			}		}
+			}		
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-{
+			{
 				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 				engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 				goto end_switch0;;
-			}		}
+			}		
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-{
+			{
 				auto emitter = particleSystem->getSphereParticleEmitter();
 				engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 				goto end_switch0;;
-			}		}
+			}		
+		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Level::createParticleSystem(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
 				->append(u"'"_j)->toString()));
 			return nullptr;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	{
@@ -210,18 +216,18 @@ end_switch0:;
 				if (objectParticleSystem->getModel() == nullptr)
 					return nullptr;
 
-				return new ObjectParticleSystemEntity(id, objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
+				return new ObjectParticleSystemEntity(id->getCPPWString(), objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
-				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
+				return new PointsParticleSystemEntity(id->getCPPWString(), false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
 				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Level::createParticleSystem(): unknown particle system type '"_j)->append(static_cast< Object* >(particleSystem->getType()))
 					->append(u"'"_j)->toString()));
 				return nullptr;
 			}
-end_switch1:;
+			end_switch1:;
 		}
 	}
 
@@ -247,8 +253,9 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 		Entity* entity = nullptr;
 		if (object->getEntity()->getModel() != nullptr) {
-			entity = new Object3D(object->getId(), object->getEntity()->getModel());
-		} else if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+			entity = new Object3D(object->getId()->getCPPWString(), object->getEntity()->getModel());
+		} else
+		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			entity = createParticleSystem(object->getEntity()->getParticleSystem(), object->getId(), false);
 		}
 		if (entity == nullptr)
@@ -313,7 +320,7 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto entity = engine->getEntity(object->getId());
+		auto entity = engine->getEntity(object->getId()->getCPPWString());
 		if (entity == nullptr)
 			continue;
 
@@ -334,7 +341,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto entity = engine->getEntity(object->getId());
+		auto entity = engine->getEntity(object->getId()->getCPPWString());
 		if (entity == nullptr)
 			continue;
 
@@ -391,8 +398,8 @@ void Level::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		compareMutableString = new MutableString();
-		transformations = new Transformations();
+			compareMutableString = new MutableString();
+			transformations = new Transformations();
 		}
 	};
 

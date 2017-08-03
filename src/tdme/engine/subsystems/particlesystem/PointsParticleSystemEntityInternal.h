@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -14,9 +16,11 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 
+using std::wstring;
+using std::vector;
+
 using tdme::engine::Transformations;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -26,22 +30,6 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 using java::lang::Object;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace particlesystem {
-typedef ::SubArray< ::tdme::engine::subsystems::particlesystem::Particle, ::java::lang::ObjectArray > ParticleArray;
-}  // namespace particlesystem
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::subsystems::particlesystem::ParticleArray;
-
-struct default_init_tag;
 
 /** 
  * Points particle system entity internal
@@ -57,7 +45,7 @@ public:
 	typedef Transformations super;
 
 public: /* protected */
-	String* id {  };
+	wstring id {  };
 	Engine* engine {  };
 	GLRenderer* renderer {  };
 	bool autoEmit {  };
@@ -65,7 +53,7 @@ public: /* protected */
 	bool active {  };
 	bool doCollisionTests {  };
 	ParticleEmitter* emitter {  };
-	ParticleArray* particles {  };
+	vector<Particle*> particles {  };
 	int32_t maxPoints {  };
 	TransparentRenderPointsPool* pointsRenderPool {  };
 	Vector3* velocityForTime {  };
@@ -81,20 +69,8 @@ public: /* protected */
 	Color4* effectColorAdd {  };
 	bool pickable {  };
 	float particlesToSpawnRemainder {  };
-protected:
-
-	/** 
-	 * Public constructor 
-	 * @param id
-	 * @param do collision tests
-	 * @param emitter
-	 * @param max points
-	 * @param auto emit
-	 */
-	void ctor(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
-
 public:
-	String* getId() override;
+	const wstring& getId() override;
 	virtual void setRenderer(GLRenderer* renderer);
 	virtual void setEngine(Engine* engine);
 	bool isEnabled() override;
@@ -133,15 +109,13 @@ public:
 	 */
 	virtual TransparentRenderPointsPool* getRenderPointsPool();
 
-	// Generated
-	PointsParticleSystemEntityInternal(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
-protected:
-	PointsParticleSystemEntityInternal(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param do collision tests
+	 * @param emitter
+	 * @param max points
+	 * @param auto emit
+	 */
+	PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 };

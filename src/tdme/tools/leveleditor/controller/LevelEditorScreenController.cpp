@@ -2,6 +2,7 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 
 #include <vector>
+#include <string>
 
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
@@ -48,6 +49,7 @@
 #include <ObjectArray.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using java::io::Serializable;
@@ -363,7 +365,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 	objectsListBox->getController()->setValue(selectedObjects);
 }
 
-void LevelEditorScreenController::unselectObjectInObjectListBox(String* objectId)
+void LevelEditorScreenController::unselectObjectInObjectListBox(const wstring& objectId)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
 	value->set(u'|')->append(objectId)->append(u'|');
@@ -379,7 +381,7 @@ void LevelEditorScreenController::unselectObjectsInObjectListBox()
 	objectsListBox->getController()->setValue(value->reset());
 }
 
-void LevelEditorScreenController::selectObjectInObjectListbox(String* objectId)
+void LevelEditorScreenController::selectObjectInObjectListbox(const wstring& objectId)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
 	value->set(u'|')->append(objectId)->append(u'|');
@@ -392,13 +394,13 @@ void LevelEditorScreenController::selectObjectInObjectListbox(String* objectId)
 
 void LevelEditorScreenController::onObjectsSelect()
 {
-	vector<String*> selectedObjectList;
+	vector<wstring> selectedObjectList;
 	auto t = new StringTokenizer(objectsListBox->getController()->getValue()->toString(), u"|"_j);
 	while (t->hasMoreTokens()) {
-		selectedObjectList.push_back(t->nextToken());
+		selectedObjectList.push_back(t->nextToken()->getCPPWString());
 	}
 	if (selectedObjectList.empty() == false)
-		view->selectObjects(selectedObjectList);
+		view->selectObjects(&selectedObjectList);
 
 }
 

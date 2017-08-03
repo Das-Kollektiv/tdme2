@@ -222,7 +222,7 @@ public:
 	/** 
 	 * Unselect objects in object list box
 	 */
-	void unselectObjectInObjectListBox(String* objectId);
+	void unselectObjectInObjectListBox(const wstring& objectId);
 
 	/** 
 	 * Unselect objects in object list box
@@ -233,7 +233,7 @@ public:
 	 * Select a object in object list box
 	 * @param object id
 	 */
-	void selectObjectInObjectListbox(String* objectId);
+	void selectObjectInObjectListbox(const wstring& objectId);
 
 	/** 
 	 * On objects select button click event

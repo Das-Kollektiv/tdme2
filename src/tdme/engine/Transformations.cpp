@@ -20,21 +20,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Transformations::Transformations(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Transformations::Transformations() 
-	: Transformations(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void Transformations::ctor()
-{
-	super::ctor();
 	transformationsMatrix = (new Matrix4x4())->identity();
 	translation = new Vector3();
 	translationMatrix = new Matrix4x4();
@@ -113,41 +100,3 @@ void Transformations::update()
 	transformationsMatrix->multiply(rotationsMatrix);
 	transformationsMatrix->multiply(translationMatrix);
 }
-
-String* Transformations::toString()
-{
-	return ::java::lang::StringBuilder().append(
-		u"Transformations [translation="_j)->
-			/*
-		append(static_cast< Object* >(translation))
-		append(u", translationMatrix="_j)->
-		append(static_cast< Object* >(translationMatrix))->
-		// TODO: implement me!
-		append(u", scale="_j)
-		append(static_cast< Object* >(scale))
-		append(u", scaleMatrix="_j)
-		append(static_cast< Object* >(scaleMatrix))
-		*/
-		append(u", rotations="_j)->
-		append(static_cast< Object* >(rotations))->
-		/*
-		append(u", transformationsMatrix="_j)->
-		append(static_cast< Object* >(transformationsMatrix))->
-		*/
-		append(u"]"_j)->
-		toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Transformations::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.Transformations", 27);
-    return c;
-}
-
-java::lang::Class* Transformations::getClass0()
-{
-	return class_();
-}
-

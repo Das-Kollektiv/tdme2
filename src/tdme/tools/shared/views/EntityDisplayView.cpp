@@ -97,15 +97,15 @@ void EntityDisplayView::setDisplayBoundingVolume(bool displayBoundingVolume)
 void EntityDisplayView::display(LevelEditorEntity* entity)
 {
 	if (entity != nullptr) {
-		auto model = engine->getEntity(u"model"_j);
+		auto model = engine->getEntity(L"model");
 		if (model == nullptr)
 			return;
 
-		auto ground = engine->getEntity(u"ground"_j);
+		auto ground = engine->getEntity(L"ground");
 		model->setDynamicShadowingEnabled(displayShadowing);
 		ground->setEnabled(displayGroundPlate);
 		for (auto i = 0; i < MODEL_BOUNDINGVOLUME_IDS->length; i++) {
-			auto modelBoundingVolume = engine->getEntity((*MODEL_BOUNDINGVOLUME_IDS)[i]);
+			auto modelBoundingVolume = engine->getEntity((*MODEL_BOUNDINGVOLUME_IDS)[i]->getCPPWString());
 			if (modelBoundingVolume != nullptr) {
 				modelBoundingVolume->setEnabled(displayBoundingVolume);
 			}

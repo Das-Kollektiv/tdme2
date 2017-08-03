@@ -331,12 +331,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		}
 	} else {
 		entityBoundingBox = entity->getModel()->getBoundingBox();
-		auto modelObject = new Object3D(u"model"_j, entity->getModel());
+		auto modelObject = new Object3D(L"model", entity->getModel());
 		modelObject->setDynamicShadowingEnabled(true);
 		engine->addEntity(modelObject);
 	}
 	auto ground = createGroundModel((entityBoundingBox->getMax()->getX() - entityBoundingBox->getMin()->getX()) * 1.0f, (entityBoundingBox->getMax()->getZ() - entityBoundingBox->getMin()->getZ()) * 1.0f, entityBoundingBox->getMin()->getY() - MathTools::EPSILON);
-	auto groundObject = new Object3D(u"ground"_j, ground);
+	auto groundObject = new Object3D(L"ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
@@ -344,7 +344,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		if (boundingVolume->getModel() == nullptr)
 			continue;
 
-		auto modelBoundingVolumeObject = new Object3D(::java::lang::StringBuilder().append(u"model_bv."_j)->append(i)->toString(), boundingVolume->getModel());
+		auto modelBoundingVolumeObject = new Object3D(
+			L"model_bv." + to_wstring(i),
+			boundingVolume->getModel());
 		modelBoundingVolumeObject->setEnabled(false);
 		engine->addEntity(modelBoundingVolumeObject);
 	}

@@ -3,9 +3,9 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -17,6 +17,7 @@
 #include <tdme/engine/Entity.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
@@ -32,8 +33,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-struct default_init_tag;
-
 /** 
  * Object particle system entity to be used with engine class
  * @author Andreas Drewke
@@ -43,23 +42,6 @@ class tdme::engine::ObjectParticleSystemEntity final
 	: public ObjectParticleSystemEntityInternal
 	, public Entity
 {
-
-public:
-	typedef ObjectParticleSystemEntityInternal super;
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param id
-	 * @param model
-	 * @param scale
-	 * @param auto emit
-	 * @param enable dynamic shadows
-	 * @param max count
-	 * @param emitter
-	 */
-	void ctor(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
-
 public:
 	void initialize() override;
 	BoundingBox* getBoundingBox() override;
@@ -74,18 +56,23 @@ public:
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
 
-	// Generated
-	ObjectParticleSystemEntity(String* id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
-protected:
-	ObjectParticleSystemEntity(const ::default_init_tag&);
-
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param model
+	 * @param scale
+	 * @param auto emit
+	 * @param enable dynamic shadows
+	 * @param max count
+	 * @param emitter
+	 */
+	ObjectParticleSystemEntity(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
-	static ::java::lang::Class *class_();
 	virtual void dispose();
 	virtual Color4* getEffectColorAdd();
 	virtual Color4* getEffectColorMul();
-	virtual String* getId();
+	virtual const wstring& getId();
 	virtual Vector3* getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3* getScale();
@@ -98,7 +85,4 @@ public:
 	virtual void setEngine(Engine* engine);
 	virtual void setPickable(bool pickable);
 	virtual void setRenderer(GLRenderer* renderer);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

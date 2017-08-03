@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -38,9 +42,15 @@ protected:
 
 	/**
 	 * Public constructor
+	 * @param string
 	 */
 	void ctor(String* s);
 
+	/**
+	 * Public constructor
+	 * @param string
+	 */
+	void ctor(const wstring& s);
 private:
 
 	/**
@@ -96,6 +106,13 @@ public:
 	MutableString* set(String* s);
 
 	/**
+	 * Set string
+	 * @param s
+	 * @return this mutable string
+	 */
+	MutableString* set(const wstring& s);
+
+	/**
 	 * Append string
 	 * @param s
 	 * @return this mutable string
@@ -103,11 +120,25 @@ public:
 	MutableString* append(String* s);
 
 	/**
+	 * Append string
+	 * @param s
+	 * @return this mutable string
+	 */
+	MutableString* append(const wstring& s);
+
+	/**
 	 * Insert string at idx
 	 * @param c
 	 * @return this mutable string
 	 */
 	MutableString* insert(int32_t idx, String* s);
+
+	/**
+	 * Insert string at idx
+	 * @param c
+	 * @return this mutable string
+	 */
+	MutableString* insert(int32_t idx, const wstring& s);
 
 	/**
 	 * Set mutable string
@@ -220,6 +251,7 @@ public:
 	// Generated
 	MutableString();
 	MutableString(String* s);
+	MutableString(const wstring& s);
 protected:
 	MutableString(const ::default_init_tag&);
 

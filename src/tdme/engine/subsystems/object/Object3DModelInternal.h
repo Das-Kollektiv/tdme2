@@ -21,28 +21,10 @@ struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DModelInternal
 	: public Object3DBase
 {
-
 public:
-	typedef Object3DBase super;
-protected:
-
-	/** 
+	/**
 	 * Public constructor
 	 * @param model
 	 */
-	void ctor(Model* model);
-
-	// Generated
-
-public:
 	Object3DModelInternal(Model* model);
-protected:
-	Object3DModelInternal(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

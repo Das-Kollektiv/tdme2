@@ -2,8 +2,9 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -13,9 +14,10 @@
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
 #include <tdme/engine/Entity.h>
 
+using std::wstring;
+
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
 using tdme::engine::Entity;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -25,9 +27,6 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Point particle system entity to be used with engine class
@@ -43,14 +42,6 @@ public:
 	typedef PointsParticleSystemEntityInternal super;
 protected:
 
-	/** 
-	 * Public constructor
-	 * @param id
-	 * @param do collision tests
-	 * @param emitter
-	 * @param max points
-	 * @param auto emit
-	 */
 	void ctor(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 
 public:
@@ -62,18 +53,20 @@ public:
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
 
-	// Generated
-	PointsParticleSystemEntity(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
-protected:
-	PointsParticleSystemEntity(const ::default_init_tag&);
-
-
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param do collision tests
+	 * @param emitter
+	 * @param max points
+	 * @param auto emit
+	 */
+	PointsParticleSystemEntity(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 public:
-	static ::java::lang::Class *class_();
 	virtual void dispose();
 	virtual Color4* getEffectColorAdd();
 	virtual Color4* getEffectColorMul();
-	virtual String* getId();
+	virtual const wstring& getId();
 	virtual Vector3* getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3* getScale();
@@ -86,7 +79,4 @@ public:
 	virtual void setEngine(Engine* engine);
 	virtual void setPickable(bool pickable);
 	virtual void setRenderer(GLRenderer* renderer);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -140,7 +140,7 @@ PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionO
 void PartitionOctTree::addEntity(Entity* entity)
 {
 	vector<PartitionOctTree_PartitionTreeNode*>* thisEntityPartitions = nullptr;
-	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId()->getCPPWString());
+	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId());
 	if (thisEntityPartitionsIt != entityPartitionNodes.end()) {
 		thisEntityPartitions = &thisEntityPartitionsIt->second;
 	}
@@ -175,7 +175,7 @@ void PartitionOctTree::updateEntity(Entity* entity)
 void PartitionOctTree::removeEntity(Entity* entity)
 {
 	vector<PartitionOctTree_PartitionTreeNode*>* objectPartitionsVector = nullptr;
-	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId()->getCPPWString());
+	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId());
 	if (objectPartitionsVectorIt != entityPartitionNodes.end()) {
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
@@ -287,7 +287,7 @@ void PartitionOctTree::addToPartitionTree(PartitionOctTree_PartitionTreeNode* no
 	}
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionEntities.push_back(entity);
-		entityPartitionNodes[entity->getId()->getCPPWString()].push_back(node);
+		entityPartitionNodes[entity->getId()].push_back(node);
 	} else
 	if (node->subNodes.size() > 0) {
 		for (auto i = 0; i < node->subNodes.size(); i++) {

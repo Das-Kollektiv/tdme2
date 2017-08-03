@@ -8,6 +8,7 @@ namespace utils {
 		class MutableString;
 		class Pool;
 		class StringConverter;
+		class StringUtils;
 		class _ArrayList;
 		class _Console;
 		class _ExceptionBase;

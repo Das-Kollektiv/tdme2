@@ -135,8 +135,10 @@ String* LevelEditorObject::toString()
 	return ::java::lang::StringBuilder().append(u"LevelEditorObject [id="_j)->append(id)
 		->append(u", description="_j)
 		->append(description)
+		/*
 		->append(u", transformations="_j)
 		->append(static_cast< Object* >(transformations))
+		*/
 		->append(u", entity="_j)
 		->append(static_cast< Object* >(entity))
 		->append(u", objectProperties="_j)

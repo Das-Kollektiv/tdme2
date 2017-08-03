@@ -2,17 +2,17 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::Engine;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -28,7 +28,6 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 struct tdme::engine::Entity
-	: public virtual Object
 {
 
 	/** 
@@ -46,7 +45,7 @@ struct tdme::engine::Entity
 	/** 
 	 * @return object id
 	 */
-	virtual String* getId() = 0;
+	virtual const wstring& getId() = 0;
 
 	/** 
 	 * @return true if enabled to be rendered
@@ -148,7 +147,4 @@ struct tdme::engine::Entity
 	 * Update transformations
 	 */
 	virtual void update() = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };

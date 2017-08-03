@@ -1,9 +1,10 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.java
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
 
+#include <string>
+#include <vector>
+
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/System.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/Engine.h>
@@ -26,10 +27,11 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::wstring;
+using std::vector;
+
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
 using java::lang::System;
 using java::util::Iterator;
 using tdme::engine::Engine;
@@ -49,17 +51,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace particlesystem {
-typedef ::SubArray< ::tdme::engine::subsystems::particlesystem::Particle, ::java::lang::ObjectArray > ParticleArray;
-}  // namespace particlesystem
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
-
 template<typename T, typename U>
 static T java_cast(U* u)
 {
@@ -68,29 +59,16 @@ static T java_cast(U* u)
     return t;
 }
 
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
 {
-	clinit();
-}
-
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) 
-	: PointsParticleSystemEntityInternal(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,doCollisionTests,emitter,maxPoints,autoEmit);
-}
-
-void PointsParticleSystemEntityInternal::ctor(String* id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
-{
-	super::ctor();
 	this->id = id;
 	this->enabled = true;
 	this->doCollisionTests = doCollisionTests;
 	this->active = false;
 	this->emitter = emitter;
-	particles = new ParticleArray(maxPoints);
-	for (auto i = 0; i < particles->length; i++) {
-		particles->set(i, new Particle());
+	particles.resize(maxPoints);
+	for (auto i = 0; i < particles.size(); i++) {
+		particles[i] = new Particle();
 	}
 	this->maxPoints = maxPoints;
 	velocityForTime = new Vector3();
@@ -105,7 +83,7 @@ void PointsParticleSystemEntityInternal::ctor(String* id, bool doCollisionTests,
 	this->particlesToSpawnRemainder = 0.0f;
 }
 
-String* PointsParticleSystemEntityInternal::getId()
+const wstring& PointsParticleSystemEntityInternal::getId()
 {
 	return id;
 }
@@ -177,14 +155,14 @@ void PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 
 void PointsParticleSystemEntityInternal::update()
 {
-	super::update();
+	Transformations::update();
 	emitter->fromTransformations(this);
 	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 void PointsParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
-	super::fromTransformations(transformations);
+	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
 	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
@@ -203,8 +181,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
 	auto timeDelta = engine->getTiming()->getDeltaTime();
-	for (auto i = 0; i < particles->length; i++) {
-		auto particle = (*particles)[i];
+	for (auto i = 0; i < particles.size(); i++) {
+		auto particle = particles[i];
 		if (particle->active == false)
 			continue;
 
@@ -228,7 +206,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			for (auto _i = engine->getPartition()->getObjectsNearTo(particle->position)->iterator(); _i->hasNext(); ) {
 				Entity* entity = java_cast< Entity* >(_i->next());
 				{
-					if (static_cast< Object* >(entity) == static_cast< Object* >(this))
+					if (static_cast< void* >(entity) == static_cast< void* >(this))
 						continue;
 
 					if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr)
@@ -298,8 +276,8 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 		return 0;
 
 	auto particlesSpawned = 0;
-	for (auto i = 0; i < particles->length; i++) {
-		auto particle = (*particles)[i];
+	for (auto i = 0; i < particles.size(); i++) {
+		auto particle = particles[i];
 		if (particle->active == true)
 			continue;
 
@@ -321,17 +299,3 @@ TransparentRenderPointsPool* PointsParticleSystemEntityInternal::getRenderPoints
 {
 	return pointsRenderPool;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PointsParticleSystemEntityInternal::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.particlesystem.PointsParticleSystemEntityInternal", 72);
-    return c;
-}
-
-java::lang::Class* PointsParticleSystemEntityInternal::getClass0()
-{
-	return class_();
-}
-

@@ -281,7 +281,7 @@ public:
 	 * @param id
 	 * @return entity or null
 	 */
-	Entity* getEntity(String* id);
+	Entity* getEntity(const wstring& id);
 
 	/** 
 	 * Adds an entity by id
@@ -293,7 +293,7 @@ public:
 	 * Removes an entity
 	 * @param id
 	 */
-	void removeEntity(String* id);
+	void removeEntity(const wstring& id);
 
 	/** 
 	 * Removes all entities and caches
