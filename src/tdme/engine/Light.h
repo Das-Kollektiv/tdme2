@@ -5,18 +5,16 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 
-using java::lang::Object;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-
-
-struct default_init_tag;
 
 /** 
  * Light 
@@ -24,39 +22,21 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::Light final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	int32_t id {  };
 	bool enabled {  };
-	Color4* ambient {  };
-	Color4* diffuse {  };
-	Color4* specular {  };
-	Vector4* position {  };
-	Vector3* spotDirection {  };
+	Color4 ambient {  };
+	Color4 diffuse {  };
+	Color4 specular {  };
+	Vector4 position {  };
+	Vector3 spotDirection {  };
 	float spotExponent {  };
 	float spotCutOff {  };
 	float constantAttenuation {  };
 	float linearAttenuation {  };
 	float quadraticAttenuation {  };
-	Vector4* lightPositionTransformed {  };
-	Vector4* spotDirection4 {  };
-	Vector4* spotDirection4Transformed {  };
-	Vector3* tmpVector3 {  };
 	GLRenderer* renderer {  };
-protected:
-
-	/** 
-	 * Public default constructor
-	 * @param renderer
-	 * @param id
-	 */
-	void ctor(GLRenderer* renderer, int32_t id);
-
 public:
 
 	/** 
@@ -161,16 +141,10 @@ public:
 	 */
 	void update();
 
-	// Generated
+	/**
+	 * Public default constructor
+	 * @param renderer
+	 * @param id
+	 */
 	Light(GLRenderer* renderer, int32_t id);
-protected:
-	Light(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

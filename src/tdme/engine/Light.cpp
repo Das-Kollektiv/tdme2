@@ -14,43 +14,21 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-Light::Light(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Light::Light(GLRenderer* renderer, int32_t id) 
-	: Light(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer,id);
-}
-
-void Light::init()
-{
+	this->renderer = renderer;
+	this->id = id;
 	enabled = false;
-	ambient = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	diffuse = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	specular = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	position = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	spotDirection = new Vector3(0.0f, 0.0f, -1.0f);
+	ambient.set(0.0f, 0.0f, 0.0f, 1.0f);
+	diffuse.set(1.0f, 1.0f, 1.0f, 1.0f);
+	specular.set(1.0f, 1.0f, 1.0f, 1.0f);
+	position.set(0.0f, 0.0f, 0.0f, 0.0f);
+	spotDirection.set(0.0f, 0.0f, -1.0f);
 	spotExponent = 0.0f;
 	spotCutOff = 180.0f;
 	constantAttenuation = 1.0f;
 	linearAttenuation = 0.0f;
 	quadraticAttenuation = 0.0f;
-}
-
-void Light::ctor(GLRenderer* renderer, int32_t id)
-{
-	super::ctor();
-	init();
-	this->renderer = renderer;
-	this->id = id;
-	this->lightPositionTransformed = new Vector4();
-	this->spotDirection4 = new Vector4();
-	this->spotDirection4Transformed = new Vector4();
-	this->tmpVector3 = new Vector3();
 }
 
 int32_t Light::getId()
@@ -70,27 +48,27 @@ void Light::setEnabled(bool enabled)
 
 Color4* Light::getAmbient()
 {
-	return ambient;
+	return &ambient;
 }
 
 Color4* Light::getDiffuse()
 {
-	return diffuse;
+	return &diffuse;
 }
 
 Color4* Light::getSpecular()
 {
-	return specular;
+	return &specular;
 }
 
 Vector4* Light::getPosition()
 {
-	return position;
+	return &position;
 }
 
 Vector3* Light::getSpotDirection()
 {
-	return spotDirection;
+	return &spotDirection;
 }
 
 float Light::getSpotExponent()
@@ -146,11 +124,15 @@ void Light::setQuadraticAttenuation(float quadraticAttenuation)
 void Light::update()
 {
 	if (enabled) {
+		Vector4 lightPositionTransformed;
+		Vector3 tmpVector3;
+		Vector4 spotDirection4;
+		Vector4 spotDirection4Transformed;
 		renderer->setLightEnabled(id);
-		renderer->setLightAmbient(id, ambient->getArray());
-		renderer->setLightDiffuse(id, diffuse->getArray());
-		renderer->setLightPosition(id, renderer->getCameraMatrix()->multiply(position, lightPositionTransformed)->scale(1.0f / lightPositionTransformed->getW())->getArray());
-		renderer->setLightSpotDirection(id, tmpVector3->set(renderer->getCameraMatrix()->multiply(spotDirection4->set(spotDirection, 0.0f), spotDirection4Transformed))->getArray());
+		renderer->setLightAmbient(id, ambient.getArray());
+		renderer->setLightDiffuse(id, diffuse.getArray());
+		renderer->setLightPosition(id, renderer->getCameraMatrix()->multiply(&position, &lightPositionTransformed)->scale(1.0f / lightPositionTransformed.getW())->getArray());
+		renderer->setLightSpotDirection(id, tmpVector3.set(renderer->getCameraMatrix()->multiply(spotDirection4.set(&spotDirection, 0.0f), &spotDirection4Transformed))->getArray());
 		renderer->setLightSpotExponent(id, spotExponent);
 		renderer->setLightSpotCutOff(id, spotCutOff);
 		renderer->setLightConstantAttenuation(id, constantAttenuation);
@@ -162,17 +144,3 @@ void Light::update()
 		renderer->onUpdateLight(id);
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Light::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.Light", 17);
-    return c;
-}
-
-java::lang::Class* Light::getClass0()
-{
-	return class_();
-}
-
