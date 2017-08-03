@@ -4,12 +4,8 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::Entity;
-
-
 
 /** 
  * Entity picking filter
@@ -17,7 +13,6 @@ using tdme::engine::Entity;
  * @version $Id$
  */
 struct tdme::engine::EntityPickingFilter
-	: public virtual Object
 {
 
 	/** 
@@ -26,7 +21,4 @@ struct tdme::engine::EntityPickingFilter
 	 * @return if allowed or not
 	 */
 	virtual bool filterEntity(Entity* entity) = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };
