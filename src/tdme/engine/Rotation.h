@@ -3,18 +3,13 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Quaternion.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Rotation
@@ -22,32 +17,17 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::Rotation final
-	: public Object
 {
 
 public:
-	typedef Object super;
-	static Vector3* X_AXIS;
-	static Vector3* Y_AXIS;
-	static Vector3* Z_AXIS;
+	static Vector3 X_AXIS;
+	static Vector3 Y_AXIS;
+	static Vector3 Z_AXIS;
 
 private:
 	float angle {  };
-	Vector3* axis {  };
-	Quaternion* quaternion {  };
-protected:
-
-	/** 
-	 * Public default constructor
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param angle
-	 * @param axis
-	 */
-	void ctor(float angle, Vector3* axis);
+	Vector3 axis {  };
+	Quaternion quaternion {  };
 
 public:
 
@@ -87,19 +67,16 @@ public:
 	 * Computes rotation matrix
 	 */
 	void update();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	Rotation();
+
+	/**
+	 * Public constructor
+	 * @param angle
+	 * @param axis
+	 */
 	Rotation(float angle, Vector3* axis);
-protected:
-	Rotation(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
