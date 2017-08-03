@@ -4,10 +4,7 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Integer.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
@@ -23,18 +20,11 @@
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::map;
 using std::wstring;
 
 using tdme::engine::subsystems::object::ModelUtilitiesInternal;
-using java::lang::Integer;
-using java::lang::Object;
-using java::lang::String;
-using java::util::Iterator;
 using tdme::engine::Timing;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
@@ -59,27 +49,13 @@ static T java_cast(U* u)
     return t;
 }
 
-ModelUtilitiesInternal::ModelUtilitiesInternal(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-ModelUtilitiesInternal::ModelUtilitiesInternal()
-	: ModelUtilitiesInternal(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
 {
-	clinit();
 	return ModelUtilitiesInternal::createBoundingBox(new Object3DModelInternal(model));
 }
 
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* object3DModelInternal)
 {
-	clinit();
 	auto model = object3DModelInternal->getModel();
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	float minX = 0.0f, minY = 0.0f, minZ = 0.0f;
@@ -138,13 +114,11 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 
 void ModelUtilitiesInternal::invertNormals(Model* model)
 {
-	clinit();
 	invertNormals(model->getSubGroups());
 }
 
 void ModelUtilitiesInternal::invertNormals(map<wstring, Group*>* groups)
 {
-	clinit();
 	for (auto it: *groups) {
 		Group* group = it.second;
 		for (auto& normal : *group->getNormals()) {
@@ -156,13 +130,11 @@ void ModelUtilitiesInternal::invertNormals(map<wstring, Group*>* groups)
 
 ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStatistics(Model* model)
 {
-	clinit();
 	return ModelUtilitiesInternal::computeModelStatistics(new Object3DModelInternal(model));
 }
 
 ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal)
 {
-	clinit();
 	map<wstring, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
@@ -194,13 +166,11 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 
 bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 {
-	clinit();
 	return ModelUtilitiesInternal::equals(new Object3DModelInternal(model1), new Object3DModelInternal(model2));
 }
 
 bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)
 {
-	clinit();
 	if (object3DModel1Internal->object3dGroups.size() != object3DModel2Internal->object3dGroups.size())
 		return false;
 
@@ -246,22 +216,3 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 	}
 	return true;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelUtilitiesInternal::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.ModelUtilitiesInternal", 52);
-    return c;
-}
-
-bool ModelUtilitiesInternal::equals(Object* obj)
-{
-	return super::equals(obj);
-}
-
-java::lang::Class* ModelUtilitiesInternal::getClass0()
-{
-	return class_();
-}
-

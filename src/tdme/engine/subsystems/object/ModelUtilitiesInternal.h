@@ -6,24 +6,19 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
 using tdme::engine::subsystems::object::Object3DModelInternal;
-
-struct default_init_tag;
 
 /** 
  * Model utilities
@@ -31,12 +26,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::ModelUtilitiesInternal
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
-
 	/** 
 	 * Creates a bounding box from given model
 	 * @param model
@@ -97,17 +88,6 @@ public:
 	 */
 	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);
 
-	// Generated
-	ModelUtilitiesInternal();
-protected:
-	ModelUtilitiesInternal(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* obj);
-
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class ModelUtilitiesInternal_ModelStatistics;
 };
