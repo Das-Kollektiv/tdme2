@@ -5,25 +5,19 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using java::nio::ByteBuffer;
 
 /** 
- * Taken from Nifty-GUI 1.3.2 http://nifty-gui.lessvoid.com
- * This has been slightly modified by me
+ * Texture
  * @version $Id$
- * @author Nifty GUI authors, Andreas Drewke
+ * @author Andreas Drewke
  */
 struct tdme::engine::fileio::textures::Texture
-	: public virtual Object
 {
 
 	/**
@@ -80,14 +74,6 @@ struct tdme::engine::fileio::textures::Texture
 	 * @return texture data wrapped in a byte buffer
 	 */
 	ByteBuffer* getTextureData();
-
-	/**
-	 * @return string representation
-	 */
-	String* toString() override;
-
-	// Generated
-	static ::java::lang::Class *class_();
 
 private:
 	wstring id;

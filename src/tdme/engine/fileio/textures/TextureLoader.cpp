@@ -29,21 +29,8 @@ using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 
-TextureLoader::TextureLoader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-TextureLoader::TextureLoader()
-	: TextureLoader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
 Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException)
 {
-	clinit();
 	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
 	if ((new String(fileName))->toLowerCase()->endsWith(new String(L".png")) == true) {
 		Texture* texture = TextureLoader::loadPNG(path, fileName);
@@ -62,7 +49,6 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 
 Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
-	clinit();
 
 	// canonical file name for id
 	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(new String(path), new String(fileName));
@@ -200,17 +186,3 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 		new ByteBuffer(width * height * bytesPerPixel, (int8_t*)pixels)
 	);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TextureLoader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.fileio.textures.TextureLoader", 41);
-    return c;
-}
-
-java::lang::Class* TextureLoader::getClass0()
-{
-	return class_();
-}
-

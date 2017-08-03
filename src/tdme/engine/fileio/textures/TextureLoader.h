@@ -4,10 +4,8 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <Array.h>
 
 #include <tdme/os/_FileSystemException.h>
@@ -16,13 +14,9 @@
 
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::_FileSystemException;
 using tdme::utils::_Console;
-
-struct default_init_tag;
 
 namespace tdme {
 namespace engine {
@@ -80,12 +74,8 @@ private:
  * @version $Id$
  */
 class tdme::engine::fileio::textures::TextureLoader final
-	: public Object
 {
-
 public:
-	typedef Object super;
-
 	/** 
 	 * Loads a texture
 	 * @param path
@@ -95,17 +85,7 @@ public:
 	 */
 	static Texture* loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException);
 
-	// Generated
-	TextureLoader();
-protected:
-	TextureLoader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-
 	/**
 	 * Read PNG data from memory
 	 * @param png structure
@@ -120,7 +100,4 @@ private:
 	 * @param file name
 	 */
 	static Texture* loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException);
-
-	//
-	virtual ::java::lang::Class* getClass0();
 };

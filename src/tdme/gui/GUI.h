@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/util/concurrent/locks/fwd-tdme.h>
@@ -13,6 +16,9 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::map;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -50,7 +56,7 @@ private:
 	Engine* engine {  };
 	_HashMap* screens {  };
 	static _HashMap* fontCache;
-	static _HashMap* imageCache;
+	static map<wstring, Texture*> imageCache;
 	GUIColor* foccussedBorderColor {  };
 	_ArrayList* focusableNodes {  };
 	_ArrayList* focusableScreenNodes {  };

@@ -5,6 +5,7 @@
 	#include <Carbon/Carbon.h>
 #endif
 
+#include <map>
 #include <string>
 
 #include <java/lang/Object.h>
@@ -43,6 +44,7 @@
 #include <tdme/utils/_HashMap.h>
 #include <Array.h>
 
+using std::map;
 using std::wstring;
 using std::string;
 using std::to_string;
@@ -92,6 +94,9 @@ static T java_cast(U* u)
     return t;
 }
 
+_HashMap* GUI::fontCache = new _HashMap();
+map<wstring, Texture*> GUI::imageCache;
+
 GUI::GUI(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -121,10 +126,6 @@ void GUI::init()
 	renderScreens = new _ArrayList();
 	mouseButtonLast = 0;
 }
-
-_HashMap* GUI::fontCache;
-
-_HashMap* GUI::imageCache;
 
 void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
 {
@@ -237,7 +238,8 @@ Texture* GUI::getImage(String* fileName)
 		return nullptr;
 	}
 
-	auto image = java_cast< Texture* >(imageCache->get(canonicalFile));
+	auto imageIt = imageCache.find(canonicalFile->getCPPWString());
+	auto image = imageIt != imageCache.end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
 			image = TextureLoader::loadTexture(path->getCPPWString(), file->getCPPWString());
@@ -246,7 +248,7 @@ Texture* GUI::getImage(String* fileName)
 			_Console::println(string(exception.what()));
 			return nullptr;
 		}
-		imageCache->put(canonicalFile, image);
+		imageCache[canonicalFile->getCPPWString()] = image;
 	}
 	return image;
 }
@@ -281,7 +283,7 @@ void GUI::reset()
 		removeScreen(java_cast< String* >(entitiesToRemove->get(i)));
 	}
 	fontCache->clear();
-	imageCache->clear();
+	imageCache.clear();
 }
 
 void GUI::resetRenderScreens()
@@ -766,8 +768,6 @@ void GUI::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		fontCache = new _HashMap();
-		imageCache = new _HashMap();
 		}
 	};
 
