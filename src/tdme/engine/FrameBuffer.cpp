@@ -12,25 +12,8 @@ using java::lang::StringBuilder;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
-FrameBuffer::FrameBuffer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers) 
-	: FrameBuffer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(width,height,buffers);
-}
-
-constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
-
-constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
-
-void FrameBuffer::ctor(int32_t width, int32_t height, int32_t buffers)
-{
-	super::ctor();
 	this->width = width;
 	this->height = height;
 	this->buffers = buffers;
@@ -38,6 +21,10 @@ void FrameBuffer::ctor(int32_t width, int32_t height, int32_t buffers)
 	depthBufferTextureId = Engine::renderer->ID_NONE;
 	colorBufferTextureId = Engine::renderer->ID_NONE;
 }
+
+constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
+
+constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
 
 int32_t FrameBuffer::getWidth()
 {
@@ -92,7 +79,6 @@ void FrameBuffer::enableFrameBuffer()
 
 void FrameBuffer::disableFrameBuffer()
 {
-	clinit();
 	Engine::renderer->bindFrameBuffer(Engine::renderer->FRAMEBUFFER_DEFAULT);
 	Engine::renderer->setViewPort(0, 0, Engine::instance->getWidth(), Engine::instance->getHeight());
 	Engine::renderer->updateViewPort();
@@ -107,33 +93,3 @@ int32_t FrameBuffer::getColorBufferTextureId()
 {
 	return colorBufferTextureId;
 }
-
-String* FrameBuffer::toString()
-{
-	return ::java::lang::StringBuilder().append(u"FrameBuffer [width="_j)->append(width)
-		->append(u", height="_j)
-		->append(height)
-		->append(u", frameBufferId="_j)
-		->append(frameBufferId)
-		->append(u", depthBufferTextureId="_j)
-		->append(depthBufferTextureId)
-		->append(u", colorBufferTextureId="_j)
-		->append(colorBufferTextureId)
-		->append(u", buffers="_j)
-		->append(buffers)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* FrameBuffer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.FrameBuffer", 23);
-    return c;
-}
-
-java::lang::Class* FrameBuffer::getClass0()
-{
-	return class_();
-}
-

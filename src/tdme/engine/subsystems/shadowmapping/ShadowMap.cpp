@@ -167,8 +167,12 @@ void ShadowMap::updateDepthBiasMVPMatrix()
 
 String* ShadowMap::toString()
 {
-	return ::java::lang::StringBuilder().append(u"ShadowMap [frameBuffer="_j)->append(static_cast< Object* >(frameBuffer))
-		->append(u"]"_j)->toString();
+	return ::java::lang::StringBuilder().
+		append(u"ShadowMap [frameBuffer="_j)->
+		/*
+		append(static_cast< Object* >(frameBuffer))->
+		*/
+		append(u"]"_j)->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

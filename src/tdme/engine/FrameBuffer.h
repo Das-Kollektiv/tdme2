@@ -3,15 +3,7 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Frame buffer class
@@ -19,11 +11,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::FrameBuffer final
-	: public Object
 {
 
 public:
-	typedef Object super;
 	static constexpr int32_t FRAMEBUFFER_DEPTHBUFFER { 1 };
 	static constexpr int32_t FRAMEBUFFER_COLORBUFFER { 2 };
 
@@ -34,17 +24,6 @@ private:
 	int32_t depthBufferTextureId {  };
 	int32_t colorBufferTextureId {  };
 	int32_t buffers {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param engine
-	 * @param width
-	 * @param height
-	 * @param buffers (see FrameBuffer::FRAMEBUFFER_*)
-	 */
-	void ctor(int32_t width, int32_t height, int32_t buffers);
-
 public:
 
 	/** 
@@ -98,17 +77,13 @@ public:
 	 * @return color buffer texture id
 	 */
 	int32_t getColorBufferTextureId();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param engine
+	 * @param width
+	 * @param height
+	 * @param buffers (see FrameBuffer::FRAMEBUFFER_*)
+	 */
 	FrameBuffer(int32_t width, int32_t height, int32_t buffers);
-protected:
-	FrameBuffer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
