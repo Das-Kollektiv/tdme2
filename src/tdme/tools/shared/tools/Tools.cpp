@@ -350,7 +350,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		modelBoundingVolumeObject->setEnabled(false);
 		engine->addEntity(modelBoundingVolumeObject);
 	}
-	for (auto light : *engine->getLights()) light->setEnabled(false);
+	for (auto lightIdx = 0; 0 < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);

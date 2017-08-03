@@ -128,7 +128,6 @@ Engine::Engine()
 	height = 0;
 	timing = new Timing();
 	camera = nullptr;
-	lights.resize(8);
 	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
 	shadowMappingEnabled = false;
@@ -189,7 +188,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	offScreenEngine->camera = new Camera(renderer);
 	offScreenEngine->partition = new PartitionOctTree();
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++)
-		offScreenEngine->lights[i] = new Light(renderer, i);
+		offScreenEngine->lights[i] = Light(renderer, i);
 
 	if (instance->shadowMappingEnabled == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
@@ -243,19 +242,18 @@ void Engine::setPartition(Partition* partition)
 	this->partition = partition;
 }
 
-vector<Light*>* Engine::getLights()
-{
-	return &lights;
-}
-
 FrameBuffer* Engine::getFrameBuffer()
 {
 	return frameBuffer;
 }
 
+int32_t Engine::getLightCount() {
+	return lights.size();
+}
+
 Light* Engine::getLightAt(int32_t idx)
 {
-	return lights[idx];
+	return &lights[idx];
 }
 
 TextureManager* Engine::getTextureManager()
@@ -445,10 +443,8 @@ void Engine::initialize(bool debug)
 	gui = new GUI(this, guiRenderer);
 	gui->initialize();
 	camera = new Camera(renderer);
+	for (auto i = 0; i < lights.size(); i++) lights[i] = Light(renderer, i);
 	partition = new PartitionOctTree();
-	for (auto i = 0; i < lights.size(); i++)
-		lights[i] = new Light(renderer, i);
-
 	lightingShader = new LightingShader(renderer);
 	lightingShader->initialize();
 	particlesShader = new ParticlesShader(this, renderer);
@@ -574,7 +570,7 @@ void Engine::display()
 		lightingShader->useProgram();
 	}
 	for (auto j = 0; j < lights.size(); j++) {
-		lights[j]->update();
+		lights[j].update();
 	}
 	object3DVBORenderer->render(visibleObjects, true);
 	if (lightingShader != nullptr) {

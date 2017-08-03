@@ -87,7 +87,7 @@ void ShadowMapping::ctor(Engine* engine, GLRenderer* renderer, Object3DVBORender
 	this->renderer = renderer;
 	this->object3DVBORenderer = object3DVBORenderer;
 	this->lightEyeDistanceScale = 4.0f;
-	shadowMaps = new ShadowMapArray(engine->getLights()->size());
+	shadowMaps = new ShadowMapArray(engine->getLightCount());
 	for (auto i = 0; i < shadowMaps->length; i++) {
 		shadowMaps->set(i, nullptr);
 	}
@@ -131,7 +131,7 @@ void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
 	renderer->setColorMask(false, false, false, false);
 	renderer->setCullFace(renderer->CULLFACE_FRONT);
 	Engine::getShadowMappingShaderPre()->useProgram();
-	for (auto i = 0; i < engine->getLights()->size(); i++) {
+	for (auto i = 0; i < engine->getLightCount(); i++) {
 		auto light = engine->getLightAt(i);
 		if (light->isEnabled()) {
 			if ((*shadowMaps)[i] == nullptr) {
@@ -234,25 +234,28 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 	{
 		auto v = runState;
 		if ((v == ShadowMapping_RunState::PRE)) {
-{
+			{
 				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(mvpMatrix);
 				goto end_switch0;;
-			}		}
+			}
+		}
 		if ((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER)) {
-{
+			{
 				auto shader = Engine::getShadowMappingShaderRender();
 				shader->setProgramMVMatrix(mvMatrix);
 				shader->setProgramMVPMatrix(mvpMatrix);
 				shader->setProgramNormalMatrix(normalMatrix);
 				goto end_switch0;;
-			}		}
+			}
+		}
 		if (((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER) || ((v != ShadowMapping_RunState::PRE) && (v != ShadowMapping_RunState::RENDER)))) {
-{
+			{
 				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ShadowMapping::updateMVPMatrices(): unsupported run state '"_j)->append(static_cast< Object* >(runState))
 					->append(u"'"_j)->toString()));
 				goto end_switch0;;
-			}		}
-end_switch0:;
+			}
+		}
+		end_switch0:;
 	}
 
 }

@@ -141,6 +141,12 @@ public:
 	 */
 	void update();
 
+
+	/**
+	 * Public default constructor
+	 */
+	Light();
+
 	/**
 	 * Public default constructor
 	 * @param renderer

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -9,6 +10,7 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
@@ -24,6 +26,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::array;
 using std::map;
 using std::vector;
 using std::wstring;
@@ -97,7 +100,7 @@ public: /* protected */
 	Partition* partition {  };
 
 private:
-	vector<Light*> lights {  };
+	array<Light, 8> lights {  };
 	Color4* sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
@@ -205,14 +208,14 @@ public:
 	void setPartition(Partition* partition);
 
 	/** 
-	 * @return lights
-	 */
-	vector<Light*>* getLights();
-
-	/** 
 	 * @return frame buffer or null
 	 */
 	FrameBuffer* getFrameBuffer();
+
+	/**
+	 * @return count of lights
+	 */
+	int32_t getLightCount();
 
 	/** 
 	 * Returns light at idx (0 <= idx < 8)
