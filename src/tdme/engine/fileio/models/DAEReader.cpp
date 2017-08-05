@@ -697,7 +697,19 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
 									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
 								);
+								_Console::print(wstring(L"A:"));
+								for (auto value: *keyFrameMatrices[keyFrameIdx].getArray()) {
+									_Console::print(value);
+									_Console::print(wstring(L" "));
+								}
+								_Console::println();
 								keyFrameMatrices[keyFrameIdx].transpose();
+								_Console::print(wstring(L"B:"));
+								for (auto value: *keyFrameMatrices[keyFrameIdx].getArray()) {
+									_Console::print(value);
+									_Console::print(wstring(L" "));
+								}
+								_Console::println();
 								keyFrameIdx++;
 							}
 
