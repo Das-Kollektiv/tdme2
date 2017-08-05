@@ -3,6 +3,8 @@
 
 #include <java/lang/String.h>
 
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Group.h>
@@ -15,6 +17,8 @@ using std::endl;
 using std::find;
 
 using java::lang::String;
+using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
@@ -30,6 +34,14 @@ void printMatrix(Matrix4x4* matrix) {
 	cout << endl;
 }
 
+void printVector(Vector3* vector) {
+	for (auto value: *vector->getArray()) {
+		cout << value;
+		cout << " ";
+	}
+	cout << endl;
+}
+
 int main(int argc, char** argv)
 {
     cout << "DAETest" << endl;
@@ -37,7 +49,13 @@ int main(int argc, char** argv)
     for (auto it: *model->getSubGroups()) {
     		Group* group = it.second;
     		wcout << it.first << endl;
+    		wcout << "--" << endl;
+    		for (auto& vector: *group->getVertices()) {
+    			printVector(&vector);
+    		}
+    		wcout << "--" << endl;
     		printMatrix(group->getTransformationsMatrix());
+    		wcout << "--" << endl;
     		Animation* animation = group->getAnimation();
     		for (auto& matrix: *animation->getTransformationsMatrices()) {
     			printMatrix(&matrix);
