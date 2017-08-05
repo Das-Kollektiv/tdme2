@@ -24,6 +24,11 @@ Matrix4x4::Matrix4x4()
 	data.fill(0.0f);
 }
 
+Matrix4x4::Matrix4x4(array<float, 16>* m)
+{
+	data = *m;
+}
+
 Matrix4x4::Matrix4x4(floatArray* m) 
 {
 	for (int i = 0; i < m->length; i++) {
@@ -59,6 +64,12 @@ Matrix4x4* Matrix4x4::set(float r0c0, float r1c0, float r2c0, float r3c0, float 
 	data[13] = r1c3;
 	data[14] = r2c3;
 	data[15] = r3c3;
+	return this;
+}
+
+Matrix4x4* Matrix4x4::set(array<float, 16>* m)
+{
+	data = *m;
 	return this;
 }
 

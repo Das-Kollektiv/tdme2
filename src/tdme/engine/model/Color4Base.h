@@ -21,6 +21,11 @@ public: /* protected */
 	array<float, 4> data {  };
 
 public:
+	/**
+	 * Set up color
+	 * @param color float array
+	 */
+	virtual void set(array<float, 4>* color);
 
 	/** 
 	 * Set up color
@@ -113,6 +118,12 @@ public:
 	 * @param color
 	 */
 	Color4Base(Color4Base* color);
+
+	/**
+	 * Public constructor
+	 * @param color
+	 */
+	Color4Base(array<float, 4>* color);
 
 	/**
 	 * Public constructor

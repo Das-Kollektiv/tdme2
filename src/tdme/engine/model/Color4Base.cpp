@@ -38,6 +38,11 @@ Color4Base::Color4Base(Color4Base* color)
 	data = color->data;
 }
 
+Color4Base::Color4Base(array<float, 4>* color)
+{
+	this->data = *color;
+}
+
 Color4Base::Color4Base(floatArray* color) 
 {
 	this->data[0] = (*color)[0];
@@ -52,6 +57,11 @@ Color4Base::Color4Base(float r, float g, float b, float a)
 	data[1] = g;
 	data[2] = b;
 	data[3] = a;
+}
+
+void Color4Base::set(array<float, 4>* color)
+{
+	this->data = *color;
 }
 
 void Color4Base::set(floatArray* color)

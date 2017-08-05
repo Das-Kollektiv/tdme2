@@ -49,6 +49,13 @@ public:
 	 * @param m
 	 * @return this matrix
 	 */
+	Matrix4x4* set(array<float, 16>* m);
+
+	/**
+	 * Sets up this matrix by matrix m
+	 * @param m
+	 * @return this matrix
+	 */
 	Matrix4x4* set(floatArray* m);
 
 	/** 
@@ -247,6 +254,12 @@ public:
 	 * Public constructor
 	 */
 	Matrix4x4();
+
+	/**
+	 * Public constructor
+	 * @param matrix as float values
+	 */
+	Matrix4x4(array<float, 16>* m);
 
 	/**
 	 * Public constructor

@@ -2,6 +2,7 @@
 #include <tdme/engine/fileio/models/DAEReader.h>
 
 #include <map>
+#include <map>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -64,6 +65,7 @@
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
+using std::array;
 using std::vector;
 using std::map;
 using std::unordered_set;
@@ -391,18 +393,11 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				if (xmlMatrixElements.empty() == false) {
 					auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText())));
 					auto t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
-					nodeTransformationsMatrix = (
-						new Matrix4x4(
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-							Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-						)
-					)->transpose();
+					array<float, 16> nodeTransformationsMatrixArray;
+					for (auto i = 0; i < nodeTransformationsMatrixArray.size(); i++) {
+						nodeTransformationsMatrixArray[i] = Float::parseFloat(t->nextToken());
+					}
+					nodeTransformationsMatrix = (new Matrix4x4(&nodeTransformationsMatrixArray))->transpose();
 				}
 				if (nodeTransformationsMatrix == nullptr) {
 					throw ModelFileIOException(
@@ -611,16 +606,11 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	if (xmlMatrixElements.empty() == false) {
 		auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText())));
 		t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
-		transformationsMatrix = (new Matrix4x4(
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-		))->transpose();
+		array<float, 16> transformationsMatrixArray;
+		for (auto i = 0; i < transformationsMatrixArray.size(); i++) {
+			transformationsMatrixArray[i] = Float::parseFloat(t->nextToken());
+		}
+		transformationsMatrix = (new Matrix4x4(&transformationsMatrixArray))->transpose();
 	}
 
 	auto group = new Group(model, parentGroup, xmlNodeId->getCPPWString(), xmlNodeName->getCPPWString());
@@ -687,29 +677,12 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 							vector<Matrix4x4> keyFrameMatrices;
 							keyFrameMatrices.resize(keyFrames);
 							while (t->hasMoreTokens()) {
-								keyFrameMatrices[keyFrameIdx].set(
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-									Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-								);
-								_Console::print(wstring(L"A:"));
-								for (auto value: *keyFrameMatrices[keyFrameIdx].getArray()) {
-									_Console::print(value);
-									_Console::print(wstring(L" "));
+								array<float, 16> keyFrameMatricesArray;
+								for (auto i = 0; i < keyFrameMatricesArray.size() ;i++) {
+									keyFrameMatricesArray[i] = Float::parseFloat(t->nextToken());
 								}
-								_Console::println();
+								keyFrameMatrices[keyFrameIdx].set(&keyFrameMatricesArray);
 								keyFrameMatrices[keyFrameIdx].transpose();
-								_Console::print(wstring(L"B:"));
-								for (auto value: *keyFrameMatrices[keyFrameIdx].getArray()) {
-									_Console::print(value);
-									_Console::print(wstring(L" "));
-								}
-								_Console::println();
 								keyFrameIdx++;
 							}
 
@@ -844,17 +817,11 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	xmlGeometryId = (tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlSkin->Attribute("source")))))->substring(1);
 	auto xmlMatrix = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkin, "bind_shape_matrix").at(0)->GetText())));
 	t = new StringTokenizer(xmlMatrix, u" \n\r"_j);
-	auto bindShapeMatrix =
-		(new Matrix4x4(
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-			Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-		))->transpose();
+	array<float, 16> bindShapeMatrixArray;
+	for (auto i = 0; i < bindShapeMatrixArray.size(); i++) {
+		bindShapeMatrixArray[i] = Float::parseFloat(t->nextToken());
+	}
+	auto bindShapeMatrix = (new Matrix4x4(&bindShapeMatrixArray))->transpose();
 
 	auto group = new Group(model, parentGroup, xmlNodeId->getCPPWString(), xmlNodeName->getCPPWString());
 	auto skinning = group->createSkinning();
@@ -903,18 +870,12 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 			t = new StringTokenizer((tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())))), u" \n\r"_j);
 			auto _joints = skinning->getJoints();
 			for (auto i = 0; i < _joints->size(); i++) {
+				array<float, 16> bindMatrixArray;
+				for (auto i = 0; i < bindMatrixArray.size(); i++) {
+					bindMatrixArray[i] = Float::parseFloat(t->nextToken());
+				}
 				(*_joints)[i].getBindMatrix()->multiply(bindShapeMatrix);
-				(*_joints)[i].getBindMatrix()->multiply(
-					(new Matrix4x4(
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()),
-						Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken())
-					))->transpose());
+				(*_joints)[i].getBindMatrix()->multiply((Matrix4x4(&bindMatrixArray)).transpose());
 			}
 		}
 	}
@@ -1282,12 +1243,11 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					for (auto xmlDiffuse: getChildrenByTagName(xmlTechniqueNode, "diffuse")) {
 						for (auto xmlColor: getChildrenByTagName(xmlDiffuse, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
-							material->getDiffuseColor()->set(
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken())
-							);
+							array<float, 4> colorArray;
+							for (auto i = 0; i < colorArray.size(); i++) {
+								colorArray[i] = Float::parseFloat(t->nextToken());
+							}
+							material->getDiffuseColor()->set(&colorArray);
 						}
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
 							xmlDiffuseTextureId = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture"))));
@@ -1313,23 +1273,21 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 					for (auto xmlAmbient: getChildrenByTagName(xmlTechniqueNode, "ambient")) {
 						for (auto xmlColor: getChildrenByTagName(xmlAmbient, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
-							material->getAmbientColor()->set(
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken())
-							);
+							array<float, 4> colorArray;
+							for (auto i = 0; i < colorArray.size(); i++) {
+								colorArray[i] = Float::parseFloat(t->nextToken());
+							}
+							material->getAmbientColor()->set(&colorArray);
 						}
 					}
 					for (auto xmlEmission: getChildrenByTagName(xmlTechniqueNode, "emission")) {
 						for (auto xmlColor: getChildrenByTagName(xmlEmission, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
-							material->getEmissionColor()->set(
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken())
-							);
+							array<float, 4> colorArray;
+							for (auto i = 0; i < colorArray.size(); i++) {
+								colorArray[i] = Float::parseFloat(t->nextToken());
+							}
+							material->getEmissionColor()->set(&colorArray);
 						}
 					}
 					auto hasSpecularMap = false;
@@ -1358,12 +1316,11 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 						}
 						for (auto xmlColor: getChildrenByTagName(xmlSpecular, "color")) {
 							auto t = new StringTokenizer(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlColor->GetText()))), u" "_j);
-							material->getSpecularColor()->set(
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken()),
-								Float::parseFloat(t->nextToken())
-							);
+							array<float, 4> colorArray;
+							for (auto i = 0; i < colorArray.size(); i++) {
+								colorArray[i] = Float::parseFloat(t->nextToken());
+							}
+							material->getSpecularColor()->set(&colorArray);
 							hasSpecularColor = true;
 						}
 					}
