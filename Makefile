@@ -367,6 +367,7 @@ SRCS = \
 	src/tdme/utils/Pool.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
+	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/_ArrayList.cpp \
 	src/tdme/utils/_ExceptionBase.cpp \
 	src/tdme/utils/_Console.cpp \
