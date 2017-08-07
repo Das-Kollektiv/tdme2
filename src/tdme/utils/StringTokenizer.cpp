@@ -11,6 +11,8 @@ StringTokenizer::StringTokenizer() {
 
 void StringTokenizer::tokenize(const wstring& str, const wstring& delimiters)
 {
+	idx = 0;
+	elements.clear();
 	wstring token;
 	for (int i = 0; i < str.length(); i++) {
 		// got a delimiter?
