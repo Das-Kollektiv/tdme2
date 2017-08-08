@@ -9,12 +9,14 @@
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
+#include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <java/lang/Object.h>
 
 using std::array;
 
-using java::lang::Object;
 using java::lang::String;
 using java::nio::ByteBuffer;
 using java::nio::FloatBuffer;
@@ -24,38 +26,14 @@ using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::math::Matrix4x4;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace renderer {
-typedef ::SubArray< ::tdme::engine::subsystems::renderer::GLRenderer_Light, ::java::lang::ObjectArray > GLRenderer_LightArray;
-}  // namespace renderer
-}  // namespace subsystems
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::engine::subsystems::renderer::GLRenderer_LightArray;
-using tdme::math::Matrix4x4Array;
-
-struct default_init_tag;
-
 /** 
  * OpenGL renderer interface
  * @author Andreas Drewke
  * @ersion $Id$
  */
 class tdme::engine::subsystems::renderer::GLRenderer
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
 	int32_t ID_NONE {  };
 	int32_t CLEAR_DEPTH_BUFFER_BIT {  };
 	int32_t CLEAR_COLOR_BUFFER_BIT {  };
@@ -75,8 +53,8 @@ public:
 	int32_t FRONTFACE_CCW {  };
 	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	GLRenderer_Material* material {  };
-	GLRenderer_LightArray* lights {  };
+	GLRenderer_Material material;
+	array<GLRenderer_Light, 8> lights;
 
 public: /* protected */
 	int32_t viewPortX {  };
@@ -84,10 +62,10 @@ public: /* protected */
 	int32_t viewPortWidth {  };
 	int32_t viewPortHeight {  };
 	int32_t activeTextureUnit {  };
-	Matrix4x4* projectionMatrix {  };
-	Matrix4x4* cameraMatrix {  };
-	Matrix4x4* modelViewMatrix {  };
-	Matrix4x4* viewportMatrix {  };
+	Matrix4x4 projectionMatrix {  };
+	Matrix4x4 cameraMatrix {  };
+	Matrix4x4 modelViewMatrix {  };
+	Matrix4x4 viewportMatrix {  };
 
 public:
 	bool renderingTexturingClientState {  };
@@ -95,12 +73,6 @@ public:
 
 public: /* protected */
 	FloatBuffer* pixelDepthBuffer {  };
-protected:
-
-	/** 
-	 * public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -783,18 +755,17 @@ public:
 	 */
 	virtual void doneGuiMode() = 0;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	GLRenderer();
-protected:
-	GLRenderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
+	/**
+	 * Init
+	 */
 	void init();
-	virtual ::java::lang::Class* getClass0();
+
+	//
 	friend class GLRenderer_Material;
 	friend class GLRenderer_Light;
 };

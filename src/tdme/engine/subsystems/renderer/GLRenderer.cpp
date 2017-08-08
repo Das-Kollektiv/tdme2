@@ -11,8 +11,6 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/Matrix4x4.h>
 #include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::copy;
 using std::begin;
@@ -26,31 +24,22 @@ using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::math::Matrix4x4;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace renderer {
-typedef ::SubArray< ::tdme::engine::subsystems::renderer::GLRenderer_Light, ::java::lang::ObjectArray > GLRenderer_LightArray;
-}  // namespace renderer
-}  // namespace subsystems
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-GLRenderer::GLRenderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GLRenderer::GLRenderer() 
-	: GLRenderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
+	init();
+	for (auto i = 0; i < lights.size(); i++) {
+		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
+	}
+	projectionMatrix = (new Matrix4x4())->identity();
+	cameraMatrix = (new Matrix4x4())->identity();
+	modelViewMatrix = (new Matrix4x4())->identity();
+	viewportMatrix = (new Matrix4x4())->identity();
+	viewPortX = 0;
+	viewPortY = 0;
+	viewPortWidth = 0;
+	viewPortHeight = 0;
+	TEXTUREUNITS_MAX = 2;
+	activeTextureUnit = 0;
 }
 
 void GLRenderer::init()
@@ -75,101 +64,79 @@ void GLRenderer::init()
 	pixelDepthBuffer = ByteBuffer::allocateDirect(1)->asFloatBuffer();
 }
 
-void GLRenderer::ctor()
-{
-	super::ctor();
-	init();
-	material = new GLRenderer_Material(this);
-	lights = new GLRenderer_LightArray(8);
-	for (auto i = 0; i < lights->length; i++) {
-		lights->set(i, new GLRenderer_Light(this));
-		(*lights)[i]->spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
-	}
-	projectionMatrix = (new Matrix4x4())->identity();
-	cameraMatrix = (new Matrix4x4())->identity();
-	modelViewMatrix = (new Matrix4x4())->identity();
-	viewportMatrix = (new Matrix4x4())->identity();
-	viewPortX = 0;
-	viewPortY = 0;
-	viewPortWidth = 0;
-	viewPortHeight = 0;
-	TEXTUREUNITS_MAX = 2;
-	activeTextureUnit = 0;
-}
-
 Matrix4x4* GLRenderer::getProjectionMatrix()
 {
-	return projectionMatrix;
+	return &projectionMatrix;
 }
 
 Matrix4x4* GLRenderer::getCameraMatrix()
 {
-	return cameraMatrix;
+	return &cameraMatrix;
 }
 
 Matrix4x4* GLRenderer::getModelViewMatrix()
 {
-	return modelViewMatrix;
+	return &modelViewMatrix;
 }
 
 Matrix4x4* GLRenderer::getViewportMatrix()
 {
-	return viewportMatrix;
+	return &viewportMatrix;
 }
 
 void GLRenderer::setLightEnabled(int32_t lightId)
 {
-	(*lights)[lightId]->enabled = 1;
+	lights[lightId].enabled = 1;
 }
 
 void GLRenderer::setLightDisabled(int32_t lightId)
 {
-	(*lights)[lightId]->enabled = 0;
+	lights[lightId].enabled = 0;
 }
 
 void GLRenderer::setLightAmbient(int32_t lightId, array<float, 4>* ambient)
 {
-	copy(begin(*ambient), end(*ambient), begin((*lights)[lightId]->ambient));
+	copy(begin(*ambient), end(*ambient), begin(lights[lightId].ambient));
 }
 
 void GLRenderer::setLightDiffuse(int32_t lightId, array<float, 4>* diffuse)
 {
-	copy(begin(*diffuse), end(*diffuse), begin((*lights)[lightId]->diffuse));
+	copy(begin(*diffuse), end(*diffuse), begin(lights[lightId].diffuse));
 }
 
 void GLRenderer::setLightPosition(int32_t lightId, array<float, 4>* position)
 {
-	copy(begin(*position), end(*position), begin((*lights)[lightId]->position));
+	copy(begin(*position), end(*position), begin(lights[lightId].position));
 }
 
 void GLRenderer::setLightSpotDirection(int32_t lightId, array<float, 3>* spotDirection)
 {
-	copy(begin(*spotDirection), end(*spotDirection), begin((*lights)[lightId]->spotDirection));
+	copy(begin(*spotDirection), end(*spotDirection), begin(lights[lightId].spotDirection));
 }
 
 void GLRenderer::setLightSpotExponent(int32_t lightId, float spotExponent)
 {
-	(*lights)[lightId]->spotExponent = spotExponent;
+	lights[lightId].spotExponent = spotExponent;
 }
 
 void GLRenderer::setLightSpotCutOff(int32_t lightId, float spotCutOff)
 {
-	(*lights)[lightId]->spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
+	lights[lightId].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
 }
 
 void GLRenderer::setLightConstantAttenuation(int32_t lightId, float constantAttenuation)
 {
-	(*lights)[lightId]->constantAttenuation = constantAttenuation;
+	lights[lightId].constantAttenuation = constantAttenuation;
 }
 
 void GLRenderer::setLightLinearAttenuation(int32_t lightId, float linearAttenuation)
 {
-	(*lights)[lightId]->linearAttenuation = linearAttenuation;
+	lights[lightId].linearAttenuation = linearAttenuation;
 }
 
 void GLRenderer::setLightQuadraticAttenuation(int32_t lightId, float QuadraticAttenuation)
 {
-	(*lights)[lightId]->quadraticAttenuation = QuadraticAttenuation;
+	lights[lightId].quadraticAttenuation = QuadraticAttenuation;
 }
 
 void GLRenderer::setEffectColorMul(array<float, 4>* effectColorMul)
@@ -192,39 +159,25 @@ void GLRenderer::setMaterialDisabled()
 
 void GLRenderer::setMaterialAmbient(array<float, 4>* ambient)
 {
-	copy(begin(*ambient), end(*ambient), begin(material->ambient));
+	copy(begin(*ambient), end(*ambient), begin(material.ambient));
 }
 
 void GLRenderer::setMaterialDiffuse(array<float, 4>* diffuse)
 {
-	copy(begin(*diffuse), end(*diffuse), begin(material->diffuse));
+	copy(begin(*diffuse), end(*diffuse), begin(material.diffuse));
 }
 
 void GLRenderer::setMaterialSpecular(array<float, 4>* specular)
 {
-	copy(begin(*specular), end(*specular), begin(material->specular));
+	copy(begin(*specular), end(*specular), begin(material.specular));
 }
 
 void GLRenderer::setMaterialEmission(array<float, 4>* emission)
 {
-	copy(begin(*emission), end(*emission), begin(material->emission));
+	copy(begin(*emission), end(*emission), begin(material.emission));
 }
 
 void GLRenderer::setMaterialShininess(float shininess)
 {
-	material->shininess = shininess;
+	material.shininess = shininess;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GLRenderer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.renderer.GLRenderer", 42);
-    return c;
-}
-
-java::lang::Class* GLRenderer::getClass0()
-{
-	return class_();
-}
-

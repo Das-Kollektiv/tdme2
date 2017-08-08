@@ -11,8 +11,6 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::copy;
 using std::begin;
@@ -26,17 +24,6 @@ using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace subsystems {
-namespace renderer {
-typedef ::SubArray< ::tdme::engine::subsystems::renderer::GLRenderer_Light, ::java::lang::ObjectArray > GLRenderer_LightArray;
-}  // namespace renderer
-}  // namespace subsystems
-}  // namespace engine
-}  // namespace tdme
 
 LightingShader::LightingShader(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -300,14 +287,14 @@ void LightingShader::updateMaterial(GLRenderer* renderer)
 		return;
 
 	tmpColor4[3] = 0.0f;
-	copy(begin(renderer->material->ambient), end(renderer->material->ambient), begin(tmpColor4));
+	copy(begin(renderer->material.ambient), end(renderer->material.ambient), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, &tmpColor4);
-	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, &renderer->material->diffuse);
-	copy(begin(renderer->material->specular), end(renderer->material->specular), begin(tmpColor4));
+	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, &renderer->material.diffuse);
+	copy(begin(renderer->material.specular), end(renderer->material.specular), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, &tmpColor4);
-	copy(begin(renderer->material->emission), end(renderer->material->emission), begin(tmpColor4));
+	copy(begin(renderer->material.emission), end(renderer->material.emission), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, &tmpColor4);
-	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material->shininess);
+	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
 }
 
 void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
@@ -315,18 +302,18 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 	if (isRunning == false)
 		return;
 
-	renderer->setProgramUniformInteger((*uniformLightEnabled)[lightId], (*renderer->lights)[lightId]->enabled);
-	if ((*renderer->lights)[lightId]->enabled == 1) {
-		renderer->setProgramUniformFloatVec4((*uniformLightAmbient)[lightId], &(*renderer->lights)[lightId]->ambient);
-		renderer->setProgramUniformFloatVec4((*uniformLightDiffuse)[lightId], &(*renderer->lights)[lightId]->diffuse);
-		renderer->setProgramUniformFloatVec4((*uniformLightSpecular)[lightId], &(*renderer->lights)[lightId]->specular);
-		renderer->setProgramUniformFloatVec4((*uniformLightPosition)[lightId], &(*renderer->lights)[lightId]->position);
-		renderer->setProgramUniformFloatVec3((*uniformLightSpotDirection)[lightId], &(*renderer->lights)[lightId]->spotDirection);
-		renderer->setProgramUniformFloat((*uniformLightSpotExponent)[lightId], (*renderer->lights)[lightId]->spotExponent);
-		renderer->setProgramUniformFloat((*uniformLightSpotCosCutoff)[lightId], (*renderer->lights)[lightId]->spotCosCutoff);
-		renderer->setProgramUniformFloat((*uniformLightConstantAttenuation)[lightId], (*renderer->lights)[lightId]->constantAttenuation);
-		renderer->setProgramUniformFloat((*uniformLightLinearAttenuation)[lightId], (*renderer->lights)[lightId]->linearAttenuation);
-		renderer->setProgramUniformFloat((*uniformLightQuadraticAttenuation)[lightId], (*renderer->lights)[lightId]->quadraticAttenuation);
+	renderer->setProgramUniformInteger((*uniformLightEnabled)[lightId], renderer->lights[lightId].enabled);
+	if (renderer->lights[lightId].enabled == 1) {
+		renderer->setProgramUniformFloatVec4((*uniformLightAmbient)[lightId], &renderer->lights[lightId].ambient);
+		renderer->setProgramUniformFloatVec4((*uniformLightDiffuse)[lightId], &renderer->lights[lightId].diffuse);
+		renderer->setProgramUniformFloatVec4((*uniformLightSpecular)[lightId], &renderer->lights[lightId].specular);
+		renderer->setProgramUniformFloatVec4((*uniformLightPosition)[lightId], &renderer->lights[lightId].position);
+		renderer->setProgramUniformFloatVec3((*uniformLightSpotDirection)[lightId], &renderer->lights[lightId].spotDirection);
+		renderer->setProgramUniformFloat((*uniformLightSpotExponent)[lightId], renderer->lights[lightId].spotExponent);
+		renderer->setProgramUniformFloat((*uniformLightSpotCosCutoff)[lightId], renderer->lights[lightId].spotCosCutoff);
+		renderer->setProgramUniformFloat((*uniformLightConstantAttenuation)[lightId], renderer->lights[lightId].constantAttenuation);
+		renderer->setProgramUniformFloat((*uniformLightLinearAttenuation)[lightId], renderer->lights[lightId].linearAttenuation);
+		renderer->setProgramUniformFloat((*uniformLightQuadraticAttenuation)[lightId], renderer->lights[lightId].quadraticAttenuation);
 	}
 }
 

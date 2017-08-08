@@ -22,9 +22,6 @@ using java::nio::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 
-
-struct default_init_tag;
-
 /** 
  * OpenGL 3 renderer
  * @author Andreas Drewke
@@ -33,10 +30,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::renderer::GL3Renderer
 	: public GLRenderer
 {
-
-public:
-	typedef GLRenderer super;
-
 private:
 	uint32_t engineVAO {  };
 protected:
@@ -142,14 +135,8 @@ private:
 	// Generated
 
 public:
+	/**
+	 * Public constructor
+	 */
 	GL3Renderer();
-protected:
-	GL3Renderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

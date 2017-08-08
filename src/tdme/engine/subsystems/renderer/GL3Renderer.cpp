@@ -37,8 +37,6 @@
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/StringConverter.h>
 #include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 
@@ -66,26 +64,6 @@ using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::StackTraceElement, ObjectArray, ::java::io::SerializableArray > StackTraceElementArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
 template<typename T, typename U>
 static T java_cast(U* u)
 {
@@ -110,21 +88,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-GL3Renderer::GL3Renderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
 
 GL3Renderer::GL3Renderer() 
-	: GL3Renderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void GL3Renderer::ctor()
-{
-	super::ctor();
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
@@ -721,17 +687,3 @@ void GL3Renderer::checkGLError()
 		*/
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GL3Renderer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.renderer.GL3Renderer", 43);
-    return c;
-}
-
-java::lang::Class* GL3Renderer::getClass0()
-{
-	return class_();
-}
-

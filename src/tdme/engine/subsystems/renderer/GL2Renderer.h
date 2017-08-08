@@ -12,8 +12,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
-using std::array;
-
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::String;
 using java::nio::ByteBuffer;
@@ -21,19 +19,6 @@ using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
-using java::lang::Object;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::math::Matrix4x4Array;
-
-struct default_init_tag;
 
 /** 
  * OpenGL 2 renderer
@@ -43,10 +28,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::renderer::GL2Renderer
 	: public GLRenderer
 {
-
-public:
-	typedef GLRenderer super;
-
 private:
 	bool bufferObjectsAvailable {  };
 	int32_t viewPortX {  };
@@ -56,7 +37,7 @@ private:
 	int32_t activeTextureUnit {  };
 protected:
 
-	/** 
+	/**
 	 * final public constructor
 	 */
 	void ctor();
@@ -155,15 +136,8 @@ public:
 	void initGuiMode() override;
 	void doneGuiMode() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	GL2Renderer();
-protected:
-	GL2Renderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
