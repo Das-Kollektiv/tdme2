@@ -59,19 +59,19 @@ void GUIShader::initialize()
 	if (renderer->linkProgram(programGlId) == false)
 		return;
 
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, u"diffuseTextureUnit"_j);
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, L"diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
 
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, u"diffuseTextureAvailable"_j);
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, L"diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(programGlId, u"effectColorMul"_j);
+	uniformEffectColorMul = renderer->getProgramUniformLocation(programGlId, L"effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(programGlId, u"effectColorAdd"_j);
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(programGlId, L"effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 

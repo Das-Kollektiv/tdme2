@@ -64,60 +64,60 @@ void ShadowMappingShaderRender::initialize()
 	if (renderer->linkProgram(renderProgramGlId) == false)
 		return;
 
-	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, u"textureUnit"_j);
+	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, L"textureUnit");
 	if (renderUniformTextureUnit == -1)
 		return;
 
-	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramGlId, u"texturePixelWidth"_j);
+	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramGlId, L"texturePixelWidth");
 	if (renderUniformTexturePixelWidth == -1)
 		return;
 
-	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(renderProgramGlId, u"texturePixelHeight"_j);
+	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(renderProgramGlId, L"texturePixelHeight");
 	if (renderUniformTexturePixelHeight == -1)
 		return;
 
-	renderUniformDepthBiasMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, u"depthBiasMVPMatrix"_j);
+	renderUniformDepthBiasMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, L"depthBiasMVPMatrix");
 	if (renderUniformDepthBiasMVPMatrix == -1)
 		return;
 
-	renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramGlId, u"mvMatrix"_j);
+	renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramGlId, L"mvMatrix");
 	if (renderUniformMVMatrix == -1)
 		return;
 
-	renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, u"mvpMatrix"_j);
+	renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, L"mvpMatrix");
 	if (renderUniformMVPMatrix == -1)
 		return;
 
-	renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramGlId, u"normalMatrix"_j);
+	renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramGlId, L"normalMatrix");
 	if (renderUniformNormalMatrix == -1)
 		return;
 
-	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, u"lightDirection"_j);
+	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, L"lightDirection");
 	if (renderUniformLightDirection == -1)
 		return;
 
 	if (rendererVersion->equals(u"gles2"_j) == false) {
-		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramGlId, u"lightPosition"_j);
+		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramGlId, L"lightPosition");
 		if (renderUniformLightPosition == -1)
 			return;
 
-		renderUniformLightSpotExponent = renderer->getProgramUniformLocation(renderProgramGlId, u"lightSpotExponent"_j);
+		renderUniformLightSpotExponent = renderer->getProgramUniformLocation(renderProgramGlId, L"lightSpotExponent");
 		if (renderUniformLightSpotExponent == -1)
 			return;
 
-		renderUniformLightSpotCosCutoff = renderer->getProgramUniformLocation(renderProgramGlId, u"lightSpotCosCutoff"_j);
+		renderUniformLightSpotCosCutoff = renderer->getProgramUniformLocation(renderProgramGlId, L"lightSpotCosCutoff");
 		if (renderUniformLightSpotCosCutoff == -1)
 			return;
 
-		renderUniformLightConstantAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, u"lightConstantAttenuation"_j);
+		renderUniformLightConstantAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, L"lightConstantAttenuation");
 		if (renderUniformLightConstantAttenuation == -1)
 			return;
 
-		renderUniformLightLinearAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, u"lightLinearAttenuation"_j);
+		renderUniformLightLinearAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, L"lightLinearAttenuation");
 		if (renderUniformLightLinearAttenuation == -1)
 			return;
 
-		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, u"lightQuadraticAttenuation"_j);
+		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, L"lightQuadraticAttenuation");
 		if (renderUniformLightQuadraticAttenuation == -1)
 			return;
 

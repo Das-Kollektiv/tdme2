@@ -2,6 +2,7 @@
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
 #include <array>
+#include <string>
 
 #include <java/io/BufferedReader.h>
 #include <java/io/DataInputStream.h>
@@ -28,6 +29,7 @@
 #include <ObjectArray.h>
 
 using std::array;
+using std::wstring;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using java::io::BufferedReader;
@@ -50,26 +52,6 @@ using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::utils::_Console;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::StackTraceElement, ObjectArray, ::java::io::SerializableArray > StackTraceElementArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-}  // namespace math
-}  // namespace tdme
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -95,21 +77,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-GLES2Renderer::GLES2Renderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
 
 GLES2Renderer::GLES2Renderer() 
-	: GLES2Renderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void GLES2Renderer::ctor()
-{
-	super::ctor();
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GLES2::GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GLES2::GL_COLOR_BUFFER_BIT;
@@ -284,7 +254,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 	return true;
 }
 
-int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, String* name)
+int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const wstring& name)
 {
 	auto uniformLocation = gl->glGetUniformLocation(programId, name);
 	return uniformLocation;

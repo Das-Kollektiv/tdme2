@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -16,6 +17,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::wstring;
 
 using java::lang::String;
 using java::nio::ByteBuffer;
@@ -170,7 +172,7 @@ public:
 	 * @param uniform name
 	 * @return
 	 */
-	virtual int32_t getProgramUniformLocation(int32_t programId, String* name) = 0;
+	virtual int32_t getProgramUniformLocation(int32_t programId, const wstring& name) = 0;
 
 	/** 
 	 * Set up a integer uniform value

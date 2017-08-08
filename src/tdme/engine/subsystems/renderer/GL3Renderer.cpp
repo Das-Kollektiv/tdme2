@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <array>
+#include <string>
 
 #include <java/io/Serializable.h>
 #include <java/lang/Byte.h>
@@ -39,6 +40,7 @@
 #include <Array.h>
 
 using std::array;
+using std::wstring;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
 using java::io::Serializable;
@@ -260,9 +262,9 @@ bool GL3Renderer::linkProgram(int32_t programId)
 	return true;
 }
 
-int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, String* name)
+int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const wstring& name)
 {
-	auto uniformLocation = glGetUniformLocation(programId, StringConverter::toString(name->getCPPWString()).c_str());
+	auto uniformLocation = glGetUniformLocation(programId, StringConverter::toString(name).c_str());
 	return uniformLocation;
 }
 

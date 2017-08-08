@@ -60,7 +60,7 @@ void ShadowMappingShaderPre::initialize()
 	if (renderer->linkProgram(preProgramGlId) == false)
 		return;
 
-	preUniformMVPMatrix = renderer->getProgramUniformLocation(preProgramGlId, u"mvpMatrix"_j);
+	preUniformMVPMatrix = renderer->getProgramUniformLocation(preProgramGlId, L"mvpMatrix");
 	if (preUniformMVPMatrix == -1)
 		return;
 

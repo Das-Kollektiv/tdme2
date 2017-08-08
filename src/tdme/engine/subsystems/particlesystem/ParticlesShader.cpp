@@ -68,27 +68,27 @@ void ParticlesShader::initialize()
 	if (renderer->linkProgram(renderProgramId) == false)
 		return;
 
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, u"mvpMatrix"_j);
+	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, L"mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
 
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, u"mvMatrix"_j);
+	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, L"mvMatrix");
 	if (uniformMVMatrix == -1)
 		return;
 
-	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, u"pointSize"_j);
+	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, L"pointSize");
 	if (uniformPointSize == -1)
 		return;
 
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, u"diffuseTextureUnit"_j);
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, L"diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, u"effectColorMul"_j);
+	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, L"effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, u"effectColorAdd"_j);
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, L"effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 

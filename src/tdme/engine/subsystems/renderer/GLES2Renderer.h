@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using std::array;
+using std::wstring;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::String;
@@ -22,9 +24,6 @@ using java::nio::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 
-
-struct default_init_tag;
-
 /** 
  * OpenGL ES2 renderer
  * @author Andreas Drewke
@@ -33,17 +32,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::renderer::GLES2Renderer
 	: public GLRenderer
 {
-
-public:
-	typedef GLRenderer super;
-
-protected:
-
-	/** 
-	 * final public constructor
-	 */
-	void ctor();
-
 public:
 	String* getGLVersion() override;
 	void initialize() override;
@@ -64,7 +52,7 @@ public:
 	int32_t createProgram() override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
-	int32_t getProgramUniformLocation(int32_t programId, String* name) override;
+	int32_t getProgramUniformLocation(int32_t programId, const wstring& name) override;
 	void setProgramUniformInteger(int32_t uniformId, int32_t value) override;
 	void setProgramUniformFloat(int32_t uniformId, float value) override;
 	void setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* data) override;
