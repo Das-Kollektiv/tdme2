@@ -9,6 +9,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/object/ModelStatistics.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -17,7 +18,7 @@ using std::wstring;
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
+using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 
 /** 
@@ -61,16 +62,16 @@ public:
 	/** 
 	 * Compute model statistics
 	 * @param model
-	 * @return model statistics
+	 * @param model statistics
 	 */
-	static ModelUtilitiesInternal_ModelStatistics* computeModelStatistics(Model* model);
+	static void computeModelStatistics(Model* model, ModelStatistics* modelStatistics);
 
 	/** 
 	 * Compute model statistics
 	 * @param object 3d model internal
-	 * @return model statistics
+	 * @param model statistics
 	 */
-	static ModelUtilitiesInternal_ModelStatistics* computeModelStatistics(Object3DModelInternal* object3DModelInternal);
+	static void computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
 
 	/** 
 	 * Compute if model 1 equals model 2

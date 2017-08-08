@@ -134,7 +134,7 @@ SRCS = \
 	src/tdme/engine/subsystems/object/BatchVBORendererPoints.cpp \
 	src/tdme/engine/subsystems/object/BatchVBORendererTriangles.cpp \
 	src/tdme/engine/subsystems/object/ModelUtilitiesInternal.cpp \
-	src/tdme/engine/subsystems/object/ModelUtilitiesInternal_ModelStatistics.cpp \
+	src/tdme/engine/subsystems/object/ModelStatistics.cpp \
 	src/tdme/engine/subsystems/object/Object3DBase.cpp \
 	src/tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.cpp \
 	src/tdme/engine/subsystems/object/Object3DGroup.cpp \

@@ -13,7 +13,6 @@
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/object/ModelUtilitiesInternal_ModelStatistics.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
@@ -38,6 +37,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+#include "../../../engine/subsystems/object/ModelStatistics.h"
 
 using tdme::tools::shared::views::SharedModelViewerView;
 using java::lang::CharSequence;
@@ -52,7 +52,7 @@ using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
+using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
@@ -137,8 +137,9 @@ void SharedModelViewerView::initModel()
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	auto stats = ModelUtilities::computeModelStatistics(entity->getModel());
-	modelViewerScreenController->setStatistics(stats->getOpaqueFaceCount(), stats->getTransparentFaceCount(), stats->getMaterialCount());
+	ModelStatistics modelStatistics;
+	ModelUtilities::computeModelStatistics(entity->getModel(), &modelStatistics);
+	modelViewerScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
 	updateGUIElements();
 }
 

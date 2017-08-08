@@ -14,12 +14,13 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/object/AnimationState.h>
-#include <tdme/engine/subsystems/object/ModelUtilitiesInternal_ModelStatistics.h>
+#include <tdme/engine/subsystems/object/ModelStatistics.h>
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include "ModelStatistics.h"
 
 using std::map;
 using std::wstring;
@@ -34,7 +35,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::AnimationState;
-using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
+using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DModelInternal;
@@ -128,12 +129,13 @@ void ModelUtilitiesInternal::invertNormals(map<wstring, Group*>* groups)
 	}
 }
 
-ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStatistics(Model* model)
+void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistics* modelStatistics)
 {
-	return ModelUtilitiesInternal::computeModelStatistics(new Object3DModelInternal(model));
+	Object3DModelInternal object3DModelInternal(model);
+	computeModelStatistics(&object3DModelInternal, modelStatistics);
 }
 
-ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal)
+void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
 {
 	map<wstring, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
@@ -161,7 +163,9 @@ ModelUtilitiesInternal_ModelStatistics* ModelUtilitiesInternal::computeModelStat
 		}
 	}
 	auto materialCount = materialCountById.size();
-	return new ModelUtilitiesInternal_ModelStatistics(opaqueFaceCount, transparentFaceCount, materialCount);
+	modelStatistics->opaqueFaceCount = opaqueFaceCount;
+	modelStatistics->transparentFaceCount = transparentFaceCount;
+	modelStatistics->materialCount = materialCount;
 }
 
 bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)

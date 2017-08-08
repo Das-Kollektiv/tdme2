@@ -41,7 +41,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/subsystems/object/ModelUtilitiesInternal_ModelStatistics.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/_FileSystem.h>
@@ -62,6 +61,7 @@
 #include <ObjectArray.h>
 
 #include <ext/tinyxml/tinyxml.h>
+#include "../../subsystems/object/ModelStatistics.h"
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
@@ -106,7 +106,7 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::object::ModelUtilitiesInternal_ModelStatistics;
+using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::_FileSystem;
@@ -435,8 +435,9 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				ModelHelper::fixAnimationLength(model);
 				ModelHelper::prepareForIndexedRendering(model);
 				auto entityType = LevelEditorEntity_EntityType::MODEL;
-				auto modelStatistics = ModelUtilities::computeModelStatistics(model);
-				if (modelStatistics->getOpaqueFaceCount() == 0 && modelStatistics->getTransparentFaceCount() == 0) {
+				ModelStatistics modelStatistics;
+				ModelUtilities::computeModelStatistics(model, &modelStatistics);
+				if (modelStatistics.opaqueFaceCount == 0 && modelStatistics.transparentFaceCount == 0) {
 					entityType = LevelEditorEntity_EntityType::EMPTY;
 				}
 				LevelEditorEntity* levelEditorEntity = nullptr;

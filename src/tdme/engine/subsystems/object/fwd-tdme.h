@@ -10,7 +10,7 @@ namespace object {
 				class BatchVBORendererPoints;
 				class BatchVBORendererTriangles;
 				class ModelUtilitiesInternal;
-				class ModelUtilitiesInternal_ModelStatistics;
+				class ModelStatistics;
 				class Object3DBase;
 				class Object3DBase_TransformedFacesIterator;
 				class Object3DGroup;
