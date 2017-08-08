@@ -19,10 +19,9 @@
 #include <Array.h>
 
 using tdme::engine::subsystems::object::BatchVBORendererPoints;
+
 using java::lang::Byte;
 using java::lang::Float;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::nio::ByteBuffer;
 using java::nio::ByteOrder;
 using java::nio::FloatBuffer;
@@ -35,33 +34,15 @@ using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
-BatchVBORendererPoints::BatchVBORendererPoints(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+constexpr int32_t BatchVBORendererPoints::VERTEX_COUNT;
 
 BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id) 
-	: BatchVBORendererPoints(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer,id);
-}
-
-void BatchVBORendererPoints::init()
-{
-	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbColors = ByteBuffer::allocateDirect(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-}
-
-int32_t BatchVBORendererPoints::VERTEX_COUNT;
-
-void BatchVBORendererPoints::ctor(GLRenderer* renderer, int32_t id)
-{
-	super::ctor();
-	init();
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
+	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbColors = ByteBuffer::allocateDirect(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 bool BatchVBORendererPoints::isAcquired()
@@ -93,8 +74,6 @@ void BatchVBORendererPoints::initialize()
 
 void BatchVBORendererPoints::render()
 {
-	// fbVertices->flip();
-	// fbColors->flip();
 	if (fbVertices->position() == 0 || fbColors->position() == 0)
 		return;
 
@@ -125,47 +104,3 @@ void BatchVBORendererPoints::addPoint(TransparentRenderPoint* point)
 	fbVertices->put(point->point->getArray());
 	fbColors->put(point->color->getArray());
 }
-
-String* BatchVBORendererPoints::toString()
-{
-	return ::java::lang::StringBuilder().append(u"BatchVBORenderer [vboIds="_j)->append(Arrays::toString(vboIds))
-		->append(u", id="_j)
-		->append(id)
-		->append(u", acquired="_j)
-		->append(acquired)
-		->append(u", fbVertices="_j)
-		->append(fbVertices->position())
-		->append(u", fbNormals="_j)
-		->append(fbColors->position())
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* BatchVBORendererPoints::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.BatchVBORendererPoints", 52);
-    return c;
-}
-
-void BatchVBORendererPoints::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		VERTEX_COUNT = 32768;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* BatchVBORendererPoints::getClass0()
-{
-	return class_();
-}
-
