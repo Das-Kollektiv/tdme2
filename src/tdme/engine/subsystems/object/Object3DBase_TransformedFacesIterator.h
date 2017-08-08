@@ -8,14 +8,13 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::array;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-struct default_init_tag;
 
 /** 
  * Transformed faces iterator
@@ -24,11 +23,10 @@ struct default_init_tag;
  */
 class tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator
 {
-
 private:
 	Object3DBase* object3DBase {  };
 	array<Vector3, 3> vertices {  };
-	Matrix4x4* matrix {  };
+	Matrix4x4 matrix {  };
 	int32_t faceCount {  };
 	int32_t faceIdxTotal {  };
 	int32_t faceIdx {  };

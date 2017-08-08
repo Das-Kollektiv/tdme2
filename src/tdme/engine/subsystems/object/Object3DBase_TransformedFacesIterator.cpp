@@ -24,7 +24,6 @@ using tdme::math::Vector3;
 Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase) 
 {
 	this->object3DBase = object3DBase;
-	this->matrix = new Matrix4x4();
 	reset();
 }
 
@@ -41,7 +40,12 @@ void Object3DBase_TransformedFacesIterator::reset()
 	object3DGroupIdx = 0;
 	facesEntityIdx = 0;
 	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-	matrix = (object3DGroup->mesh->skinning == true ? matrix->identity() : matrix->set(object3DGroup->groupTransformationsMatrix))->multiply(object3DBase->transformationsMatrix);
+	if (object3DGroup->mesh->skinning == true) {
+		matrix.identity();
+	} else {
+		matrix.set(object3DGroup->groupTransformationsMatrix);
+	}
+	matrix.multiply(object3DBase->transformationsMatrix);
 }
 
 Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::iterator() {
@@ -63,9 +67,9 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 	auto& face = (*faces)[faceIdx];
 	auto faceVertexIndices = face.getVertexIndices();
 	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-	matrix->multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[0]], &vertices[0]);
-	matrix->multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[1]], &vertices[1]);
-	matrix->multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[2]], &vertices[2]);
+	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[0]], &vertices[0]);
+	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[1]], &vertices[1]);
+	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[2]], &vertices[2]);
 	faceIdxTotal++;
 	faceIdx++;
 	if (faceIdxTotal < faceCount) {
@@ -76,7 +80,12 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 				facesEntityIdx = 0;
 				object3DGroupIdx++;
 				object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-				matrix = (object3DGroup->mesh->skinning == true ? matrix->identity() : matrix->set(object3DGroup->groupTransformationsMatrix))->multiply(object3DBase->transformationsMatrix);
+				if (object3DGroup->mesh->skinning == true) {
+					matrix.identity();
+				} else {
+					matrix.set(object3DGroup->groupTransformationsMatrix);
+				}
+				matrix.multiply(object3DBase->transformationsMatrix);
 			}
 		}
 	}
