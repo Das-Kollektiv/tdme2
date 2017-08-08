@@ -28,20 +28,11 @@ using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 
-LightingShader::LightingShader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LightingShader::LightingShader(GLRenderer* renderer) 
-	: LightingShader(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer);
-}
-
-void LightingShader::init()
-{
+	this->renderer = renderer;
+	isRunning = false;
+	initialized = false;
 }
 
 constexpr int32_t LightingShader::MAX_LIGHTS;
@@ -53,29 +44,6 @@ constexpr int32_t LightingShader::TEXTUREUNIT_SPECULAR;
 constexpr int32_t LightingShader::TEXTUREUNIT_DISPLACEMENT;
 
 constexpr int32_t LightingShader::TEXTUREUNIT_NORMAL;
-
-void LightingShader::ctor(GLRenderer* renderer)
-{
-	super::ctor();
-	init();
-	this->renderer = renderer;
-	isRunning = false;
-	initialized = false;
-	uniformLightEnabled = new int32_tArray(MAX_LIGHTS);
-	uniformLightAmbient = new int32_tArray(MAX_LIGHTS);
-	uniformLightDiffuse = new int32_tArray(MAX_LIGHTS);
-	uniformLightSpecular = new int32_tArray(MAX_LIGHTS);
-	uniformLightPosition = new int32_tArray(MAX_LIGHTS);
-	uniformLightSpotDirection = new int32_tArray(MAX_LIGHTS);
-	uniformLightSpotExponent = new int32_tArray(MAX_LIGHTS);
-	uniformLightSpotCosCutoff = new int32_tArray(MAX_LIGHTS);
-	uniformLightConstantAttenuation = new int32_tArray(MAX_LIGHTS);
-	uniformLightLinearAttenuation = new int32_tArray(MAX_LIGHTS);
-	uniformLightQuadraticAttenuation = new int32_tArray(MAX_LIGHTS);
-	mvMatrix = new Matrix4x4();
-	mvpMatrix = new Matrix4x4();
-	normalMatrix = new Matrix4x4();
-}
 
 bool LightingShader::isInitialized()
 {
@@ -189,48 +157,48 @@ void LightingShader::initialize()
 		return;
 
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
-		(*uniformLightEnabled)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) +L"].enabled");
-		if ((*uniformLightEnabled)[i] == -1)
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) +L"].enabled");
+		if (uniformLightEnabled[i] == -1)
 			return;
 
-		(*uniformLightAmbient)[i] = renderer->getProgramUniformLocation(renderLightingProgramId,L"lights[" + to_wstring(i) + L"].ambient");
-		if ((*uniformLightAmbient)[i] == -1)
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId,L"lights[" + to_wstring(i) + L"].ambient");
+		if (uniformLightAmbient[i] == -1)
 			return;
 
-		(*uniformLightDiffuse)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].diffuse");
-		if ((*uniformLightDiffuse)[i] == -1)
+		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].diffuse");
+		if (uniformLightDiffuse[i] == -1)
 			return;
 
-		(*uniformLightSpecular)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].specular");
-		if ((*uniformLightSpecular)[i] == -1)
+		uniformLightSpecular[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].specular");
+		if (uniformLightSpecular[i] == -1)
 			return;
 
-		(*uniformLightPosition)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].position");
-		if ((*uniformLightPosition)[i] == -1)
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].position");
+		if (uniformLightPosition[i] == -1)
 			return;
 
-		(*uniformLightSpotDirection)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotDirection");
-		if ((*uniformLightSpotDirection)[i] == -1)
+		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotDirection");
+		if (uniformLightSpotDirection[i] == -1)
 			return;
 
-		(*uniformLightSpotExponent)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotExponent");
-		if ((*uniformLightSpotExponent)[i] == -1)
+		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotExponent");
+		if (uniformLightSpotExponent[i] == -1)
 			return;
 
-		(*uniformLightSpotCosCutoff)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotCosCutoff");
-		if ((*uniformLightSpotCosCutoff)[i] == -1)
+		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotCosCutoff");
+		if (uniformLightSpotCosCutoff[i] == -1)
 			return;
 
-		(*uniformLightConstantAttenuation)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].constantAttenuation");
-		if ((*uniformLightConstantAttenuation)[i] == -1)
+		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].constantAttenuation");
+		if (uniformLightConstantAttenuation[i] == -1)
 			return;
 
-		(*uniformLightLinearAttenuation)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].linearAttenuation");
-		if ((*uniformLightLinearAttenuation)[i] == -1)
+		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].linearAttenuation");
+		if (uniformLightLinearAttenuation[i] == -1)
 			return;
 
-		(*uniformLightQuadraticAttenuation)[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].quadraticAttenuation");
-		if ((*uniformLightQuadraticAttenuation)[i] == -1)
+		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].quadraticAttenuation");
+		if (uniformLightQuadraticAttenuation[i] == -1)
 			return;
 
 	}
@@ -294,18 +262,18 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 	if (isRunning == false)
 		return;
 
-	renderer->setProgramUniformInteger((*uniformLightEnabled)[lightId], renderer->lights[lightId].enabled);
+	renderer->setProgramUniformInteger(uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
 	if (renderer->lights[lightId].enabled == 1) {
-		renderer->setProgramUniformFloatVec4((*uniformLightAmbient)[lightId], &renderer->lights[lightId].ambient);
-		renderer->setProgramUniformFloatVec4((*uniformLightDiffuse)[lightId], &renderer->lights[lightId].diffuse);
-		renderer->setProgramUniformFloatVec4((*uniformLightSpecular)[lightId], &renderer->lights[lightId].specular);
-		renderer->setProgramUniformFloatVec4((*uniformLightPosition)[lightId], &renderer->lights[lightId].position);
-		renderer->setProgramUniformFloatVec3((*uniformLightSpotDirection)[lightId], &renderer->lights[lightId].spotDirection);
-		renderer->setProgramUniformFloat((*uniformLightSpotExponent)[lightId], renderer->lights[lightId].spotExponent);
-		renderer->setProgramUniformFloat((*uniformLightSpotCosCutoff)[lightId], renderer->lights[lightId].spotCosCutoff);
-		renderer->setProgramUniformFloat((*uniformLightConstantAttenuation)[lightId], renderer->lights[lightId].constantAttenuation);
-		renderer->setProgramUniformFloat((*uniformLightLinearAttenuation)[lightId], renderer->lights[lightId].linearAttenuation);
-		renderer->setProgramUniformFloat((*uniformLightQuadraticAttenuation)[lightId], renderer->lights[lightId].quadraticAttenuation);
+		renderer->setProgramUniformFloatVec4(uniformLightAmbient[lightId], &renderer->lights[lightId].ambient);
+		renderer->setProgramUniformFloatVec4(uniformLightDiffuse[lightId], &renderer->lights[lightId].diffuse);
+		renderer->setProgramUniformFloatVec4(uniformLightSpecular[lightId], &renderer->lights[lightId].specular);
+		renderer->setProgramUniformFloatVec4(uniformLightPosition[lightId], &renderer->lights[lightId].position);
+		renderer->setProgramUniformFloatVec3(uniformLightSpotDirection[lightId], &renderer->lights[lightId].spotDirection);
+		renderer->setProgramUniformFloat(uniformLightSpotExponent[lightId], renderer->lights[lightId].spotExponent);
+		renderer->setProgramUniformFloat(uniformLightSpotCosCutoff[lightId], renderer->lights[lightId].spotCosCutoff);
+		renderer->setProgramUniformFloat(uniformLightConstantAttenuation[lightId], renderer->lights[lightId].constantAttenuation);
+		renderer->setProgramUniformFloat(uniformLightLinearAttenuation[lightId], renderer->lights[lightId].linearAttenuation);
+		renderer->setProgramUniformFloat(uniformLightQuadraticAttenuation[lightId], renderer->lights[lightId].quadraticAttenuation);
 	}
 }
 
@@ -314,12 +282,12 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	mvMatrix->set(renderer->getModelViewMatrix());
-	mvpMatrix->set(mvMatrix)->multiply(renderer->getProjectionMatrix());
-	normalMatrix->set(mvMatrix)->invert()->transpose();
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix->getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix->getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix->getArray());
+	mvMatrix.set(renderer->getModelViewMatrix());
+	mvpMatrix.set(&mvMatrix)->multiply(renderer->getProjectionMatrix());
+	normalMatrix.set(&mvMatrix)->invert()->transpose();
+	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
+	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
+	renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
 }
 
 void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
@@ -352,17 +320,3 @@ void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
 	}
 
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LightingShader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.lighting.LightingShader", 46);
-    return c;
-}
-
-java::lang::Class* LightingShader::getClass0()
-{
-	return class_();
-}
-

@@ -8,15 +8,12 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::array;
 
-using java::lang::Object;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-
-struct default_init_tag;
 
 /** 
  * Interface to gl3 lighting shader program
@@ -24,11 +21,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::lighting::LightingShader final
-	: public Object
 {
-
 public:
-	typedef Object super;
 	static constexpr int32_t MAX_LIGHTS { 8 };
 	static constexpr int32_t TEXTUREUNIT_DIFFUSE { 0 };
 	static constexpr int32_t TEXTUREUNIT_SPECULAR { 1 };
@@ -58,33 +52,25 @@ private:
 	int32_t uniformMaterialSpecular {  };
 	int32_t uniformMaterialEmission {  };
 	int32_t uniformMaterialShininess {  };
-	int32_tArray* uniformLightEnabled {  };
-	int32_tArray* uniformLightAmbient {  };
-	int32_tArray* uniformLightDiffuse {  };
-	int32_tArray* uniformLightSpecular {  };
-	int32_tArray* uniformLightPosition {  };
-	int32_tArray* uniformLightSpotDirection {  };
-	int32_tArray* uniformLightSpotExponent {  };
-	int32_tArray* uniformLightSpotCosCutoff {  };
-	int32_tArray* uniformLightConstantAttenuation {  };
-	int32_tArray* uniformLightLinearAttenuation {  };
-	int32_tArray* uniformLightQuadraticAttenuation {  };
-	Matrix4x4* mvMatrix {  };
-	Matrix4x4* mvpMatrix {  };
-	Matrix4x4* normalMatrix {  };
+	array<int32_t, MAX_LIGHTS> uniformLightEnabled {  };
+	array<int32_t, MAX_LIGHTS> uniformLightAmbient {  };
+	array<int32_t, MAX_LIGHTS> uniformLightDiffuse {  };
+	array<int32_t, MAX_LIGHTS> uniformLightSpecular {  };
+	array<int32_t, MAX_LIGHTS> uniformLightPosition {  };
+	array<int32_t, MAX_LIGHTS> uniformLightSpotDirection {  };
+	array<int32_t, MAX_LIGHTS> uniformLightSpotExponent {  };
+	array<int32_t, MAX_LIGHTS> uniformLightSpotCosCutoff {  };
+	array<int32_t, MAX_LIGHTS> uniformLightConstantAttenuation {  };
+	array<int32_t, MAX_LIGHTS> uniformLightLinearAttenuation {  };
+	array<int32_t, MAX_LIGHTS> uniformLightQuadraticAttenuation {  };
+	Matrix4x4 mvMatrix {  };
+	Matrix4x4 mvpMatrix {  };
+	Matrix4x4 normalMatrix {  };
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool isRunning {  };
 	bool initialized {  };
 	GLRenderer* renderer {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param renderer
-	 */
-	void ctor(GLRenderer* renderer);
-
 public:
 
 	/** 
@@ -139,16 +125,9 @@ public:
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param renderer
+	 */
 	LightingShader(GLRenderer* renderer);
-protected:
-	LightingShader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
