@@ -303,9 +303,9 @@ void GL3Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>*
 	glUniform3fv(uniformId, 1, data->data());
 }
 
-void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)
+void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)
 {
-	glBindAttribLocation(programId, location, StringConverter::toString(name->getCPPWString()).c_str());
+	glBindAttribLocation(programId, location, StringConverter::toString(name).c_str());
 }
 
 void GL3Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)

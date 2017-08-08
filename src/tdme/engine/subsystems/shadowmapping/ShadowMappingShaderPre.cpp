@@ -53,9 +53,9 @@ void ShadowMappingShaderPre::initialize()
 	renderer->attachShaderToProgram(preProgramGlId, preVertexShaderGlId);
 	renderer->attachShaderToProgram(preProgramGlId, preFragmentShaderGlId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(preProgramGlId, 0, u"inVertex"_j);
-		renderer->setProgramAttributeLocation(preProgramGlId, 1, u"inNormal"_j);
-		renderer->setProgramAttributeLocation(preProgramGlId, 2, u"inTextureUV"_j);
+		renderer->setProgramAttributeLocation(preProgramGlId, 0, L"inVertex");
+		renderer->setProgramAttributeLocation(preProgramGlId, 1, L"inNormal");
+		renderer->setProgramAttributeLocation(preProgramGlId, 2, L"inTextureUV");
 	}
 	if (renderer->linkProgram(preProgramGlId) == false)
 		return;

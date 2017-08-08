@@ -295,9 +295,9 @@ void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3
 	gl->glUniform3fv(uniformId, 1, data->data(), 0);
 }
 
-void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, String* name)
+void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)
 {
-	gl->glBindAttribLocation(programId, location, name);
+	// gl->glBindAttribLocation(programId, location, name);
 }
 
 void GLES2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)

@@ -230,7 +230,7 @@ public:
 	 * @param location
 	 * @param attribute name
 	 */
-	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, String* name) = 0;
+	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name) = 0;
 
 	/** 
 	 * Set up viewport parameter

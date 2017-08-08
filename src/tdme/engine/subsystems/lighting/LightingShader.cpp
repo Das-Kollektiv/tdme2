@@ -67,9 +67,9 @@ void LightingShader::initialize()
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, u"inVertex"_j);
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, u"inNormal"_j);
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, u"inTextureUV"_j);
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, L"inVertex");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, L"inNormal");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, L"inTextureUV");
 	}
 	if (renderer->linkProgram(renderLightingProgramId) == false)
 		return;

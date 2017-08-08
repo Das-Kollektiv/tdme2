@@ -62,8 +62,8 @@ void ParticlesShader::initialize()
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderProgramId, 0, u"inVertex"_j);
-		renderer->setProgramAttributeLocation(renderProgramId, 3, u"inColor"_j);
+		renderer->setProgramAttributeLocation(renderProgramId, 0, L"inVertex");
+		renderer->setProgramAttributeLocation(renderProgramId, 3, L"inColor");
 	}
 	if (renderer->linkProgram(renderProgramId) == false)
 		return;

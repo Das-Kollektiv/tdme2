@@ -52,9 +52,9 @@ void GUIShader::initialize()
 	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
 	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programGlId, 0, u"inVertex"_j);
-		renderer->setProgramAttributeLocation(programGlId, 2, u"inTextureUV"_j);
-		renderer->setProgramAttributeLocation(programGlId, 3, u"inColor"_j);
+		renderer->setProgramAttributeLocation(programGlId, 0, L"inVertex");
+		renderer->setProgramAttributeLocation(programGlId, 2, L"inTextureUV");
+		renderer->setProgramAttributeLocation(programGlId, 3, L"inColor");
 	}
 	if (renderer->linkProgram(programGlId) == false)
 		return;
