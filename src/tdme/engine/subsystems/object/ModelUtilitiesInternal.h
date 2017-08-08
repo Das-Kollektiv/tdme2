@@ -88,7 +88,4 @@ public:
 	 * @return model1 equals model2
 	 */
 	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);
-
-private:
-	friend class ModelUtilitiesInternal_ModelStatistics;
 };

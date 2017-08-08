@@ -29,10 +29,10 @@ using tdme::engine::subsystems::object::ModelUtilitiesInternal;
 using tdme::engine::Timing;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
-using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::FacesEntity;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::AnimationState;
 using tdme::engine::subsystems::object::ModelStatistics;
@@ -41,14 +41,6 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
 {
@@ -62,14 +54,16 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	float minX = 0.0f, minY = 0.0f, minZ = 0.0f;
 	float maxX = 0.0f, maxY = 0.0f, maxZ = 0.0f;
 	auto firstVertex = true;
-	auto animationState = new AnimationState();
-	animationState->setup = defaultAnimation;
-	animationState->lastAtTime = Timing::UNDEFINED;
-	animationState->currentAtTime = 0LL;
-	animationState->time = 0.0f;
-	animationState->finished = false;
+	AnimationState animationState;
+	animationState.setup = defaultAnimation;
+	animationState.lastAtTime = Timing::UNDEFINED;
+	animationState.currentAtTime = 0LL;
+	animationState.time = 0.0f;
+	animationState.finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), object3DModelInternal->getModel()->getImportTransformationsMatrix()->clone()->multiply(object3DModelInternal->getTransformationsMatrix()), animationState, 0);
+		Matrix4x4 parentTransformationsMatrix = *object3DModelInternal->getModel()->getImportTransformationsMatrix();
+		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), &parentTransformationsMatrix, &animationState, 0);
 		Object3DGroup::computeTransformations(&object3DModelInternal->object3dGroups);
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {
@@ -83,29 +77,17 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 					maxZ = (*vertexXYZ)[2];
 					firstVertex = false;
 				} else {
-					if ((*vertexXYZ)[0] < minX)
-						minX = (*vertexXYZ)[0];
-
-					if ((*vertexXYZ)[1] < minY)
-						minY = (*vertexXYZ)[1];
-
-					if ((*vertexXYZ)[2] < minZ)
-						minZ = (*vertexXYZ)[2];
-
-					if ((*vertexXYZ)[0] > maxX)
-						maxX = (*vertexXYZ)[0];
-
-					if ((*vertexXYZ)[1] > maxY)
-						maxY = (*vertexXYZ)[1];
-
-					if ((*vertexXYZ)[2] > maxZ)
-						maxZ = (*vertexXYZ)[2];
-
+					if ((*vertexXYZ)[0] < minX) minX = (*vertexXYZ)[0];
+					if ((*vertexXYZ)[1] < minY) minY = (*vertexXYZ)[1];
+					if ((*vertexXYZ)[2] < minZ) minZ = (*vertexXYZ)[2];
+					if ((*vertexXYZ)[0] > maxX) maxX = (*vertexXYZ)[0];
+					if ((*vertexXYZ)[1] > maxY) maxY = (*vertexXYZ)[1];
+					if ((*vertexXYZ)[2] > maxZ) maxZ = (*vertexXYZ)[2];
 				}
 			}
 		}
-		animationState->currentAtTime = static_cast< int64_t >((t * 1000.0f));
-		animationState->lastAtTime = static_cast< int64_t >((t * 1000.0f));
+		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
+		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
 	}
 	if (firstVertex == true)
 		return nullptr;
