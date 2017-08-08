@@ -1,10 +1,10 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/BatchVBORendererTriangles.java
 #include <tdme/engine/subsystems/object/BatchVBORendererTriangles.h>
 
-#include <java/lang/Byte.h>
-#include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
+#include <java/lang/Byte.h>
+#include <java/lang/Float.h>
 #include <java/nio/ByteBuffer.h>
 #include <java/nio/ByteOrder.h>
 #include <java/nio/FloatBuffer.h>
@@ -33,38 +33,18 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
-BatchVBORendererTriangles::BatchVBORendererTriangles(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+constexpr int32_t BatchVBORendererTriangles::VERTEX_COUNT;
+floatArray* BatchVBORendererTriangles::TEXTURECOORDINATE_NONE = new floatArray({0.0f, 0.0f});
 
 BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32_t id) 
-	: BatchVBORendererTriangles(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer,id);
-}
-
-void BatchVBORendererTriangles::init()
-{
-	vertices = 0;
-	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbNormals = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbTextureCoordinates = ByteBuffer::allocateDirect(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-}
-
-int32_t BatchVBORendererTriangles::VERTEX_COUNT;
-
-floatArray* BatchVBORendererTriangles::TEXTURECOORDINATE_NONE;
-
-void BatchVBORendererTriangles::ctor(GLRenderer* renderer, int32_t id)
-{
-	super::ctor();
-	init();
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
 	this->vertices = 0;
+	this->fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbNormals = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbTextureCoordinates = ByteBuffer::allocateDirect(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 bool BatchVBORendererTriangles::isAcquired()
@@ -96,9 +76,6 @@ void BatchVBORendererTriangles::initialize()
 
 void BatchVBORendererTriangles::render()
 {
-	// fbVertices->flip();
-	// fbNormals->flip();
-	// fbTextureCoordinates->flip();
 	if (fbVertices->position() == 0 || fbNormals->position() == 0 || fbTextureCoordinates->position() == 0)
 		return;
 
@@ -143,53 +120,3 @@ bool BatchVBORendererTriangles::addVertex(Vector3* vertex, Vector3* normal, Text
 	vertices++;
 	return true;
 }
-
-String* BatchVBORendererTriangles::toString()
-{
-	return ::java::lang::StringBuilder().append(u"BatchVBORenderer [vboIds="_j)->append(Arrays::toString(vboIds))
-		->append(u", id="_j)
-		->append(id)
-		->append(u", acquired="_j)
-		->append(acquired)
-		->append(u", fbVertices="_j)
-		->append(fbVertices->position())
-		->append(u", fbNormals="_j)
-		->append(fbNormals->position())
-		->append(u", fbTextureCoordinates="_j)
-		->append(fbTextureCoordinates->position())
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* BatchVBORendererTriangles::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.BatchVBORendererTriangles", 55);
-    return c;
-}
-
-void BatchVBORendererTriangles::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		VERTEX_COUNT = 1024 * 3;
-		TEXTURECOORDINATE_NONE = (new floatArray({
-			0.0f,
-			0.0f
-		}));
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* BatchVBORendererTriangles::getClass0()
-{
-	return class_();
-}
-

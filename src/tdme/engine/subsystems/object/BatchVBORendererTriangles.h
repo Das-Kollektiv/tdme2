@@ -3,23 +3,17 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <Array.h>
 
-using java::lang::Object;
-using java::lang::String;
 using java::nio::FloatBuffer;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Batch VBO renderer
@@ -27,14 +21,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::BatchVBORendererTriangles final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
-	static int32_t VERTEX_COUNT;
+	static constexpr int32_t VERTEX_COUNT { 1024 * 3 };
 	GLRenderer* renderer {  };
 	int32_tArray* vboIds {  };
 	int32_t id {  };
@@ -44,13 +33,6 @@ private:
 	FloatBuffer* fbNormals {  };
 	FloatBuffer* fbTextureCoordinates {  };
 	static floatArray* TEXTURECOORDINATE_NONE;
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param renderer
-	 */
-	void ctor(GLRenderer* renderer, int32_t id);
 
 public:
 
@@ -75,6 +57,10 @@ public:
 	void initialize();
 
 public: /* protected */
+	/**
+	 * Clears this batch vbo renderer
+	 */
+	void clear();
 
 	/** 
 	 * Render 
@@ -89,12 +75,6 @@ public:
 	void dispose();
 
 public: /* protected */
-
-	/** 
-	 * Clears this batch vbo renderer
-	 */
-	void clear();
-
 	/** 
 	 * Adds a vertex to this transparent render faces group
 	 * @param vertex
@@ -105,19 +85,10 @@ public: /* protected */
 	bool addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate);
 
 public:
-	String* toString() override;
-
-	// Generated
+	/**
+	 * Public constructor
+	 * @param renderer
+	 * @param id
+	 */
 	BatchVBORendererTriangles(GLRenderer* renderer, int32_t id);
-protected:
-	BatchVBORendererTriangles(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
