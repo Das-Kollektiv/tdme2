@@ -9,17 +9,16 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::object::BatchVBORendererPoints;
@@ -31,7 +30,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
-using tdme::utils::Key;
 using tdme::utils::Pool;
 
 struct default_init_tag;
@@ -41,13 +39,7 @@ struct default_init_tag;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::object::Object3DVBORenderer final
-	: public Object
-{
-
-public:
-	typedef Object super;
-
+class tdme::engine::subsystems::object::Object3DVBORenderer final {
 private:
 	static constexpr int32_t BATCHVBORENDERER_MAX { 256 };
 
@@ -59,24 +51,12 @@ private:
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	map<wstring, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
-	Pool* transparentRenderFacesGroupPool {  };
+	Object3DVBORenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
 	map<wstring, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
-	Matrix4x4* modelViewMatrixBackup {  };
-	Matrix4x4* modelViewMatrix {  };
-	Vector3* transformedVertex {  };
-	Vector3* transformedNormal {  };
-	Matrix4x4Negative* matrix4x4Negative {  };
-protected:
-
-	/** 
-	 * Public constructor 
-	 * @param renderer
-	 */
-	void ctor(Engine* engine, GLRenderer* renderer);
-
+	Matrix4x4Negative matrix4x4Negative {  };
 public:
 
 	/** 
@@ -170,19 +150,10 @@ public:
 	 */
 	void render(const vector<PointsParticleSystemEntity*>& visiblePses);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param engine
+	 * @param renderer
+	 */
 	Object3DVBORenderer(Engine* engine, GLRenderer* renderer);
-protected:
-	Object3DVBORenderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class Object3DVBORenderer_1;
-	friend class Object3DVBORenderer_Object3DVBORenderer_2;
-	friend class Object3DVBORenderer_Object3DVBORenderer_3;
 };

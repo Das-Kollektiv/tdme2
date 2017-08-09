@@ -20,8 +20,7 @@ namespace object {
 				class Object3DModelInternal;
 				class Object3DVBORenderer;
 				class Object3DVBORenderer_1;
-				class Object3DVBORenderer_Object3DVBORenderer_2;
-				class Object3DVBORenderer_Object3DVBORenderer_3;
+				class Object3DVBORenderer_TransparentRenderFacesGroupPool;
 				class TransparentRenderFace;
 				class TransparentRenderFacesGroup;
 				class TransparentRenderFacesPool;

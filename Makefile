@@ -143,8 +143,7 @@ SRCS = \
 	src/tdme/engine/subsystems/object/Object3DInternal.cpp \
 	src/tdme/engine/subsystems/object/Object3DModelInternal.cpp \
 	src/tdme/engine/subsystems/object/Object3DVBORenderer.cpp \
-	src/tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_2.cpp \
-	src/tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_3.cpp \
+	src/tdme/engine/subsystems/object/Object3DVBORenderer_TransparentRenderFacesGroupPool.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFace.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFacesPool.cpp \

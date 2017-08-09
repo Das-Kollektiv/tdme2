@@ -29,8 +29,7 @@
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_2.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer_Object3DVBORenderer_3.h>
+#include <tdme/engine/subsystems/object/Object3DVBORenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/object/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/object/TransparentRenderFacesGroup.h>
 #include <tdme/engine/subsystems/object/TransparentRenderFacesPool.h>
@@ -83,8 +82,7 @@ using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::object::Object3DVBORenderer_1;
-using tdme::engine::subsystems::object::Object3DVBORenderer_Object3DVBORenderer_2;
-using tdme::engine::subsystems::object::Object3DVBORenderer_Object3DVBORenderer_3;
+using tdme::engine::subsystems::object::Object3DVBORenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::object::TransparentRenderFace;
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
@@ -102,72 +100,20 @@ using tdme::utils::Key;
 using tdme::utils::Pool;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Face, ::java::lang::ObjectArray > FaceArray;
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-
-namespace subsystems {
-namespace object {
-typedef ::SubArray< ::tdme::engine::subsystems::object::Object3DGroup, ::java::lang::ObjectArray > Object3DGroupArray;
-}  // namespace object
-}  // namespace subsystems
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Object3DVBORenderer::Object3DVBORenderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
-	: Object3DVBORenderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(engine,renderer);
-}
-
-void Object3DVBORenderer::init()
-{
+	this->engine = engine;
+	this->renderer = renderer;
 	transparentRenderFacesPool = nullptr;
 	pseTransparentRenderPointsPool = nullptr;
 	psePointBatchVBORenderer = nullptr;
-	modelViewMatrixBackup = new Matrix4x4();
-	modelViewMatrix = new Matrix4x4();
-	transformedVertex = new Vector3();
-	transformedNormal = new Vector3();
-	matrix4x4Negative = new Matrix4x4Negative();
-}
-
-constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
-
-void Object3DVBORenderer::ctor(Engine* engine, GLRenderer* renderer)
-{
-	super::ctor();
-	init();
-	this->engine = engine;
-	this->renderer = renderer;
-	transparentRenderFacesGroupPool = new Object3DVBORenderer_Object3DVBORenderer_3(this);
+	transparentRenderFacesGroupPool = new Object3DVBORenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
 }
+
+constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
 
 void Object3DVBORenderer::initialize()
 {
@@ -211,7 +157,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
 	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-		auto object = java_cast< Object3D* >(objects.at(objectIdx));
+		auto object = objects.at(objectIdx);
 		auto modelId = object->getModel()->getId();
 		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
 		visibleObjectsByModel.push_back(object);
@@ -257,16 +203,23 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
 {
 	auto object3DGroup = transparentRenderFaces.at(0)->object3DGroup;
-	auto object3D = java_cast< Object3D* >(object3DGroup->object);
-	modelViewMatrix = (object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(object3DGroup->groupTransformationsMatrix))->multiply(object3D->transformationsMatrix)->multiply(renderer->getModelViewMatrix());
-	auto model = (java_cast< Object3D* >(object3DGroup->object))->getModel();
+	auto object3D = dynamic_cast<Object3D*>(object3DGroup->object);
+	Matrix4x4 modelViewMatrix;
+	if (object3DGroup->mesh->skinning == true) {
+		modelViewMatrix.identity();
+	} else {
+		modelViewMatrix.set(object3DGroup->groupTransformationsMatrix)->multiply(object3D->transformationsMatrix)->multiply(renderer->getModelViewMatrix());
+	}
+	auto model = object3DGroup->object->getModel();
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	FacesEntity* facesEntity = nullptr;
 	auto depthBuffer = false;
-	auto effectColorAdd = (java_cast< Object3D* >(object3D))->getEffectColorAdd();
-	auto effectColorMul = (java_cast< Object3D* >(object3D))->getEffectColorMul();
+	auto effectColorAdd = object3D->getEffectColorAdd();
+	auto effectColorMul = object3D->getEffectColorMul();
 	Material* material = nullptr;
 	auto textureCoordinates = false;
+	Vector3 transformedVector;
+	Vector3 transformedNormal;
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
 		auto transparentRenderFace = transparentRenderFaces.at(i);
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
@@ -289,8 +242,8 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(
-				modelViewMatrix->multiply(&(*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVertex),
-				modelViewMatrix->multiplyNoTranslation(&(*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
+				modelViewMatrix.multiply(&(*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], &transformedVector),
+				modelViewMatrix.multiplyNoTranslation(&(*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], &transformedNormal),
 				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
 					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
 					static_cast< TextureCoordinate* >(nullptr)
@@ -323,7 +276,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 		}
 	}
 	auto shadowMapping = engine->getShadowMapping();
-	modelViewMatrixBackup->set(renderer->getModelViewMatrix());
+	Matrix4x4 modelViewMatrix;
+	Matrix4x4 modelViewMatrixBackup;
+	modelViewMatrixBackup.set(renderer->getModelViewMatrix());
 	auto currentFrontFace = -1;
 	auto firstObject = objects.at(0);
 	int32_tArray* boundVBOBaseIds = nullptr;
@@ -354,11 +309,10 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_object3DGroup->mesh->skinning == true ?
-								modelViewMatrix->identity() :
-								modelViewMatrix->
-									set(_object3DGroup->groupTransformationsMatrix))->
-									multiply(object->transformationsMatrix)->
-									multiply(modelViewMatrixBackup),
+								modelViewMatrix.identity() :
+								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
+							)->
+								multiply(object->transformationsMatrix)->multiply(&modelViewMatrixBackup),
 								object->object3dGroups[object3DGroupIdx],
 								faceEntityIdx,
 								faceIdx
@@ -390,11 +344,19 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				}
 				if (object->effectColorMul.getAlpha() < 1.0f - MathTools::EPSILON || object->effectColorAdd.getAlpha() < -MathTools::EPSILON) {
 					if (collectTransparentFaces == true) {
-						transparentRenderFacesPool->createTransparentRenderFaces((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix)->multiply(modelViewMatrixBackup), _object3DGroup, faceEntityIdx, faceIdx);
+						transparentRenderFacesPool->createTransparentRenderFaces(
+							(_object3DGroup->mesh->skinning == true ?
+								modelViewMatrix.identity() :
+								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
+							)->multiply(object->transformationsMatrix)->multiply(&modelViewMatrixBackup),
+							_object3DGroup,
+							faceEntityIdx,
+							faceIdx
+						);
 					}
 					continue;
 				}
-				auto currentVBOGlIds = (java_cast< Object3DGroupVBORenderer* >(_object3DGroup->renderer))->vboBaseIds;
+				auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
 				if (boundVBOBaseIds != currentVBOGlIds) {
 					boundVBOBaseIds = currentVBOGlIds;
 					if (isTextureCoordinatesAvailable == true) {
@@ -404,14 +366,21 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					renderer->bindNormalsBufferObject((*currentVBOGlIds)[2]);
 					renderer->bindIndicesBufferObject((*currentVBOGlIds)[0]);
 				}
-				auto currentVBOTangentBitangentIds = (java_cast< Object3DGroupVBORenderer* >(_object3DGroup->renderer))->vboTangentBitangentIds;
+				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
 				if (renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
 					renderer->bindTangentsBufferObject((*currentVBOTangentBitangentIds)[0]);
 					renderer->bindBitangentsBufferObject((*currentVBOTangentBitangentIds)[1]);
 				}
-				renderer->getModelViewMatrix()->set((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix)->multiply(modelViewMatrixBackup));
+				renderer->getModelViewMatrix()->set(
+					(_object3DGroup->mesh->skinning == true ?
+						modelViewMatrix.identity() :
+						modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
+					)->
+						multiply(object->transformationsMatrix)->
+						multiply(&modelViewMatrixBackup)
+				);
 				renderer->onUpdateModelViewMatrix();
-				auto objectFrontFace = matrix4x4Negative->isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
 					renderer->setFrontFace(objectFrontFace);
 					currentFrontFace = objectFrontFace;
@@ -420,7 +389,11 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				renderer->setEffectColorAdd(object->effectColorAdd.getArray());
 				renderer->onUpdateEffect();
 				if (shadowMapping != nullptr) {
-					shadowMapping->startObjectTransformations((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix));
+					shadowMapping->startObjectTransformations(
+						(_object3DGroup->mesh->skinning == true ?
+							modelViewMatrix.identity() :
+							modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
+						)->multiply(object->transformationsMatrix));
 				}
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				if (shadowMapping != nullptr) {
@@ -431,7 +404,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 		}
 	}
 	renderer->unbindBufferObjects();
-	renderer->getModelViewMatrix()->set(modelViewMatrixBackup);
+	renderer->getModelViewMatrix()->set(&modelViewMatrixBackup);
 }
 
 void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx)
@@ -486,7 +459,6 @@ void Object3DVBORenderer::clearMaterial()
 
 const wstring Object3DVBORenderer::createPseKey(Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort)
 {
-	clinit();
 	auto efcaData = effectColorAdd->getArray();
 	auto efcmData = effectColorMul->getArray();
 	wstring key =
@@ -517,7 +489,8 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	if (visiblePses.size() == 0)
 		return;
 
-	modelViewMatrix->set(renderer->getModelViewMatrix());
+	Matrix4x4 modelViewMatrix;
+	modelViewMatrix.set(renderer->getModelViewMatrix());
 	auto depthBuffer = false;
 	renderer->enableBlending();
 	renderer->disableDepthBuffer();
@@ -578,19 +551,5 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	renderer->unbindBufferObjects();
 	renderer->enableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
 	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
-	renderer->getModelViewMatrix()->set(modelViewMatrix);
+	renderer->getModelViewMatrix()->set(&modelViewMatrix);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Object3DVBORenderer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.Object3DVBORenderer", 49);
-    return c;
-}
-
-java::lang::Class* Object3DVBORenderer::getClass0()
-{
-	return class_();
-}
-
