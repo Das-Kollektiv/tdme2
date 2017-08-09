@@ -363,7 +363,6 @@ SRCS = \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
-	src/tdme/utils/Pool.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \

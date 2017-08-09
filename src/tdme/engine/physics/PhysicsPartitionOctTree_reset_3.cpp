@@ -12,7 +12,6 @@ PhysicsPartitionOctTree_reset_3::PhysicsPartitionOctTree_reset_3(PhysicsPartitio
 	: super()
 	, PhysicsPartitionOctTree_this(PhysicsPartitionOctTree_this)
 {
-	ctor();
 }
 
 PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree_reset_3::instantiate()

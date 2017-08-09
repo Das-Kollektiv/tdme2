@@ -6,7 +6,6 @@ namespace tdme {
 namespace utils {
 		class Key;
 		class MutableString;
-		class Pool;
 		class StringConverter;
 		class StringTokenizer;
 		class StringUtils;

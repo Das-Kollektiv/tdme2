@@ -12,7 +12,6 @@ GUI_2::GUI_2(GUI *GUI_this)
 	: super()
 	, GUI_this(GUI_this)
 {
-	ctor();
 }
 
 GUIKeyboardEvent* GUI_2::instantiate()

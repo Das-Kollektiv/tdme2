@@ -14,6 +14,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Pool.h>
 
 using std::map;
 using std::vector;

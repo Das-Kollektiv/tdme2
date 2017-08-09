@@ -15,7 +15,7 @@ using tdme::utils::_HashMap;
 
 struct default_init_tag;
 class tdme::utils::_HashMap_1
-	: public Pool
+	: public Pool<_HashMap_Pair*>
 {
 
 public:

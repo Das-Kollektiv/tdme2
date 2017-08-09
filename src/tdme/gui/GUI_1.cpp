@@ -12,7 +12,6 @@ GUI_1::GUI_1(GUI *GUI_this)
 	: super()
 	, GUI_this(GUI_this)
 {
-	ctor();
 }
 
 GUIMouseEvent* GUI_1::instantiate()

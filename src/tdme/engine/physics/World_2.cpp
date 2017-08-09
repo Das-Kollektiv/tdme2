@@ -12,7 +12,6 @@ World_2::World_2(World *World_this)
 	: super()
 	, World_this(World_this)
 {
-	ctor();
 }
 
 Key* World_2::instantiate()

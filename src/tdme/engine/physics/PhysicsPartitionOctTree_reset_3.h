@@ -13,7 +13,7 @@ using tdme::engine::physics::PhysicsPartitionOctTree;
 
 struct default_init_tag;
 class tdme::engine::physics::PhysicsPartitionOctTree_reset_3
-	: public Pool
+	: public Pool<PhysicsPartitionOctTree_PartitionTreeNode*>
 {
 
 public:

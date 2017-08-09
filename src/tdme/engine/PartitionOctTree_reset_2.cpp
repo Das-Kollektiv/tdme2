@@ -12,7 +12,6 @@ PartitionOctTree_reset_2::PartitionOctTree_reset_2(PartitionOctTree *partitionOc
 	: Pool()
 	, partitionOctTree(partitionOctTree)
 {
-	ctor();
 }
 
 BoundingBox* PartitionOctTree_reset_2::instantiate()

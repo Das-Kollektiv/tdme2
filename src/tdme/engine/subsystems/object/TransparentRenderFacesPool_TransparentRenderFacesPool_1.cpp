@@ -12,7 +12,6 @@ TransparentRenderFacesPool_TransparentRenderFacesPool_1::TransparentRenderFacesP
 	: super()
 	, TransparentRenderFacesPool_this(TransparentRenderFacesPool_this)
 {
-	ctor();
 }
 
 TransparentRenderFace* TransparentRenderFacesPool_TransparentRenderFacesPool_1::instantiate()

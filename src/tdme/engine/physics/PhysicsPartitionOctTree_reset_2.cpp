@@ -12,7 +12,6 @@ PhysicsPartitionOctTree_reset_2::PhysicsPartitionOctTree_reset_2(PhysicsPartitio
 	: super()
 	, PhysicsPartitionOctTree_this(PhysicsPartitionOctTree_this)
 {
-	ctor();
 }
 
 BoundingBox* PhysicsPartitionOctTree_reset_2::instantiate()

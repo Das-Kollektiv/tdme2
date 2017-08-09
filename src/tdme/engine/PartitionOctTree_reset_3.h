@@ -11,7 +11,7 @@ using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::PartitionOctTree;
 
 class tdme::engine::PartitionOctTree_reset_3
-	: public Pool
+	: public Pool<PartitionOctTree_PartitionTreeNode*>
 {
 public: /* protected */
 	PartitionOctTree_PartitionTreeNode* instantiate() override;

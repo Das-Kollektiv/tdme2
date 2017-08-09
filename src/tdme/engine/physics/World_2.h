@@ -14,7 +14,7 @@ using tdme::utils::Key;
 
 struct default_init_tag;
 class tdme::engine::physics::World_2
-	: public Pool
+	: public Pool<Key*>
 {
 
 public:

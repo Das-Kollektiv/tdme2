@@ -12,7 +12,6 @@ _HashMap_1::_HashMap_1(_HashMap *_HashMap_this)
 	: super()
 	, _HashMap_this(_HashMap_this)
 {
-	ctor();
 }
 
 _HashMap_Pair* _HashMap_1::instantiate()

@@ -12,9 +12,11 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/ApplicationInputEventsHandler.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Pool.h>
 #include <java/lang/Object.h>
 
 using std::map;
@@ -26,6 +28,8 @@ using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::fileio::textures::Texture;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -65,9 +69,9 @@ private:
 	GUIColor* unfocussedNodeBorderRightColor {  };
 	GUIColor* unfocussedNodeBorderTopColor {  };
 	GUIColor* unfocussedNodeBorderBottomColor {  };
-	Pool* mouseEventsPool {  };
+	Pool<GUIMouseEvent*>* mouseEventsPool {  };
 	_ArrayList* mouseEvents {  };
-	Pool* keyboardEventsPool {  };
+	Pool<GUIKeyboardEvent*>* keyboardEventsPool {  };
 	_ArrayList* keyboardEvents {  };
 	ReentrantLock* eventsMutex {  };
 	_ArrayList* renderScreens {  };

@@ -4,14 +4,10 @@
 
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
-
 #include <fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
-
-using java::lang::Object;
 
 /** 
  * Pool 
@@ -19,33 +15,44 @@ using java::lang::Object;
  * @version $Id$
  * @param<E>
  */
-class tdme::utils::Pool
+namespace tdme {
+namespace utils {
+
+/**
+ * Array list iterator for multiple array lists
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+template<typename T>
+class Pool
 {
 private:
-	vector<Object*> freeElements;
-	vector<Object*> usedElements;
-
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
+	vector<T> freeElements;
+	vector<T> usedElements;
 public:
 
 	/** 
 	 * Allocate a new element from pool
 	 * @return element
 	 */
-	Object* allocate();
+	T allocate() {
+		if (freeElements.empty() == false) {
+			T element = freeElements.at(freeElements.size() - 1);
+			freeElements.erase(freeElements.begin() + freeElements.size() - 1);
+			usedElements.push_back(element);
+			return element;
+		}
+		T element = instantiate();
+		usedElements.push_back(element);
+		return element;
+	}
 
 public: /* protected */
 
 	/** 
 	 * Instantiate element
 	 */
-	virtual Object* instantiate() = 0;
+	virtual T instantiate() = 0;
 
 public:
 
@@ -53,25 +60,46 @@ public:
 	 * Release element in pool for being reused
 	 * @param element
 	 */
-	void release(Object* element);
+	void release(T element) {
+		for (auto i = 0; i < usedElements.size(); i++) {
+			if (usedElements.at(i) == element) {
+				usedElements.erase(usedElements.begin() + i);
+				freeElements.push_back(element);
+				return;
+			}
+		}
+	}
 
 	/** 
 	 * @return element capacity
 	 */
-	int32_t capacity();
+	int32_t capacity() {
+		return usedElements.size() + freeElements.size();
+	}
 
 	/** 
 	 * @return elements in use
 	 */
-	int32_t size();
+	int32_t size() {
+		return usedElements.size();
+	}
 
 	/** 
 	 * Reset this pool
 	 */
-	void reset();
+	void reset() {
+		for (auto i = 0; i < usedElements.size(); i++) {
+			freeElements.push_back(usedElements.at(i));
+		}
+		usedElements.clear();
+	}
 
 	/**
 	 * Public constructor
 	 */
-	Pool();
+	Pool() {
+	}
+};
+
+};
 };

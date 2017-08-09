@@ -15,7 +15,7 @@ using tdme::engine::primitives::BoundingBox;
 
 struct default_init_tag;
 class tdme::engine::physics::PhysicsPartitionOctTree_reset_2
-	: public Pool
+	: public Pool<BoundingBox*>
 {
 
 public:

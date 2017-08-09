@@ -5,6 +5,7 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Pool.h>
 #include <java/lang/Object.h>
 
 using java::lang::Object;
@@ -37,7 +38,7 @@ private:
 	_ArrayList* buckets {  };
 	_HashMap_ValuesIterator* valuesIterator {  };
 	_HashMap_KeysIterator* keysIterator {  };
-	Pool* pairPool {  };
+	Pool<_HashMap_Pair*>* pairPool {  };
 protected:
 
 	/** 

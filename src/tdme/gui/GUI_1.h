@@ -14,7 +14,7 @@ using tdme::gui::events::GUIMouseEvent;
 
 struct default_init_tag;
 class tdme::gui::GUI_1
-	: public Pool
+	: public Pool<GUIMouseEvent*>
 {
 
 public:

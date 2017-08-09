@@ -14,7 +14,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 
 struct default_init_tag;
 class tdme::gui::GUI_2
-	: public Pool
+	: public Pool<GUIKeyboardEvent*>
 {
 
 public:

@@ -13,7 +13,7 @@ using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 
 struct default_init_tag;
 class tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRenderFacesPool_1
-	: public Pool
+	: public Pool<TransparentRenderFace*>
 {
 
 public:

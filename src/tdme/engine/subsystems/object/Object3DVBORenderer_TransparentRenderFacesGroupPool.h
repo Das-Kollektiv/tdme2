@@ -11,7 +11,7 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 
 class tdme::engine::subsystems::object::Object3DVBORenderer_TransparentRenderFacesGroupPool
-	: public Pool
+	: public Pool<TransparentRenderFacesGroup*>
 {
 public: /* protected */
 	/**

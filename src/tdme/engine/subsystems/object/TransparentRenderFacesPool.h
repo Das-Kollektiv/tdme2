@@ -8,6 +8,7 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Pool.h>
 #include <java/lang/Object.h>
 
 using std::vector;
@@ -36,7 +37,7 @@ public:
 private:
 	static constexpr int32_t FACES_MAX { 16384 };
 	vector<TransparentRenderFace*> transparentRenderFaces {  };
-	Pool* transparentRenderFacesPool {  };
+	Pool<TransparentRenderFace*>* transparentRenderFacesPool {  };
 	Vector3* tmpVector3 {  };
 protected:
 

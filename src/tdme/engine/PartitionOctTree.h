@@ -14,6 +14,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/Pool.h>
 
 using std::map;
 using std::vector;
@@ -44,8 +45,8 @@ private:
 	Vector3* sideVector {  };
 	Vector3* forwardVector {  };
 	Vector3* upVector {  };
-	Pool* boundingBoxPool {  };
-	Pool* partitionTreeNodePool {  };
+	Pool<BoundingBox*>* boundingBoxPool {  };
+	Pool<PartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
 	PartitionOctTree_PartitionTreeNode* treeRoot {  };

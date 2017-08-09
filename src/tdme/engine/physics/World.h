@@ -32,7 +32,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Pool;
 
 struct default_init_tag;
 

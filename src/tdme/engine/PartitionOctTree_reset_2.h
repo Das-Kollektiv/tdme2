@@ -13,7 +13,7 @@ using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
 class tdme::engine::PartitionOctTree_reset_2
-	: public Pool
+	: public Pool<BoundingBox*>
 {
 public: /* protected */
 	BoundingBox* instantiate() override;

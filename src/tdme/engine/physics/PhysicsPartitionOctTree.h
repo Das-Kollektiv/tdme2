@@ -15,6 +15,7 @@
 #include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/Pool.h>
 
 using std::map;
 using std::vector;
@@ -51,8 +52,8 @@ private:
 	Vector3* sideVector {  };
 	Vector3* forwardVector {  };
 	Vector3* upVector {  };
-	Pool* boundingBoxPool {  };
-	Pool* partitionTreeNodePool {  };
+	Pool<BoundingBox*>* boundingBoxPool {  };
+	Pool<PhysicsPartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode* treeRoot {  };
 
