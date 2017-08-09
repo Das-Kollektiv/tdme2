@@ -6,19 +6,15 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -28,9 +24,6 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Key;
-
-struct default_init_tag;
 
 /** 
  * Transparent render faces group
@@ -38,12 +31,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::TransparentRenderFacesGroup final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static Matrix4x4* modelViewMatrix;
 	Object3DVBORenderer* object3DVBORenderer {  };
@@ -59,12 +47,6 @@ public: /* protected */
 private:
 	Material* material {  };
 	bool textureCoordinates {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -109,21 +91,9 @@ public: /* protected */
 	 */
 	void render(GLRenderer* renderer);
 
-public:
-	String* toString() override;
-
-	// Generated
-
 public: /* protected */
+	/**
+	 * Public constructor
+	 */
 	TransparentRenderFacesGroup();
-protected:
-	TransparentRenderFacesGroup(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

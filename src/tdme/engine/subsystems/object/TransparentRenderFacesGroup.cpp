@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -23,10 +22,9 @@ using std::vector;
 using std::wstring;
 using std::to_wstring;
 
-using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
-using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
+
+using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -38,31 +36,10 @@ using tdme::math::Matrix4x4;
 using tdme::utils::Key;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-TransparentRenderFacesGroup::TransparentRenderFacesGroup(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+Matrix4x4* TransparentRenderFacesGroup::modelViewMatrix = new Matrix4x4();
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
-	: TransparentRenderFacesGroup(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-Matrix4x4* TransparentRenderFacesGroup::modelViewMatrix;
-
-void TransparentRenderFacesGroup::ctor()
-{
-	super::ctor();
 	this->object3DVBORenderer = nullptr;
 	this->model = nullptr;
 	this->object3DGroup = nullptr;
@@ -88,7 +65,6 @@ void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, 
 
 const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
 {
-	clinit();
 	auto efcmData = effectColorMul->getArray();
 	auto efcaData = effectColorAdd->getArray();
 	wstring key =
@@ -173,40 +149,3 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	renderer->getModelViewMatrix()->set(modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
 }
-
-String* TransparentRenderFacesGroup::toString()
-{
-	return ::java::lang::StringBuilder().append(u"TransparentRenderFacesGroup [model="_j)->append(model->getId())
-		->append(u", object3DGroup="_j)
-		->append(object3DGroup->id)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TransparentRenderFacesGroup::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.TransparentRenderFacesGroup", 57);
-    return c;
-}
-
-void TransparentRenderFacesGroup::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-			modelViewMatrix = new Matrix4x4();
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* TransparentRenderFacesGroup::getClass0()
-{
-	return class_();
-}
-

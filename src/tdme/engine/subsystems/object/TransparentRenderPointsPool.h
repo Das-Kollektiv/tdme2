@@ -9,15 +9,11 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
-
-struct default_init_tag;
 
 /** 
  * Transparent render points pool
@@ -25,21 +21,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::TransparentRenderPointsPool final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	vector<TransparentRenderPoint*> transparentRenderPoints {  };
 	int32_t poolIdx {  };
-protected:
-
-	/** 
-	 * Default constructor
-	 */
-	void ctor(int32_t pointsMax);
 
 public:
 
@@ -71,16 +56,9 @@ public:
 	 */
 	void sort();
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param points max
+	 */
 	TransparentRenderPointsPool(int32_t pointsMax);
-protected:
-	TransparentRenderPointsPool(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
