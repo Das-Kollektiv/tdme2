@@ -63,9 +63,12 @@ void MeshManager_MeshManaged::incrementReferenceCounter()
 
 String* MeshManager_MeshManaged::toString()
 {
-	return ::java::lang::StringBuilder().append(u"MeshManaged [id="_j)->append(id)
+	return ::java::lang::StringBuilder().append(u"MeshManaged [id="_j)
+		->append(id)
+		/*
 		->append(u", mesh="_j)
 		->append(static_cast< Object* >(mesh))
+		*/
 		->append(u", referenceCounter="_j)
 		->append(referenceCounter)
 		->append(u"]"_j)->toString();

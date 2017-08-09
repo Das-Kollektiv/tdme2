@@ -64,28 +64,11 @@ static T java_cast(U* u)
     return t;
 }
 
-Object3DGroupMesh::Object3DGroupMesh(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Object3DGroupMesh::Object3DGroupMesh()
-	: Object3DGroupMesh(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void Object3DGroupMesh::ctor()
-{
-	super::ctor();
-	init();
-}
-
-void Object3DGroupMesh::init()
 {
 	vertices = nullptr;
 	normals = nullptr;
+	textureCoordinates = nullptr;
 	tangents = nullptr;
 	bitangents = nullptr;
 	cSkinningMaxVertexWeights = -1;
@@ -96,7 +79,6 @@ void Object3DGroupMesh::init()
 
 Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices, map<wstring, Matrix4x4*>* skinningMatrices)
 {
-	clinit();
 	auto mesh = new Object3DGroupMesh();
 	mesh->group = group;
 	auto groupVertices = group->getVertices();
@@ -187,13 +169,13 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 			}
 		}
 	}
-	mesh->tmpVector3 = new Vector3();
 	mesh->recreateBuffers();
 	return mesh;
 }
 
 void Object3DGroupMesh::computeTransformations(Group* group)
 {
+	Vector3 tmpVector3;
 	auto groupVertices = group->getVertices();
 	auto groupNormals = group->getNormals();
 	auto groupTangent = group->getTangents();
@@ -225,13 +207,13 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {
 					auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					auto cTransformationsMatrix = cSkinningJointTransformationsMatrices[vertexIndex][vertexJointWeightIdx];
-					transformedVertex->add(cTransformationsMatrix->multiply(vertex, tmpVector3)->scale(weight));
-					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(normal, tmpVector3)->scale(weight));
+					transformedVertex->add(cTransformationsMatrix->multiply(vertex, &tmpVector3)->scale(weight));
+					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(normal, &tmpVector3)->scale(weight));
 					if (tangent != nullptr) {
-						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(tangent, tmpVector3)->scale(weight));
+						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(tangent, &tmpVector3)->scale(weight));
 					}
 					if (bitangent != nullptr) {
-						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(bitangent, tmpVector3)->scale(weight));
+						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(bitangent, &tmpVector3)->scale(weight));
 					}
 					totalWeights += weight;
 				}
@@ -252,10 +234,10 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 		}
 	} else if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
-			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply(&(*groupVertices)[vertexIndex], tmpVector3));
+			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply(&(*groupVertices)[vertexIndex], &tmpVector3));
 		}
 		for (auto normalIndex = 0; normalIndex < groupNormals->size(); normalIndex++) {
-			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation(&(*groupNormals)[normalIndex], tmpVector3)->normalize());
+			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation(&(*groupNormals)[normalIndex], &tmpVector3)->normalize());
 		}
 		recreateBuffers();
 	}
@@ -282,7 +264,6 @@ ShortBuffer* Object3DGroupMesh::setupVertexIndicesBuffer()
 	for (auto index : indices) {
 		sbIndices->put(index);
 	}
-	// sbIndices->flip();
 	return sbIndices;
 }
 
@@ -296,7 +277,6 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates->put(textureCoordinate.getArray());
 	}
-	// fbTextureCoordinates->flip();
 	return fbTextureCoordinates;
 }
 
@@ -306,7 +286,6 @@ FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 	for (auto& vertex : *vertices) {
 		fbVertices->put(vertex.getArray());
 	}
-	// fbVertices->flip();
 	return fbVertices;
 }
 
@@ -316,7 +295,6 @@ FloatBuffer* Object3DGroupMesh::setupNormalsBuffer()
 	for (auto& normal : *normals) {
 		fbNormals->put(normal.getArray());
 	}
-	// fbNormals->flip();
 	return fbNormals;
 }
 
@@ -329,7 +307,6 @@ FloatBuffer* Object3DGroupMesh::setupTangentsBuffer()
 	for (auto& tangent : *tangents) {
 		fbTangents->put(tangent.getArray());
 	}
-	// fbTangents->flip();
 	return fbTangents;
 }
 
@@ -342,20 +319,6 @@ FloatBuffer* Object3DGroupMesh::setupBitangentsBuffer()
 	for (auto& bitangent : *bitangents) {
 		fbBitangents->put(bitangent.getArray());
 	}
-	// fbBitangents->flip();
 	return fbBitangents;
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Object3DGroupMesh::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.Object3DGroupMesh", 47);
-    return c;
-}
-
-java::lang::Class* Object3DGroupMesh::getClass0()
-{
-	return class_();
 }
 

@@ -7,21 +7,20 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
 using tdme::engine::Engine;
@@ -30,14 +29,8 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-struct default_init_tag;
 class tdme::engine::subsystems::object::Object3DGroupMesh final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	Group* group {  };
 	int32_t faceCount {  };
@@ -62,7 +55,6 @@ public: /* protected */
 
 private:
 	vector<vector<Matrix4x4*>> cSkinningJointTransformationsMatrices {  };
-	Vector3* tmpVector3 {  };
 
 public: /* protected */
 	bool skinning {  };
@@ -138,16 +130,8 @@ public: /* protected */
 	// Generated
 
 public:
+	/**
+	 * Public constructor
+	 */
 	Object3DGroupMesh();
-protected:
-	void ctor();
-	Object3DGroupMesh(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
