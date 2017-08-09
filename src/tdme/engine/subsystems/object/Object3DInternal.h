@@ -34,8 +34,8 @@ public: /* protected */
 	bool enabled {  };
 	bool pickable {  };
 	bool dynamicShadowing {  };
-	Color4* effectColorMul {  };
-	Color4* effectColorAdd {  };
+	Color4 effectColorMul {  };
+	Color4 effectColorAdd {  };
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
 public:
@@ -115,7 +115,7 @@ public:
 	 * @param faces entity name or null if texture should be bound to all faces entities
 	 * @param frame buffer
 	 */
-	virtual void bindDiffuseTexture(String* groupId, FrameBuffer* frameBuffer);
+	virtual void bindDiffuseTexture(const wstring& groupId, FrameBuffer* frameBuffer);
 
 	/** 
 	 * Bind frame buffer color texture to a group and faces entity of this object
@@ -123,7 +123,7 @@ public:
 	 * @param faces entity id
 	 * @param frame buffer
 	 */
-	virtual void bindDiffuseTexture(String* groupId, String* facesEntityId, FrameBuffer* frameBuffer);
+	virtual void bindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, FrameBuffer* frameBuffer);
 
 	/** 
 	 * Unbind dynamic texture of this object
@@ -134,14 +134,14 @@ public:
 	 * Unbind dynamic texture to a group of this object
 	 * @param group id
 	 */
-	virtual void unbindDiffuseTexture(String* groupId);
+	virtual void unbindDiffuseTexture(const wstring& groupId);
 
 	/** 
 	 * Unbind dynamic texture to a group and faces entity of this object
 	 * @param group id
 	 * @param faces entity id
 	 */
-	virtual void unbindDiffuseTexture(String* groupId, String* facesEntityId);
+	virtual void unbindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId);
 
 private:
 
@@ -151,7 +151,7 @@ private:
 	 * @param faces entity id or null if texture should be bound to all faces entities
 	 * @param texture id
 	 */
-	void setDynamicDiffuseTexture(String* groupId, String* facesEntityId, int32_t textureId);
+	void setDynamicDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, int32_t textureId);
 
 public:
 
@@ -164,6 +164,7 @@ public:
 	 * Dispose this object3d
 	 */
 	void dispose() override;
+
 	void fromTransformations(Transformations* transformations) override;
 	void update() override;
 

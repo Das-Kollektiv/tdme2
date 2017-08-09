@@ -388,7 +388,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				} else {
 					Object3DGroup::setupTextures(renderer, _object3DGroup, faceEntityIdx);
 				}
-				if (object->effectColorMul->getAlpha() < 1.0f - MathTools::EPSILON || object->effectColorAdd->getAlpha() < -MathTools::EPSILON) {
+				if (object->effectColorMul.getAlpha() < 1.0f - MathTools::EPSILON || object->effectColorAdd.getAlpha() < -MathTools::EPSILON) {
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix)->multiply(modelViewMatrixBackup), _object3DGroup, faceEntityIdx, faceIdx);
 					}
@@ -416,8 +416,8 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					renderer->setFrontFace(objectFrontFace);
 					currentFrontFace = objectFrontFace;
 				}
-				renderer->setEffectColorMul(object->effectColorMul->getArray());
-				renderer->setEffectColorAdd(object->effectColorAdd->getArray());
+				renderer->setEffectColorMul(object->effectColorMul.getArray());
+				renderer->setEffectColorAdd(object->effectColorAdd.getArray());
 				renderer->onUpdateEffect();
 				if (shadowMapping != nullptr) {
 					shadowMapping->startObjectTransformations((_object3DGroup->mesh->skinning == true ? modelViewMatrix->identity() : modelViewMatrix->set(_object3DGroup->groupTransformationsMatrix))->multiply(object->transformationsMatrix));

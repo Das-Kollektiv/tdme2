@@ -34,14 +34,6 @@ using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::math::Vector3;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	Object3DBase(model, true, Engine::animationProcessingTarget)
 {
@@ -51,8 +43,8 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	dynamicShadowing = false;
 	effectColorMul = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
-	boundingBox = java_cast< BoundingBox* >(model->getBoundingBox()->clone());
-	boundingBoxTransformed = java_cast< BoundingBox* >(boundingBox->clone());
+	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
+	boundingBoxTransformed = dynamic_cast< BoundingBox* >(boundingBox->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
 	boundingBoxTransformed->getMin()->sub(0.05f);
 	boundingBoxTransformed->getMax()->add(0.05f);
@@ -96,12 +88,12 @@ void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 
 Color4* Object3DInternal::getEffectColorMul()
 {
-	return effectColorMul;
+	return &effectColorMul;
 }
 
 Color4* Object3DInternal::getEffectColorAdd()
 {
-	return effectColorAdd;
+	return &effectColorAdd;
 }
 
 BoundingBox* Object3DInternal::getBoundingBox()
@@ -116,45 +108,45 @@ BoundingBox* Object3DInternal::getBoundingBoxTransformed()
 
 void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer)
 {
-	setDynamicDiffuseTexture(nullptr, nullptr, frameBuffer->getColorBufferTextureId());
+	setDynamicDiffuseTexture(L"", L"", frameBuffer->getColorBufferTextureId());
 }
 
-void Object3DInternal::bindDiffuseTexture(String* groupId, FrameBuffer* frameBuffer)
+void Object3DInternal::bindDiffuseTexture(const wstring& groupId, FrameBuffer* frameBuffer)
 {
-	setDynamicDiffuseTexture(groupId, nullptr, frameBuffer->getColorBufferTextureId());
+	setDynamicDiffuseTexture(groupId, L"", frameBuffer->getColorBufferTextureId());
 }
 
-void Object3DInternal::bindDiffuseTexture(String* groupId, String* facesEntityId, FrameBuffer* frameBuffer)
+void Object3DInternal::bindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, FrameBuffer* frameBuffer)
 {
 	setDynamicDiffuseTexture(groupId, facesEntityId, frameBuffer->getColorBufferTextureId());
 }
 
 void Object3DInternal::unbindDiffuseTexture()
 {
-	setDynamicDiffuseTexture(nullptr, nullptr, Object3DGroup::GLTEXTUREID_NONE);
+	setDynamicDiffuseTexture(L"", L"", Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::unbindDiffuseTexture(String* groupId)
+void Object3DInternal::unbindDiffuseTexture(const wstring& groupId)
 {
-	setDynamicDiffuseTexture(groupId, nullptr, Object3DGroup::GLTEXTUREID_NONE);
+	setDynamicDiffuseTexture(groupId, L"", Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::unbindDiffuseTexture(String* groupId, String* facesEntityId)
+void Object3DInternal::unbindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId)
 {
 	setDynamicDiffuseTexture(groupId, facesEntityId, Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::setDynamicDiffuseTexture(String* groupId, String* facesEntityId, int32_t textureId)
+void Object3DInternal::setDynamicDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, int32_t textureId)
 {
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
-		if (groupId != nullptr && groupId->getCPPWString() != object3DGroup->group->getId())
+		if (groupId != L"" && groupId != object3DGroup->group->getId())
 			continue;
 
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->size(); facesEntityIdx++) {
 			auto& facesEntity = (*facesEntities)[facesEntityIdx];
-			if (facesEntityId != nullptr && facesEntityId->getCPPWString() != facesEntity.getId())
+			if (facesEntityId != L"" && facesEntityId != facesEntity.getId())
 				continue;
 
 			(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] = textureId;

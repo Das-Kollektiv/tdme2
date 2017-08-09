@@ -359,7 +359,7 @@ void EngineTest::initialize()
 		engine->addEntity(barrel);
 		auto _farPlane = createWallModel();
 		auto farPlane = new Object3D(L"wall", _farPlane);
-		farPlane->bindDiffuseTexture(u"wall"_j, u"wall"_j, osEngine->getFrameBuffer());
+		farPlane->bindDiffuseTexture(L"wall", L"wall", osEngine->getFrameBuffer());
 		engine->addEntity(farPlane);
 		auto _grass = DAEReader::read(u"resources/tests/models/grass"_j, u"grass.dae"_j);
 		auto grass = new Object3D(L"ground", _grass);
