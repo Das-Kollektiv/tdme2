@@ -1,20 +1,19 @@
 // Generated from /tdme/src/tdme/engine/PartitionOctTree.java
-#include <tdme/engine/PartitionOctTree_reset_2.h>
+#include "PartitionOctTreeBoundingBoxPool.h"
 
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
-using tdme::engine::PartitionOctTree_reset_2;
+using tdme::engine::PartitionOctTreeBoundingBoxPool;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
-PartitionOctTree_reset_2::PartitionOctTree_reset_2(PartitionOctTree *partitionOctTree)
+PartitionOctTreeBoundingBoxPool::PartitionOctTreeBoundingBoxPool()
 	: Pool()
-	, partitionOctTree(partitionOctTree)
 {
 }
 
-BoundingBox* PartitionOctTree_reset_2::instantiate()
+BoundingBox* PartitionOctTreeBoundingBoxPool::instantiate()
 {
 	return new BoundingBox();
 }

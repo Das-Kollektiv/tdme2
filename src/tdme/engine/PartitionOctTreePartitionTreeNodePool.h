@@ -10,7 +10,7 @@ using tdme::utils::Pool;
 using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::PartitionOctTree;
 
-class tdme::engine::PartitionOctTree_reset_3
+class tdme::engine::PartitionOctTreePartitionTreeNodePool
 	: public Pool<PartitionOctTree_PartitionTreeNode*>
 {
 public: /* protected */
@@ -20,11 +20,10 @@ public:
 	/**
 	 * Public constructor
 	 */
-	PartitionOctTree_reset_3(PartitionOctTree* partitionOctTree);
-	PartitionOctTree* partitionOctTree;;
+	PartitionOctTreePartitionTreeNodePool();
 
 private:
 	friend class PartitionOctTree;
 	friend class PartitionOctTree_PartitionTreeNode;
-	friend class PartitionOctTree_reset_2;
+	friend class PartitionOctTreeBoundingBoxPool;
 };

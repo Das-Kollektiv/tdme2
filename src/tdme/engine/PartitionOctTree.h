@@ -137,6 +137,6 @@ public:
 	PartitionOctTree();
 private:
 	friend class PartitionOctTree_PartitionTreeNode;
-	friend class PartitionOctTree_reset_2;
+	friend class PartitionOctTreeBoundingBoxPool;
 	friend class PartitionOctTree_reset_3;
 };

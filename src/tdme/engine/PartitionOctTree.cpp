@@ -9,8 +9,6 @@
 #include <java/lang/Math.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
-#include <tdme/engine/PartitionOctTree_reset_2.h>
-#include <tdme/engine/PartitionOctTree_reset_3.h>
 #include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -19,6 +17,8 @@
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/_Console.h>
+#include "PartitionOctTreeBoundingBoxPool.h"
+#include "PartitionOctTreePartitionTreeNodePool.h"
 
 using std::map;
 using std::remove;
@@ -30,8 +30,8 @@ using tdme::engine::PartitionOctTree;
 using java::lang::Math;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
-using tdme::engine::PartitionOctTree_reset_2;
-using tdme::engine::PartitionOctTree_reset_3;
+using tdme::engine::PartitionOctTreeBoundingBoxPool;
+using tdme::engine::PartitionOctTreePartitionTreeNodePool;
 using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
@@ -68,8 +68,8 @@ constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
 
 void PartitionOctTree::reset()
 {
-	this->boundingBoxPool = new PartitionOctTree_reset_2(this);
-	this->partitionTreeNodePool = new PartitionOctTree_reset_3(this);
+	this->boundingBoxPool = new PartitionOctTreeBoundingBoxPool();
+	this->partitionTreeNodePool = new PartitionOctTreePartitionTreeNodePool();
 	this->entityPartitionNodes.clear();
 	this->visibleEntities.clear();
 	this->treeRoot = new PartitionOctTree_PartitionTreeNode();

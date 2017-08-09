@@ -12,23 +12,15 @@ using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
-class tdme::engine::PartitionOctTree_reset_2
+class tdme::engine::PartitionOctTreeBoundingBoxPool
 	: public Pool<BoundingBox*>
 {
 public: /* protected */
 	BoundingBox* instantiate() override;
 
-	// Generated
-
 public:
 	/**
 	 * Public constructor
 	 */
-	PartitionOctTree_reset_2(PartitionOctTree* partitionOctTree);
-	PartitionOctTree* partitionOctTree;
-
-private:
-	friend class PartitionOctTree;
-	friend class PartitionOctTree_PartitionTreeNode;
-	friend class PartitionOctTree_reset_3;
+	PartitionOctTreeBoundingBoxPool();
 };
