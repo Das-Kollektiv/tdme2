@@ -24,12 +24,10 @@ using tdme::utils::_Console;
 TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax) 
 {
 	poolIdx = 0;
-	for (auto i = 0; i < pointsMax; i++) {
-		auto point = new TransparentRenderPoint();
-		point->acquired = false;
-		point->point = new Vector3();
-		point->color = new Color4();
-		transparentRenderPoints.push_back(point);
+	transparentRenderPoints.resize(pointsMax);
+	for (auto i = 0; i < transparentRenderPoints.size(); i++) {
+		auto& point = transparentRenderPoints[i];
+		point.acquired = false;
 	}
 }
 
@@ -39,40 +37,40 @@ void TransparentRenderPointsPool::addPoint(Vector3* point, Color4* color, float 
 		_Console::println(u"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points");
 		return;
 	}
-	auto transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
-	transparentRenderPoint->acquired = true;
-	transparentRenderPoint->point->set(point);
-	transparentRenderPoint->color->set(static_cast< Color4Base* >(color));
-	transparentRenderPoint->distanceFromCamera = distanceFromCamera;
+	auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
+	transparentRenderPoint.acquired = true;
+	transparentRenderPoint.point.set(point);
+	transparentRenderPoint.color.set(color);
+	transparentRenderPoint.distanceFromCamera = distanceFromCamera;
 }
 
 void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 {
 	for (auto point: pool2->transparentRenderPoints) {
-		if (point->acquired == false)
+		if (point.acquired == false)
 			break;
 
 		if (poolIdx >= transparentRenderPoints.size()) {
 			_Console::println(u"TransparentRenderPointsPool::merge(): Too many transparent render points"_j);
 			break;
 		}
-		auto transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
-		transparentRenderPoint->acquired = true;
-		transparentRenderPoint->point->set(point->point);
-		transparentRenderPoint->color->set(static_cast< Color4Base* >(point->color));
-		transparentRenderPoint->distanceFromCamera = point->distanceFromCamera;
+		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
+		transparentRenderPoint.acquired = true;
+		transparentRenderPoint.point.set(&point.point);
+		transparentRenderPoint.color.set(&point.color);
+		transparentRenderPoint.distanceFromCamera = point.distanceFromCamera;
 	}
 }
 
 void TransparentRenderPointsPool::reset()
 {
 	poolIdx = 0;
-	for (auto point: transparentRenderPoints) {
-		point->acquired = false;
+	for (auto& point: transparentRenderPoints) {
+		point.acquired = false;
 	}
 }
 
-const vector<TransparentRenderPoint*>* TransparentRenderPointsPool::getTransparentRenderPoints()
+vector<TransparentRenderPoint>* TransparentRenderPointsPool::getTransparentRenderPoints()
 {
 	return &transparentRenderPoints;
 }

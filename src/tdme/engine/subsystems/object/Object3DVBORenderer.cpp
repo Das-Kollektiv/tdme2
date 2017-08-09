@@ -525,11 +525,11 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 
 		if (pseSort == true) pseTransparentRenderPointsPool->sort();
 
-		for (auto point: *pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-			if (point->acquired == false)
+		for (auto& point: *pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
+			if (point.acquired == false)
 				break;
 
-			psePointBatchVBORenderer->addPoint(point);
+			psePointBatchVBORenderer->addPoint(&point);
 		}
 		renderer->setEffectColorAdd(currentPse->getEffectColorAdd()->getArray());
 		renderer->setEffectColorMul(currentPse->getEffectColorMul()->getArray());

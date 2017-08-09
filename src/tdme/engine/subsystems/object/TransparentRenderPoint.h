@@ -4,8 +4,10 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
@@ -18,8 +20,8 @@ using tdme::math::Vector3;
 struct tdme::engine::subsystems::object::TransparentRenderPoint final
 {
 	bool acquired {  };
-	Vector3* point {  };
-	Color4* color {  };
+	Vector3 point {  };
+	Color4 color {  };
 	float distanceFromCamera {  };
 
 	/**
@@ -27,5 +29,5 @@ struct tdme::engine::subsystems::object::TransparentRenderPoint final
 	 * @param point 1
 	 * @param point 2
 	 */
-	static bool compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2);
+	static bool compare(TransparentRenderPoint& point1, TransparentRenderPoint& point2);
 };

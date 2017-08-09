@@ -101,6 +101,6 @@ void BatchVBORendererPoints::clear()
 
 void BatchVBORendererPoints::addPoint(TransparentRenderPoint* point)
 {
-	fbVertices->put(point->point->getArray());
-	fbColors->put(point->color->getArray());
+	fbVertices->put(point->point.getArray());
+	fbColors->put(point->color.getArray());
 }

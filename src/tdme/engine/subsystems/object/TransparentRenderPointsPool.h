@@ -7,12 +7,14 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
 
 using tdme::engine::model::Color4;
+using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::math::Vector3;
 
 /** 
@@ -23,7 +25,7 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::object::TransparentRenderPointsPool final
 {
 private:
-	vector<TransparentRenderPoint*> transparentRenderPoints {  };
+	vector<TransparentRenderPoint> transparentRenderPoints {  };
 	int32_t poolIdx {  };
 
 public:
@@ -49,7 +51,7 @@ public:
 	/** 
 	 * @return transparent render points vector
 	 */
-	const vector<TransparentRenderPoint*>* getTransparentRenderPoints();
+	vector<TransparentRenderPoint>* getTransparentRenderPoints();
 
 	/** 
 	 * Sort transparent render points

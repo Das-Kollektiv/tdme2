@@ -11,17 +11,17 @@ using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-bool TransparentRenderPoint::compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2)
+bool TransparentRenderPoint::compare(TransparentRenderPoint& point1, TransparentRenderPoint& point2)
 {
-	if (point1->acquired == false && point2->acquired == false) {
+	if (point1.acquired == false && point2.acquired == false) {
 		return false;
 	} else
-	if (point1->acquired == false) {
+	if (point1.acquired == false) {
 		return false;
 	} else
-	if (point2->acquired == false) {
+	if (point2.acquired == false) {
 		return true;
 	} else {
-		return point1->distanceFromCamera > point2->distanceFromCamera;
+		return point1.distanceFromCamera > point2.distanceFromCamera;
 	}
 }
