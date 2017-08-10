@@ -60,7 +60,6 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->usesMeshManager = useMeshManager;
-	parentTransformationsMatrix = new Matrix4x4();
 	transformationsMatrix = Transformations::getTransformationsMatrix();
 	tmpMatrix1 = new Matrix4x4();
 	transformedFacesIterator = nullptr;
@@ -306,19 +305,21 @@ void Object3DBase::computeTransformations()
 				overlayAnimationState->currentAtTime += currentFrameAtTime - lastFrameAtTime;
 			}
 		}
-		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
+		Matrix4x4 parentTransformationsMatrix;
+		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix->multiply(transformationsMatrix);
+			parentTransformationsMatrix.multiply(transformationsMatrix);
 		}
-		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
+		computeTransformationsMatrices(model->getSubGroups(), &parentTransformationsMatrix, &baseAnimation, 0);
 		Object3DGroup::computeTransformations(&object3dGroups);
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-		parentTransformationsMatrix->set(model->getImportTransformationsMatrix());
+		Matrix4x4 parentTransformationsMatrix;
+		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix->multiply(transformationsMatrix);
+			parentTransformationsMatrix.multiply(transformationsMatrix);
 		}
-		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
+		computeTransformationsMatrices(model->getSubGroups(), &parentTransformationsMatrix, &baseAnimation, 0);
 		Object3DGroup::computeTransformations(&object3dGroups);
 	}
 }

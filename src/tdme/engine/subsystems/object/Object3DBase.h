@@ -46,7 +46,6 @@ class tdme::engine::subsystems::object::Object3DBase
 public: /* protected */
 	Model* model {  };
 	map<wstring, Matrix4x4*> transformationsMatrices {  };
-	Matrix4x4* parentTransformationsMatrix {  };
 	Matrix4x4* transformationsMatrix {  };
 	Matrix4x4* tmpMatrix1 {  };
 	bool hasSkinning {  };
