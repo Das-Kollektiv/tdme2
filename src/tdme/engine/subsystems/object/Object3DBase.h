@@ -47,7 +47,6 @@ public: /* protected */
 	map<wstring, Matrix4x4*> transformationsMatrices {  };
 	Matrix4x4* parentTransformationsMatrix {  };
 	Matrix4x4* transformationsMatrix {  };
-	vector<Matrix4x4*> transformationsMatricesStack {  };
 	Matrix4x4* tmpMatrix1 {  };
 	bool hasSkinning {  };
 	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
@@ -147,13 +146,6 @@ public: /* protected */
 	 * @param depth
 	 */
 	virtual void computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
-
-	/** 
-	 * Calculates all groups transformation matrices
-	 * @param groups
-	 * @param depth
-	 */
-	virtual int32_t determineTransformationsMatricesStackDepth(map<wstring, Group*>* groups, int32_t depth);
 
 public:
 

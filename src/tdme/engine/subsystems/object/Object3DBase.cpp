@@ -78,11 +78,6 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	createTransformationsMatrices(&transformationsMatrices, model->getSubGroups());
 	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
-	auto transformationsMatricesStackDepth = determineTransformationsMatricesStackDepth(model->getSubGroups(), 0);
-	transformationsMatricesStack.resize(transformationsMatricesStackDepth);
-	for (auto i = 0; i < transformationsMatricesStack.size(); i++) {
-		transformationsMatricesStack[i] = new Matrix4x4();
-	}
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimation, 0);
 	Object3DGroup::computeTransformations(&object3dGroups);
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
@@ -286,27 +281,11 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 		}
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
-			transformationsMatricesStack.at(depth)->set(transformationsMatrix);
-			computeTransformationsMatrices(subGroups, transformationsMatricesStack.at(depth), animationState, depth + 1);
-		}
-
-	}
-}
-
-int32_t Object3DBase::determineTransformationsMatricesStackDepth(map<wstring, Group*>* groups, int32_t depth)
-{
-	auto depthMax = depth;
-	for (auto it: *groups) {
-		Group* group = it.second;
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
-			auto _depth = determineTransformationsMatricesStackDepth(subGroups, depth + 1);
-			if (_depth > depthMax)
-				depthMax = _depth;
-
+			Matrix4x4 parentTransformationsMatrix;
+			parentTransformationsMatrix.set(transformationsMatrix);
+			computeTransformationsMatrices(subGroups, &parentTransformationsMatrix, animationState, depth + 1);
 		}
 	}
-	return depthMax;
 }
 
 void Object3DBase::computeTransformations()
