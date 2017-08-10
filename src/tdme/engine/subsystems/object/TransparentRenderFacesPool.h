@@ -9,18 +9,13 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Pool.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-
-
-struct default_init_tag;
 
 /** 
  * Transparent render faces pool
@@ -28,23 +23,11 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::TransparentRenderFacesPool final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr int32_t FACES_MAX { 16384 };
 	vector<TransparentRenderFace*> transparentRenderFaces {  };
 	Pool<TransparentRenderFace*>* transparentRenderFacesPool {  };
-	Vector3* tmpVector3 {  };
-protected:
-
-	/** 
-	 * Default constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -78,17 +61,8 @@ public: /* protected */
 	 */
 	vector<TransparentRenderFace*>* getTransparentRenderFaces();
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	TransparentRenderFacesPool();
-protected:
-	TransparentRenderFacesPool(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class TransparentRenderFacesPool_TransparentRenderFacesPool_1;
 };

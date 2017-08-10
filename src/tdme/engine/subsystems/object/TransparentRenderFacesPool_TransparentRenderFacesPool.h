@@ -10,26 +10,12 @@ using tdme::utils::Pool;
 using tdme::engine::subsystems::object::TransparentRenderFace;
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 
-
-struct default_init_tag;
-class tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRenderFacesPool_1
+class tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRenderFacesPool
 	: public Pool<TransparentRenderFace*>
 {
-
-public:
-	typedef Pool super;
-
 public: /* protected */
 	TransparentRenderFace* instantiate() override;
 
-	// Generated
-
 public:
-	TransparentRenderFacesPool_TransparentRenderFacesPool_1(TransparentRenderFacesPool *TransparentRenderFacesPool_this);
-	static ::java::lang::Class *class_();
-	TransparentRenderFacesPool *TransparentRenderFacesPool_this;
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class TransparentRenderFacesPool;
+	TransparentRenderFacesPool_TransparentRenderFacesPool();
 };

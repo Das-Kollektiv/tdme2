@@ -3,8 +3,7 @@
 
 #include <algorithm>
 #include <vector>
-
-#include <java/lang/String.h>
+#include <string>
 
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -13,6 +12,7 @@
 #include <tdme/utils/_Console.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::engine::subsystems::object::TransparentRenderPointsPool;
 using tdme::engine::model::Color4;
@@ -34,7 +34,7 @@ TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 void TransparentRenderPointsPool::addPoint(Vector3* point, Color4* color, float distanceFromCamera)
 {
 	if (poolIdx >= transparentRenderPoints.size()) {
-		_Console::println(u"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points");
+		_Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 		return;
 	}
 	auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
@@ -51,7 +51,7 @@ void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 			break;
 
 		if (poolIdx >= transparentRenderPoints.size()) {
-			_Console::println(u"TransparentRenderPointsPool::merge(): Too many transparent render points"_j);
+			_Console::println(wstring(L"TransparentRenderPointsPool::merge(): Too many transparent render points"));
 			break;
 		}
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);

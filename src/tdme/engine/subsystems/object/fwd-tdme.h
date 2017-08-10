@@ -24,7 +24,7 @@ namespace object {
 				class TransparentRenderFace;
 				class TransparentRenderFacesGroup;
 				class TransparentRenderFacesPool;
-				class TransparentRenderFacesPool_TransparentRenderFacesPool_1;
+				class TransparentRenderFacesPool_TransparentRenderFacesPool;
 				class TransparentRenderPoint;
 				class TransparentRenderPointsPool;
 				class _Buffer;
