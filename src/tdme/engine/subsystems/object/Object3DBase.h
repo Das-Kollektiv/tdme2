@@ -12,6 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/object/AnimationState.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
@@ -51,7 +52,7 @@ public: /* protected */
 	bool hasSkinning {  };
 	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
 	vector<Group*> skinningGroups {  };
-	AnimationState* baseAnimation {  };
+	AnimationState baseAnimation {  };
 	map<wstring, AnimationState*> overlayAnimationsById {  };
 	map<wstring, AnimationState*> overlayAnimationsByJointId {  };
 	vector<Object3DGroup*> object3dGroups {  };

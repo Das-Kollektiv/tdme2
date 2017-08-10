@@ -59,7 +59,6 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 {
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
-	this->baseAnimation = new AnimationState();
 	this->usesMeshManager = useMeshManager;
 	parentTransformationsMatrix = new Matrix4x4();
 	transformationsMatrix = Transformations::getTransformationsMatrix();
@@ -78,7 +77,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	createTransformationsMatrices(&transformationsMatrices, model->getSubGroups());
 	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
-	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimation, 0);
+	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), &baseAnimation, 0);
 	Object3DGroup::computeTransformations(&object3dGroups);
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
@@ -92,11 +91,11 @@ void Object3DBase::setAnimation(const wstring& id)
 {
 	auto _animationActiveSetup = model->getAnimationSetup(id);
 	if (_animationActiveSetup != nullptr) {
-		baseAnimation->setup = _animationActiveSetup;
-		baseAnimation->lastAtTime = Timing::UNDEFINED;
-		baseAnimation->currentAtTime = 0LL;
-		baseAnimation->time = 0.0f;
-		baseAnimation->finished = false;
+		baseAnimation.setup = _animationActiveSetup;
+		baseAnimation.lastAtTime = Timing::UNDEFINED;
+		baseAnimation.currentAtTime = 0LL;
+		baseAnimation.time = 0.0f;
+		baseAnimation.finished = false;
 	}
 }
 
@@ -164,12 +163,12 @@ void Object3DBase::removeOverlayAnimations()
 
 const wstring Object3DBase::getAnimation()
 {
-	return baseAnimation->setup == nullptr ? L"none" : baseAnimation->setup->getId();
+	return baseAnimation.setup == nullptr ? L"none" : baseAnimation.setup->getId();
 }
 
 float Object3DBase::getAnimationTime()
 {
-	return baseAnimation->time;
+	return baseAnimation.time;
 }
 
 bool Object3DBase::hasOverlayAnimation(const wstring& id)
@@ -290,15 +289,15 @@ void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, 
 
 void Object3DBase::computeTransformations()
 {
-	if (baseAnimation->setup != nullptr) {
+	if (baseAnimation.setup != nullptr) {
 		auto engine = Engine::getInstance();
 		auto timing = engine->getTiming();
-		baseAnimation->lastAtTime = baseAnimation->currentAtTime;
+		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto lastFrameAtTime = timing->getLastFrameAtTime();
-		baseAnimation->lastAtTime = baseAnimation->currentAtTime;
+		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 		if (lastFrameAtTime != Timing::UNDEFINED) {
-			baseAnimation->currentAtTime += currentFrameAtTime - lastFrameAtTime;
+			baseAnimation.currentAtTime += currentFrameAtTime - lastFrameAtTime;
 		}
 		for (auto it: overlayAnimationsById) {
 			AnimationState* overlayAnimationState = it.second;
@@ -311,7 +310,7 @@ void Object3DBase::computeTransformations()
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
-		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
+		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
 		Object3DGroup::computeTransformations(&object3dGroups);
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
@@ -319,7 +318,7 @@ void Object3DBase::computeTransformations()
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			parentTransformationsMatrix->multiply(transformationsMatrix);
 		}
-		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, baseAnimation, 0);
+		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
 		Object3DGroup::computeTransformations(&object3dGroups);
 	}
 }
