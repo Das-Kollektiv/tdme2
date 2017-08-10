@@ -34,7 +34,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
 constexpr int32_t BatchVBORendererTriangles::VERTEX_COUNT;
-floatArray* BatchVBORendererTriangles::TEXTURECOORDINATE_NONE = new floatArray({0.0f, 0.0f});
+array<float, 2> BatchVBORendererTriangles::TEXTURECOORDINATE_NONE = {{ 0.0f, 0.0f }};
 
 BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32_t id) 
 {
@@ -115,7 +115,7 @@ bool BatchVBORendererTriangles::addVertex(Vector3* vertex, Vector3* normal, Text
 	if (textureCoordinate != nullptr) {
 		fbTextureCoordinates->put(textureCoordinate->getArray());
 	} else {
-		fbTextureCoordinates->put(TEXTURECOORDINATE_NONE);
+		fbTextureCoordinates->put(&TEXTURECOORDINATE_NONE);
 	}
 	vertices++;
 	return true;

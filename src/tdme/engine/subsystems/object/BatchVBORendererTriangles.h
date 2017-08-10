@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <Array.h>
+
+using std::array;
 
 using java::nio::FloatBuffer;
 using tdme::engine::model::TextureCoordinate;
@@ -32,7 +36,7 @@ private:
 	FloatBuffer* fbVertices {  };
 	FloatBuffer* fbNormals {  };
 	FloatBuffer* fbTextureCoordinates {  };
-	static floatArray* TEXTURECOORDINATE_NONE;
+	static array<float, 2> TEXTURECOORDINATE_NONE;
 
 public:
 
