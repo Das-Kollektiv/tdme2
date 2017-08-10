@@ -36,16 +36,12 @@ using tdme::math::Matrix4x4;
 using tdme::utils::Key;
 using tdme::utils::_Console;
 
-Matrix4x4* TransparentRenderFacesGroup::modelViewMatrix = new Matrix4x4();
-
 TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
 {
 	this->object3DVBORenderer = nullptr;
 	this->model = nullptr;
 	this->object3DGroup = nullptr;
 	this->facesEntityIdx = -1;
-	this->effectColorAdd = nullptr;
-	this->effectColorMul = nullptr;
 	this->material = nullptr;
 	this->textureCoordinates = false;
 }
@@ -57,8 +53,8 @@ void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, 
 	this->model = model;
 	this->object3DGroup = object3DGroup;
 	this->facesEntityIdx = facesEntityIdx;
-	this->effectColorAdd = effectColorAdd;
-	this->effectColorMul = effectColorMul;
+	this->effectColorAdd.set(effectColorAdd);
+	this->effectColorMul.set(effectColorMul);
 	this->material = material;
 	this->textureCoordinates = textureCoordinates;
 }
@@ -121,7 +117,8 @@ void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, Te
 
 void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 {
-	modelViewMatrix->set(renderer->getModelViewMatrix());
+	Matrix4x4 modelViewMatrix;
+	modelViewMatrix.set(renderer->getModelViewMatrix());
 	if (textureCoordinates == true) {
 		if (renderer->renderingTexturingClientState == false) {
 			renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
@@ -133,8 +130,8 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 			renderer->renderingTexturingClientState = false;
 		}
 	}
-	renderer->setEffectColorMul(effectColorMul->getArray());
-	renderer->setEffectColorAdd(effectColorAdd->getArray());
+	renderer->setEffectColorMul(effectColorMul.getArray());
+	renderer->setEffectColorAdd(effectColorAdd.getArray());
 	renderer->onUpdateEffect();
 	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx);
 	renderer->getModelViewMatrix()->identity();
@@ -146,6 +143,6 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	}
 	batchVBORenderers.clear();
 	renderer->unbindBufferObjects();
-	renderer->getModelViewMatrix()->set(modelViewMatrix);
+	renderer->getModelViewMatrix()->set(&modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
 }

@@ -7,6 +7,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -33,7 +34,6 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::object::TransparentRenderFacesGroup final
 {
 private:
-	static Matrix4x4* modelViewMatrix;
 	Object3DVBORenderer* object3DVBORenderer {  };
 	vector<BatchVBORendererTriangles*> batchVBORenderers {  };
 	Model* model {  };
@@ -41,8 +41,8 @@ private:
 	int32_t facesEntityIdx {  };
 
 public: /* protected */
-	Color4* effectColorAdd {  };
-	Color4* effectColorMul {  };
+	Color4 effectColorAdd {  };
+	Color4 effectColorMul {  };
 
 private:
 	Material* material {  };
