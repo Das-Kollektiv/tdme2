@@ -208,7 +208,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	if (object3DGroup->mesh->skinning == true) {
 		modelViewMatrix.identity();
 	} else {
-		modelViewMatrix.set(object3DGroup->groupTransformationsMatrix)->multiply(object3D->transformationsMatrix)->multiply(renderer->getModelViewMatrix());
+		modelViewMatrix.set(object3DGroup->groupTransformationsMatrix)->multiply(object3D->getTransformationsMatrix())->multiply(renderer->getModelViewMatrix());
 	}
 	auto model = object3DGroup->object->getModel();
 	auto facesEntities = object3DGroup->group->getFacesEntities();
@@ -312,7 +312,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 								modelViewMatrix.identity() :
 								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
 							)->
-								multiply(object->transformationsMatrix)->multiply(&modelViewMatrixBackup),
+								multiply(object->getTransformationsMatrix())->multiply(&modelViewMatrixBackup),
 								object->object3dGroups[object3DGroupIdx],
 								faceEntityIdx,
 								faceIdx
@@ -348,7 +348,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 							(_object3DGroup->mesh->skinning == true ?
 								modelViewMatrix.identity() :
 								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-							)->multiply(object->transformationsMatrix)->multiply(&modelViewMatrixBackup),
+							)->multiply(object->getTransformationsMatrix())->multiply(&modelViewMatrixBackup),
 							_object3DGroup,
 							faceEntityIdx,
 							faceIdx
@@ -376,7 +376,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 						modelViewMatrix.identity() :
 						modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
 					)->
-						multiply(object->transformationsMatrix)->
+						multiply(object->getTransformationsMatrix())->
 						multiply(&modelViewMatrixBackup)
 				);
 				renderer->onUpdateModelViewMatrix();
@@ -393,7 +393,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 						(_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
 							modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-						)->multiply(object->transformationsMatrix));
+						)->multiply(object->getTransformationsMatrix()));
 				}
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				if (shadowMapping != nullptr) {

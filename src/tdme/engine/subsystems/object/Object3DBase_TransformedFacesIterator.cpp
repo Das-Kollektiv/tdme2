@@ -45,7 +45,7 @@ void Object3DBase_TransformedFacesIterator::reset()
 	} else {
 		matrix.set(object3DGroup->groupTransformationsMatrix);
 	}
-	matrix.multiply(object3DBase->transformationsMatrix);
+	matrix.multiply(object3DBase->getTransformationsMatrix());
 }
 
 Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::iterator() {
@@ -85,7 +85,7 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 				} else {
 					matrix.set(object3DGroup->groupTransformationsMatrix);
 				}
-				matrix.multiply(object3DBase->transformationsMatrix);
+				matrix.multiply(object3DBase->getTransformationsMatrix());
 			}
 		}
 	}
