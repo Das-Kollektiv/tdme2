@@ -225,8 +225,10 @@ String* LevelEditorEntityBoundingVolume::toString()
 		->append(modelMeshFile)
 		->append(u", model="_j)
 		->append((model != nullptr ? model->getId() : L"none"))
+		/*
 		->append(u", boundingVolume="_j)
 		->append(static_cast< Object* >(boundingVolume))
+		*/
 		->append(u"]"_j)->toString();
 }
 

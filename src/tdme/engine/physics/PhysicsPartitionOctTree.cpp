@@ -91,7 +91,7 @@ void PhysicsPartitionOctTree::ctor()
 
 void PhysicsPartitionOctTree::reset()
 {
-	this->boundingBoxPool = new PhysicsPartitionOctTree_reset_2(this);
+	this->boundingBoxPool = new PhysicsPartitionOctTree_reset_2();
 	this->partitionTreeNodePool = new PhysicsPartitionOctTree_reset_3(this);
 	this->treeRoot = new PhysicsPartitionOctTree_PartitionTreeNode();
 	this->treeRoot->partitionSize = -1;
@@ -320,7 +320,9 @@ String* PhysicsPartitionOctTree::toString(String* indent, PhysicsPartitionOctTre
 		->append(u", size "_j)
 		->append(node->partitionSize)
 		->append(u" / "_j)
+		/*
 		->append(static_cast< Object* >(node->bv))
+		*/
 		->append(u"\n"_j)->toString();
 	if (node->partitionRidigBodies.size() > 0) {
 		result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString())->toString();

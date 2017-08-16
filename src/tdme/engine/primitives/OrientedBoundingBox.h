@@ -6,55 +6,20 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::array;
 using std::vector;
 
-using java::lang::Object;
 using tdme::engine::primitives::BoundingVolume;
-using java::io::Serializable;
-using java::lang::Cloneable;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-namespace  {
-typedef ::SubArray< ::int32_tArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > int32_tArrayArray;
-}  // namespace 
-
-using java::io::SerializableArray;
-using java::lang::CloneableArray;
-using java::lang::ObjectArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
 
 /** 
  * Oriented Bounding Box
@@ -62,18 +27,29 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::primitives::OrientedBoundingBox final
-	: public virtual Object
-	, public BoundingVolume
+	: public BoundingVolume
 {
 
 public:
-	typedef Object super;
+	static array<int32_t, 3> FACE0_INDICES;
+	static array<int32_t, 3> FACE1_INDICES;
+	static array<int32_t, 3> FACE2_INDICES;
+	static array<int32_t, 3> FACE3_INDICES;
+	static array<int32_t, 3> FACE4_INDICES;
+	static array<int32_t, 3> FACE5_INDICES;
+	static array<int32_t, 3> FACE6_INDICES;
+	static array<int32_t, 3> FACE7_INDICES;
+	static array<int32_t, 3> FACE8_INDICES;
+	static array<int32_t, 3> FACE9_INDICES;
+	static array<int32_t, 3> FACE10_INDICES;
+	static array<int32_t, 3> FACE11_INDICES;
+	static array<array<int32_t,3>,12> facesVerticesIndexes;
+
 	static Vector3* AABB_AXIS_X;
 	static Vector3* AABB_AXIS_Y;
 	static Vector3* AABB_AXIS_Z;
 
 public: /* protected */
-	static int32_tArrayArray* facesVerticesIndexes;
 	Vector3* center {  };
 	array<Vector3*, 3> axes {  };
 	Vector3* halfExtension {  };
@@ -96,32 +72,6 @@ public:
 	 * @return bounding volume
 	 */
 	static BoundingVolume* createBoundingVolume(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
-protected:
-
-	/** 
-	 * Public constructor
-	 * you should use the new bounding volume interface when using bounding volumes
-	 * and not instantiate bounding volume classes directly
-	 * @param center
-	 * @param axis 0
-	 * @param axis 1
-	 * @param axis 2
-	 * @param half extension
-	 */
-	void ctor(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
-
-	/** 
-	 * Protected constructor
-	 * @param bounding box
-	 */
-	void ctor(BoundingBox* bb);
-
-	/** 
-	 * Public constructor
-	 * @param bounding box
-	 */
-	void ctor();
-
 public:
 	Vector3* getCenter() override;
 	float getSphereRadius() override;
@@ -159,7 +109,7 @@ public:
 	/** 
 	 * @return faces vertices indexes
 	 */
-	static int32_tArrayArray* getFacesVerticesIndexes();
+	static array<array<int32_t,3>,12>* getFacesVerticesIndexes();
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
 
 	/** 
@@ -195,21 +145,29 @@ public:
 	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
 	float computeDimensionOnAxis(Vector3* axis) override;
 	BoundingVolume* clone() override;
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param center
+	 * @param axis0
+	 * @param axis1
+	 * @param axis2
+	 * @param half extension
+	 */
 	OrientedBoundingBox(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
-	OrientedBoundingBox(BoundingBox* bb);
-	OrientedBoundingBox();
-protected:
-	OrientedBoundingBox(const ::default_init_tag&);
 
+	/**
+	 * Public constructor
+	 * @param bounding box
+	 */
+	OrientedBoundingBox(BoundingBox* bb);
+
+	/**
+	 * Public constructor
+	 */
+	OrientedBoundingBox();
 
 public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
+
 };

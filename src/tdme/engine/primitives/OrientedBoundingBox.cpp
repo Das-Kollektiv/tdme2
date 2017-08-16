@@ -51,57 +51,74 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
+array<int32_t, 3> OrientedBoundingBox::FACE0_INDICES = {{ 0, 4, 7 }};
+array<int32_t, 3> OrientedBoundingBox::FACE1_INDICES = {{ 7, 3, 0 }};
+array<int32_t, 3> OrientedBoundingBox::FACE2_INDICES = {{ 6, 5, 1 }};
+array<int32_t, 3> OrientedBoundingBox::FACE3_INDICES = {{ 1, 2, 6 }};
+array<int32_t, 3> OrientedBoundingBox::FACE4_INDICES = {{ 5, 4, 0 }};
+array<int32_t, 3> OrientedBoundingBox::FACE5_INDICES = {{ 0, 1, 5 }};
+array<int32_t, 3> OrientedBoundingBox::FACE6_INDICES = {{ 3, 7, 6 }};
+array<int32_t, 3> OrientedBoundingBox::FACE7_INDICES = {{ 6, 2, 3 }};
+array<int32_t, 3> OrientedBoundingBox::FACE8_INDICES = {{ 2, 1, 0 }};
+array<int32_t, 3> OrientedBoundingBox::FACE9_INDICES = {{ 0, 3, 2 }};
+array<int32_t, 3> OrientedBoundingBox::FACE10_INDICES = {{ 4, 5, 6 }};
+array<int32_t, 3> OrientedBoundingBox::FACE11_INDICES = {{ 6, 7, 4 }};
+array<array<int32_t,3>,12> OrientedBoundingBox::facesVerticesIndexes =
+{{
+	FACE0_INDICES, FACE1_INDICES, FACE2_INDICES, FACE3_INDICES,
+	FACE4_INDICES, FACE5_INDICES, FACE6_INDICES, FACE7_INDICES,
+	FACE8_INDICES, FACE9_INDICES, FACE10_INDICES, FACE11_INDICES
+}};
 
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
+Vector3* OrientedBoundingBox::AABB_AXIS_X = new Vector3(1.0f, 0.0f, 0.0f);
 
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
+Vector3* OrientedBoundingBox::AABB_AXIS_Y = new Vector3(0.0f, 1.0f, 0.0f);
 
-namespace  {
-typedef ::SubArray< ::int32_tArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > int32_tArrayArray;
-}  // namespace 
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-OrientedBoundingBox::OrientedBoundingBox(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+Vector3* OrientedBoundingBox::AABB_AXIS_Z = new Vector3(0.0f, 0.0f, 1.0f);
 
 OrientedBoundingBox::OrientedBoundingBox(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension) 
-	: OrientedBoundingBox(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(center,axis0,axis1,axis2,halfExtension);
+	init();
+	this->center = center;
+	this->axes[0] = axis0;
+	this->axes[1] = axis1;
+	this->axes[2] = axis2;
+	this->halfExtension = halfExtension;
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
+	}
+	update();
 }
 
-OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb) 
-	: OrientedBoundingBox(*static_cast< ::default_init_tag* >(0))
+OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 {
-	ctor(bb);
+	init();
+	this->halfExtension = (new Vector3())->set(bb->getMax())->sub(bb->getMin())->scale(0.5f);
+	this->center = (new Vector3())->set(bb->getMin())->add(halfExtension);
+	this->axes[0] = AABB_AXIS_X->clone();
+	this->axes[1] = AABB_AXIS_Y->clone();
+	this->axes[2] = AABB_AXIS_Z->clone();
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
+	}
+	update();
 }
 
 OrientedBoundingBox::OrientedBoundingBox() 
-	: OrientedBoundingBox(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
+	init();
+	this->halfExtension = new Vector3(0.0f, 0.0f, 0.0f);
+	this->center = new Vector3(0.0f, 0.0f, 0.0f);
+	this->axes[0] = AABB_AXIS_X->clone();
+	this->axes[1] = AABB_AXIS_Y->clone();
+	this->axes[2] = AABB_AXIS_Z->clone();
+	this->vertices.resize(8);
+	for (auto i = 0; i < vertices.size(); i++) {
+		vertices[i] = new Vector3();
+	}
+	update();
 }
 
 void OrientedBoundingBox::init()
@@ -116,66 +133,9 @@ void OrientedBoundingBox::init()
 	scale = new Vector3();
 }
 
-Vector3* OrientedBoundingBox::AABB_AXIS_X;
-
-Vector3* OrientedBoundingBox::AABB_AXIS_Y;
-
-Vector3* OrientedBoundingBox::AABB_AXIS_Z;
-
-int32_tArrayArray* OrientedBoundingBox::facesVerticesIndexes;
-
 BoundingVolume* OrientedBoundingBox::createBoundingVolume(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
 {
-	clinit();
 	return new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
-}
-
-void OrientedBoundingBox::ctor(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
-{
-	super::ctor();
-	init();
-	this->center = center;
-	this->axes[0] = axis0;
-	this->axes[1] = axis1;
-	this->axes[2] = axis2;
-	this->halfExtension = halfExtension;
-	this->vertices.resize(8);
-	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i] = new Vector3();
-	}
-	update();
-}
-
-void OrientedBoundingBox::ctor(BoundingBox* bb)
-{
-	super::ctor();
-	init();
-	this->halfExtension = (new Vector3())->set(bb->getMax())->sub(bb->getMin())->scale(0.5f);
-	this->center = (new Vector3())->set(bb->getMin())->add(halfExtension);
-	this->axes[0] = AABB_AXIS_X->clone();
-	this->axes[1] = AABB_AXIS_Y->clone();
-	this->axes[2] = AABB_AXIS_Z->clone();
-	this->vertices.resize(8);
-	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i] = new Vector3();
-	}
-	update();
-}
-
-void OrientedBoundingBox::ctor()
-{
-	super::ctor();
-	init();
-	this->halfExtension = new Vector3(0.0f, 0.0f, 0.0f);
-	this->center = new Vector3(0.0f, 0.0f, 0.0f);
-	this->axes[0] = AABB_AXIS_X->clone();
-	this->axes[1] = AABB_AXIS_Y->clone();
-	this->axes[2] = AABB_AXIS_Z->clone();
-	this->vertices.resize(8);
-	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i] = new Vector3();
-	}
-	update();
 }
 
 Vector3* OrientedBoundingBox::getCenter()
@@ -224,7 +184,7 @@ void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 		_Console::println(static_cast< Object* >(u"OrientedBoundingBox::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto obb = java_cast< OrientedBoundingBox* >(original);
+	auto obb = dynamic_cast< OrientedBoundingBox* >(original);
 	center->set(obb->center);
 	for (auto i = 0; i < axes.size(); i++)
 		axes[i]->set(obb->axes[i]);
@@ -241,7 +201,7 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 		_Console::println(static_cast< Object* >(u"OrientedBoundingBox::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto obb = java_cast< OrientedBoundingBox* >(original);
+	auto obb = dynamic_cast< OrientedBoundingBox* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	transformationsMatrix->multiply(obb->center, center);
 	transformationsMatrix->multiplyNoTranslation(obb->axes[0], axisTransformed[0]);
@@ -304,10 +264,9 @@ vector<Vector3*>* OrientedBoundingBox::getVertices()
 	return &vertices;
 }
 
-int32_tArrayArray* OrientedBoundingBox::getFacesVerticesIndexes()
+array<array<int32_t,3>,12>* OrientedBoundingBox::getFacesVerticesIndexes()
 {
-	clinit();
-	return facesVerticesIndexes;
+	return &facesVerticesIndexes;
 }
 
 void OrientedBoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
@@ -458,24 +417,23 @@ bool OrientedBoundingBox::containsPoint(Vector3* point)
 bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"OrientedBoundingBox::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
 		return false;
 	}
 }
@@ -501,111 +459,3 @@ BoundingVolume* OrientedBoundingBox::clone()
 {
 	return new OrientedBoundingBox(center->clone(), axes[0]->clone(), axes[1]->clone(), axes[2]->clone(), halfExtension->clone());
 }
-
-String* OrientedBoundingBox::toString()
-{
-	return ::java::lang::StringBuilder().append(u"OrientedBoundingBox [center="_j)
-			/*
-		->append(static_cast< Object* >(center))
-		->append(u", axes="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(axes)))
-		->append(u", halfExtension="_j)
-		->append(static_cast< Object* >(halfExtension))
-		->append(u"]"_j)
-		*/
-		->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* OrientedBoundingBox::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.OrientedBoundingBox", 42);
-    return c;
-}
-
-void OrientedBoundingBox::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		AABB_AXIS_X = new Vector3(1.0f, 0.0f, 0.0f);
-		AABB_AXIS_Y = new Vector3(0.0f, 1.0f, 0.0f);
-		AABB_AXIS_Z = new Vector3(0.0f, 0.0f, 1.0f);
-		facesVerticesIndexes = (new int32_tArrayArray({
-			(new int32_tArray({
-			0,
-			4,
-			7
-		})),
-			(new int32_tArray({
-			7,
-			3,
-			0
-		})),
-			(new int32_tArray({
-			6,
-			5,
-			1
-		})),
-			(new int32_tArray({
-			1,
-			2,
-			6
-		})),
-			(new int32_tArray({
-			5,
-			4,
-			0
-		})),
-			(new int32_tArray({
-			0,
-			1,
-			5
-		})),
-			(new int32_tArray({
-			3,
-			7,
-			6
-		})),
-			(new int32_tArray({
-			6,
-			2,
-			3
-		})),
-			(new int32_tArray({
-			2,
-			1,
-			0
-		})),
-			(new int32_tArray({
-			0,
-			3,
-			2
-		})),
-			(new int32_tArray({
-			4,
-			5,
-			6
-		})),
-			(new int32_tArray({
-			6,
-			7,
-			4
-		}))
-		}));
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* OrientedBoundingBox::getClass0()
-{
-	return class_();
-}
-

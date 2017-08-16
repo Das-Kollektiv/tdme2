@@ -498,12 +498,7 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->enabled = rigidBody->enabled;
 	clonedRigidBody->isSleeping_ = rigidBody->isSleeping_;
 	clonedRigidBody->collisionTypeIds = rigidBody->collisionTypeIds;
-	if (rigidBody->obv != nullptr) {
-		if (static_cast< Object* >(clonedRigidBody->obv->getClass()) != static_cast< Object* >(rigidBody->obv->getClass())) {
-			clonedRigidBody->setBoundingVolume(rigidBody->obv->clone());
-		}
-		clonedRigidBody->cbv->fromBoundingVolume(rigidBody->cbv);
-	}
+	clonedRigidBody->cbv->fromBoundingVolume(rigidBody->cbv);
 	clonedRigidBody->isStatic_ = rigidBody->isStatic_;
 	clonedRigidBody->mass = rigidBody->mass;
 	clonedRigidBody->inverseMass = rigidBody->inverseMass;

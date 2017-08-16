@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
@@ -15,6 +16,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::vector;
 
 using java::lang::Object;
 using java::io::Serializable;
@@ -88,7 +90,6 @@ public:
 private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int32_t SAT_AXES_TEST_MAX { 20 };
-	static constexpr int32_t TRIANGLES_TEST_MAX { 10000 };
 	static CollisionDetection* instance;
 	static Object* synchronizeObject;
 	static Vector3* zeroVector;
@@ -121,8 +122,7 @@ private:
 	Vector3* triangle2Normal {  };
 	array<Vector3*, 5> closestPointsOnCapsuleSegment {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
 	array<Vector3*, 5> closestPointsOnTriangleSegments {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
-	int32_t testTriangleCount {  };
-	TriangleArrayArray* testTriangles {  };
+	vector<Triangle*> testTriangles {  };
 	Vector3* satAxis {  };
 	int32_t satAxesCount {  };
 	floatArray* satPenetrations {  };

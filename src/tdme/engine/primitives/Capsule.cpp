@@ -19,9 +19,6 @@
 
 using tdme::engine::primitives::Capsule;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
@@ -34,35 +31,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Capsule::Capsule(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Capsule::Capsule(Vector3* a, Vector3* b, float radius) 
-	: Capsule(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(a,b,radius);
-}
-
-BoundingVolume* Capsule::createBoundingVolume(Vector3* a, Vector3* b, float radius)
-{
-	clinit();
-	return new Capsule(a, b, radius);
-}
-
-void Capsule::ctor(Vector3* a, Vector3* b, float radius)
-{
-	super::ctor();
 	this->a = a;
 	this->b = b;
 	this->radius = radius;
@@ -72,6 +42,11 @@ void Capsule::ctor(Vector3* a, Vector3* b, float radius)
 	this->center = new Vector3();
 	this->cpCvsP = new Vector3();
 	update();
+}
+
+BoundingVolume* Capsule::createBoundingVolume(Vector3* a, Vector3* b, float radius)
+{
+	return new Capsule(a, b, radius);
 }
 
 float Capsule::getRadius()
@@ -100,7 +75,7 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 		_Console::println(static_cast< Object* >(u"Capsule::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto capsule = java_cast< Capsule* >(original);
+	auto capsule = dynamic_cast< Capsule* >(original);
 	a->set(capsule->a);
 	b->set(capsule->b);
 	center->set(capsule->center);
@@ -113,7 +88,7 @@ void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tr
 		_Console::println(static_cast< Object* >(u"Capsule::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto capsule = java_cast< Capsule* >(original);
+	auto capsule = dynamic_cast< Capsule* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	transformationsMatrix->multiply(capsule->a, a);
 	transformationsMatrix->multiply(capsule->b, b);
@@ -171,19 +146,18 @@ bool Capsule::containsPoint(Vector3* point)
 bool Capsule::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Capsule::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
 		return false;
 	}
 }
@@ -197,30 +171,3 @@ BoundingVolume* Capsule::clone()
 {
 	return new Capsule(a->clone(), b->clone(), radius);
 }
-
-String* Capsule::toString()
-{
-	return ::java::lang::StringBuilder().append(u"Capsule [a="_j)
-		/*
-		->append(static_cast< Object* >(a))
-		->append(u", b="_j)
-		->append(static_cast< Object* >(b))
-		*/
-		->append(u", radius="_j)
-		->append(radius)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Capsule::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.Capsule", 30);
-    return c;
-}
-
-java::lang::Class* Capsule::getClass0()
-{
-	return class_();
-}
-

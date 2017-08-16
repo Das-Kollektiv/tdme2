@@ -3,21 +3,16 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
-using java::lang::Object;
 using tdme::engine::primitives::BoundingVolume;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
-
 
 struct default_init_tag;
 
@@ -27,13 +22,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::primitives::Capsule final
-	: public virtual Object
-	, public BoundingVolume
+	: public BoundingVolume
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	Vector3* a {  };
 	Vector3* b {  };
@@ -57,18 +47,6 @@ public:
 	 * @return bounding volume
 	 */
 	static BoundingVolume* createBoundingVolume(Vector3* a, Vector3* b, float radius);
-protected:
-
-	/** 
-	 * Public constructor
-	 * you should use the new bounding volume interface when using bounding volumes
-	 * and not instantiate bounding volume classes directly
-	 * @param a
-	 * @param b
-	 * @param radius
-	 */
-	void ctor(Vector3* a, Vector3* b, float radius);
-
 public:
 
 	/** 
@@ -101,17 +79,12 @@ public:
 	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
 	float computeDimensionOnAxis(Vector3* axis) override;
 	BoundingVolume* clone() override;
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param a
+	 * @param b
+	 * @param radius
+	 */
 	Capsule(Vector3* a, Vector3* b, float radius);
-protected:
-	Capsule(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

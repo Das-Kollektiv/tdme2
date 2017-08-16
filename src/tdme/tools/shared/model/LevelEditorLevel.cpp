@@ -379,9 +379,9 @@ String* LevelEditorLevel::toString()
 		*/
 		->append(u", objectIdx="_j)
 		->append(objectIdx)
+		/*
 		->append(u", boundingBox="_j)
 		->append(static_cast< Object* >(boundingBox))
-		/*
 		->append(u", dimension="_j)
 		->append(static_cast< Object* >(dimension))
 		->append(u", propertiesByName="_j)

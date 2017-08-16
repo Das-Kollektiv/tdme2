@@ -231,9 +231,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 5);
 		} else {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onTabSelected(): invalid bounding volume@"_j)->append(idx)
-				->append(u": "_j)
-				->append(static_cast< Object* >(bv))->toString()));
+			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onTabSelected(): invalid bounding volume@"_j)->append(idx)->toString()));
 		}
 	}
 }

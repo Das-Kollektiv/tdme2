@@ -20,16 +20,10 @@
 #include <tdme/math/SeparatingAxisTheorem.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
@@ -44,69 +38,12 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::BoundingVolume, ::java::lang::ObjectArray > BoundingVolumeArray;
-typedef ::SubArray< ::tdme::engine::primitives::Triangle, ::java::lang::ObjectArray, BoundingVolumeArray > TriangleArray;
-}  // namespace primitives
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
+ConvexMesh::ConvexMesh(vector<Triangle*>* triangles)
 {
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-ConvexMesh::ConvexMesh(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-ConvexMesh::ConvexMesh(TriangleArray* triangles) 
-	: ConvexMesh(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(triangles);
-}
-
-ConvexMesh::ConvexMesh(Object3DModel* model) 
-	: ConvexMesh(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(model);
-}
-
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes)
-{
-	clinit();
-	vector<Triangle> faceTriangles;
-	model->getFaceTriangles(&faceTriangles);
-	for (auto i = 0; i < faceTriangles.size(); i++) {
-		auto convexMeshTriangles = new TriangleArray(2);
-		convexMeshTriangles->set(0, faceTriangles[i].clone());
-		convexMeshTriangles->set(1, faceTriangles[i].clone());
-		(*(*convexMeshTriangles)[1]->getVertices())[0]->addY(-1.0f);
-		(*(*convexMeshTriangles)[1]->getVertices())[1]->addY(-1.0f);
-		(*(*convexMeshTriangles)[1]->getVertices())[2]->addY(-1.0f);
-		convexMeshes->push_back(ConvexMesh(convexMeshTriangles));
-	}
-}
-
-void ConvexMesh::ctor(TriangleArray* triangles)
-{
-	super::ctor();
 	this->center = new Vector3();
 	this->distanceVector = new Vector3();
 	this->closestsPoint = new Vector3();
-	this->triangles = triangles;
+	this->triangles = *triangles;
 	this->triangleEdge1 = new Vector3();
 	this->triangleEdge2 = new Vector3();
 	this->triangleEdge3 = new Vector3();
@@ -115,18 +52,16 @@ void ConvexMesh::ctor(TriangleArray* triangles)
 	createVertices();
 }
 
-void ConvexMesh::ctor(Object3DModel* model)
+ConvexMesh::ConvexMesh(Object3DModel* model) 
 {
-	super::ctor();
 	center = new Vector3();
 	distanceVector = new Vector3();
 	closestsPoint = new Vector3();
 	vector<Triangle> faceTriangles;
 	model->getFaceTriangles(&faceTriangles);
-	triangles = new TriangleArray(faceTriangles.size());
 	int faceTriangleIdx = 0;
 	for (auto& triangle: faceTriangles) {
-		triangles->set(faceTriangleIdx++, triangle.clone());
+		triangles.push_back(dynamic_cast<Triangle*>(triangle.clone()));
 	}
 	triangleEdge1 = new Vector3();
 	triangleEdge2 = new Vector3();
@@ -136,25 +71,40 @@ void ConvexMesh::ctor(Object3DModel* model)
 	createVertices();
 }
 
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes)
+{
+	vector<Triangle> faceTriangles;
+	model->getFaceTriangles(&faceTriangles);
+	for (auto i = 0; i < faceTriangles.size(); i++) {
+		vector<Triangle*> convexMeshTriangles;
+		convexMeshTriangles.push_back(dynamic_cast<Triangle*>(faceTriangles[i].clone()));
+		convexMeshTriangles.push_back(dynamic_cast<Triangle*>(faceTriangles[i].clone()));
+		(*convexMeshTriangles[1]->getVertices())[0]->addY(-1.0f);
+		(*convexMeshTriangles[1]->getVertices())[1]->addY(-1.0f);
+		(*convexMeshTriangles[1]->getVertices())[2]->addY(-1.0f);
+		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles));
+	}
+}
+
 void ConvexMesh::createVertices()
 {
-	for (auto i = 0; i < triangles->length; i++) {
-		for (auto j = 0; j < (*triangles)[i]->vertices.size(); j++) {
+	for (auto i = 0; i < triangles.size(); i++) {
+		for (auto j = 0; j < triangles[i]->vertices.size(); j++) {
 			auto haveVertex = false;
 			for (auto k = 0; k < vertices.size(); k++) {
-				if (vertices.at(k)->equals((*triangles)[i]->vertices[j]) == true) {
+				if (vertices.at(k)->equals(triangles[i]->vertices[j]) == true) {
 					haveVertex = true;
 				}
 			}
 			if (haveVertex == false)
-				vertices.push_back((*triangles)[i]->vertices[j]);
+				vertices.push_back(triangles[i]->vertices[j]);
 		}
 	}
 }
 
-TriangleArray* ConvexMesh::getTriangles()
+vector<Triangle*>* ConvexMesh::getTriangles()
 {
-	return triangles;
+	return &triangles;
 }
 
 vector<Vector3*>* ConvexMesh::getVertices()
@@ -168,13 +118,13 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 		_Console::println(static_cast< Object* >(u"Mesh::fromBoundingVolume(): original is not of same type"_j));
 		return;
 	}
-	auto mesh = java_cast< ConvexMesh* >(original);
-	if (mesh->triangles->length != triangles->length) {
+	auto mesh = dynamic_cast< ConvexMesh* >(original);
+	if (mesh->triangles.size() != triangles.size()) {
 		_Console::println(static_cast< Object* >(u"Mesh::fromBoundingVolume(): triangles count mismatch"_j));
 		return;
 	}
-	for (auto i = 0; i < triangles->length; i++) {
-		(*triangles)[i]->fromBoundingVolume((*mesh->triangles)[i]);
+	for (auto i = 0; i < triangles.size(); i++) {
+		triangles[i]->fromBoundingVolume(mesh->triangles[i]);
 	}
 	center->set(mesh->center);
 	sphereRadius = mesh->sphereRadius;
@@ -186,16 +136,16 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 		_Console::println(static_cast< Object* >(u"Mesh::fromBoundingVolume(): original is not of same type"_j));
 		return;
 	}
-	auto mesh = java_cast< ConvexMesh* >(original);
-	if (mesh->triangles->length != triangles->length) {
+	auto mesh = dynamic_cast< ConvexMesh* >(original);
+	if (mesh->triangles.size() != triangles.size()) {
 		_Console::println(static_cast< Object* >(u"Mesh::fromBoundingVolume(): triangles count mismatch"_j));
 		return;
 	}
-	for (auto i = 0; i < triangles->length; i++) {
-		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[0], (*triangles)[i]->vertices[0]);
-		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[1], (*triangles)[i]->vertices[1]);
-		transformations->getTransformationsMatrix()->multiply((*mesh->triangles)[i]->vertices[2], (*triangles)[i]->vertices[2]);
-		(*triangles)[i]->update();
+	for (auto i = 0; i < triangles.size(); i++) {
+		transformations->getTransformationsMatrix()->multiply(mesh->triangles[i]->vertices[0], triangles[i]->vertices[0]);
+		transformations->getTransformationsMatrix()->multiply(mesh->triangles[i]->vertices[1], triangles[i]->vertices[1]);
+		transformations->getTransformationsMatrix()->multiply(mesh->triangles[i]->vertices[2], triangles[i]->vertices[2]);
+		triangles[i]->update();
 	}
 	update();
 }
@@ -206,14 +156,14 @@ void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* cl
 		closestsPoint->set(point);
 		return;
 	}
-	if (triangles->length == 0) {
+	if (triangles.size() == 0) {
 		return;
 	}
-	(*triangles)[0]->computeClosestPointOnBoundingVolume(point, this->closestsPoint);
+	triangles[0]->computeClosestPointOnBoundingVolume(point, this->closestsPoint);
 	auto distance = distanceVector->set(point)->sub(this->closestsPoint)->computeLength();
 	closestsPoint->set(this->closestsPoint);
-	for (auto i = 1; i < triangles->length; i++) {
-		(*triangles)[i]->computeClosestPointOnBoundingVolume(point, this->closestsPoint);
+	for (auto i = 1; i < triangles.size(); i++) {
+		triangles[i]->computeClosestPointOnBoundingVolume(point, this->closestsPoint);
 		auto _distance = distanceVector->set(point)->sub(this->closestsPoint)->computeLength();
 		if (_distance < distance) {
 			distance = _distance;
@@ -224,8 +174,8 @@ void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* cl
 
 bool ConvexMesh::containsPoint(Vector3* point)
 {
-	for (auto i = 0; i < triangles->length; i++) {
-		auto triangle = (*triangles)[i];
+	for (auto i = 0; i < triangles.size(); i++) {
+		auto triangle = triangles[i];
 		auto triangleVertices = triangle->getVertices();
 		triangleEdge1->set((*triangleVertices)[1])->sub((*triangleVertices)[0])->normalize();
 		triangleEdge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
@@ -250,19 +200,18 @@ bool ConvexMesh::containsPoint(Vector3* point)
 bool ConvexMesh::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Capsule::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
 		return false;
 	}
 }
@@ -280,8 +229,8 @@ float ConvexMesh::getSphereRadius()
 float ConvexMesh::computeDimensionOnAxis(Vector3* axis)
 {
 	auto dimensionOnAxis = 0.0f;
-	for (auto i = 0; i < triangles->length; i++) {
-		auto _dimensionOnAxis = (*triangles)[i]->computeDimensionOnAxis(axis);
+	for (auto i = 0; i < triangles.size(); i++) {
+		auto _dimensionOnAxis = triangles[i]->computeDimensionOnAxis(axis);
 		if (_dimensionOnAxis > dimensionOnAxis)
 			dimensionOnAxis = _dimensionOnAxis;
 
@@ -292,16 +241,16 @@ float ConvexMesh::computeDimensionOnAxis(Vector3* axis)
 void ConvexMesh::update()
 {
 	center->set(0.0f, 0.0f, 0.0f);
-	for (auto i = 0; i < triangles->length; i++) {
-		center->add((*triangles)[i]->vertices[0]);
-		center->add((*triangles)[i]->vertices[1]);
-		center->add((*triangles)[i]->vertices[2]);
+	for (auto i = 0; i < triangles.size(); i++) {
+		center->add(triangles[i]->vertices[0]);
+		center->add(triangles[i]->vertices[1]);
+		center->add(triangles[i]->vertices[2]);
 	}
-	center->scale(1.0f / (triangles->length * 3.0f));
+	center->scale(1.0f / (triangles.size() * 3.0f));
 	this->sphereRadius = 0.0f;
-	for (auto i = 0; i < triangles->length; i++) 
+	for (auto i = 0; i < triangles.size(); i++)
 	for (auto j = 0; j < 3; j++) {
-		auto _sphereRadius = distanceVector->set(center)->sub((*triangles)[i]->vertices[j])->computeLength();
+		auto _sphereRadius = distanceVector->set(center)->sub(triangles[i]->vertices[j])->computeLength();
 		if (_sphereRadius > sphereRadius)
 			sphereRadius = _sphereRadius;
 	}
@@ -309,36 +258,9 @@ void ConvexMesh::update()
 
 BoundingVolume* ConvexMesh::clone()
 {
-	auto triangles = new TriangleArray(this->triangles->length);
-	for (auto i = 0; i < this->triangles->length; i++) {
-		triangles->set(i, java_cast< Triangle* >((*this->triangles)[i]->clone()));
+	vector<Triangle*> triangles;
+	for (auto i = 0; i < this->triangles.size(); i++) {
+		triangles.push_back(dynamic_cast< Triangle* >(this->triangles[i]->clone()));
 	}
-	return new ConvexMesh(triangles);
+	return new ConvexMesh(&triangles);
 }
-
-String* ConvexMesh::toString()
-{
-	return ::java::lang::StringBuilder().append(u"ConvexMesh [center="_j)
-		/*
-		->append(static_cast< Object* >(center))
-		*/
-		->append(u", sphereRadius="_j)
-		->append(sphereRadius)
-		->append(u", triangles="_j)
-		->append(Arrays::toString(static_cast< ObjectArray* >(triangles)))
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ConvexMesh::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.ConvexMesh", 33);
-    return c;
-}
-
-java::lang::Class* ConvexMesh::getClass0()
-{
-	return class_();
-}
-

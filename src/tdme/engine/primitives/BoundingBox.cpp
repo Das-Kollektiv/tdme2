@@ -20,19 +20,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingVolume;
@@ -45,70 +37,27 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-namespace  {
-typedef ::SubArray< ::int32_tArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > int32_tArrayArray;
-}  // namespace 
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-BoundingBox::BoundingBox(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+array<int32_t, 3> BoundingBox::FACE0_INDICES = {{ 0, 4, 7 }};
+array<int32_t, 3> BoundingBox::FACE1_INDICES = {{ 7, 3, 0 }};
+array<int32_t, 3> BoundingBox::FACE2_INDICES = {{ 6, 5, 1 }};
+array<int32_t, 3> BoundingBox::FACE3_INDICES = {{ 1, 2, 6 }};
+array<int32_t, 3> BoundingBox::FACE4_INDICES = {{ 5, 4, 0 }};
+array<int32_t, 3> BoundingBox::FACE5_INDICES = {{ 0, 1, 5 }};
+array<int32_t, 3> BoundingBox::FACE6_INDICES = {{ 3, 7, 6 }};
+array<int32_t, 3> BoundingBox::FACE7_INDICES = {{ 6, 2, 3 }};
+array<int32_t, 3> BoundingBox::FACE8_INDICES = {{ 2, 1, 0 }};
+array<int32_t, 3> BoundingBox::FACE9_INDICES = {{ 0, 3, 2 }};
+array<int32_t, 3> BoundingBox::FACE10_INDICES = {{ 4, 5, 6 }};
+array<int32_t, 3> BoundingBox::FACE11_INDICES = {{ 6, 7, 4 }};
+array<array<int32_t,3>,12> BoundingBox::facesVerticesIndexes =
+{{
+	FACE0_INDICES, FACE1_INDICES, FACE2_INDICES, FACE3_INDICES,
+	FACE4_INDICES, FACE5_INDICES, FACE6_INDICES, FACE7_INDICES,
+	FACE8_INDICES, FACE9_INDICES, FACE10_INDICES, FACE11_INDICES
+}};
 
 BoundingBox::BoundingBox() 
-	: BoundingBox(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-BoundingBox::BoundingBox(BoundingBox* boundingBox) 
-	: BoundingBox(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(boundingBox);
-}
-
-BoundingBox::BoundingBox(Vector3* min, Vector3* max) 
-	: BoundingBox(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(min,max);
-}
-
-int32_tArrayArray* BoundingBox::facesVerticesIndexes;
-
-BoundingVolume* BoundingBox::createBoundingVolume(Vector3* min, Vector3* max)
-{
-	clinit();
-	return new BoundingBox(min, max);
-}
-
-void BoundingBox::ctor()
-{
-	super::ctor();
 	min = new Vector3();
 	max = new Vector3();
 	center = new Vector3();
@@ -120,9 +69,8 @@ void BoundingBox::ctor()
 	update();
 }
 
-void BoundingBox::ctor(BoundingBox* boundingBox)
+BoundingBox::BoundingBox(BoundingBox* boundingBox) 
 {
-	super::ctor();
 	this->min = boundingBox->min->clone();
 	this->max = boundingBox->max->clone();
 	this->center = new Vector3();
@@ -134,9 +82,9 @@ void BoundingBox::ctor(BoundingBox* boundingBox)
 	update();
 }
 
-void BoundingBox::ctor(Vector3* min, Vector3* max)
+BoundingBox::BoundingBox(Vector3* min, Vector3* max)
 {
-	super::ctor();
+
 	this->min = min;
 	this->max = max;
 	this->center = new Vector3();
@@ -146,6 +94,11 @@ void BoundingBox::ctor(Vector3* min, Vector3* max)
 	}
 	halfExtension = new Vector3();
 	update();
+}
+
+BoundingVolume* BoundingBox::createBoundingVolume(Vector3* min, Vector3* max)
+{
+	return new BoundingBox(min, max);
 }
 
 Vector3* BoundingBox::getMin()
@@ -163,10 +116,9 @@ vector<Vector3*>* BoundingBox::getVertices()
 	return &vertices;
 }
 
-int32_tArrayArray* BoundingBox::getFacesVerticesIndexes()
+array<array<int32_t,3>,12>* BoundingBox::getFacesVerticesIndexes()
 {
-	clinit();
-	return facesVerticesIndexes;
+	return &facesVerticesIndexes;
 }
 
 void BoundingBox::fromBoundingVolume(BoundingVolume* original)
@@ -175,7 +127,7 @@ void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 		_Console::println(static_cast< Object* >(u"BoundingBox::fromBoundingVolume: original is not of same type"_j));
 		return;
 	}
-	auto boundingBox = java_cast< BoundingBox* >(original);
+	auto boundingBox = dynamic_cast< BoundingBox* >(original);
 	min->set(boundingBox->min);
 	max->set(boundingBox->max);
 	center->set(boundingBox->center);
@@ -190,7 +142,7 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 		_Console::println(static_cast< Object* >(u"BoundingBox::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto boundingBox = java_cast< BoundingBox* >(original);
+	auto boundingBox = dynamic_cast< BoundingBox* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
@@ -256,19 +208,18 @@ bool BoundingBox::containsPoint(Vector3* point)
 bool BoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"BoundingBox::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
 		return false;
 	}
 }
@@ -322,104 +273,4 @@ BoundingVolume* BoundingBox::clone()
 	return new BoundingBox(min->clone(), max->clone());
 }
 
-String* BoundingBox::toString()
-{
-	return ::java::lang::StringBuilder().append(u"BoundingBox [min="_j)
-		/*
-		append(static_cast< Object* >(min))
-		->append(u", max="_j)
-		->append(static_cast< Object* >(max))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* BoundingBox::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.BoundingBox", 34);
-    return c;
-}
-
-void BoundingBox::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		facesVerticesIndexes = (new int32_tArrayArray({
-			(new int32_tArray({
-			0,
-			4,
-			7
-		})),
-			(new int32_tArray({
-			7,
-			3,
-			0
-		})),
-			(new int32_tArray({
-			6,
-			5,
-			1
-		})),
-			(new int32_tArray({
-			1,
-			2,
-			6
-		})),
-			(new int32_tArray({
-			5,
-			4,
-			0
-		})),
-			(new int32_tArray({
-			0,
-			1,
-			5
-		})),
-			(new int32_tArray({
-			3,
-			7,
-			6
-		})),
-			(new int32_tArray({
-			6,
-			2,
-			3
-		})),
-			(new int32_tArray({
-			2,
-			1,
-			0
-		})),
-			(new int32_tArray({
-			0,
-			3,
-			2
-		})),
-			(new int32_tArray({
-			4,
-			5,
-			6
-		})),
-			(new int32_tArray({
-			6,
-			7,
-			4
-		}))
-		}));
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* BoundingBox::getClass0()
-{
-	return class_();
-}
 

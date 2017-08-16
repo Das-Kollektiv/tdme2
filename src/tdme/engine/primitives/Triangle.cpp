@@ -3,11 +3,10 @@
 
 #include <vector>
 
+#include <java/lang/fwd-tdme.h>
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
+
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -20,17 +19,13 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::vector;
 
-using tdme::engine::primitives::Triangle;
 using java::lang::Math;
-using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
+
+using tdme::engine::primitives::Triangle;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
@@ -44,42 +39,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Triangle::Triangle(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Triangle::Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2) 
-	: Triangle(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(vertex0,vertex1,vertex2);
-}
-
-BoundingVolume* Triangle::createBoundingVolume(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
-{
-	clinit();
-	return new Triangle(vertex0, vertex1, vertex2);
-}
-
-void Triangle::ctor(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
-{
-	super::ctor();
 	this->vertices.resize(3);
 	this->vertices[0] = vertex0;
 	this->vertices[1] = vertex1;
@@ -93,6 +54,12 @@ void Triangle::ctor(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
 	update();
 }
 
+BoundingVolume* Triangle::createBoundingVolume(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
+{
+	return new Triangle(vertex0, vertex1, vertex2);
+}
+
+
 vector<Vector3*>* Triangle::getVertices()
 {
 	return &vertices;
@@ -104,7 +71,7 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 		_Console::println(static_cast< Object* >(u"Triangle::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto triangle = java_cast< Triangle* >(original);
+	auto triangle = dynamic_cast< Triangle* >(original);
 	for (auto i = 0; i < vertices.size(); i++)
 		vertices[i]->set(triangle->vertices[i]);
 
@@ -118,7 +85,7 @@ void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, T
 		_Console::println(static_cast< Object* >(u"Triangle::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
-	auto triangle = java_cast< Triangle* >(original);
+	auto triangle = dynamic_cast< Triangle* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
 	for (auto i = 0; i < 3; i++) {
 		transformationsMatrix->multiply(triangle->vertices[i], vertices[i]);
@@ -203,19 +170,18 @@ bool Triangle::containsPoint(Vector3* point)
 bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, java_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Triangle::doesCollideWith(): unsupported bounding volume 2: "_j)->append(static_cast< Object* >(bv2))->toString()));
 		return false;
 	}
 }
@@ -263,27 +229,3 @@ BoundingVolume* Triangle::clone()
 {
 	return new Triangle(vertices[0]->clone(), vertices[1]->clone(), vertices[2]->clone());
 }
-
-String* Triangle::toString()
-{
-	return ::java::lang::StringBuilder().append(u"Triangle [vertices="_j)
-		/*
-		->append(Arrays::toString(static_cast< ObjectArray* >(vertices)))
-		*/
-		->append(u"]"_j)
-		->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Triangle::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.Triangle", 31);
-    return c;
-}
-
-java::lang::Class* Triangle::getClass0()
-{
-	return class_();
-}
-

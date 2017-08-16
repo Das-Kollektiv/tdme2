@@ -7,14 +7,10 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
-
-
 
 /** 
  * Bounding Volume Interface
@@ -22,7 +18,6 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 struct tdme::engine::primitives::BoundingVolume
-	: public virtual Object
 {
 
 	/** 
@@ -88,7 +83,4 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @return cloned bounding volume
 	 */
 	virtual BoundingVolume* clone() = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };
