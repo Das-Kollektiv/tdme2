@@ -30,8 +30,7 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::OrientedBoundingBox final
 	: public BoundingVolume
 {
-
-public:
+private:
 	static array<int32_t, 3> FACE0_INDICES;
 	static array<int32_t, 3> FACE1_INDICES;
 	static array<int32_t, 3> FACE2_INDICES;
@@ -46,9 +45,11 @@ public:
 	static array<int32_t, 3> FACE11_INDICES;
 	static array<array<int32_t,3>,12> facesVerticesIndexes;
 
+public:
 	static Vector3 AABB_AXIS_X;
 	static Vector3 AABB_AXIS_Y;
 	static Vector3 AABB_AXIS_Z;
+
 public:
 	Vector3* getCenter() override;
 	float getSphereRadius() override;
@@ -143,8 +144,6 @@ public:
 	 * Public constructor
 	 */
 	OrientedBoundingBox();
-
-
 
 private:
 	Vector3 center {  };

@@ -23,7 +23,7 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::Sphere final
 	: public BoundingVolume
 {
-public: /* protected */
+private:
 	Vector3 center {  };
 	float radius {  };
 

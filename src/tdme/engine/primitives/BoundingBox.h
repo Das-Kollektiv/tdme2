@@ -29,7 +29,7 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::BoundingBox final :
 	public BoundingVolume
 {
-public: /* protected */
+private:
 	static array<int32_t, 3> FACE0_INDICES;
 	static array<int32_t, 3> FACE1_INDICES;
 	static array<int32_t, 3> FACE2_INDICES;
@@ -43,8 +43,6 @@ public: /* protected */
 	static array<int32_t, 3> FACE10_INDICES;
 	static array<int32_t, 3> FACE11_INDICES;
 	static array<array<int32_t,3>,12> facesVerticesIndexes;
-
-private:
 	Vector3 min {  };
 	Vector3 max {  };
 	Vector3 center {  };
