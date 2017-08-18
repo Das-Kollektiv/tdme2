@@ -19,7 +19,7 @@ using tdme::math::Vector3;
  */
 class tdme::math::Quaternion final
 {
-public: /* protected */
+private:
 	array<float, 4> data {  };
 
 public:

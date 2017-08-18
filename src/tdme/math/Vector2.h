@@ -17,8 +17,10 @@ using std::array;
  */
 class tdme::math::Vector2 final
 {
-public: /* protected */
+private:
 	array<float, 2> data {  };
+
+public:
 
 	/** 
 	 * Set up vector

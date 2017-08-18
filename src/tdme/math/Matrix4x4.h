@@ -19,8 +19,9 @@ using tdme::math::Vector4;
  */
 class tdme::math::Matrix4x4 final
 {
-public: /* protected */
+private:
 	array<float, 16> data {  };
+
 public:
 	/** 
 	 * Set up matrix by values

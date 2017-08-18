@@ -16,11 +16,12 @@ using tdme::math::Vector3;
  */
 class tdme::math::Matrix4x4Negative
 {
-public: /* protected */
+private:
 	Vector3 xAxis {  };
 	Vector3 yAxis {  };
 	Vector3 zAxis {  };
 	Vector3 tmpAxis {  };
+
 public:
 
 	/** 

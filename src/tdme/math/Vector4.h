@@ -18,7 +18,10 @@ using tdme::math::Vector3;
  */
 class tdme::math::Vector4 final
 {
-public: /* protected */
+	friend class Matrix4x4;
+	friend class Vector3;
+
+private:
 	array<float, 4> data {  };
 
 public:

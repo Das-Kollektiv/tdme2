@@ -16,9 +16,13 @@ using std::array;
  */
 class tdme::math::Vector3 final
 {
+	friend class Matrix4x4;
+	friend class Quaternion;
+	friend class Vector4;
 
-public: /* protected */
+private:
 	array<float, 3> data {  };
+
 public:
 
 	/** 
