@@ -199,11 +199,11 @@ void PhysicsTest3::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto side = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(1.0f, 16.0f, 8.0f));
-	auto sideModel = PrimitiveModel::createModel(side, u"side_model"_j);
+	auto sideModel = PrimitiveModel::createModel(side, L"side_model");
 	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	auto nearFar = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(8.0f, 16.0f, 1.0f));
-	auto nearFarModel = PrimitiveModel::createModel(nearFar, u"far_model"_j);
+	auto nearFarModel = PrimitiveModel::createModel(nearFar, L"far_model");
 	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D(L"far", nearFarModel);
@@ -228,7 +228,7 @@ void PhysicsTest3::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody(u"sideleft"_j, true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
 	auto box = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(0.6f, 0.6f, 0.6f));
-	auto boxModel = PrimitiveModel::createModel(box, u"box_model"_j);
+	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
@@ -251,7 +251,7 @@ void PhysicsTest3::initialize()
 		world->addRigidBody(::java::lang::StringBuilder().append(u"box"_j)->append((BOX_COUNT + i))->toString(), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto sphere = new Sphere(new Vector3(0.0f, 0.0f, 0.0f), 0.4f);
-	auto sphereModel = PrimitiveModel::createModel(sphere, u"sphere_model"_j);
+	auto sphereModel = PrimitiveModel::createModel(sphere, L"sphere_model");
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.5f, 0.8f, 0.8f, 1.0f);
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(0.0f, 1.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
@@ -265,7 +265,7 @@ void PhysicsTest3::initialize()
 		world->addRigidBody(::java::lang::StringBuilder().append(u"sphere"_j)->append(i)->toString(), true, RIGID_TYPEID_STANDARD, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto capsule = new Capsule(new Vector3(0.0f, 0.5f, 0.0f), new Vector3(0.0f, -0.5f, 0.0f), 0.25f);
-	auto capsuleModel = PrimitiveModel::createModel(capsule, u"capsule_model"_j);
+	auto capsuleModel = PrimitiveModel::createModel(capsule, L"capsule_model");
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.0f, 0.8f, 1.0f);
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
@@ -278,7 +278,7 @@ void PhysicsTest3::initialize()
 		world->addRigidBody(::java::lang::StringBuilder().append(u"capsule"_j)->append(i)->toString(), true, RIGID_TYPEID_STANDARD, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto capsuleBig = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(0.5f, 1.0f, 0.5f));
-	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, u"capsulebig_model"_j);
+	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, L"capsulebig_model");
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(1.0f, 0.8f, 0.8f, 1.0f);
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	entity = new Object3D(L"capsulebig1", capsuleBigModel);

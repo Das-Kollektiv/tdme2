@@ -6,7 +6,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -14,7 +13,6 @@
 using std::map;
 using std::wstring;
 
-using java::lang::String;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
@@ -23,8 +21,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
-
-struct default_init_tag;
 
 /** 
  * Class to create primitives model
@@ -40,14 +36,13 @@ private:
 	static constexpr int32_t CAPSULE_SEGMENTS_Y { 20 };
 
 public:
-
 	/** 
 	 * Creates a model from bounding box
 	 * @param bounding box
 	 * @param id
 	 * @return model
 	 */
-	static Model* createBoundingBoxModel(BoundingBox* boundingBox, String* id);
+	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const wstring& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
@@ -55,7 +50,7 @@ public:
 	 * @param id
 	 * @return model
 	 */
-	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, String* id);
+	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const wstring& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
@@ -65,7 +60,7 @@ public:
 	 * @param number of y segments
 	 * @return model
 	 */
-	static Model* createSphereModel(Sphere* sphere, String* id, int32_t segmentsX, int32_t segmentsY);
+	static Model* createSphereModel(Sphere* sphere, const wstring& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Creates a model from capsule
@@ -75,7 +70,7 @@ public:
 	 * @param number of y segments
 	 * @return model
 	 */
-	static Model* createCapsuleModel(Capsule* capsule, String* id, int32_t segmentsX, int32_t segmentsY);
+	static Model* createCapsuleModel(Capsule* capsule, const wstring& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Set up a convex mesh model
@@ -84,7 +79,6 @@ public:
 	static void setupConvexMeshModel(Model* model);
 
 private:
-
 	/** 
 	 * Set up convex mesh material
 	 * @param groups
@@ -92,12 +86,11 @@ private:
 	static void setupConvexMeshMaterial(map<wstring, Group*>* groups, Material* material);
 
 public:
-
 	/** 
 	 * Creates a model from bounding volume
 	 * @param bounding box
 	 * @param id
 	 * @return model
 	 */
-	static Model* createModel(BoundingVolume* boundingVolume, String* id);
+	static Model* createModel(BoundingVolume* boundingVolume, const wstring& id);
 };

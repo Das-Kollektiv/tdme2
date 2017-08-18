@@ -371,7 +371,7 @@ void EngineTest::initialize()
 		_player->addAnimationSetup(L"still", 3, 3, true);
 		_player->addAnimationSetup(L"walk", 0, 18, true);
 		playerBoundingVolume = new Capsule(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
-		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, u"player_bv"_j);
+		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, L"player_bv");
 		auto player1 = new Object3D(L"player1", _player);
 		player1->getTranslation()->add(new Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation(L"still");
@@ -418,7 +418,7 @@ void EngineTest::initialize()
 		cubeBoundingVolumeTransformed = cubeBoundingVolume->clone();
 		cubeBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(cubeBoundingVolume, cube);
 		engine->addEntity(cube);
-		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, u"cube_bv"_j);
+		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, L"cube_bv");
 		auto cubeBoundingVolumeObject3D = new Object3D(L"cube_bv", cubeBoundingVolumeModel);
 		cubeBoundingVolumeObject3D->fromTransformations(cube);
 		cubeBoundingVolumeObject3D->setEnabled(true);

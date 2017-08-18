@@ -120,7 +120,8 @@ void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 		 append(id)->
 		 append(u"."_j)->
 		 append((staticIdx++))->
-		 toString()
+		 toString()->
+		 getCPPWString()
 	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
@@ -139,7 +140,8 @@ void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float
 		 append(id)->
 		 append(u"."_j)->
 		 append((staticIdx++))->
-		 toString()
+		 toString()->
+		 getCPPWString()
 	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
@@ -158,7 +160,8 @@ void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, 
 		 append(id)->
 		 append(u"."_j)->
 		 append((staticIdx++))->
-		 toString()
+		 toString()->
+		 getCPPWString()
 	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();
@@ -177,7 +180,8 @@ void LevelEditorEntityBoundingVolume::setupAabb(Vector3* min, Vector3* max)
 		 append(id)->
 		 append(u"."_j)->
 		 append((staticIdx++))->
-		 toString()
+		 toString()->
+		 getCPPWString()
 	);
 	modelMeshFile = nullptr;
 	updateLevelEditorEntity();

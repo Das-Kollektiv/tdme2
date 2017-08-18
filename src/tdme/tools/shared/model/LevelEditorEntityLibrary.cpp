@@ -168,7 +168,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, String* name
 		->append(u"m"_j)->toString();
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(new Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), new Vector3(+width / 2.0f, height, +depth / 2.0f));
-	auto model = PrimitiveModel::createModel(boundingBox, ::java::lang::StringBuilder().append(cacheId)->append(u"_bv"_j)->toString());
+	auto model = PrimitiveModel::createModel(boundingBox, ::java::lang::StringBuilder().append(cacheId)->append(u"_bv"_j)->toString()->getCPPWString());
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::TRIGGER,
