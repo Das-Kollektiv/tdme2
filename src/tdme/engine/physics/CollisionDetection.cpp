@@ -128,7 +128,6 @@ CollisionDetection::CollisionDetection()
 
 void CollisionDetection::init()
 {
-	lineSegment = new LineSegment();
 	closestPointOnCapsule1 = new Vector3();
 	closestPointOnCapsule2 = new Vector3();
 	closestPoint = new Vector3();
@@ -325,7 +324,7 @@ bool CollisionDetection::doCollide(Capsule* c1, Capsule* c2, Vector3* movement, 
 	if (doBroadTest(c1, c2) == false)
 		return false;
 
-	lineSegment->computeClosestPointsOnLineSegments(c1->getA(), c1->getB(), c2->getA(), c2->getB(), closestPointOnCapsule1, closestPointOnCapsule2);
+	LineSegment::computeClosestPointsOnLineSegments(c1->getA(), c1->getB(), c2->getA(), c2->getB(), closestPointOnCapsule1, closestPointOnCapsule2);
 	return doCollide(sphere1->set(closestPointOnCapsule1, c1->getRadius()), sphere2->set(closestPointOnCapsule2, c2->getRadius()), movement, collision);
 }
 
@@ -550,7 +549,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Capsule* capsule, V
 	obbExtended->fromOrientedBoundingBox(obb);
 	obbExtended->getHalfExtension()->add(r);
 	obbExtended->update();
-	if (lineSegment->doesOrientedBoundingBoxCollideWithLineSegment(obbExtended, capsule->getA(), capsule->getB(), contactMin, contactMax) == true) {
+	if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(obbExtended, capsule->getA(), capsule->getB(), contactMin, contactMax) == true) {
 		axis->set(capsule->getB())->sub(capsule->getA())->normalize();
 		contactAvg->set(contactMin)->add(contactMax)->scale(0.5f);
 		obb->computeClosestPointOnBoundingVolume(contactAvg, closestPoint);
@@ -995,9 +994,9 @@ bool CollisionDetection::doCollide(Triangle* triangle, Capsule* capsule, Vector3
 		return false;
 
 	auto triangleVertices = triangle->getVertices();
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[1], &(*triangleVertices)[0], closestPointsOnCapsuleSegment[0], closestPointsOnTriangleSegments[0]);
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[2], &(*triangleVertices)[1], closestPointsOnCapsuleSegment[1], closestPointsOnTriangleSegments[1]);
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[0], &(*triangleVertices)[2], closestPointsOnCapsuleSegment[2], closestPointsOnTriangleSegments[2]);
+	LineSegment::computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[1], &(*triangleVertices)[0], closestPointsOnCapsuleSegment[0], closestPointsOnTriangleSegments[0]);
+	LineSegment::computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[2], &(*triangleVertices)[1], closestPointsOnCapsuleSegment[1], closestPointsOnTriangleSegments[1]);
+	LineSegment::computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[0], &(*triangleVertices)[2], closestPointsOnCapsuleSegment[2], closestPointsOnTriangleSegments[2]);
 	closestPointsOnCapsuleSegment[3]->set(capsule->getA());
 	triangle->computeClosestPointOnBoundingVolume(closestPointsOnCapsuleSegment[3], closestPointsOnTriangleSegments[3]);
 	closestPointsOnCapsuleSegment[4]->set(capsule->getB());
@@ -1209,7 +1208,7 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 	auto lineSegmentsIntersections = 0;
 	for (auto i = 0; i < lineSegmentsTriangleIndices->length; i += 2) 
 		for (auto j = 0; j < lineSegmentsTriangleIndices->length; j += 2) {
-			if (lineSegment->doesLineSegmentsCollide(
+			if (LineSegment::doesLineSegmentsCollide(
 					&(*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 0]],
 					&(*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 1]],
 					&(*triangle2Vertices)[(*lineSegmentsTriangleIndices)[j + 0]],

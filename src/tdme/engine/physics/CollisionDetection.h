@@ -27,7 +27,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
-using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
@@ -94,7 +93,6 @@ private:
 	static Object* synchronizeObject;
 	static Vector3* zeroVector;
 	static int32_tArray* lineSegmentsTriangleIndices;
-	LineSegment* lineSegment {  };
 	Vector3* closestPointOnCapsule1 {  };
 	Vector3* closestPointOnCapsule2 {  };
 	Vector3* closestPoint {  };

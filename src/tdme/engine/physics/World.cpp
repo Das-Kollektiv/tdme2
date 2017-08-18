@@ -104,7 +104,6 @@ void World::init()
 	heightOnPointCandidate = new Vector3();
 	heightOnPointA = new Vector3();
 	heightOnPointB = new Vector3();
-	heightOnPointLineSegment = new LineSegment();
 	sideVector = new Vector3(1.0f, 0.0f, 0.0f);
 	upVector = new Vector3(0.0f, 1.0f, 0.0f);
 	forwardVector = new Vector3(0.0f, 0.0f, 1.0f);
@@ -351,7 +350,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 
 			auto cbv = rigidBody->cbv;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
-				if (heightOnPointLineSegment->doesBoundingBoxCollideWithLineSegment(java_cast< BoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
+				if (LineSegment::doesBoundingBoxCollideWithLineSegment(java_cast< BoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
@@ -360,7 +359,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 				}
 			} else
 			if (dynamic_cast< OrientedBoundingBox* >(cbv) != nullptr) {
-				if (heightOnPointLineSegment->doesOrientedBoundingBoxCollideWithLineSegment(java_cast< OrientedBoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
+				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(java_cast< OrientedBoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();

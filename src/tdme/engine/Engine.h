@@ -39,7 +39,6 @@ using tdme::engine::Light;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
-using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -128,7 +127,6 @@ private:
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 projectionMatrix {  };
-	LineSegment* lineSegment {  };
 
 public: /* protected */
 	bool initialized {  };

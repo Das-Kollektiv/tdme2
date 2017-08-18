@@ -29,7 +29,6 @@ using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -71,7 +70,6 @@ private:
 	Vector3* heightOnPointCandidate {  };
 	Vector3* heightOnPointA {  };
 	Vector3* heightOnPointB {  };
-	LineSegment* heightOnPointLineSegment {  };
 	Vector3* sideVector {  };
 	Vector3* upVector {  };
 	Vector3* forwardVector {  };
