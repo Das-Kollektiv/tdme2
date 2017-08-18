@@ -10,12 +10,10 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -34,12 +32,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::primitives::PrimitiveModel final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr int32_t SPHERE_SEGMENTS_X { 20 };
 	static constexpr int32_t SPHERE_SEGMENTS_Y { 20 };
@@ -107,16 +100,4 @@ public:
 	 * @return model
 	 */
 	static Model* createModel(BoundingVolume* boundingVolume, String* id);
-
-	// Generated
-	PrimitiveModel();
-protected:
-	PrimitiveModel(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

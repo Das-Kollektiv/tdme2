@@ -6,9 +6,7 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -27,9 +25,6 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 using std::vector;
@@ -37,9 +32,7 @@ using std::wstring;
 
 using tdme::engine::primitives::PrimitiveModel;
 using java::lang::Math;
-using java::lang::Object;
 using java::lang::String;
-using java::util::Iterator;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -59,26 +52,6 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-PrimitiveModel::PrimitiveModel(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-PrimitiveModel::PrimitiveModel()
-	: PrimitiveModel(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
 constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_X;
 
 constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_Y;
@@ -89,7 +62,6 @@ constexpr int32_t PrimitiveModel::CAPSULE_SEGMENTS_Y;
 
 Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* id)
 {
-	clinit();
 	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -139,7 +111,6 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 
 Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, String* id)
 {
-	clinit();
 	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -190,7 +161,6 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 
 Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t segmentsX, int32_t segmentsY)
 {
-	clinit();
 	auto radius = sphere->getRadius();
 	auto center = sphere->getCenter();
 	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
@@ -258,7 +228,6 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 
 Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t segmentsX, int32_t segmentsY)
 {
-	clinit();
 	auto radius = capsule->getRadius();
 	auto a = capsule->getA();
 	auto b = capsule->getB();
@@ -363,7 +332,6 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t 
 
 void PrimitiveModel::setupConvexMeshModel(Model* model)
 {
-	clinit();
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor()->set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -374,7 +342,6 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 
 void PrimitiveModel::setupConvexMeshMaterial(map<wstring, Group*>* groups, Material* material)
 {
-	clinit();
 	for (auto it: *groups) {
 		Group* group = it.second;
 		for (auto& faceEntity : *group->getFacesEntities()) {
@@ -385,34 +352,19 @@ void PrimitiveModel::setupConvexMeshMaterial(map<wstring, Group*>* groups, Mater
 
 Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, String* id)
 {
-	clinit();
 	if (dynamic_cast< BoundingBox* >(boundingVolume) != nullptr) {
-		return PrimitiveModel::createBoundingBoxModel(java_cast< BoundingBox* >(boundingVolume), id);
+		return PrimitiveModel::createBoundingBoxModel(dynamic_cast< BoundingBox* >(boundingVolume), id);
 	} else
 	if (dynamic_cast< OrientedBoundingBox* >(boundingVolume) != nullptr) {
-		return PrimitiveModel::createOrientedBoundingBoxModel(java_cast< OrientedBoundingBox* >(boundingVolume), id);
+		return PrimitiveModel::createOrientedBoundingBoxModel(dynamic_cast< OrientedBoundingBox* >(boundingVolume), id);
 	} else
 	if (dynamic_cast< Sphere* >(boundingVolume) != nullptr) {
-		return PrimitiveModel::createSphereModel(java_cast< Sphere* >(boundingVolume), id, SPHERE_SEGMENTS_X, SPHERE_SEGMENTS_Y);
+		return PrimitiveModel::createSphereModel(dynamic_cast< Sphere* >(boundingVolume), id, SPHERE_SEGMENTS_X, SPHERE_SEGMENTS_Y);
 	} else
 	if (dynamic_cast< Capsule* >(boundingVolume) != nullptr) {
-		return PrimitiveModel::createCapsuleModel(java_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
+		return PrimitiveModel::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
 	} else {
 		_Console::println(static_cast< Object* >(u"PrimitiveModel::createModel(): unsupported bounding volume"_j));
 		return nullptr;
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PrimitiveModel::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.primitives.PrimitiveModel", 37);
-    return c;
-}
-
-java::lang::Class* PrimitiveModel::getClass0()
-{
-	return class_();
-}
-
