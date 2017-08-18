@@ -10,6 +10,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::array;
@@ -42,24 +43,14 @@ public: /* protected */
 	static array<int32_t, 3> FACE10_INDICES;
 	static array<int32_t, 3> FACE11_INDICES;
 	static array<array<int32_t,3>,12> facesVerticesIndexes;
-	Vector3* min {  };
-	Vector3* max {  };
-	Vector3* center {  };
 
 private:
+	Vector3 min {  };
+	Vector3 max {  };
+	Vector3 center {  };
 	float sphereRadius {  };
-	vector<Vector3*> vertices {  };
-	Vector3* halfExtension {  };
+	vector<Vector3> vertices {  };
 
-public:
-
-	/** 
-	 * Creates a bounding volume bounding volume
-	 * @param min
-	 * @param max
-	 * @return bounding volume
-	 */
-	static BoundingVolume* createBoundingVolume(Vector3* min, Vector3* max);
 public:
 
 	/** 
@@ -77,7 +68,7 @@ public:
 	 * @param bounding box
 	 * @return vertices
 	 */
-	vector<Vector3*>* getVertices();
+	vector<Vector3>* getVertices();
 
 	/** 
 	 * @return faces vertices indexes

@@ -35,26 +35,21 @@ float SeparatingAxisTheorem::doCalculatePoint(Vector3* point, Vector3* axis)
 	return distance;
 }
 
-void SeparatingAxisTheorem::doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, float& min, float& max)
+void SeparatingAxisTheorem::doCalculateInterval(vector<Vector3>* vertices, Vector3* axis, float& min, float& max)
 {
-	auto distance = Vector3::computeDotProduct((*vertices)[0], axis);
+	auto distance = Vector3::computeDotProduct(&(*vertices)[0], axis);
 	min = distance;
 	max = distance;
 	for (auto i = 1; i < vertices->size(); i++) {
-		distance = Vector3::computeDotProduct((*vertices)[i], axis);
-		if (distance < min)
-			min = distance;
-
-		if (distance > max)
-			max = distance;
-
+		distance = Vector3::computeDotProduct(&(*vertices)[i], axis);
+		if (distance < min) min = distance;
+		if (distance > max) max = distance;
 	}
 }
 
-bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis)
+bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(vector<Vector3>* vertices, Vector3* point, Vector3* axis)
 {
-	if (checkAxis(axis) == false)
-		return true;
+	if (checkAxis(axis) == false) return true;
 	float min;
 	float max;
 	doCalculateInterval(vertices, axis, min, max);
@@ -62,7 +57,7 @@ bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(vector<Vector3*>* vertice
 	return pOnAxis >= min && pOnAxis <= max;
 }
 
-bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset)
+bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset)
 {
 	Vector3 axis;
 	axis.set(axisTest)->normalize();

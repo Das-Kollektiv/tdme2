@@ -45,7 +45,7 @@ private:
 	 * @param axis
 	 * @return float[] containing min and max
 	 */
-	static void doCalculateInterval(vector<Vector3*>* vertices, Vector3* axis, float& min, float& max);
+	static void doCalculateInterval(vector<Vector3>* vertices, Vector3* axis, float& min, float& max);
 
 public:
 
@@ -56,7 +56,7 @@ public:
 	 * @param axis
 	 * @return point in vertices
 	 */
-	static bool checkPointInVerticesOnAxis(vector<Vector3*>* vertices, Vector3* point, Vector3* axis);
+	static bool checkPointInVerticesOnAxis(vector<Vector3>* vertices, Vector3* point, Vector3* axis);
 
 	/** 
 	 * Determines penetration of given vertices for both objects on a given axis
@@ -67,6 +67,6 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	static bool doSpanIntersect(vector<Vector3*>* vertices1, vector<Vector3*>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
+	static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
 
 };

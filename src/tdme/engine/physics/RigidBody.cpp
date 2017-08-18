@@ -98,9 +98,9 @@ Matrix4x4* RigidBody::getNoRotationInertiaMatrix()
 Matrix4x4* RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
 {
 	clinit();
-	auto width = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_X);
-	auto height = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_Y);
-	auto depth = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_Z);
+	auto width = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_X);
+	auto height = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Y);
+	auto depth = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Z);
 	return (new Matrix4x4(scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f, 0.0f, scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth), 0.0f, 0.0f, 0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f))->invert();
 }
 

@@ -17,12 +17,6 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
 
 LineSegment::LineSegment(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -117,8 +111,8 @@ bool LineSegment::doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox
 {
 	auto tmin = 0.0f;
 	auto tmax = 1.0f;
-	auto minXYZ = boundingBox->min->getArray();
-	auto maxXYZ = boundingBox->max->getArray();
+	auto minXYZ = boundingBox->getMin()->getArray();
+	auto maxXYZ = boundingBox->getMax()->getArray();
 	d->set(q)->sub(p);
 	auto directionXYZ = d->getArray();
 	auto pointXYZ = p->getArray();
@@ -153,16 +147,16 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 {
 	auto tmin = 0.0f;
 	auto tmax = 1.0f;
-	auto& obbAxes = orientedBoundingBox->axes;
-	auto obbCenter = orientedBoundingBox->center;
-	auto obbHalfExtension = orientedBoundingBox->halfExtension;
+	auto obbAxes = orientedBoundingBox->getAxes();
+	auto obbCenter = orientedBoundingBox->getCenter();
+	auto obbHalfExtension = orientedBoundingBox->getHalfExtension();
 	auto obbHalfExtensionXYZ = obbHalfExtension->getArray();
 	d->set(q)->sub(p);
 	for (auto i = 0; i < 3; i++) {
-		auto directionLengthOnAxis = Vector3::computeDotProduct(d, obbAxes[i]);
+		auto directionLengthOnAxis = Vector3::computeDotProduct(d, &(*obbAxes)[i]);
 		auto obbExtensionLengthOnAxis = (*obbHalfExtensionXYZ)[i];
-		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, obbAxes[i]);
-		auto pointLengthOnAxis = Vector3::computeDotProduct(p, obbAxes[i]);
+		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, &(*obbAxes)[i]);
+		auto pointLengthOnAxis = Vector3::computeDotProduct(p, &(*obbAxes)[i]);
 		if (Math::abs(directionLengthOnAxis) < MathTools::EPSILON && (pointLengthOnAxis <= obbCenterLengthOnAxis - obbExtensionLengthOnAxis || pointLengthOnAxis >= obbCenterLengthOnAxis + obbExtensionLengthOnAxis)) {
 			return false;
 		} else {

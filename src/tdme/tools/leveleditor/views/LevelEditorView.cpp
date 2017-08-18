@@ -941,7 +941,7 @@ void LevelEditorView::removeGrid()
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, java_cast< BoundingBox* >(BoundingBox::createBoundingVolume(new Vector3(0.0f, -0.01f, 0.0f), new Vector3(1.0f, +0.01f, 1.0f))));
+	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(new Vector3(0.0f, -0.01f, 0.0f), new Vector3(1.0f, +0.01f, 1.0f)));
 	auto groundPlateMaterial = new Material(L"ground");
 	groundPlateMaterial->getDiffuseColor()->setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseTexture(L"resources/tools/leveleditor/textures", L"groundplate.png");

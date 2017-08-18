@@ -9,6 +9,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::vector;
@@ -26,34 +27,12 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::Triangle final
 	: public BoundingVolume
 {
-public: /* protected */
-	vector<Vector3*> vertices {  };
-	Vector3* center {  };
-	Vector3* closestPoint {  };
-	Vector3* distanceVector {  };
-	float sphereRadius {  };
-
-private:
-	Vector3* edge0 {  };
-	Vector3* edge1 {  };
-	Vector3* v0Point {  };
-
-public:
-
-	/** 
-	 * Creates a triangle bounding volume
-	 * @param vertex 0
-	 * @param vertex 1
-	 * @param vertex 2
-	 * @return bounding volume
-	 */
-	static BoundingVolume* createBoundingVolume(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2);
 public:
 
 	/** 
 	 * @return triangle vertices
 	 */
-	vector<Vector3*>* getVertices();
+	vector<Vector3>* getVertices();
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
@@ -72,4 +51,10 @@ public:
 	 * @param vertex 2
 	 */
 	Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2);
+
+private:
+	vector<Vector3> vertices {  };
+	Vector3 center {  };
+	Vector3 distanceVector {  };
+	float sphereRadius {  };
 };

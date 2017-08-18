@@ -7,6 +7,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using tdme::engine::primitives::BoundingVolume;
@@ -23,21 +24,9 @@ class tdme::engine::primitives::Sphere final
 	: public BoundingVolume
 {
 public: /* protected */
-	Vector3* center {  };
+	Vector3 center {  };
 	float radius {  };
 
-private:
-	Vector3* axis {  };
-
-public:
-
-	/** 
-	 * Creates a sphere bounding volume
-	 * @param center
-	 * @param radius
-	 * @return bounding volume
-	 */
-	static BoundingVolume* createBoundingVolume(Vector3* center, float radius);
 public:
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;

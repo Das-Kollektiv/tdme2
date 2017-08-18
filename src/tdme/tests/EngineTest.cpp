@@ -370,7 +370,7 @@ void EngineTest::initialize()
 		auto _player = DAEReader::read(u"resources/tests/models/dummy"_j, u"testDummy_textured.DAE"_j);
 		_player->addAnimationSetup(L"still", 3, 3, true);
 		_player->addAnimationSetup(L"walk", 0, 18, true);
-		playerBoundingVolume = Capsule::createBoundingVolume(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
+		playerBoundingVolume = new Capsule(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
 		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, u"player_bv"_j);
 		auto player1 = new Object3D(L"player1", _player);
 		player1->getTranslation()->add(new Vector3(-1.5f, 0.0f, 0.0f));

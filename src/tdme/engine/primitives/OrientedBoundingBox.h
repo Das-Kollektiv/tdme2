@@ -10,6 +10,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::array;
@@ -45,33 +46,9 @@ public:
 	static array<int32_t, 3> FACE11_INDICES;
 	static array<array<int32_t,3>,12> facesVerticesIndexes;
 
-	static Vector3* AABB_AXIS_X;
-	static Vector3* AABB_AXIS_Y;
-	static Vector3* AABB_AXIS_Z;
-
-public: /* protected */
-	Vector3* center {  };
-	array<Vector3*, 3> axes {  };
-	Vector3* halfExtension {  };
-	vector<Vector3*> vertices {  };
-	Vector3* axis {  };
-	array<Vector3*, 3> axisTransformed {  };
-	Vector3* direction {  };
-	Vector3* scale {  };
-	float sphereRadius {  };
-
-public:
-
-	/** 
-	 * Creates a oriented bounding box bounding volume
-	 * @param center
-	 * @param axis 0
-	 * @param axis 1
-	 * @param axis 2
-	 * @param half extension
-	 * @return bounding volume
-	 */
-	static BoundingVolume* createBoundingVolume(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
+	static Vector3 AABB_AXIS_X;
+	static Vector3 AABB_AXIS_Y;
+	static Vector3 AABB_AXIS_Z;
 public:
 	Vector3* getCenter() override;
 	float getSphereRadius() override;
@@ -79,7 +56,7 @@ public:
 	/** 
 	 * @return 3 axes
 	 */
-	array<Vector3*, 3>* getAxes();
+	array<Vector3, 3>* getAxes();
 
 	/** 
 	 * @return half extension
@@ -104,7 +81,7 @@ public:
 	/** 
 	 * @return oriented bounding box vertices
 	 */
-	vector<Vector3*>* getVertices();
+	vector<Vector3>* getVertices();
 
 	/** 
 	 * @return faces vertices indexes
@@ -167,7 +144,13 @@ public:
 	 */
 	OrientedBoundingBox();
 
-public:
-	void init();
+
+
+private:
+	Vector3 center {  };
+	array<Vector3, 3> axes {  };
+	Vector3 halfExtension {  };
+	vector<Vector3> vertices {  };
+	float sphereRadius {  };
 
 };

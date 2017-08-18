@@ -8,9 +8,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using java::lang::Math;
@@ -20,21 +17,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -67,7 +49,7 @@ void BoundingBoxParticleEmitter::ctor(int32_t count, int64_t lifeTime, int64_t l
 	this->velocityRnd = velocityRnd;
 	this->colorStart = colorStart;
 	this->colorEnd = colorEnd;
-	this->obbTransformed = java_cast< OrientedBoundingBox* >(obb->clone());
+	this->obbTransformed = dynamic_cast< OrientedBoundingBox* >(obb->clone());
 }
 
 int32_t BoundingBoxParticleEmitter::getCount()
@@ -103,9 +85,9 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	auto obbAxes = obbTransformed->getAxes();
 	auto obbHalfExtensionXYZ = obbTransformed->getHalfExtension()->getArray();
 	particle->position->set(0.0f, 0.0f, 0.0f);
-	particle->position->add(tmpAxis->set((*obbAxes)[0])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[0] * 2.0f) - (*obbHalfExtensionXYZ)[0]));
-	particle->position->add(tmpAxis->set((*obbAxes)[1])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[1] * 2.0f) - (*obbHalfExtensionXYZ)[1]));
-	particle->position->add(tmpAxis->set((*obbAxes)[2])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[2] * 2.0f) - (*obbHalfExtensionXYZ)[2]));
+	particle->position->add(tmpAxis->set(&(*obbAxes)[0])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[0] * 2.0f) - (*obbHalfExtensionXYZ)[0]));
+	particle->position->add(tmpAxis->set(&(*obbAxes)[1])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[1] * 2.0f) - (*obbHalfExtensionXYZ)[1]));
+	particle->position->add(tmpAxis->set(&(*obbAxes)[2])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[2] * 2.0f) - (*obbHalfExtensionXYZ)[2]));
 	particle->position->add(obbTransformed->getCenter());
 	particle->velocity->set((*velocityXYZ)[0] + static_cast< float >((Math::random() * (*velocityRndXYZ)[0] * (Math::random() > 0.5 ? +1.0f : -1.0f))), (*velocityXYZ)[1] + static_cast< float >((Math::random() * (*velocityRndXYZ)[1] * (Math::random() > 0.5 ? +1.0f : -1.0f))), (*velocityXYZ)[2] + static_cast< float >((Math::random() * (*velocityRndXYZ)[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))));
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));

@@ -8,7 +8,9 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
@@ -31,40 +33,11 @@ class tdme::engine::primitives::ConvexMesh final
 	: public BoundingVolume
 {
 private:
-	vector<Triangle*> triangles {  };
-	Vector3* triangleEdge1 {  };
-	Vector3* triangleEdge2 {  };
-	Vector3* triangleEdge3 {  };
-	Vector3* triangleNormal {  };
-
-public: /* protected */
-	vector<Vector3*> vertices {  };
-	Vector3* center {  };
-	Vector3* distanceVector {  };
-	Vector3* closestsPoint {  };
+	vector<Triangle> triangles {  };
+	vector<Vector3> vertices {  };
+	vector<Vector3*> vertexReferences {  };
+	Vector3 center {  };
 	float sphereRadius {  };
-
-public:
-
-	/** 
-	 * Create convex meshes from terrain model
-	 * @param model
-	 * @param convex meshes
-	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes);
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 */
-	void ctor(vector<Triangle>* triangles);
-
-	/** 
-	 * Public constructor
-	 * @param model
-	 */
-	void ctor(Object3DModel* model);
 
 private:
 
@@ -75,15 +48,22 @@ private:
 
 public:
 
+	/**
+	 * Create terrain convex meshes
+	 * @param model
+	 * @param convex meshes
+	 */
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes);
+
 	/** 
 	 * @return triangles
 	 */
-	vector<Triangle*>* getTriangles();
+	vector<Triangle>* getTriangles();
 
 	/** 
 	 * @return mesh vertices
 	 */
-	vector<Vector3*>* getVertices();
+	vector<Vector3>* getVertices();
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint) override;
@@ -99,7 +79,7 @@ public:
 	 * Public constructor
 	 * @param triangles
 	 */
-	ConvexMesh(vector<Triangle*>* triangles);
+	ConvexMesh(vector<Triangle>* triangles);
 
 	/**
 	 * Public constructor

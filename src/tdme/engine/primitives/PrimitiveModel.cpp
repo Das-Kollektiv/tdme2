@@ -99,8 +99,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, String* 
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	vector<Vector3> vertices;
-	for (auto vertex : *boundingBox->getVertices()) {
-		vertices.push_back(*vertex);
+	for (auto& vertex : *boundingBox->getVertices()) {
+		vertices.push_back(vertex);
 	}
 	vector<Vector3> normals;
 	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
@@ -149,17 +149,17 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto group = new Group(model, nullptr, L"group", L"group");
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	vector<Vector3> vertices;
-	for (auto vertex : *orientedBoundingBox->getVertices()) {
-		vertices.push_back(*vertex);
+	for (auto& vertex : *orientedBoundingBox->getVertices()) {
+		vertices.push_back(vertex);
 	}
 	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
-	normals.push_back(*(*axes)[0]->clone2().scale(-1.0f));
-	normals.push_back((*axes)[0]->clone2());
-	normals.push_back(*(*axes)[1]->clone2().scale(-1.0f));
-	normals.push_back((*axes)[1]->clone2());
-	normals.push_back(*(*axes)[2]->clone2().scale(-1.0f));
-	normals.push_back((*axes)[2]->clone2());
+	normals.push_back(*(*axes)[0].clone2().scale(-1.0f));
+	normals.push_back((*axes)[0].clone2());
+	normals.push_back(*(*axes)[1].clone2().scale(-1.0f));
+	normals.push_back((*axes)[1].clone2());
+	normals.push_back(*(*axes)[2].clone2().scale(-1.0f));
+	normals.push_back((*axes)[2].clone2());
 	vector<Face> faces;
 	faces.push_back(Face(group, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
 	faces.push_back(Face(group, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
@@ -191,8 +191,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t segmentsX, int32_t segmentsY)
 {
 	clinit();
-	auto radius = sphere->radius;
-	auto center = sphere->center;
+	auto radius = sphere->getRadius();
+	auto center = sphere->getCenter();
 	auto model = new Model(id->getCPPWString(), id->getCPPWString(), Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -259,9 +259,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, String* id, int32_t seg
 Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, String* id, int32_t segmentsX, int32_t segmentsY)
 {
 	clinit();
-	auto radius = capsule->radius;
-	auto a = capsule->a;
-	auto b = capsule->b;
+	auto radius = capsule->getRadius();
+	auto a = capsule->getA();
+	auto b = capsule->getB();
 	auto rotationQuaternion = new Quaternion();
 	rotationQuaternion->identity();
 	auto yAxis = new Vector3(0.0f, -1.0f, 0.0f);

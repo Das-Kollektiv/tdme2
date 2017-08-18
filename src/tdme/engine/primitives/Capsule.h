@@ -7,14 +7,13 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
-
-struct default_init_tag;
 
 /** 
  * Capsule primitive
@@ -24,31 +23,7 @@ struct default_init_tag;
 class tdme::engine::primitives::Capsule final
 	: public BoundingVolume
 {
-public: /* protected */
-	Vector3* a {  };
-	Vector3* b {  };
-	float radius {  };
-	Vector3* center {  };
-	float sphereRadius {  };
-
-private:
-	Vector3* baSub {  };
-	Vector3* paSub {  };
-	Vector3* side {  };
-	Vector3* cpCvsP {  };
-
 public:
-
-	/** 
-	 * Creates a capsule bounding volume
-	 * @param a
-	 * @param b
-	 * @param radius
-	 * @return bounding volume
-	 */
-	static BoundingVolume* createBoundingVolume(Vector3* a, Vector3* b, float radius);
-public:
-
 	/** 
 	 * @return radius
 	 */
@@ -87,4 +62,12 @@ public:
 	 * @param radius
 	 */
 	Capsule(Vector3* a, Vector3* b, float radius);
+
+private:
+	Vector3 a {  };
+	Vector3 b {  };
+	float radius {  };
+	Vector3 center {  };
+	float sphereRadius {  };
+
 };

@@ -401,49 +401,49 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBo
 	auto axes2 = obb2->getAxes();
 	auto obb1Vertices = obb1->getVertices();
 	auto obb2Vertices = obb2->getVertices();
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[0]->set((*axes1)[0]), satPenetrations, 0) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[0]->set(&(*axes1)[0]), satPenetrations, 0) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[1]->set((*axes1)[1]), satPenetrations, 1) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[1]->set(&(*axes1)[1]), satPenetrations, 1) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[2]->set((*axes1)[2]), satPenetrations, 2) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[2]->set(&(*axes1)[2]), satPenetrations, 2) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[3]->set((*axes2)[0]), satPenetrations, 3) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[3]->set(&(*axes2)[0]), satPenetrations, 3) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[4]->set((*axes2)[1]), satPenetrations, 4) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[4]->set(&(*axes2)[1]), satPenetrations, 4) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[5]->set((*axes2)[2]), satPenetrations, 5) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, satAxes[5]->set(&(*axes2)[2]), satPenetrations, 5) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[0], satAxes[6]), satPenetrations, 6) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[0], &(*axes2)[0], satAxes[6]), satPenetrations, 6) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[1], satAxes[7]), satPenetrations, 7) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[0], &(*axes2)[1], satAxes[7]), satPenetrations, 7) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[0], (*axes2)[2], satAxes[8]), satPenetrations, 8) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[0], &(*axes2)[2], satAxes[8]), satPenetrations, 8) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[0], satAxes[9]), satPenetrations, 9) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[1], &(*axes2)[0], satAxes[9]), satPenetrations, 9) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[1], satAxes[10]), satPenetrations, 10) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[1], &(*axes2)[1], satAxes[10]), satPenetrations, 10) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[1], (*axes2)[2], satAxes[11]), satPenetrations, 11) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[1], &(*axes2)[2], satAxes[11]), satPenetrations, 11) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[0], satAxes[12]), satPenetrations, 12) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[2], &(*axes2)[0], satAxes[12]), satPenetrations, 12) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[1], satAxes[13]), satPenetrations, 13) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[2], &(*axes2)[1], satAxes[13]), satPenetrations, 13) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct((*axes1)[2], (*axes2)[2], satAxes[14]), satPenetrations, 14) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(obb1Vertices, obb2Vertices, Vector3::computeCrossProduct(&(*axes1)[2], &(*axes2)[2], satAxes[14]), satPenetrations, 14) == false)
 		return false;
 
 	auto selectedEntityIdx = -1;
@@ -634,8 +634,8 @@ bool CollisionDetection::doCollide(Sphere* sphere, ConvexMesh* mesh, Vector3* mo
 	if (doBroadTest(mesh, sphere) == false)
 		return false;
 
-	for (auto triangle : *mesh->getTriangles()) {
-		if (doCollide(sphere, triangle, movement, collision1) == true) {
+	for (auto& triangle : *mesh->getTriangles()) {
+		if (doCollide(sphere, &triangle, movement, collision1) == true) {
 			collision->mergeResponse(collision1);
 		}
 	}
@@ -648,8 +648,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, Sphere* sphere, Vector3* mo
 	if (doBroadTest(mesh, sphere) == false)
 		return false;
 
-	for (auto triangle : *mesh->getTriangles()) {
-		if (doCollide(triangle, sphere, movement, collision1) == true) {
+	for (auto& triangle : *mesh->getTriangles()) {
+		if (doCollide(&triangle, sphere, movement, collision1) == true) {
 			collision->mergeResponse(collision1);
 		}
 	}
@@ -677,47 +677,47 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 	auto obbVertices = obb->getVertices();
 	auto obbAxes = obb->getAxes();
 	auto triangleVertices = triangle->getVertices();
-	triangle1Edge1->set((*triangleVertices)[1])->sub((*triangleVertices)[0])->normalize();
-	triangle1Edge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
-	triangle1Edge3->set((*triangleVertices)[0])->sub((*triangleVertices)[2])->normalize();
+	triangle1Edge1->set(&(*triangleVertices)[1])->sub(&(*triangleVertices)[0])->normalize();
+	triangle1Edge2->set(&(*triangleVertices)[2])->sub(&(*triangleVertices)[1])->normalize();
+	triangle1Edge3->set(&(*triangleVertices)[0])->sub(&(*triangleVertices)[2])->normalize();
 	triangle1Normal = Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2)->normalize();
 	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[1]->set((*obbAxes)[0]), satPenetrations, 1) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[1]->set(&(*obbAxes)[0]), satPenetrations, 1) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[2]->set((*obbAxes)[1]), satPenetrations, 2) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[2]->set(&(*obbAxes)[1]), satPenetrations, 2) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[3]->set((*obbAxes)[2]), satPenetrations, 3) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxes[3]->set(&(*obbAxes)[2]), satPenetrations, 3) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge1, satAxes[4]), satPenetrations, 4) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge1, satAxes[4]), satPenetrations, 4) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge2, satAxes[5]), satPenetrations, 5) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge2, satAxes[5]), satPenetrations, 5) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge3, satAxes[6]), satPenetrations, 6) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge3, satAxes[6]), satPenetrations, 6) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge1, satAxes[7]), satPenetrations, 7) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge1, satAxes[7]), satPenetrations, 7) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge2, satAxes[8]), satPenetrations, 8) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge2, satAxes[8]), satPenetrations, 8) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge3, satAxes[9]), satPenetrations, 9) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge3, satAxes[9]), satPenetrations, 9) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge1, satAxes[10]), satPenetrations, 10) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge1, satAxes[10]), satPenetrations, 10) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge2, satAxes[11]), satPenetrations, 11) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge2, satAxes[11]), satPenetrations, 11) == false)
 		return false;
 
-	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge3, satAxes[12]), satPenetrations, 12) == false)
+	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge3, satAxes[12]), satPenetrations, 12) == false)
 		return false;
 
 	auto selectedEntityIdx = -1;
@@ -769,33 +769,33 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, V
 	auto obbAxes = obb->getAxes();
 	auto meshVertices = mesh->getVertices();
 	resetTriangles();
-	for (auto triangle : *mesh->getTriangles()) {
+	for (auto& triangle : *mesh->getTriangles()) {
 		collision1->reset();
-		if (doBroadTest(triangle, obb) == false)
+		if (doBroadTest(&triangle, obb) == false)
 			continue;
 
-		auto triangleVertices = triangle->getVertices();
-		triangle1Edge1->set((*triangleVertices)[1])->sub((*triangleVertices)[0])->normalize();
-		triangle1Edge2->set((*triangleVertices)[2])->sub((*triangleVertices)[1])->normalize();
-		triangle1Edge3->set((*triangleVertices)[0])->sub((*triangleVertices)[2])->normalize();
+		auto triangleVertices = triangle.getVertices();
+		triangle1Edge1->set(&(*triangleVertices)[1])->sub(&(*triangleVertices)[0])->normalize();
+		triangle1Edge2->set(&(*triangleVertices)[2])->sub(&(*triangleVertices)[1])->normalize();
+		triangle1Edge3->set(&(*triangleVertices)[0])->sub(&(*triangleVertices)[2])->normalize();
 		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal)->normalize();
 		resetSATAxes();
 		addSATAxis(satAxis->set(triangle1Normal));
-		addSATAxis(satAxis->set((*obbAxes)[0]));
-		addSATAxis(satAxis->set((*obbAxes)[1]));
-		addSATAxis(satAxis->set((*obbAxes)[2]));
+		addSATAxis(satAxis->set(&(*obbAxes)[0]));
+		addSATAxis(satAxis->set(&(*obbAxes)[1]));
+		addSATAxis(satAxis->set(&(*obbAxes)[2]));
 		addSATAxis(satAxis->set(triangle1Edge1));
 		addSATAxis(satAxis->set(triangle1Edge2));
 		addSATAxis(satAxis->set(triangle1Edge3));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge1, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge2, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[0], triangle1Edge3, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge1, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge2, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[1], triangle1Edge3, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge1, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge2, satAxis));
-		addSATAxis(Vector3::computeCrossProduct((*obbAxes)[2], triangle1Edge3, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge1, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge2, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[0], triangle1Edge3, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge1, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge2, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[1], triangle1Edge3, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge1, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge2, satAxis));
+		addSATAxis(Vector3::computeCrossProduct(&(*obbAxes)[2], triangle1Edge3, satAxis));
 		for (auto satAxisIdx = 0; satAxisIdx < satAxesCount; satAxisIdx++) {
 			if (SeparatingAxisTheorem::doSpanIntersect(meshVertices, obbVertices, satAxes[satAxisIdx], satPenetrations, satAxisIdx) == false) {
 				resetSATAxes();
@@ -804,7 +804,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, V
 			}
 		}
 		determineSatAxisBestFit();
-		testTriangles.push_back(triangle);
+		testTriangles.push_back(&triangle);
 	}
 	if (haveSatAxisBestFit == true) {
 		auto entity = collision->addResponse(satAxisBestFitPenetration);
@@ -835,14 +835,14 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, Vec
 		return false;
 
 	auto triangle1Vertices = triangle1->getVertices();
-	triangle1Edge1->set((*triangle1Vertices)[1])->sub((*triangle1Vertices)[0])->normalize();
-	triangle1Edge2->set((*triangle1Vertices)[2])->sub((*triangle1Vertices)[1])->normalize();
-	triangle1Edge3->set((*triangle1Vertices)[0])->sub((*triangle1Vertices)[2])->normalize();
+	triangle1Edge1->set(&(*triangle1Vertices)[1])->sub(&(*triangle1Vertices)[0])->normalize();
+	triangle1Edge2->set(&(*triangle1Vertices)[2])->sub(&(*triangle1Vertices)[1])->normalize();
+	triangle1Edge3->set(&(*triangle1Vertices)[0])->sub(&(*triangle1Vertices)[2])->normalize();
 	Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal)->normalize();
 	auto triangle2Vertices = triangle2->getVertices();
-	triangle2Edge1->set((*triangle2Vertices)[1])->sub((*triangle2Vertices)[0])->normalize();
-	triangle2Edge2->set((*triangle2Vertices)[2])->sub((*triangle2Vertices)[1])->normalize();
-	triangle2Edge3->set((*triangle2Vertices)[0])->sub((*triangle2Vertices)[2])->normalize();
+	triangle2Edge1->set(&(*triangle2Vertices)[1])->sub(&(*triangle2Vertices)[0])->normalize();
+	triangle2Edge2->set(&(*triangle2Vertices)[2])->sub(&(*triangle2Vertices)[1])->normalize();
+	triangle2Edge3->set(&(*triangle2Vertices)[0])->sub(&(*triangle2Vertices)[2])->normalize();
 	Vector3::computeCrossProduct(triangle2Edge1, triangle2Edge2, triangle2Normal)->normalize();
 	if (SeparatingAxisTheorem::doSpanIntersect(triangle1Vertices, triangle2Vertices, satAxes[0]->set(triangle1Normal), satPenetrations, 0) == false)
 		return false;
@@ -906,20 +906,20 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3
 	auto mesh1Vertices = mesh1->getVertices();
 	auto mesh2Vertices = mesh2->getVertices();
 	resetTriangles();
-	for (auto triangle1 : *mesh1->getTriangles()) 
-		for (auto triangle2 : *mesh2->getTriangles()) {
-			if (doBroadTest(triangle1, triangle2) == false)
+	for (auto& triangle1 : *mesh1->getTriangles())
+		for (auto& triangle2 : *mesh2->getTriangles()) {
+			if (doBroadTest(&triangle1, &triangle2) == false)
 				continue;
 
-			auto triangle1Vertices = triangle1->getVertices();
-			triangle1Edge1->set((*triangle1Vertices)[1])->sub((*triangle1Vertices)[0])->normalize();
-			triangle1Edge2->set((*triangle1Vertices)[2])->sub((*triangle1Vertices)[1])->normalize();
-			triangle1Edge3->set((*triangle1Vertices)[0])->sub((*triangle1Vertices)[2])->normalize();
+			auto triangle1Vertices = triangle1.getVertices();
+			triangle1Edge1->set(&(*triangle1Vertices)[1])->sub(&(*triangle1Vertices)[0])->normalize();
+			triangle1Edge2->set(&(*triangle1Vertices)[2])->sub(&(*triangle1Vertices)[1])->normalize();
+			triangle1Edge3->set(&(*triangle1Vertices)[0])->sub(&(*triangle1Vertices)[2])->normalize();
 			Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal)->normalize();
-			auto triangle2Vertices = triangle2->getVertices();
-			triangle2Edge1->set((*triangle2Vertices)[1])->sub((*triangle2Vertices)[0])->normalize();
-			triangle2Edge2->set((*triangle2Vertices)[2])->sub((*triangle2Vertices)[1])->normalize();
-			triangle2Edge3->set((*triangle2Vertices)[0])->sub((*triangle2Vertices)[2])->normalize();
+			auto triangle2Vertices = triangle2.getVertices();
+			triangle2Edge1->set(&(*triangle2Vertices)[1])->sub(&(*triangle2Vertices)[0])->normalize();
+			triangle2Edge2->set(&(*triangle2Vertices)[2])->sub(&(*triangle2Vertices)[1])->normalize();
+			triangle2Edge3->set(&(*triangle2Vertices)[0])->sub(&(*triangle2Vertices)[2])->normalize();
 			Vector3::computeCrossProduct(triangle2Edge1, triangle2Edge2, triangle2Normal)->normalize();
 			resetSATAxes();
 			addSATAxis(satAxis->set(triangle1Normal));
@@ -941,8 +941,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3
 				}
 			}
 			determineSatAxisBestFit();
-			testTriangles.push_back(triangle1);
-			testTriangles.push_back(triangle2);
+			testTriangles.push_back(&triangle1);
+			testTriangles.push_back(&triangle2);
 		}
 
 	if (haveSatAxisBestFit == true) {
@@ -963,8 +963,8 @@ bool CollisionDetection::doCollide(Triangle* triangle, ConvexMesh* mesh, Vector3
 	if (doBroadTest(triangle, mesh) == false)
 		return false;
 
-	for (auto triangle2 : *mesh->getTriangles()) {
-		if (doCollide(triangle, triangle2, movement, collision1) == true) {
+	for (auto& triangle2 : *mesh->getTriangles()) {
+		if (doCollide(triangle, &triangle2, movement, collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1->getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(collision1);
 			}
@@ -979,8 +979,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, Triangle* triangle, Vector3
 	if (doBroadTest(triangle, mesh) == false)
 		return false;
 
-	for (auto triangle2 : *mesh->getTriangles()) {
-		if (doCollide(triangle2, triangle, movement, collision1) == true) {
+	for (auto& triangle2 : *mesh->getTriangles()) {
+		if (doCollide(&triangle2, triangle, movement, collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1->getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(collision1);
 			}
@@ -995,9 +995,9 @@ bool CollisionDetection::doCollide(Triangle* triangle, Capsule* capsule, Vector3
 		return false;
 
 	auto triangleVertices = triangle->getVertices();
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), (*triangleVertices)[1], (*triangleVertices)[0], closestPointsOnCapsuleSegment[0], closestPointsOnTriangleSegments[0]);
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), (*triangleVertices)[2], (*triangleVertices)[1], closestPointsOnCapsuleSegment[1], closestPointsOnTriangleSegments[1]);
-	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), (*triangleVertices)[0], (*triangleVertices)[2], closestPointsOnCapsuleSegment[2], closestPointsOnTriangleSegments[2]);
+	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[1], &(*triangleVertices)[0], closestPointsOnCapsuleSegment[0], closestPointsOnTriangleSegments[0]);
+	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[2], &(*triangleVertices)[1], closestPointsOnCapsuleSegment[1], closestPointsOnTriangleSegments[1]);
+	lineSegment->computeClosestPointsOnLineSegments(capsule->getA(), capsule->getB(), &(*triangleVertices)[0], &(*triangleVertices)[2], closestPointsOnCapsuleSegment[2], closestPointsOnTriangleSegments[2]);
 	closestPointsOnCapsuleSegment[3]->set(capsule->getA());
 	triangle->computeClosestPointOnBoundingVolume(closestPointsOnCapsuleSegment[3], closestPointsOnTriangleSegments[3]);
 	closestPointsOnCapsuleSegment[4]->set(capsule->getB());
@@ -1030,8 +1030,8 @@ bool CollisionDetection::doCollide(Capsule* capsule, ConvexMesh* mesh, Vector3* 
 	if (doBroadTest(mesh, capsule) == false)
 		return false;
 
-	for (auto triangle : *mesh->getTriangles()) {
-		if (doCollide(capsule, triangle, movement, collision1) == true) {
+	for (auto& triangle : *mesh->getTriangles()) {
+		if (doCollide(capsule, &triangle, movement, collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1->getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(collision1);
 			}
@@ -1046,8 +1046,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, Capsule* capsule, Vector3* 
 	if (doBroadTest(mesh, capsule) == false)
 		return false;
 
-	for (auto triangle : *mesh->getTriangles()) {
-		if (doCollide(triangle, capsule, movement, collision1) == true) {
+	for (auto& triangle : *mesh->getTriangles()) {
+		if (doCollide(&triangle, capsule, movement, collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1->getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(collision1);
 			}
@@ -1065,12 +1065,12 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 	for (auto triangleObb1Idx = 0; triangleObb1Idx < obb1FacesVerticesIndexes->size(); triangleObb1Idx++)
 		for (auto triangleObb2Idx = 0; triangleObb2Idx < obb2FacesVerticesIndexes->size(); triangleObb2Idx++) {
 			auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
-				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]],
-				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]],
-				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]],
-				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][0]],
-				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][1]],
-				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][2]],
+				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]],
+				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]],
+				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]],
+				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][0]],
+				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][1]],
+				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][2]],
 				hitPointTriangle1,
 				hitPointTriangle2
 			);
@@ -1090,13 +1090,13 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 					if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 						auto _triangle1Vertices = triangle1->getVertices();
 						auto _triangle2Vertices = triangle2->getVertices();
-						(*_triangle1Vertices)[0]->set((*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]]);
-						(*_triangle1Vertices)[1]->set((*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]]);
-						(*_triangle1Vertices)[2]->set((*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]]);
+						(*_triangle1Vertices)[0].set(&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]]);
+						(*_triangle1Vertices)[1].set(&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]]);
+						(*_triangle1Vertices)[2].set(&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]]);
 						triangle1->update();
-						(*_triangle2Vertices)[0]->set((*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][0]]);
-						(*_triangle2Vertices)[1]->set((*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][1]]);
-						(*_triangle2Vertices)[2]->set((*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][2]]);
+						(*_triangle2Vertices)[0].set(&(*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][0]]);
+						(*_triangle2Vertices)[1].set(&(*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][1]]);
+						(*_triangle2Vertices)[2].set(&(*obb2Vertices)[(*obb1FacesVerticesIndexes)[triangleObb2Idx][2]]);
 						triangle2->update();
 						computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 						goto end_switch0;;
@@ -1116,18 +1116,16 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 	auto obbFacesVerticesIndexes = OrientedBoundingBox::getFacesVerticesIndexes();
 	for (auto triangleObbIdx = 0; triangleObbIdx < obbFacesVerticesIndexes->size(); triangleObbIdx++) {
 		auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
-			(*triangleVertices)[0],
-			(*triangleVertices)[1],
-			(*triangleVertices)[2],
-			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]],
-			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]],
-			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]],
+			&(*triangleVertices)[0],
+			&(*triangleVertices)[1],
+			&(*triangleVertices)[2],
+			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]],
+			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]],
+			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]],
 			hitPointTriangle1,
 			hitPointTriangle2
 		);
 		{
-			Vector3Array* _triangle1Vertices;
-			Vector3Array* _triangle2Vertices;
 			{
 				auto v = tritriReturn;
 				if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
@@ -1141,13 +1139,13 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 				if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 					auto _triangle1Vertices = triangle1->getVertices();
 					auto _triangle2Vertices = triangle2->getVertices();
-					(*_triangle1Vertices)[0]->set((*triangleVertices)[0]);
-					(*_triangle1Vertices)[1]->set((*triangleVertices)[1]);
-					(*_triangle1Vertices)[2]->set((*triangleVertices)[2]);
+					(*_triangle1Vertices)[0].set(&(*triangleVertices)[0]);
+					(*_triangle1Vertices)[1].set(&(*triangleVertices)[1]);
+					(*_triangle1Vertices)[2].set(&(*triangleVertices)[2]);
 					triangle1->update();
-					(*_triangle2Vertices)[0]->set((*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]]);
-					(*_triangle2Vertices)[1]->set((*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]]);
-					(*_triangle2Vertices)[2]->set((*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]]);
+					(*_triangle2Vertices)[0].set(&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]]);
+					(*_triangle2Vertices)[1].set(&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]]);
+					(*_triangle2Vertices)[2].set(&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]]);
 					triangle2->update();
 					computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 					goto end_switch1;;
@@ -1163,10 +1161,17 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 {
 	auto triangle1Vertices = triangle1->getVertices();
 	auto triangle2Vertices = triangle2->getVertices();
-	auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection((*triangle1Vertices)[0], (*triangle1Vertices)[1], (*triangle1Vertices)[2], (*triangle2Vertices)[0], (*triangle2Vertices)[1], (*triangle2Vertices)[2], hitPointTriangle1, hitPointTriangle2);
+	auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
+		&(*triangle1Vertices)[0],
+		&(*triangle1Vertices)[1],
+		&(*triangle1Vertices)[2],
+		&(*triangle2Vertices)[0],
+		&(*triangle2Vertices)[1],
+		&(*triangle2Vertices)[2],
+		hitPointTriangle1,
+		hitPointTriangle2
+	);
 	{
-		Vector3Array* _triangle1Vertices;
-		Vector3Array* _triangle2Vertices;
 		{
 			auto v = tritriReturn;
 			if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
@@ -1180,13 +1185,13 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 			if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
 				auto _triangle1Vertices = triangle1->getVertices();
 				auto _triangle2Vertices = triangle2->getVertices();
-				(*_triangle1Vertices)[0]->set((*triangle1Vertices)[0]);
-				(*_triangle1Vertices)[1]->set((*triangle1Vertices)[1]);
-				(*_triangle1Vertices)[2]->set((*triangle1Vertices)[2]);
+				(*_triangle1Vertices)[0].set(&(*triangle1Vertices)[0]);
+				(*_triangle1Vertices)[1].set(&(*triangle1Vertices)[1]);
+				(*_triangle1Vertices)[2].set(&(*triangle1Vertices)[2]);
 				triangle1->update();
-				(*_triangle2Vertices)[0]->set((*triangle2Vertices)[0]);
-				(*_triangle2Vertices)[1]->set((*triangle2Vertices)[1]);
-				(*_triangle2Vertices)[2]->set((*triangle2Vertices)[2]);
+				(*_triangle2Vertices)[0].set(&(*triangle2Vertices)[0]);
+				(*_triangle2Vertices)[1].set(&(*triangle2Vertices)[1]);
+				(*_triangle2Vertices)[2].set(&(*triangle2Vertices)[2]);
 				triangle2->update();
 				computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 				goto end_switch2;;
@@ -1203,8 +1208,14 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 	auto triangle2Vertices = triangle2->getVertices();
 	auto lineSegmentsIntersections = 0;
 	for (auto i = 0; i < lineSegmentsTriangleIndices->length; i += 2) 
-				for (auto j = 0; j < lineSegmentsTriangleIndices->length; j += 2) {
-			if (lineSegment->doesLineSegmentsCollide((*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 0]], (*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 1]], (*triangle2Vertices)[(*lineSegmentsTriangleIndices)[j + 0]], (*triangle2Vertices)[(*lineSegmentsTriangleIndices)[j + 1]], hitPoint) == true) {
+		for (auto j = 0; j < lineSegmentsTriangleIndices->length; j += 2) {
+			if (lineSegment->doesLineSegmentsCollide(
+					&(*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 0]],
+					&(*triangle1Vertices)[(*lineSegmentsTriangleIndices)[i + 1]],
+					&(*triangle2Vertices)[(*lineSegmentsTriangleIndices)[j + 0]],
+					&(*triangle2Vertices)[(*lineSegmentsTriangleIndices)[j + 1]],
+					hitPoint
+				) == true) {
 				lineSegmentsIntersections++;
 				collisionEntity->addHitPoint(hitPoint);
 			}
@@ -1212,13 +1223,13 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 
 	if (lineSegmentsIntersections == 0) {
 		for (auto i = 0; i < triangle1Vertices->size(); i++) {
-			if (triangle2->containsPoint((*triangle1Vertices)[i]) == true) {
-				collisionEntity->addHitPoint((*triangle1Vertices)[i]);
+			if (triangle2->containsPoint(&(*triangle1Vertices)[i]) == true) {
+				collisionEntity->addHitPoint(&(*triangle1Vertices)[i]);
 			}
 		}
 		for (auto i = 0; i < triangle2Vertices->size(); i++) {
-			if (triangle1->containsPoint((*triangle2Vertices)[i]) == true) {
-				collisionEntity->addHitPoint((*triangle2Vertices)[i]);
+			if (triangle1->containsPoint(&(*triangle2Vertices)[i]) == true) {
+				collisionEntity->addHitPoint(&(*triangle2Vertices)[i]);
 			}
 		}
 	}

@@ -13,7 +13,6 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
 
 using tdme::engine::primitives::Sphere;
 using java::lang::String;
@@ -27,56 +26,46 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
 
 Sphere::Sphere() 
 {
-	this->center = new Vector3();
+	this->center.set(0.0f, 0.0f, 0.0f);
 	this->radius = 0.0f;
-	this->axis = new Vector3();
 }
 
 Sphere::Sphere(Vector3* center, float radius) 
 {
-	this->center = center;
+	this->center.set(center);
 	this->radius = radius;
-	this->axis = new Vector3();
 }
-
-BoundingVolume* Sphere::createBoundingVolume(Vector3* center, float radius)
-{
-	return new Sphere(center, radius);
-}
-
 
 void Sphere::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< Sphere* >(original) != nullptr == false) {
-		_Console::println(static_cast< Object* >(u"Sphere::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
 	auto sphere = dynamic_cast< Sphere* >(original);
-	center->set(sphere->center);
+	center.set(&sphere->center);
 	radius = sphere->radius;
 }
 
 void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
 	if (dynamic_cast< Sphere* >(original) != nullptr == false) {
-		_Console::println(static_cast< Object* >(u"Sphere::fromBoundingVolumeWithTransformations(): original is not of same type"_j));
 		return;
 	}
+	Vector3 axis;
 	auto sphere = dynamic_cast< Sphere* >(original);
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(sphere->center, center);
-	axis->set(sphere->center)->addX(sphere->radius);
-	transformationsMatrix->multiply(axis, axis);
-	radius = axis->sub(center)->computeLength();
+	transformationsMatrix->multiply(&sphere->center, &center);
+	axis.set(&sphere->center)->addX(sphere->radius);
+	transformationsMatrix->multiply(&axis, &axis);
+	radius = axis.sub(&center)->computeLength();
 }
 
 Vector3* Sphere::getCenter()
 {
-	return center;
+	return &center;
 }
 
 float Sphere::getRadius()
@@ -96,7 +85,7 @@ void Sphere::setRadius(float radius)
 
 Sphere* Sphere::set(Vector3* center, float radius)
 {
-	this->center->set(center);
+	this->center.set(center);
 	this->radius = radius;
 	this->update();
 	return this;
@@ -104,20 +93,22 @@ Sphere* Sphere::set(Vector3* center, float radius)
 
 void Sphere::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
 {
-	axis->set(point)->sub(center);
+	Vector3 axis;
+	axis.set(point)->sub(&center);
 	auto length = point->computeLength();
 	if (length <= radius) {
 		closestPoint->set(point);
 	} else {
-		closestPoint->set(axis)->normalize()->scale(radius);
-		closestPoint->add(center);
+		closestPoint->set(&axis)->normalize()->scale(radius);
+		closestPoint->add(&center);
 	}
 	return;
 }
 
 bool Sphere::containsPoint(Vector3* point)
 {
-	auto distance = point->clone()->sub(center)->computeLength();
+	Vector3 axis;
+	auto distance = axis.set(point)->sub(&center)->computeLength();
 	return distance <= radius;
 }
 
@@ -151,6 +142,6 @@ void Sphere::update()
 
 BoundingVolume* Sphere::clone()
 {
-	return new Sphere(center->clone(), radius);
+	return new Sphere(&center, radius);
 }
 
