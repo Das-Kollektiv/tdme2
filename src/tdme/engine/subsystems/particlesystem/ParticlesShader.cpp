@@ -18,26 +18,12 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 
-ParticlesShader::ParticlesShader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 ParticlesShader::ParticlesShader(Engine* engine, GLRenderer* renderer) 
-	: ParticlesShader(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(engine,renderer);
-}
-
-void ParticlesShader::ctor(Engine* engine, GLRenderer* renderer)
-{
-	super::ctor();
 	this->engine = engine;
 	this->renderer = renderer;
 	isRunning = false;
 	initialized = false;
-	mvpMatrix = new Matrix4x4();
 }
 
 bool ParticlesShader::isInitialized()
@@ -125,21 +111,7 @@ void ParticlesShader::updateMatrices(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	mvpMatrix->set(renderer->getModelViewMatrix())->multiply(renderer->getProjectionMatrix());
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix->getArray());
+	mvpMatrix.set(renderer->getModelViewMatrix())->multiply(renderer->getProjectionMatrix());
+	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, renderer->getModelViewMatrix()->getArray());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ParticlesShader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.particlesystem.ParticlesShader", 53);
-    return c;
-}
-
-java::lang::Class* ParticlesShader::getClass0()
-{
-	return class_();
-}
-

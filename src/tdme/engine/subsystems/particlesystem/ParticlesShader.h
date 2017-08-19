@@ -7,15 +7,11 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Matrix4x4.h>
 
-using java::lang::Object;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-
-
-struct default_init_tag;
 
 /** 
  * Interface to particles shader program
@@ -23,12 +19,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::ParticlesShader final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	int32_t renderProgramId {  };
 	int32_t renderFragmentShaderId {  };
@@ -39,19 +30,12 @@ private:
 	int32_t uniformDiffuseTextureUnit {  };
 	int32_t uniformEffectColorMul {  };
 	int32_t uniformEffectColorAdd {  };
-	Matrix4x4* mvpMatrix {  };
+	Matrix4x4 mvpMatrix {  };
 	int32_t pointTextureId {  };
 	bool isRunning {  };
 	bool initialized {  };
 	Engine* engine {  };
 	GLRenderer* renderer {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param renderer
-	 */
-	void ctor(Engine* engine, GLRenderer* renderer);
 
 public:
 
@@ -87,15 +71,10 @@ public:
 	 */
 	void updateMatrices(GLRenderer* renderer);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param engine
+	 * @param renderer
+	 */
 	ParticlesShader(Engine* engine, GLRenderer* renderer);
-protected:
-	ParticlesShader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
