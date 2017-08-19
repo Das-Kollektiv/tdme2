@@ -8,6 +8,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
@@ -44,10 +45,6 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityIntern
 	: public Transformations
 	, public virtual ParticleSystemEntity
 {
-
-public:
-	typedef Transformations super;
-
 public: /* protected */
 	Engine* engine {  };
 	wstring id {  };
@@ -63,9 +60,8 @@ public: /* protected */
 	Transformations* inverseTransformation {  };
 	ParticleEmitter* emitter {  };
 	bool pickable {  };
-	Color4* effectColorMul {  };
-	Color4* effectColorAdd {  };
-	Vector3* velocityForTime {  };
+	Color4 effectColorMul {  };
+	Color4 effectColorAdd {  };
 	float particlesToSpawnRemainder {  };
 public:
 	const wstring& getId() override;

@@ -81,9 +81,8 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 	this->boundingBoxTransformed = new BoundingBox();
 	this->inverseTransformation = new Transformations();
 	this->emitter = emitter;
-	this->velocityForTime = new Vector3();
-	this->effectColorMul = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	this->effectColorAdd = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
+	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->particlesToSpawnRemainder = 0.0f;
 }
@@ -119,12 +118,12 @@ void ObjectParticleSystemEntityInternal::setEnabled(bool enabled)
 
 Color4* ObjectParticleSystemEntityInternal::getEffectColorMul()
 {
-	return effectColorMul;
+	return &effectColorMul;
 }
 
 Color4* ObjectParticleSystemEntityInternal::getEffectColorAdd()
 {
-	return effectColorAdd;
+	return &effectColorAdd;
 }
 
 bool ObjectParticleSystemEntityInternal::isPickable()
@@ -162,14 +161,14 @@ void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 
 void ObjectParticleSystemEntityInternal::update()
 {
-	super::update();
+	Transformations::update();
 	emitter->fromTransformations(this);
 	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 void ObjectParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
-	super::fromTransformations(transformations);
+	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
 	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
@@ -208,8 +207,8 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		object->getTranslation()->set(particle->position);
 		object->update();
 		object->setEnabled(true);
-		object->getEffectColorAdd()->set(static_cast< Color4Base* >(effectColorAdd));
-		object->getEffectColorMul()->set(static_cast< Color4Base* >(effectColorMul));
+		object->getEffectColorAdd()->set(&effectColorAdd);
+		object->getEffectColorMul()->set(&effectColorMul);
 		enabledObjects.push_back(object);
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
@@ -221,6 +220,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 
 void ObjectParticleSystemEntityInternal::updateParticles()
 {
+	Vector3 velocityForTime;
 	auto first = true;
 	auto bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
 	auto bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
@@ -241,9 +241,9 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		if (particle->mass > MathTools::EPSILON)
 			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
-		object->getEffectColorAdd()->set(static_cast< Color4Base* >(effectColorAdd));
-		object->getEffectColorMul()->set(static_cast< Color4Base* >(effectColorMul));
-		object->getTranslation()->add(velocityForTime->set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->getEffectColorAdd()->set(&effectColorAdd);
+		object->getEffectColorMul()->set(&effectColorMul);
+		object->getTranslation()->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed->getMin()->set(object->getBoundingBoxTransformed()->getMin());
