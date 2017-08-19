@@ -12,6 +12,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -51,7 +52,7 @@ public: /* protected */
 	bool active {  };
 	bool doCollisionTests {  };
 	ParticleEmitter* emitter {  };
-	vector<Particle*> particles {  };
+	vector<Particle> particles {  };
 	int32_t maxPoints {  };
 	TransparentRenderPointsPool* pointsRenderPool {  };
 
