@@ -19,9 +19,6 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-
-struct default_init_tag;
-
 /** 
  * Sphere particle emitter
  * @author Andreas Drewke
@@ -30,10 +27,6 @@ struct default_init_tag;
 class tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter final
 	: public ParticleEmitter
 {
-
-public:
-	typedef Object super;
-
 private:
 	int32_t count {  };
 	int64_t lifeTime {  };
