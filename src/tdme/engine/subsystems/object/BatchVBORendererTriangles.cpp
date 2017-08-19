@@ -69,7 +69,7 @@ void BatchVBORendererTriangles::release()
 void BatchVBORendererTriangles::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(::java::lang::StringBuilder().append(u"tdme.batchvborenderertriangles."_j)->append(id)->toString(), 3);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborenderertriangles." + id, 3);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -92,7 +92,7 @@ void BatchVBORendererTriangles::render()
 void BatchVBORendererTriangles::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(::java::lang::StringBuilder().append(u"tdme.batchvborenderertriangles."_j)->append(id)->toString());
+		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborenderertriangles." + id);
 		vboIds = nullptr;
 	}
 }

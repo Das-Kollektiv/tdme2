@@ -2,50 +2,36 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <Array.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::subsystems::manager::VBOManager;
-
-
-struct default_init_tag;
 
 /** 
  * Managed VBO entity
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::manager::VBOManager_VBOManaged
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
+	friend class VBOManager;
 
 private:
-	String* id {  };
+	wstring id {  };
 	int32_tArray* vboGlIds {  };
 	int32_t referenceCounter {  };
 	bool uploaded {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param id
-	 * @param vbo gl id
-	 * @param referenceCounter
-	 */
-	void ctor(String* id, int32_tArray* vboGlIds);
 
 public:
 
 	/** 
 	 * @return vbo id
 	 */
-	virtual String* getId();
+	virtual const wstring& getId();
 
 	/** 
 	 * @return vbo gl ids
@@ -77,24 +63,6 @@ public:
 	 */
 	virtual bool isUploaded();
 
-	/** 
-	 * @return string representation
-	 */
-	String* toString() override;
-
-	// Generated
-
 private:
-	VBOManager_VBOManaged(VBOManager *VBOManager_this, String* id, int32_tArray* vboGlIds);
-protected:
-	VBOManager_VBOManaged(VBOManager *VBOManager_this, const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	VBOManager *VBOManager_this;
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class VBOManager;
+	VBOManager_VBOManaged(const wstring& id, int32_tArray* vboGlIds);
 };

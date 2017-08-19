@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/BatchVBORendererPoints.java
 #include <tdme/engine/subsystems/object/BatchVBORendererPoints.h>
 
+#include <string>
+
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
@@ -17,6 +19,9 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
 #include <Array.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::object::BatchVBORendererPoints;
 
@@ -67,7 +72,7 @@ void BatchVBORendererPoints::release()
 void BatchVBORendererPoints::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(::java::lang::StringBuilder().append(u"tdme.batchvborendererpoints."_j)->append(id)->toString(), 2);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborendererpoints." + id, 2);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -88,7 +93,7 @@ void BatchVBORendererPoints::render()
 void BatchVBORendererPoints::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(::java::lang::StringBuilder().append(u"tdme.batchvborendererpoints."_j)->append(id)->toString());
+		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborendererpoints." + id);
 		vboIds = nullptr;
 	}
 }

@@ -52,7 +52,7 @@ private:
 public: /* protected */
 	static constexpr int32_t GLTEXTUREID_NONE { -1 };
 	static constexpr int32_t GLTEXTUREID_NOTUSED { 0 };
-	String* id {  };
+	wstring id {  };
 	Object3DBase* object {  };
 	Group* group {  };
 	bool animated {  };

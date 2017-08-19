@@ -4,8 +4,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/utils/_Console.h>
@@ -15,56 +13,33 @@ using std::map;
 using std::wstring;
 
 using tdme::engine::subsystems::manager::VBOManager;
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-VBOManager::VBOManager(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 VBOManager::VBOManager(GLRenderer* renderer) 
-	: VBOManager(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer);
-}
-
-void VBOManager::ctor(GLRenderer* renderer)
-{
-	super::ctor();
 	this->renderer = renderer;
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(String* vboId, int32_t ids)
+VBOManager_VBOManaged* VBOManager::addVBO(const wstring& vboId, int32_t ids)
 {
-	auto vboManagedIt = vbos.find(vboId->getCPPWString());
+	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		vboManaged->incrementReferenceCounter();
 		return vboManaged;
 	}
 	auto vboIds = renderer->createBufferObjects(ids);
-	auto vboManaged = new VBOManager_VBOManaged(this, vboId, vboIds);
+	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
 	vboManaged->incrementReferenceCounter();
-	vbos[vboManaged->getId()->getCPPWString()] = vboManaged;
+	vbos[vboManaged->getId()] = vboManaged;
 	return vboManaged;
 }
 
-void VBOManager::removeVBO(String* vboId)
+void VBOManager::removeVBO(const wstring& vboId)
 {
-	auto vboManagedIt = vbos.find(vboId->getCPPWString());
+	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		if (vboManaged->decrementReferenceCounter()) {
@@ -74,19 +49,5 @@ void VBOManager::removeVBO(String* vboId)
 		}
 		return;
 	}
-	_Console::println(static_cast< Object* >(u"Warning: vbo not managed by vbo manager"_j));
+	_Console::println(wstring(L"Warning: vbo not managed by vbo manager"));
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* VBOManager::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.manager.VBOManager", 41);
-    return c;
-}
-
-java::lang::Class* VBOManager::getClass0()
-{
-	return class_();
-}
-

@@ -66,7 +66,7 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 	wstring key =
 		model->getId() +
 		L"," +
-		object3DGroup->id->getCPPWString() +
+		object3DGroup->id +
 		L"," +
 		to_wstring(facesEntityIdx) +
 		L"," +

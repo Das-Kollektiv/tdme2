@@ -5,21 +5,15 @@
 #include <map>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-
-struct default_init_tag;
 
 /** 
  * Mesh manager
@@ -27,20 +21,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::manager::MeshManager final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	map<wstring, MeshManager_MeshManaged*> meshes {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -49,32 +32,24 @@ public:
 	 * @param meshId
 	 * @return object 3d group mesh or null
 	 */
-	Object3DGroupMesh* getMesh(String* meshId);
+	Object3DGroupMesh* getMesh(const wstring& meshId);
 
 	/** 
 	 * Adds a mesh to manager
 	 * @param mesh id
 	 * @param mesh
 	 */
-	void addMesh(String* meshId, Object3DGroupMesh* mesh);
+	void addMesh(const wstring& meshId, Object3DGroupMesh* mesh);
 
 	/** 
 	 * Removes a mesh from manager
 	 * @param gl
 	 * @param texture
 	 */
-	void removeMesh(String* meshId);
+	void removeMesh(const wstring& meshId);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	MeshManager();
-protected:
-	MeshManager(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class MeshManager_MeshManaged;
 };

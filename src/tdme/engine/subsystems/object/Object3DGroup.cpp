@@ -29,6 +29,7 @@
 using std::map;
 using std::vector;
 using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::object::Object3DGroup;
 using java::lang::Object;
@@ -105,13 +106,17 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* g
 		if (faceCount > 0) {
 			auto object3DGroup = new Object3DGroup();
 			object3DGroups->push_back(object3DGroup);
-			object3DGroup->id = ::java::lang::StringBuilder().append(group->getModel()->getId())->append(u":"_j)
-				->append(group->getId())
-				->append(u":"_j)
-				->append(animationProcessingTarget)
-				->toString();
+			object3DGroup->id =
+				group->getModel()->getId() +
+				L":" +
+				group->getId() +
+				L":" +
+				to_wstring(animationProcessingTarget);
 			if (animated == true && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
-				object3DGroup->id = ::java::lang::StringBuilder(object3DGroup->id).append(::java::lang::StringBuilder().append(u":"_j)->append((counter++))->toString())->toString();
+				object3DGroup->id =
+					object3DGroup->id +
+					L":" +
+					to_wstring(counter++);
 			}
 			object3DGroup->object = object3D;
 			object3DGroup->group = group;

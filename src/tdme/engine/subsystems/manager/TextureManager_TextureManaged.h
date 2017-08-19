@@ -5,42 +5,23 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::subsystems::manager::TextureManager;
 
 using std::wstring;
-
-struct default_init_tag;
 
 /** 
  * Managed texture entity
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::manager::TextureManager_TextureManaged
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
-public: /* package */
+	friend class TextureManager;
+private:
 	wstring id {  };
 	int32_t glId {  };
 	int32_t referenceCounter {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param id
-	 * @param gl id
-	 */
-	void ctor(const wstring& id, int32_t glId);
-
 private:
 
 	/** 
@@ -69,17 +50,10 @@ private:
 	 */
 	void incrementReferenceCounter();
 
-	// Generated
-	TextureManager_TextureManaged(TextureManager *TextureManager_this, const wstring& id, int32_t glId);
-protected:
-	TextureManager_TextureManaged(TextureManager *TextureManager_this, const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	TextureManager *TextureManager_this;
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class TextureManager;
+	/**
+	 * Protected constructor
+	 * @param id
+	 * @param gl id
+	 */
+	TextureManager_TextureManaged(const wstring& id, int32_t glId);
 };

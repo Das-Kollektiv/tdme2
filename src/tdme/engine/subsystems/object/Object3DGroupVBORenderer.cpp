@@ -84,7 +84,7 @@ void Object3DGroupVBORenderer::preRender(Object3DVBORenderer* object3DVBORendere
 		meshUploaded = vboManaged->isUploaded();
 	}
 	if (object3DVBORenderer->renderer->isNormalMappingAvailable() && object3DGroup->mesh->group->getTangents()->size() > 0 && object3DGroup->mesh->group->getBitangents()->size() > 0 && vboTangentBitangentIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(::java::lang::StringBuilder().append(object3DGroup->id)->append(u".tangentbitangent"_j)->toString(), 2);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + L".tangentbitangent", 2);
 		vboTangentBitangentIds = vboManaged->getVBOGlIds();
 	}
 	if (object3DGroup->mesh->hasRecreatedBuffers() == true || meshUploaded == false) {
@@ -116,7 +116,7 @@ void Object3DGroupVBORenderer::dispose()
 		vboBaseIds = nullptr;
 	}
 	if (vboSkinningIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(::java::lang::StringBuilder().append(object3DGroup->id)->append(u".skinning"_j)->toString());
+		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + L".skinning");
 		vboSkinningIds = nullptr;
 	}
 }

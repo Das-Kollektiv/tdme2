@@ -2,51 +2,35 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-
-
-struct default_init_tag;
 
 /** 
  * Managed Mesh entity
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::manager::MeshManager_MeshManaged
-	: public virtual Object
 {
+	friend class MeshManager;
 
-public:
-	typedef Object super;
-
-public: /* package */
-	String* id {  };
+private:
+	wstring id {  };
 	Object3DGroupMesh* mesh {  };
 	int32_t referenceCounter {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param id
-	 * @param vbo gl id
-	 * @param referenceCounter
-	 */
-	void ctor(String* id, Object3DGroupMesh* mesh);
-
 private:
 
 	/** 
 	 * @return mesh id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return object 3d group mesh
@@ -69,26 +53,10 @@ private:
 	 */
 	void incrementReferenceCounter();
 
-public:
-
 	/** 
-	 * @return string representation
+	 * Protected constructor
+	 * @param id
+	 * @param mesh
 	 */
-	String* toString() override;
-
-	// Generated
-
-private:
-	MeshManager_MeshManaged(MeshManager *MeshManager_this, String* id, Object3DGroupMesh* mesh);
-protected:
-	MeshManager_MeshManaged(MeshManager *MeshManager_this, const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	MeshManager *MeshManager_this;
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class MeshManager;
+	MeshManager_MeshManaged(const wstring& id, Object3DGroupMesh* mesh);
 };

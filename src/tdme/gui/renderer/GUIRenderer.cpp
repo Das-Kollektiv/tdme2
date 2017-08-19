@@ -103,7 +103,7 @@ GUI* GUIRenderer::getGUI()
 void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(u"tdme.guirenderer"_j, 4);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.guirenderer", 4);
 		vboIds = vboManaged->getVBOGlIds();
 		for (auto i = 0; i < QUAD_COUNT; i++) {
 			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
@@ -121,7 +121,7 @@ void GUIRenderer::initialize()
 void GUIRenderer::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(u"tdme.guirenderer"_j);
+		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.guirenderer");
 		vboIds = nullptr;
 	}
 }
