@@ -177,18 +177,18 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			continue;
 		}
 		if (particle->mass > MathTools::EPSILON)
-			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+			particle->velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
-		particle->position->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
-		auto color = particle->color->getArray();
-		auto colorAdd = particle->colorAdd->getArray();
+		particle->position.add(velocityForTime.set(&particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		auto color = particle->color.getArray();
+		auto colorAdd = particle->colorAdd.getArray();
 		(*color)[0] += (*colorAdd)[0] * static_cast< float >(timeDelta);
 		(*color)[1] += (*colorAdd)[1] * static_cast< float >(timeDelta);
 		(*color)[2] += (*colorAdd)[2] * static_cast< float >(timeDelta);
 		(*color)[3] += (*colorAdd)[3] * static_cast< float >(timeDelta);
-		modelViewMatrix->multiply(particle->position, &point);
+		modelViewMatrix->multiply(&particle->position, &point);
 		if (doCollisionTests == true) {
-			for (auto _i = engine->getPartition()->getObjectsNearTo(particle->position)->iterator(); _i->hasNext(); ) {
+			for (auto _i = engine->getPartition()->getObjectsNearTo(&particle->position)->iterator(); _i->hasNext(); ) {
 				Entity* entity = dynamic_cast< Entity* >(_i->next());
 				{
 					if (static_cast< void* >(entity) == static_cast< void* >(this))
@@ -197,7 +197,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 					if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr)
 						continue;
 
-					if (entity->getBoundingBoxTransformed()->containsPoint(particle->position)) {
+					if (entity->getBoundingBoxTransformed()->containsPoint(&particle->position)) {
 						particle->active = false;
 						continue;
 					}
@@ -206,7 +206,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		}
 		activeParticles++;
 		distanceFromCamera = -point.getZ();
-		auto positionXYZ = particle->position->getArray();
+		auto positionXYZ = particle->position.getArray();
 		if (haveBoundingBox == false) {
 			*bbMinXYZ = *positionXYZ;
 			*bbMaxXYZ = *positionXYZ;
@@ -219,7 +219,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			if ((*positionXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*positionXYZ)[1];
 			if ((*positionXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*positionXYZ)[2];
 		}
-		pointsRenderPool->addPoint(&point, particle->color, distanceFromCamera);
+		pointsRenderPool->addPoint(&point, &particle->color, distanceFromCamera);
 	}
 	if (activeParticles == 0) {
 		active = false;
@@ -270,9 +270,9 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 		emitter->emit(particle);
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * static_cast< double >(timeDelta)));
 		if (particle->mass > MathTools::EPSILON)
-			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
+			particle->velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
 
-		particle->position->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDeltaRnd) / 1000.0f));
+		particle->position.add(velocityForTime.set(&particle->velocity)->scale(static_cast< float >(timeDeltaRnd) / 1000.0f));
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
 			break;

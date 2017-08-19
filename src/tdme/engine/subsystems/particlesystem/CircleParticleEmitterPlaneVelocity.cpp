@@ -73,16 +73,16 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	auto rnd = static_cast< float >(Math::random());
 	cosOnAxis0.set(&axis0Transformed)->scale(static_cast< float >(Math::cos(Math::PI * 2 * rnd)));
 	sinOnAxis1.set(&axis1Transformed)->scale(static_cast< float >(Math::sin(Math::PI * 2 * rnd)));
-	particle->position->set(&cosOnAxis0);
-	particle->position->add(&sinOnAxis1);
-	particle->position->scale(radiusTransformed);
-	particle->position->add(&centerTransformed);
-	particle->velocity->set(particle->position)->sub(&centerTransformed)->normalize()->scale(velocity + static_cast< float >((Math::random() * velocityRnd)));
+	particle->position.set(&cosOnAxis0);
+	particle->position.add(&sinOnAxis1);
+	particle->position.scale(radiusTransformed);
+	particle->position.add(&centerTransformed);
+	particle->velocity.set(&particle->position)->sub(&centerTransformed)->normalize()->scale(velocity + static_cast< float >((Math::random() * velocityRnd)));
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
-	particle->color->set(&colorStart);
-	particle->colorAdd->set(
+	particle->color.set(&colorStart);
+	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,
 		(colorEnd.getBlue() - colorStart.getBlue()) / particle->lifeTimeMax,

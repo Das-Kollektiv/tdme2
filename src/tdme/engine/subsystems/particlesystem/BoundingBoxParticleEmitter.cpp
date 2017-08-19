@@ -66,12 +66,12 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->active = true;
 	auto obbAxes = obbTransformed->getAxes();
 	auto obbHalfExtensionXYZ = obbTransformed->getHalfExtension()->getArray();
-	particle->position->set(0.0f, 0.0f, 0.0f);
-	particle->position->add(tmpAxis.set(&(*obbAxes)[0])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[0] * 2.0f) - (*obbHalfExtensionXYZ)[0]));
-	particle->position->add(tmpAxis.set(&(*obbAxes)[1])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[1] * 2.0f) - (*obbHalfExtensionXYZ)[1]));
-	particle->position->add(tmpAxis.set(&(*obbAxes)[2])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[2] * 2.0f) - (*obbHalfExtensionXYZ)[2]));
-	particle->position->add(obbTransformed->getCenter());
-	particle->velocity->set(
+	particle->position.set(0.0f, 0.0f, 0.0f);
+	particle->position.add(tmpAxis.set(&(*obbAxes)[0])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[0] * 2.0f) - (*obbHalfExtensionXYZ)[0]));
+	particle->position.add(tmpAxis.set(&(*obbAxes)[1])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[1] * 2.0f) - (*obbHalfExtensionXYZ)[1]));
+	particle->position.add(tmpAxis.set(&(*obbAxes)[2])->scale((static_cast< float >(Math::random()) * (*obbHalfExtensionXYZ)[2] * 2.0f) - (*obbHalfExtensionXYZ)[2]));
+	particle->position.add(obbTransformed->getCenter());
+	particle->velocity.set(
 		(*velocityXYZ)[0] + static_cast< float >((Math::random() * (*velocityRndXYZ)[0] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
 		(*velocityXYZ)[1] + static_cast< float >((Math::random() * (*velocityRndXYZ)[1] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
 		(*velocityXYZ)[2] + static_cast< float >((Math::random() * (*velocityRndXYZ)[2] * (Math::random() > 0.5 ? +1.0f : -1.0f)))
@@ -79,8 +79,8 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
-	particle->color->set(&colorStart);
-	particle->colorAdd->set(
+	particle->color.set(&colorStart);
+	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,
 		(colorEnd.getBlue() - colorStart.getBlue()) / particle->lifeTimeMax,

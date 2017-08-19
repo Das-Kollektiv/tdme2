@@ -203,7 +203,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 
 		emitter->emit(particle);
 		auto object = objects[i];
-		object->getTranslation()->set(particle->position);
+		object->getTranslation()->set(&particle->position);
 		object->update();
 		object->setEnabled(true);
 		object->getEffectColorAdd()->set(&effectColorAdd);
@@ -238,11 +238,11 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 			continue;
 		}
 		if (particle->mass > MathTools::EPSILON)
-			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+			particle->velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
 		object->getEffectColorAdd()->set(&effectColorAdd);
 		object->getEffectColorMul()->set(&effectColorMul);
-		object->getTranslation()->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->getTranslation()->add(velocityForTime.set(&particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed->getMin()->set(object->getBoundingBoxTransformed()->getMin());

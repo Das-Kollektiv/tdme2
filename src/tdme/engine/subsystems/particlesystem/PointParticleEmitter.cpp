@@ -63,8 +63,8 @@ void PointParticleEmitter::emit(Particle* particle)
 	auto velocityXYZ = velocity.getArray();
 	auto velocityRndXYZ = velocityRnd.getArray();
 	particle->active = true;
-	particle->position->set(&positionTransformed);
-	particle->velocity->set(
+	particle->position.set(&positionTransformed);
+	particle->velocity.set(
 		(*velocityXYZ)[0] + static_cast< float >((Math::random() * (*velocityRndXYZ)[0] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
 		(*velocityXYZ)[1] + static_cast< float >((Math::random() * (*velocityRndXYZ)[1] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
 		(*velocityXYZ)[2] + static_cast< float >((Math::random() * (*velocityRndXYZ)[2] * (Math::random() > 0.5 ? +1.0f : -1.0f)))
@@ -72,8 +72,8 @@ void PointParticleEmitter::emit(Particle* particle)
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
-	particle->color->set(&colorStart);
-	particle->colorAdd->set(
+	particle->color.set(&colorStart);
+	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,
 		(colorEnd.getBlue() - colorStart.getBlue()) / particle->lifeTimeMax,
