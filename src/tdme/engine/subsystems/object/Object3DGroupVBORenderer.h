@@ -2,16 +2,15 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
+using std::vector;
+
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DVBORenderer;
-
-
-struct default_init_tag;
 
 /** 
  * Object 3D group render 
@@ -19,26 +18,15 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::Object3DGroupVBORenderer final
-	: public Object
 {
+	friend class Object3DVBORenderer;
 
-public:
-	typedef Object super;
-
-public: /* protected */
+private:
 	Object3DGroup* object3DGroup {  };
-	int32_tArray* vboBaseIds {  };
-	int32_tArray* vboTangentBitangentIds {  };
-	int32_tArray* vboSkinningIds {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param object 3D group
-	 */
-	void ctor(Object3DGroup* object3DGroup);
-
-public: /* protected */
+	vector<int32_t>* vboBaseIds {  };
+	vector<int32_t>* vboTangentBitangentIds {  };
+	vector<int32_t>* vboSkinningIds {  };
+public:
 	void preRender(Object3DVBORenderer* object3DVBORenderer);
 
 	/** 
@@ -47,15 +35,9 @@ public: /* protected */
 	 */
 	void dispose();
 
-	// Generated
+	/**
+	 * Constructor
+	 * @param object 3D group
+	 */
 	Object3DGroupVBORenderer(Object3DGroup* object3DGroup);
-protected:
-	Object3DGroupVBORenderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
@@ -13,6 +14,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::vector;
 
 using java::lang::Object;
 using java::nio::FloatBuffer;
@@ -49,7 +51,7 @@ public: /* protected */
 
 private:
 	GLRenderer* renderer {  };
-	int32_tArray* vboIds {  };
+	vector<int32_t>* vboIds {  };
 	int32_t quadCount {  };
 	ShortBuffer* sbIndices {  };
 	FloatBuffer* fbVertices {  };

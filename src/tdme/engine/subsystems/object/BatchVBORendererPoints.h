@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-#include <Array.h>
+using std::vector;
 
 using java::nio::FloatBuffer;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
@@ -23,7 +25,7 @@ class tdme::engine::subsystems::object::BatchVBORendererPoints final
 private:
 	static constexpr int32_t VERTEX_COUNT { 32768 };
 	GLRenderer* renderer {  };
-	int32_tArray * vboIds {  };
+	vector<int32_t> * vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
 	FloatBuffer* fbVertices {  };

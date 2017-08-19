@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroupVBORenderer.java
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 
+#include <vector>
+
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
 #include <java/lang/Short.h>
@@ -18,16 +20,13 @@
 #include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
+
+using std::vector;
 
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using java::lang::Byte;
 using java::lang::Float;
 using java::lang::Short;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
 using tdme::engine::Engine;
@@ -41,34 +40,8 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-Object3DGroupVBORenderer::Object3DGroupVBORenderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Object3DGroupVBORenderer::Object3DGroupVBORenderer(Object3DGroup* object3DGroup) 
-	: Object3DGroupVBORenderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(object3DGroup);
-}
-
-void Object3DGroupVBORenderer::ctor(Object3DGroup* object3DGroup)
-{
-	super::ctor();
 	this->object3DGroup = object3DGroup;
 	this->vboBaseIds = nullptr;
 	this->vboTangentBitangentIds = nullptr;
@@ -120,17 +93,3 @@ void Object3DGroupVBORenderer::dispose()
 		vboSkinningIds = nullptr;
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Object3DGroupVBORenderer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.object.Object3DGroupVBORenderer", 54);
-    return c;
-}
-
-java::lang::Class* Object3DGroupVBORenderer::getClass0()
-{
-	return class_();
-}
-

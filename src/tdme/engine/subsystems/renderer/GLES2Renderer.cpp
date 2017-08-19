@@ -2,6 +2,7 @@
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
 #include <array>
+#include <vector>
 #include <string>
 
 #include <java/io/BufferedReader.h>
@@ -29,6 +30,7 @@
 #include <ObjectArray.h>
 
 using std::array;
+using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
@@ -483,10 +485,11 @@ void GLES2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	gl->glDeleteFramebuffers(1, new int32_tArray({frameBufferId}), 0);
 }
 
-int32_tArray* GLES2Renderer::createBufferObjects(int32_t buffers)
+vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers)
 {
-	auto bufferObjectIds = new int32_tArray(buffers);
-	gl->glGenBuffers(buffers, bufferObjectIds, 0);
+	vector<int32_t> bufferObjectIds;
+	bufferObjectIds.resize(buffers);
+	gl->glGenBuffers(buffers, bufferObjectIds.data(), 0);
 	return bufferObjectIds;
 }
 
@@ -601,9 +604,9 @@ void GLES2Renderer::unbindBufferObjects()
 	gl->glBindBuffer(GLES2::GL_ARRAY_BUFFER, 0);
 }
 
-void GLES2Renderer::disposeBufferObjects(int32_tArray* bufferObjectIds)
+void GLES2Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
 {
-	gl->glDeleteBuffers(bufferObjectIds->length, bufferObjectIds, 0);
+	gl->glDeleteBuffers(bufferObjectIds->size(), (const uint32_t*)bufferObjectIds->data(), 0);
 }
 
 int32_t GLES2Renderer::getTextureUnit()

@@ -33,8 +33,6 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
 
-struct default_init_tag;
-
 /** 
  * VBO renderer class
  * @author Andreas Drewke

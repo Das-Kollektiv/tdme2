@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <vector>
 #include <string>
 
 #include <fwd-tdme.h>
@@ -9,6 +10,7 @@
 #include <Array.h>
 
 using std::wstring;
+using std::vector;
 
 using tdme::engine::subsystems::manager::VBOManager;
 
@@ -22,7 +24,7 @@ class tdme::engine::subsystems::manager::VBOManager_VBOManaged
 
 private:
 	wstring id {  };
-	int32_tArray* vboGlIds {  };
+	vector<int32_t> vboGlIds {  };
 	int32_t referenceCounter {  };
 	bool uploaded {  };
 
@@ -36,7 +38,7 @@ public:
 	/** 
 	 * @return vbo gl ids
 	 */
-	virtual int32_tArray* getVBOGlIds();
+	virtual vector<int32_t>* getVBOGlIds();
 
 private:
 
@@ -64,5 +66,5 @@ public:
 	virtual bool isUploaded();
 
 private:
-	VBOManager_VBOManaged(const wstring& id, int32_tArray* vboGlIds);
+	VBOManager_VBOManaged(const wstring& id, vector<int32_t>* vboGlIds);
 };

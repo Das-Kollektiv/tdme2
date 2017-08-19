@@ -31,7 +31,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const wstring& vboId, int32_t ids)
 		return vboManaged;
 	}
 	auto vboIds = renderer->createBufferObjects(ids);
-	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
+	auto vboManaged = new VBOManager_VBOManaged(vboId, &vboIds);
 	vboManaged->incrementReferenceCounter();
 	vbos[vboManaged->getId()] = vboManaged;
 	return vboManaged;

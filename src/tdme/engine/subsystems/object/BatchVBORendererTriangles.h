@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
@@ -10,9 +11,9 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <Array.h>
 
 using std::array;
+using std::vector;
 
 using java::nio::FloatBuffer;
 using tdme::engine::model::TextureCoordinate;
@@ -29,7 +30,7 @@ class tdme::engine::subsystems::object::BatchVBORendererTriangles final
 private:
 	static constexpr int32_t VERTEX_COUNT { 1024 * 3 };
 	GLRenderer* renderer {  };
-	int32_tArray* vboIds {  };
+	vector<int32_t>* vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
 	int32_t vertices {  };

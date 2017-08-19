@@ -72,7 +72,7 @@ void BatchVBORendererPoints::release()
 void BatchVBORendererPoints::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborendererpoints." + id, 2);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborendererpoints." + to_wstring(id), 2);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -93,7 +93,7 @@ void BatchVBORendererPoints::render()
 void BatchVBORendererPoints::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborendererpoints." + id);
+		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborendererpoints." + to_wstring(id));
 		vboIds = nullptr;
 	}
 }

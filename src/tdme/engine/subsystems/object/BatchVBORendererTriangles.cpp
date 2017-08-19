@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/BatchVBORendererTriangles.java
 #include <tdme/engine/subsystems/object/BatchVBORendererTriangles.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/Byte.h>
@@ -16,6 +18,9 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
 #include <Array.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::object::BatchVBORendererTriangles;
 using java::lang::Byte;
@@ -69,7 +74,7 @@ void BatchVBORendererTriangles::release()
 void BatchVBORendererTriangles::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborenderertriangles." + id, 3);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborenderertriangles." + to_wstring(id), 3);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -92,7 +97,7 @@ void BatchVBORendererTriangles::render()
 void BatchVBORendererTriangles::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborenderertriangles." + id);
+		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborenderertriangles." + to_wstring(id));
 		vboIds = nullptr;
 	}
 }

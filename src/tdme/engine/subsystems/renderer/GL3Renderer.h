@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <string>
 
 #include <fwd-tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using std::array;
+using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -95,7 +97,7 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
-	int32_tArray* createBufferObjects(int32_t buffers) override;
+	vector<int32_t> createBufferObjects(int32_t buffers) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
@@ -113,7 +115,7 @@ public:
 	void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects() override;
-	void disposeBufferObjects(int32_tArray* bufferObjectIds) override;
+	void disposeBufferObjects(vector<int32_t>* bufferObjectIds) override;
 	int32_t getTextureUnit() override;
 
 	/** 

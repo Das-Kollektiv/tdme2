@@ -3,22 +3,19 @@
 
 #include <string>
 
-#include <java/util/Arrays.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <Array.h>
 
 using std::wstring;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::subsystems::manager::VBOManager;
 
-VBOManager_VBOManaged::VBOManager_VBOManaged(const wstring& id, int32_tArray* vboGlIds)
+VBOManager_VBOManaged::VBOManager_VBOManaged(const wstring& id, vector<int32_t>* vboGlIds)
 {
 	this->id = id;
-	this->vboGlIds = vboGlIds;
+	this->vboGlIds = *vboGlIds;
 	this->referenceCounter = 0;
 }
 
@@ -27,9 +24,9 @@ const wstring& VBOManager_VBOManaged::getId()
 	return id;
 }
 
-int32_tArray* VBOManager_VBOManaged::getVBOGlIds()
+vector<int32_t>* VBOManager_VBOManaged::getVBOGlIds()
 {
-	return vboGlIds;
+	return &vboGlIds;
 }
 
 int32_t VBOManager_VBOManaged::getReferenceCounter()

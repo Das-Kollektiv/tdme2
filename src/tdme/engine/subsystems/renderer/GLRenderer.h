@@ -2,7 +2,9 @@
 
 #pragma once
 
+
 #include <array>
+#include <vector>
 #include <string>
 
 #include <fwd-tdme.h>
@@ -17,6 +19,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::vector;
 using std::wstring;
 
 using java::lang::String;
@@ -445,7 +448,7 @@ public:
 	 * @param buffers
 	 * @return ids
 	 */
-	virtual int32_tArray* createBufferObjects(int32_t buffers) = 0;
+	virtual vector<int32_t> createBufferObjects(int32_t buffers) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
@@ -561,7 +564,7 @@ public:
 	 * Disposes a frame buffer object
 	 * @param frame buffer id
 	 */
-	virtual void disposeBufferObjects(int32_tArray* bufferObjectIds) = 0;
+	virtual void disposeBufferObjects(vector<int32_t>* bufferObjectIds) = 0;
 
 	/** 
 	 * @return active texture unit

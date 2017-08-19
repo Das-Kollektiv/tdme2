@@ -281,9 +281,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 	modelViewMatrixBackup.set(renderer->getModelViewMatrix());
 	auto currentFrontFace = -1;
 	auto firstObject = objects.at(0);
-	int32_tArray* boundVBOBaseIds = nullptr;
-	int32_tArray* boundVBOTangentBitangentIds = nullptr;
-	int32_tArray* boundSkinningIds = nullptr;
+	vector<int32_t>* boundVBOBaseIds = nullptr;
+	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
+	vector<int32_t>* boundSkinningIds = nullptr;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		auto facesEntities = object3DGroup->group->getFacesEntities();

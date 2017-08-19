@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <array>
+#include <vector>
 #include <string>
 
 #include <java/io/Serializable.h>
@@ -40,6 +41,7 @@
 #include <Array.h>
 
 using std::array;
+using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
@@ -484,10 +486,11 @@ void GL3Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-int32_tArray* GL3Renderer::createBufferObjects(int32_t buffers)
+vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers)
 {
-	auto bufferObjectIds = new int32_tArray(buffers);
-	glGenBuffers(buffers, (uint32_t*)bufferObjectIds->getPointer());
+	vector<int32_t> bufferObjectIds;
+	bufferObjectIds.resize(buffers);
+	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
 	return bufferObjectIds;
 }
 
@@ -611,9 +614,9 @@ void GL3Renderer::unbindBufferObjects()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL3Renderer::disposeBufferObjects(int32_tArray* bufferObjectIds)
+void GL3Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
 {
-	glDeleteBuffers(bufferObjectIds->length, (const uint32_t*)bufferObjectIds->getPointer());
+	glDeleteBuffers(bufferObjectIds->size(), (const uint32_t*)bufferObjectIds->data());
 }
 
 int32_t GL3Renderer::getTextureUnit()
