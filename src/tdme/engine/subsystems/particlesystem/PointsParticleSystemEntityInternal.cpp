@@ -22,10 +22,6 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::wstring;
 using std::vector;
@@ -49,15 +45,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
 {
@@ -71,13 +58,10 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const wst
 		particles[i] = new Particle();
 	}
 	this->maxPoints = maxPoints;
-	velocityForTime = new Vector3();
-	point = new Vector3();
 	boundingBox = new BoundingBox();
 	boundingBoxTransformed = new BoundingBox();
-	inverseTransformation = new Transformations();
-	this->effectColorMul = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	this->effectColorAdd = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
+	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->autoEmit = autoEmit;
 	this->particlesToSpawnRemainder = 0.0f;
@@ -116,12 +100,12 @@ void PointsParticleSystemEntityInternal::setEnabled(bool enabled)
 
 Color4* PointsParticleSystemEntityInternal::getEffectColorMul()
 {
-	return effectColorMul;
+	return &effectColorMul;
 }
 
 Color4* PointsParticleSystemEntityInternal::getEffectColorAdd()
 {
-	return effectColorAdd;
+	return &effectColorAdd;
 }
 
 bool PointsParticleSystemEntityInternal::isPickable()
@@ -157,14 +141,14 @@ void PointsParticleSystemEntityInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(this);
-	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 void PointsParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 void PointsParticleSystemEntityInternal::updateParticles()
@@ -172,12 +156,13 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	if (enabled == false || active == false)
 		return;
 
+	Vector3 velocityForTime;
+	Vector3 point;
 	auto bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
 	auto bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
 	auto haveBoundingBox = false;
 	float distanceFromCamera;
 	auto modelViewMatrix = renderer->getModelViewMatrix();
-	distanceFromCamera = -point->getZ();
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
 	auto timeDelta = engine->getTiming()->getDeltaTime();
@@ -194,17 +179,17 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		if (particle->mass > MathTools::EPSILON)
 			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
-		particle->position->add(velocityForTime->set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		particle->position->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
 		auto color = particle->color->getArray();
 		auto colorAdd = particle->colorAdd->getArray();
 		(*color)[0] += (*colorAdd)[0] * static_cast< float >(timeDelta);
 		(*color)[1] += (*colorAdd)[1] * static_cast< float >(timeDelta);
 		(*color)[2] += (*colorAdd)[2] * static_cast< float >(timeDelta);
 		(*color)[3] += (*colorAdd)[3] * static_cast< float >(timeDelta);
-		modelViewMatrix->multiply(particle->position, point);
+		modelViewMatrix->multiply(particle->position, &point);
 		if (doCollisionTests == true) {
 			for (auto _i = engine->getPartition()->getObjectsNearTo(particle->position)->iterator(); _i->hasNext(); ) {
-				Entity* entity = java_cast< Entity* >(_i->next());
+				Entity* entity = dynamic_cast< Entity* >(_i->next());
 				{
 					if (static_cast< void* >(entity) == static_cast< void* >(this))
 						continue;
@@ -220,7 +205,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			}
 		}
 		activeParticles++;
-		distanceFromCamera = -point->getZ();
+		distanceFromCamera = -point.getZ();
 		auto positionXYZ = particle->position->getArray();
 		if (haveBoundingBox == false) {
 			*bbMinXYZ = *positionXYZ;
@@ -234,7 +219,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			if ((*positionXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*positionXYZ)[1];
 			if ((*positionXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*positionXYZ)[2];
 		}
-		pointsRenderPool->addPoint(point, particle->color, distanceFromCamera);
+		pointsRenderPool->addPoint(&point, particle->color, distanceFromCamera);
 	}
 	if (activeParticles == 0) {
 		active = false;
@@ -243,7 +228,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	boundingBoxTransformed->getMin()->sub(0.05f);
 	boundingBoxTransformed->getMax()->add(0.05f);
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
 }
 
 void PointsParticleSystemEntityInternal::dispose()
@@ -275,6 +260,7 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 	if (particlesToSpawnInteger == 0)
 		return 0;
 
+	Vector3 velocityForTime;
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
 		auto particle = particles[i];
@@ -286,7 +272,7 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 		if (particle->mass > MathTools::EPSILON)
 			particle->velocity->subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
 
-		particle->position->add(velocityForTime->set(particle->velocity)->scale(static_cast< float >(timeDeltaRnd) / 1000.0f));
+		particle->position->add(velocityForTime.set(particle->velocity)->scale(static_cast< float >(timeDeltaRnd) / 1000.0f));
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
 			break;

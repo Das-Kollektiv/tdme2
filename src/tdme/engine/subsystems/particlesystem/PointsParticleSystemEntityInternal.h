@@ -8,11 +8,13 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 
@@ -29,7 +31,6 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
-using java::lang::Object;
 
 /** 
  * Points particle system entity internal
@@ -40,9 +41,6 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityIntern
 	: public Transformations
 	, public virtual ParticleSystemEntity
 {
-
-public:
-	typedef Transformations super;
 
 public: /* protected */
 	wstring id {  };
@@ -56,17 +54,13 @@ public: /* protected */
 	vector<Particle*> particles {  };
 	int32_t maxPoints {  };
 	TransparentRenderPointsPool* pointsRenderPool {  };
-	Vector3* velocityForTime {  };
-
-private:
-	Vector3* point {  };
 
 public: /* protected */
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
-	Transformations* inverseTransformation {  };
-	Color4* effectColorMul {  };
-	Color4* effectColorAdd {  };
+	Transformations inverseTransformation {  };
+	Color4 effectColorMul {  };
+	Color4 effectColorAdd {  };
 	bool pickable {  };
 	float particlesToSpawnRemainder {  };
 public:
