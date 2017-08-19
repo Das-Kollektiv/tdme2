@@ -79,7 +79,6 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 	}
 	this->boundingBox = new BoundingBox();
 	this->boundingBoxTransformed = new BoundingBox();
-	this->inverseTransformation = new Transformations();
 	this->emitter = emitter;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -163,14 +162,14 @@ void ObjectParticleSystemEntityInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(this);
-	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 void ObjectParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation->getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
 }
 
 ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()
@@ -261,7 +260,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		}
 	}
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
 }
 
 void ObjectParticleSystemEntityInternal::dispose()

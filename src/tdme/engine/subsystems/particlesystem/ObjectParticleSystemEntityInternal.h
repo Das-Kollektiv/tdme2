@@ -57,7 +57,7 @@ public: /* protected */
 	vector<Object3D*> enabledObjects {  };
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
-	Transformations* inverseTransformation {  };
+	Transformations inverseTransformation {  };
 	ParticleEmitter* emitter {  };
 	bool pickable {  };
 	Color4 effectColorMul {  };
