@@ -7,15 +7,11 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
-
-
 
 /** 
  * Particle Emitter Interface
@@ -23,7 +19,6 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 struct tdme::engine::subsystems::particlesystem::ParticleEmitter
-	: public virtual Object
 {
 
 	/** 
@@ -62,7 +57,4 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	 * @param transformations
 	 */
 	virtual void fromTransformations(Transformations* transformations) = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };
