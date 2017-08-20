@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
-
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -16,13 +14,10 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Key.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::vector;
 using std::wstring;
 using std::to_wstring;
-
-using java::lang::String;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using tdme::engine::model::Color4;
@@ -97,7 +92,7 @@ void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, Te
 	if (batchVBORenderers.size() == 0) {
 		auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 		if (batchVBORendererTriangles == nullptr) {
-			_Console::println(static_cast< Object* >(u"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"_j));
+			_Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 			return;
 		}
 		batchVBORenderers.push_back(batchVBORendererTriangles);
@@ -108,7 +103,7 @@ void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, Te
 
 	batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 	if (batchVBORendererTriangles == nullptr) {
-		_Console::println(static_cast< Object* >(u"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"_j));
+		_Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 		return;
 	}
 	batchVBORenderers.push_back(batchVBORendererTriangles);
