@@ -9,9 +9,6 @@
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::engine::model::Model;
 
-
-struct default_init_tag;
-
 /** 
  * Object 3D Model
  * To be used in non engine context
