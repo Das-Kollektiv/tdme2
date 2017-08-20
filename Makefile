@@ -171,7 +171,6 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMapping_RunState.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \
