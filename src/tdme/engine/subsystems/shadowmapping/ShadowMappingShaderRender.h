@@ -6,15 +6,10 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Shadow mapping shader for render shadows pass
@@ -22,12 +17,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	GLRenderer* renderer {  };
 	int32_t renderVertexShaderGlId {  };
@@ -48,13 +38,6 @@ private:
 	int32_t renderUniformLightLinearAttenuation {  };
 	int32_t renderUniformLightQuadraticAttenuation {  };
 	bool initialized {  };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor(GLRenderer* renderer);
-
 public:
 
 	/** 
@@ -155,15 +138,9 @@ public:
 	 */
 	void setProgramLightQuadraticAttenuation(float quadraticAttenuation);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param renderer
+	 */
 	ShadowMappingShaderRender(GLRenderer* renderer);
-protected:
-	ShadowMappingShaderRender(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -16,24 +16,12 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ShadowMappingShaderRender::ShadowMappingShaderRender(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer) 
-	: ShadowMappingShaderRender(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer);
-}
-
-void ShadowMappingShaderRender::ctor(GLRenderer* renderer)
-{
-	super::ctor();
 	this->renderer = renderer;
 	initialized = false;
 }
+
 
 bool ShadowMappingShaderRender::isInitialized()
 {
@@ -199,17 +187,3 @@ void ShadowMappingShaderRender::setProgramLightQuadraticAttenuation(float quadra
 {
 	renderer->setProgramUniformFloat(renderUniformLightQuadraticAttenuation, quadraticAttenuation);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ShadowMappingShaderRender::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.shadowmapping.ShadowMappingShaderRender", 62);
-    return c;
-}
-
-java::lang::Class* ShadowMappingShaderRender::getClass0()
-{
-	return class_();
-}
-
