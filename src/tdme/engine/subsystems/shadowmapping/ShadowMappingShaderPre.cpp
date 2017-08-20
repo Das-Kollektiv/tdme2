@@ -3,30 +3,20 @@
 
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
+
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using java::lang::String;
 using java::lang::StringBuilder;
+
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 
-ShadowMappingShaderPre::ShadowMappingShaderPre(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
-	: ShadowMappingShaderPre(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer);
-}
-
-void ShadowMappingShaderPre::ctor(GLRenderer* renderer)
-{
-	super::ctor();
 	this->renderer = renderer;
 	initialized = false;
 }
@@ -80,17 +70,3 @@ void ShadowMappingShaderPre::setProgramMVPMatrix(Matrix4x4* mvpMatrix)
 {
 	renderer->setProgramUniformFloatMatrix4x4(preUniformMVPMatrix, mvpMatrix->getArray());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ShadowMappingShaderPre::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.subsystems.shadowmapping.ShadowMappingShaderPre", 59);
-    return c;
-}
-
-java::lang::Class* ShadowMappingShaderPre::getClass0()
-{
-	return class_();
-}
-
