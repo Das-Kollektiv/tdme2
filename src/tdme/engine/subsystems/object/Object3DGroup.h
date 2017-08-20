@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -15,14 +14,11 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::subsystems::object::Object3DBase;
@@ -32,20 +28,13 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::engine::subsystems::object::Object3DGroup;
 
-struct default_init_tag;
-
 /** 
  * Object 3d render group 
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::subsystems::object::Object3DGroup final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static int64_t counter;
 
@@ -56,11 +45,11 @@ public: /* protected */
 	Object3DBase* object {  };
 	Group* group {  };
 	bool animated {  };
-	int32_tArray* materialDiffuseTextureIdsByEntities {  };
-	int32_tArray* dynamicDiffuseTextureIdsByEntities {  };
-	int32_tArray* materialSpecularTextureIdsByEntities {  };
-	int32_tArray* materialDisplacementTextureIdsByEntities {  };
-	int32_tArray* materialNormalTextureIdsByEntities {  };
+	vector<int32_t> materialDiffuseTextureIdsByEntities {  };
+	vector<int32_t> dynamicDiffuseTextureIdsByEntities {  };
+	vector<int32_t> materialSpecularTextureIdsByEntities {  };
+	vector<int32_t> materialDisplacementTextureIdsByEntities {  };
+	vector<int32_t> materialNormalTextureIdsByEntities {  };
 	Object3DGroupVBORenderer* renderer {  };
 	Object3DGroupMesh* mesh {  };
 	Matrix4x4* groupTransformationsMatrix {  };
@@ -109,20 +98,9 @@ public: /* protected */
 	 */
 	void dispose();
 
-	// Generated
-
 public:
+	/**
+	 * Public constructor
+	 */
 	Object3DGroup();
-protected:
-	void ctor();
-	Object3DGroup(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

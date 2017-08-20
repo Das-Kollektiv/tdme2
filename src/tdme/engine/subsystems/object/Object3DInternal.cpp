@@ -149,7 +149,7 @@ void Object3DInternal::setDynamicDiffuseTexture(const wstring& groupId, const ws
 			if (facesEntityId != L"" && facesEntityId != facesEntity.getId())
 				continue;
 
-			(*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] = textureId;
+			object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
 		}
 	}
 }

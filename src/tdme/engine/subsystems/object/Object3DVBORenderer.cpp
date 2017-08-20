@@ -422,18 +422,18 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 	renderer->setMaterialShininess(material->getShininess());
 	renderer->onUpdateMaterial();
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
-	renderer->bindTexture((*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? (*object3DGroup->dynamicDiffuseTextureIdsByEntities)[facesEntityIdx] : (*object3DGroup->materialDiffuseTextureIdsByEntities)[facesEntityIdx]);
+	renderer->bindTexture(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx]);
 	if (renderer->isSpecularMappingAvailable() == true) {
 		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
-		renderer->bindTexture((*object3DGroup->materialSpecularTextureIdsByEntities)[facesEntityIdx]);
+		renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
 	}
 	if (renderer->isDisplacementMappingAvailable() == true) {
 		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
-		renderer->bindTexture((*object3DGroup->materialDisplacementTextureIdsByEntities)[facesEntityIdx]);
+		renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
 	}
 	if (renderer->isNormalMappingAvailable() == true) {
 		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
-		renderer->bindTexture((*object3DGroup->materialNormalTextureIdsByEntities)[facesEntityIdx]);
+		renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
 	}
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
