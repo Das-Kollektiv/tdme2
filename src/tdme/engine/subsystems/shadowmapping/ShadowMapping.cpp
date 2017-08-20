@@ -114,11 +114,11 @@ void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
 	Vector3 tmpVector3;
-	Vector4 lightPosition4Transformed {  };
-	Vector3 lightPosition3Transformed {  };
-	Vector4 spotDirection4 {  };
-	Vector4 spotDirection4Transformed {  };
-	Vector3 spotDirection3Transformed {  };
+	Vector4 lightPosition4Transformed;
+	Vector3 lightPosition3Transformed;
+	Vector4 spotDirection4;
+	Vector4 spotDirection4Transformed;
+	Vector3 spotDirection3Transformed;
 	runState = ShadowMapping_RunState::RENDER;
 	auto shader = Engine::getShadowMappingShaderRender();
 	shader->useProgram();
