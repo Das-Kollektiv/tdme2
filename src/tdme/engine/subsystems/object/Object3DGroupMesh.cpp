@@ -56,14 +56,6 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 Object3DGroupMesh::Object3DGroupMesh()
 {
 	vertices = nullptr;
