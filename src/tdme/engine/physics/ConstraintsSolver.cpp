@@ -112,7 +112,6 @@ ConstraintsSolver::ConstraintsSolver(const vector<RigidBody*>& rigidBodies)
 void ConstraintsSolver::init()
 {
 	constraintsEntityCount = 0;
-	collisionsCount = 0;
 	constraintsCount = 0;
 	keyCount = 0;
 	contactCache = new ContactCache();
@@ -127,14 +126,13 @@ void ConstraintsSolver::init()
 	upperBounds = new DynamicVector(CONSTRAINTS_MAX);
 	d = new floatArray(CONSTRAINTS_MAX);
 	constraintsEntities = new ConstraintsEntityArray(BODIES_MAX);
-	collisions = new CollisionResponseArray(BODIES_MAX);
 	keys = new KeyArray(BODIES_MAX * 2);
 	invInertiaMatrices.resize(BODIES_MAX);
 	velocityVectors.resize(BODIES_MAX);
 	constrainedVelocityVectors.resize(BODIES_MAX);
 	forcesVectors.resize(BODIES_MAX);
 	a.resize(BODIES_MAX);
-	tmpLamdaValues = new floatArray(CollisionResponse::HITPOINT_COUNT * 3);
+	tmpLamdaValues = new floatArray(30 * 3);
 	tmpMatrix1x6 = new Matrix1x6();
 	tmpVector6 = new Vector6();
 	newLinearVelocity = new Vector3();
@@ -166,7 +164,6 @@ void ConstraintsSolver::ctor(const vector<RigidBody*>& rigidBodies)
 		forcesVectors[i] = new Vector6();
 		a[i] = new Vector6();
 		constraintsEntities->set(i, new ConstraintsEntity());
-		collisions->set(i, new CollisionResponse());
 	}
 	for (auto i = 0; i < BODIES_MAX * 2; i++) {
 		keys->set(i, new Key());
@@ -182,7 +179,6 @@ void ConstraintsSolver::ctor(const vector<RigidBody*>& rigidBodies)
 void ConstraintsSolver::reset()
 {
 	constraintsEntityCount = 0;
-	collisionsCount = 0;
 	constraintsCount = 0;
 	keyCount = 0;
 	constrainedBodies.clear();
@@ -191,11 +187,6 @@ void ConstraintsSolver::reset()
 ConstraintsEntity* ConstraintsSolver::allocateConstraintsEntity()
 {
 	return (*constraintsEntities)[constraintsEntityCount++];
-}
-
-CollisionResponse* ConstraintsSolver::allocateCollision()
-{
-	return (*collisions)[collisionsCount++];
 }
 
 Key* ConstraintsSolver::allocateKey()
@@ -215,12 +206,12 @@ void ConstraintsSolver::initialize(float dt)
 		auto constraintedBody = (*constraintsEntities)[i];
 		constrainedBodies[constraintedBody->rb1->id->getCPPWString()] = constraintedBody->rb1;
 		constrainedBodies[constraintedBody->rb2->id->getCPPWString()] = constraintedBody->rb2;
-		constraintsCount += constraintedBody->collision->getHitPointsCount() * 3;
+		constraintsCount += constraintedBody->collision.getHitPointsCount() * 3;
 	}
 	auto currentConstraint = 0;
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto constraintedBody = (*constraintsEntities)[i];
-		auto hitPointsCount = constraintedBody->collision->getHitPointsCount();
+		auto hitPointsCount = constraintedBody->collision.getHitPointsCount();
 		for (auto j = 0; j < hitPointsCount * 3; j++) {
 			(*(*constraintsBodyIdxMap)[currentConstraint + j])[0] = constraintedBody->rb1->idx;
 			(*(*constraintsBodyIdxMap)[currentConstraint + j])[1] = constraintedBody->rb2->idx;
@@ -229,7 +220,7 @@ void ConstraintsSolver::initialize(float dt)
 		constraintedBody->computeLowerBound(currentConstraint, lowerBounds);
 		constraintedBody->computeUpperBound(currentConstraint, upperBounds);
 		constraintedBody->computeBaumgarte(currentConstraint, errorValues);
-		auto contactCacheInfo = contactCache->get(constraintedBody->rb1, constraintedBody->rb2, constraintedBody->collision);
+		auto contactCacheInfo = contactCache->get(constraintedBody->rb1, constraintedBody->rb2, &constraintedBody->collision);
 		if (contactCacheInfo != nullptr) {
 			for (auto j = 0; j < hitPointsCount * 3; j++) {
 				lambdaInit->setValue(currentConstraint + j, (*contactCacheInfo->lamdas)[j]);
@@ -355,11 +346,11 @@ void ConstraintsSolver::updateContactCache()
 	auto constraintsIdx = 0;
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto constraintsEntity = (*constraintsEntities)[i];
-		auto hitPoints = constraintsEntity->collision->getHitPointsCount();
+		auto hitPoints = constraintsEntity->collision.getHitPointsCount();
 		for (auto j = 0; j < hitPoints * 3; j++) {
 			(*tmpLamdaValues)[j] = lambda->getValue(constraintsIdx + j);
 		}
-		contactCache->add(constraintsEntity->rb1, constraintsEntity->rb2, constraintsEntity->collision, tmpLamdaValues);
+		contactCache->add(constraintsEntity->rb1, constraintsEntity->rb2, &constraintsEntity->collision, tmpLamdaValues);
 		constraintsIdx += hitPoints * 3;
 	}
 }
@@ -393,7 +384,7 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 		if (haveRigidBodyCheck == true) {
 			continue;
 		}
-		auto normalCurrent = constraintEntity->collision->getNormal();
+		auto normalCurrent = constraintEntity->collision.getNormal();
 		if (normalLast != nullptr) {
 			if (Math::abs(Vector3::computeDotProduct(normalLast, normalCurrent)) < 0.75f) {
 				continue;

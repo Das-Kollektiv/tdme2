@@ -270,13 +270,11 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		}
 	}
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"cube: "_j)->append(static_cast< Object* >(collision))->toString()));
 		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (CollisionDetection::doCollide(java_cast< Capsule* >(playerBoundingVolumeTransformed), java_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"barrel: "_j)->append(static_cast< Object* >(collision))->toString()));
 		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
@@ -286,7 +284,6 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			continue;
 
 		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"player: "_j)->append(static_cast< Object* >(collision))->toString()));
 			player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 			player->update();
 			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);

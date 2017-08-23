@@ -5,21 +5,15 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Collision response
@@ -27,26 +21,13 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::CollisionResponse final
-	: public Object
 {
-
-public:
-	typedef Object super;
-	static constexpr int32_t ENTITY_COUNT { 15 };
-	static constexpr int32_t HITPOINT_COUNT { 30 };
+	friend class CollisionResponse_Entity;
 
 public: /* protected */
-	vector<CollisionResponse_Entity*> entities {  };
-	int32_t entityCount {  };
+	static constexpr int32_t HITPOINT_COUNT { 30 };
+	vector<CollisionResponse_Entity> entities {  };
 	CollisionResponse_Entity* selectedEntity {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param distance
-	 * @param normal
-	 */
-	void ctor();
 
 public:
 
@@ -139,19 +120,11 @@ public:
 	 * @param response
 	 */
 	CollisionResponse* mergeResponse(CollisionResponse* response);
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param distance
+	 * @param normal
+	 */
 	CollisionResponse();
-protected:
-	CollisionResponse(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class CollisionResponse_Entity;
 };

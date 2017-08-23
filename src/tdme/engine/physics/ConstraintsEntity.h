@@ -9,6 +9,7 @@
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <java/lang/Object.h>
@@ -82,20 +83,11 @@ private:
 public: /* protected */
 	RigidBody* rb1 {  };
 	RigidBody* rb2 {  };
-	CollisionResponse* collision {  };
+	CollisionResponse collision;
 
 private:
-	array<Vector3*, 2> frictionVectors {{ new Vector3(), new Vector3() }};
+	array<Vector3, 2> frictionVectors { };
 	float muMg {  };
-	Vector3* tmpVector3 {  };
-	Vector3* r1 {  };
-	Vector3* r2 {  };
-	Vector3* r1CrossN {  };
-	Vector3* r2CrossN {  };
-	Vector3* r1CrossU1 {  };
-	Vector3* r2CrossU1 {  };
-	Vector3* r1CrossU2 {  };
-	Vector3* r2CrossU2 {  };
 
 	/** 
 	 * Compute cross product a x b = dest

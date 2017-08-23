@@ -106,7 +106,6 @@ public: /* protected */
 
 private:
 	int32_t constraintsEntityCount {  };
-	int32_t collisionsCount {  };
 	int32_t constraintsCount {  };
 	int32_t keyCount {  };
 	vector<RigidBody*> rigidBodies {  };
@@ -123,7 +122,6 @@ private:
 	DynamicVector* upperBounds {  };
 	floatArray* d {  };
 	ConstraintsEntityArray* constraintsEntities {  };
-	CollisionResponseArray* collisions {  };
 	KeyArray* keys {  };
 	vector<Matrix6x6*> invInertiaMatrices {  };
 	vector<Vector6*> velocityVectors {  };
@@ -159,11 +157,6 @@ public: /* protected */
 	 * @return constraints entity
 	 */
 	ConstraintsEntity* allocateConstraintsEntity();
-
-	/** 
-	 * @return collision response
-	 */
-	CollisionResponse* allocateCollision();
 
 	/** 
 	 * @return key

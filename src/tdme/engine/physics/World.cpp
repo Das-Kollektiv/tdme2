@@ -246,7 +246,7 @@ void World::update(float deltaTime)
 						rigidBody1->awake(true);
 						rigidBody2->awake(true);
 					}
-					constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, constraintsSolver->allocateCollision()->fromResponse(collision));
+					constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, collision);
 				}
 			}
 		}
