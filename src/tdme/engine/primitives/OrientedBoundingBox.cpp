@@ -21,8 +21,6 @@ using std::array;
 using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::lang::Math;
 using java::lang::Object;
 using java::lang::String;
@@ -358,22 +356,22 @@ bool OrientedBoundingBox::containsPoint(Vector3* point)
 bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else
 	if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::getInstance()->doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
 		return false;
 	}

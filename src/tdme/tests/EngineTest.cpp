@@ -275,7 +275,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
-	if (CollisionDetection::getInstance()->doCollide(java_cast< Capsule* >(playerBoundingVolumeTransformed), java_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
+	if (CollisionDetection::doCollide(java_cast< Capsule* >(playerBoundingVolumeTransformed), java_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"barrel: "_j)->append(static_cast< Object* >(collision))->toString()));
 		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 		player->update();

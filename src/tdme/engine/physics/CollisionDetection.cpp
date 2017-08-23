@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/engine/physics/CollisionDetection.java
 #include <tdme/engine/physics/CollisionDetection.h>
 
+#include <string>
+
 #include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
@@ -18,6 +20,8 @@
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
+
+using std::wstring;
 
 using tdme::engine::physics::CollisionDetection;
 using java::lang::Float;
@@ -212,10 +216,10 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBo
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false &&  \
-			(satHaveBestFit == false || satPenetration > satPenetrationBestFit)) {  \
+			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(&satAxis);  \
-			satPenetrationBestFit = satPenetration;  \
+			satPenetrationBestFit = -satPenetration;  \
 		}
 	//
 
@@ -516,10 +520,10 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false &&  \
-			(satHaveBestFit == false || satPenetration > satPenetrationBestFit)) {  \
+			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(&satAxis);  \
-			satPenetrationBestFit = satPenetration;  \
+			satPenetrationBestFit = -satPenetration;  \
 		}
 	//
 
@@ -609,10 +613,10 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, V
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false &&  \
-			(satHaveBestFit == false || satPenetration > satPenetrationBestFit)) {  \
+			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(&satAxis);  \
-			satPenetrationBestFit = satPenetration;  \
+			satPenetrationBestFit = -satPenetration;  \
 		}
 	//
 
@@ -731,10 +735,10 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, Vec
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false &&  \
-			(satHaveBestFit == false || satPenetration > satPenetrationBestFit)) {  \
+			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(&satAxis);  \
-			satPenetrationBestFit = satPenetration;  \
+			satPenetrationBestFit = -satPenetration;  \
 		}
 	//
 
@@ -794,10 +798,10 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false &&  \
-			(satHaveBestFit == false || satPenetration > satPenetrationBestFit)) {  \
+			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(&satAxis);  \
-			satPenetrationBestFit = satPenetration;  \
+			satPenetrationBestFit = -satPenetration;  \
 		}
 	//
 
@@ -1189,7 +1193,7 @@ void CollisionDetection::checkCollision(CollisionResponse* collision)
 {
 	auto normalXYZ = collision->getNormal()->getArray();
 	if (Float::isNaN((*normalXYZ)[0]) == true || Float::isNaN((*normalXYZ)[1]) == true || Float::isNaN((*normalXYZ)[2]) == true) {
-		_Console::println(static_cast< Object* >(u"CollisionDetection::checkCollision(): BROKEN NORMAL @ "_j));
+		_Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL @ "));
 		// TODO: Print back trace
 	}
 }

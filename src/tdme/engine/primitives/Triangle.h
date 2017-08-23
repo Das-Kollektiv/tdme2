@@ -28,7 +28,6 @@ class tdme::engine::primitives::Triangle final
 	: public BoundingVolume
 {
 public:
-
 	/** 
 	 * @return triangle vertices
 	 */
@@ -43,6 +42,11 @@ public:
 	float computeDimensionOnAxis(Vector3* axis) override;
 	void update() override;
 	BoundingVolume* clone() override;
+
+	/**
+	 * Public constructor
+	 */
+	Triangle();
 
 	/**
 	 * Public constructor
