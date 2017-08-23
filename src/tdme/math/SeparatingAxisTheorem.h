@@ -4,7 +4,6 @@
 
 #include <vector>
 
-#include <Array.h>
 #include <fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
@@ -67,6 +66,6 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset);
+	static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, float& satPenetration);
 
 };

@@ -3,24 +3,15 @@
 #pragma once
 
 #include <array>
-#include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::array;
-using std::vector;
 
-using java::lang::Object;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
@@ -34,152 +25,17 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::BoundingVolume, ::java::lang::ObjectArray > BoundingVolumeArray;
-typedef ::SubArray< ::tdme::engine::primitives::Triangle, ::java::lang::ObjectArray, BoundingVolumeArray > TriangleArray;
-}  // namespace primitives
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-
-namespace engine {
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::TriangleArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > TriangleArrayArray;
-}  // namespace primitives
-}  // namespace engine
-}  // namespace tdme
-
-using java::io::SerializableArray;
-using java::lang::CloneableArray;
-using java::lang::ObjectArray;
-using tdme::engine::primitives::BoundingVolumeArray;
-using tdme::engine::primitives::TriangleArray;
-using tdme::engine::primitives::TriangleArrayArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
-
 /** 
  * Collision detection
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::physics::CollisionDetection final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int32_t SAT_AXES_TEST_MAX { 20 };
-	static CollisionDetection* instance;
-	static Object* synchronizeObject;
-	static Vector3* zeroVector;
-	static int32_tArray* lineSegmentsTriangleIndices;
-	Vector3* closestPointOnCapsule1 {  };
-	Vector3* closestPointOnCapsule2 {  };
-	Vector3* closestPoint {  };
-	Vector3* axis {  };
-	OrientedBoundingBox* obbExtended {  };
-	Vector3* contactMin {  };
-	Vector3* contactMax {  };
-	Vector3* contactAvg {  };
-	Vector3* contactAvgCollisionNormal {  };
-	Vector3* contactAvgSubContactMin {  };
-	Vector3* contactOptimal {  };
-	Sphere* sphere1 {  };
-	Sphere* sphere2 {  };
-	OrientedBoundingBox* obbConverted1 {  };
-	OrientedBoundingBox* obbConverted2 {  };
-	Vector3* pointOnFaceNearest {  };
-	Vector3* pointOnFaceOpposite {  };
-	Vector3* triangle1Edge1 {  };
-	Vector3* triangle1Edge2 {  };
-	Vector3* triangle1Edge3 {  };
-	Vector3* triangle1Normal {  };
-	Vector3* triangle2Edge1 {  };
-	Vector3* triangle2Edge2 {  };
-	Vector3* triangle2Edge3 {  };
-	Vector3* triangle2Normal {  };
-	array<Vector3*, 5> closestPointsOnCapsuleSegment {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
-	array<Vector3*, 5> closestPointsOnTriangleSegments {{ new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3() }};
-	vector<Triangle*> testTriangles {  };
-	Vector3* satAxis {  };
-	int32_t satAxesCount {  };
-	floatArray* satPenetrations {  };
-	array<Vector3*, 20> satAxes {{
-		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
-		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
-		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
-		new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(),
-	}};
-	bool haveSatAxisBestFit {  };
-	Vector3* satAxisBestFit {  };
-	float satAxisBestFitPenetration {  };
-	SeparatingAxisTheorem* separatingAxisTheorem {  };
-	Vector3* hitPoint {  };
-	TriangleTriangleIntersection* triangleTriangleIntersection {  };
-	Triangle* triangle1 {  };
-	Triangle* triangle2 {  };
-	Vector3* hitPointTriangle1 {  };
-	Vector3* hitPointTriangle2 {  };
-	CollisionResponse* collision1 {  };
 	static constexpr bool CHECK_COLLISIONRESPONSE { false };
-
-public:
-
-	/** 
-	 * Singleton method
-	 * @return collision detection for current thread
-	 */
-	static CollisionDetection* getInstance();
-
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
-
-private:
-
-	/** 
-	 * Reset SAT axes
-	 */
-	void resetSATAxes();
-
-	/** 
-	 * Add axis to SAT test
-	 * @param axis
-	 */
-	void addSATAxis(Vector3* axis);
-
-	/** 
-	 * Determine sat axis best fit
-	 */
-	void determineSatAxisBestFit();
-
-	/** 
-	 * Reset triangles to test
-	 */
-	void resetTriangles();
+	static constexpr array<int32_t,6> LINESEGMENTSTRIANGLEINDICES {{ 0, 1, 1, 2, 2, 0 }};
 
 public:
 
@@ -202,7 +58,7 @@ public:
 	 * @param collision response
 	 * @return collision 
 	 */
-	bool doCollide(BoundingBox* b1, BoundingBox* b2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* b1, BoundingBox* b2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if axis aligned bounding box collides with sphere
@@ -212,7 +68,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(BoundingBox* aabb, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* aabb, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if sphere is colliding with axis aligned bounding box
@@ -222,7 +78,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Sphere* sphere, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* sphere, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if axis aligned bounding box collides with capsule
@@ -232,7 +88,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(BoundingBox* aabb, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* aabb, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if capsule collides with axis aligned bounding box
@@ -242,7 +98,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Capsule* capsule, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* capsule, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if 2 spheres are colliding 
@@ -252,7 +108,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Sphere* s1, Sphere* s2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* s1, Sphere* s2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if 2 capsules do collide
@@ -262,7 +118,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Capsule* c1, Capsule* c2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* c1, Capsule* c2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if capsule is colliding with sphere
@@ -272,7 +128,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Capsule* c, Sphere* s, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* c, Sphere* s, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if sphere is colliding with capsule
@@ -282,7 +138,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Sphere* s, Capsule* c, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* s, Capsule* c, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if oriented bounding box 1 collides with oriented bounding box 2
@@ -293,7 +149,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(OrientedBoundingBox* obb1, OrientedBoundingBox* obb2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb1, OrientedBoundingBox* obb2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if oriented bounding box collides with axis aligned bounding box
@@ -303,7 +159,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(OrientedBoundingBox* obb, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if axis aligned bounding box collides with oriented bounding box
@@ -313,7 +169,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(BoundingBox* aabb, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* aabb, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if oriented bounding box collides with sphere
@@ -323,7 +179,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(OrientedBoundingBox* obb, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if sphere collides with oriented bounding box
@@ -333,7 +189,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Sphere* sphere, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* sphere, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if oriented bounding box collides with capsule
@@ -343,7 +199,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(OrientedBoundingBox* obb, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if capsule collides with oriented bounding box
@@ -353,7 +209,7 @@ public:
 	 * @param collision
 	 * @return collision 
 	 */
-	bool doCollide(Capsule* capsule, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* capsule, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if triangle collides with sphere
@@ -363,7 +219,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Triangle* triangle, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Checks if sphere collides with triangle
@@ -373,7 +229,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Sphere* sphere, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* sphere, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if sphere collides with mesh 
@@ -383,7 +239,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(Sphere* sphere, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Sphere* sphere, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if sphere collides with mesh 
@@ -393,7 +249,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh, Sphere* sphere, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if triangle collides with bounding box
@@ -403,7 +259,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Triangle* triangle, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if bounding box collides with triangle
@@ -413,7 +269,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(BoundingBox* aabb, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* aabb, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if triangle collides with oriented bounding box
@@ -423,7 +279,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Triangle* triangle, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if oriented bounding collides with triangle box
@@ -433,7 +289,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(OrientedBoundingBox* obb, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if mesh collides with axis aligned bounding box
@@ -443,7 +299,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh, BoundingBox* aabb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if axis aligned bounding box collides with mesh 
@@ -453,7 +309,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(BoundingBox* aabb, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(BoundingBox* aabb, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if mesh collides with oriented bounding box
@@ -463,7 +319,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if oriented bounding box collides with mesh 
@@ -473,7 +329,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(OrientedBoundingBox* obb, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(OrientedBoundingBox* obb, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if triangle collides with another triangle
@@ -483,7 +339,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(Triangle* triangle1, Triangle* triangle2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle1, Triangle* triangle2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if mesh collides with another mesh
@@ -494,7 +350,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if triangle collides with mesh
@@ -504,7 +360,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(Triangle* triangle, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if mesh collides with triangle
@@ -514,7 +370,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if triangle collides with capsule
@@ -524,7 +380,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Triangle* triangle, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Triangle* triangle, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if capsule collides with triangle
@@ -534,7 +390,7 @@ public:
 	 * @param collision
 	 * @return collision
 	 */
-	bool doCollide(Capsule* capsule, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* capsule, Triangle* triangle, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if capsule collides with mesh 
@@ -544,7 +400,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(Capsule* capsule, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(Capsule* capsule, ConvexMesh* mesh, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Check if mesh collides with capsule 
@@ -554,7 +410,7 @@ public:
 	 * @param collision response
 	 * @return if collided
 	 */
-	bool doCollide(ConvexMesh* mesh, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
+	static bool doCollide(ConvexMesh* mesh, Capsule* capsule, Vector3* movement, CollisionResponse* collision);
 
 	/** 
 	 * Compute hit points for intersecting obb1 with obb2
@@ -562,7 +418,7 @@ public:
 	 * @param obb2
 	 * @param collision entity
 	 */
-	void computeHitPoints(OrientedBoundingBox* obb1, OrientedBoundingBox* obb2, CollisionResponse_Entity* collisionEntity);
+	static void computeHitPoints(OrientedBoundingBox* obb1, OrientedBoundingBox* obb2, CollisionResponse_Entity* collisionEntity);
 
 	/** 
 	 * Compute hit points for intersecting obb1 with obb2
@@ -570,7 +426,7 @@ public:
 	 * @param obb2
 	 * @param collision entity
 	 */
-	void computeHitPoints(Triangle* triangle, OrientedBoundingBox* obb, CollisionResponse_Entity* collisionEntity);
+	static void computeHitPoints(Triangle* triangle, OrientedBoundingBox* obb, CollisionResponse_Entity* collisionEntity);
 
 	/** 
 	 * Compute hit points for intersecting obb1 with obb2
@@ -578,7 +434,7 @@ public:
 	 * @param triangle 2
 	 * @param collision entity
 	 */
-	void computeHitPoints(Triangle* triangle1, Triangle* triangle2, CollisionResponse_Entity* collisionEntity);
+	static void computeHitPoints(Triangle* triangle1, Triangle* triangle2, CollisionResponse_Entity* collisionEntity);
 
 private:
 
@@ -588,7 +444,7 @@ private:
 	 * @param triangle 2
 	 * @param collision entity
 	 */
-	void computeCoplanarTrianglesHitPoints(Triangle* triangle1, Triangle* triangle2, CollisionResponse_Entity* collisionEntity);
+	static void computeCoplanarTrianglesHitPoints(Triangle* triangle1, Triangle* triangle2, CollisionResponse_Entity* collisionEntity);
 
 public:
 
@@ -598,7 +454,7 @@ public:
 	 * @param bounding volume 2
 	 * @return
 	 */
-	bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2);
+	static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2);
 
 private:
 
@@ -616,18 +472,4 @@ private:
 	 * @param collision
 	 */
 	static void checkCollision(CollisionResponse* collision);
-
-	// Generated
-	CollisionDetection();
-protected:
-	CollisionDetection(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

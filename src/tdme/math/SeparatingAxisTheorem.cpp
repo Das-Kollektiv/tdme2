@@ -57,7 +57,7 @@ bool SeparatingAxisTheorem::checkPointInVerticesOnAxis(vector<Vector3>* vertices
 	return pOnAxis >= min && pOnAxis <= max;
 }
 
-bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, floatArray* resultArray, int32_t resultOffset)
+bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, float& satPenetration)
 {
 	Vector3 axis;
 	axis.set(axisTest)->normalize();
@@ -78,7 +78,7 @@ bool SeparatingAxisTheorem::doSpanIntersect(vector<Vector3>* vertices1, vector<V
 	if (min2 < min1) {
 		axisTest->scale(-1.0f);
 	}
-	(*resultArray)[resultOffset] = len1 + len2 - len;
+	satPenetration = len1 + len2 - len;
 	return true;
 }
 
