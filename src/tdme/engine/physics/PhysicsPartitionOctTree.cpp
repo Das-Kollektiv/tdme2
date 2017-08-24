@@ -2,6 +2,7 @@
 #include <tdme/engine/physics/PhysicsPartitionOctTree.h>
 
 #include <algorithm>
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -10,8 +11,6 @@
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/physics/CollisionDetection.h>
-#include <tdme/engine/physics/PhysicsPartitionOctTree_reset_2.h>
-#include <tdme/engine/physics/PhysicsPartitionOctTree_reset_3.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -22,6 +21,7 @@
 #include <tdme/utils/_Console.h>
 
 using std::find;
+using std::list;
 using std::map;
 using std::remove;
 using std::wstring;
@@ -51,7 +51,6 @@ constexpr float PhysicsPartitionOctTree::PARTITION_SIZE_MAX;
 
 PhysicsPartitionOctTree::PhysicsPartitionOctTree()
 {
-	treeRoot = nullptr;
 	this->sideVector.set(1.0f, 0.0f, 0.0f);
 	this->upVector.set(0.0f, 1.0f, 0.0f);
 	this->forwardVector.set(0.0f, 0.0f, 1.0f);
@@ -60,46 +59,36 @@ PhysicsPartitionOctTree::PhysicsPartitionOctTree()
 
 void PhysicsPartitionOctTree::reset()
 {
-	this->boundingBoxPool = new PhysicsPartitionOctTree_reset_2();
-	this->partitionTreeNodePool = new PhysicsPartitionOctTree_reset_3(this);
-	this->treeRoot = new PhysicsPartitionOctTree_PartitionTreeNode();
-	this->treeRoot->partitionSize = -1;
-	this->treeRoot->x = -1;
-	this->treeRoot->y = -1;
-	this->treeRoot->z = -1;
-	this->treeRoot->parent = nullptr;
-	this->treeRoot->bv = nullptr;
-	this->treeRoot->subNodes.clear();
-	this->treeRoot->partitionRidigBodies.clear();
-	this->rigidBodyIterator.clear();
+	this->treeRoot.partitionSize = -1;
+	this->treeRoot.x = -1;
+	this->treeRoot.y = -1;
+	this->treeRoot.z = -1;
+	this->treeRoot.parent = nullptr;
 }
 
 PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
 {
-	auto node = partitionTreeNodePool->allocate();
-	node->partitionSize = partitionSize;
-	node->x = x;
-	node->y = y;
-	node->z = z;
-	node->parent = parent;
-	node->bv = boundingBoxPool->allocate();
-	node->bv->getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
-	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
-	node->bv->update();
-	node->subNodes.clear();
-	node->subNodesByCoordinate.clear();
-	node->partitionRidigBodies.clear();
+	PhysicsPartitionOctTree_PartitionTreeNode node;
+	node.partitionSize = partitionSize;
+	node.x = x;
+	node.y = y;
+	node.z = z;
+	node.parent = parent;
+	node.bv.getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
+	node.bv.getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
+	node.bv.update();
 	parent->subNodes.push_back(node);
-	if (parent == treeRoot) {
-		wstring key = to_wstring(node->x) + L"," + to_wstring(node->y) + L"," + to_wstring(node->z);
-		parent->subNodesByCoordinate[key] = node;
+	PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
+	if (parent == &treeRoot) {
+		wstring key = to_wstring(node.x) + L"," + to_wstring(node.y) + L"," + to_wstring(node.z);
+		parent->subNodesByCoordinate[key] = storedNode;
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
 		for (auto _x = 0; _x < 2; _x++)
 		for (auto _z = 0; _z < 2; _z++) {
 			createPartition(
-				node,
+				storedNode,
 				static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x,
 				static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y,
 				static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z,
@@ -107,7 +96,7 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 			);
 		}
 	}
-	return node;
+	return storedNode;
 }
 
 void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
@@ -138,9 +127,9 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
 		wstring key = to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition);
-		auto nodeIt = treeRoot->subNodesByCoordinate.find(key);
-		if (nodeIt == treeRoot->subNodesByCoordinate.end()) {
-			createPartition(treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+		auto nodeIt = treeRoot.subNodesByCoordinate.find(key);
+		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
+			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
 	}
 
@@ -177,9 +166,15 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
 				removePartitionNode(rootPartitionTreeNode);
-				treeRoot->subNodes.erase(remove(treeRoot->subNodes.begin(), treeRoot->subNodes.end(), rootPartitionTreeNode), treeRoot->subNodes.end());
-				wstring key = to_wstring(rootPartitionTreeNode->x) + L"," + to_wstring(rootPartitionTreeNode->y) + L"," + to_wstring(rootPartitionTreeNode->z);
-				treeRoot->subNodesByCoordinate.erase(key);
+				for (auto treeRootSubNodeIt = treeRoot.subNodes.begin(); treeRootSubNodeIt != treeRoot.subNodes.end(); ++treeRootSubNodeIt) {
+					if ((void*)&treeRootSubNodeIt == (void*)rootPartitionTreeNode) {
+						treeRoot.subNodes.erase(treeRootSubNodeIt);
+						break;
+					}
+				}
+				treeRoot.subNodesByCoordinate.erase(
+					to_wstring(rootPartitionTreeNode->x) + L"," + to_wstring(rootPartitionTreeNode->y) + L"," + to_wstring(rootPartitionTreeNode->z)
+				);
 			}
 		}
 	}
@@ -191,8 +186,8 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 	if (node->partitionRidigBodies.size() > 0) {
 		return false;
 	} else {
-		for (auto i = 0; i < node->subNodes.size(); i++) {
-			if (isPartitionNodeEmpty(node->subNodes.at(i)) == false)
+		for (auto& subNode: node->subNodes) {
+			if (isPartitionNodeEmpty(&subNode) == false)
 				return false;
 		}
 		return true;
@@ -205,42 +200,38 @@ void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_Partit
 		_Console::println(wstring(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
 		node->partitionRidigBodies.clear();
 	} else {
-		for (auto i = 0; i < node->subNodes.size(); i++) {
-			auto subNode = node->subNodes.at(i);
-			removePartitionNode(subNode);
+		for (auto& subNode: node->subNodes) {
+			removePartitionNode(&subNode);
 		}
 		node->subNodes.clear();
 	}
-	boundingBoxPool->release(node->bv);
-	node->bv = nullptr;
-	partitionTreeNodePool->release(node);
 }
 
 void PhysicsPartitionOctTree::addToPartitionTree(PhysicsPartitionOctTree_PartitionTreeNode* node, RigidBody* rigidBody, BoundingBox* cbv)
 {
-	if (CollisionDetection::doCollideAABBvsAABBFast(node->bv, cbv) == false) {
+	if (CollisionDetection::doCollideAABBvsAABBFast(&node->bv, cbv) == false) {
 		return;
 	}
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionRidigBodies.push_back(rigidBody);
 		rigidBodyPartitionNodes[rigidBody->getId()->getCPPWString()].push_back(node);
 	} else {
-		for (auto i = 0; i < node->subNodes.size(); i++) {
-			addToPartitionTree(node->subNodes.at(i), rigidBody, cbv);
+		for (auto& subNode: node->subNodes) {
+			addToPartitionTree(&subNode, rigidBody, cbv);
 		}
 	}
 }
 
 void PhysicsPartitionOctTree::addToPartitionTree(RigidBody* rigidBody, BoundingBox* cbv)
 {
-	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
-		addToPartitionTree(treeRoot->subNodes.at(i), rigidBody, cbv);
+	for (auto& subNode: treeRoot.subNodes) {
+		addToPartitionTree(&subNode, rigidBody, cbv);
 	}
 }
 
 int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<RigidBody*>& rigidBodyIterator)
 {
-	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, node->bv) == false) {
+	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
 		return 1;
 	}
 	if (node->partitionRidigBodies.size() > 0) {
@@ -248,8 +239,8 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 		return 1;
 	} else {
 		auto lookUps = 1;
-		for (auto i = 0; i < node->subNodes.size(); i++) {
-			lookUps += doPartitionTreeLookUpNearEntities(node->subNodes.at(i), cbv, rigidBodyIterator);
+		for (auto& subNode: node->subNodes) {
+			lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv, rigidBodyIterator);
 		}
 		return lookUps;
 	}
@@ -266,8 +257,8 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;
-	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), &boundingBox, rigidBodyIterator);
+	for (auto& subNode: treeRoot.subNodes) {
+		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox, rigidBodyIterator);
 	}
 	return &rigidBodyIterator;
 }
@@ -282,8 +273,8 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;
-	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), &boundingBox, rigidBodyIterator);
+	for (auto& subNode: treeRoot.subNodes) {
+		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox, rigidBodyIterator);
 	}
 	return &rigidBodyIterator;
 }

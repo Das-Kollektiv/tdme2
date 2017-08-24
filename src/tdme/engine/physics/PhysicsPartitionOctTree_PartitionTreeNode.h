@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -9,10 +10,12 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/physics/RigidBody.h>
 
+using std::list;
 using std::map;
 using std::wstring;
 using std::vector;
@@ -33,8 +36,8 @@ struct tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode final
 	int32_t y {  };
 	int32_t z {  };
 	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
-	BoundingBox* bv {  };
-	vector<PhysicsPartitionOctTree_PartitionTreeNode*> subNodes {  };
+	BoundingBox bv {  };
+	list<PhysicsPartitionOctTree_PartitionTreeNode> subNodes {  };
 	map<wstring, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<RigidBody*> partitionRidigBodies {  };
 };

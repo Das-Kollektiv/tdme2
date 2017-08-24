@@ -14,6 +14,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
+#include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
@@ -40,8 +41,6 @@ class tdme::engine::physics::PhysicsPartitionOctTree final
 	: public PhysicsPartition
 {
 	friend class PhysicsPartitionOctTree_PartitionTreeNode;
-	friend class PhysicsPartitionOctTree_reset_2;
-	friend class PhysicsPartitionOctTree_reset_3;
 
 private:
 	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
@@ -50,10 +49,8 @@ private:
 	Vector3 sideVector {  };
 	Vector3 forwardVector {  };
 	Vector3 upVector {  };
-	Pool<BoundingBox*>* boundingBoxPool {  };
-	Pool<PhysicsPartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
-	PhysicsPartitionOctTree_PartitionTreeNode* treeRoot {  };
+	PhysicsPartitionOctTree_PartitionTreeNode treeRoot {  };
 
 public:
 	static constexpr float PARTITION_SIZE_MIN { 4.0f };
