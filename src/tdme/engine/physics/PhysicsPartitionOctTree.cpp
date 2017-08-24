@@ -76,13 +76,13 @@ void PhysicsPartitionOctTree::reset()
 
 PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
 {
-	auto node = dynamic_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(partitionTreeNodePool->allocate());
+	auto node = partitionTreeNodePool->allocate();
 	node->partitionSize = partitionSize;
 	node->x = x;
 	node->y = y;
 	node->z = z;
 	node->parent = parent;
-	node->bv = dynamic_cast< BoundingBox* >(boundingBoxPool->allocate());
+	node->bv = boundingBoxPool->allocate();
 	node->bv->getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node->bv->update();
@@ -98,7 +98,13 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 		for (auto _y = 0; _y < 2; _y++) 
 		for (auto _x = 0; _x < 2; _x++)
 		for (auto _z = 0; _z < 2; _z++) {
-			createPartition(node, static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x, static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y, static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z, partitionSize / 2.0f);
+			createPartition(
+				node,
+				static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x,
+				static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y,
+				static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z,
+				partitionSize / 2.0f
+			);
 		}
 	}
 	return node;
@@ -186,7 +192,7 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 		return false;
 	} else {
 		for (auto i = 0; i < node->subNodes.size(); i++) {
-			if (isPartitionNodeEmpty(dynamic_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes.at(i))) == false)
+			if (isPartitionNodeEmpty(node->subNodes.at(i)) == false)
 				return false;
 		}
 		return true;
@@ -196,7 +202,7 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionRidigBodies.size() > 0) {
-		_Console::println(static_cast< Object* >(u"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"_j));
+		_Console::println(wstring(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
 		node->partitionRidigBodies.clear();
 	} else {
 		for (auto i = 0; i < node->subNodes.size(); i++) {
@@ -252,7 +258,7 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector) + 0.2f, cbv->computeDimensionOnAxis(&upVector) + 0.2f, cbv->computeDimensionOnAxis(&forwardVector) + 0.2f)->scale(0.5f);
+	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector))->scale(0.5f);
 	boundingBox.getMin()->set(center);
 	boundingBox.getMin()->sub(&halfExtension);
 	boundingBox.getMax()->set(center);

@@ -41,30 +41,20 @@ using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-PartitionOctTree::PartitionOctTree() 
-{
-	treeRoot = nullptr;
-	this->boundingBox = new BoundingBox();
-	this->halfExtension = new Vector3();
-	this->sideVector = new Vector3(1.0f, 0.0f, 0.0f);
-	this->upVector = new Vector3(0.0f, 1.0f, 0.0f);
-	this->forwardVector = new Vector3(0.0f, 0.0f, 1.0f);
-	reset();
-}
-
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MID;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
+
+PartitionOctTree::PartitionOctTree() 
+{
+	treeRoot = nullptr;
+	this->sideVector.set(1.0f, 0.0f, 0.0f);
+	this->upVector.set(0.0f, 1.0f, 0.0f);
+	this->forwardVector.set(0.0f, 0.0f, 1.0f);
+	reset();
+}
 
 void PartitionOctTree::reset()
 {
@@ -86,13 +76,13 @@ void PartitionOctTree::reset()
 
 PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
 {
-	auto node = java_cast< PartitionOctTree_PartitionTreeNode* >(partitionTreeNodePool->allocate());
+	auto node = partitionTreeNodePool->allocate();
 	node->partitionSize = partitionSize;
 	node->x = x;
 	node->y = y;
 	node->z = z;
 	node->parent = parent;
-	node->bv = java_cast< BoundingBox* >(boundingBoxPool->allocate());
+	node->bv = boundingBoxPool->allocate();
 	node->bv->getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node->bv->update();
@@ -108,7 +98,13 @@ PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionO
 		for (auto _y = 0; _y < 2; _y++) 
 		for (auto _x = 0; _x < 2; _x++)
 		for (auto _z = 0; _z < 2; _z++) {
-			createPartition(node, static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x, static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y, static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z, partitionSize / 2.0f);
+			createPartition(
+				node,
+				static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x,
+				static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y,
+				static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z,
+				partitionSize / 2.0f
+			);
 		}
 	}
 }
@@ -303,32 +299,32 @@ int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_Par
 ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto center = cbv->getCenter();
-	halfExtension->set(cbv->computeDimensionOnAxis(sideVector) + 0.2f, cbv->computeDimensionOnAxis(upVector) + 0.2f, cbv->computeDimensionOnAxis(forwardVector) + 0.2f)->scale(0.5f);
-	boundingBox->getMin()->set(center);
-	boundingBox->getMin()->sub(halfExtension);
-	boundingBox->getMax()->set(center);
-	boundingBox->getMax()->add(halfExtension);
-	boundingBox->update();
+	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector))->scale(0.5f);
+	boundingBox.getMin()->set(center);
+	boundingBox.getMin()->sub(&halfExtension);
+	boundingBox.getMax()->set(center);
+	boundingBox.getMax()->add(&halfExtension);
+	boundingBox.update();
 	entityIterator.clear();
 	auto lookUps = 0;
 	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), boundingBox, entityIterator);
+		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), &boundingBox, entityIterator);
 	}
 	return &entityIterator;
 }
 
 ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(Vector3* center)
 {
-	halfExtension->set(0.2f, 0.2f, 0.2f)->scale(0.5f);
-	boundingBox->getMin()->set(center);
-	boundingBox->getMin()->sub(halfExtension);
-	boundingBox->getMax()->set(center);
-	boundingBox->getMax()->add(halfExtension);
-	boundingBox->update();
+	halfExtension.set(0.2f, 0.2f, 0.2f)->scale(0.5f);
+	boundingBox.getMin()->set(center);
+	boundingBox.getMin()->sub(&halfExtension);
+	boundingBox.getMax()->set(center);
+	boundingBox.getMax()->add(&halfExtension);
+	boundingBox.update();
 	entityIterator.clear();
 	auto lookUps = 0;
 	for (auto i = 0; i < treeRoot->subNodes.size(); i++) {
-		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), boundingBox, entityIterator);
+		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), &boundingBox, entityIterator);
 	}
 	return &entityIterator;
 }

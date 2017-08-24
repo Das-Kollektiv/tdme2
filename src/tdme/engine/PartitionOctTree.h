@@ -9,7 +9,9 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
@@ -40,11 +42,11 @@ class tdme::engine::PartitionOctTree final
 {
 private:
 	ArrayListIteratorMultiple<Entity*> entityIterator {  };
-	BoundingBox* boundingBox {  };
-	Vector3* halfExtension {  };
-	Vector3* sideVector {  };
-	Vector3* forwardVector {  };
-	Vector3* upVector {  };
+	BoundingBox boundingBox {  };
+	Vector3 halfExtension {  };
+	Vector3 sideVector {  };
+	Vector3 forwardVector {  };
+	Vector3 upVector {  };
 	Pool<BoundingBox*>* boundingBoxPool {  };
 	Pool<PartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
