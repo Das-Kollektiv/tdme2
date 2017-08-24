@@ -5,7 +5,6 @@
 #include <array>
 
 #include <tdme/math/Vector3.h>
-#include <Array.h>
 
 using std::array;
 using std::begin;

@@ -1,19 +1,10 @@
 // Generated from /tdme/src/tdme/engine/physics/Matrix6x6.java
 #include <tdme/engine/physics/Matrix6x6.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/lang/System.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/physics/Vector6.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
 
 using tdme::engine::physics::Matrix6x6;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::lang::System;
-using java::util::Arrays;
 using tdme::engine::physics::Vector6;
 using tdme::math::Vector3;
 
