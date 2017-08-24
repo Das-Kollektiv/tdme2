@@ -3,13 +3,9 @@
 #pragma once
 
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::RigidBody;
-
-
 
 /** 
  * Rigid body collision listener
@@ -17,7 +13,6 @@ using tdme::engine::physics::RigidBody;
  * @version $Id$
  */
 struct tdme::engine::physics::CollisionListener
-	: public virtual Object
 {
 
 	/** 
@@ -48,7 +43,4 @@ struct tdme::engine::physics::CollisionListener
 	 * @param rigid body 2
 	 */
 	virtual void onCollisionEnd(RigidBody* rigidBody1, RigidBody* rigidBody2) = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };
