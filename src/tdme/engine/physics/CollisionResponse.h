@@ -88,6 +88,11 @@ public:
 	float getPenetration();
 	Vector3* getNormal();
 
+	/**
+	 * @return get hit points
+	 */
+	vector<Vector3>* getHitPoints();
+
 	/** 
 	 * @return hit points count
 	 */

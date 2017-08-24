@@ -120,6 +120,11 @@ Vector3* CollisionResponse::getNormal()
 	return &selectedEntity->normal;
 }
 
+vector<Vector3>* CollisionResponse::getHitPoints() {
+	if (selectedEntity == nullptr) return nullptr;
+	return &selectedEntity->hitPoints;
+}
+
 int32_t CollisionResponse::getHitPointsCount()
 {
 	if (selectedEntity == nullptr) return 0;

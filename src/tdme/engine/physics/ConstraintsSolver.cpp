@@ -132,7 +132,6 @@ void ConstraintsSolver::init()
 	constrainedVelocityVectors.resize(BODIES_MAX);
 	forcesVectors.resize(BODIES_MAX);
 	a.resize(BODIES_MAX);
-	tmpLamdaValues = new floatArray(30 * 3);
 	tmpMatrix1x6 = new Matrix1x6();
 	tmpVector6 = new Vector6();
 	newLinearVelocity = new Vector3();
@@ -223,7 +222,7 @@ void ConstraintsSolver::initialize(float dt)
 		auto contactCacheInfo = contactCache->get(constraintedBody->rb1, constraintedBody->rb2, &constraintedBody->collision);
 		if (contactCacheInfo != nullptr) {
 			for (auto j = 0; j < hitPointsCount * 3; j++) {
-				lambdaInit->setValue(currentConstraint + j, (*contactCacheInfo->lamdas)[j]);
+				lambdaInit->setValue(currentConstraint + j, contactCacheInfo->lamdas[j]);
 			}
 		} else {
 			for (auto j = 0; j < hitPointsCount * 3; j++) {
@@ -347,10 +346,11 @@ void ConstraintsSolver::updateContactCache()
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto constraintsEntity = (*constraintsEntities)[i];
 		auto hitPoints = constraintsEntity->collision.getHitPointsCount();
+		vector<float> tmpLamdaValues;
 		for (auto j = 0; j < hitPoints * 3; j++) {
-			(*tmpLamdaValues)[j] = lambda->getValue(constraintsIdx + j);
+			tmpLamdaValues.push_back(lambda->getValue(constraintsIdx + j));
 		}
-		contactCache->add(constraintsEntity->rb1, constraintsEntity->rb2, &constraintsEntity->collision, tmpLamdaValues);
+		contactCache->add(constraintsEntity->rb1, constraintsEntity->rb2, &constraintsEntity->collision, &tmpLamdaValues);
 		constraintsIdx += hitPoints * 3;
 	}
 }
