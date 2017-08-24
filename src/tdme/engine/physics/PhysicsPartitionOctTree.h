@@ -9,7 +9,9 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -43,11 +45,11 @@ class tdme::engine::physics::PhysicsPartitionOctTree final
 
 private:
 	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
-	BoundingBox* boundingBox {  };
-	Vector3* halfExtension {  };
-	Vector3* sideVector {  };
-	Vector3* forwardVector {  };
-	Vector3* upVector {  };
+	BoundingBox boundingBox {  };
+	Vector3 halfExtension {  };
+	Vector3 sideVector {  };
+	Vector3 forwardVector {  };
+	Vector3 upVector {  };
 	Pool<BoundingBox*>* boundingBoxPool {  };
 	Pool<PhysicsPartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
