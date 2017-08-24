@@ -107,8 +107,6 @@ SRCS = \
 	src/tdme/engine/physics/RigidBody.cpp \
 	src/tdme/engine/physics/Vector6.cpp \
 	src/tdme/engine/physics/World.cpp \
-	src/tdme/engine/physics/World_1.cpp \
-	src/tdme/engine/physics/World_2.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
 	src/tdme/engine/primitives/BoundingVolume.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \

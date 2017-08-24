@@ -21,8 +21,6 @@
 #include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree.h>
 #include <tdme/engine/physics/RigidBody.h>
-#include <tdme/engine/physics/World_1.h>
-#include <tdme/engine/physics/World_2.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
@@ -71,14 +69,6 @@ using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::_Console;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 World::World(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -195,7 +185,7 @@ void World::update(float deltaTime)
 		}
 		auto nearObjects = 0;
 		for (auto _i = partition->getObjectsNearTo(rigidBody1->cbv)->iterator(); _i->hasNext(); ) {
-			RigidBody* rigidBody2 = java_cast< RigidBody* >(_i->next());
+			RigidBody* rigidBody2 = _i->next();
 			{
 				if (rigidBody2->enabled == false) {
 					continue;
@@ -343,14 +333,14 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 	auto height = -10000.0f;
 	RigidBody* heightRigidBody = nullptr;
 	for (auto _i = partition->getObjectsNearTo(static_cast< BoundingVolume* >(heightBoundingBox))->iterator(); _i->hasNext(); ) {
-		RigidBody* rigidBody = java_cast< RigidBody* >(_i->next());
+		RigidBody* rigidBody = _i->next();
 		{
 			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false)
 				continue;
 
 			auto cbv = rigidBody->cbv;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
-				if (LineSegment::doesBoundingBoxCollideWithLineSegment(java_cast< BoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
+				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
@@ -359,7 +349,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 				}
 			} else
 			if (dynamic_cast< OrientedBoundingBox* >(cbv) != nullptr) {
-				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(java_cast< OrientedBoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
+				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(dynamic_cast< OrientedBoundingBox* >(cbv), heightBoundingBox->getMin(), heightBoundingBox->getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
@@ -462,7 +452,7 @@ const vector<RigidBody*>& World::doesCollideWith(int32_t typeIds, BoundingVolume
 {
 	collidedRigidBodies.clear();
 	for (auto _i = partition->getObjectsNearTo(boundingVolume)->iterator(); _i->hasNext(); ) {
-		RigidBody* rigidBody = java_cast< RigidBody* >(_i->next());
+		RigidBody* rigidBody = _i->next();
 		{
 			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false)
 				continue;
