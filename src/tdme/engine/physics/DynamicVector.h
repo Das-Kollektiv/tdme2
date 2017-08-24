@@ -2,16 +2,12 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
+using std::vector;
 
 /** 
  * Dynamic Vector
@@ -19,20 +15,9 @@ struct default_init_tag;
  * @versioN $Id$
  */
 class tdme::engine::physics::DynamicVector final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	floatArray* data {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 */
-	void ctor(int32_t size);
+	vector<float> data {  };
 
 public: /* protected */
 
@@ -63,20 +48,8 @@ public: /* protected */
 	 */
 	void scale(float value, DynamicVector* dest);
 
-public:
-	String* toString() override;
-
-	// Generated
-
-public: /* protected */
+	/**
+	 * Constructor
+	 */
 	DynamicVector(int32_t size);
-protected:
-	DynamicVector(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
