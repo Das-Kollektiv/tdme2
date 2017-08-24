@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -22,7 +21,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::physics::PhysicsPartition;
-using java::lang::String;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
@@ -30,8 +28,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
-
-struct default_init_tag;
 
 /** 
  * Partition oct tree implementation
@@ -41,9 +37,9 @@ struct default_init_tag;
 class tdme::engine::physics::PhysicsPartitionOctTree final
 	: public PhysicsPartition
 {
-
-public:
-	typedef PhysicsPartition super;
+	friend class PhysicsPartitionOctTree_PartitionTreeNode;
+	friend class PhysicsPartitionOctTree_reset_2;
+	friend class PhysicsPartitionOctTree_reset_3;
 
 private:
 	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
@@ -60,12 +56,6 @@ private:
 public:
 	static constexpr float PARTITION_SIZE_MIN { 4.0f };
 	static constexpr float PARTITION_SIZE_MAX { 16.0f };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -158,30 +148,8 @@ public:
 	 */
 	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) override;
 
-	/** 
-	 * To string
-	 * @param indent
-	 * @param node
-	 * @return string representation of node
+	/**
+	 * Public constructor
 	 */
-	String* toString(String* indent, PhysicsPartitionOctTree_PartitionTreeNode* node);
-	String* toString() override;
-
-	// Generated
-
-public: /* protected */
 	PhysicsPartitionOctTree();
-protected:
-	PhysicsPartitionOctTree(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class PhysicsPartitionOctTree_PartitionTreeNode;
-	friend class PhysicsPartitionOctTree_reset_2;
-	friend class PhysicsPartitionOctTree_reset_3;
 };

@@ -19,8 +19,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 
-struct default_init_tag;
-
 /** 
  * Partition none implementation
  * @author Andreas Drewke
@@ -29,19 +27,9 @@ struct default_init_tag;
 class tdme::engine::physics::PhysicsPartitionNone final
 	: public PhysicsPartition
 {
-
-public:
-	typedef PhysicsPartition super;
-
 private:
 	vector<RigidBody*> bodies {  };
 	ArrayListIteratorMultiple<RigidBody*> arrayListIteratorMultiple {  };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -86,16 +74,8 @@ public:
 
 	// Generated
 
-public: /* protected */
+	/**
+	 * Constructor
+	 */
 	PhysicsPartitionNone();
-protected:
-	PhysicsPartitionNone(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

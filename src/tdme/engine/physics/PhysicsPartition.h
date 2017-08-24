@@ -6,19 +6,14 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
-using java::lang::Object;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
-
-
-struct default_init_tag;
 
 /** 
  * Physics partition interface
@@ -26,12 +21,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::PhysicsPartition
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 
 	/** 
@@ -72,16 +62,4 @@ public:
 	 * @return objects near to cbv
 	 */
 	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) = 0;
-
-	// Generated
-	PhysicsPartition();
-protected:
-	PhysicsPartition(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

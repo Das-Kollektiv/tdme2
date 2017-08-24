@@ -7,9 +7,7 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_reset_2.h>
@@ -26,13 +24,12 @@
 using std::find;
 using std::map;
 using std::remove;
-using std::string;
+using std::wstring;
 using std::to_wstring;
 using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using java::lang::Math;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
@@ -48,39 +45,13 @@ using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-PhysicsPartitionOctTree::PhysicsPartitionOctTree(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-PhysicsPartitionOctTree::PhysicsPartitionOctTree() 
-	: PhysicsPartitionOctTree(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void PhysicsPartitionOctTree::init()
-{
-	treeRoot = nullptr;
-}
-
 constexpr float PhysicsPartitionOctTree::PARTITION_SIZE_MIN;
 
 constexpr float PhysicsPartitionOctTree::PARTITION_SIZE_MAX;
 
-void PhysicsPartitionOctTree::ctor()
+PhysicsPartitionOctTree::PhysicsPartitionOctTree()
 {
-	super::ctor();
-	init();
+	treeRoot = nullptr;
 	this->boundingBox = new BoundingBox();
 	this->halfExtension = new Vector3();
 	this->sideVector = new Vector3(1.0f, 0.0f, 0.0f);
@@ -107,13 +78,13 @@ void PhysicsPartitionOctTree::reset()
 
 PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
 {
-	auto node = java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(partitionTreeNodePool->allocate());
+	auto node = dynamic_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(partitionTreeNodePool->allocate());
 	node->partitionSize = partitionSize;
 	node->x = x;
 	node->y = y;
 	node->z = z;
 	node->parent = parent;
-	node->bv = java_cast< BoundingBox* >(boundingBoxPool->allocate());
+	node->bv = dynamic_cast< BoundingBox* >(boundingBoxPool->allocate());
 	node->bv->getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node->bv->getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node->bv->update();
@@ -185,8 +156,11 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 		rigidBodyPartitionsVector = &rigidBodyPartitionsVectorIt->second;
 	}
 	if (rigidBodyPartitionsVector == nullptr || rigidBodyPartitionsVector->empty() == true) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"PartitionOctTree::removeRigidBody(): '"_j)->append(rigidBody->getId())
-			->append(u"' not registered"_j)->toString()));
+		_Console::println(
+			wstring(L"PartitionOctTree::removeRigidBody(): '") +
+			rigidBody->getId()->getCPPWString() +
+			wstring(L"' not registered")
+		);
 		return;
 	}
 	while (rigidBodyPartitionsVector->size() > 0) {
@@ -214,7 +188,7 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 		return false;
 	} else {
 		for (auto i = 0; i < node->subNodes.size(); i++) {
-			if (isPartitionNodeEmpty(java_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes.at(i))) == false)
+			if (isPartitionNodeEmpty(dynamic_cast< PhysicsPartitionOctTree_PartitionTreeNode* >(node->subNodes.at(i))) == false)
 				return false;
 		}
 		return true;
@@ -308,56 +282,5 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 		lookUps += doPartitionTreeLookUpNearEntities(treeRoot->subNodes.at(i), boundingBox, rigidBodyIterator);
 	}
 	return &rigidBodyIterator;
-}
-
-String* PhysicsPartitionOctTree::toString(String* indent, PhysicsPartitionOctTree_PartitionTreeNode* node)
-{
-	auto result = ::java::lang::StringBuilder().append(indent)->append(node->x)
-		->append(u"/"_j)
-		->append(node->y)
-		->append(u"/"_j)
-		->append(node->z)
-		->append(u", size "_j)
-		->append(node->partitionSize)
-		->append(u" / "_j)
-		/*
-		->append(static_cast< Object* >(node->bv))
-		*/
-		->append(u"\n"_j)->toString();
-	if (node->partitionRidigBodies.size() > 0) {
-		result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString())->toString();
-		for (auto rigidBody: node->partitionRidigBodies) {
-			result = ::java::lang::StringBuilder(result).append(::java::lang::StringBuilder().append(rigidBody->id)->append(u","_j)->toString())->toString();
-		}
-		result = ::java::lang::StringBuilder(result).append(u"\n"_j)->toString();
-	}
-	if (node->subNodes.size() > 0) {
-		for (auto subNode: node->subNodes) {
-			result = ::java::lang::StringBuilder(result).append(toString(::java::lang::StringBuilder().append(indent)->append(u"  "_j)->toString(), subNode))->toString();
-		}
-	}
-	return result;
-}
-
-String* PhysicsPartitionOctTree::toString()
-{
-	auto result = u"PartitionOctTree\n"_j;
-	for (auto subNode: treeRoot->subNodes) {
-		result = ::java::lang::StringBuilder(result).append(toString(u"  "_j, subNode))->toString();
-	}
-	return result;
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PhysicsPartitionOctTree::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.physics.PhysicsPartitionOctTree", 43);
-    return c;
-}
-
-java::lang::Class* PhysicsPartitionOctTree::getClass0()
-{
-	return class_();
 }
 

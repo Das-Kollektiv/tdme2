@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 
-#include <java/lang/Object.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
@@ -17,27 +16,9 @@ using java::lang::Object;
 using tdme::engine::physics::RigidBody;
 using tdme::utils::ArrayListIteratorMultiple;
 
-PhysicsPartitionNone::PhysicsPartitionNone(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 PhysicsPartitionNone::PhysicsPartitionNone() 
-	: PhysicsPartitionNone(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void PhysicsPartitionNone::init()
 {
 	arrayListIteratorMultiple.addArrayList(&bodies);
-}
-
-void PhysicsPartitionNone::ctor()
-{
-	super::ctor();
-	init();
 }
 
 void PhysicsPartitionNone::reset()
@@ -68,17 +49,3 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(Ve
 {
 	return &arrayListIteratorMultiple;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PhysicsPartitionNone::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.physics.PhysicsPartitionNone", 40);
-    return c;
-}
-
-java::lang::Class* PhysicsPartitionNone::getClass0()
-{
-	return class_();
-}
-
