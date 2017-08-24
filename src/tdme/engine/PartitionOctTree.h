@@ -8,6 +8,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
@@ -40,6 +41,8 @@ using tdme::utils::Pool;
 class tdme::engine::PartitionOctTree final
 	: public Partition
 {
+	friend class PartitionOctTree_PartitionTreeNode;
+
 private:
 	ArrayListIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox boundingBox {  };
@@ -47,11 +50,9 @@ private:
 	Vector3 sideVector {  };
 	Vector3 forwardVector {  };
 	Vector3 upVector {  };
-	Pool<BoundingBox*>* boundingBoxPool {  };
-	Pool<PartitionOctTree_PartitionTreeNode*>* partitionTreeNodePool {  };
 	map<wstring, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
-	PartitionOctTree_PartitionTreeNode* treeRoot {  };
+	PartitionOctTree_PartitionTreeNode treeRoot {  };
 
 public:
 	static constexpr float PARTITION_SIZE_MIN { 4.0f };
@@ -137,8 +138,4 @@ public:
 	 * Public constructor
 	 */
 	PartitionOctTree();
-private:
-	friend class PartitionOctTree_PartitionTreeNode;
-	friend class PartitionOctTreeBoundingBoxPool;
-	friend class PartitionOctTree_reset_3;
 };

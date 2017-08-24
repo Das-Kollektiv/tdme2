@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -9,11 +10,13 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
+using std::list;
 using std::map;
 using std::wstring;
 using std::vector;
@@ -30,8 +33,8 @@ struct tdme::engine::PartitionOctTree_PartitionTreeNode
 	int32_t y {  };
 	int32_t z {  };
 	PartitionOctTree_PartitionTreeNode* parent {  };
-	BoundingBox* bv {  };
-	vector<PartitionOctTree_PartitionTreeNode*> subNodes {  };
+	BoundingBox bv {  };
+	list<PartitionOctTree_PartitionTreeNode> subNodes {  };
 	map<wstring, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<Entity*> partitionEntities {  };
 };

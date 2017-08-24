@@ -58,8 +58,6 @@ SRCS = \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PartitionOctTree_PartitionTreeNode.cpp \
-	src/tdme/engine/PartitionOctTreeBoundingBoxPool.cpp \
-	src/tdme/engine/PartitionOctTreePartitionTreeNodePool.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/Rotations.cpp \

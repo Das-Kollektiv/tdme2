@@ -80,8 +80,7 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	parent->subNodes.push_back(node);
 	PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
 	if (parent == &treeRoot) {
-		wstring key = to_wstring(node.x) + L"," + to_wstring(node.y) + L"," + to_wstring(node.z);
-		parent->subNodesByCoordinate[key] = storedNode;
+		parent->subNodesByCoordinate[to_wstring(node.x) + L"," + to_wstring(node.y) + L"," + to_wstring(node.z)] = storedNode;
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
@@ -126,8 +125,7 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-		wstring key = to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition);
-		auto nodeIt = treeRoot.subNodesByCoordinate.find(key);
+		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
 			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
