@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tests/PhysicsTest2.java
 #include <tdme/tests/PhysicsTest2.h>
 
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -20,6 +22,9 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::tests::PhysicsTest2;
 using java::lang::Object;
@@ -55,13 +60,6 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 PhysicsTest2::PhysicsTest2(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -137,7 +135,7 @@ void PhysicsTest2::initialize()
 	entity->getTranslation()->setY(-1.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(u"ground"_j, true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
+	world->addStaticRigidBody(L"ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto box = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(1.0f, 1.0f, 1.0f));
 	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
@@ -148,7 +146,7 @@ void PhysicsTest2::initialize()
 		entity->getTranslation()->addY(i * 2.0f + 1.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString(), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody(L"box" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 

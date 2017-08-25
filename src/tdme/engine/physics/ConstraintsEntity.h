@@ -17,53 +17,11 @@
 using std::array;
 using std::vector;
 
-using java::lang::Object;
-using java::io::Serializable;
-using java::lang::Cloneable;
-using java::lang::String;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::DynamicVector;
 using tdme::engine::physics::Matrix1x6;
 using tdme::engine::physics::RigidBody;
 using tdme::math::Vector3;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace physics {
-typedef ::SubArray< ::tdme::engine::physics::Matrix1x6, ::java::lang::ObjectArray > Matrix1x6Array;
-}  // namespace physics
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-
-namespace engine {
-namespace physics {
-typedef ::SubArray< ::tdme::engine::physics::Matrix1x6Array, ::java::lang::CloneableArray, ::java::io::SerializableArray > Matrix1x6ArrayArray;
-}  // namespace physics
-}  // namespace engine
-}  // namespace tdme
-
-using java::io::SerializableArray;
-using java::lang::CloneableArray;
-using java::lang::ObjectArray;
-using tdme::engine::physics::Matrix1x6Array;
-using tdme::engine::physics::Matrix1x6ArrayArray;
-using tdme::math::Vector3Array;
-
-struct default_init_tag;
 
 /** 
  * Physics constraints entity
@@ -71,12 +29,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::ConstraintsEntity final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr float HITPOINT_TOLERANCE { 0.3f };
 
@@ -96,12 +49,6 @@ private:
 	 * @param dest
 	 */
 	static void computeCrossProduct(Vector3* a, Vector3* b, Vector3* dest);
-protected:
-
-	/** 
-	 * Protected constructor
-	 */
-	void ctor();
 
 public: /* protected */
 
@@ -141,21 +88,9 @@ public: /* protected */
 	 */
 	void computeBaumgarte(int32_t constraintIdx, DynamicVector* errorValues);
 
-public:
-	String* toString() override;
-
-	// Generated
-
 public: /* protected */
+	/**
+	 * Protected constructor
+	 */
 	ConstraintsEntity();
-protected:
-	ConstraintsEntity(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

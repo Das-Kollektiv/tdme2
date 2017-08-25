@@ -4,9 +4,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -43,71 +40,9 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
+
+RigidBody::RigidBody(World* world, int32_t idx, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia)
 {
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-RigidBody::RigidBody(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-RigidBody::RigidBody(World* world, int32_t idx, String* id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia) 
-	: RigidBody(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(world,idx,id,enabled,typeId,obv,transformations,restitution,friction,mass,inverseInertia);
-}
-
-void RigidBody::init()
-{
-	movement = new Vector3();
-	position = new Vector3();
-	linearVelocity = new Vector3();
-	linearVelocityLast = new Vector3();
-	force = new Vector3();
-	orientation = new Quaternion();
-	angularVelocity = new Vector3();
-	angularVelocityLast = new Vector3();
-	torque = new Vector3();
-	inverseInertia = (new Matrix4x4())->identity()->invert();
-	orientationMatrix = (new Matrix4x4())->identity();
-	worldInverseInertia = (new Matrix4x4())->identity();
-	distance = new Vector3();
-	tmpQuaternion1 = new Quaternion();
-	tmpQuaternion2 = new Quaternion();
-	tmpVector3 = new Vector3();
-}
-
-constexpr int32_t RigidBody::TYPEIDS_ALL;
-
-constexpr float RigidBody::VELOCITY_SLEEPTOLERANCE;
-
-constexpr int32_t RigidBody::SLEEPING_FRAMES;
-
-Matrix4x4* RigidBody::getNoRotationInertiaMatrix()
-{
-	clinit();
-	return new Matrix4x4(0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix4x4* RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
-{
-	clinit();
-	auto width = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_X);
-	auto height = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Y);
-	auto depth = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Z);
-	return (new Matrix4x4(scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f, 0.0f, scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth), 0.0f, 0.0f, 0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f))->invert();
-}
-
-void RigidBody::ctor(World* world, int32_t idx, String* id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia)
-{
-	super::ctor();
-	init();
 	this->world = world;
 	this->idx = idx;
 	this->id = id;
@@ -126,6 +61,31 @@ void RigidBody::ctor(World* world, int32_t idx, String* id, bool enabled, int32_
 	computeWorldInverseInertiaMatrix();
 }
 
+constexpr int32_t RigidBody::TYPEIDS_ALL;
+
+constexpr float RigidBody::VELOCITY_SLEEPTOLERANCE;
+
+constexpr int32_t RigidBody::SLEEPING_FRAMES;
+
+Matrix4x4* RigidBody::getNoRotationInertiaMatrix()
+{
+	return new Matrix4x4(0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix4x4* RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
+{
+	auto width = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_X);
+	auto height = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Y);
+	auto depth = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Z);
+	return
+		(new Matrix4x4(
+			scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f,
+			0.0f, scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth), 0.0f, 0.0f,
+			0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		))->invert();
+}
+
 void RigidBody::setIdx(int32_t idx)
 {
 	this->idx = idx;
@@ -136,7 +96,7 @@ int32_t RigidBody::getIdx()
 	return idx;
 }
 
-String* RigidBody::getId()
+const wstring& RigidBody::getId()
 {
 	return id;
 }
@@ -197,7 +157,7 @@ BoundingVolume* RigidBody::getBoudingVolume()
 void RigidBody::setBoundingVolume(BoundingVolume* obv)
 {
 	this->obv = obv;
-	this->cbv = this->obv == nullptr ? static_cast< BoundingVolume* >(nullptr) : obv->clone();
+	this->cbv = this->obv == nullptr ? nullptr : obv->clone();
 }
 
 BoundingVolume* RigidBody::getBoundingVolumeTransformed()
@@ -207,12 +167,12 @@ BoundingVolume* RigidBody::getBoundingVolumeTransformed()
 
 Vector3* RigidBody::getPosition()
 {
-	return position;
+	return &position;
 }
 
 Vector3* RigidBody::getMovement()
 {
-	return movement;
+	return &movement;
 }
 
 float RigidBody::getFriction()
@@ -254,25 +214,23 @@ void RigidBody::setMass(float mass)
 
 Vector3* RigidBody::getLinearVelocity()
 {
-	return linearVelocity;
+	return &linearVelocity;
 }
 
 Vector3* RigidBody::getAngularVelocity()
 {
-	return angularVelocity;
+	return &angularVelocity;
 }
 
 Vector3* RigidBody::getForce()
 {
-	return force;
+	return &force;
 }
 
 void RigidBody::awake(bool resetFrameCount)
 {
 	isSleeping_ = false;
-	if (resetFrameCount)
-		sleepingFrameCount = 0;
-
+	if (resetFrameCount) sleepingFrameCount = 0;
 }
 
 void RigidBody::sleep()
@@ -283,8 +241,8 @@ void RigidBody::sleep()
 
 void RigidBody::computeWorldInverseInertiaMatrix()
 {
-	orientation->computeMatrix(orientationMatrix);
-	worldInverseInertia->set(orientationMatrix)->transpose()->multiply(inverseInertia)->multiply(orientationMatrix);
+	orientation.computeMatrix(&orientationMatrix);
+	worldInverseInertia.set(&orientationMatrix)->transpose()->multiply(&inverseInertia)->multiply(&orientationMatrix);
 }
 
 void RigidBody::synch(Transformations* transformations)
@@ -293,14 +251,14 @@ void RigidBody::synch(Transformations* transformations)
 	if (this->cbv != nullptr)
 		this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
 
-	this->position->set(this->transformations->getTranslation());
-	this->orientation->identity();
+	this->position.set(this->transformations->getTranslation());
+	this->orientation.identity();
 	for (auto i = 0; i < this->transformations->getRotations()->size(); i++) {
 		auto r = this->transformations->getRotations()->get(i);
-		this->orientation->multiply(r->getQuaternion());
+		this->orientation.multiply(r->getQuaternion());
 	}
-	(*this->orientation->getArray())[1] *= -1.0f;
-	this->orientation->normalize();
+	(*this->orientation.getArray())[1] *= -1.0f;
+	this->orientation.normalize();
 	this->awake(true);
 }
 
@@ -313,14 +271,19 @@ void RigidBody::addForce(Vector3* forceOrigin, Vector3* force)
 		return;
 
 	awake(false);
-	this->force->add(force);
-	distance->set(forceOrigin)->sub(position);
-	if (distance->computeLength() < MathTools::EPSILON) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"RigidBody::addForce(): "_j)->append(id)
-			->append(u": Must not equals position"_j)->toString()));
+	this->force.add(force);
+	Vector3 distance;
+	Vector3 tmp;
+	distance.set(forceOrigin)->sub(&position);
+	if (distance.computeLength() < MathTools::EPSILON) {
+		_Console::println(
+			wstring(L"RigidBody::addForce(): ") +
+			id +
+			wstring(L": Must not equals position")
+		);
 	}
-	Vector3::computeCrossProduct(force, distance, tmpVector3);
-	this->torque->add(tmpVector3);
+	Vector3::computeCrossProduct(force, &distance, &tmp);
+	this->torque.add(&tmp);
 }
 
 void RigidBody::update(float deltaTime)
@@ -328,7 +291,7 @@ void RigidBody::update(float deltaTime)
 	if (isSleeping_ == true)
 		return;
 
-	if (linearVelocity->computeLength() < VELOCITY_SLEEPTOLERANCE && angularVelocity->computeLength() < VELOCITY_SLEEPTOLERANCE) {
+	if (linearVelocity.computeLength() < VELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < VELOCITY_SLEEPTOLERANCE) {
 		sleepingFrameCount++;
 		if (sleepingFrameCount >= SLEEPING_FRAMES) {
 			sleep();
@@ -337,33 +300,38 @@ void RigidBody::update(float deltaTime)
 		awake(true);
 	}
 	if (isSleeping_ == true) {
-		linearVelocity->set(0.0f, 0.0f, 0.0f);
-		angularVelocity->set(0.0f, 0.0f, 0.0f);
+		linearVelocity.set(0.0f, 0.0f, 0.0f);
+		angularVelocity.set(0.0f, 0.0f, 0.0f);
 		return;
 	}
-	movement->set(position);
-	position->add(tmpVector3->set(linearVelocity)->scale(deltaTime));
-	movement->sub(position);
-	movement->scale(-1.0f);
-	auto angularVelocityXYZ = angularVelocity->getArray();
-	tmpQuaternion2->set((*angularVelocityXYZ)[0], -(*angularVelocityXYZ)[1], (*angularVelocityXYZ)[2], 0.0f)->scale(0.5f * deltaTime);
-	tmpQuaternion1->set(orientation);
-	tmpQuaternion1->multiply(tmpQuaternion2);
-	orientation->add(tmpQuaternion1);
-	orientation->normalize();
-	force->set(0.0f, 0.0f, 0.0f);
-	torque->set(0.0f, 0.0f, 0.0f);
-	linearVelocityLast->set(linearVelocity);
-	angularVelocityLast->set(angularVelocity);
+	Vector3 tmpVector3;
+	Quaternion tmpQuaternion1;
+	Quaternion tmpQuaternion2;
+	movement.set(&position);
+	position.add(tmpVector3.set(&linearVelocity)->scale(deltaTime));
+	movement.sub(&position);
+	movement.scale(-1.0f);
+	auto angularVelocityXYZ = angularVelocity.getArray();
+	tmpQuaternion2.set((*angularVelocityXYZ)[0], -(*angularVelocityXYZ)[1], (*angularVelocityXYZ)[2], 0.0f)->scale(0.5f * deltaTime);
+	tmpQuaternion1.set(&orientation);
+	tmpQuaternion1.multiply(&tmpQuaternion2);
+	orientation.add(&tmpQuaternion1);
+	orientation.normalize();
+	force.set(0.0f, 0.0f, 0.0f);
+	torque.set(0.0f, 0.0f, 0.0f);
+	linearVelocityLast.set(&linearVelocity);
+	angularVelocityLast.set(&angularVelocity);
 	computeWorldInverseInertiaMatrix();
 }
 
 bool RigidBody::checkVelocityChange()
 {
-	if (tmpVector3->set(linearVelocity)->sub(linearVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
+	Vector3 tmpVector3;
+
+	if (tmpVector3.set(&linearVelocity)->sub(&linearVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
 		return true;
 
-	if (tmpVector3->set(angularVelocity)->sub(angularVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
+	if (tmpVector3.set(&angularVelocity)->sub(&angularVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
 		return true;
 
 	return false;
@@ -399,23 +367,3 @@ void RigidBody::fireOnCollisionEnd(RigidBody* other)
 		listener->onCollisionEnd(this, other);
 	}
 }
-
-String* RigidBody::toString()
-{
-	return ::java::lang::StringBuilder().append(u"RigidBody [id="_j)->append(id)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* RigidBody::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.physics.RigidBody", 29);
-    return c;
-}
-
-java::lang::Class* RigidBody::getClass0()
-{
-	return class_();
-}
-

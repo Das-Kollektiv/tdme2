@@ -39,13 +39,13 @@ void ContactCache::add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collis
 	contactCacheInfo.rb2 = rb2;
 	contactCacheInfo.hitPoints = *collision->getHitPoints();
 	contactCacheInfo.lamdas = *lamdaValues;
-	wstring key = rb1->id->getCPPWString() + L"," + rb2->id->getCPPWString();
+	wstring key = rb1->id + L"," + rb2->id;
 	contactCache[key] = contactCacheInfo;
 }
 
 ContactCache_ContactCacheInfo* ContactCache::get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision)
 {
-	wstring key = rb1->id->getCPPWString() + L"," + rb2->id->getCPPWString();
+	wstring key = rb1->id + L"," + rb2->id;
 	ContactCache_ContactCacheInfo* contactCacheInfo = nullptr;
 	auto contactCacheInfoIt = contactCache.find(key);
 	if (contactCacheInfoIt != contactCache.end()) {

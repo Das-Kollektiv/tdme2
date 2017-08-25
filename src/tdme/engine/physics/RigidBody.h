@@ -2,24 +2,25 @@
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/engine/physics/CollisionListener.h>
 
-using std::vector;
 using std::remove;
+using std::vector;
+using std::wstring;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::CollisionResponse;
@@ -29,9 +30,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-
-struct default_init_tag;
-
 /** 
  * Rigid Body class
  * ported from "game physics - a practical introduction/ben kenwright"
@@ -39,11 +37,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::engine::physics::RigidBody final
-	: public Object
 {
-
 public:
-	typedef Object super;
 	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
 
 private:
@@ -53,7 +48,7 @@ private:
 public: /* protected */
 	World* world {  };
 	int32_t idx {  };
-	String* id {  };
+	wstring id {  };
 	int32_t typeId {  };
 	int32_t collisionTypeIds {  };
 	bool enabled {  };
@@ -71,29 +66,25 @@ public: /* protected */
 	float restitution {  };
 	float mass {  };
 	float inverseMass {  };
-	Vector3* movement {  };
-	Vector3* position {  };
-	Vector3* linearVelocity {  };
-	Vector3* linearVelocityLast {  };
-	Vector3* force {  };
-	Quaternion* orientation {  };
-	Vector3* angularVelocity {  };
-	Vector3* angularVelocityLast {  };
-	Vector3* torque {  };
-	Matrix4x4* inverseInertia {  };
+	Vector3 movement {  };
+	Vector3 position {  };
+	Vector3 linearVelocity {  };
+	Vector3 linearVelocityLast {  };
+	Vector3 force {  };
+	Quaternion orientation {  };
+	Vector3 angularVelocity {  };
+	Vector3 angularVelocityLast {  };
+	Vector3 torque {  };
+	Matrix4x4 inverseInertia {  };
 
 private:
-	Matrix4x4* orientationMatrix {  };
+	Matrix4x4 orientationMatrix {  };
 
 public: /* protected */
-	Matrix4x4* worldInverseInertia {  };
+	Matrix4x4 worldInverseInertia {  };
 
 private:
-	Vector3* distance {  };
 	vector<CollisionListener*> collisionListener {  };
-	Quaternion* tmpQuaternion1 {  };
-	Quaternion* tmpQuaternion2 {  };
-	Vector3* tmpVector3 {  };
 
 public:
 
@@ -112,21 +103,6 @@ public:
 	 * @return inertia matrix
 	 */
 	static Matrix4x4* computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param partition
-	 * @param idx
-	 * @param id
-	 * @param enabled
-	 * @param type id
-	 * @param original bounding volume
-	 * @param transformations
-	 * @param restitution
-	 * @param mass in kg
-	 */
-	void ctor(World* world, int32_t idx, String* id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
 
 public:
 
@@ -144,7 +120,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * @return type id
@@ -347,22 +323,18 @@ public: /* protected */
 	 * @param collision response
 	 */
 	void fireOnCollisionEnd(RigidBody* other);
-
-public:
-	String* toString() override;
-
-	// Generated
-
 public: /* protected */
-	RigidBody(World* world, int32_t idx, String* id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
-protected:
-	RigidBody(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Protected constructor
+	 * @param partition
+	 * @param idx
+	 * @param id
+	 * @param enabled
+	 * @param type id
+	 * @param original bounding volume
+	 * @param transformations
+	 * @param restitution
+	 * @param mass in kg
+	 */
+	RigidBody(World* world, int32_t idx, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
 };

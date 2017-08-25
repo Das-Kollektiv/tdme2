@@ -101,7 +101,7 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 {
 	vector<PhysicsPartitionOctTree_PartitionTreeNode*>* thisRigidBodyPartitions = nullptr;
-	auto rigidBodyPartitionNodesIt = rigidBodyPartitionNodes.find(rigidBody->getId()->getCPPWString());
+	auto rigidBodyPartitionNodesIt = rigidBodyPartitionNodes.find(rigidBody->getId());
 	if (rigidBodyPartitionNodesIt != rigidBodyPartitionNodes.end()) {
 		thisRigidBodyPartitions = &rigidBodyPartitionNodesIt->second;
 	}
@@ -141,7 +141,7 @@ void PhysicsPartitionOctTree::updateRigidBody(RigidBody* rigidBody)
 
 void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 {
-	auto rigidBodyPartitionsVectorIt = rigidBodyPartitionNodes.find(rigidBody->getId()->getCPPWString());
+	auto rigidBodyPartitionsVectorIt = rigidBodyPartitionNodes.find(rigidBody->getId());
 	vector<PhysicsPartitionOctTree_PartitionTreeNode*>* rigidBodyPartitionsVector = nullptr;
 	if (rigidBodyPartitionsVectorIt != rigidBodyPartitionNodes.end()) {
 		rigidBodyPartitionsVector = &rigidBodyPartitionsVectorIt->second;
@@ -149,7 +149,7 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 	if (rigidBodyPartitionsVector == nullptr || rigidBodyPartitionsVector->empty() == true) {
 		_Console::println(
 			wstring(L"PartitionOctTree::removeRigidBody(): '") +
-			rigidBody->getId()->getCPPWString() +
+			rigidBody->getId() +
 			wstring(L"' not registered")
 		);
 		return;
@@ -212,7 +212,7 @@ void PhysicsPartitionOctTree::addToPartitionTree(PhysicsPartitionOctTree_Partiti
 	}
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionRidigBodies.push_back(rigidBody);
-		rigidBodyPartitionNodes[rigidBody->getId()->getCPPWString()].push_back(node);
+		rigidBodyPartitionNodes[rigidBody->getId()].push_back(node);
 	} else {
 		for (auto& subNode: node->subNodes) {
 			addToPartitionTree(&subNode, rigidBody, cbv);

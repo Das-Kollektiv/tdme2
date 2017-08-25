@@ -7,20 +7,16 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
@@ -32,20 +28,13 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-struct default_init_tag;
-
 /** 
  * Physics
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::physics::World final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	PhysicsPartition* partition {  };
 
@@ -58,31 +47,8 @@ private:
 	vector<RigidBody*> rigidBodies {  };
 	vector<RigidBody*> rigidBodiesDynamic {  };
 	map<wstring, RigidBody*> rigidBodiesById {  };
-	map<wstring, RigidBodyCollisionStruct> rigidBodyTestedCollisions {  };
-	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame {  };
-	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame {  };
-	Vector3* collisionMovement {  };
-	Vector3* worldPosForce {  };
-	Vector3* gravityForce {  };
-	CollisionResponse* collision {  };
-	ConstraintsSolver* constraintsSolver {  };
-	BoundingBox* heightBoundingBox {  };
-	Vector3* heightOnPointCandidate {  };
-	Vector3* heightOnPointA {  };
-	Vector3* heightOnPointB {  };
-	Vector3* sideVector {  };
-	Vector3* upVector {  };
-	Vector3* forwardVector {  };
-	Vector3* heightPoint {  };
-	Vector3* heightPointDest {  };
-	vector<RigidBody*> collidedRigidBodies {  };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
-
+	ConstraintsSolver* constraintsSolver { nullptr };
+	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
 public:
 
 	/** 
@@ -113,7 +79,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(String* id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix);
+	RigidBody* addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body
@@ -124,14 +90,14 @@ public:
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(String* id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
+	RigidBody* addStaticRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 
 	 * @param id
 	 * @return ridig body
 	 */
-	RigidBody* getRigidBody(String* id);
+	RigidBody* getRigidBody(const wstring& id);
 
 	/** 
 	 * Update world
@@ -184,12 +150,12 @@ public:
 	 * @param bounding volume
 	 * @return collided rigid bodies
 	 */
-	const vector<RigidBody*>& doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume);
+	const vector<RigidBody*> doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume);
 
 	/** 
 	 * Clone this world
 	 */
-	World* clone() override;
+	World* clone();
 
 private:
 
@@ -208,20 +174,9 @@ public:
 	 * @param world
 	 */
 	void synch(World* world);
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	World();
-protected:
-	World(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class World_1;
-	friend class World_2;
 };

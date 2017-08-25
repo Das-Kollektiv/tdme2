@@ -296,6 +296,19 @@ int32_t MutableString::hashCode()
 	return h;
 }
 
+bool MutableString::equals(const wstring& s2)
+{
+	if (length_ != s2.length())
+		return false;
+
+	for (auto i = 0; i < length_; i++) {
+		if ((*data)[i] != s2[i])
+			return false;
+
+	}
+	return true;
+}
+
 bool MutableString::equals(String* s2)
 {
 	if (length_ != s2->length())

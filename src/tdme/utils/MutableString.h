@@ -238,6 +238,13 @@ public:
 	 * @param string 2
 	 * @return string 2 equals this string
 	 */
+	bool equals(const wstring& s2);
+
+	/**
+	 * Equals
+	 * @param string 2
+	 * @return string 2 equals this string
+	 */
 	bool equals(String* s2);
 
 	/**
