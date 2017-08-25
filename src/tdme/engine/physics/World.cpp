@@ -67,22 +67,6 @@ using tdme::utils::_Console;
 World::World() 
 {
 	partition = new PhysicsPartitionOctTree();
-	/*
-	collisionMovement = new Vector3();
-	worldPosForce = new Vector3();
-	gravityForce = new Vector3();
-	collision = new CollisionResponse();
-	constraintsSolver = nullptr;
-	heightBoundingBox = new BoundingBox();
-	heightOnPointCandidate = new Vector3();
-	heightOnPointA = new Vector3();
-	heightOnPointB = new Vector3();
-	sideVector = new Vector3(1.0f, 0.0f, 0.0f);
-	upVector = new Vector3(0.0f, 1.0f, 0.0f);
-	forwardVector = new Vector3(0.0f, 0.0f, 1.0f);
-	heightPoint = new Vector3();
-	heightPointDest = new Vector3();
-	*/
 }
 
 void World::reset()
