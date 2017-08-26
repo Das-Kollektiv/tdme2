@@ -50,8 +50,6 @@ using tdme::engine::physics::ConstraintsSolver;
 using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::engine::physics::RigidBody;
-using tdme::engine::physics::World_1;
-using tdme::engine::physics::World_2;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;

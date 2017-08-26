@@ -20,17 +20,9 @@ namespace physics {
 			class PhysicsPartitionNone;
 			class PhysicsPartitionOctTree;
 			class PhysicsPartitionOctTree_PartitionTreeNode;
-			class PhysicsPartitionOctTree_reset_1;
-			class PhysicsPartitionOctTree_reset_2;
-			class PhysicsPartitionOctTree_reset_3;
-			class PhysicsPartitionOctTree_reset_4;
-			class PhysicsPartitionOctTree_reset_5;
-			class PhysicsPartitionOctTree_reset_6;
 			class RigidBody;
 			class Vector6;
 			class World;
-			class World_1;
-			class World_2;
 }  // namespace physics
 }  // namespace engine
 }  // namespace tdme

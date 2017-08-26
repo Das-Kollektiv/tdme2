@@ -34,8 +34,6 @@ using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::engine::physics::CollisionDetection;
-using tdme::engine::physics::PhysicsPartitionOctTree_reset_2;
-using tdme::engine::physics::PhysicsPartitionOctTree_reset_3;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;

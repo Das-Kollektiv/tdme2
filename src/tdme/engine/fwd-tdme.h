@@ -25,8 +25,6 @@ namespace engine {
 		class PartitionNone;
 		class PartitionOctTree;
 		class PartitionOctTree_PartitionTreeNode;
-		class PartitionOctTreeBoundingBoxPool;
-		class PartitionOctTreePartitionTreeNodePool;
 		class PointsParticleSystemEntity;
 		class Rotation;
 		class Rotations;
