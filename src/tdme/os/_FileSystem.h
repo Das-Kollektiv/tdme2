@@ -3,13 +3,8 @@
 #pragma once
 
 #include <tdme/os/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::os::_FileSystemInterface;
-
-
-struct default_init_tag;
 
 /** 
  * File system 
@@ -17,12 +12,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::os::_FileSystem
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static _FileSystemInterface* fileSystem;
 
@@ -41,16 +31,4 @@ public:
 	 */
 	static void setupFileSystem(_FileSystemInterface* fileSystem);
 
-	// Generated
-	_FileSystem();
-protected:
-	_FileSystem(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
