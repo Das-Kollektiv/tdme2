@@ -9,7 +9,6 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 
 using std::map;
 using std::vector;
@@ -19,7 +18,6 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ContactCache_ContactCacheInfo;
 using tdme::engine::physics::RigidBody;
 using tdme::math::Vector3;
-using tdme::utils::Key;
 
 /** 
  * Contact cache manager
