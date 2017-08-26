@@ -18,7 +18,6 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::nodes::GUIElementNode;
 using java::lang::Object;
@@ -38,7 +37,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -100,8 +98,8 @@ bool GUIElementNode::isContentNode()
 int32_t GUIElementNode::getContentWidth()
 {
 	auto width = 0;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
 		auto contentWidth = guiSubNode->getAutoWidth();
 		if (contentWidth > width) {
 			width = contentWidth;
@@ -115,8 +113,8 @@ int32_t GUIElementNode::getContentWidth()
 int32_t GUIElementNode::getContentHeight()
 {
 	auto height = 0;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
 		auto contentHeight = guiSubNode->getAutoHeight();
 		if (contentHeight > height) {
 			height = contentHeight;
@@ -136,8 +134,8 @@ void GUIElementNode::setTop(int32_t top)
 {
 	super::setTop(top);
 	top += computedConstraints->alignmentTop;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		java_cast< GUINode* >(subNodes->get(i))->setTop(top);
+	for (auto i = 0; i < subNodes.size(); i++) {
+		java_cast< GUINode* >(subNodes.at(i))->setTop(top);
 	}
 }
 
@@ -145,8 +143,8 @@ void GUIElementNode::setLeft(int32_t left)
 {
 	super::setLeft(left);
 	left += computedConstraints->alignmentLeft;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		java_cast< GUINode* >(subNodes->get(i))->setLeft(left);
+	for (auto i = 0; i < subNodes.size(); i++) {
+		java_cast< GUINode* >(subNodes.at(i))->setLeft(left);
 	}
 }
 
@@ -155,8 +153,8 @@ void GUIElementNode::layoutSubNodes()
 	super::layoutSubNodes();
 	auto height = computedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
 	auto width = computedConstraints->width - border->left - border->right- padding->left- padding->right;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
 		auto doLayoutSubNodes = false;
 		if (guiSubNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints->height = height;
@@ -175,8 +173,8 @@ void GUIElementNode::layout()
 {
 	if (requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesHeight = requestedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
-		for (auto i = 0; i < subNodes->size(); i++) {
-			auto subNode = java_cast< GUINode* >(subNodes->get(i));
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto subNode = java_cast< GUINode* >(subNodes.at(i));
 			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints->height > subNodesHeight) {
 				subNode->requestedConstraints->height = subNodesHeight;
 			}
@@ -184,8 +182,8 @@ void GUIElementNode::layout()
 	}
 	if (requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesWidth = requestedConstraints->width - border->left - border->right- padding->left- padding->right;
-		for (auto i = 0; i < subNodes->size(); i++) {
-			auto subNode = java_cast< GUINode* >(subNodes->get(i));
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto subNode = java_cast< GUINode* >(subNodes.at(i));
 			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints->width > subNodesWidth) {
 				subNode->requestedConstraints->width = subNodesWidth;
 			}
@@ -268,8 +266,8 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (conditionsMet == false)
 		return;
 
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto subNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto subNode = java_cast< GUINode* >(subNodes.at(i));
 		subNode->handleKeyboardEvent(event);
 	}
 	super::handleKeyboardEvent(event);

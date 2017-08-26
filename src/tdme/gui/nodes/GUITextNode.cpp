@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUITextNode.java
 #include <tdme/gui/nodes/GUITextNode.h>
 
+#include <vector>
+
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/utils/MutableString.h>
+
+using std::vector;
 
 using tdme::gui::nodes::GUITextNode;
 using java::lang::String;
@@ -72,7 +76,7 @@ void GUITextNode::dispose()
 	super::dispose();
 }
 
-void GUITextNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUITextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

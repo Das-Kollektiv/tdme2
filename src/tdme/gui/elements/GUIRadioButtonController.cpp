@@ -15,8 +15,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::gui::elements::GUIRadioButtonController;
 using java::lang::Object;
@@ -33,8 +31,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -69,7 +65,7 @@ String* GUIRadioButtonController::CONDITION_DISABLED;
 
 String* GUIRadioButtonController::CONDITION_ENABLED;
 
-_HashMap* GUIRadioButtonController::radioButtonGroupNodesByName;
+map<wstring, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
 
 void GUIRadioButtonController::ctor(GUINode* node)
 {
@@ -77,14 +73,8 @@ void GUIRadioButtonController::ctor(GUINode* node)
 	init();
 	this->selected = (java_cast< GUIElementNode* >(node))->isSelected();
 	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
-	auto radioButtonGroupNodes = java_cast< _ArrayList* >(radioButtonGroupNodesByName->get(::java::lang::StringBuilder().append(this->node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
-		->append((java_cast< GUIElementNode* >(this->node))->getName())->toString()));
-	if (radioButtonGroupNodes == nullptr) {
-		radioButtonGroupNodes = new _ArrayList();
-		radioButtonGroupNodesByName->put(::java::lang::StringBuilder().append(node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
-			->append((java_cast< GUIElementNode* >(node))->getName())->toString(), radioButtonGroupNodes);
-	}
-	radioButtonGroupNodes->add(java_cast< GUIElementNode* >(node));
+	radioButtonGroupNodesByName[::java::lang::StringBuilder().append(node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
+		->append((java_cast< GUIElementNode* >(node))->getName())->toString()->getCPPWString()].push_back(java_cast< GUIElementNode* >(node));
 }
 
 bool GUIRadioButtonController::isSelected()
@@ -94,11 +84,11 @@ bool GUIRadioButtonController::isSelected()
 
 void GUIRadioButtonController::select()
 {
-	auto radioButtonGroupNodes = java_cast< _ArrayList* >(radioButtonGroupNodesByName->get(::java::lang::StringBuilder().append(this->node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
-		->append((java_cast< GUIElementNode* >(this->node))->getName())->toString()));
-	if (radioButtonGroupNodes != nullptr) {
-		for (auto i = 0; i < radioButtonGroupNodes->size(); i++) {
-			auto radioButtonNode = java_cast< GUIElementNode* >(radioButtonGroupNodes->get(i));
+	auto radioButtonGroupNodesIt = radioButtonGroupNodesByName.find(::java::lang::StringBuilder().append(this->node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
+		->append((java_cast< GUIElementNode* >(this->node))->getName())->toString()->getCPPWString());
+	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
+		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
+			auto radioButtonNode = java_cast< GUIElementNode* >(radioButtonGroupNodesIt->second.at(i));
 			auto nodeConditions = radioButtonNode->getActiveConditions();
 			auto nodeController = java_cast< GUIRadioButtonController* >(radioButtonNode->getController());
 			nodeConditions->remove(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
@@ -134,8 +124,8 @@ void GUIRadioButtonController::initialize()
 
 void GUIRadioButtonController::dispose()
 {
-	radioButtonGroupNodesByName->remove(::java::lang::StringBuilder().append(this->node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
-		->append((java_cast< GUIElementNode* >(this->node))->getName())->toString());
+	radioButtonGroupNodesByName.erase(radioButtonGroupNodesByName.find(::java::lang::StringBuilder().append(this->node->getScreenNode()->getId())->append(u"_radiobuttongroup_"_j)
+		->append((java_cast< GUIElementNode* >(this->node))->getName())->toString()->getCPPWString()));
 }
 
 void GUIRadioButtonController::postLayout()
@@ -233,7 +223,6 @@ struct string_init_ {
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		radioButtonGroupNodesByName = new _HashMap();
 		}
 	};
 

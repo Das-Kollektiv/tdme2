@@ -21,7 +21,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -76,7 +75,7 @@ public:
 	 */
 	static GUINode_RequestedConstraints* createRequestedConstraints(String* left, String* top, String* width, String* height);
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
 	GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);

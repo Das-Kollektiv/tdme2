@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,13 +14,17 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::map;
+using std::wstring;
+using std::vector;
+
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -40,7 +48,7 @@ private:
 	static String* CONDITION_ENABLED;
 	bool selected {  };
 	bool disabled {  };
-	static _HashMap* radioButtonGroupNodesByName;
+	static map<wstring, vector<GUIElementNode*>> radioButtonGroupNodesByName;
 	MutableString* value {  };
 protected:
 

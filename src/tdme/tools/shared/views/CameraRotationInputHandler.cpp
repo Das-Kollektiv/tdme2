@@ -116,7 +116,7 @@ void CameraRotationInputHandler::reset()
 void CameraRotationInputHandler::handleInputEvents()
 {
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents()->size(); i++) {
-		auto event = java_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->get(i));
+		auto event = java_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -152,7 +152,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		}
 	}
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
-		auto event = java_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->get(i));
+		auto event = java_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 

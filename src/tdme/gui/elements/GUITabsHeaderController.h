@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -9,12 +11,13 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::vector;
+
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -33,8 +36,8 @@ public:
 
 private:
 	GUINode* tabsNode {  };
-	_ArrayList* childControllerNodes {  };
-	_ArrayList* tabControllers {  };
+	vector<GUINode*> childControllerNodes {  };
+	vector<GUITabController*> tabControllers {  };
 	bool hasFocus_ {  };
 protected:
 

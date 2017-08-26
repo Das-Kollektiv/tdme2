@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,13 +12,14 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::vector;
+
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -36,8 +39,8 @@ public:
 private:
 	static String* CONDITION_DISABLED;
 	static String* CONDITION_ENABLED;
-	_ArrayList* childControllerNodes {  };
-	_ArrayList* selectBoxOptionControllers {  };
+	vector<GUINode*> childControllerNodes {  };
+	vector<GUISelectBoxOptionController*> selectBoxOptionControllers {  };
 	bool disabled {  };
 	MutableString* value {  };
 protected:

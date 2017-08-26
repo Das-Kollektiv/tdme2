@@ -23,7 +23,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -102,7 +101,7 @@ public:
 	 */
 	int32_t getMaxLength();
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
 	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, String* colorDisabled, MutableString* text, int32_t maxLength);

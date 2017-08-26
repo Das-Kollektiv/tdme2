@@ -83,7 +83,7 @@ void GUIImageNode::dispose()
 	super::dispose();
 }
 
-void GUIImageNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

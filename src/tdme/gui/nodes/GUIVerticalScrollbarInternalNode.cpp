@@ -76,7 +76,7 @@ int32_t GUIVerticalScrollbarInternalNode::getContentHeight()
 	return computedConstraints->height;
 }
 
-void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

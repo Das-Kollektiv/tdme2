@@ -2,6 +2,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 #include <string>
+#include <vector>
 
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -26,8 +27,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 
+using std::vector;
 using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
@@ -54,7 +55,6 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -79,7 +79,6 @@ GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNod
 void GUIParentNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
-	this->subNodes = new _ArrayList();
 	this->overflowX = overflowX;
 	this->overflowY = overflowY;
 	this->childrenRenderOffsetX = 0.0f;
@@ -90,12 +89,12 @@ void GUIParentNode::clearSubNodes()
 {
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto node = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto node = subNodes.at(i);
 		screenNode->removeNode(node);
 		node->dispose();
 	}
-	subNodes->clear();
+	subNodes.clear();
 }
 
 void GUIParentNode::replaceSubNodes(String* xml, bool resetScrollOffsets) /* throws(Exception) */
@@ -104,12 +103,12 @@ void GUIParentNode::replaceSubNodes(String* xml, bool resetScrollOffsets) /* thr
 		childrenRenderOffsetX = 0.0f;
 		childrenRenderOffsetY = 0.0f;
 	}
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto node = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto node = subNodes.at(i);
 		screenNode->removeNode(node);
 		node->dispose();
 	}
-	subNodes->clear();
+	subNodes.clear();
 	GUIParser::parse(this, xml);
 	screenNode->layout(this);
 	float elementWidth = computedConstraints->width;
@@ -143,7 +142,7 @@ void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
 			"'"
 		);
 	}
-	subNodes->add(node);
+	subNodes.push_back(node);
 }
 
 GUIParentNode_Overflow* GUIParentNode::getOverflowX()
@@ -222,8 +221,8 @@ void GUIParentNode::layout()
 
 void GUIParentNode::layoutSubNodes()
 {
-	for (auto i = 0; i < subNodes->size(); i++) {
-		java_cast< GUINode* >(subNodes->get(i))->layout();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		subNodes.at(i)->layout();
 	}
 }
 
@@ -233,16 +232,16 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		auto v = alignments->horizontal;
 		if ((v == GUINode_AlignmentHorizontal::LEFT)) {
 {
-				for (auto i = 0; i < subNodes->size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+				for (auto i = 0; i < subNodes.size(); i++) {
+					auto guiSubNode = subNodes.at(i);
 					guiSubNode->computedConstraints->alignmentLeft = border->left + padding->left;
 				}
 				goto end_switch0;;
 			}		}
 		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
 {
-				for (auto i = 0; i < subNodes->size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+				for (auto i = 0; i < subNodes.size(); i++) {
+					auto guiSubNode = subNodes.at(i);
 					guiSubNode->computedConstraints->alignmentLeft = (computedConstraints->width - guiSubNode->computedConstraints->width) / 2;
 				}
 				goto end_switch0;;
@@ -250,8 +249,8 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
 {
 {
-					for (auto i = 0; i < subNodes->size(); i++) {
-						auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+					for (auto i = 0; i < subNodes.size(); i++) {
+						auto guiSubNode = subNodes.at(i);
 						guiSubNode->computedConstraints->alignmentLeft = (computedConstraints->width - guiSubNode->computedConstraints->width - border->right- padding->right);
 					}
 					goto end_switch0;;
@@ -268,16 +267,16 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		auto v = alignments->vertical;
 		if ((v == GUINode_AlignmentVertical::TOP)) {
 {
-				for (auto i = 0; i < subNodes->size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+				for (auto i = 0; i < subNodes.size(); i++) {
+					auto guiSubNode = subNodes.at(i);
 					guiSubNode->computedConstraints->alignmentTop = border->top + padding->top;
 				}
 				goto end_switch1;;
 			}		}
 		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
 {
-				for (auto i = 0; i < subNodes->size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+				for (auto i = 0; i < subNodes.size(); i++) {
+					auto guiSubNode = subNodes.at(i);
 					guiSubNode->computedConstraints->alignmentTop = (computedConstraints->height - guiSubNode->computedConstraints->height) / 2;
 				}
 				goto end_switch1;;
@@ -285,8 +284,8 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
 {
 {
-					for (auto i = 0; i < subNodes->size(); i++) {
-						auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+					for (auto i = 0; i < subNodes.size(); i++) {
+						auto guiSubNode = subNodes.at(i);
 						guiSubNode->computedConstraints->alignmentTop = (computedConstraints->height - guiSubNode->computedConstraints->height - border->bottom- padding->bottom);
 					}
 					goto end_switch1;;
@@ -297,12 +296,12 @@ end_switch1:;
 
 }
 
-void GUIParentNode::getChildControllerNodesInternal(_ArrayList* childControllerNodes)
+void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes)
 {
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto node = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto node = subNodes.at(i);
 		if (node->controller != nullptr) {
-			childControllerNodes->add(node);
+			childControllerNodes->push_back(node);
 		}
 		if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 			(java_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
@@ -310,7 +309,7 @@ void GUIParentNode::getChildControllerNodesInternal(_ArrayList* childControllerN
 	}
 }
 
-void GUIParentNode::getChildControllerNodes(_ArrayList* childControllerNodes)
+void GUIParentNode::getChildControllerNodes(vector<GUINode*>*childControllerNodes)
 {
 	childControllerNodes->clear();
 	getChildControllerNodesInternal(childControllerNodes);
@@ -318,8 +317,8 @@ void GUIParentNode::getChildControllerNodes(_ArrayList* childControllerNodes)
 
 void GUIParentNode::dispose()
 {
-	for (auto i = 0; i < subNodes->size(); i++) {
-		java_cast< GUINode* >(subNodes->get(i))->dispose();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		subNodes.at(i)->dispose();
 	}
 	super::dispose();
 }
@@ -330,13 +329,13 @@ void GUIParentNode::setConditionsMet()
 	if (conditionsMet == false)
 		return;
 
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes.at(i);
 		guiSubNode->setConditionsMet();
 	}
 }
 
-void GUIParentNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;
@@ -372,10 +371,10 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
 	super::render(guiRenderer, floatingNodes);
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
-			floatingNodes->add(guiSubNode);
+			floatingNodes->push_back(guiSubNode);
 			continue;
 		}
 		guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
@@ -436,8 +435,8 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 			return;
 		}
 	}
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto subNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto subNode = java_cast< GUINode* >(subNodes.at(i));
 		if (subNode->flow == GUINode_Flow::FLOATING) {
 			continue;
 		}
@@ -462,8 +461,8 @@ void GUIParentNode::tick()
 	if (conditionsMet == false)
 		return;
 
-	for (auto i = 0; i < subNodes->size(); i++) {
-		auto subNode = java_cast< GUINode* >(subNodes->get(i));
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto subNode = java_cast< GUINode* >(subNodes.at(i));
 		subNode->tick();
 	}
 	super::tick();
@@ -495,8 +494,8 @@ String* GUIParentNode::toString(int32_t indent)
 		->append((this->controller != nullptr ? u"yes"_j : u"no"_j))
 		->append(u"]"_j)
 		->append(u"\n"_j)->toString();
-	for (auto i = 0; i < subNodes->size(); i++) {
-		tmp = ::java::lang::StringBuilder(tmp).append(::java::lang::StringBuilder().append(java_cast< GUINode* >(subNodes->get(i))->toString(indent + 1))->append((i == subNodes->size() - 1 ? u""_j : u"\n"_j))->toString())->toString();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		tmp = ::java::lang::StringBuilder(tmp).append(::java::lang::StringBuilder().append(java_cast< GUINode* >(subNodes.at(i))->toString(indent + 1))->append((i == subNodes.size() - 1 ? u""_j : u"\n"_j))->toString())->toString();
 	}
 	return tmp;
 }

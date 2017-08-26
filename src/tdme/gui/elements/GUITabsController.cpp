@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabsController.java
 #include <tdme/gui/elements/GUITabsController.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <tdme/gui/elements/GUITabContentController.h>
@@ -9,7 +11,8 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::gui::elements::GUITabsController;
 using java::lang::Object;
@@ -20,7 +23,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -44,7 +46,6 @@ GUITabsController::GUITabsController(GUINode* node)
 
 void GUITabsController::init()
 {
-	childControllerNodes = new _ArrayList();
 	tabContentNodeId = new MutableString();
 }
 
@@ -65,9 +66,9 @@ void GUITabsController::setDisabled(bool disabled)
 
 void GUITabsController::initialize()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto tabController = java_cast< GUITabController* >(childController);
@@ -91,9 +92,9 @@ void GUITabsController::postLayout()
 
 void GUITabsController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto tabController = java_cast< GUITabController* >(childController);
@@ -108,9 +109,9 @@ void GUITabsController::unselect()
 void GUITabsController::setTabContentSelected(String* id)
 {
 	tabContentNodeId->set(id)->append(u"-content"_j);
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabContentController* >(childController) != nullptr) {
 			auto tabContentController = java_cast< GUITabContentController* >(childController);

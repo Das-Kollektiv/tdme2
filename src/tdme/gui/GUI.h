@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -20,6 +21,7 @@
 #include <java/lang/Object.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 
 using java::lang::Object;
@@ -37,7 +39,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Pool;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 
@@ -62,19 +63,19 @@ private:
 	static _HashMap* fontCache;
 	static map<wstring, Texture*> imageCache;
 	GUIColor* foccussedBorderColor {  };
-	_ArrayList* focusableNodes {  };
-	_ArrayList* focusableScreenNodes {  };
+	vector<GUIElementNode*> focusableNodes {  };
+	vector<GUIScreenNode*> focusableScreenNodes {  };
 	GUIElementNode* focussedNode {  };
 	GUIColor* unfocussedNodeBorderLeftColor {  };
 	GUIColor* unfocussedNodeBorderRightColor {  };
 	GUIColor* unfocussedNodeBorderTopColor {  };
 	GUIColor* unfocussedNodeBorderBottomColor {  };
 	Pool<GUIMouseEvent*>* mouseEventsPool {  };
-	_ArrayList* mouseEvents {  };
+	vector<GUIMouseEvent*> mouseEvents {  };
 	Pool<GUIKeyboardEvent*>* keyboardEventsPool {  };
-	_ArrayList* keyboardEvents {  };
+	vector<GUIKeyboardEvent*> keyboardEvents {  };
 	ReentrantLock* eventsMutex {  };
-	_ArrayList* renderScreens {  };
+	vector<GUIScreenNode*> renderScreens {  };
 	int32_t width {  };
 	int32_t height {  };
 	int32_t mouseButtonLast { };
@@ -129,12 +130,12 @@ public:
 	/** 
 	 * @return mouse events
 	 */
-	_ArrayList* getMouseEvents();
+	vector<GUIMouseEvent*>* getMouseEvents();
 
 	/** 
 	 * @return keyboard events
 	 */
-	_ArrayList* getKeyboardEvents();
+	vector<GUIKeyboardEvent*>* getKeyboardEvents();
 
 	/** 
 	 * Get font

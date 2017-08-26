@@ -22,7 +22,6 @@ using java::lang::String;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 using tdme::gui::GUIParserException;
 using tdme::ext::tinyxml::TiXmlElement;

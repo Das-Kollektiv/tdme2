@@ -25,7 +25,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utils/_ArrayList.h>
 #include <Array.h>
 
 using tdme::gui::nodes::GUINode;
@@ -53,7 +52,6 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -362,16 +360,16 @@ GUINodeConditions* GUINode::createConditions(String* conditions)
 
 bool GUINode::checkConditions()
 {
-	auto showOn = java_cast< _ArrayList* >(this->showOn->conditions);
-	auto hideOn = java_cast< _ArrayList* >(this->hideOn->conditions);
+	auto showOn = this->showOn->conditions;
+	auto hideOn = this->hideOn->conditions;
 
-	for (auto i = 0; i < showOn->size(); i++) {
-		if (java_cast< String* >(showOn->get(i))->equals(GUIElementNode::CONDITION_ALWAYS))
+	for (auto i = 0; i < showOn.size(); i++) {
+		if (java_cast< String* >(showOn.at(i))->equals(GUIElementNode::CONDITION_ALWAYS))
 			return true;
 
 	}
-	for (auto i = 0; i < hideOn->size(); i++) {
-		if (java_cast< String* >(hideOn->get(i))->equals(GUIElementNode::CONDITION_ALWAYS))
+	for (auto i = 0; i < hideOn.size(); i++) {
+		if (java_cast< String* >(hideOn.at(i))->equals(GUIElementNode::CONDITION_ALWAYS))
 			return false;
 
 	}
@@ -383,21 +381,21 @@ bool GUINode::checkConditions()
 		return true;
 	}
 	auto elementNode = java_cast< GUIElementNode* >(node);
-	for (auto i = 0; i < hideOn->size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions->conditions->size(); j++) {
-			if (java_cast< String* >(hideOn->get(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions->get(j))))
+	for (auto i = 0; i < hideOn.size(); i++) {
+		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
+			if (java_cast< String* >(hideOn.at(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions.at(j))))
 				return false;
 
 		}
 	}
-	for (auto i = 0; i < showOn->size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions->conditions->size(); j++) {
-			if (java_cast< String* >(showOn->get(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions->get(j))))
+	for (auto i = 0; i < showOn.size(); i++) {
+		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
+			if (java_cast< String* >(showOn.at(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions.at(j))))
 				return true;
 
 		}
 	}
-	return showOn->size() == 0;
+	return showOn.size() == 0;
 }
 
 void GUINode::dispose()
@@ -412,7 +410,7 @@ void GUINode::setConditionsMet()
 	conditionsMet = checkConditions();
 }
 
-void GUINode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

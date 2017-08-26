@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
+
+using std::vector;
 
 using java::lang::Object;
 using java::lang::String;
@@ -29,7 +33,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -304,7 +307,7 @@ public:
 	 * @param gui renderer
 	 * @param floating nodes
 	 */
-	virtual void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes);
+	virtual void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
 
 public: /* protected */
 

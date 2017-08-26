@@ -131,7 +131,7 @@ void GUIInputInternalNode::dispose()
 	this->controller->dispose();
 }
 
-void GUIInputInternalNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

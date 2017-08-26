@@ -7,6 +7,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -37,7 +38,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
@@ -45,6 +45,7 @@
 #include <Array.h>
 
 using std::map;
+using std::vector;
 using std::wstring;
 using std::string;
 using std::to_string;
@@ -80,7 +81,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::Pool;
 using tdme::utils::StringConverter;
-using tdme::utils::_ArrayList;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::_HashMap_KeysIterator;
@@ -112,18 +112,13 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 void GUI::init()
 {
 	foccussedBorderColor = nullptr;
-	focusableNodes = new _ArrayList();
-	focusableScreenNodes = new _ArrayList();
 	unfocussedNodeBorderLeftColor = nullptr;
 	unfocussedNodeBorderRightColor = nullptr;
 	unfocussedNodeBorderTopColor = nullptr;
 	unfocussedNodeBorderBottomColor = nullptr;
 	mouseEventsPool = new GUI_1(this);
-	mouseEvents = new _ArrayList();
 	keyboardEventsPool = new GUI_2(this);
-	keyboardEvents = new _ArrayList();
 	eventsMutex = new ReentrantLock();
-	renderScreens = new _ArrayList();
 	mouseButtonLast = 0;
 }
 
@@ -179,14 +174,14 @@ void GUI::unlockEvents()
 	eventsMutex->unlock();
 }
 
-_ArrayList* GUI::getMouseEvents()
+vector<GUIMouseEvent*>* GUI::getMouseEvents()
 {
-	return mouseEvents;
+	return &mouseEvents;
 }
 
-_ArrayList* GUI::getKeyboardEvents()
+vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 {
-	return keyboardEvents;
+	return &keyboardEvents;
 }
 
 GUIFont* GUI::getFont(String* fileName)
@@ -274,13 +269,13 @@ void GUI::removeScreen(String* id)
 void GUI::reset()
 {
 	Iterator* screenKeys = screens->getKeysIterator();
-	auto entitiesToRemove = new _ArrayList();
+	vector<String*> entitiesToRemove;
 	while (screenKeys->hasNext()) {
 		auto screen = java_cast< String* >(screenKeys->next());
-		entitiesToRemove->add(screen);
+		entitiesToRemove.push_back(screen);
 	}
-	for (auto i = 0; i < entitiesToRemove->size(); i++) {
-		removeScreen(java_cast< String* >(entitiesToRemove->get(i)));
+	for (auto i = 0; i < entitiesToRemove.size(); i++) {
+		removeScreen(java_cast< String* >(entitiesToRemove.at(i)));
 	}
 	fontCache->clear();
 	imageCache.clear();
@@ -288,10 +283,10 @@ void GUI::reset()
 
 void GUI::resetRenderScreens()
 {
-	for (auto i = 0; i < renderScreens->size(); i++) {
-		java_cast< GUIScreenNode* >(renderScreens->get(i))->setGUI(nullptr);
+	for (auto i = 0; i < renderScreens.size(); i++) {
+		java_cast< GUIScreenNode* >(renderScreens.at(i))->setGUI(nullptr);
 	}
-	renderScreens->clear();
+	renderScreens.clear();
 }
 
 void GUI::addRenderScreen(String* screenId)
@@ -301,7 +296,7 @@ void GUI::addRenderScreen(String* screenId)
 		return;
 
 	screen->setGUI(this);
-	renderScreens->add(screen);
+	renderScreens.push_back(screen);
 }
 
 GUIColor* GUI::getFoccussedBorderColor()
@@ -317,21 +312,21 @@ void GUI::invalidateFocussedNode()
 
 void GUI::determineFocussedNodes()
 {
-	focusableNodes->clear();
-	focusableScreenNodes->clear();
-	for (auto i = renderScreens->size() - 1; i >= 0; i--) {
-		auto screen = java_cast< GUIScreenNode* >(renderScreens->get(i));
+	focusableNodes.clear();
+	focusableScreenNodes.clear();
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = java_cast< GUIScreenNode* >(renderScreens.at(i));
 		if (screen->isVisible() == false)
 			continue;
 
-		focusableScreenNodes->add(screen);
+		focusableScreenNodes.push_back(screen);
 		if (screen->isPopUp() == true)
 			break;
 
 	}
-	for (auto i = focusableScreenNodes->size() - 1; i >= 0; i--) {
-		auto screen = java_cast< GUIScreenNode* >(focusableScreenNodes->get(i));
-		screen->determineFocussedNodes(screen, focusableNodes);
+	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
+		auto screen = focusableScreenNodes.at(i);
+		screen->determineFocussedNodes(screen, &focusableNodes);
 	}
 }
 
@@ -387,15 +382,15 @@ void GUI::focusNextNode()
 {
 	determineFocussedNodes();
 	unfocusNode();
-	if (focusableNodes->size() > 0) {
+	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
-		for (auto i = 0; i < focusableNodes->size(); i++) {
-			if (focussedNode == java_cast< GUIElementNode* >(focusableNodes->get(i))) {
+		for (auto i = 0; i < focusableNodes.size(); i++) {
+			if (focussedNode == java_cast< GUIElementNode* >(focusableNodes.at(i))) {
 				focussedNodeIdx = i;
 			}
 		}
-		auto focussedNextNodeIdx = (focussedNodeIdx + 1) % focusableNodes->size();
-		focussedNode = java_cast< GUIElementNode* >(focusableNodes->get(focussedNextNodeIdx));
+		auto focussedNextNodeIdx = (focussedNodeIdx + 1) % focusableNodes.size();
+		focussedNode = java_cast< GUIElementNode* >(focusableNodes.at(focussedNextNodeIdx));
 		focusNode();
 		focussedNode->scrollToNodeX();
 		focussedNode->scrollToNodeY();
@@ -406,18 +401,18 @@ void GUI::focusPreviousNode()
 {
 	determineFocussedNodes();
 	unfocusNode();
-	if (focusableNodes->size() > 0) {
+	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
-		for (auto i = 0; i < focusableNodes->size(); i++) {
-			if (focussedNode == java_cast< GUIElementNode* >(focusableNodes->get(i))) {
+		for (auto i = 0; i < focusableNodes.size(); i++) {
+			if (focussedNode == java_cast< GUIElementNode* >(focusableNodes.at(i))) {
 				focussedNodeIdx = i;
 			}
 		}
-		auto focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes->size();
+		auto focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
 		if (focussedPreviousNodeIdx < 0)
-			focussedPreviousNodeIdx += focusableNodes->size();
+			focussedPreviousNodeIdx += focusableNodes.size();
 
-		focussedNode = java_cast< GUIElementNode* >(focusableNodes->get(focussedPreviousNodeIdx));
+		focussedNode = java_cast< GUIElementNode* >(focusableNodes.at(focussedPreviousNodeIdx));
 		focusNode();
 		focussedNode->scrollToNodeX();
 		focussedNode->scrollToNodeY();
@@ -426,7 +421,7 @@ void GUI::focusPreviousNode()
 
 void GUI::render()
 {
-	if (renderScreens->isEmpty() == true)
+	if (renderScreens.empty() == true)
 		return;
 
 	if (focussedNode == nullptr) {
@@ -435,8 +430,8 @@ void GUI::render()
 	guiRenderer->setGUI(this);
 	engine->initGUIMode();
 	guiRenderer->initRendering();
-	for (auto i = 0; i < renderScreens->size(); i++) {
-		auto screen = java_cast< GUIScreenNode* >(renderScreens->get(i));
+	for (auto i = 0; i < renderScreens.size(); i++) {
+		auto screen = java_cast< GUIScreenNode* >(renderScreens.at(i));
 		if (screen->isVisible() == false)
 			continue;
 
@@ -448,8 +443,8 @@ void GUI::render()
 		screen->tick();
 		screen->render(guiRenderer);
 	}
-	for (auto i = 0; i < renderScreens->size(); i++) {
-		auto screen = java_cast< GUIScreenNode* >(renderScreens->get(i));
+	for (auto i = 0; i < renderScreens.size(); i++) {
+		auto screen = java_cast< GUIScreenNode* >(renderScreens.at(i));
 		if (screen->isVisible() == false)
 			continue;
 
@@ -461,8 +456,8 @@ void GUI::render()
 
 void GUI::handleEvents(GUINode* node)
 {
-	for (auto i = 0; i < mouseEvents->size(); i++) {
-		auto event = java_cast< GUIMouseEvent* >(mouseEvents->get(i));
+	for (auto i = 0; i < mouseEvents.size(); i++) {
+		auto event = java_cast< GUIMouseEvent* >(mouseEvents.at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -470,8 +465,8 @@ void GUI::handleEvents(GUINode* node)
 		event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
 		node->handleMouseEvent(event);
 	}
-	for (auto i = 0; i < keyboardEvents->size(); i++) {
-		auto event = java_cast< GUIKeyboardEvent* >(keyboardEvents->get(i));
+	for (auto i = 0; i < keyboardEvents.size(); i++) {
+		auto event = java_cast< GUIKeyboardEvent* >(keyboardEvents.at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -510,22 +505,22 @@ void GUI::handleEvents(GUINode* node)
 void GUI::handleEvents()
 {
 	lockEvents();
-	for (auto i = renderScreens->size() - 1; i >= 0; i--) {
-		auto screen = java_cast< GUIScreenNode* >(renderScreens->get(i));
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = renderScreens.at(i);
 		if (screen->isVisible() == false)
 			continue;
 
-		auto floatingNodes = screen->getFloatingNodes();
+		vector<GUINode*>* floatingNodes = screen->getFloatingNodes();
 		for (auto j = 0; j < floatingNodes->size(); j++) {
-			auto floatingNode = java_cast< GUINode* >(floatingNodes->get(j));
+			auto floatingNode = java_cast< GUINode* >(floatingNodes->at(j));
 			handleEvents(floatingNode);
 		}
 		if (screen->isPopUp() == true)
 			break;
 
 	}
-	for (auto i = renderScreens->size() - 1; i >= 0; i--) {
-		auto screen = java_cast< GUIScreenNode* >(renderScreens->get(i));
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = java_cast< GUIScreenNode* >(renderScreens.at(i));
 		if (screen->isVisible() == false)
 			continue;
 
@@ -537,9 +532,9 @@ void GUI::handleEvents()
 			break;
 
 	}
-	mouseEvents->clear();
+	mouseEvents.clear();
 	mouseEventsPool->reset();
-	keyboardEvents->clear();
+	keyboardEvents.clear();
 	keyboardEventsPool->reset();
 	unlockEvents();
 }
@@ -557,7 +552,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
 	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
+	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
 }
 
@@ -574,7 +569,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
 	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
+	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
 }
 
@@ -591,7 +586,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
 	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
+	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
 }
 
@@ -608,7 +603,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	guiKeyboardEvent->setAltDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
 	guiKeyboardEvent->setShiftDown((ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
+	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
 }
 
@@ -628,7 +623,7 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
 	*/
 	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
+	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
 
@@ -648,7 +643,7 @@ void GUI::onMouseMoved(int x, int y) {
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
 	*/
 	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
+	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
 
@@ -669,7 +664,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
 	*/
 	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
+	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
 
@@ -705,7 +700,7 @@ void GUI::fakeMouseMovedEvent()
 	guiMouseEvent->setWheelY(0.0f);
 	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
+	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
 
@@ -739,7 +734,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	}
 
 	lockEvents();
-	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
+	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(System::currentTimeMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(-1);
@@ -749,7 +744,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	guiKeyboardEvent->setAltDown(isAltDown);
 	guiKeyboardEvent->setShiftDown(isShiftDown);
 	guiKeyboardEvent->setProcessed(false);
-	keyboardEvents->add(guiKeyboardEvent);
+	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
 }
 

@@ -2,14 +2,17 @@
 
 #pragma once
 
+#include <vector>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::vector;
+
 using java::lang::Object;
 using java::lang::String;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -27,7 +30,7 @@ public:
 	typedef Object super;
 
 public: /* protected */
-	_ArrayList* conditions {  };
+	vector<String*> conditions {  };
 protected:
 
 	/** 
@@ -40,7 +43,7 @@ public:
 	/** 
 	 * @return conditions
 	 */
-	_ArrayList* getConditions();
+	vector<String*>* getConditions();
 
 	/** 
 	 * Add a condition

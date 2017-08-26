@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+
+using std::vector;
 
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
@@ -18,7 +22,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -40,8 +43,8 @@ private:
 	static String* CONDITION_ENABLED;
 	static String* CONDITION_OPENED;
 	static String* CONDITION_CLOSED;
-	_ArrayList* childControllerNodes {  };
-	_ArrayList* dropDownOptionControllers {  };
+	vector<GUINode*> childControllerNodes {  };
+	vector<GUIDropDownOptionController*> dropDownOptionControllers {  };
 	bool isOpen_ {  };
 	bool disabled {  };
 	GUIParentNode* dropDownNode {  };

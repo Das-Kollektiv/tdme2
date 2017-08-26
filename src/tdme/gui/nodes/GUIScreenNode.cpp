@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIScreenNode.java
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
+#include <algorithm>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -19,7 +21,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 #include <tdme/utils/_HashMap.h>
 
@@ -42,7 +43,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap_ValuesIterator;
 using tdme::utils::_HashMap;
 
@@ -81,11 +81,7 @@ void GUIScreenNode::ctor(String* id, GUINode_Flow* flow, GUIParentNode_Overflow*
 	this->screenWidth = 0;
 	this->screenHeight = 0;
 	this->nodesById = new _HashMap();
-	this->floatingNodes = new _ArrayList();
-	this->actionListener = new _ArrayList();
-	this->changeListener = new _ArrayList();
 	this->inputEventHandler = nullptr;
-	this->childControllerNodes = new _ArrayList();
 	this->screenNode = this;
 	this->parentNode = nullptr;
 	this->visible = true;
@@ -136,9 +132,9 @@ void GUIScreenNode::setPopUp(bool popUp)
 	this->popUp = popUp;
 }
 
-_ArrayList* GUIScreenNode::getFloatingNodes()
+vector<GUINode*>* GUIScreenNode::getFloatingNodes()
 {
-	return floatingNodes;
+	return &floatingNodes;
 }
 
 int32_t GUIScreenNode::getGUIEffectOffsetX()
@@ -178,12 +174,12 @@ int32_t GUIScreenNode::getContentHeight()
 
 void GUIScreenNode::layout()
 {
-	for (auto i = 0; i < subNodes->size(); i++) {
-		java_cast< GUINode* >(subNodes->get(i))->layout();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		java_cast< GUINode* >(subNodes.at(i))->layout();
 	}
-	getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto node = java_cast< GUINode* >(childControllerNodes->get(i));
+	getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto node = childControllerNodes.at(i);
 		auto controller = node->getController();
 		if (controller != nullptr) {
 			controller->postLayout();
@@ -196,9 +192,9 @@ void GUIScreenNode::layout(GUINode* node)
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = java_cast< GUIParentNode* >(node);
 		parentNode->layoutSubNodes();
-		parentNode->getChildControllerNodes(childControllerNodes);
-		for (auto i = 0; i < childControllerNodes->size(); i++) {
-			auto childNode = java_cast< GUINode* >(childControllerNodes->get(i));
+		parentNode->getChildControllerNodes(&childControllerNodes);
+		for (auto i = 0; i < childControllerNodes.size(); i++) {
+			auto childNode = childControllerNodes.at(i);
 			auto controller = childNode->getController();
 			if (controller != nullptr) {
 				controller->postLayout();
@@ -259,8 +255,8 @@ bool GUIScreenNode::removeNode(GUINode* node)
 	nodesById->remove(node->id);
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = java_cast< GUIParentNode* >(node);
-		for (auto i = 0; i < parentNode->subNodes->size(); i++) {
-			removeNode(java_cast< GUINode* >(parentNode->subNodes->get(i)));
+		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
+			removeNode(java_cast< GUINode* >(parentNode->subNodes.at(i)));
 		}
 	}
 	return true;
@@ -278,8 +274,8 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 			}
 		}
 	}
-	floatingNodes->clear();
-	super::render(guiRenderer, floatingNodes);
+	floatingNodes.clear();
+	super::render(guiRenderer, &floatingNodes);
 	guiRenderer->doneScreen();
 }
 
@@ -292,13 +288,13 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 			effect->apply(guiRenderer);
 		}
 	}
-	for (auto i = 0; i < floatingNodes->size(); i++) {
-		java_cast< GUINode* >(floatingNodes->get(i))->render(guiRenderer, nullptr);
+	for (auto i = 0; i < floatingNodes.size(); i++) {
+		floatingNodes.at(i)->render(guiRenderer, nullptr);
 	}
 	guiRenderer->doneScreen();
 }
 
-void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, _ArrayList* focusableNodes)
+void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>* focusableNodes)
 {
 	if (parentNode->conditionsMet == false) {
 		return;
@@ -306,11 +302,11 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, _ArrayList
 	if (dynamic_cast< GUIElementNode* >(parentNode) != nullptr) {
 		auto parentElementNode = java_cast< GUIElementNode* >(parentNode);
 		if (parentElementNode->focusable == true && (parentElementNode->getController() == nullptr || parentElementNode->getController()->isDisabled() == false)) {
-			focusableNodes->add(java_cast< GUIElementNode* >(parentNode));
+			focusableNodes->push_back(java_cast< GUIElementNode* >(parentNode));
 		}
 	}
-	for (auto i = 0; i < parentNode->subNodes->size(); i++) {
-		auto subNode = java_cast< GUINode* >(parentNode->subNodes->get(i));
+	for (auto i = 0; i < parentNode->subNodes.size(); i++) {
+		auto subNode = java_cast< GUINode* >(parentNode->subNodes.at(i));
 		if (dynamic_cast< GUIParentNode* >(subNode) != nullptr) {
 			determineFocussedNodes(java_cast< GUIParentNode* >(subNode), focusableNodes);
 		}
@@ -320,8 +316,8 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, _ArrayList
 void GUIScreenNode::handleMouseEvent(GUIMouseEvent* event)
 {
 	mouseEventProcessedByFloatingNode = false;
-	for (auto i = 0; i < floatingNodes->size(); i++) {
-		auto floatingNode = java_cast< GUINode* >(floatingNodes->get(i));
+	for (auto i = 0; i < floatingNodes.size(); i++) {
+		auto floatingNode = floatingNodes.at(i);
 		floatingNode->handleMouseEvent(event);
 	}
 	super::handleMouseEvent(event);
@@ -333,12 +329,12 @@ void GUIScreenNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 
 void GUIScreenNode::addActionListener(GUIActionListener* listener)
 {
-	actionListener->add(listener);
+	actionListener.push_back(listener);
 }
 
 void GUIScreenNode::removeActionListener(GUIActionListener* listener)
 {
-	actionListener->remove(static_cast< Object* >(listener));
+	actionListener.erase(std::remove(actionListener.begin(), actionListener.end(), listener), actionListener.end());
 }
 
 GUIInputEventHandler* GUIScreenNode::getInputEventHandler()
@@ -353,34 +349,34 @@ void GUIScreenNode::setInputEventHandler(GUIInputEventHandler* inputEventHandler
 
 void GUIScreenNode::delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
-	for (auto i = 0; i < actionListener->size(); i++) {
-		java_cast< GUIActionListener* >(actionListener->get(i))->onActionPerformed(type, node);
+	for (auto i = 0; i < actionListener.size(); i++) {
+		actionListener.at(i)->onActionPerformed(type, node);
 	}
 }
 
 void GUIScreenNode::addChangeListener(GUIChangeListener* listener)
 {
-	changeListener->add(listener);
+	changeListener.push_back(listener);
 }
 
 void GUIScreenNode::removeChangeListener(GUIChangeListener* listener)
 {
-	changeListener->remove(static_cast< Object* >(listener));
+	changeListener.erase(std::remove(changeListener.begin(), changeListener.end(), listener), changeListener.end());
 }
 
 void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 {
-	for (auto i = 0; i < changeListener->size(); i++) {
-		java_cast< GUIChangeListener* >(changeListener->get(i))->onValueChanged(node);
+	for (auto i = 0; i < changeListener.size(); i++) {
+		changeListener.at(i)->onValueChanged(node);
 	}
 }
 
 void GUIScreenNode::getValues(_HashMap* values)
 {
 	values->clear();
-	getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes.at(i);
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
 			continue;
 
@@ -399,9 +395,9 @@ void GUIScreenNode::getValues(_HashMap* values)
 
 void GUIScreenNode::setValues(_HashMap* values)
 {
-	getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes.at(i);
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
 			continue;
 
@@ -445,7 +441,7 @@ java::lang::Class* GUIScreenNode::class_()
     return c;
 }
 
-void GUIScreenNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIScreenNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	super::render(guiRenderer, floatingNodes);
 }

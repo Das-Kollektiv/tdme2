@@ -23,7 +23,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -78,7 +77,7 @@ public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
 	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* src, GUIColor* effectColorMul, GUIColor* effectColorAdd);

@@ -16,7 +16,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::elements::GUISelectBoxController;
 using java::lang::Object;
@@ -34,7 +33,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -58,8 +56,6 @@ GUISelectBoxController::GUISelectBoxController(GUINode* node)
 
 void GUISelectBoxController::init()
 {
-	childControllerNodes = new _ArrayList();
-	selectBoxOptionControllers = new _ArrayList();
 	value = new MutableString();
 }
 
@@ -102,9 +98,9 @@ void GUISelectBoxController::postLayout()
 
 void GUISelectBoxController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUISelectBoxOptionController* >(childController) != nullptr) {
 			(java_cast< GUISelectBoxOptionController* >(childController))->unselect();
@@ -114,13 +110,13 @@ void GUISelectBoxController::unselect()
 
 void GUISelectBoxController::determineSelectBoxOptionControllers()
 {
-	selectBoxOptionControllers->clear();
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	selectBoxOptionControllers.clear();
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUISelectBoxOptionController* >(childController) != nullptr) {
-			selectBoxOptionControllers->add(java_cast< GUISelectBoxOptionController* >(childController));
+			selectBoxOptionControllers.push_back(java_cast< GUISelectBoxOptionController* >(childController));
 		}
 	}
 }
@@ -128,8 +124,8 @@ void GUISelectBoxController::determineSelectBoxOptionControllers()
 int32_t GUISelectBoxController::getSelectedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
-	for (auto i = 0; i < selectBoxOptionControllers->size(); i++) {
-		auto selectBoxOptionController = java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(i));
+	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
+		auto selectBoxOptionController = selectBoxOptionControllers.at(i);
 		if (selectBoxOptionController->isSelected() == true) {
 			selectBoxOptionControllerIdx = i;
 			break;
@@ -148,16 +144,16 @@ void GUISelectBoxController::selectNext()
 	determineSelectBoxOptionControllers();
 	auto selectBoxOptionControllerIdx = getSelectedOptionIdx();
 	unselect();
-	if (selectBoxOptionControllers->size() == 0)
+	if (selectBoxOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % selectBoxOptionControllers->size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % selectBoxOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
-		selectBoxOptionControllerIdx += selectBoxOptionControllers->size();
+		selectBoxOptionControllerIdx += selectBoxOptionControllers.size();
 
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->select();
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(java_cast< GUIParentNode* >(node));
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(java_cast< GUIParentNode* >(node));
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->select();
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(java_cast< GUIParentNode* >(node));
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(java_cast< GUIParentNode* >(node));
 }
 
 void GUISelectBoxController::selectPrevious()
@@ -165,16 +161,16 @@ void GUISelectBoxController::selectPrevious()
 	determineSelectBoxOptionControllers();
 	auto selectBoxOptionControllerIdx = getSelectedOptionIdx();
 	unselect();
-	if (selectBoxOptionControllers->size() == 0)
+	if (selectBoxOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % selectBoxOptionControllers->size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % selectBoxOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
-		selectBoxOptionControllerIdx += selectBoxOptionControllers->size();
+		selectBoxOptionControllerIdx += selectBoxOptionControllers.size();
 
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->select();
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(java_cast< GUIParentNode* >(node));
-	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(java_cast< GUIParentNode* >(node));
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->select();
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(java_cast< GUIParentNode* >(node));
+	java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(java_cast< GUIParentNode* >(node));
 }
 
 void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -234,8 +230,8 @@ MutableString* GUISelectBoxController::getValue()
 {
 	value->reset();
 	determineSelectBoxOptionControllers();
-	for (auto i = 0; i < selectBoxOptionControllers->size(); i++) {
-		auto selectBoxOptionController = java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(i));
+	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
+		auto selectBoxOptionController = selectBoxOptionControllers.at(i);
 		if (selectBoxOptionController->isSelected() == true) {
 			value->append((java_cast< GUIElementNode* >(selectBoxOptionController->getNode()))->getValue());
 		}
@@ -247,8 +243,8 @@ void GUISelectBoxController::setValue(MutableString* value)
 {
 	determineSelectBoxOptionControllers();
 	unselect();
-	for (auto i = 0; i < selectBoxOptionControllers->size(); i++) {
-		auto selectBoxOptionController = java_cast< GUISelectBoxOptionController* >(selectBoxOptionControllers->get(i));
+	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
+		auto selectBoxOptionController = selectBoxOptionControllers.at(i);
 		auto selectBoxOptionNode = java_cast< GUIElementNode* >(selectBoxOptionController->getNode());
 		if (value->equals(selectBoxOptionNode->getValue()) == true) {
 			selectBoxOptionController->select();

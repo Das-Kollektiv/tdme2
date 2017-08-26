@@ -1,16 +1,19 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINodeConditions.java
 #include <tdme/gui/nodes/GUINodeConditions.h>
 
+#include <algorithm>
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::gui::nodes::GUINodeConditions;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -35,33 +38,42 @@ GUINodeConditions::GUINodeConditions()
 void GUINodeConditions::ctor()
 {
 	super::ctor();
-	this->conditions = new _ArrayList();
 }
 
-_ArrayList* GUINodeConditions::getConditions()
+vector<String*>* GUINodeConditions::getConditions()
 {
-	return conditions;
+	return &conditions;
 }
 
 void GUINodeConditions::add(String* condition)
 {
 	remove(condition);
-	conditions->add(condition);
+	conditions.push_back(condition);
 }
 
 void GUINodeConditions::remove(String* condition)
 {
-	conditions->remove(condition);
+	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
 }
 
 void GUINodeConditions::removeAll()
 {
-	conditions->clear();
+	conditions.clear();
 }
 
 String* GUINodeConditions::toString()
 {
-	return ::java::lang::StringBuilder().append(u"GUINodeConditions [conditions="_j)->append(static_cast< Object* >(conditions))
+	// basically copied from method _ArrayList::toString() from src/tdme/utils/_ArrayList.cpp
+	// to make this work with the vector<String*> of conditions
+	auto conditionsVectorAsString = u"["_j;
+	for (auto i = 0; i < conditions.size(); i++) {
+		conditionsVectorAsString = ::java::lang::StringBuilder(conditionsVectorAsString).append(conditions[i])->toString();
+		if (i < conditions.size() - 1)
+			conditionsVectorAsString = ::java::lang::StringBuilder(conditionsVectorAsString).append(u", "_j)->toString();
+	}
+	conditionsVectorAsString = ::java::lang::StringBuilder(conditionsVectorAsString).append(u"]"_j)->toString();
+
+	return ::java::lang::StringBuilder().append(u"GUINodeConditions [conditions="_j)->append(conditionsVectorAsString)
 		->append(u"]"_j)->toString();
 }
 

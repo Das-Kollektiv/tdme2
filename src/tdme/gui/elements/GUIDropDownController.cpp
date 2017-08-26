@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDownController.java
 #include <tdme/gui/elements/GUIDropDownController.h>
 
+#include <vector>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -17,7 +19,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_ArrayList.h>
+
+using std::vector;
 
 using tdme::gui::elements::GUIDropDownController;
 using java::lang::Object;
@@ -36,7 +39,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -60,8 +62,6 @@ GUIDropDownController::GUIDropDownController(GUINode* node)
 
 void GUIDropDownController::init()
 {
-	childControllerNodes = new _ArrayList();
-	dropDownOptionControllers = new _ArrayList();
 	isOpen_ = false;
 	dropDownNode = nullptr;
 	arrowNode = nullptr;
@@ -128,9 +128,9 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
 			(java_cast< GUIDropDownOptionController* >(childController))->unselect();
@@ -149,13 +149,13 @@ void GUIDropDownController::toggleOpenState()
 
 void GUIDropDownController::determineDropDownOptionControllers()
 {
-	dropDownOptionControllers->clear();
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	dropDownOptionControllers.clear();
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
-			dropDownOptionControllers->add(java_cast< GUIDropDownOptionController* >(childController));
+			dropDownOptionControllers.push_back(java_cast< GUIDropDownOptionController* >(childController));
 		}
 	}
 }
@@ -163,8 +163,8 @@ void GUIDropDownController::determineDropDownOptionControllers()
 int32_t GUIDropDownController::getSelectedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
-	for (auto i = 0; i < dropDownOptionControllers->size(); i++) {
-		auto selectBoxOptionController = java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(i));
+	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
+		auto selectBoxOptionController = java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(i));
 		if (selectBoxOptionController->isSelected() == true) {
 			selectBoxOptionControllerIdx = i;
 			break;
@@ -178,16 +178,16 @@ void GUIDropDownController::selectNext()
 	determineDropDownOptionControllers();
 	auto selectBoxOptionControllerIdx = getSelectedOptionIdx();
 	unselect();
-	if (dropDownOptionControllers->size() == 0)
+	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % dropDownOptionControllers->size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % dropDownOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
-		selectBoxOptionControllerIdx += dropDownOptionControllers->size();
+		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->select();
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->select();
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::selectPrevious()
@@ -195,16 +195,16 @@ void GUIDropDownController::selectPrevious()
 	determineDropDownOptionControllers();
 	auto selectBoxOptionControllerIdx = getSelectedOptionIdx();
 	unselect();
-	if (dropDownOptionControllers->size() == 0)
+	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % dropDownOptionControllers->size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % dropDownOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
-		selectBoxOptionControllerIdx += dropDownOptionControllers->size();
+		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->select();
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->select();
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
+	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -280,8 +280,8 @@ MutableString* GUIDropDownController::getValue()
 {
 	value->reset();
 	determineDropDownOptionControllers();
-	for (auto i = 0; i < dropDownOptionControllers->size(); i++) {
-		auto dropDownOptionController = java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(i));
+	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
+		auto dropDownOptionController = dropDownOptionControllers.at(i);
 		if (dropDownOptionController->isSelected() == true) {
 			value->append((java_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
 		}
@@ -293,8 +293,8 @@ void GUIDropDownController::setValue(MutableString* value)
 {
 	determineDropDownOptionControllers();
 	unselect();
-	for (auto i = 0; i < dropDownOptionControllers->size(); i++) {
-		auto dropDownOptionController = java_cast< GUIDropDownOptionController* >(dropDownOptionControllers->get(i));
+	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
+		auto dropDownOptionController = dropDownOptionControllers.at(i);
 		auto dropDownOptionNode = (java_cast< GUIElementNode* >(dropDownOptionController->getNode()));
 		if (value->equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/nodes/GUINode.h>
+
+using std::vector;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::String;
@@ -26,7 +30,6 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUIParserException;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -44,7 +47,7 @@ public:
 	typedef GUINode super;
 
 public: /* protected */
-	_ArrayList* subNodes {  };
+	vector<GUINode*> subNodes {  };
 	GUIParentNode_Overflow* overflowX {  };
 	GUIParentNode_Overflow* overflowY {  };
 	float childrenRenderOffsetX {  };
@@ -167,7 +170,7 @@ private:
 	 * Get child controller nodes internal
 	 * @param child controller nodes
 	 */
-	void getChildControllerNodesInternal(_ArrayList* childControllerNodes);
+	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
 
 public:
 
@@ -175,10 +178,10 @@ public:
 	 * Get child controller nodes
 	 * @param child controller nodes
 	 */
-	virtual void getChildControllerNodes(_ArrayList* childControllerNodes);
+	virtual void getChildControllerNodes(vector<GUINode*>* childControllerNodes);
 	void dispose() override;
 	void setConditionsMet() override;
-	void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;

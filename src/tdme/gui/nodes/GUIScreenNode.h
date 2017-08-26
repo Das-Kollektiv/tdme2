@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+
+using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using java::lang::String;
@@ -33,7 +37,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_ArrayList;
 using tdme::utils::_HashMap;
 
 
@@ -57,11 +60,11 @@ private:
 	int32_t screenWidth {  };
 	int32_t screenHeight {  };
 	_HashMap* nodesById {  };
-	_ArrayList* floatingNodes {  };
-	_ArrayList* actionListener {  };
-	_ArrayList* changeListener {  };
+	vector<GUINode*> floatingNodes {  };
+	vector<GUIActionListener*> actionListener {  };
+	vector<GUIChangeListener*> changeListener {  };
 	GUIInputEventHandler* inputEventHandler {  };
-	_ArrayList* childControllerNodes {  };
+	vector<GUINode*> childControllerNodes {  };
 
 public: /* protected */
 	bool mouseEventProcessedByFloatingNode {  };
@@ -140,7 +143,7 @@ public:
 	/** 
 	 * @return floating nodes
 	 */
-	_ArrayList* getFloatingNodes();
+	vector<GUINode*>* getFloatingNodes();
 
 	/** 
 	 * @return GUI effect offset X
@@ -255,7 +258,7 @@ public:
 	 * @param parent node
 	 * @param focusable nodes
 	 */
-	void determineFocussedNodes(GUIParentNode* parentNode, _ArrayList* focusableNodes);
+	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>* focusableNodes);
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
@@ -353,7 +356,7 @@ private:
 	void init();
 
 public:
-	void render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes);
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
 
 private:
 	virtual ::java::lang::Class* getClass0();

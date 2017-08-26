@@ -2,6 +2,7 @@
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
 
 #include <array>
+#include <vector>
 
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
@@ -15,6 +16,7 @@
 #include <Array.h>
 
 using std::array;
+using std::vector;
 
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
 using java::lang::String;
@@ -76,7 +78,7 @@ int32_t GUIHorizontalScrollbarInternalNode::getContentHeight()
 	return computedConstraints->height;
 }
 
-void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, _ArrayList* floatingNodes)
+void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

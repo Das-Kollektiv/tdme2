@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,13 +12,14 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::vector;
+
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
-using tdme::utils::_ArrayList;
 
 
 struct default_init_tag;
@@ -34,7 +37,7 @@ public:
 	typedef GUINodeController super;
 
 private:
-	_ArrayList* childControllerNodes {  };
+	vector<GUINode*> childControllerNodes {  };
 	MutableString* tabContentNodeId {  };
 protected:
 

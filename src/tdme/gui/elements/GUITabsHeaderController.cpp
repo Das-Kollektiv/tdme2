@@ -14,7 +14,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/_ArrayList.h>
 
 using tdme::gui::elements::GUITabsHeaderController;
 using java::lang::Object;
@@ -30,7 +29,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::_ArrayList;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -55,8 +53,6 @@ GUITabsHeaderController::GUITabsHeaderController(GUINode* node)
 void GUITabsHeaderController::ctor(GUINode* node)
 {
 	super::ctor(node);
-	this->childControllerNodes = new _ArrayList();
-	this->tabControllers = new _ArrayList();
 	this->hasFocus_ = false;
 }
 
@@ -89,9 +85,9 @@ bool GUITabsHeaderController::hasFocus()
 
 void GUITabsHeaderController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto guiTabController = java_cast< GUITabController* >(childController);
@@ -105,10 +101,10 @@ void GUITabsHeaderController::unselect()
 
 void GUITabsHeaderController::determineTabControllers()
 {
-	tabControllers->clear();
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes->size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes->get(i));
+	tabControllers.clear();
+	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto guiTabController = java_cast< GUITabController* >(childController);
@@ -118,7 +114,7 @@ void GUITabsHeaderController::determineTabControllers()
 			if (guiTabController->isDisabled() == true)
 				continue;
 
-			tabControllers->add(guiTabController);
+			tabControllers.push_back(guiTabController);
 		}
 	}
 }
@@ -126,8 +122,8 @@ void GUITabsHeaderController::determineTabControllers()
 int32_t GUITabsHeaderController::getSelectedTabIdx()
 {
 	auto tabControllerIdx = -1;
-	for (auto i = 0; i < tabControllers->size(); i++) {
-		auto tabController = java_cast< GUITabController* >(tabControllers->get(i));
+	for (auto i = 0; i < tabControllers.size(); i++) {
+		auto tabController = java_cast< GUITabController* >(tabControllers.at(i));
 		if (tabController->isSelected() == true) {
 			tabControllerIdx = i;
 			break;
@@ -141,13 +137,13 @@ void GUITabsHeaderController::selectNext()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	tabControllerIdx = (tabControllerIdx + 1) % tabControllers->size();
+	tabControllerIdx = (tabControllerIdx + 1) % tabControllers.size();
 	if (tabControllerIdx < 0)
-		tabControllerIdx += tabControllers->size();
+		tabControllerIdx += tabControllers.size();
 
-	java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->setSelected(true);
+	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
 	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->getNode()->getId());
+	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectPrevious()
@@ -155,13 +151,13 @@ void GUITabsHeaderController::selectPrevious()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	tabControllerIdx = (tabControllerIdx - 1) % tabControllers->size();
+	tabControllerIdx = (tabControllerIdx - 1) % tabControllers.size();
 	if (tabControllerIdx < 0)
-		tabControllerIdx += tabControllers->size();
+		tabControllerIdx += tabControllers.size();
 
-	java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->setSelected(true);
+	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
 	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->getNode()->getId());
+	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectCurrent()
@@ -169,9 +165,9 @@ void GUITabsHeaderController::selectCurrent()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->setSelected(true);
+	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
 	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers->get(tabControllerIdx))->getNode()->getId());
+	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
 }
 
 void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
