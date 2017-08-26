@@ -32,13 +32,6 @@ ConstraintsEntity::ConstraintsEntity()
 
 constexpr float ConstraintsEntity::HITPOINT_TOLERANCE;
 
-void ConstraintsEntity::computeCrossProduct(Vector3* a, Vector3* b, Vector3* dest)
-{
-	auto aXYZ = a->getArray();
-	auto bXYZ = b->getArray();
-	dest->set((*aXYZ)[1] * (*bXYZ)[2] - (*aXYZ)[2] * (*bXYZ)[1], (*aXYZ)[2] * (*bXYZ)[0] - (*aXYZ)[0] * (*bXYZ)[2], (*aXYZ)[0] * (*bXYZ)[1] - (*aXYZ)[1] * (*bXYZ)[0]);
-}
-
 void ConstraintsEntity::set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision)
 {
 	this->collision.fromResponse(collision);
@@ -47,7 +40,7 @@ void ConstraintsEntity::set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* c
 	muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * MathTools::g;
 	this->collision.getNormal()->scale(-1.0f);
 	this->collision.getNormal()->computeOrthogonalVector(&this->frictionVectors[0]);
-	computeCrossProduct(this->collision.getNormal(), &this->frictionVectors[0], &this->frictionVectors[1]);
+	Vector3::computeCrossProduct(this->collision.getNormal(), &this->frictionVectors[0], &this->frictionVectors[1]);
 }
 
 void ConstraintsEntity::computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6, 2>>* jacobianMatrices)
@@ -73,8 +66,8 @@ void ConstraintsEntity::computeJacobian(int32_t constraintIdx, vector<array<Matr
 		auto point = collision.getHitPointAt(hitPointIdx);
 		r1.set(point)->sub(body1Position);
 		r2.set(point)->sub(body2Position);
-		computeCrossProduct(&r1, n, &r1CrossN);
-		computeCrossProduct(&r2, n, &r2CrossN);
+		Vector3::computeCrossProduct(&r1, n, &r1CrossN);
+		Vector3::computeCrossProduct(&r2, n, &r2CrossN);
 		jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];
 		jacobianMatrix->setValue(0, tmpVector3.set(n)->scale(-1.0f));
 		jacobianMatrix->setValue(3, tmpVector3.set(&r1CrossN)->scale(-1.0f));
@@ -82,10 +75,10 @@ void ConstraintsEntity::computeJacobian(int32_t constraintIdx, vector<array<Matr
 		jacobianMatrix->setValue(0, n);
 		jacobianMatrix->setValue(3, &r2CrossN);
 		currentConstraintIdx++;
-		computeCrossProduct(&r1, &t1, &r1CrossU1);
-		computeCrossProduct(&r2, &t1, &r2CrossU1);
-		computeCrossProduct(&r1, &t2, &r1CrossU2);
-		computeCrossProduct(&r2, &t2, &r2CrossU2);
+		Vector3::computeCrossProduct(&r1, &t1, &r1CrossU1);
+		Vector3::computeCrossProduct(&r2, &t1, &r2CrossU1);
+		Vector3::computeCrossProduct(&r1, &t2, &r1CrossU2);
+		Vector3::computeCrossProduct(&r2, &t2, &r2CrossU2);
 		jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];
 		jacobianMatrix->setValue(0, tmpVector3.set(&t1)->scale(-1.0f));
 		jacobianMatrix->setValue(3, tmpVector3.set(&r1CrossU1)->scale(-1.0f));

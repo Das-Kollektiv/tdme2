@@ -42,14 +42,6 @@ private:
 	array<Vector3, 2> frictionVectors { };
 	float muMg {  };
 
-	/** 
-	 * Compute cross product a x b = dest
-	 * @param a
-	 * @param b
-	 * @param dest
-	 */
-	static void computeCrossProduct(Vector3* a, Vector3* b, Vector3* dest);
-
 public: /* protected */
 
 	/** 
