@@ -65,7 +65,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param jacobian matrices
 	 */
-	void computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6*, 2>>* jacobianMatrices);
+	void computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6, 2>>* jacobianMatrices);
 
 	/** 
 	 * Compute lower bounds

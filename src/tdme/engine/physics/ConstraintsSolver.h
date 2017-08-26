@@ -9,7 +9,15 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/ConstraintsEntity.h>
+#include <tdme/engine/physics/ContactCache.h>
+#include <tdme/engine/physics/DynamicVector.h>
+#include <tdme/engine/physics/Matrix1x6.h>
+#include <tdme/engine/physics/Matrix6x6.h>
+#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/engine/physics/Vector6.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
@@ -17,7 +25,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ConstraintsEntity;
 using tdme::engine::physics::ContactCache;
 using tdme::engine::physics::DynamicVector;
@@ -41,36 +48,29 @@ public: /* protected */
 private:
 	int32_t constraintsEntityCount {  };
 	int32_t constraintsCount {  };
-	int32_t keyCount {  };
-	vector<RigidBody*> rigidBodies {  };
+	vector<RigidBody*>* rigidBodies {  };
 	map<wstring, RigidBody*> constrainedBodies {  };
-	ContactCache* contactCache {  };
+	ContactCache contactCache {  };
 	vector<array<int32_t, 2>> constraintsBodyIdxMap {  };
-	vector<array<Matrix1x6*, 2>> jacobianMatrices {  };
-	vector<array<Vector6*, 2>> bVectors {  };
-	DynamicVector* lambda {  };
-	DynamicVector* lambdaInit {  };
-	DynamicVector* errorValues {  };
-	DynamicVector* b {  };
-	DynamicVector* lowerBounds {  };
-	DynamicVector* upperBounds {  };
+	vector<array<Matrix1x6, 2>> jacobianMatrices {  };
+	vector<array<Vector6, 2>> bVectors {  };
+	DynamicVector lambda {  };
+	DynamicVector lambdaInit {  };
+	DynamicVector errorValues {  };
+	DynamicVector b {  };
+	DynamicVector lowerBounds {  };
+	DynamicVector upperBounds {  };
 	vector<float> d {  };
-	vector<ConstraintsEntity*> constraintsEntities {  };
-	vector<Matrix6x6*> invInertiaMatrices {  };
-	vector<Vector6*> velocityVectors {  };
-	vector<Vector6*> constrainedVelocityVectors {  };
-	vector<Vector6*> forcesVectors {  };
-	vector<Vector6*> a {  };
+	vector<ConstraintsEntity> constraintsEntities {  };
+	vector<Matrix6x6> invInertiaMatrices {  };
+	vector<Vector6> velocityVectors {  };
+	vector<Vector6> constrainedVelocityVectors {  };
+	vector<Vector6> forcesVectors {  };
+	vector<Vector6> a {  };
 	vector<RigidBody*> rigidBodiesVelocityChange {  };
 	vector<RigidBody*> rigidBodiesCurrentChain {  };
 	vector<RigidBody*> rigidBodiesChainsResult {  };
 	vector<float> tmpLamdaValues {  };
-	Matrix1x6* tmpMatrix1x6 {  };
-	Vector6* tmpVector6 {  };
-	Vector3* newLinearVelocity {  };
-	Vector3* newAngularVelocity {  };
-	Vector3* force {  };
-	Vector3* torque {  };
 
 public: /* protected */
 
@@ -186,5 +186,5 @@ public: /* protected */
 	 * Protected constructor
 	 * @param rigid bodies
 	 */
-	ConstraintsSolver(const vector<RigidBody*>& rigidBodies);
+	ConstraintsSolver(vector<RigidBody*>* rigidBodies);
 };

@@ -8,6 +8,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/ContactCache_ContactCacheInfo.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::map;

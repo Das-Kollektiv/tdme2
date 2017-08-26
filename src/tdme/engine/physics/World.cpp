@@ -65,12 +65,16 @@ using tdme::utils::_Console;
 World::World() 
 {
 	partition = new PhysicsPartitionOctTree();
+	updateRigidBodyIndices = true;
 }
 
 void World::reset()
 {
 	rigidBodies.clear();
+	rigidBodiesDynamic.clear();
+	rigidBodiesById.clear();
 	partition->reset();
+	updateRigidBodyIndices = true;
 }
 
 PhysicsPartition* World::getPartition()
@@ -85,24 +89,22 @@ void World::setPartition(PhysicsPartition* partition)
 
 RigidBody* World::addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix)
 {
-	auto rigidBody = new RigidBody(this, rigidBodies.size(), id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
+	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesDynamic.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
-	if (enabled == true)
-		partition->addRigidBody(rigidBody);
-
+	if (enabled == true) partition->addRigidBody(rigidBody);
+	updateRigidBodyIndices = true;
 	return rigidBody;
 }
 
 RigidBody* World::addStaticRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction)
 {
-	auto rigidBody = new RigidBody(this, rigidBodies.size(), id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
+	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
-	if (enabled == true)
-		partition->addRigidBody(rigidBody);
-
+	if (enabled == true) partition->addRigidBody(rigidBody);
+	updateRigidBodyIndices = true;
 	return rigidBody;
 }
 
@@ -117,8 +119,15 @@ RigidBody* World::getRigidBody(const wstring& id)
 
 void World::update(float deltaTime)
 {
+	if (updateRigidBodyIndices == true) {
+		int rigidBodyIdx = 0;
+		for (auto rigidBody: rigidBodies) {
+			rigidBody->idx = rigidBodyIdx++;
+		}
+		updateRigidBodyIndices = false;
+	}
 	if (constraintsSolver == nullptr) {
-		constraintsSolver = new ConstraintsSolver(rigidBodies);
+		constraintsSolver = new ConstraintsSolver(&rigidBodies);
 	}
 	{
 		Vector3 worldPosForce;

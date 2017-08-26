@@ -7,6 +7,10 @@ using std::vector;
 
 using tdme::engine::physics::DynamicVector;
 
+DynamicVector::DynamicVector()
+{
+}
+
 DynamicVector::DynamicVector(int32_t size) 
 {
 	data.resize(size);

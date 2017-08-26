@@ -49,6 +49,7 @@ private:
 	map<wstring, RigidBody*> rigidBodiesById {  };
 	ConstraintsSolver* constraintsSolver { nullptr };
 	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	bool updateRigidBodyIndices {  };
 public:
 
 	/** 

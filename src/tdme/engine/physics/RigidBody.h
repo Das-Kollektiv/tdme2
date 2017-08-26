@@ -327,7 +327,6 @@ public: /* protected */
 	/**
 	 * Protected constructor
 	 * @param partition
-	 * @param idx
 	 * @param id
 	 * @param enabled
 	 * @param type id
@@ -336,5 +335,5 @@ public: /* protected */
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, int32_t idx, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
+	RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
 };

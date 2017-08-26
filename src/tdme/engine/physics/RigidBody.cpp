@@ -41,10 +41,10 @@ using tdme::math::Vector3;
 using tdme::utils::_Console;
 
 
-RigidBody::RigidBody(World* world, int32_t idx, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia)
+RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia)
 {
 	this->world = world;
-	this->idx = idx;
+	this->idx = -1;
 	this->id = id;
 	this->enabled = enabled;
 	this->typeId = typeId;

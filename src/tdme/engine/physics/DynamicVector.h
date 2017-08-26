@@ -51,5 +51,11 @@ public: /* protected */
 	/**
 	 * Constructor
 	 */
+	DynamicVector();
+
+	/**
+	 * Constructor
+	 * @param size
+	 */
 	DynamicVector(int32_t size);
 };
