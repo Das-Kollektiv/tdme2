@@ -1,9 +1,12 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 #include <tdme/engine/fileio/models/TMReader.h>
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
+
+#include <Array.h>
 
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
@@ -37,6 +40,7 @@
 #include <SubArray.h>
 #include <ObjectArray.h>
 
+using std::array;
 using std::map;
 using std::vector;
 using std::wstring;
@@ -144,7 +148,11 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 	auto name = is->readString();
 	auto upVector = Model_UpVector::valueOf(is->readWString());
 	auto rotationOrder = RotationOrder::valueOf(is->readWString());
-	auto boundingBox = new BoundingBox(new Vector3(is->readFloatArray()), new Vector3(is->readFloatArray()));
+	array<float, 3> boundingBoxMinXYZ;
+	is->readFloatArray(&boundingBoxMinXYZ);
+	array<float, 3> boundingBoxMaxXYZ;
+	is->readFloatArray(&boundingBoxMaxXYZ);
+	auto boundingBox = new BoundingBox(new Vector3(&boundingBoxMinXYZ), new Vector3(&boundingBoxMaxXYZ));
 	auto model = new Model(
 		::java::lang::StringBuilder().
 		 append(pathName)->
@@ -158,7 +166,9 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 		boundingBox
 	);
 	model->setFPS(is->readFloat());
-	model->getImportTransformationsMatrix()->set(is->readFloatArray());
+	array<float, 16> importTransformationsMatrixArray;
+	is->readFloatArray(&importTransformationsMatrixArray);
+	model->getImportTransformationsMatrix()->set(&importTransformationsMatrixArray);
 	auto materialCount = is->readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(is);
@@ -173,10 +183,15 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	clinit();
 	auto id = is->readWString();
 	auto m = new Material(id);
-	m->getAmbientColor()->set(is->readFloatArray());
-	m->getDiffuseColor()->set(is->readFloatArray());
-	m->getSpecularColor()->set(is->readFloatArray());
-	m->getEmissionColor()->set(is->readFloatArray());
+	array<float, 4> colorRGBAArray;
+	is->readFloatArray(&colorRGBAArray);
+	m->getAmbientColor()->set(&colorRGBAArray);
+	is->readFloatArray(&colorRGBAArray);
+	m->getDiffuseColor()->set(&colorRGBAArray);
+	is->readFloatArray(&colorRGBAArray);
+	m->getSpecularColor()->set(&colorRGBAArray);
+	is->readFloatArray(&colorRGBAArray);
+	m->getEmissionColor()->set(&colorRGBAArray);
 	m->setShininess(is->readFloat());
 	auto diffuseTexturePathName = is->readWString();
 	auto diffuseTextureFileName = is->readWString();
@@ -205,10 +220,12 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 {
 	clinit();
 	vector<Vector3> v;
+	array<float, 3> vXYZ;
 	if (is->readBoolean() == true) {
 		v.resize(is->readInt());
 		for (auto i = 0; i < v.size(); i++) {
-			v[i].set(is->readFloatArray());
+			is->readFloatArray(&vXYZ);
+			v[i].set(&vXYZ);
 		}
 	}
 	return v;
@@ -217,11 +234,13 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
+	array<float, 2> tcUV;
 	vector<TextureCoordinate> tc;
 	if (is->readBoolean() == true) {
 		tc.resize(is->readInt());
 		for (auto i = 0; i < tc.size(); i++) {
-			tc[i] = TextureCoordinate(is->readFloatArray());
+			is->readFloatArray(&tcUV);
+			tc[i] = TextureCoordinate(&tcUV);
 		}
 	}
 	return tc;
@@ -247,9 +266,11 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
+		array<float, 16> matrixArray;
 		g->createAnimation(is->readInt());
 		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
-			(*g->getAnimation()->getTransformationsMatrices())[i].set(is->readFloatArray());
+			is->readFloatArray(&matrixArray);
+			(*g->getAnimation()->getTransformationsMatrices())[i].set(&matrixArray);
 		}
 		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->size());
 		return g->getAnimation();
@@ -296,8 +317,10 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	clinit();
+	array<float, 16> matrixArray;
 	Joint joint(is->readWString());
-	joint.getBindMatrix()->set(is->readFloatArray());
+	is->readFloatArray(&matrixArray);
+	joint.getBindMatrix()->set(&matrixArray);
 	return joint;
 }
 
@@ -347,7 +370,9 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	clinit();
 	auto group = new Group(model, parentGroup, is->readWString(), is->readWString());
 	group->setJoint(is->readBoolean());
-	group->getTransformationsMatrix()->set(is->readFloatArray());
+	array<float, 16> matrixArray;
+	is->readFloatArray(&matrixArray);
+	group->getTransformationsMatrix()->set(&matrixArray);
 	vector<Vector3> vertices = readVertices(is);
 	group->setVertices(&vertices);
 	vector<Vector3> normals = readVertices(is);

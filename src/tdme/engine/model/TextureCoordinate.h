@@ -63,7 +63,7 @@ public:
 	 * Public constructor
 	 * @param texture coordinate
 	 */
-	TextureCoordinate(floatArray* uv);
+	TextureCoordinate(array<float, 2>* uv);
 
 	/**
 	 * Public constructor

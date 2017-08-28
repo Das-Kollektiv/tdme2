@@ -5,7 +5,6 @@
 #include <java/lang/Float.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector4.h>
-#include <Array.h>
 #include <cmath>
 
 using tdme::math::Vector3;
@@ -26,16 +25,9 @@ Vector3::Vector3(float x, float y, float z)
 	data[2] = z;
 }
 
-Vector3::Vector3(floatArray* v) 
+Vector3::Vector3(array<float,3>* v)
 {
-	data[0] = (*v)[0];
-	data[1] = (*v)[1];
-	data[2] = (*v)[2];
-}
-
-Vector3::Vector3(array<float,3> v)
-{
-	data = v;
+	data = *v;
 }
 
 Vector3::Vector3(Vector3* v) 
@@ -58,11 +50,9 @@ Vector3* Vector3::set(float x, float y, float z)
 	return this;
 }
 
-Vector3* Vector3::set(floatArray* v)
+Vector3* Vector3::set(array<float, 3>* v)
 {
-	data[0] = (*v)[0];
-	data[1] = (*v)[1];
-	data[2] = (*v)[2];
+	data = *v;
 	return this;
 }
 
@@ -285,12 +275,12 @@ Vector3* Vector3::scale(Vector3* scale)
 
 Vector3* Vector3::clone()
 {
-	return new Vector3(data);
+	return new Vector3(&data);
 }
 
 Vector3 Vector3::clone2()
 {
-	return Vector3(data);
+	return Vector3(&data);
 }
 
 bool Vector3::equals(Vector3* v)

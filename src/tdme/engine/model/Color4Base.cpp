@@ -10,7 +10,6 @@
 #include <java/lang/System.h>
 #include <java/util/Arrays.h>
 #include <tdme/math/MathTools.h>
-#include <Array.h>
 
 using std::array;
 using std::begin;
@@ -43,14 +42,6 @@ Color4Base::Color4Base(array<float, 4>* color)
 	this->data = *color;
 }
 
-Color4Base::Color4Base(floatArray* color) 
-{
-	this->data[0] = (*color)[0];
-	this->data[1] = (*color)[1];
-	this->data[2] = (*color)[2];
-	this->data[3] = (*color)[3];
-}
-
 Color4Base::Color4Base(float r, float g, float b, float a) 
 {
 	data[0] = r;
@@ -62,14 +53,6 @@ Color4Base::Color4Base(float r, float g, float b, float a)
 void Color4Base::set(array<float, 4>* color)
 {
 	this->data = *color;
-}
-
-void Color4Base::set(floatArray* color)
-{
-	this->data[0] = (*color)[0];
-	this->data[1] = (*color)[1];
-	this->data[2] = (*color)[2];
-	this->data[3] = (*color)[3];
 }
 
 void Color4Base::set(float r, float g, float b, float a)

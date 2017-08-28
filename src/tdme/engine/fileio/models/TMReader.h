@@ -2,11 +2,13 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
 
 #include <Array.h>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/StringBuffer.h>
@@ -20,6 +22,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::array;
 using std::map;
 using std::wstring;
 using std::vector;
@@ -165,12 +168,59 @@ public:
 	 * @throws model file IO exception
 	 * @return float array
 	 */
-	inline floatArray* readFloatArray() throw (ModelFileIOException) {
-		auto f = new floatArray(readInt());
-		for (auto i = 0; i < f->length; i++) {
-			(*f)[i] = readFloat();
+	inline void readFloatArray(array<float, 16>* data) throw (ModelFileIOException) {
+		auto length = readInt();
+		if (length != data->size()) {
+			throw ModelFileIOException("Wrong float array size");
 		}
-		return f;
+		for (auto i = 0; i < data->size(); i++) {
+			(*data)[i] = readFloat();
+		}
+	}
+
+	/**
+	 * Reads a float array from input stream
+	 * @throws model file IO exception
+	 * @return float array
+	 */
+	inline void readFloatArray(array<float, 4>* data) throw (ModelFileIOException) {
+		auto length = readInt();
+		if (length != data->size()) {
+			throw ModelFileIOException("Wrong float array size");
+		}
+		for (auto i = 0; i < data->size(); i++) {
+			(*data)[i] = readFloat();
+		}
+	}
+
+	/**
+	 * Reads a float array from input stream
+	 * @throws model file IO exception
+	 * @return float array
+	 */
+	inline void readFloatArray(array<float, 3>* data) throw (ModelFileIOException) {
+		auto length = readInt();
+		if (length != data->size()) {
+			throw ModelFileIOException("Wrong float array size");
+		}
+		for (auto i = 0; i < data->size(); i++) {
+			(*data)[i] = readFloat();
+		}
+	}
+
+	/**
+	 * Reads a float array from input stream
+	 * @throws model file IO exception
+	 * @return float array
+	 */
+	inline void readFloatArray(array<float, 2>* data) throw (ModelFileIOException) {
+		auto length = readInt();
+		if (length != data->size()) {
+			throw ModelFileIOException("Wrong float array size");
+		}
+		for (auto i = 0; i < data->size(); i++) {
+			(*data)[i] = readFloat();
+		}
 	}
 
 	/**

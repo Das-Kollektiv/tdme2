@@ -26,12 +26,6 @@ Vector2::Vector2(array<float, 2>* v)
 	data = *v;
 }
 
-Vector2::Vector2(floatArray* v) 
-{
-	data[0] = (*v)[0];
-	data[1] = (*v)[1];
-}
-
 Vector2::Vector2(Vector2* v) 
 {
 	data = v->data;
@@ -47,13 +41,6 @@ Vector2* Vector2::set(float x, float y)
 Vector2* Vector2::set(array<float, 2>* v)
 {
 	data = *v;
-	return this;
-}
-
-Vector2* Vector2::set(floatArray* v)
-{
-	data[0] = (*v)[0];
-	data[1] = (*v)[1];
 	return this;
 }
 

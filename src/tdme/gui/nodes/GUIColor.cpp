@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIColor.java
 #include <tdme/gui/nodes/GUIColor.h>
 
+#include <array>
 #include <cwchar>
 #include <vector>
 
@@ -14,6 +15,7 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utils/StringConverter.h>
 
+using std::array;
 using std::vector;
 
 using tdme::gui::nodes::GUIColor;
@@ -38,7 +40,7 @@ GUIColor::GUIColor(float r, float g, float b, float a) : Color4Base(r,g,b,a)
 {
 }
 
-GUIColor::GUIColor(floatArray* color): Color4Base(color)
+GUIColor::GUIColor(array<float, 4>* color): Color4Base(color)
 {
 }
 
@@ -103,54 +105,54 @@ void GUIColor::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-			WHITE = new GUIColor(new floatArray({
+			WHITE = new GUIColor(
 				1.0f,
 				1.0f,
 				1.0f,
 				1.0f
-			}));
-			BLACK = new GUIColor(new floatArray({
+			);
+			BLACK = new GUIColor(
 				0.0f,
 				0.0f,
 				0.0f,
 				1.0f
-			}));
-			RED = new GUIColor(new floatArray({
+			);
+			RED = new GUIColor(
 				1.0f,
 				0.0f,
 				0.0f,
 				1.0f
-			}));
-			GREEN = new GUIColor(new floatArray({
+			);
+			GREEN = new GUIColor(
 				0.0f,
 				1.0f,
 				0.0f,
 				1.0f
-			}));
-			BLUE = new GUIColor(new floatArray({
+			);
+			BLUE = new GUIColor(
 				0.0f,
 				0.0f,
 				1.0f,
 				1.0f
-			}));
-			TRANSPARENT = new GUIColor(new floatArray({
+			);
+			TRANSPARENT = new GUIColor(
 				0.0f,
 				0.0f,
 				0.0f,
 				0.0f
-			}));
-			EFFECT_COLOR_MUL = new GUIColor(new floatArray({
+			);
+			EFFECT_COLOR_MUL = new GUIColor(
 				1.0f,
 				1.0f,
 				1.0f,
 				1.0f
-			}));
-			EFFECT_COLOR_ADD = new GUIColor(new floatArray({
+			);
+			EFFECT_COLOR_ADD = new GUIColor(
 				0.0f,
 				0.0f,
 				0.0f,
 				0.0f
-			}));
+			);
 			COLOR_INSTANCES.push_back(WHITE),
 			COLOR_INSTANCES.push_back(BLACK),
 			COLOR_INSTANCES.push_back(RED),

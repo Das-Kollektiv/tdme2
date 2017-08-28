@@ -6,15 +6,11 @@
 #include <java/lang/Math.h>
 #include <java/lang/System.h>
 #include <tdme/math/MathTools.h>
-#include <Array.h>
 
 using std::array;
 
 using tdme::engine::model::TextureCoordinate;
 using java::lang::Math;
-using java::lang::String;
-using java::lang::System;
-using java::util::Arrays;
 using tdme::math::MathTools;
 
 TextureCoordinate::TextureCoordinate()
@@ -27,10 +23,9 @@ TextureCoordinate::TextureCoordinate(TextureCoordinate* textureCoordinate)
 	data = textureCoordinate->data;
 }
 
-TextureCoordinate::TextureCoordinate(floatArray* uv) 
+TextureCoordinate::TextureCoordinate(array<float, 2>* uv)
 {
-	data[0] = (*uv)[0];
-	data[1] = (*uv)[1];
+	data = *uv;
 }
 
 TextureCoordinate::TextureCoordinate(float u, float v) 

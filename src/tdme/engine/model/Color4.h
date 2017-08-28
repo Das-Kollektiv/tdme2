@@ -2,9 +2,13 @@
 
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4Base.h>
+
+using std::array;
 
 using tdme::engine::model::Color4Base;
 
@@ -20,5 +24,5 @@ public:
 	Color4();
 	Color4(Color4* color);
 	Color4(float r, float g, float b, float a);
-	Color4(floatArray* color);
+	Color4(array<float, 4>* color);
 };

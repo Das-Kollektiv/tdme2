@@ -8,7 +8,6 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <Array.h>
 
 using std::array;
 
@@ -27,13 +26,6 @@ Matrix4x4::Matrix4x4()
 Matrix4x4::Matrix4x4(array<float, 16>* m)
 {
 	data = *m;
-}
-
-Matrix4x4::Matrix4x4(floatArray* m) 
-{
-	for (int i = 0; i < m->length; i++) {
-		data[i] = m->get(i);
-	}
 }
 
 Matrix4x4::Matrix4x4(Matrix4x4* matrix) 
@@ -70,14 +62,6 @@ Matrix4x4* Matrix4x4::set(float r0c0, float r1c0, float r2c0, float r3c0, float 
 Matrix4x4* Matrix4x4::set(array<float, 16>* m)
 {
 	data = *m;
-	return this;
-}
-
-Matrix4x4* Matrix4x4::set(floatArray* m)
-{
-	for (int i = 0; i < m->length; i++) {
-		data[i] = m->get(i);
-	}
 	return this;
 }
 

@@ -40,9 +40,9 @@ public:
 	 * @param float array containing x,y,z,w values
 	 * @return this vector
 	 */
-	Vector4* set(floatArray* v);
+	Vector4* set(array<float, 4>* v);
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param v
 	 * @return this vector
@@ -157,5 +157,5 @@ public:
 	 * Public constructor
 	 * @param v
 	 */
-	Vector4(floatArray* v);
+	Vector4(array<float, 4>* v);
 };

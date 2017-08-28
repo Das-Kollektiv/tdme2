@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -11,6 +12,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>
 
+using std::array;
 using std::vector;
 
 using tdme::engine::model::Color4Base;
@@ -75,7 +77,7 @@ public:
 	 * Public constructor
 	 * @param color as float array
 	 */
-	GUIColor(floatArray* color);
+	GUIColor(array<float, 4>* color);
 
 	/**
 	 * Public constructor

@@ -37,7 +37,7 @@ public:
 	 * @param float array containing x,y,z values
 	 * @return this vector
 	 */
-	Vector3* set(floatArray* v);
+	Vector3* set(array<float, 3>* v);
 
 	/** 
 	 * Set up vector
@@ -291,13 +291,7 @@ public:
 	 * Public constructor
 	 * @param values
 	 */
-	Vector3(floatArray* v);
-
-	/**
-	 * Public constructor
-	 * @param values
-	 */
-	Vector3(array<float,3> v);
+	Vector3(array<float,3>* v);
 
 	/**
 	 * Public constructor

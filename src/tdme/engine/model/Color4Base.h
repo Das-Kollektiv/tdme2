@@ -29,12 +29,6 @@ public:
 
 	/** 
 	 * Set up color
-	 * @param color float array
-	 */
-	virtual void set(floatArray* color);
-
-	/** 
-	 * Set up color
 	 * @param red
 	 * @param green
 	 * @param blue
@@ -127,18 +121,11 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param color
-	 */
-	Color4Base(floatArray* color);
-
-	/**
-	 * Public constructor
 	 * @param red
 	 * @param green
 	 * @param blue
 	 * @param alpha
 	 */
 	Color4Base(float r, float g, float b, float a);
-
 
 };
