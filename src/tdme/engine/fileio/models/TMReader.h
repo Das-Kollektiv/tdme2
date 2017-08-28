@@ -8,16 +8,15 @@
 #include <vector>
 
 #include <Array.h>
-
-#include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/StringBuffer.h>
+
+#include <fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
@@ -27,7 +26,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
 using java::io::InputStream;
 using java::lang::String;
 using java::lang::StringBuffer;
@@ -41,8 +39,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 using tdme::os::_FileSystemException;
-
-struct default_init_tag;
 
 namespace tdme {
 namespace engine {
@@ -250,11 +246,8 @@ public:
  * @version $Id$
  */
 class tdme::engine::fileio::models::TMReader
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
 
 	/** 
 	 * TDME model format reader
@@ -367,18 +360,4 @@ private:
 	 * @return group
 	 */
 	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException);
-
-	// Generated
-
-public:
-	TMReader();
-protected:
-	TMReader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

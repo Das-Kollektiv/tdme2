@@ -8,8 +8,6 @@
 
 #include <Array.h>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -48,10 +46,7 @@ using std::to_string;
 
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using java::io::Serializable;
-using java::lang::Cloneable;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuffer;
 using java::lang::StringBuilder;
@@ -77,13 +72,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 namespace
 {
@@ -101,21 +89,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-TMReader::TMReader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-TMReader::TMReader()
-	: TMReader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
-	clinit();
 	TMReaderInputStream* is = nullptr;
 	auto finally0 = finally([&] {
 		if (is != nullptr) {
@@ -180,7 +156,6 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 
 Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	auto id = is->readWString();
 	auto m = new Material(id);
 	array<float, 4> colorRGBAArray;
@@ -218,7 +193,6 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 
 const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	vector<Vector3> v;
 	array<float, 3> vXYZ;
 	if (is->readBoolean() == true) {
@@ -233,7 +207,6 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 
 const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	array<float, 2> tcUV;
 	vector<TextureCoordinate> tc;
 	if (is->readBoolean() == true) {
@@ -248,7 +221,6 @@ const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputSt
 
 int32_tArray* TMReader::readIndices(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
@@ -262,7 +234,6 @@ int32_tArray* TMReader::readIndices(TMReaderInputStream* is) throw (ModelFileIOE
 
 Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
-	clinit();
 	if (is->readBoolean() == false) {
 		return nullptr;
 	} else {
@@ -279,7 +250,6 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 
 void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
-	clinit();
 	vector<FacesEntity> facesEntities;
 	facesEntities.resize(is->readInt());
 	for (auto i = 0; i < facesEntities.size(); i++) {
@@ -316,7 +286,6 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 
 Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	array<float, 16> matrixArray;
 	Joint joint(is->readWString());
 	is->readFloatArray(&matrixArray);
@@ -326,13 +295,11 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOExc
 
 JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	clinit();
 	return JointWeight(is->readInt(), is->readInt());
 }
 
 void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
 {
-	clinit();
 	if (is->readBoolean() == true) {
 		auto skinning = g->createSkinning();
 		skinning->setWeights(is->readFloatVector());
@@ -356,7 +323,6 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 
 void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
 {
-	clinit();
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
@@ -367,7 +333,6 @@ void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* paren
 
 Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException)
 {
-	clinit();
 	auto group = new Group(model, parentGroup, is->readWString(), is->readWString());
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
@@ -390,17 +355,3 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	readSubGroups(is, model, parentGroup, group->getSubGroups());
 	return group;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TMReader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.fileio.models.TMReader", 34);
-    return c;
-}
-
-java::lang::Class* TMReader::getClass0()
-{
-	return class_();
-}
-
