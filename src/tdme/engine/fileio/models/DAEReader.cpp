@@ -13,7 +13,6 @@
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -154,35 +153,14 @@ typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Ar
 }  // namespace math
 }  // namespace tdme
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
+Color4* DAEReader::BLENDER_AMBIENT_NONE = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 
-DAEReader::DAEReader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
 
-DAEReader::DAEReader()
-	: DAEReader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-Color4* DAEReader::BLENDER_AMBIENT_NONE;
-
-float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE;
-
-float DAEReader::BLENDER_DIFFUSE_SCALE;
+float DAEReader::BLENDER_DIFFUSE_SCALE = 0.8f;
 
 Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
 {
-	clinit();
 	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
@@ -258,8 +236,6 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
 {
 	String* tmpString = nullptr;
-
-	clinit();
 
 	auto modelPathName =
 		::java::lang::StringBuilder().
@@ -512,7 +488,6 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 
 DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 {
-	clinit();
 	String* tmpString = nullptr;
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlContributer: getChildrenByTagName(xmlAsset, "contributor")) {
@@ -528,7 +503,6 @@ DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 
 Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
 {
-	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
@@ -550,7 +524,6 @@ Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIO
 
 void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* model)
 {
-	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText())));
@@ -570,7 +543,6 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 
 void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 {
-	clinit();
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUnit: getChildrenByTagName(xmlAsset, "unit")) {
 			String* tmp = nullptr;
@@ -583,7 +555,6 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 
 Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
-	clinit();
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	if (xmlInstanceControllers.empty() == false) {
 		return readVisualSceneInstanceController(authoringTool, pathName, model, parentGroup, xmlRoot, xmlNode);
@@ -594,7 +565,6 @@ Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, St
 
 Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
 {
-	clinit();
 	String* tmpString = nullptr;
 
 	auto xmlNodeId = AVOID_NULLPTR_STRING(xmlNode->Attribute("id")) != nullptr?new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")))):nullptr;
@@ -777,8 +747,6 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 
 Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
 {
-	clinit();
-
 	String* tmpString = nullptr;
 
 	StringTokenizer* t;
@@ -962,7 +930,6 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 
 void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException)
 {
-	clinit();
 	StringTokenizer* t;
 	String* tmpString = nullptr;
 	vector<FacesEntity> facesEntities = *group->getFacesEntities();
@@ -1194,7 +1161,6 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 
 Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId)
 {
-	clinit();
 	String* tmpString = nullptr;
 	String* xmlEffectId = nullptr;
 	auto xmlLibraryMaterials = getChildrenByTagName(xmlRoot, "library_materials").at(0);
@@ -1412,7 +1378,6 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 
 String* DAEReader::determineDisplacementFilename(String* path, String* mapType, String* fileName)
 {
-	clinit();
 	auto tmpFileNameCandidate = fileName->toLowerCase();
 	tmpFileNameCandidate = tmpFileNameCandidate->substring(0, tmpFileNameCandidate->lastIndexOf(static_cast< int32_t >(u'.')));
 	if (tmpFileNameCandidate->endsWith(mapType))
@@ -1432,7 +1397,6 @@ String* DAEReader::determineDisplacementFilename(String* path, String* mapType, 
 
 String* DAEReader::makeFileNameRelative(String* fileName)
 {
-	clinit();
 	if (fileName->startsWith(u"/"_j) == true || fileName->matches(u"^[A-Z]\\:\\\\.*$"_j) == true) {
 		auto indexSlash = fileName->lastIndexOf(u"/"_j);
 		auto indexBackslash = fileName->lastIndexOf(u"\\"_j);
@@ -1449,7 +1413,6 @@ String* DAEReader::makeFileNameRelative(String* fileName)
 
 String* DAEReader::getTextureFileNameById(TiXmlElement* xmlRoot, String* xmlTextureId)
 {
-	clinit();
 	String* tmpString = nullptr;
 	String* xmlTextureFilename = nullptr;
 	auto xmlLibraryImages = getChildrenByTagName(xmlRoot, "library_images").at(0);
@@ -1467,7 +1430,6 @@ String* DAEReader::getTextureFileNameById(TiXmlElement* xmlRoot, String* xmlText
 
 const vector<TiXmlElement*> DAEReader::getChildrenByTagName(TiXmlElement* parent, const char* name)
 {
-	clinit();
 	vector<TiXmlElement*> elementList;
 	for (auto *child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
 		elementList.push_back(child);
@@ -1477,64 +1439,9 @@ const vector<TiXmlElement*> DAEReader::getChildrenByTagName(TiXmlElement* parent
 
 const vector<TiXmlElement*> DAEReader::getChildren(TiXmlElement* parent)
 {
-	clinit();
 	vector<TiXmlElement*> elementList;
 	for (auto *child = parent->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
 		elementList.push_back(child);
 	}
 	return elementList;
 }
-
-/*
-String* DAEReader::nodeToString(Node* node)
-{
-	clinit();
-	auto attributes = node->getAttributes();
-	auto attributesString = u""_j;
-	for (auto i = 0; i < attributes->getLength(); i++) {
-		if (i > 0) {
-			attributesString = ::java::lang::StringBuilder(attributesString).append(u", "_j)->toString();
-		}
-		attributesString = ::java::lang::StringBuilder(attributesString).append(attributes->item(i)->getNodeName())->toString();
-		attributesString = ::java::lang::StringBuilder(attributesString).append(u"="_j)->toString();
-		attributesString = ::java::lang::StringBuilder(attributesString).append(attributes->item(i)->getNodeValue())->toString();
-	}
-	return ::java::lang::StringBuilder().append(::java::lang::StringBuilder().append(u"["_j)->append(u"name="_j)->toString())->append(node->getNodeName())
-		->append(u", attributes=["_j)
-		->append(attributesString)
-		->append(u"]"_j)
-		->append(u"]"_j)->toString();
-}
-*/
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* DAEReader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.fileio.models.DAEReader", 35);
-    return c;
-}
-
-void DAEReader::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		BLENDER_AMBIENT_NONE = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
-		BLENDER_DIFFUSE_SCALE = 0.8f;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* DAEReader::getClass0()
-{
-	return class_();
-}
-

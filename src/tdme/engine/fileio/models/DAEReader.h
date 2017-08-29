@@ -14,7 +14,6 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <java/lang/Object.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
@@ -24,7 +23,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -38,19 +36,15 @@ using tdme::tools::shared::model::LevelEditorLevel;
 
 using tdme::ext::tinyxml::TiXmlElement;
 
-struct default_init_tag;
-
 /** 
  * Collada DAE reader
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::fileio::models::DAEReader final
-	: public Object
 {
-
-public:
-	typedef Object super;
+	friend class DAEReader_AuthoringTool;
+	friend class DAEReader_determineDisplacementFilename_1;
 
 private:
 	static Color4* BLENDER_AMBIENT_NONE;
@@ -215,30 +209,4 @@ public:
 	 * @return elements
 	 */
 	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
-
-private:
-
-	/** 
-	 * Converts an element to string
-	 * @param node
-	 * @return string representation
-	 */
-	// static String* nodeToString(Node* node);
-
-	// Generated
-
-public:
-	DAEReader();
-protected:
-	DAEReader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class DAEReader_AuthoringTool;
-	friend class DAEReader_determineDisplacementFilename_1;
 };
