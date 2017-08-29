@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
 #include <java/lang/Character.h>
-#include <java/lang/Object.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
@@ -19,7 +18,6 @@
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using java::lang::Character;
-using java::lang::Object;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
@@ -34,36 +32,8 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::_ArrayList;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-CameraRotationInputHandler::CameraRotationInputHandler(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine) 
-	: CameraRotationInputHandler(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(engine);
-}
-
-void CameraRotationInputHandler::init()
-{
-	mouseLastX = 0;
-	mouseLastY = 0;
-}
-
-void CameraRotationInputHandler::ctor(Engine* engine)
-{
-	super::ctor();
-	init();
 	this->engine = engine;
 	keyLeft = false;
 	keyRight = false;
@@ -81,6 +51,8 @@ void CameraRotationInputHandler::ctor(Engine* engine)
 	lookFromRotations->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 0.0f, 1.0f)));
 	lookFromRotations->update();
 	resetRequested = false;
+	mouseLastX = 0;
+	mouseLastY = 0;
 }
 
 float CameraRotationInputHandler::getMaxAxisDimension()
@@ -116,7 +88,7 @@ void CameraRotationInputHandler::reset()
 void CameraRotationInputHandler::handleInputEvents()
 {
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents()->size(); i++) {
-		auto event = java_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
+		auto event = dynamic_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -152,7 +124,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		}
 	}
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
-		auto event = java_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
+		auto event = dynamic_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -234,17 +206,3 @@ void CameraRotationInputHandler::handleInputEvents()
 	cam->getLookFrom()->set(lookFrom);
 	cam->getUpVector()->set(upVector);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* CameraRotationInputHandler::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.CameraRotationInputHandler", 50);
-    return c;
-}
-
-java::lang::Class* CameraRotationInputHandler::getClass0()
-{
-	return class_();
-}
-

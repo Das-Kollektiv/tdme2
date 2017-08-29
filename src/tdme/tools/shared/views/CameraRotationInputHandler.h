@@ -5,16 +5,11 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
-using java::lang::Object;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-
-
-struct default_init_tag;
 
 /** 
  * Camera Rotation View
@@ -22,13 +17,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::views::CameraRotationInputHandler
-	: public virtual Object
-	, public virtual GUIInputEventHandler
+	: public virtual GUIInputEventHandler
 {
-
-public:
-	typedef Object super;
-
 private:
 	Engine* engine {  };
 	bool mouseDragging {  };
@@ -47,12 +37,6 @@ private:
 	Transformations* lookFromRotations {  };
 	float scale {  };
 	bool resetRequested {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor(Engine* engine);
 
 public:
 
@@ -89,16 +73,8 @@ public:
 	virtual void reset();
 	void handleInputEvents() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	CameraRotationInputHandler(Engine* engine);
-protected:
-	CameraRotationInputHandler(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
