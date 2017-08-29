@@ -27,7 +27,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using java::io::OutputStream;
 using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -62,8 +61,6 @@ using java::lang::String;
 using tdme::engine::model::FacesEntityArray;
 using tdme::engine::model::TextureCoordinateArray;
 using tdme::math::Vector3Array;
-
-struct default_init_tag;
 
 namespace tdme {
 namespace engine {
@@ -290,11 +287,8 @@ public:
  * @version $Id$
  */
 class tdme::engine::fileio::models::TMWriter
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
 
 	/** 
 	 * TDME model format writer
@@ -393,18 +387,4 @@ private:
 	 * @throws model file IO exception
 	 */
 	static void writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIOException);
-
-	// Generated
-
-public:
-	TMWriter();
-protected:
-	TMWriter(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

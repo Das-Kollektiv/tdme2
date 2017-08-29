@@ -9,7 +9,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/model/Animation.h>
@@ -44,7 +43,6 @@ using tdme::engine::fileio::models::TMWriter;
 using java::io::Serializable;
 using java::lang::Cloneable;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::model::Animation;
@@ -101,14 +99,6 @@ typedef ::SubArray< ::tdme::engine::model::JointWeightArray, ::java::lang::Clone
 }  // namespace engine
 }  // namespace tdme
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 namespace
 {
 template<typename F>
@@ -125,21 +115,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-TMWriter::TMWriter(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-TMWriter::TMWriter()
-	: TMWriter(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
-	clinit();
 	TMWriterOutputStream* os = nullptr;
 	auto finally0 = finally([&] {
 		if (os != nullptr) {
@@ -169,7 +147,6 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_F
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeString(m->getId());
 	os->writeFloatArray(m->getAmbientColor()->getArray());
 	os->writeFloatArray(m->getDiffuseColor()->getArray());
@@ -188,7 +165,6 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 
 void TMWriter::writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException)
 {
-	clinit();
 	if (v->size() == 0) {
 		os->writeBoolean(false);
 	} else {
@@ -202,7 +178,6 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw
 
 void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException)
 {
-	clinit();
 	if (tc == nullptr) {
 		os->writeBoolean(false);
 	} else {
@@ -216,7 +191,6 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureC
 
 void TMWriter::writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException)
 {
-	clinit();
 	if (indices == nullptr) {
 		os->writeBoolean(false);
 	} else {
@@ -230,7 +204,6 @@ void TMWriter::writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices
 
 void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (ModelFileIOException)
 {
-	clinit();
 	if (a == nullptr) {
 		os->writeBoolean(false);
 	} else {
@@ -244,7 +217,6 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (Mod
 
 void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeInt(facesEntities->size());
 	for (auto i = 0; i < facesEntities->size(); i++) {
 		auto& fe = (*facesEntities)[i];
@@ -269,21 +241,18 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>*
 
 void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeString(joint->getGroupId());
 	os->writeFloatArray(joint->getBindMatrix()->getArray());
 }
 
 void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeInt(jointWeight->getJointIndex());
 	os->writeInt(jointWeight->getWeightIndex());
 }
 
 void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw (ModelFileIOException)
 {
-	clinit();
 	if (skinning == nullptr) {
 		os->writeBoolean(false);
 	} else {
@@ -305,7 +274,6 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 
 void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeInt(subGroups->size());
 	for (auto it: *subGroups) {
 		Group* subGroup = it.second;
@@ -315,7 +283,6 @@ void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* su
 
 void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIOException)
 {
-	clinit();
 	os->writeString(g->getId());
 	os->writeString(g->getName());
 	os->writeBoolean(g->isJoint());
@@ -330,17 +297,3 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIO
 	writeFacesEntities(os, g->getFacesEntities());
 	writeSubGroups(os, g->getSubGroups());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TMWriter::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.fileio.models.TMWriter", 34);
-    return c;
-}
-
-java::lang::Class* TMWriter::getClass0()
-{
-	return class_();
-}
-
