@@ -9,9 +9,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
@@ -19,33 +17,17 @@ using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
-
-struct default_init_tag;
-
 /** 
  * Entity bounding volume view
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::views::EntityBoundingVolumeView
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	Engine* engine {  };
 	EntityBoundingVolumeSubScreenController* modelViewerScreenController {  };
 	PopUps* popUps {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups
-	 * @param model viewer screen controller
-	 */
-	void ctor(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps);
 
 public:
 
@@ -150,15 +132,10 @@ public:
 	 */
 	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, String* fileName);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups
+	 * @param model viewer screen controller
+	 */
 	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps);
-protected:
-	EntityBoundingVolumeView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

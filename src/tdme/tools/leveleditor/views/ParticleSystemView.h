@@ -14,8 +14,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 
-struct default_init_tag;
-
 /** 
  * Particle System View
  * @author Andreas Drewke
@@ -24,17 +22,6 @@ struct default_init_tag;
 class tdme::tools::leveleditor::views::ParticleSystemView
 	: public SharedParticleSystemView
 {
-
-public:
-	typedef SharedParticleSystemView super;
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups
-	 */
-	void ctor(PopUps* popUps);
-
 public:
 	void onSetEntityData() override;
 	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
@@ -45,15 +32,9 @@ public: /* protected */
 public:
 	void onInitAdditionalScreens() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups
+	 */
 	ParticleSystemView(PopUps* popUps);
-protected:
-	ParticleSystemView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -14,21 +14,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 
-PopUps::PopUps(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 PopUps::PopUps() 
-	: PopUps(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void PopUps::ctor()
-{
-	super::ctor();
 }
 
 FileDialogScreenController* PopUps::getFileDialogScreenController()
@@ -56,17 +43,3 @@ void PopUps::dispose()
 	fileDialogScreenController->dispose();
 	infoDialogScreenController->dispose();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PopUps::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.PopUps", 30);
-    return c;
-}
-
-java::lang::Class* PopUps::getClass0()
-{
-	return class_();
-}
-

@@ -48,21 +48,8 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-EmptyView::EmptyView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 EmptyView::EmptyView(PopUps* popUps) 
-	: EmptyView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void EmptyView::ctor(PopUps* popUps)
-{
-	super::ctor();
 	this->popUps = popUps;
 	emptyScreenController = nullptr;
 	initModelRequested = false;
@@ -172,17 +159,3 @@ void EmptyView::dispose()
 {
 	Engine::getInstance()->reset();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EmptyView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.views.EmptyView", 38);
-    return c;
-}
-
-java::lang::Class* EmptyView::getClass0()
-{
-	return class_();
-}
-

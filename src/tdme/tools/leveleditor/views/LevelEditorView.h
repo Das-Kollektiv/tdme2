@@ -18,7 +18,6 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
@@ -26,7 +25,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using java::io::Serializable;
@@ -75,13 +73,11 @@ struct default_init_tag;
  * @version $Id: 04313d20d0978eefc881024d6e0af748196c1425 $
  */
 class tdme::tools::leveleditor::views::LevelEditorView final
-	: public virtual Object
-	, public View
+	: public View
 	, public GUIInputEventHandler
 {
-
-public:
-	typedef Object super;
+	friend class LevelEditorView_ObjectColor;
+	friend class LevelEditorView_LevelEditorView_1;
 
 private:
 	static StringArray* OBJECTCOLOR_NAMES;
@@ -153,13 +149,6 @@ private:
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
 	Vector3* tmpVector3 {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups 
-	 */
-	void ctor(PopUps* popUps);
 
 public:
 
@@ -474,19 +463,9 @@ public:
 	 */
 	void applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, Vector3* spotTo, Vector3* spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups
+	 */
 	LevelEditorView(PopUps* popUps);
-protected:
-	LevelEditorView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorView_ObjectColor;
-	friend class LevelEditorView_LevelEditorView_1;
 };

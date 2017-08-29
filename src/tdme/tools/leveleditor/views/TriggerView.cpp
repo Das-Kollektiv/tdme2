@@ -54,21 +54,8 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-TriggerView::TriggerView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 TriggerView::TriggerView(PopUps* popUps) 
-	: TriggerView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void TriggerView::ctor(PopUps* popUps)
-{
-	super::ctor();
 	this->popUps = popUps;
 	triggerScreenController = nullptr;
 	initModelRequested = false;
@@ -208,17 +195,3 @@ void TriggerView::dispose()
 {
 	Engine::getInstance()->reset();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TriggerView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.views.TriggerView", 40);
-    return c;
-}
-
-java::lang::Class* TriggerView::getClass0()
-{
-	return class_();
-}
-

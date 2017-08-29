@@ -11,6 +11,9 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/SharedParticleSystemView.h>
+
 
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using java::lang::String;
@@ -24,21 +27,9 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLevel;
 
-ParticleSystemView::ParticleSystemView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 ParticleSystemView::ParticleSystemView(PopUps* popUps) 
-	: ParticleSystemView(*static_cast< ::default_init_tag* >(0))
+	: SharedParticleSystemView(popUps)
 {
-	ctor(popUps);
-}
-
-void ParticleSystemView::ctor(PopUps* popUps)
-{
-	super::ctor(popUps);
 }
 
 void ParticleSystemView::onSetEntityData()
@@ -68,17 +59,3 @@ void ParticleSystemView::onInitAdditionalScreens()
 {
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ParticleSystemView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.views.ParticleSystemView", 47);
-    return c;
-}
-
-java::lang::Class* ParticleSystemView::getClass0()
-{
-	return class_();
-}
-

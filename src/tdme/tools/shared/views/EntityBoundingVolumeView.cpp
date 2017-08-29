@@ -72,29 +72,8 @@ typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Ar
 }  // namespace math
 }  // namespace tdme
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EntityBoundingVolumeView::EntityBoundingVolumeView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 EntityBoundingVolumeView::EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps) 
-	: EntityBoundingVolumeView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(modelViewerScreenController,popUps);
-}
-
-void EntityBoundingVolumeView::ctor(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps)
-{
-	super::ctor();
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;
 	this->modelViewerScreenController = modelViewerScreenController;
@@ -179,19 +158,19 @@ void EntityBoundingVolumeView::setBoundingVolumes(LevelEditorEntity* entity)
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE);
 			continue;
 		} else if (dynamic_cast< Sphere* >(bv->getBoundingVolume()) != nullptr) {
-			auto sphere = java_cast< Sphere* >(bv->getBoundingVolume());
+			auto sphere = dynamic_cast< Sphere* >(bv->getBoundingVolume());
 			modelViewerScreenController->setupSphere(i, sphere->getCenter(), sphere->getRadius());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
 		} else if (dynamic_cast< Capsule* >(bv->getBoundingVolume()) != nullptr) {
-			auto capsule = java_cast< Capsule* >(bv->getBoundingVolume());
+			auto capsule = dynamic_cast< Capsule* >(bv->getBoundingVolume());
 			modelViewerScreenController->setupCapsule(i, capsule->getA(), capsule->getB(), capsule->getRadius());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
 		} else if (dynamic_cast< BoundingBox* >(bv->getBoundingVolume()) != nullptr) {
-			auto aabb = java_cast< BoundingBox* >(bv->getBoundingVolume());
+			auto aabb = dynamic_cast< BoundingBox* >(bv->getBoundingVolume());
 			modelViewerScreenController->setupBoundingBox(i, aabb->getMin(), aabb->getMax());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
 		} else if (dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume()) != nullptr) {
-			auto obb = java_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
+			auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
 			modelViewerScreenController->setupOrientedBoundingBox(i, obb->getCenter(), &(*obb->getAxes())[0], &(*obb->getAxes())[1], &(*obb->getAxes())[2], obb->getHalfExtension());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 		} else if (dynamic_cast< ConvexMesh* >(bv->getBoundingVolume()) != nullptr) {
@@ -313,17 +292,3 @@ void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* 
 	);
 	updateModelBoundingVolume(entity, idx);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityBoundingVolumeView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.EntityBoundingVolumeView", 48);
-    return c;
-}
-
-java::lang::Class* EntityBoundingVolumeView::getClass0()
-{
-	return class_();
-}
-

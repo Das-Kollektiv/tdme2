@@ -9,11 +9,9 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
-using java::lang::Object;
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using java::io::File;
@@ -26,23 +24,15 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 
-
-struct default_init_tag;
-
 /** 
  * TDME particle system view
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::views::SharedParticleSystemView
-	: public virtual Object
-	, public virtual View
+	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	Engine* engine {  };
 
@@ -56,13 +46,6 @@ private:
 	bool initParticleSystemRequested {  };
 	String* particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups view
-	 */
-	void ctor(PopUps* popUps);
 
 public:
 
@@ -188,15 +171,9 @@ public:
 	 */
 	virtual void onSetEntityData();
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups view
+	 */
 	SharedParticleSystemView(PopUps* popUps);
-protected:
-	SharedParticleSystemView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

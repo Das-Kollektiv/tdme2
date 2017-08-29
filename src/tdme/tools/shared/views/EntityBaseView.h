@@ -7,15 +7,10 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
-
-
-struct default_init_tag;
 
 /** 
  * Model base biew
@@ -23,21 +18,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::views::EntityBaseView
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model base sub screen controller
-	 */
-	void ctor(EntityBaseSubScreenController* entityBaseSubScreenController);
 
 public:
 
@@ -86,15 +69,9 @@ public:
 	 */
 	virtual void setEntityData(LevelEditorEntity* entity, String* name, String* description);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param model base sub screen controller
+	 */
 	EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController);
-protected:
-	EntityBaseView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

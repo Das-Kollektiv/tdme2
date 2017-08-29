@@ -11,7 +11,6 @@
 #include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Iterable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -93,7 +92,6 @@ using java::lang::Character;
 using java::lang::Comparable;
 using java::lang::Float;
 using java::lang::Iterable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
@@ -172,28 +170,31 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
+StringArray* LevelEditorView::OBJECTCOLOR_NAMES = (new StringArray({
+	u"blue"_j,
+	u"yellow"_j,
+	u"magenta"_j,
+	u"cyan"_j,
+	u"none"_j
+}));
 
-LevelEditorView::LevelEditorView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+constexpr int32_t LevelEditorView::MOUSE_BUTTON_NONE;
+
+constexpr int32_t LevelEditorView::MOUSE_BUTTON_LEFT;
+
+constexpr int32_t LevelEditorView::MOUSE_BUTTON_MIDDLE;
+
+constexpr int32_t LevelEditorView::MOUSE_BUTTON_RIGHT;
+
+constexpr int32_t LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
+
+constexpr int32_t LevelEditorView::MOUSE_PANNING_NONE;
+
+constexpr int32_t LevelEditorView::MOUSE_ROTATION_NONE;
 
 LevelEditorView::LevelEditorView(PopUps* popUps) 
-	: LevelEditorView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void LevelEditorView::init()
-{
+	this->popUps = popUps;
 	GRID_DIMENSION_X = 20;
 	GRID_DIMENSION_Y = 20;
 	camLookRotationX = new Rotation(-45.0f, new Vector3(1.0f, 0.0f, 0.0f));
@@ -214,29 +215,6 @@ void LevelEditorView::init()
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
 	groundPlateWidth = 1.0f;
 	groundPlateDepth = 1.0f;
-}
-
-StringArray* LevelEditorView::OBJECTCOLOR_NAMES;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_LEFT;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_MIDDLE;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_RIGHT;
-
-constexpr int32_t LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_PANNING_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_ROTATION_NONE;
-
-void LevelEditorView::ctor(PopUps* popUps)
-{
-	super::ctor();
-	init();
-	this->popUps = popUps;
 	level = TDMELevelEditor::getInstance()->getLevel();
 	reloadEntityLibrary = false;
 	selectedEntity = nullptr;
@@ -347,7 +325,7 @@ void LevelEditorView::handleInputEvents()
 	auto keyXBefore = keyX;
 	keyControl = false;
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
-		auto event = java_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
+		auto event = dynamic_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -420,7 +398,7 @@ void LevelEditorView::handleInputEvents()
 		levelEditorScreenController->unselectObjectsInObjectListBox();
 	}
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents()->size(); i++) {
-		auto event = java_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
+		auto event = dynamic_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
 		if (event->isProcessed() == true)
 			continue;
 
@@ -727,10 +705,10 @@ void LevelEditorView::loadSettings()
 		Object* tmp;
 		auto settings = new Properties();
 		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
-		gridEnabled = (tmp = java_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
-		gridY = (tmp = java_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
-		levelEditorScreenController->getMapPath()->setPath((tmp = java_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		gridEnabled = (tmp = dynamic_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
+		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
+		levelEditorScreenController->getMapPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -1428,7 +1406,7 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
-		auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		auto objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
 		if ((*objectBBMinXYZ)[0] < pasteObjectsMinX)
 			pasteObjectsMinX = (*objectBBMinXYZ)[0];
 
@@ -1449,8 +1427,8 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, levelEditorObject->getTransformations());
-		auto objectBBMinXYZ = (java_cast< BoundingBox* >(cbv))->getMin()->getArray();
-		auto objectBBMaxXYZ = (java_cast< BoundingBox* >(cbv))->getMax()->getArray();
+		auto objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		auto objectBBMaxXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMax()->getArray();
 		if ((*objectBBMinXYZ)[0] < selectedObjectsMinX)
 			selectedObjectsMinX = (*objectBBMinXYZ)[0];
 
@@ -1532,39 +1510,3 @@ void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Co
 	engine->getLightAt(i)->setEnabled(enabled);
 	levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.views.LevelEditorView", 44);
-    return c;
-}
-
-void LevelEditorView::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		OBJECTCOLOR_NAMES = (new StringArray({
-			u"blue"_j,
-			u"yellow"_j,
-			u"magenta"_j,
-			u"cyan"_j,
-			u"none"_j
-		}));
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* LevelEditorView::getClass0()
-{
-	return class_();
-}
-

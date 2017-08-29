@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/views/SharedParticleSystemView.java
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Properties.h>
@@ -37,7 +36,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::views::SharedParticleSystemView;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Properties;
@@ -72,29 +70,8 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-SharedParticleSystemView::SharedParticleSystemView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps) 
-	: SharedParticleSystemView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void SharedParticleSystemView::ctor(PopUps* popUps)
-{
-	super::ctor();
 	this->popUps = popUps;
 	engine = Engine::getInstance();
 	particleSystemScreenController = nullptr;
@@ -190,7 +167,7 @@ void SharedParticleSystemView::display()
 		particleSystemScreenController->setParticleSystemEmitter();
 		initParticleSystemRequested = false;
 	}
-	auto particleSystemEntity = java_cast< ParticleSystemEntity* >(engine->getEntity(L"model"));
+	auto particleSystemEntity = dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"model"));
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == false) {
 		particleSystemEntity->emitParticles();
 		particleSystemEntity->updateParticles();
@@ -226,11 +203,11 @@ void SharedParticleSystemView::loadSettings()
 		Object* tmp = nullptr;
 		auto settings = new Properties();
 		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"particlesystem.properties"_j));
-		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		particleSystemScreenController->getParticleSystemPath()->setPath((tmp = java_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-		particleSystemScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		particleSystemScreenController->getParticleSystemPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		particleSystemScreenController->getModelPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -343,17 +320,3 @@ LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(String* name, St
 void SharedParticleSystemView::onSetEntityData()
 {
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* SharedParticleSystemView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.SharedParticleSystemView", 48);
-    return c;
-}
-
-java::lang::Class* SharedParticleSystemView::getClass0()
-{
-	return class_();
-}
-

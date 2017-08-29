@@ -9,9 +9,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -39,20 +37,13 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * Entity display view
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::views::EntityDisplayView
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static StringArray* MODEL_BOUNDINGVOLUME_IDS;
 	Engine* engine {  };
@@ -60,13 +51,6 @@ private:
 	bool displayGroundPlate {  };
 	bool displayShadowing {  };
 	bool displayBoundingVolume {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param entity display sub screen controller
-	 */
-	void ctor(EntityDisplaySubScreenController* entityDisplaySubScreenController);
 
 public:
 
@@ -109,17 +93,9 @@ public:
 	 */
 	virtual void display(LevelEditorEntity* entity);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param entity display sub screen controller
+	 */
 	EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController);
-protected:
-	EntityDisplayView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

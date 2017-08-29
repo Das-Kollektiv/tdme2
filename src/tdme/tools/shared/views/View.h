@@ -3,9 +3,6 @@
 #pragma once
 
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
 
 /** 
  * View interface, this combines application logic, regarding a application view, with screen controllers
@@ -13,7 +10,6 @@ using java::lang::Object;
  * @version $Id$
  */
 struct tdme::tools::shared::views::View
-	: public virtual Object
 {
 
 	/** 
@@ -40,7 +36,4 @@ struct tdme::tools::shared::views::View
 	 * Disposes the view
 	 */
 	virtual void dispose() = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };

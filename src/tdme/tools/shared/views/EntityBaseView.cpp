@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/views/EntityBaseView.java
 #include <tdme/tools/shared/views/EntityBaseView.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
 #include <java/util/Set.h>
@@ -11,7 +10,6 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
 using tdme::tools::shared::views::EntityBaseView;
-using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
 using java::util::Set;
@@ -20,29 +18,8 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EntityBaseView::EntityBaseView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 EntityBaseView::EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController) 
-	: EntityBaseView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(entityBaseSubScreenController);
-}
-
-void EntityBaseView::ctor(EntityBaseSubScreenController* entityBaseSubScreenController)
-{
-	super::ctor();
 	this->entityBaseSubScreenController = entityBaseSubScreenController;
 }
 
@@ -120,17 +97,3 @@ void EntityBaseView::setEntityData(LevelEditorEntity* entity, String* name, Stri
 	entity->setName(name);
 	entity->setDescription(description);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityBaseView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.EntityBaseView", 38);
-    return c;
-}
-
-java::lang::Class* EntityBaseView::getClass0()
-{
-	return class_();
-}
-

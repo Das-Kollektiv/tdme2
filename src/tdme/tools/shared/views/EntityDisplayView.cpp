@@ -35,33 +35,24 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-EntityDisplayView::EntityDisplayView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+StringArray* EntityDisplayView::MODEL_BOUNDINGVOLUME_IDS = (new StringArray({
+	u"model_bv.0"_j,
+	u"model_bv.1"_j,
+	u"model_bv.2"_j,
+	u"model_bv.3"_j,
+	u"model_bv.4"_j,
+	u"model_bv.5"_j,
+	u"model_bv.6"_j,
+	u"model_bv.7"_j
+}));
 
 EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController) 
-	: EntityDisplayView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(entityDisplaySubScreenController);
-}
-
-void EntityDisplayView::init()
-{
+	this->engine = Engine::getInstance();
+	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
 	displayGroundPlate = false;
 	displayShadowing = false;
 	displayBoundingVolume = false;
-}
-
-StringArray* EntityDisplayView::MODEL_BOUNDINGVOLUME_IDS;
-
-void EntityDisplayView::ctor(EntityDisplaySubScreenController* entityDisplaySubScreenController)
-{
-	super::ctor();
-	init();
-	this->engine = Engine::getInstance();
-	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
 }
 
 bool EntityDisplayView::isDisplayGroundPlate()
@@ -112,42 +103,3 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 		}
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityDisplayView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.EntityDisplayView", 41);
-    return c;
-}
-
-void EntityDisplayView::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		MODEL_BOUNDINGVOLUME_IDS = (new StringArray({
-			u"model_bv.0"_j,
-			u"model_bv.1"_j,
-			u"model_bv.2"_j,
-			u"model_bv.3"_j,
-			u"model_bv.4"_j,
-			u"model_bv.5"_j,
-			u"model_bv.6"_j,
-			u"model_bv.7"_j
-		}));
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* EntityDisplayView::getClass0()
-{
-	return class_();
-}
-
