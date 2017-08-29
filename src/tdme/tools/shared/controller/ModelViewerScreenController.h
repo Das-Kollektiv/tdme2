@@ -33,9 +33,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * Model viewer screen controller
  * @author Andreas Drewke
@@ -46,9 +43,9 @@ class tdme::tools::shared::controller::ModelViewerScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class ModelViewerScreenController_ModelViewerScreenController_1;
+	friend class ModelViewerScreenController_onModelLoad_2;
+	friend class ModelViewerScreenController_onModelSave_3;
 
 private:
 	static MutableString* TEXT_EMPTY;
@@ -69,13 +66,6 @@ private:
 	GUIElementNode* statsMaterialCount {  };
 	MutableString* value {  };
 	FileDialogPath* modelPath {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 */
-	void ctor(SharedModelViewerView* view);
 
 public:
 
@@ -181,19 +171,9 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 */
 	ModelViewerScreenController(SharedModelViewerView* view);
-protected:
-	ModelViewerScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class ModelViewerScreenController_ModelViewerScreenController_1;
-	friend class ModelViewerScreenController_onModelLoad_2;
-	friend class ModelViewerScreenController_onModelSave_3;
 };

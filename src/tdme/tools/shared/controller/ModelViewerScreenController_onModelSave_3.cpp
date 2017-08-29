@@ -20,35 +20,18 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 
-ModelViewerScreenController_onModelSave_3::ModelViewerScreenController_onModelSave_3(ModelViewerScreenController *ModelViewerScreenController_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, ModelViewerScreenController_this(ModelViewerScreenController_this)
+ModelViewerScreenController_onModelSave_3::ModelViewerScreenController_onModelSave_3(ModelViewerScreenController* modelViewerScreenController)
+	: modelViewerScreenController(modelViewerScreenController)
 {
-	clinit();
-	ctor();
 }
 
 void ModelViewerScreenController_onModelSave_3::performAction()
 {
 	try {
-		ModelViewerScreenController_this->view->saveFile(ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-		ModelViewerScreenController_this->modelPath->setPath(ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-		ModelViewerScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		modelViewerScreenController->view->saveFile(modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+		modelViewerScreenController->modelPath->setPath(modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 	} catch (_Exception& exception) {
-		ModelViewerScreenController_this->showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		modelViewerScreenController->showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelViewerScreenController_onModelSave_3::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* ModelViewerScreenController_onModelSave_3::getClass0()
-{
-	return class_();
-}
-

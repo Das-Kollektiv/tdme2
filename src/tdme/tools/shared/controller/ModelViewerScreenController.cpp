@@ -5,7 +5,6 @@
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
@@ -42,7 +41,6 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
@@ -85,31 +83,11 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-ModelViewerScreenController::ModelViewerScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
-	: ModelViewerScreenController(*static_cast< ::default_init_tag* >(0))
+	: ScreenController()
 {
-	ctor(view);
-}
-
-MutableString* ModelViewerScreenController::TEXT_EMPTY;
-
-void ModelViewerScreenController::ctor(SharedModelViewerView* view)
-{
-	super::ctor();
 	this->modelPath = new FileDialogPath(u"."_j);
 	this->view = view;
 	auto const finalView = view;
@@ -144,16 +122,16 @@ void ModelViewerScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/viewer/gui"_j, u"screen_modelviewer.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		modelReload = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_reload"_j));
-		modelSave = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_save"_j));
-		pivotX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_x"_j));
-		pivotY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_y"_j));
-		pivotZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_z"_j));
-		pivotApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_pivot_apply"_j));
-		statsOpaqueFaces = java_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_opaque_faces"_j));
-		statsTransparentFaces = java_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_transparent_faces"_j));
-		statsMaterialCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_material_count"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_reload"_j));
+		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_save"_j));
+		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_x"_j));
+		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_y"_j));
+		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_z"_j));
+		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_pivot_apply"_j));
+		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_opaque_faces"_j));
+		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_transparent_faces"_j));
+		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_material_count"_j));
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
@@ -319,7 +297,7 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 	{
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+			{
 				if (node->getId()->equals(u"button_model_load"_j)) {
 					onModelLoad();
 				} else if (node->getId()->equals(u"button_model_reload"_j)) {
@@ -338,42 +316,14 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 						->append(u"'"_j)->toString()));
 				}
 				goto end_switch0;;
-			}		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-{
-				goto end_switch0;;
-			}		}
-end_switch0:;
-	}
-
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelViewerScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.ModelViewerScreenController", 56);
-    return c;
-}
-
-void ModelViewerScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		TEXT_EMPTY = new MutableString(u""_j);
+			}
 		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
+		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
+			{
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
 	}
-}
 
-java::lang::Class* ModelViewerScreenController::getClass0()
-{
-	return class_();
 }
-

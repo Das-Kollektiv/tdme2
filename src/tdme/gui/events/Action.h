@@ -15,14 +15,9 @@ using java::lang::Object;
  * @version $Id$
  */
 struct tdme::gui::events::Action
-	: public virtual Object
 {
-
 	/** 
 	 * Perform action
 	 */
 	virtual void performAction() = 0;
-
-	// Generated
-	static ::java::lang::Class *class_();
 };
