@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
 #include <java/lang/CharSequence.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Properties.h>
@@ -78,29 +77,8 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-SharedModelViewerView::SharedModelViewerView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 SharedModelViewerView::SharedModelViewerView(PopUps* popUps) 
-	: SharedModelViewerView(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void SharedModelViewerView::ctor(PopUps* popUps)
-{
-	super::ctor();
 	this->popUps = popUps;
 	engine = Engine::getInstance();
 	modelViewerScreenController = nullptr;
@@ -226,10 +204,10 @@ void SharedModelViewerView::loadSettings()
 		Object* tmp;
 		auto settings = new Properties();
 		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"modelviewer.properties"_j));
-		entityDisplayView->setDisplayBoundingVolume((tmp = java_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = java_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = java_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		modelViewerScreenController->getModelPath()->setPath((tmp = java_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
+		modelViewerScreenController->getModelPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -390,18 +368,5 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 
 void SharedModelViewerView::onSetEntityData()
 {
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* SharedModelViewerView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.views.SharedModelViewerView", 45);
-    return c;
-}
-
-java::lang::Class* SharedModelViewerView::getClass0()
-{
-	return class_();
 }
 

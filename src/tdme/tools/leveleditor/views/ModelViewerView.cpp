@@ -20,21 +20,9 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLevel;
 
-ModelViewerView::ModelViewerView(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+ModelViewerView::ModelViewerView(PopUps* popUps)
+	: SharedModelViewerView(popUps)
 {
-	clinit();
-}
-
-ModelViewerView::ModelViewerView(PopUps* popUps) 
-	: ModelViewerView(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(popUps);
-}
-
-void ModelViewerView::ctor(PopUps* popUps)
-{
-	super::ctor(popUps);
 }
 
 void ModelViewerView::onSetEntityData()
@@ -58,17 +46,3 @@ LevelEditorEntity* ModelViewerView::loadModel(String* name, String* description,
 {
 	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(LevelEditorEntityLibrary::ID_ALLOCATE, name, description, pathName, fileName, pivot);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelViewerView::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.views.ModelViewerView", 44);
-    return c;
-}
-
-java::lang::Class* ModelViewerView::getClass0()
-{
-	return class_();
-}
-

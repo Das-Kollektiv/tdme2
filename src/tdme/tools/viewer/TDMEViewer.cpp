@@ -42,30 +42,23 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-TDMEViewer::TDMEViewer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+String* TDMEViewer::VERSION = u"0.9.9"_j;
+
+TDMEViewer* TDMEViewer::instance = nullptr;
 
 TDMEViewer::TDMEViewer()
-	: TDMEViewer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void TDMEViewer::init()
-{
+	TDMEViewer::instance = this;
+	engine = Engine::getInstance();
+	view = nullptr;
+	viewInitialized = false;
+	viewNew = nullptr;
+	popUps = new PopUps();
 	quitRequested = false;
 }
 
-String* TDMEViewer::VERSION;
-
-TDMEViewer* TDMEViewer::instance;
-
 void TDMEViewer::main(int argc, char** argv)
 {
-	clinit();
 	String* modelFileName = nullptr;
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEViewer "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
@@ -75,21 +68,8 @@ void TDMEViewer::main(int argc, char** argv)
 	tdmeLevelEditor->run(argc, argv, L"TDMEViewer");
 }
 
-void TDMEViewer::ctor()
-{
-	super::ctor();
-	init();
-	TDMEViewer::instance = this;
-	engine = Engine::getInstance();
-	view = nullptr;
-	viewInitialized = false;
-	viewNew = nullptr;
-	popUps = new PopUps();
-}
-
 TDMEViewer* TDMEViewer::getInstance()
 {
-	clinit();
 	return instance;
 }
 
@@ -163,30 +143,3 @@ void TDMEViewer::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TDMEViewer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.viewer.TDMEViewer", 28);
-    return c;
-}
-
-void TDMEViewer::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	VERSION = u"0.9.9"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* TDMEViewer::getClass0()
-{
-	return class_();
-}
-

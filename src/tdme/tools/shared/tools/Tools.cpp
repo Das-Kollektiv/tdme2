@@ -6,7 +6,6 @@
 
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Locale.h>
@@ -55,7 +54,6 @@ using std::to_wstring;
 using tdme::tools::shared::tools::Tools;
 using java::lang::Float;
 using java::lang::Integer;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Locale;
@@ -94,41 +92,20 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::_Exception;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-typedef ::SubArray< ::tdme::engine::Light, ::java::lang::ObjectArray > LightArray;
-}  // namespace engine
-}  // namespace tdme
+Engine* Tools::osEngine = nullptr;
 
-Tools::Tools(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+Transformations* Tools::oseLookFromRotations = nullptr;
 
-Tools::Tools()
-	: Tools(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-Engine* Tools::osEngine;
-
-Transformations* Tools::oseLookFromRotations;
-
-float Tools::oseScale;
+float Tools::oseScale = 0.75f;
 
 String* Tools::formatFloat(float value)
 {
-	clinit();
 	wstring floatString = to_wstring(value);
 	return new String(floatString);
 }
 
 String* Tools::formatVector3(Vector3* value)
 {
-	clinit();
 	return ::java::lang::StringBuilder().append(formatFloat(value->getX()))->append(u", "_j)
 		->append(formatFloat(value->getY()))
 		->append(u", "_j)
@@ -137,7 +114,6 @@ String* Tools::formatVector3(Vector3* value)
 
 String* Tools::formatColor4(Color4* value)
 {
-	clinit();
 	return ::java::lang::StringBuilder().append(formatFloat(value->getRed()))->append(u", "_j)
 		->append(formatFloat(value->getGreen()))
 		->append(u", "_j)
@@ -148,7 +124,6 @@ String* Tools::formatColor4(Color4* value)
 
 void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */
 {
-	clinit();
 	auto i = 0;
 	auto t = new StringTokenizer(text, u","_j);
 	while (t->hasMoreTokens() && i < array->size()) {
@@ -158,7 +133,6 @@ void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(Numbe
 
 void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */
 {
-	clinit();
 	auto i = 0;
 	auto t = new StringTokenizer(text, u","_j);
 	while (t->hasMoreTokens() && i < array->size()) {
@@ -168,7 +142,6 @@ void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(Numbe
 
 Vector3* Tools::convertToVector3(String* text) /* throws(NumberFormatException) */
 {
-	clinit();
 	auto v = new Vector3();
 	convertToArray(text, v->getArray());
 	return v;
@@ -176,7 +149,6 @@ Vector3* Tools::convertToVector3(String* text) /* throws(NumberFormatException) 
 
 Vector4* Tools::convertToVector4(String* text) /* throws(NumberFormatException) */
 {
-	clinit();
 	auto v = new Vector4();
 	convertToArray(text, v->getArray());
 	return v;
@@ -184,7 +156,6 @@ Vector4* Tools::convertToVector4(String* text) /* throws(NumberFormatException) 
 
 Color4* Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
 {
-	clinit();
 	auto color = new Color4();
 	convertToArray(text, color->getArray());
 	return color;
@@ -192,19 +163,16 @@ Color4* Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
 
 float Tools::convertToFloat(String* text) /* throws(NumberFormatException) */
 {
-	clinit();
 	return Float::parseFloat(text);
 }
 
 int32_t Tools::convertToInt(String* text) /* throws(NumberFormatException) */
 {
-	clinit();
 	return Integer::parseInt(text);
 }
 
 int32_t Tools::convertToIntSilent(String* text)
 {
-	clinit();
 	try {
 		return Integer::parseInt(text);
 	} catch (_Exception& exception) {
@@ -214,7 +182,6 @@ int32_t Tools::convertToIntSilent(String* text)
 
 void Tools::setDefaultLight(Light* light)
 {
-	clinit();
 	light->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -230,7 +197,6 @@ void Tools::setDefaultLight(Light* light)
 
 void Tools::oseInit()
 {
-	clinit();
 	osEngine = Engine::createOffScreenInstance(128, 128);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
@@ -244,13 +210,11 @@ void Tools::oseInit()
 
 void Tools::oseDispose()
 {
-	clinit();
 	osEngine->dispose();
 }
 
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
-	clinit();
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
 	osEngine->getSceneColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	osEngine->display();
@@ -263,7 +227,6 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 
 float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
 {
-	clinit();
 	auto maxAxisDimension = 0.0f;
 	auto dimension = new Vector3(modelBoundingVolume->computeDimensionOnAxis(new Vector3(1.0f, 0.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(new Vector3(0.0f, 0.0f, 1.0f)));
 	if (dimension->getX() > maxAxisDimension)
@@ -280,7 +243,6 @@ float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
 
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
-	clinit();
 	auto ground = new Model(L"ground", L"ground", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material(L"ground");
 	groundMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -318,7 +280,6 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 
 void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformations* lookFromRotations, float scale)
 {
-	clinit();
 	if (entity == nullptr)
 		return;
 
@@ -384,7 +345,6 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 
 String* Tools::getRelativeResourcesFileName(String* gameRoot, String* fileName)
 {
-	clinit();
 	fileName = fileName->replace(u'\\', u'/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
@@ -404,7 +364,6 @@ String* Tools::getRelativeResourcesFileName(String* gameRoot, String* fileName)
 
 String* Tools::getGameRootPath(String* fileName)
 {
-	clinit();
 	fileName = fileName->replace(u'\\', u'/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
@@ -424,43 +383,10 @@ String* Tools::getGameRootPath(String* fileName)
 
 String* Tools::getPath(String* fileName)
 {
-	clinit();
 	return _FileSystem::getInstance()->getPathName(fileName);
 }
 
 String* Tools::getFileName(String* fileName)
 {
-	clinit();
 	return _FileSystem::getInstance()->getFileName(fileName);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Tools::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.tools.Tools", 29);
-    return c;
-}
-
-void Tools::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		osEngine = nullptr;
-		oseLookFromRotations = nullptr;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* Tools::getClass0()
-{
-	return class_();
-}
-

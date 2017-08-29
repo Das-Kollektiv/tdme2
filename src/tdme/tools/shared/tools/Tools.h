@@ -16,7 +16,6 @@
 
 using std::array;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -28,21 +27,13 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-
-struct default_init_tag;
-
 /** 
  * Thumbnail generator
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::tools::Tools final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static Engine* osEngine;
 	static Transformations* oseLookFromRotations;
@@ -202,17 +193,4 @@ public:
 	 * @return file name
 	 */
 	static String* getFileName(String* fileName);
-
-	// Generated
-	Tools();
-protected:
-	Tools(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

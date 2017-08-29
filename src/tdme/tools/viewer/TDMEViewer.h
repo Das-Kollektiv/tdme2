@@ -9,9 +9,7 @@
 #include <tdme/engine/Application.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/viewer/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -48,11 +46,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::viewer::TDMEViewer final
-	: public virtual Object, public Application
+	: public Application
 {
-
-public:
-	typedef Object super;
 
 private:
 	static String* VERSION;
@@ -65,18 +60,11 @@ private:
 	PopUps* popUps {  };
 
 public:
-
 	/** 
 	 * @param argument count
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -123,17 +111,8 @@ public:
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	TDMEViewer();
-protected:
-	TDMEViewer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

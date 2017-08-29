@@ -29,7 +29,6 @@ class LevelEditorEntity;
 } /* namespace tools */
 } /* namespace tdme */
 
-using java::lang::Object;
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using java::io::File;
@@ -43,23 +42,15 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 
-
-struct default_init_tag;
-
 /** 
  * TDME Model Viewer View
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::views::SharedModelViewerView
-	: public virtual Object
-	, public virtual View
+	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	Engine* engine {  };
 
@@ -209,15 +200,9 @@ public:
 	 */
 	virtual void onSetEntityData();
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups
+	 */
 	SharedModelViewerView(PopUps* popUps);
-protected:
-	SharedModelViewerView(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
