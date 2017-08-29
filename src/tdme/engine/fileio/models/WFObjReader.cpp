@@ -12,7 +12,6 @@
 #include <java/lang/String.h>
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/StringTokenizer.h>
@@ -46,7 +45,6 @@ using java::io::File;
 using java::io::InputStreamReader;
 using java::lang::Float;
 using java::lang::Integer;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::StringTokenizer;
@@ -86,14 +84,6 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 namespace
 {
 template<typename F>
@@ -110,21 +100,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-WFObjReader::WFObjReader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-WFObjReader::WFObjReader()
-	: WFObjReader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
 {
-	clinit();
 	auto model = new Model(
 		::java::lang::StringBuilder().
 		 	 append(pathName)->
@@ -351,7 +329,6 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 
 void WFObjReader::readMaterials(String* pathName, String* fileName, map<wstring, Material*>& materials) throw (_FileSystemException, ModelFileIOException)
 {
-	clinit();
 	Material* current = nullptr;
 	String* line;
 	auto alpha = 1.0f;
@@ -413,17 +390,3 @@ void WFObjReader::readMaterials(String* pathName, String* fileName, map<wstring,
 		}
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* WFObjReader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.engine.fileio.models.WFObjReader", 37);
-    return c;
-}
-
-java::lang::Class* WFObjReader::getClass0()
-{
-	return class_();
-}
-
