@@ -23,9 +23,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * Level editor model library screen controller
  * @author Andreas Drewke
@@ -36,9 +33,7 @@ class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenContro
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class LevelEditorEntityLibraryScreenController_onValueChanged_1;
 
 private:
 	GUIScreenNode* screenNode {  };
@@ -49,12 +44,6 @@ private:
 	MutableString* dropdownEntityActionReset {  };
 	PopUps* popUps {  };
 	String* modelPath {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor(PopUps* popUps);
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -110,16 +99,8 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	LevelEditorEntityLibraryScreenController(PopUps* popUps);
-protected:
-	LevelEditorEntityLibraryScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorEntityLibraryScreenController_onValueChanged_1;
 };

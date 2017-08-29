@@ -24,29 +24,8 @@ using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::MutableString;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-InfoDialogScreenController::InfoDialogScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 InfoDialogScreenController::InfoDialogScreenController() 
-	: InfoDialogScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void InfoDialogScreenController::ctor()
-{
-	super::ctor();
 	this->value = new MutableString();
 }
 
@@ -61,8 +40,8 @@ void InfoDialogScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/shared/gui"_j, u"infodialog.xml"_j);
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
-		captionNode = java_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_caption"_j));
-		messageNode = java_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_message"_j));
+		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_caption"_j));
+		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_message"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -91,31 +70,18 @@ void InfoDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 	{
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+			{
 				if (node->getId()->equals(u"infodialog_ok"_j)) {
 					close();
 				}
 				goto end_switch0;;
-			}		}
+			}
+		}
 		if (((v == GUIActionListener_Type::PERFORMED) || ((v != GUIActionListener_Type::PERFORMED)))) {
-{
+			{
 				goto end_switch0;;
-			}		}
-end_switch0:;
+			}
+		}
+		end_switch0:;
 	}
-
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* InfoDialogScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.InfoDialogScreenController", 55);
-    return c;
-}
-
-java::lang::Class* InfoDialogScreenController::getClass0()
-{
-	return class_();
-}
-

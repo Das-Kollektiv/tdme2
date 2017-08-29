@@ -46,8 +46,6 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * File dialog screen controller
  * @author Andreas Drewke
@@ -58,9 +56,7 @@ class tdme::tools::shared::controller::FileDialogScreenController
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class FileDialogScreenController_setupFileDialogListBox_1;
 
 private:
 	GUIScreenNode* screenNode {  };
@@ -72,13 +68,6 @@ private:
 	GUIElementNode* files {  };
 	MutableString* value {  };
 	Action* applyAction {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model library controller
-	 */
-	void ctor();
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -124,16 +113,8 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	FileDialogScreenController();
-protected:
-	FileDialogScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class FileDialogScreenController_setupFileDialogListBox_1;
 };

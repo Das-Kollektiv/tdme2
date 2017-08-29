@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
@@ -29,7 +28,6 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
@@ -61,29 +59,8 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-FileDialogScreenController::FileDialogScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 FileDialogScreenController::FileDialogScreenController() 
-	: FileDialogScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void FileDialogScreenController::ctor()
-{
-	super::ctor();
 	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
@@ -111,9 +88,9 @@ void FileDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		caption = java_cast< GUITextNode* >(screenNode->getNodeById(u"filedialog_caption"_j));
-		files = java_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_files"_j));
-		fileName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_filename"_j));
+		caption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"filedialog_caption"_j));
+		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_files"_j));
+		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_filename"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -142,7 +119,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 		_Console::println(string(exception.what()));
 	}
 
-	auto filesInnerNode = java_cast< GUIParentNode* >((files->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(files->getId())->append(u"_inner"_j)->toString())));
+	auto filesInnerNode = dynamic_cast< GUIParentNode* >((files->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(files->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto filesInnerNodeSubNodesXML = u""_j;
 	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"<scrollarea width=\"100%\" height=\"100%\">\n"_j)->toString();
@@ -232,17 +209,3 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 	}
 
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* FileDialogScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.FileDialogScreenController", 55);
-    return c;
-}
-
-java::lang::Class* FileDialogScreenController::getClass0()
-{
-	return class_();
-}
-

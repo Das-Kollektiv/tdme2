@@ -117,35 +117,14 @@ typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUI
 }  // namespace gui
 }  // namespace tdme
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
+MutableString* LevelEditorScreenController::CHECKBOX_CHECKED = new MutableString(u"1"_j);
 
-LevelEditorScreenController::LevelEditorScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+MutableString* LevelEditorScreenController::CHECKBOX_UNCHECKED = new MutableString(u""_j);
+
+MutableString* LevelEditorScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view) 
-	: LevelEditorScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(view);
-}
-
-MutableString* LevelEditorScreenController::CHECKBOX_CHECKED;
-
-MutableString* LevelEditorScreenController::CHECKBOX_UNCHECKED;
-
-MutableString* LevelEditorScreenController::TEXT_EMPTY;
-
-void LevelEditorScreenController::ctor(LevelEditorView* view)
-{
-	super::ctor();
 	this->view = view;
 	this->mapPath = new FileDialogPath(u"."_j);
 }
@@ -166,47 +145,47 @@ void LevelEditorScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_leveleditor.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		gridEnabled = java_cast< GUIElementNode* >(screenNode->getNodeById(u"grid_enabled"_j));
-		gridYPosition = java_cast< GUIElementNode* >(screenNode->getNodeById(u"grid_y_position"_j));
-		mapWidth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_width"_j));
-		mapDepth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_depth"_j));
-		mapHeight = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_height"_j));
-		mapPropertyName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_property_name"_j));
-		mapPropertyValue = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_property_value"_j));
-		mapPropertySave = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_map_properties_save"_j));
-		mapPropertyRemove = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_map_properties_remove"_j));
-		mapPropertiesListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"map_properties_listbox"_j));
-		objectName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_name"_j));
-		objectDescription = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_description"_j));
-		objectModel = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_model"_j));
-		objectCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_center"_j));
-		btnObjectDataApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_objectdata_apply"_j));
-		btnObjectTranslationApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_translation_apply"_j));
-		btnObjectScaleApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_scale_apply"_j));
-		btnObjectRotationApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_rotation_apply"_j));
-		btnObjectColor = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_color"_j));
-		btnObjectCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_center"_j));
-		btnObjectRemove = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_remove"_j));
-		objectTranslationX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_x"_j));
-		objectTranslationY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_y"_j));
-		objectTranslationZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_z"_j));
-		objectScaleX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_x"_j));
-		objectScaleY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_y"_j));
-		objectScaleZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_z"_j));
-		objectRotationX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_x"_j));
-		objectRotationY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_y"_j));
-		objectRotationZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_z"_j));
-		objectPropertyName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_property_name"_j));
-		objectPropertyValue = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_property_value"_j));
-		btnObjectPropertySave = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_save"_j));
-		btnObjectPropertyRemove = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_remove"_j));
-		btnObjectPropertyAdd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_add"_j));
-		btnObjectPropertyRemove = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_remove"_j));
-		btnObjectPropertyPresetApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_presetapply"_j));
-		objectPropertiesListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_properties_listbox"_j));
-		objectPropertiesPresets = java_cast< GUIElementNode* >(screenNode->getNodeById(u"object_properties_presets"_j));
-		objectsListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"objects_listbox"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		gridEnabled = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"grid_enabled"_j));
+		gridYPosition = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"grid_y_position"_j));
+		mapWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_width"_j));
+		mapDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_depth"_j));
+		mapHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_height"_j));
+		mapPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_property_name"_j));
+		mapPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_property_value"_j));
+		mapPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_map_properties_save"_j));
+		mapPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_map_properties_remove"_j));
+		mapPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"map_properties_listbox"_j));
+		objectName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_name"_j));
+		objectDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_description"_j));
+		objectModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_model"_j));
+		objectCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_center"_j));
+		btnObjectDataApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_objectdata_apply"_j));
+		btnObjectTranslationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_translation_apply"_j));
+		btnObjectScaleApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_scale_apply"_j));
+		btnObjectRotationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_rotation_apply"_j));
+		btnObjectColor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_color"_j));
+		btnObjectCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_center"_j));
+		btnObjectRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_remove"_j));
+		objectTranslationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_x"_j));
+		objectTranslationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_y"_j));
+		objectTranslationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_translation_z"_j));
+		objectScaleX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_x"_j));
+		objectScaleY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_y"_j));
+		objectScaleZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_scale_z"_j));
+		objectRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_x"_j));
+		objectRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_y"_j));
+		objectRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_rotation_z"_j));
+		objectPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_property_name"_j));
+		objectPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_property_value"_j));
+		btnObjectPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_save"_j));
+		btnObjectPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_remove"_j));
+		btnObjectPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_add"_j));
+		btnObjectPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_remove"_j));
+		btnObjectPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_object_properties_presetapply"_j));
+		objectPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_properties_listbox"_j));
+		objectPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"object_properties_presets"_j));
+		objectsListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"objects_listbox"_j));
 		mapWidth->getController()->setDisabled(true);
 		mapDepth->getController()->setDisabled(true);
 		mapHeight->getController()->setDisabled(true);
@@ -227,32 +206,32 @@ void LevelEditorScreenController::initialize()
 		ligthsSpotDirectionCompute = new GUIElementNodeArray(4);
 		lightsEnabled = new GUIElementNodeArray(4);
 		for (auto i = 0; i < 4; i++) {
-			lightsPresets->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"presets_light"_j)->append(i)->toString())));
-			lightsAmbient->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsPresets->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"presets_light"_j)->append(i)->toString())));
+			lightsAmbient->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_ambient"_j)->toString())));
-			lightsDiffuse->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsDiffuse->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_diffuse"_j)->toString())));
-			lightsSpecular->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsSpecular->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_specular"_j)->toString())));
-			lightsPosition->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsPosition->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_position"_j)->toString())));
-			lightsLinAttenuation->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsLinAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_linear_attenuation"_j)->toString())));
-			lightsConstAttenuation->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsConstAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_constant_attenuation"_j)->toString())));
-			lightsQuadAttenuation->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsQuadAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_quadratic_attenuation"_j)->toString())));
-			lightsSpotTo->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsSpotTo->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_spot_to"_j)->toString())));
-			lightsSpotDirection->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsSpotDirection->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_spot_direction"_j)->toString())));
-			lightsSpotExponent->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsSpotExponent->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_spot_exponent"_j)->toString())));
-			lightsSpotCutoff->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsSpotCutoff->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_spot_cutoff"_j)->toString())));
-			ligthsSpotDirectionCompute->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"button_light"_j)->append(i)
+			ligthsSpotDirectionCompute->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"button_light"_j)->append(i)
 				->append(u"_spotdirection_compute"_j)->toString())));
-			lightsEnabled->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
+			lightsEnabled->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
 				->append(u"_enabled"_j)->toString())));
 		}
 		value = new MutableString();
@@ -299,7 +278,7 @@ void LevelEditorScreenController::unsetObjectProperties()
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
 	objectPropertyValue->getController()->setDisabled(true);
-	auto objectPropertiesListBoxInnerNode = java_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
 	objectPropertiesListBoxInnerNode->clearSubNodes();
 }
 
@@ -342,7 +321,7 @@ void LevelEditorScreenController::onObjectDataApply()
 void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
-	auto objectsListBoxInnerNode = java_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectsListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectsListBox->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto objectsListBoxSubNodesXML = u""_j;
 	objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectsListBox->getId())
@@ -489,7 +468,7 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, Stri
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
 	mapPropertySave->getController()->setDisabled(true);
-	auto mapPropertiesListBoxInnerNode = java_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(mapPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(mapPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto mapPropertiesListBoxSubNodesXML = u""_j;
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(mapPropertiesListBox->getId())
@@ -538,7 +517,7 @@ void LevelEditorScreenController::onMapPropertyRemove()
 
 void LevelEditorScreenController::setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds)
 {
-	auto objectPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto objectPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesPresets->getId())
@@ -596,7 +575,7 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEdi
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setDisabled(true);
 	objectPropertiesPresets->getController()->setValue(presetId != nullptr ? value->set(presetId) : value->set(u"none"_j));
-	auto objectPropertiesListBoxInnerNode = java_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto objectPropertiesListBoxSubNodesXML = u""_j;
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesListBox->getId())
@@ -758,7 +737,7 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
-		auto lightPresetsInnerNode = java_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*lightsPresets)[i]->getId())->append(u"_inner"_j)->toString())));
+		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*lightsPresets)[i]->getId())->append(u"_inner"_j)->toString())));
 		auto idx = 0;
 		auto lightPresetsInnerNodeSubNodesXML = u""_j;
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append((*lightsPresets)[i]->getId())
@@ -1017,35 +996,3 @@ void LevelEditorScreenController::showErrorPopUp(String* caption, String* messag
 		->append(message)->toString()));
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.controller.LevelEditorScreenController", 61);
-    return c;
-}
-
-void LevelEditorScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		CHECKBOX_CHECKED = new MutableString(u"1"_j);
-		CHECKBOX_UNCHECKED = new MutableString(u""_j);
-		TEXT_EMPTY = new MutableString(u""_j);
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* LevelEditorScreenController::getClass0()
-{
-	return class_();
-}
-

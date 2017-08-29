@@ -34,9 +34,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * Model viewer screen controller
  * @author Andreas Drewke
@@ -47,9 +44,10 @@ class tdme::tools::shared::controller::ParticleSystemScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class ParticleSystemScreenController_ParticleSystemScreenController_1;
+	friend class ParticleSystemScreenController_onParticleSystemLoad_2;
+	friend class ParticleSystemScreenController_onEntitySave_3;
+	friend class ParticleSystemScreenController_onActionPerformed_4;
 
 private:
 	static String* TYPE_NONE;
@@ -145,13 +143,6 @@ private:
 	MutableString* value {  };
 	FileDialogPath* particleSystemPath {  };
 	FileDialogPath* modelPath {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 */
-	void ctor(SharedParticleSystemView* view);
 
 public:
 
@@ -280,20 +271,9 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 */
 	ParticleSystemScreenController(SharedParticleSystemView* view);
-protected:
-	ParticleSystemScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class ParticleSystemScreenController_ParticleSystemScreenController_1;
-	friend class ParticleSystemScreenController_onParticleSystemLoad_2;
-	friend class ParticleSystemScreenController_onEntitySave_3;
-	friend class ParticleSystemScreenController_onActionPerformed_4;
 };

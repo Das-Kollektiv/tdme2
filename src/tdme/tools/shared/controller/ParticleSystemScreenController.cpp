@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -61,7 +60,6 @@ using tdme::tools::shared::controller::ParticleSystemScreenController;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
@@ -125,47 +123,18 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
+String* ParticleSystemScreenController::TYPE_NONE = u"None"_j;
+String* ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = u"Object Particle System"_j;
+String* ParticleSystemScreenController::TYPE_POINTSPARTICLESYSTEM = u"Points Particle System"_j;
+String* ParticleSystemScreenController::EMITTER_NONE = u"None"_j;
+String* ParticleSystemScreenController::EMITTER_POINTPARTICLEEMITTER = u"Point Particle Emitter"_j;
+String* ParticleSystemScreenController::EMITTER_BOUNDINGBOXPARTICLEEMITTER = u"BoundingBox Particle Emitter"_j;
+String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTER = u"Circle Particle Emitter"_j;
+String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY = u"Circle Particle Emitter Plane Velocity"_j;
+String* ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER = u"Sphere Particle Emitter"_j;
+
+ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSystemView* view)
 {
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-ParticleSystemScreenController::ParticleSystemScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSystemView* view) 
-	: ParticleSystemScreenController(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(view);
-}
-
-String* ParticleSystemScreenController::TYPE_NONE;
-
-String* ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM;
-
-String* ParticleSystemScreenController::TYPE_POINTSPARTICLESYSTEM;
-
-String* ParticleSystemScreenController::EMITTER_NONE;
-
-String* ParticleSystemScreenController::EMITTER_POINTPARTICLEEMITTER;
-
-String* ParticleSystemScreenController::EMITTER_BOUNDINGBOXPARTICLEEMITTER;
-
-String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTER;
-
-String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
-
-String* ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER;
-
-void ParticleSystemScreenController::ctor(SharedParticleSystemView* view)
-{
-	super::ctor();
 	this->particleSystemPath = new FileDialogPath(u"."_j);
 	this->modelPath = new FileDialogPath(u"."_j);
 	this->view = view;
@@ -207,82 +176,82 @@ void ParticleSystemScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/particlesystem/gui"_j, u"screen_particlesystem.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		particleSystemReload = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_reload"_j));
-		particleSystemSave = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_save"_j));
-		particleSystemTypes = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_types"_j));
-		particleSystemType = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_type"_j));
-		particleSystemEmitters = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitters"_j));
-		particleSystemEmitter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitter"_j));
-		opsScale = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_scale"_j));
-		opsMaxCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_maxcount"_j));
-		opsModel = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_model"_j));
-		opsAutoEmit = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_auto_emit"_j));
-		ppsMaxPoints = java_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_maxpoints"_j));
-		ppsAutoEmit = java_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_auto_emit"_j));
-		ppeCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_count"_j));
-		ppeLifeTime = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetime"_j));
-		ppeLifeTimeRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetimernd"_j));
-		ppeMass = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_mass"_j));
-		ppeMassRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_massrnd"_j));
-		ppePosition = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_position"_j));
-		ppeVelocity = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocity"_j));
-		ppeVelocityRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocityrnd"_j));
-		ppeColorStart = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorstart"_j));
-		ppeColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorend"_j));
-		bbpeCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_count"_j));
-		bbpeLifeTime = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetime"_j));
-		bbpeLifeTimeRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetimernd"_j));
-		bbpeMass = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_mass"_j));
-		bbpeMassRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_massrnd"_j));
-		bbpeVelocity = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocity"_j));
-		bbpeVelocityRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocityrnd"_j));
-		bbpeColorStart = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorstart"_j));
-		bbpeColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorend"_j));
-		bbpeObbCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_center"_j));
-		bbpeObbHalfextension = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_halfextension"_j));
-		bbpeObbRotationX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_x"_j));
-		bbpeObbRotationY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_y"_j));
-		bbpeObbRotationZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_z"_j));
-		cpeCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_count"_j));
-		cpeLifeTime = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetime"_j));
-		cpeLifeTimeRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetimernd"_j));
-		cpeMass = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_mass"_j));
-		cpeMassRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_massrnd"_j));
-		cpeVelocity = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocity"_j));
-		cpeVelocityRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocityrnd"_j));
-		cpeColorStart = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorstart"_j));
-		cpeColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorend"_j));
-		cpeCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_center"_j));
-		cpeRadius = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_radius"_j));
-		cpeRotationX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_x"_j));
-		cpeRotationY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_y"_j));
-		cpeRotationZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_z"_j));
-		cpepvCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_count"_j));
-		cpepvLifeTime = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetime"_j));
-		cpepvLifeTimeRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetimernd"_j));
-		cpepvMass = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_mass"_j));
-		cpepvMassRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_massrnd"_j));
-		cpepvVelocity = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocity"_j));
-		cpepvVelocityRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocityrnd"_j));
-		cpepvColorStart = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorstart"_j));
-		cpepvColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorend"_j));
-		cpepvCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_center"_j));
-		cpepvRadius = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_radius"_j));
-		cpepvRotationX = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_x"_j));
-		cpepvRotationY = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_y"_j));
-		cpepvRotationZ = java_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_z"_j));
-		speCount = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_count"_j));
-		speLifeTime = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetime"_j));
-		speLifeTimeRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetimernd"_j));
-		speMass = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_mass"_j));
-		speMassRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_massrnd"_j));
-		speVelocity = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocity"_j));
-		speVelocityRnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocityrnd"_j));
-		speColorStart = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorstart"_j));
-		speColorEnd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorend"_j));
-		speCenter = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_center"_j));
-		speRadius = java_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_radius"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		particleSystemReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_reload"_j));
+		particleSystemSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_save"_j));
+		particleSystemTypes = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_types"_j));
+		particleSystemType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_type"_j));
+		particleSystemEmitters = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitters"_j));
+		particleSystemEmitter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitter"_j));
+		opsScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_scale"_j));
+		opsMaxCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_maxcount"_j));
+		opsModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_model"_j));
+		opsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_auto_emit"_j));
+		ppsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_maxpoints"_j));
+		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_auto_emit"_j));
+		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_count"_j));
+		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetime"_j));
+		ppeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetimernd"_j));
+		ppeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_mass"_j));
+		ppeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_massrnd"_j));
+		ppePosition = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_position"_j));
+		ppeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocity"_j));
+		ppeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocityrnd"_j));
+		ppeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorstart"_j));
+		ppeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorend"_j));
+		bbpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_count"_j));
+		bbpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetime"_j));
+		bbpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetimernd"_j));
+		bbpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_mass"_j));
+		bbpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_massrnd"_j));
+		bbpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocity"_j));
+		bbpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocityrnd"_j));
+		bbpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorstart"_j));
+		bbpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorend"_j));
+		bbpeObbCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_center"_j));
+		bbpeObbHalfextension = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_halfextension"_j));
+		bbpeObbRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_x"_j));
+		bbpeObbRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_y"_j));
+		bbpeObbRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_z"_j));
+		cpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_count"_j));
+		cpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetime"_j));
+		cpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetimernd"_j));
+		cpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_mass"_j));
+		cpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_massrnd"_j));
+		cpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocity"_j));
+		cpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocityrnd"_j));
+		cpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorstart"_j));
+		cpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorend"_j));
+		cpeCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_center"_j));
+		cpeRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_radius"_j));
+		cpeRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_x"_j));
+		cpeRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_y"_j));
+		cpeRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_z"_j));
+		cpepvCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_count"_j));
+		cpepvLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetime"_j));
+		cpepvLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetimernd"_j));
+		cpepvMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_mass"_j));
+		cpepvMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_massrnd"_j));
+		cpepvVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocity"_j));
+		cpepvVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocityrnd"_j));
+		cpepvColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorstart"_j));
+		cpepvColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorend"_j));
+		cpepvCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_center"_j));
+		cpepvRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_radius"_j));
+		cpepvRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_x"_j));
+		cpepvRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_y"_j));
+		cpepvRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_z"_j));
+		speCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_count"_j));
+		speLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetime"_j));
+		speLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetimernd"_j));
+		speMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_mass"_j));
+		speMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_massrnd"_j));
+		speVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocity"_j));
+		speVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocityrnd"_j));
+		speColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorstart"_j));
+		speColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorend"_j));
+		speCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_center"_j));
+		speRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_radius"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -328,7 +297,7 @@ void ParticleSystemScreenController::unsetEntityProperties()
 
 void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
 {
-	auto particleSystemTypesInnerNode = java_cast< GUIParentNode* >((particleSystemTypes->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemTypes->getId())->append(u"_inner"_j)->toString())));
+	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >((particleSystemTypes->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemTypes->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto particleSystemTypesInnerNodeSubNodesXML = u""_j;
 	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemTypes->getId())
@@ -353,7 +322,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 
 void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
 {
-	auto particleSystemEmittersInnerNode = java_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemEmitters->getId())->append(u"_inner"_j)->toString())));
+	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemEmitters->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto particleSystemEmittersInnerNodeSubNodesXML = u""_j;
 	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemEmitters->getId())
@@ -413,7 +382,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 				->append(u"'"_j)->toString()));
 			goto end_switch0;;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	view->initParticleSystemRequest();
@@ -648,13 +617,14 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 	{
 		auto v = particleSystem->getEmitter();
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_NONE));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_NONE);
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_POINTPARTICLEEMITTER));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_POINTPARTICLEEMITTER);
 				auto emitter = particleSystem->getPointParticleEmitter();
@@ -669,9 +639,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				ppeColorStart->getController()->setValue(value->set(Tools::formatColor4(emitter->getColorStart())));
 				ppeColorEnd->getController()->setValue(value->set(Tools::formatColor4(emitter->getColorEnd())));
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_BOUNDINGBOXPARTICLEEMITTER);
 				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
@@ -694,9 +665,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				bbpeObbRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
 				bbpeObbRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTER));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_CIRCLEPARTICLEEMITTER);
 				auto emitter = particleSystem->getCircleParticleEmitter();
@@ -719,9 +691,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpeRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
 				cpeRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY);
 				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
@@ -744,9 +717,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpepvRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
 				cpepvRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-{
+			{
 				particleSystemEmitters->getController()->setValue(value->set(EMITTER_SPHEREPARTICLEEMITTER));
 				particleSystemEmitter->getActiveConditions()->add(EMITTER_SPHEREPARTICLEEMITTER);
 				auto emitter = particleSystem->getSphereParticleEmitter();
@@ -762,12 +736,13 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				speCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getCenter())));
 				speRadius->getController()->setValue(value->set(emitter->getRadius(), 4));
 				goto end_switch3;;
-			}		}
+			}
+		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
 				->append(u"'"_j)->toString()));
 		}
-end_switch3:;
+		end_switch3:;
 	}
 
 	view->initParticleSystemRequest();
@@ -873,38 +848,3 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 	}
 
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ParticleSystemScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.ParticleSystemScreenController", 59);
-    return c;
-}
-
-void ParticleSystemScreenController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	TYPE_NONE = u"None"_j;
-	TYPE_OBJECTPARTICLESYSTEM = u"Object Particle System"_j;
-	TYPE_POINTSPARTICLESYSTEM = u"Points Particle System"_j;
-	EMITTER_NONE = u"None"_j;
-	EMITTER_POINTPARTICLEEMITTER = u"Point Particle Emitter"_j;
-	EMITTER_BOUNDINGBOXPARTICLEEMITTER = u"BoundingBox Particle Emitter"_j;
-	EMITTER_CIRCLEPARTICLEEMITTER = u"Circle Particle Emitter"_j;
-	EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY = u"Circle Particle Emitter Plane Velocity"_j;
-	EMITTER_SPHEREPARTICLEEMITTER = u"Sphere Particle Emitter"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* ParticleSystemScreenController::getClass0()
-{
-	return class_();
-}
-

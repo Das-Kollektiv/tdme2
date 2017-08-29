@@ -2,7 +2,6 @@
 #include <tdme/tools/leveleditor/controller/TriggerScreenController.h>
 
 #include <java/lang/Float.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
@@ -26,7 +25,6 @@
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
@@ -48,31 +46,10 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-TriggerScreenController::TriggerScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 TriggerScreenController::TriggerScreenController(TriggerView* view) 
-	: TriggerScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(view);
-}
-
-MutableString* TriggerScreenController::TEXT_EMPTY;
-
-void TriggerScreenController::ctor(TriggerView* view)
-{
-	super::ctor();
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new TriggerScreenController_TriggerScreenController_1(this, finalView));
@@ -89,11 +66,11 @@ void TriggerScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_trigger.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		triggerWidth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_width"_j));
-		triggerHeight = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_height"_j));
-		triggerDepth = java_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_depth"_j));
-		triggerApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_trigger_apply"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		triggerWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_width"_j));
+		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_height"_j));
+		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_depth"_j));
+		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_trigger_apply"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -186,7 +163,7 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 	{
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+			{
 				if (node->getId()->equals(u"button_trigger_apply"_j)) {
 					onTriggerApply();
 				} else {
@@ -199,42 +176,14 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 						->append(u"'"_j)->toString()));
 				}
 				goto end_switch0;;
-			}		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-{
-				goto end_switch0;;
-			}		}
-end_switch0:;
-	}
-
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TriggerScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.controller.TriggerScreenController", 57);
-    return c;
-}
-
-void TriggerScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		TEXT_EMPTY = new MutableString(u""_j);
+			}
 		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
+		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
+				{
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
 	}
-}
 
-java::lang::Class* TriggerScreenController::getClass0()
-{
-	return class_();
 }
-

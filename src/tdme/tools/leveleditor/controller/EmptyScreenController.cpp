@@ -32,31 +32,10 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EmptyScreenController::EmptyScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
-	: EmptyScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(view);
-}
-
-MutableString* EmptyScreenController::TEXT_EMPTY;
-
-void EmptyScreenController::ctor(EmptyView* view)
-{
-	super::ctor();
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new EmptyScreenController_EmptyScreenController_1(this, finalView));
@@ -73,7 +52,7 @@ void EmptyScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_empty.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = java_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -130,33 +109,3 @@ void EmptyScreenController::onActionPerformed(GUIActionListener_Type* type, GUIE
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EmptyScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.controller.EmptyScreenController", 55);
-    return c;
-}
-
-void EmptyScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		TEXT_EMPTY = new MutableString(u""_j);
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* EmptyScreenController::getClass0()
-{
-	return class_();
-}
-

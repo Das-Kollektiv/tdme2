@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
@@ -41,7 +40,6 @@ using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenContro
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
@@ -85,29 +83,8 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
-	: LevelEditorEntityLibraryScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps);
-}
-
-void LevelEditorEntityLibraryScreenController::ctor(PopUps* popUps)
-{
-	super::ctor();
 	this->popUps = popUps;
 	this->modelPath = u"."_j;
 	entityLibraryListBoxSelection = new MutableString();
@@ -134,9 +111,9 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_leveleditor_entitylibrary.xml"_j);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		entityLibraryListBox = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_library_listbox"_j));
-		buttonEntityPlace = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_place"_j));
-		buttonLevelEdit = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_level_edit"_j));
+		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_library_listbox"_j));
+		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_place"_j));
+		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_level_edit"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -160,7 +137,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
 	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 	entityLibraryListBoxSelection->set(entityLibraryListBox->getController()->getValue());
-	auto entityLibraryListBoxInnerNode = java_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityLibraryListBox->getId())->append(u"_inner"_j)->toString())));
+	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityLibraryListBox->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto entityLibraryListBoxSubNodesXML = u""_j;
 	entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityLibraryListBox->getId())
@@ -195,7 +172,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toString()));
 		if (entity != nullptr) {
-			(java_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
+			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
 		}
 	}
 }
@@ -212,31 +189,31 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 			if (dynamic_cast< ModelViewerView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelViewer();
 			}
-			(java_cast< ModelViewerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< ModelViewerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 			goto end_switch0;;
 		}
 		if ((v == LevelEditorEntity_EntityType::TRIGGER)) {
 			if (dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
-			(java_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 			goto end_switch0;;
 		}
 		if ((v == LevelEditorEntity_EntityType::EMPTY)) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
-			(java_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 			goto end_switch0;;
 		}
 		if ((v == LevelEditorEntity_EntityType::PARTICLESYSTEM)) {
 			if (dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
-			(java_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 			goto end_switch0;;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	buttonEntityPlace->getController()->setDisabled(true);
@@ -258,7 +235,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(java_cast< LevelEditorView* >(view))->placeObject();
+		(dynamic_cast< LevelEditorView* >(view))->placeObject();
 	}
 }
 
@@ -273,7 +250,7 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 	setEntityLibrary();
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(java_cast< LevelEditorView* >(view))->loadLevel();
+		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
@@ -360,17 +337,3 @@ void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListen
 		}
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityLibraryScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.controller.LevelEditorEntityLibraryScreenController", 74);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityLibraryScreenController::getClass0()
-{
-	return class_();
-}
-

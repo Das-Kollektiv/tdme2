@@ -19,9 +19,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * Info dialog screen controller
  * @author Andreas Drewke
@@ -32,21 +29,11 @@ class tdme::tools::shared::controller::InfoDialogScreenController
 	, public virtual GUIActionListener
 {
 
-public:
-	typedef ScreenController super;
-
 private:
 	GUIScreenNode* screenNode {  };
 	GUITextNode* captionNode {  };
 	GUITextNode* messageNode {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param model library controller
-	 */
-	void ctor();
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -64,15 +51,8 @@ public:
 	virtual void close();
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	InfoDialogScreenController();
-protected:
-	InfoDialogScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

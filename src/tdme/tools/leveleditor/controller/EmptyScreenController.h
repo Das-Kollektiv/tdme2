@@ -26,8 +26,6 @@ using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::utils::MutableString;
 
-struct default_init_tag;
-
 /** 
  * Empty screen controller
  * @author Andreas Drewke
@@ -38,9 +36,7 @@ class tdme::tools::leveleditor::controller::EmptyScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class EmptyScreenController_EmptyScreenController_1;
 
 private:
 	static MutableString* TEXT_EMPTY;
@@ -48,13 +44,6 @@ private:
 	EmptyView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 */
-	void ctor(EmptyView* view);
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -104,17 +93,9 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 */
 	EmptyScreenController(EmptyView* view);
-protected:
-	EmptyScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class EmptyScreenController_EmptyScreenController_1;
 };

@@ -27,9 +27,6 @@ using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * Model viewer screen controller
  * @author Andreas Drewke
@@ -40,9 +37,7 @@ class tdme::tools::leveleditor::controller::TriggerScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class TriggerScreenController_TriggerScreenController_1;
 
 private:
 	static MutableString* TEXT_EMPTY;
@@ -54,13 +49,6 @@ private:
 	GUIElementNode* triggerHeight {  };
 	GUIElementNode* triggerDepth {  };
 	GUIElementNode* triggerApply {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 */
-	void ctor(TriggerView* view);
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -126,17 +114,9 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 */
 	TriggerScreenController(TriggerView* view);
-protected:
-	TriggerScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class TriggerScreenController_TriggerScreenController_1;
 };

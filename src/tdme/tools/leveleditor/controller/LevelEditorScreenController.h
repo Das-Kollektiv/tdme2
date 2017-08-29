@@ -67,8 +67,6 @@ using tdme::gui::nodes::GUIElementNodeArray;
 using tdme::gui::nodes::GUINodeArray;
 using tdme::gui::nodes::GUIParentNodeArray;
 
-struct default_init_tag;
-
 /** 
  * Level Editor Screen Controller
  * @author Andreas Drewke
@@ -79,9 +77,8 @@ class tdme::tools::leveleditor::controller::LevelEditorScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-
-public:
-	typedef ScreenController super;
+	friend class LevelEditorScreenController_onMapLoad_1;
+	friend class LevelEditorScreenController_onMapSave_2;
 
 private:
 	static MutableString* CHECKBOX_CHECKED;
@@ -146,13 +143,6 @@ private:
 	MutableString* value {  };
 	MutableString* selectedObjects {  };
 	FileDialogPath* mapPath {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 */
-	void ctor(LevelEditorView* view);
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -495,18 +485,9 @@ public:
 	 */
 	void showErrorPopUp(String* caption, String* message);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 */
 	LevelEditorScreenController(LevelEditorView* view);
-protected:
-	LevelEditorScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorScreenController_onMapLoad_1;
-	friend class LevelEditorScreenController_onMapSave_2;
 };
