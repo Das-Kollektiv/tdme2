@@ -21,5 +21,7 @@ public:
 
 	// Generated
 	ModelViewerScreenController_onModelLoad_2(ModelViewerScreenController* modelViewerScreenController);
+
+private:
 	ModelViewerScreenController *modelViewerScreenController;
 };

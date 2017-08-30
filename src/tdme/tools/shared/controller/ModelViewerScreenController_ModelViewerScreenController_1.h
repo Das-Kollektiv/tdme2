@@ -23,6 +23,8 @@ public:
 
 	// Generated
 	ModelViewerScreenController_ModelViewerScreenController_1(ModelViewerScreenController* modelViewerScreenController, SharedModelViewerView* finalView);
+
+private:
 	ModelViewerScreenController* modelViewerScreenController;
 	SharedModelViewerView* finalView;
 };

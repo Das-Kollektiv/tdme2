@@ -35,12 +35,9 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-FileDialogScreenController_setupFileDialogListBox_1::FileDialogScreenController_setupFileDialogListBox_1(FileDialogScreenController *FileDialogScreenController_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, FileDialogScreenController_this(FileDialogScreenController_this)
+FileDialogScreenController_setupFileDialogListBox_1::FileDialogScreenController_setupFileDialogListBox_1(FileDialogScreenController* fileDialogScreenController)
+	: fileDialogScreenController(fileDialogScreenController)
 {
-	clinit();
-	ctor();
 }
 
 bool FileDialogScreenController_setupFileDialogListBox_1::accept(String* directory, String* file)
@@ -48,24 +45,10 @@ bool FileDialogScreenController_setupFileDialogListBox_1::accept(String* directo
 	if (_FileSystem::getInstance()->isPath(new String(directory->getCPPWString() + L"/" + file->getCPPWString())) == true)
 		return true;
 
-	for (auto extension : *FileDialogScreenController_this->extensions) {
+	for (auto extension : *fileDialogScreenController->extensions) {
 		if (file->toLowerCase()->endsWith(::java::lang::StringBuilder().append(u"."_j)->append(extension)->toString()))
 			return true;
 
 	}
 	return false;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* FileDialogScreenController_setupFileDialogListBox_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* FileDialogScreenController_setupFileDialogListBox_1::getClass0()
-{
-	return class_();
-}
-

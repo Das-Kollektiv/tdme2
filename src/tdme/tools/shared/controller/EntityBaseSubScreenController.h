@@ -14,13 +14,11 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
 using java::lang::Iterable;
 using java::lang::String;
 using java::util::Collection;
@@ -34,20 +32,13 @@ using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 
-struct default_init_tag;
-
 /** 
  * Entity base sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::controller::EntityBaseSubScreenController
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static MutableString* TEXT_EMPTY;
 	EntityBaseView* view {  };
@@ -65,14 +56,6 @@ private:
 	GUIElementNode* entityPropertiesPresets {  };
 	Action* onSetEntityDataAction {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param view
-	 * @param on set entity data action
-	 */
-	void ctor(PopUps* popUps, Action* onSetEntityDataAction);
 
 public:
 
@@ -170,17 +153,10 @@ public:
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param view
+	 * @param on set entity data action
+	 */
 	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
-protected:
-	EntityBaseSubScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

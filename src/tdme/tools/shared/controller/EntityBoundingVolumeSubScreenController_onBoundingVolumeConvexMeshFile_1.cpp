@@ -37,34 +37,17 @@ typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUI
 }  // namespace gui
 }  // namespace tdme
 
-EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(EntityBoundingVolumeSubScreenController *EntityBoundingVolumeSubScreenController_this, int32_t idxFinal, LevelEditorEntity* entityFinal)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, EntityBoundingVolumeSubScreenController_this(EntityBoundingVolumeSubScreenController_this)
+EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController, int32_t idxFinal, LevelEditorEntity* entityFinal)
+	: entityBoundingVolumeSubScreenController(entityBoundingVolumeSubScreenController)
 	, idxFinal(idxFinal)
 	, entityFinal(entityFinal)
 {
-	clinit();
-	ctor();
 }
 
 void EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::performAction()
 {
-	(*EntityBoundingVolumeSubScreenController_this->boundingvolumeConvexMeshFile)[idxFinal]->getController()->setValue(EntityBoundingVolumeSubScreenController_this->value->set(EntityBoundingVolumeSubScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-	EntityBoundingVolumeSubScreenController_this->onBoundingVolumeConvexMeshApply(entityFinal, idxFinal);
-	EntityBoundingVolumeSubScreenController_this->modelPath->setPath(EntityBoundingVolumeSubScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-	EntityBoundingVolumeSubScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->close();
+	(*entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile)[idxFinal]->getController()->setValue(entityBoundingVolumeSubScreenController->value->set(entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+	entityBoundingVolumeSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, idxFinal);
+	entityBoundingVolumeSubScreenController->modelPath->setPath(entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+	entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::getClass0()
-{
-	return class_();
-}
-

@@ -20,5 +20,7 @@ public:
 
 	// Generated
 	ModelViewerScreenController_onModelSave_3(ModelViewerScreenController* modelViewerScreenController);
+
+private:
 	ModelViewerScreenController* modelViewerScreenController;
 };

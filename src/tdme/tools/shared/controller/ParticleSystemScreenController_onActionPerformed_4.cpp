@@ -24,32 +24,15 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::utils::MutableString;
 
-ParticleSystemScreenController_onActionPerformed_4::ParticleSystemScreenController_onActionPerformed_4(ParticleSystemScreenController *ParticleSystemScreenController_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, ParticleSystemScreenController_this(ParticleSystemScreenController_this)
+ParticleSystemScreenController_onActionPerformed_4::ParticleSystemScreenController_onActionPerformed_4(ParticleSystemScreenController* particleSystemScreenController)
+	: particleSystemScreenController(particleSystemScreenController)
 {
-	clinit();
-	ctor();
 }
 
 void ParticleSystemScreenController_onActionPerformed_4::performAction()
 {
-	ParticleSystemScreenController_this->opsModel->getController()->setValue(ParticleSystemScreenController_this->value->set(::java::lang::StringBuilder().append(ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName())->append(u"/"_j)
-		->append(ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getFileName())->toString()));
-	ParticleSystemScreenController_this->modelPath->setPath(ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-	ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->close();
+	particleSystemScreenController->opsModel->getController()->setValue(particleSystemScreenController->value->set(::java::lang::StringBuilder().append(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName())->append(u"/"_j)
+		->append(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName())->toString()));
+	particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+	particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ParticleSystemScreenController_onActionPerformed_4::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* ParticleSystemScreenController_onActionPerformed_4::getClass0()
-{
-	return class_();
-}
-

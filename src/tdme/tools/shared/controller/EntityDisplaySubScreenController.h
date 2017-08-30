@@ -8,17 +8,12 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::utils::MutableString;
-
-
-struct default_init_tag;
 
 /** 
  * Entity display sub screen controller
@@ -26,12 +21,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::controller::EntityDisplaySubScreenController
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static MutableString* CHECKBOX_CHECKED;
 	static MutableString* CHECKBOX_UNCHECKED;
@@ -39,12 +29,6 @@ private:
 	GUIElementNode* displayShadowing {  };
 	GUIElementNode* displayGround {  };
 	EntityDisplayView* view {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -85,16 +69,8 @@ public:
 	virtual bool getDisplayBoundingVolume();
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	EntityDisplaySubScreenController();
-protected:
-	EntityDisplaySubScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

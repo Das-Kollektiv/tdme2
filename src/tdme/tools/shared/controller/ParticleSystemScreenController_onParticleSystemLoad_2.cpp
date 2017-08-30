@@ -14,31 +14,14 @@ using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
-ParticleSystemScreenController_onParticleSystemLoad_2::ParticleSystemScreenController_onParticleSystemLoad_2(ParticleSystemScreenController *ParticleSystemScreenController_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, ParticleSystemScreenController_this(ParticleSystemScreenController_this)
+ParticleSystemScreenController_onParticleSystemLoad_2::ParticleSystemScreenController_onParticleSystemLoad_2(ParticleSystemScreenController* particleSystemScreenController)
+	: particleSystemScreenController(particleSystemScreenController)
 {
-	clinit();
-	ctor();
 }
 
 void ParticleSystemScreenController_onParticleSystemLoad_2::performAction()
 {
-	ParticleSystemScreenController_this->view->loadFile(ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-	ParticleSystemScreenController_this->particleSystemPath->setPath(ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-	ParticleSystemScreenController_this->view->getPopUpsViews()->getFileDialogScreenController()->close();
+	particleSystemScreenController->view->loadFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+	particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+	particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ParticleSystemScreenController_onParticleSystemLoad_2::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* ParticleSystemScreenController_onParticleSystemLoad_2::getClass0()
-{
-	return class_();
-}
-

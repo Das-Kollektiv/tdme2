@@ -12,9 +12,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -64,19 +62,17 @@ using tdme::gui::nodes::GUIElementNodeArray;
 using tdme::gui::nodes::GUINodeArray;
 using tdme::gui::nodes::GUIParentNodeArray;
 
-struct default_init_tag;
-
 /** 
  * Entity bounding volume sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
-	: public virtual Object
 {
+	friend class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 
 public:
-	typedef Object super;
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 8 };
 	static StringArray* MODEL_BOUNDINGVOLUME_IDS;
 
@@ -100,14 +96,6 @@ private:
 	GUIElementNodeArray* boundingvolumeObbRotationZ {  };
 	GUIElementNodeArray* boundingvolumeConvexMeshFile {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups
-	 * @param model viewer screen controller
-	 */
-	void ctor(PopUps* popUps, FileDialogPath* modelPath);
 
 public:
 
@@ -264,18 +252,10 @@ public:
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param pop ups
+	 * @param model viewer screen controller
+	 */
 	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath);
-protected:
-	EntityBoundingVolumeSubScreenController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
-	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 };

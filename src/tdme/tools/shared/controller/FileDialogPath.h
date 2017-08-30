@@ -4,13 +4,8 @@
 
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * File dialog path
@@ -18,20 +13,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::controller::FileDialogPath
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	String* path {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor(String* path);
 
 public:
 
@@ -46,15 +30,8 @@ public:
 	 */
 	virtual void setPath(String* path);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	FileDialogPath(String* path);
-protected:
-	FileDialogPath(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

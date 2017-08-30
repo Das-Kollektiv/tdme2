@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <java/lang/Iterable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Collection.h>
@@ -36,7 +35,6 @@ using std::wstring;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using java::lang::Iterable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Collection;
@@ -60,56 +58,30 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EntityBaseSubScreenController::EntityBaseSubScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction) 
-	: EntityBaseSubScreenController(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(popUps,onSetEntityDataAction);
-}
-
-void EntityBaseSubScreenController::init()
-{
-	value = new MutableString();
-}
-
-MutableString* EntityBaseSubScreenController::TEXT_EMPTY;
-
-void EntityBaseSubScreenController::ctor(PopUps* popUps, Action* onSetEntityDataAction)
-{
-	super::ctor();
-	init();
 	this->view = new EntityBaseView(this);
 	this->popUps = popUps;
 	this->onSetEntityDataAction = onSetEntityDataAction;
+	value = new MutableString();
 }
 
 void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
-		entityName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_name"_j));
-		entityDescription = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_description"_j));
-		entityApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_apply"_j));
-		entityPropertyName = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_property_name"_j));
-		entityPropertyValue = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_property_value"_j));
-		entityPropertySave = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_save"_j));
-		entityPropertyAdd = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_add"_j));
-		entityPropertyRemove = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_remove"_j));
-		entityPropertiesList = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_listbox"_j));
-		entityPropertyPresetApply = java_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_presetapply"_j));
-		entityPropertiesPresets = java_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_presets"_j));
+		entityName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_name"_j));
+		entityDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_description"_j));
+		entityApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_apply"_j));
+		entityPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_property_name"_j));
+		entityPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_property_value"_j));
+		entityPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_save"_j));
+		entityPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_add"_j));
+		entityPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_remove"_j));
+		entityPropertiesList = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_listbox"_j));
+		entityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_properties_presetapply"_j));
+		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_properties_presets"_j));
 	} catch (_Exception& exception) {
 		_Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -146,7 +118,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 
 void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds)
 {
-	auto entityPropertiesPresetsInnerNode = java_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
+	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 0;
 	auto entityPropertiesPresetsInnerNodeSubNodesXML = u""_j;
 	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesPresets->getId())
@@ -181,7 +153,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
 	entityPropertiesPresets->getController()->setValue(presetId != nullptr ? value->set(presetId) : value->set(u"none"_j));
-	auto entityPropertiesListBoxInnerNode = java_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto entityPropertiesListBoxSubNodesXML = u""_j;
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesList->getId())
@@ -209,7 +181,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::unsetEntityProperties()
 {
-	auto modelPropertiesListBoxInnerNode = java_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
+	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
 	entityPropertiesPresets->getController()->setValue(value->set(u"none"_j));
 	entityPropertiesPresets->getController()->setDisabled(true);
@@ -318,33 +290,3 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 	}
 
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityBaseSubScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.EntityBaseSubScreenController", 58);
-    return c;
-}
-
-void EntityBaseSubScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		TEXT_EMPTY = new MutableString(u""_j);
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* EntityBaseSubScreenController::getClass0()
-{
-	return class_();
-}
-

@@ -4,7 +4,6 @@
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Rotation.h>
@@ -47,7 +46,6 @@ using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Rotation;
@@ -107,33 +105,21 @@ typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUI
 }  // namespace gui
 }  // namespace tdme
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath) 
-	: EntityBoundingVolumeSubScreenController(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(popUps,modelPath);
-}
-
 constexpr int32_t EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT;
 
-StringArray* EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS;
+StringArray* EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS = (new StringArray({
+	u"model_bv.0"_j,
+	u"model_bv.1"_j,
+	u"model_bv.2"_j,
+	u"model_bv.3"_j,
+	u"model_bv.4"_j,
+	u"model_bv.5"_j,
+	u"model_bv.6"_j,
+	u"model_bv.7"_j
+}));
 
-void EntityBoundingVolumeSubScreenController::ctor(PopUps* popUps, FileDialogPath* modelPath)
+EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath) 
 {
-	super::ctor();
 	this->modelPath = modelPath;
 	this->view = new EntityBoundingVolumeView(this, popUps);
 }
@@ -165,23 +151,23 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 		boundingvolumeObbRotationZ = new GUIElementNodeArray(8);
 		boundingvolumeConvexMeshFile = new GUIElementNodeArray(8);
 		for (auto i = 0; i < 8; i++) {
-			boundingVolumeTypeDropDown->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_type_"_j)->append(i)->toString())));
-			boundingVolumeNoneApply->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"button_boundingvolume_apply_"_j)->append(i)->toString())));
-			boundingVolume->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_"_j)->append(i)->toString())));
-			boundingvolumeSphereCenter->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_sphere_center_"_j)->append(i)->toString())));
-			boundingvolumeSphereRadius->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_sphere_radius_"_j)->append(i)->toString())));
-			boundingvolumeCapsuleA->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_a_"_j)->append(i)->toString())));
-			boundingvolumeCapsuleB->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_b_"_j)->append(i)->toString())));
-			boundingvolumeCapsuleRadius->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_radius_"_j)->append(i)->toString())));
-			boundingvolumeBoundingBoxMin->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_aabb_min_"_j)->append(i)->toString())));
-			boundingvolumeBoundingBoxMax->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_aabb_max_"_j)->append(i)->toString())));
-			boundingvolumeObbCenter->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_center_"_j)->append(i)->toString())));
-			boundingvolumeObbCenter->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_center_"_j)->append(i)->toString())));
-			boundingvolumeObbHalfextension->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_halfextension_"_j)->append(i)->toString())));
-			boundingvolumeObbRotationX->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_x_"_j)->append(i)->toString())));
-			boundingvolumeObbRotationY->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_y_"_j)->append(i)->toString())));
-			boundingvolumeObbRotationZ->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_z_"_j)->append(i)->toString())));
-			boundingvolumeConvexMeshFile->set(i, java_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_convexmesh_file_"_j)->append(i)->toString())));
+			boundingVolumeTypeDropDown->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_type_"_j)->append(i)->toString())));
+			boundingVolumeNoneApply->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"button_boundingvolume_apply_"_j)->append(i)->toString())));
+			boundingVolume->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_"_j)->append(i)->toString())));
+			boundingvolumeSphereCenter->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_sphere_center_"_j)->append(i)->toString())));
+			boundingvolumeSphereRadius->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_sphere_radius_"_j)->append(i)->toString())));
+			boundingvolumeCapsuleA->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_a_"_j)->append(i)->toString())));
+			boundingvolumeCapsuleB->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_b_"_j)->append(i)->toString())));
+			boundingvolumeCapsuleRadius->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_capsule_radius_"_j)->append(i)->toString())));
+			boundingvolumeBoundingBoxMin->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_aabb_min_"_j)->append(i)->toString())));
+			boundingvolumeBoundingBoxMax->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_aabb_max_"_j)->append(i)->toString())));
+			boundingvolumeObbCenter->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_center_"_j)->append(i)->toString())));
+			boundingvolumeObbCenter->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_center_"_j)->append(i)->toString())));
+			boundingvolumeObbHalfextension->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_halfextension_"_j)->append(i)->toString())));
+			boundingvolumeObbRotationX->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_x_"_j)->append(i)->toString())));
+			boundingvolumeObbRotationY->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_y_"_j)->append(i)->toString())));
+			boundingvolumeObbRotationZ->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_obb_rotation_z_"_j)->append(i)->toString())));
+			boundingvolumeConvexMeshFile->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"boundingvolume_convexmesh_file_"_j)->append(i)->toString())));
 		}
 	} catch (_Exception& exception) {
 		_Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
@@ -238,7 +224,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 
 void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t idx, StringArray* boundingVolumeTypes)
 {
-	auto boundingVolumeTypeDropDownInnerNode = java_cast< GUIParentNode* >(((*boundingVolumeTypeDropDown)[idx]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*boundingVolumeTypeDropDown)[idx]->getId())->append(u"_inner"_j)->toString())));
+	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >(((*boundingVolumeTypeDropDown)[idx]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*boundingVolumeTypeDropDown)[idx]->getId())->append(u"_inner"_j)->toString())));
 	auto bvIdx = 0;
 	auto boundingVolumeTypeDropDownSubNodesXML = u""_j;
 	boundingVolumeTypeDropDownSubNodesXML = ::java::lang::StringBuilder(boundingVolumeTypeDropDownSubNodesXML).append(u"<scrollarea-vertical width=\"100%\" height=\"80\">"_j)->toString();
@@ -295,7 +281,7 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 			(*boundingVolume)[idx]->getActiveConditions()->add(u"convexmesh"_j);
 			goto end_switch0;;
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 }
@@ -445,7 +431,7 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 	{
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
-{
+			{
 				if (node->getId()->startsWith(u"button_boundingvolume_apply_"_j)) {
 					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
 				} else if (node->getId()->startsWith(u"button_boundingvolume_sphere_apply_"_j)) {
@@ -471,51 +457,14 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 						->append(u"'"_j)->toString()));
 				}
 				goto end_switch1;;
-			}		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-{
-				goto end_switch1;;
-			}		}
-end_switch1:;
-	}
-
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EntityBoundingVolumeSubScreenController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.controller.EntityBoundingVolumeSubScreenController", 68);
-    return c;
-}
-
-void EntityBoundingVolumeSubScreenController::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		MODEL_BOUNDINGVOLUME_IDS = (new StringArray({
-			u"model_bv.0"_j,
-			u"model_bv.1"_j,
-			u"model_bv.2"_j,
-			u"model_bv.3"_j,
-			u"model_bv.4"_j,
-			u"model_bv.5"_j,
-			u"model_bv.6"_j,
-			u"model_bv.7"_j
-		}));
+			}
 		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
+		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
+			{
+				goto end_switch1;;
+			}
+		}
+		end_switch1:;
 	}
-}
 
-java::lang::Class* EntityBoundingVolumeSubScreenController::getClass0()
-{
-	return class_();
 }
-
