@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/particlesystem/TDMEParticleSystem.java
 #include <tdme/tools/particlesystem/TDMEParticleSystem.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -16,7 +15,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::particlesystem::TDMEParticleSystem;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
@@ -43,30 +41,23 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-TDMEParticleSystem::TDMEParticleSystem(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+String* TDMEParticleSystem::VERSION = u"0.9.9"_j;
+
+TDMEParticleSystem* TDMEParticleSystem::instance = nullptr;
 
 TDMEParticleSystem::TDMEParticleSystem()
-	: TDMEParticleSystem(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void TDMEParticleSystem::init()
-{
+	TDMEParticleSystem::instance = this;
+	engine = Engine::getInstance();
+	view = nullptr;
+	viewInitialized = false;
+	viewNew = nullptr;
+	popUps = new PopUps();
 	quitRequested = false;
 }
 
-String* TDMEParticleSystem::VERSION;
-
-TDMEParticleSystem* TDMEParticleSystem::instance;
-
 void TDMEParticleSystem::main(int argc, char** argv)
 {
-	clinit();
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEParticleSystem "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2017 by Andreas Drewke, drewke.net."_j));
 	_Console::println();
@@ -74,21 +65,8 @@ void TDMEParticleSystem::main(int argc, char** argv)
 	tdmeParticleSystem->run(argc, argv, L"TDMEParticleSystem");
 }
 
-void TDMEParticleSystem::ctor()
-{
-	super::ctor();
-	init();
-	TDMEParticleSystem::instance = this;
-	engine = Engine::getInstance();
-	view = nullptr;
-	viewInitialized = false;
-	viewNew = nullptr;
-	popUps = new PopUps();
-}
-
 TDMEParticleSystem* TDMEParticleSystem::getInstance()
 {
-	clinit();
 	return instance;
 }
 
@@ -161,30 +139,3 @@ void TDMEParticleSystem::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TDMEParticleSystem::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.particlesystem.TDMEParticleSystem", 44);
-    return c;
-}
-
-void TDMEParticleSystem::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	VERSION = u"0.9.9"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* TDMEParticleSystem::getClass0()
-{
-	return class_();
-}
-
