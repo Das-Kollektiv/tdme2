@@ -12,31 +12,15 @@ using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 
-EmptyScreenController_EmptyScreenController_1::EmptyScreenController_EmptyScreenController_1(EmptyScreenController *EmptyScreenController_this, EmptyView* finalView)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, EmptyScreenController_this(EmptyScreenController_this)
+EmptyScreenController_EmptyScreenController_1::EmptyScreenController_EmptyScreenController_1(EmptyScreenController* emptyScreenController, EmptyView* finalView)
+	: emptyScreenController(emptyScreenController)
 	, finalView(finalView)
 {
-	clinit();
-	ctor();
 }
 
 void EmptyScreenController_EmptyScreenController_1::performAction()
 {
 	finalView->updateGUIElements();
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EmptyScreenController_EmptyScreenController_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* EmptyScreenController_EmptyScreenController_1::getClass0()
-{
-	return class_();
 }
 

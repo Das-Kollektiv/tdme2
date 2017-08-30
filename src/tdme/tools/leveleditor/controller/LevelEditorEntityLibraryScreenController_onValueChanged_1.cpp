@@ -32,43 +32,26 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 
-LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibraryScreenController_onValueChanged_1(LevelEditorEntityLibraryScreenController *LevelEditorEntityLibraryScreenController_this, LevelEditorEntityLibrary* entityLibrary)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, LevelEditorEntityLibraryScreenController_this(LevelEditorEntityLibraryScreenController_this)
+LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibraryScreenController_onValueChanged_1(LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController, LevelEditorEntityLibrary* entityLibrary)
+	: levelEditorEntityLibraryScreenController(levelEditorEntityLibraryScreenController)
 	, entityLibrary(entityLibrary)
 {
-	clinit();
-	ctor();
 }
 
 void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 {
 	try {
-		auto entity = entityLibrary->addModel(LevelEditorEntityLibrary::ID_ALLOCATE, LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->getFileName(), u""_j, LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->getPathName(), LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->getFileName(), new Vector3(0.0f, 0.0f, 0.0f));
+		auto entity = entityLibrary->addModel(LevelEditorEntityLibrary::ID_ALLOCATE, levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(), u""_j, levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(), levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(), new Vector3(0.0f, 0.0f, 0.0f));
 		entity->setDefaultBoundingVolumes();
-		LevelEditorEntityLibraryScreenController_this->setEntityLibrary();
-		LevelEditorEntityLibraryScreenController_this->entityLibraryListBox->getController()->setValue(LevelEditorEntityLibraryScreenController_this->entityLibraryListBoxSelection->set(entity->getId()));
-		LevelEditorEntityLibraryScreenController_this->onEditEntity();
+		levelEditorEntityLibraryScreenController->setEntityLibrary();
+		levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(levelEditorEntityLibraryScreenController->entityLibraryListBoxSelection->set(entity->getId()));
+		levelEditorEntityLibraryScreenController->onEditEntity();
 	} catch (_Exception& exception) {
-		LevelEditorEntityLibraryScreenController_this->popUps->getInfoDialogScreenController()->show(
+		levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
 			u"Error"_j,
 			::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(exception.what())))->toString()
 		);
 	}
-	LevelEditorEntityLibraryScreenController_this->modelPath = LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->getPathName();
-	LevelEditorEntityLibraryScreenController_this->popUps->getFileDialogScreenController()->close();
+	levelEditorEntityLibraryScreenController->modelPath = levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();
+	levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->close();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityLibraryScreenController_onValueChanged_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityLibraryScreenController_onValueChanged_1::getClass0()
-{
-	return class_();
-}
-

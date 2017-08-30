@@ -14,31 +14,14 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::views::PopUps;
 
-LevelEditorScreenController_onMapSave_2::LevelEditorScreenController_onMapSave_2(LevelEditorScreenController *LevelEditorScreenController_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, LevelEditorScreenController_this(LevelEditorScreenController_this)
+LevelEditorScreenController_onMapSave_2::LevelEditorScreenController_onMapSave_2(LevelEditorScreenController* levelEditorScreenController)
+	: levelEditorScreenController(levelEditorScreenController)
 {
-	clinit();
-	ctor();
 }
 
 void LevelEditorScreenController_onMapSave_2::performAction()
 {
-	LevelEditorScreenController_this->view->saveMap(LevelEditorScreenController_this->view->getPopUps()->getFileDialogScreenController()->getPathName(), LevelEditorScreenController_this->view->getPopUps()->getFileDialogScreenController()->getFileName());
-	LevelEditorScreenController_this->mapPath->setPath(LevelEditorScreenController_this->view->getPopUps()->getFileDialogScreenController()->getPathName());
-	LevelEditorScreenController_this->view->getPopUps()->getFileDialogScreenController()->close();
+	levelEditorScreenController->view->saveMap(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+	levelEditorScreenController->mapPath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+	levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorScreenController_onMapSave_2::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* LevelEditorScreenController_onMapSave_2::getClass0()
-{
-	return class_();
-}
-

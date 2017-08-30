@@ -12,13 +12,10 @@ using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenContro
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using tdme::tools::leveleditor::views::TriggerView;
 
-TriggerScreenController_TriggerScreenController_1::TriggerScreenController_TriggerScreenController_1(TriggerScreenController *TriggerScreenController_this, TriggerView* finalView)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, TriggerScreenController_this(TriggerScreenController_this)
+TriggerScreenController_TriggerScreenController_1::TriggerScreenController_TriggerScreenController_1(TriggerScreenController* triggerScreenController, TriggerView* finalView)
+	: triggerScreenController(triggerScreenController)
 	, finalView(finalView)
 {
-	clinit();
-	ctor();
 }
 
 void TriggerScreenController_TriggerScreenController_1::performAction()
@@ -26,17 +23,3 @@ void TriggerScreenController_TriggerScreenController_1::performAction()
 	finalView->updateGUIElements();
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TriggerScreenController_TriggerScreenController_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* TriggerScreenController_TriggerScreenController_1::getClass0()
-{
-	return class_();
-}
-
