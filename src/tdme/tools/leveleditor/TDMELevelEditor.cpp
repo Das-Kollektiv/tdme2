@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/TDMELevelEditor.java
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -25,7 +24,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::leveleditor::TDMELevelEditor;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
@@ -61,30 +59,24 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-TDMELevelEditor::TDMELevelEditor(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+String* TDMELevelEditor::VERSION = u"0.9.9"_j;
+
+TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
 TDMELevelEditor::TDMELevelEditor()
-	: TDMELevelEditor(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void TDMELevelEditor::init()
-{
+	TDMELevelEditor::instance = this;
+	level = new LevelEditorLevel();
+	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(level);
+	engine = Engine::getInstance();
+	view = nullptr;
+	popUps = new PopUps();
 	quitRequested = false;
+
 }
-
-String* TDMELevelEditor::VERSION;
-
-TDMELevelEditor* TDMELevelEditor::instance;
 
 void TDMELevelEditor::main(int argc, char** argv)
 {
-	clinit();
 	String* modelFileName = nullptr;
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMELevelEditor "_j)->append(VERSION)->toString()));
 	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
@@ -93,21 +85,8 @@ void TDMELevelEditor::main(int argc, char** argv)
 	tdmeLevelEditor->run(argc, argv, L"TDMELevelEditor");
 }
 
-void TDMELevelEditor::ctor()
-{
-	super::ctor();
-	init();
-	TDMELevelEditor::instance = this;
-	level = new LevelEditorLevel();
-	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(level);
-	engine = Engine::getInstance();
-	view = nullptr;
-	popUps = new PopUps();
-}
-
 TDMELevelEditor* TDMELevelEditor::getInstance()
 {
-	clinit();
 	return instance;
 }
 
@@ -225,31 +204,5 @@ void TDMELevelEditor::switchToEmptyView()
 void TDMELevelEditor::switchToParticleSystemView()
 {
 	setView(particleSystemView);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* TDMELevelEditor::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.TDMELevelEditor", 38);
-    return c;
-}
-
-void TDMELevelEditor::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	VERSION = u"0.9.9"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* TDMELevelEditor::getClass0()
-{
-	return class_();
 }
 

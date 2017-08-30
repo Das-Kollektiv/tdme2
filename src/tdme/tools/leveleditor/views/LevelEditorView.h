@@ -65,8 +65,6 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * TDME Level Editor View
  * @author andreas.drewke

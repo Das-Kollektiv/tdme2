@@ -12,9 +12,7 @@
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -51,20 +49,14 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * TDME Level Editor
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::tools::leveleditor::TDMELevelEditor final
-	: public virtual Object, public virtual Application
+	: public virtual Application
 {
-
-public:
-	typedef Object super;
-
 private:
 	static String* VERSION;
 	static TDMELevelEditor* instance;
@@ -88,12 +80,6 @@ public:
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -178,17 +164,8 @@ public:
 	 */
 	void switchToParticleSystemView();
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	TDMELevelEditor();
-protected:
-	TDMELevelEditor(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };
