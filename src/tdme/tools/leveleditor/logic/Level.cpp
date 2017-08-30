@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
@@ -52,7 +51,6 @@
 using std::vector;
 
 using tdme::tools::leveleditor::logic::Level;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Engine;
@@ -98,37 +96,20 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-Level::Level(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 Level::Level()
-	: Level(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
 }
 
 constexpr int32_t Level::RIGIDBODY_TYPEID_STATIC;
 
 constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
 
-MutableString* Level::compareMutableString;
+MutableString* Level::compareMutableString = new MutableString();
 
-Transformations* Level::transformations;
+Transformations* Level::transformations = new Transformations();
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translation)
 {
-	clinit();
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		engine->getLightAt(i)->getAmbient()->set(static_cast< Color4Base* >(level->getLightAt(i)->getAmbient()));
 		engine->getLightAt(i)->getDiffuse()->set(static_cast< Color4Base* >(level->getLightAt(i)->getDiffuse()));
@@ -151,7 +132,6 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translati
 
 Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, String* id, bool enableDynamicShadows)
 {
-	clinit();
 	ParticleEmitter* engineEmitter = nullptr;
 	{
 		auto v = particleSystem->getEmitter();
@@ -235,13 +215,11 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation)
 {
-	clinit();
 	addLevel(engine, level, addEmpties, addTrigger, dynamicShadowing, pickable, translation, true);
 }
 
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation, bool enable)
 {
-	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto properties = object->getTotalProperties();
@@ -280,13 +258,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
 {
-	clinit();
 	addLevel(world, level, rigidBodies, translation, true);
 }
 
 void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation, bool enable)
 {
-	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY)
@@ -317,7 +293,6 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 {
-	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto entity = engine->getEntity(object->getId()->getCPPWString());
@@ -330,7 +305,6 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 
 void Level::disableLevel(World* world, vector<RigidBody*>& rigidBodies)
 {
-	clinit();
 	for (auto rigidBody: rigidBodies) {
 		rigidBody->setEnabled(false);
 	}
@@ -338,7 +312,6 @@ void Level::disableLevel(World* world, vector<RigidBody*>& rigidBodies)
 
 void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* translation)
 {
-	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto entity = engine->getEntity(object->getId()->getCPPWString());
@@ -359,7 +332,6 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 
 void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
 {
-	clinit();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
@@ -381,35 +353,5 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 			}
 		}
 	}
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Level::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.leveleditor.logic.Level", 34);
-    return c;
-}
-
-void Level::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-			compareMutableString = new MutableString();
-			transformations = new Transformations();
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* Level::getClass0()
-{
-	return class_();
 }
 

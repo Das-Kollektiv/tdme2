@@ -13,11 +13,9 @@
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -37,11 +35,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::leveleditor::logic::Level
-	: public virtual Object
 {
 
 public:
-	typedef Object super;
 	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
 	static constexpr int32_t RIGIDBODY_TYPEID_PLAYER { 2 };
 
@@ -142,16 +138,8 @@ public:
 	 */
 	static void enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	Level();
-protected:
-	Level(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
