@@ -18,12 +18,12 @@ LevelEditorLight::LevelEditorLight(int32_t id)
 {
 	this->id = id;
 	enabled = false;
-	ambient = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	diffuse = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	specular = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	position = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	spotTo = new Vector3(0.0f, 0.0f, -1.0f);
-	spotDirection = new Vector3(0.0f, 0.0f, -1.0f);
+	ambient.set(0.0f, 0.0f, 0.0f, 1.0f);
+	diffuse.set(1.0f, 1.0f, 1.0f, 1.0f);
+	specular.set(1.0f, 1.0f, 1.0f, 1.0f);
+	position.set(0.0f, 0.0f, 0.0f, 0.0f);
+	spotTo.set(0.0f, 0.0f, -1.0f);
+	spotDirection.set(0.0f, 0.0f, -1.0f);
 	spotExponent = 0.0f;
 	spotCutOff = 180.0f;
 	constantAttenuation = 1.0f;
@@ -48,32 +48,32 @@ void LevelEditorLight::setEnabled(bool enabled)
 
 Color4* LevelEditorLight::getAmbient()
 {
-	return ambient;
+	return &ambient;
 }
 
 Color4* LevelEditorLight::getDiffuse()
 {
-	return diffuse;
+	return &diffuse;
 }
 
 Color4* LevelEditorLight::getSpecular()
 {
-	return specular;
+	return &specular;
 }
 
 Vector4* LevelEditorLight::getPosition()
 {
-	return position;
+	return &position;
 }
 
 Vector3* LevelEditorLight::getSpotTo()
 {
-	return spotTo;
+	return &spotTo;
 }
 
 Vector3* LevelEditorLight::getSpotDirection()
 {
-	return spotDirection;
+	return &spotDirection;
 }
 
 float LevelEditorLight::getSpotExponent()

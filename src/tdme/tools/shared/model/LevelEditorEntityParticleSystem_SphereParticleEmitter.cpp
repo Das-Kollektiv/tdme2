@@ -19,11 +19,11 @@ LevelEditorEntityParticleSystem_SphereParticleEmitter::LevelEditorEntityParticle
 	lifeTimeRnd = 500;
 	mass = 0.0f;
 	massRnd = 0.0f;
-	velocity = new Vector3(0.0f, 1.0f, 0.0f);
-	velocityRnd = new Vector3(0.0f, 0.5f, 0.0f);
-	colorStart = new Color4(0.5f, 0.5f, 0.5f, 0.5f);
-	colorEnd = new Color4(1.0f, 1.0f, 1.0f, 0.5f);
-	center = new Vector3(0.0f, 0.5f, 0.0f);
+	velocity.set(0.0f, 1.0f, 0.0f);
+	velocityRnd.set(0.0f, 0.5f, 0.0f);
+	colorStart.set(0.5f, 0.5f, 0.5f, 0.5f);
+	colorEnd.set(1.0f, 1.0f, 1.0f, 0.5f);
+	center.set(0.0f, 0.5f, 0.0f);
 	radius = 0.5f;
 }
 
@@ -79,27 +79,27 @@ void LevelEditorEntityParticleSystem_SphereParticleEmitter::setMassRnd(float mas
 
 Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocity()
 {
-	return velocity;
+	return &velocity;
 }
 
 Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocityRnd()
 {
-	return velocityRnd;
+	return &velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorStart()
 {
-	return colorStart;
+	return &colorStart;
 }
 
 Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorEnd()
 {
-	return colorEnd;
+	return &colorEnd;
 }
 
 Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getCenter()
 {
-	return center;
+	return &center;
 }
 
 float LevelEditorEntityParticleSystem_SphereParticleEmitter::getRadius()

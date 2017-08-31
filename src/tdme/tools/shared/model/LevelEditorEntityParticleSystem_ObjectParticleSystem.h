@@ -6,6 +6,7 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using java::lang::String;
@@ -39,7 +40,7 @@ class tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticle
 	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 
 private:
-	Vector3* scale {  };
+	Vector3 scale {  };
 	int32_t maxCount {  };
 	bool autoEmit {  };
 	Model* model {  };
@@ -51,12 +52,6 @@ public:
 	 * @return scale
 	 */
 	virtual Vector3* getScale();
-
-	/** 
-	 * Set scale
-	 * @param scale
-	 */
-	virtual void setScale(Vector3* scale);
 
 	/** 
 	 * @return max count

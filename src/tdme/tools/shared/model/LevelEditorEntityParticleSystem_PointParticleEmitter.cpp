@@ -19,11 +19,11 @@ LevelEditorEntityParticleSystem_PointParticleEmitter::LevelEditorEntityParticleS
 	lifeTimeRnd = 500;
 	mass = 0.0f;
 	massRnd = 0.0f;
-	position = new Vector3(0.0f, 0.0f, 0.0f);
-	velocity = new Vector3(0.0f, 1.0f, 0.0f);
-	velocityRnd = new Vector3(0.0f, 0.5f, 0.0f);
-	colorStart = new Color4(0.5f, 0.5f, 0.5f, 0.5f);
-	colorEnd = new Color4(1.0f, 1.0f, 1.0f, 0.5f);
+	position.set(0.0f, 0.0f, 0.0f);
+	velocity.set(0.0f, 1.0f, 0.0f);
+	velocityRnd.set(0.0f, 0.5f, 0.0f);
+	colorStart.set(0.5f, 0.5f, 0.5f, 0.5f);
+	colorEnd.set(1.0f, 1.0f, 1.0f, 0.5f);
 }
 
 int32_t LevelEditorEntityParticleSystem_PointParticleEmitter::getCount()
@@ -78,26 +78,26 @@ void LevelEditorEntityParticleSystem_PointParticleEmitter::setMassRnd(float mass
 
 Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getPosition()
 {
-	return position;
+	return &position;
 }
 
 Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocity()
 {
-	return velocity;
+	return &velocity;
 }
 
 Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocityRnd()
 {
-	return velocityRnd;
+	return &velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorStart()
 {
-	return colorStart;
+	return &colorStart;
 }
 
 Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorEnd()
 {
-	return colorEnd;
+	return &colorEnd;
 }
 

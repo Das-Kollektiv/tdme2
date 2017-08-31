@@ -12,6 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
@@ -49,7 +50,7 @@ private:
 	vector<LevelEditorObject*> objects {  };
 	int32_t objectIdx {  };
 	BoundingBox* boundingBox {  };
-	Vector3* dimension {  };
+	Vector3 dimension {  };
 
 public:
 

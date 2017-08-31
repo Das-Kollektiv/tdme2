@@ -19,14 +19,14 @@ LevelEditorEntityParticleSystem_CircleParticleEmitter::LevelEditorEntityParticle
 	lifeTimeRnd = 500;
 	mass = 0.0f;
 	massRnd = 0.0f;
-	velocity = new Vector3(0.0f, 1.0f, 0.0f);
-	velocityRnd = new Vector3(0.0f, 0.5f, 0.0f);
-	colorStart = new Color4(0.5f, 0.5f, 0.5f, 0.5f);
-	colorEnd = new Color4(1.0f, 1.0f, 1.0f, 0.5f);
-	center = new Vector3(0.0f, 0.0f, 0.0f);
+	velocity.set(0.0f, 1.0f, 0.0f);
+	velocityRnd.set(0.0f, 0.5f, 0.0f);
+	colorStart.set(0.5f, 0.5f, 0.5f, 0.5f);
+	colorEnd.set(1.0f, 1.0f, 1.0f, 0.5f);
+	center.set(0.0f, 0.0f, 0.0f);
 	radius = 0.5f;
-	axis0 = new Vector3(1.0f, 0.0f, 0.0f);
-	axis1 = new Vector3(0.0f, 0.0f, 1.0f);
+	axis0.set(1.0f, 0.0f, 0.0f);
+	axis1.set(0.0f, 0.0f, 1.0f);
 }
 
 int32_t LevelEditorEntityParticleSystem_CircleParticleEmitter::getCount()
@@ -81,27 +81,27 @@ void LevelEditorEntityParticleSystem_CircleParticleEmitter::setMassRnd(float mas
 
 Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitter::getVelocity()
 {
-	return velocity;
+	return &velocity;
 }
 
 Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitter::getVelocityRnd()
 {
-	return velocityRnd;
+	return &velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorStart()
 {
-	return colorStart;
+	return &colorStart;
 }
 
 Color4* LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorEnd()
 {
-	return colorEnd;
+	return &colorEnd;
 }
 
 Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitter::getCenter()
 {
-	return center;
+	return &center;
 }
 
 float LevelEditorEntityParticleSystem_CircleParticleEmitter::getRadius()
@@ -116,10 +116,10 @@ void LevelEditorEntityParticleSystem_CircleParticleEmitter::setRadius(float radi
 
 Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitter::getAxis0()
 {
-	return axis0;
+	return &axis0;
 }
 
 Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitter::getAxis1()
 {
-	return axis1;
+	return &axis1;
 }

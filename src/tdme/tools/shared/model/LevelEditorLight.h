@@ -5,7 +5,10 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using java::lang::String;
@@ -23,12 +26,12 @@ class tdme::tools::shared::model::LevelEditorLight final
 private:
 	int32_t id {  };
 	bool enabled {  };
-	Color4* ambient {  };
-	Color4* diffuse {  };
-	Color4* specular {  };
-	Vector4* position {  };
-	Vector3* spotTo {  };
-	Vector3* spotDirection {  };
+	Color4 ambient {  };
+	Color4 diffuse {  };
+	Color4 specular {  };
+	Vector4 position {  };
+	Vector3 spotTo {  };
+	Vector3 spotDirection {  };
 	float spotExponent {  };
 	float spotCutOff {  };
 	float constantAttenuation {  };

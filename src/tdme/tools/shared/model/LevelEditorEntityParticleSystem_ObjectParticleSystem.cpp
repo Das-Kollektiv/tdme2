@@ -24,7 +24,7 @@ using tdme::utils::_ExceptionBase;
 
 LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem() 
 {
-	scale = new Vector3(1.0f, 1.0f, 1.0f);
+	scale.set(1.0f, 1.0f, 1.0f);
 	maxCount = 10;
 	autoEmit = true;
 	model = nullptr;
@@ -33,12 +33,7 @@ LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleS
 
 Vector3* LevelEditorEntityParticleSystem_ObjectParticleSystem::getScale()
 {
-	return scale;
-}
-
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::setScale(Vector3* scale)
-{
-	this->scale = scale;
+	return &scale;
 }
 
 int32_t LevelEditorEntityParticleSystem_ObjectParticleSystem::getMaxCount()

@@ -8,6 +8,7 @@
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
@@ -45,7 +46,7 @@ public: /* protected */
 	String* fileName {  };
 	String* thumbnail {  };
 	Model* model {  };
-	Vector3* pivot {  };
+	Vector3 pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 

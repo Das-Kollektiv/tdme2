@@ -75,7 +75,6 @@ LevelEditorLevel::LevelEditorLevel()
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
 	objectIdx = 0;
-	dimension = new Vector3();
 	boundingBox = new BoundingBox();
 }
 
@@ -136,7 +135,7 @@ LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
 
 Vector3* LevelEditorLevel::getDimension()
 {
-	return dimension;
+	return &dimension;
 }
 
 void LevelEditorLevel::computeDimension()
@@ -158,9 +157,12 @@ void LevelEditorLevel::computeBoundingBox()
 	auto far = 0.0f;
 	auto top = 0.0f;
 	auto bottom = 0.0f;
-	auto bbDimension = new Vector3();
-	auto bbMin = new Vector3();
-	auto bbMax = new Vector3();
+	Vector3 sideVector(1.0f, 0.0f, 0.0f);
+	Vector3 upVector(0.0f, 1.0f, 0.0f);
+	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
+	Vector3 bbDimension;
+	Vector3 bbMin;
+	Vector3 bbMax;
 	for (auto levelEditorObject: objects) {
 		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
 			continue;
@@ -168,18 +170,18 @@ void LevelEditorLevel::computeBoundingBox()
 		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = bv->clone();
 		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
-		bbDimension->set(cbv->computeDimensionOnAxis(new Vector3(1.0f, 0.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)), cbv->computeDimensionOnAxis(new Vector3(0.0f, 0.0f, 1.0f)));
-		bbDimension->scale(0.5f);
-		bbMin->set(cbv->getCenter());
-		bbMin->sub(bbDimension);
-		bbMax->set(cbv->getCenter());
-		bbMax->add(bbDimension);
-		auto objectLeft = bbMin->getX();
-		auto objectRight = bbMax->getX();
-		auto objectNear = bbMin->getZ();
-		auto objectFar = bbMax->getZ();
-		auto objectBottom = bbMin->getY();
-		auto objectTop = bbMax->getY();
+		bbDimension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector));
+		bbDimension.scale(0.5f);
+		bbMin.set(cbv->getCenter());
+		bbMin.sub(&bbDimension);
+		bbMax.set(cbv->getCenter());
+		bbMax.add(&bbDimension);
+		auto objectLeft = bbMin.getX();
+		auto objectRight = bbMax.getX();
+		auto objectNear = bbMin.getZ();
+		auto objectFar = bbMax.getZ();
+		auto objectBottom = bbMin.getY();
+		auto objectTop = bbMax.getY();
 		if (haveDimension == false) {
 			left = objectLeft;
 			right = objectRight;
@@ -201,9 +203,9 @@ void LevelEditorLevel::computeBoundingBox()
 	boundingBox->getMin()->set(left, bottom, near);
 	boundingBox->getMax()->set(right, top, far);
 	boundingBox->update();
-	dimension->setX(right - left);
-	dimension->setZ(far - near);
-	dimension->setY(top - bottom);
+	dimension.setX(right - left);
+	dimension.setZ(far - near);
+	dimension.setY(top - bottom);
 }
 
 Vector3* LevelEditorLevel::computeCenter()

@@ -5,7 +5,9 @@
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using java::lang::String;
@@ -44,15 +46,15 @@ private:
 	int64_t lifeTimeRnd {  };
 	float mass {  };
 	float massRnd {  };
-	Vector3* velocity {  };
-	Vector3* velocityRnd {  };
-	Color4* colorStart {  };
-	Color4* colorEnd {  };
-	Vector3* obbCenter {  };
-	Vector3* obbHalfextension {  };
-	Vector3* obbAxis0 {  };
-	Vector3* obbAxis1 {  };
-	Vector3* obbAxis2 {  };
+	Vector3 velocity {  };
+	Vector3 velocityRnd {  };
+	Color4 colorStart {  };
+	Color4 colorEnd {  };
+	Vector3 obbCenter {  };
+	Vector3 obbHalfextension {  };
+	Vector3 obbAxis0 {  };
+	Vector3 obbAxis1 {  };
+	Vector3 obbAxis2 {  };
 
 public:
 
