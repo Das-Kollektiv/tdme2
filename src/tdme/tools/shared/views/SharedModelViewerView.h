@@ -64,13 +64,6 @@ private:
 	bool initModelRequested {  };
 	String* modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param pop ups view
-	 */
-	void ctor(PopUps* popUps);
 
 public:
 
