@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -14,6 +16,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+using std::map;
+using std::wstring;
 using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
@@ -37,7 +41,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::_HashMap;
+using tdme::utils::MutableString;
 
 
 struct default_init_tag;
@@ -59,7 +63,7 @@ private:
 	int32_t nodeCounter {  };
 	int32_t screenWidth {  };
 	int32_t screenHeight {  };
-	_HashMap* nodesById {  };
+	map<wstring, GUINode*> nodesById {  };
 	vector<GUINode*> floatingNodes {  };
 	vector<GUIActionListener*> actionListener {  };
 	vector<GUIChangeListener*> changeListener {  };
@@ -72,7 +76,7 @@ public: /* protected */
 	bool popUp {  };
 
 private:
-	_HashMap* effects {  };
+	map<wstring, GUIEffect*> effects {  };
 	int32_t guiEffectOffsetX {  };
 	int32_t guiEffectOffsetY {  };
 protected:
@@ -313,13 +317,13 @@ public:
 	 * Get values
 	 * @param values
 	 */
-	void getValues(_HashMap* values);
+	void getValues(map<wstring, MutableString*>* values);
 
 	/** 
 	 * Set values
 	 * @param values
 	 */
-	void setValues(_HashMap* values);
+	void setValues(map<wstring, MutableString*>* values);
 
 	/** 
 	 * Add effect that will be removed if finished

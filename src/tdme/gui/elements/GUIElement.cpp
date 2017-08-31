@@ -2,6 +2,7 @@
 #include <tdme/gui/elements/GUIElement.h>
 
 using tdme::gui::elements::GUIElement;
+
 GUIElement::GUIElement(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {

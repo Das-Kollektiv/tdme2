@@ -3,6 +3,9 @@
 
 #include <stdlib.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -17,7 +20,9 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::tests::GUITest_init_1;
 using java::lang::Object;
@@ -34,7 +39,6 @@ using tdme::tests::GUITest;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -56,19 +60,18 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 {
 	if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button"_j)) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(node->getId())->append(u".actionPerformed()"_j)->toString()));
-		auto values = new _HashMap();
-		node->getScreenNode()->getValues(values);
-		_Console::println(static_cast< Object* >(values));
-		values->clear();
-		values->put(u"select"_j, new MutableString(u"8"_j));
-		values->put(u"input"_j, new MutableString(u"Enter some more text here!"_j));
-		values->put(u"checkbox1"_j, new MutableString(u"1"_j));
-		values->put(u"checkbox2"_j, new MutableString(u"1"_j));
-		values->put(u"checkbox3"_j, new MutableString(u"1"_j));
-		values->put(u"dropdown"_j, new MutableString(u"11"_j));
-		values->put(u"radio"_j, new MutableString(u"3"_j));
-		values->put(u"selectmultiple"_j, new MutableString(u"|1|2|3|15|16|17|"_j));
-		node->getScreenNode()->setValues(values);
+		map<wstring, MutableString*> values;
+		node->getScreenNode()->getValues(&values);
+		values.clear();
+		values.emplace(L"select", new MutableString(u"8"_j));
+		values.emplace(L"input", new MutableString(u"Enter some more text here!"_j));
+		values.emplace(L"checkbox1", new MutableString(u"1"_j));
+		values.emplace(L"checkbox2", new MutableString(u"1"_j));
+		values.emplace(L"checkbox3", new MutableString(u"1"_j));
+		values.emplace(L"dropdown", new MutableString(u"11"_j));
+		values.emplace(L"radio", new MutableString(u"3"_j));
+		values.emplace(L"selectmultiple", new MutableString(u"|1|2|3|15|16|17|"_j));
+		node->getScreenNode()->setValues(&values);
 		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab1"_j)->getController()))->selectTab();
 	} else if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button2"_j)) {
 		try {

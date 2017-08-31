@@ -6,7 +6,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::gui::elements::GUIInput;
 using java::lang::String;
@@ -14,7 +13,6 @@ using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_HashMap;
 
 GUIInput::GUIInput(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -33,7 +31,6 @@ String* GUIInput::NAME;
 void GUIInput::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	attributes = new _HashMap();
 	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"input.xml"_j));
 }
 
@@ -47,15 +44,15 @@ String* GUIInput::getTemplate()
 	return template_;
 }
 
-_HashMap* GUIInput::getAttributes(GUIScreenNode* screenNode)
+map<wstring, String*>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes->clear();
-	attributes->put(u"id"_j, screenNode->allocateNodeId());
-	attributes->put(u"width"_j, u"auto"_j);
-	attributes->put(u"height"_j, u"auto"_j);
-	attributes->put(u"text"_j, u""_j);
-	attributes->put(u"maxlength"_j, u"0"_j);
-	return attributes;
+	attributes.clear();
+	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes[L"width"] = u"auto"_j;
+	attributes[L"height"] = u"auto"_j;
+	attributes[L"text"] = u""_j;
+	attributes[L"maxlength"] = u"0"_j;
+	return &attributes;
 }
 
 GUINodeController* GUIInput::createController(GUINode* node)

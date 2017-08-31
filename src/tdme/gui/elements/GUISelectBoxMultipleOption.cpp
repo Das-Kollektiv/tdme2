@@ -7,7 +7,9 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using java::lang::String;
@@ -16,7 +18,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_HashMap;
 
 GUISelectBoxMultipleOption::GUISelectBoxMultipleOption(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -35,7 +36,6 @@ String* GUISelectBoxMultipleOption::NAME;
 void GUISelectBoxMultipleOption::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	attributes = new _HashMap();
 	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"selectbox-multiple-option.xml"_j));
 }
 
@@ -49,11 +49,11 @@ String* GUISelectBoxMultipleOption::getTemplate()
 	return template_;
 }
 
-_HashMap* GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
+map<wstring, String*>* GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes->clear();
-	attributes->put(u"id"_j, screenNode->allocateNodeId());
-	return attributes;
+	attributes.clear();
+	attributes[L"id"] = screenNode->allocateNodeId();
+	return &attributes;
 }
 
 GUINodeController* GUISelectBoxMultipleOption::createController(GUINode* node)

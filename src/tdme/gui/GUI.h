@@ -39,7 +39,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Pool;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -59,8 +58,8 @@ public:
 private:
 	GUIRenderer* guiRenderer {  };
 	Engine* engine {  };
-	_HashMap* screens {  };
-	static _HashMap* fontCache;
+	map<wstring, GUIScreenNode*> screens {  };
+	static map<wstring, GUIFont*> fontCache;
 	static map<wstring, Texture*> imageCache;
 	GUIColor* foccussedBorderColor {  };
 	vector<GUIElementNode*> focusableNodes {  };
@@ -169,7 +168,7 @@ public:
 	 * Removes an screen
 	 * @param id
 	 */
-	void removeScreen(String* id);
+	void removeScreen(wstring* id);
 
 	/** 
 	 * Removes all screens and caches

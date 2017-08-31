@@ -2,6 +2,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
+#include <map>
+#include <string>
 
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -21,8 +23,9 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_HashMap_ValuesIterator.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::gui::nodes::GUIScreenNode;
 using java::lang::Object;
@@ -43,8 +46,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
-using tdme::utils::_HashMap_ValuesIterator;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -80,13 +81,11 @@ void GUIScreenNode::ctor(String* id, GUINode_Flow* flow, GUIParentNode_Overflow*
 	this->nodeCounter = 0;
 	this->screenWidth = 0;
 	this->screenHeight = 0;
-	this->nodesById = new _HashMap();
 	this->inputEventHandler = nullptr;
 	this->screenNode = this;
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
-	this->effects = new _HashMap();
 }
 
 GUI* GUIScreenNode::getGUI()
@@ -230,7 +229,11 @@ String* GUIScreenNode::getNodeType()
 
 GUINode* GUIScreenNode::getNodeById(String* nodeId)
 {
-	return java_cast< GUINode* >(nodesById->get(nodeId));
+	auto nodesByIdIt = nodesById.find(nodeId->getCPPWString());
+	if (nodesByIdIt == nodesById.end()) {
+		return nullptr;
+	}
+	return nodesByIdIt->second;
 }
 
 String* GUIScreenNode::allocateNodeId()
@@ -243,16 +246,16 @@ bool GUIScreenNode::addNode(GUINode* node)
 	if (node->id->length() == 0) {
 		node->id = allocateNodeId();
 	}
-	if (java_cast< GUINode* >(nodesById->get(node->id)) != nullptr) {
+	if (nodesById.find(node->id->getCPPWString()) != nodesById.end()) {
 		return false;
 	}
-	nodesById->put(node->id, node);
+	nodesById[node->id->getCPPWString()] = node;
 	return true;
 }
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
-	nodesById->remove(node->id);
+	nodesById.erase(node->id->getCPPWString());
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = java_cast< GUIParentNode* >(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -265,13 +268,11 @@ bool GUIScreenNode::removeNode(GUINode* node)
 void GUIScreenNode::render(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
-	for (auto _i = effects->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		GUIEffect* effect = java_cast< GUIEffect* >(_i->next());
-		{
-			if (effect->isActive() == true) {
-				effect->update(guiRenderer);
-				effect->apply(guiRenderer);
-			}
+	for (const auto& i : effects) {
+		auto effect = i.second;
+		if (effect->isActive() == true) {
+			effect->update(guiRenderer);
+			effect->apply(guiRenderer);
 		}
 	}
 	floatingNodes.clear();
@@ -282,11 +283,9 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
-	for (auto _i = effects->getValuesIterator()->iterator(); _i->hasNext(); ) {
-		GUIEffect* effect = java_cast< GUIEffect* >(_i->next());
-		{
-			effect->apply(guiRenderer);
-		}
+	for (const auto& i : effects) {
+		auto effect = i.second;
+		effect->apply(guiRenderer);
 	}
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		floatingNodes.at(i)->render(guiRenderer, nullptr);
@@ -371,7 +370,7 @@ void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 	}
 }
 
-void GUIScreenNode::getValues(_HashMap* values)
+void GUIScreenNode::getValues(map<wstring, MutableString*>* values)
 {
 	values->clear();
 	getChildControllerNodes(&childControllerNodes);
@@ -383,17 +382,17 @@ void GUIScreenNode::getValues(_HashMap* values)
 		auto guiElementNode = (java_cast< GUIElementNode* >(childControllerNode));
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto name = guiElementNode->getName();
+			auto name = guiElementNode->getName()->getCPPWString();
 			auto value = guiElementNodeController->getValue();
-			auto currentValue = java_cast< MutableString* >(values->get(name));
-			if (currentValue == nullptr || currentValue->length() == 0) {
-				values->put(name, value);
+			auto currentValueIt = values->find(name);
+			if (currentValueIt == values->end() || currentValueIt->second->length() == 0) {
+				(*values)[name] = value;
 			}
 		}
 	}
 }
 
-void GUIScreenNode::setValues(_HashMap* values)
+void GUIScreenNode::setValues(map<wstring, MutableString*>* values)
 {
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -404,33 +403,41 @@ void GUIScreenNode::setValues(_HashMap* values)
 		auto guiElementNode = (java_cast< GUIElementNode* >(childControllerNode));
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto name = guiElementNode->getName();
-			auto newValue = java_cast< MutableString* >(values->get(name));
-			if (newValue == nullptr)
+			auto name = guiElementNode->getName()->getCPPWString();
+			auto newValueIt = values->find(name);
+			if (newValueIt == values->end())
 				continue;
 
-			guiElementNodeController->setValue(newValue);
+			guiElementNodeController->setValue(newValueIt->second);
 		}
 	}
 }
 
 bool GUIScreenNode::addEffect(String* id, GUIEffect* effect)
 {
-	if (java_cast< GUIEffect* >(effects->get(id)) != nullptr) {
+	if (effects.find(id->getCPPWString()) != effects.end()) {
 		return false;
 	}
-	effects->put(id, effect);
+	effects[id->getCPPWString()] = effect;
 	return true;
 }
 
 GUIEffect* GUIScreenNode::getEffect(String* id)
 {
-	return java_cast< GUIEffect* >(effects->get(id));
+	auto effectsIt = effects.find(id->getCPPWString());
+	if (effectsIt == effects.end()) {
+		return nullptr;
+	}
+	return effectsIt->second;
 }
 
 bool GUIScreenNode::removeEffect(String* id)
 {
-	return java_cast< GUIEffect* >(effects->remove(id)) != nullptr;
+	auto eraseCount = effects.erase(id->getCPPWString());
+	if (eraseCount == 0) {
+		return false;
+	}
+	return true;
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

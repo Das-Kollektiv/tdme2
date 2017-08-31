@@ -7,7 +7,6 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::gui::elements::GUIDropDown;
 using java::lang::String;
@@ -16,7 +15,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_HashMap;
 
 GUIDropDown::GUIDropDown(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -35,7 +33,6 @@ String* GUIDropDown::NAME;
 void GUIDropDown::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	attributes = new _HashMap();
 	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"dropdown.xml"_j));
 }
 
@@ -49,14 +46,14 @@ String* GUIDropDown::getTemplate()
 	return template_;
 }
 
-_HashMap* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
+map<wstring, String*>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes->clear();
-	attributes->put(u"id"_j, screenNode->allocateNodeId());
-	attributes->put(u"width"_j, u"100%"_j);
-	attributes->put(u"height"_j, u"auto"_j);
-	attributes->put(u"text"_j, u"10"_j);
-	return attributes;
+	attributes.clear();
+	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes[L"width"] = u"100%"_j;
+	attributes[L"height"] = u"auto"_j;
+	attributes[L"text"] = u"10"_j;
+	return &attributes;
 }
 
 GUINodeController* GUIDropDown::createController(GUINode* node)

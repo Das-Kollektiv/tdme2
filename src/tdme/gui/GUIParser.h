@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <map>
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
@@ -15,6 +16,7 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
+using std::map;
 using std::vector;
 
 using java::lang::Object;
@@ -22,7 +24,6 @@ using java::lang::String;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::_HashMap;
 using tdme::gui::GUIParserException;
 using tdme::ext::tinyxml::TiXmlElement;
 
@@ -41,7 +42,7 @@ public:
 	typedef Object super;
 
 private:
-	static _HashMap* elements;
+	static map<wstring, GUIElement*> elements;
 
 public:
 

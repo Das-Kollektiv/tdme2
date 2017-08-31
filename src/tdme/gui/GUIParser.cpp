@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/GUIParser.java
 #include <tdme/gui/GUIParser.h>
 
+#include <map>
+
 #include <java/lang/CharSequence.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
@@ -46,10 +48,10 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap.h>
 
 #include <ext/tinyxml/tinyxml.h>
+
+using std::map;
 
 using tdme::gui::GUIParser;
 using java::lang::CharSequence;
@@ -97,8 +99,6 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap;
 
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
@@ -126,7 +126,7 @@ GUIParser::GUIParser()
 	ctor();
 }
 
-_HashMap* GUIParser::elements;
+map<wstring, GUIElement*> GUIParser::elements;
 
 GUIScreenNode* GUIParser::parse(String* pathName, String* fileName) throw (GUIParserException)
 {
@@ -692,15 +692,15 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				}
 			} else {
 				String* nodeTagNameString = new String(StringConverter::toWideString(nodeTagName));
-				auto newGuiElement = java_cast< GUIElement* >(elements->get(nodeTagNameString));
-				if (newGuiElement == nullptr) {
+				auto guiElementIt = elements.find(nodeTagNameString->getCPPWString());
+				if (guiElementIt == elements.end()) {
 					throw GUIParserException(
 						"Unknown element '" +
 						StringConverter::toString(nodeTagNameString->getCPPWString()) +
 						"'"
 					);
 				}
-				auto newGuiElementTemplate = newGuiElement->getTemplate();
+				auto newGuiElementTemplate = guiElementIt->second->getTemplate();
 				for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
 					String* attributeKey = new String(StringConverter::toWideString(attribute->Name()));
 					String* attributeValue =  new String(StringConverter::toWideString(attribute->Value()));
@@ -721,14 +721,11 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						);
 				}
 
-				auto newGuiElementAttributes = newGuiElement->getAttributes(guiParentNode->getScreenNode());
-				for (auto _i = newGuiElementAttributes->getKeysIterator()->iterator(); _i->hasNext(); ) {
-					String* newGuiElementAttributeKey = java_cast< String* >(_i->next());
-					{
-						auto guiElementAttributeValue = escapeQuotes(java_cast< String* >(newGuiElementAttributes->get(newGuiElementAttributeKey)));
-						newGuiElementTemplate = newGuiElementTemplate->replace(static_cast< CharSequence* >(::java::lang::StringBuilder().append(u"{$"_j)->append(newGuiElementAttributeKey)
-							->append(u"}"_j)->toString()), static_cast< CharSequence* >(guiElementAttributeValue));
-					}
+				auto newGuiElementAttributes = guiElementIt->second->getAttributes(guiParentNode->getScreenNode());
+				for (auto newGuiElementAttributesIt : *newGuiElementAttributes) {
+					auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
+					newGuiElementTemplate = newGuiElementTemplate->replace(static_cast< CharSequence* >(::java::lang::StringBuilder().append(u"{$"_j)->append(newGuiElementAttributesIt.first)
+						->append(u"}"_j)->toString()), static_cast< CharSequence* >(guiElementAttributeValue));
 				}
 
 				newGuiElementTemplate = newGuiElementTemplate->replace(
@@ -750,7 +747,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
 					);
 				}
-				parseGUINode(guiParentNode, newGuiElementDocument.RootElement(), newGuiElement);
+				parseGUINode(guiParentNode, newGuiElementDocument.RootElement(), guiElementIt->second);
 			}
 		}
 	}
@@ -794,14 +791,14 @@ String* GUIParser::escapeQuotes(String* string)
 void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException)
 {
 	clinit();
-	if (java_cast< GUIElement* >(elements->get(guiElement->getName())) != nullptr) {
+	if (elements.find(guiElement->getName()->getCPPWString()) != elements.end()) {
 		throw GUIParserException(
 			"Element with given name '" +
 			StringConverter::toString(guiElement->getName()->getCPPWString()) +
 			"' already exists"
 		);
 	}
-	elements->put(guiElement->getName(), guiElement);
+	elements.emplace(guiElement->getName()->getCPPWString(), guiElement);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
@@ -819,7 +816,6 @@ void GUIParser::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-			elements = new _HashMap();
 			{
 				try {
 					GUICheckbox::clinit();

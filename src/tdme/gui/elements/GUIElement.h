@@ -2,18 +2,23 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <java/lang/Object.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
 using java::lang::String;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::_HashMap;
 
 
 struct default_init_tag;
@@ -45,7 +50,7 @@ public:
 	 * @param screen node
 	 * @return default attributes
 	 */
-	virtual _HashMap* getAttributes(GUIScreenNode* screenNode) = 0;
+	virtual map<wstring, String*>* getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/** 
 	 * Create controller which is attached to this node

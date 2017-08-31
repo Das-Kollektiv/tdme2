@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -9,13 +12,16 @@
 #include <tdme/gui/elements/GUIElement.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::map;
+using std::wstring;
+
 using tdme::gui::elements::GUIElement;
 using java::lang::String;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystemException;
-using tdme::utils::_HashMap;
+
 
 struct default_init_tag;
 
@@ -33,7 +39,7 @@ public:
 
 private:
 	static String* NAME;
-	_HashMap* attributes {  };
+	map<wstring, String*> attributes {  };
 	String* template_ {  };
 protected:
 
@@ -45,7 +51,7 @@ protected:
 public:
 	String* getName() override;
 	String* getTemplate() override;
-	_HashMap* getAttributes(GUIScreenNode* screenNode) override;
+	map<wstring, String*>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
 	// Generated

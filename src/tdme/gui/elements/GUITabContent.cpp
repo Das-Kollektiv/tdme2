@@ -1,13 +1,18 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabContent.java
 #include <tdme/gui/elements/GUITabContent.h>
 
+#include <map>
+#include <string>
+
 #include <java/lang/String.h>
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
-#include <tdme/utils/_HashMap.h>
+
+using std::map;
+using std::wstring;
 
 using tdme::gui::elements::GUITabContent;
 using java::lang::String;
@@ -16,7 +21,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_HashMap;
 
 GUITabContent::GUITabContent(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -35,7 +39,6 @@ String* GUITabContent::NAME;
 void GUITabContent::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	attributes = new _HashMap();
 	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"tab-content.xml"_j));
 }
 
@@ -49,13 +52,13 @@ String* GUITabContent::getTemplate()
 	return template_;
 }
 
-_HashMap* GUITabContent::getAttributes(GUIScreenNode* screenNode)
+map<wstring, String*>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes->clear();
-	attributes->put(u"id"_j, screenNode->allocateNodeId());
-	attributes->put(u"horizontal-align"_j, u"center"_j);
-	attributes->put(u"vertical-align"_j, u"center"_j);
-	return attributes;
+	attributes.clear();
+	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes[L"horizontal-align"] = u"center"_j;
+	attributes[L"vertical-align"] = u"center"_j;
+	return &attributes;
 }
 
 GUINodeController* GUITabContent::createController(GUINode* node)

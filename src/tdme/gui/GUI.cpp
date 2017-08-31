@@ -40,8 +40,6 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_HashMap_KeysIterator.h>
-#include <tdme/utils/_HashMap.h>
 #include <Array.h>
 
 using std::map;
@@ -83,8 +81,6 @@ using tdme::utils::Pool;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-using tdme::utils::_HashMap_KeysIterator;
-using tdme::utils::_HashMap;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -94,7 +90,7 @@ static T java_cast(U* u)
     return t;
 }
 
-_HashMap* GUI::fontCache = new _HashMap();
+map<wstring, GUIFont*> GUI::fontCache;
 map<wstring, Texture*> GUI::imageCache;
 
 GUI::GUI(const ::default_init_tag&)
@@ -128,7 +124,6 @@ void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
 	init();
 	this->engine = engine;
 	this->guiRenderer = guiRenderer;
-	this->screens = new _HashMap();
 	this->width = 0;
 	this->height = 0;
 	try {
@@ -190,7 +185,7 @@ GUIFont* GUI::getFont(String* fileName)
 	String* canonicalFile = nullptr;
 	String* path = nullptr;
 	String* file = nullptr;
-	String* key = nullptr;
+	GUIFont* font;
 	try {
 		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
@@ -201,8 +196,8 @@ GUIFont* GUI::getFont(String* fileName)
 		return nullptr;
 	}
 
-	auto font = java_cast< GUIFont* >(fontCache->get(canonicalFile));
-	if (font == nullptr) {
+	auto fontCacheIt = fontCache.find(canonicalFile->getCPPWString());
+	if (fontCacheIt == fontCache.end()) {
 		try {
 			font = GUIFont::parse(path, file);
 		} catch (_Exception& exception) {
@@ -211,7 +206,10 @@ GUIFont* GUI::getFont(String* fileName)
 			return nullptr;
 		}
 
-		fontCache->put(canonicalFile, font);
+		fontCache.emplace(canonicalFile->getCPPWString(), font);
+	}
+	else {
+		font = fontCacheIt->second;
 	}
 	return font;
 }
@@ -250,53 +248,57 @@ Texture* GUI::getImage(String* fileName)
 
 GUIScreenNode* GUI::getScreen(String* id)
 {
-	return java_cast< GUIScreenNode* >(screens->get(id));
+	auto screensIt = screens.find(id->getCPPWString());
+	if (screensIt == screens.end()) {
+		return nullptr;
+	}
+	return screensIt->second;
 }
 
 void GUI::addScreen(String* id, GUIScreenNode* screen)
 {
-	screens->put(id, screen);
+	screens.emplace(id->getCPPWString(), screen);
 }
 
-void GUI::removeScreen(String* id)
+void GUI::removeScreen(wstring* id)
 {
-	auto screen = java_cast< GUIScreenNode* >(screens->remove(id));
-	if (screen != nullptr) {
-		screen->dispose();
+	auto screensIt = screens.find(*id);
+
+	if (screensIt != screens.end()) {
+		screensIt->second->dispose();
+		screens.erase(*id);
 	}
 }
 
 void GUI::reset()
 {
-	Iterator* screenKeys = screens->getKeysIterator();
-	vector<String*> entitiesToRemove;
-	while (screenKeys->hasNext()) {
-		auto screen = java_cast< String* >(screenKeys->next());
-		entitiesToRemove.push_back(screen);
+	vector<wstring> entitiesToRemove;
+	for (auto screenKeysIt: screens) {
+		entitiesToRemove.push_back(screenKeysIt.first);
 	}
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
-		removeScreen(java_cast< String* >(entitiesToRemove.at(i)));
+		removeScreen(&(entitiesToRemove.at(i)));
 	}
-	fontCache->clear();
+	fontCache.clear();
 	imageCache.clear();
 }
 
 void GUI::resetRenderScreens()
 {
 	for (auto i = 0; i < renderScreens.size(); i++) {
-		java_cast< GUIScreenNode* >(renderScreens.at(i))->setGUI(nullptr);
+		renderScreens.at(i)->setGUI(nullptr);
 	}
 	renderScreens.clear();
 }
 
 void GUI::addRenderScreen(String* screenId)
 {
-	auto screen = java_cast< GUIScreenNode* >(screens->get(screenId));
-	if (screen == nullptr)
+	auto screenIt = screens.find(screenId->getCPPWString());
+	if (screenIt == screens.end())
 		return;
 
-	screen->setGUI(this);
-	renderScreens.push_back(screen);
+	screenIt->second->setGUI(this);
+	renderScreens.push_back(screenIt->second);
 }
 
 GUIColor* GUI::getFoccussedBorderColor()

@@ -7,7 +7,6 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
-#include <tdme/utils/_HashMap.h>
 
 using tdme::gui::elements::GUIScrollAreaVertical;
 using java::lang::String;
@@ -16,7 +15,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
-using tdme::utils::_HashMap;
 
 GUIScrollAreaVertical::GUIScrollAreaVertical(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -35,7 +33,6 @@ String* GUIScrollAreaVertical::NAME;
 void GUIScrollAreaVertical::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	attributes = new _HashMap();
 	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"scrollarea-vertical.xml"_j));
 }
 
@@ -49,22 +46,22 @@ String* GUIScrollAreaVertical::getTemplate()
 	return template_;
 }
 
-_HashMap* GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenNode)
+map<wstring, String*>* GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes->clear();
-	attributes->put(u"id"_j, screenNode->allocateNodeId());
-	attributes->put(u"width"_j, u"100%"_j);
-	attributes->put(u"height"_j, u"100%"_j);
-	attributes->put(u"horizontal-align"_j, u"left"_j);
-	attributes->put(u"vertical-align"_j, u"top"_j);
-	attributes->put(u"alignment"_j, u"vertical"_j);
-	attributes->put(u"background-color"_j, u"transparent"_j);
-	attributes->put(u"border"_j, u"0"_j);
-	attributes->put(u"border-color"_j, u"transparent"_j);
-	attributes->put(u"padding"_j, u"0"_j);
-	attributes->put(u"show-on"_j, u""_j);
-	attributes->put(u"hide-on"_j, u""_j);
-	return attributes;
+	attributes.clear();
+	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes[L"width"] = u"100%"_j;
+	attributes[L"height"] = u"100%"_j;
+	attributes[L"horizontal-align"] = u"left"_j;
+	attributes[L"vertical-align"] = u"top"_j;
+	attributes[L"alignment"] = u"vertical"_j;
+	attributes[L"background-color"] = u"transparent"_j;
+	attributes[L"border"] = u"0"_j;
+	attributes[L"border-color"] = u"transparent"_j;
+	attributes[L"padding"] = u"0"_j;
+	attributes[L"show-on"] = u""_j;
+	attributes[L"hide-on"] = u""_j;
+	return &attributes;
 }
 
 GUINodeController* GUIScrollAreaVertical::createController(GUINode* node)
