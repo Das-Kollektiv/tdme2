@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 
 #include <java/lang/Float.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -38,7 +37,6 @@
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using java::lang::Float;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -86,22 +84,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-ModelMetaDataFileImport::ModelMetaDataFileImport(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-ModelMetaDataFileImport::ModelMetaDataFileImport()
-	: ModelMetaDataFileImport(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathName, String* fileName) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
-
 	auto jsonContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 
 	Value jEntityRoot;
@@ -123,7 +108,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathNam
 
 LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String* pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	LevelEditorEntity* levelEditorEntity;
 	auto version = Float::parseFloat(new String(StringConverter::toWideString(jEntityRoot["version"].getString())));
 	auto pivot = new Vector3(
@@ -473,7 +457,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 
 LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
 	auto bvTypeString = new String(StringConverter::toWideString(jBv["type"].getString()));
@@ -558,17 +541,3 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	}
 	return entityBoundingVolume;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelMetaDataFileImport::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.files.ModelMetaDataFileImport", 47);
-    return c;
-}
-
-java::lang::Class* ModelMetaDataFileImport::getClass0()
-{
-	return class_();
-}
-

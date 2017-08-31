@@ -7,15 +7,12 @@
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-#include <java/lang/Object.h>
-
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 
 #include <ext/jsonbox/Object.h>
 #include <ext/jsonbox/JsonException.h>
 
-using java::lang::Object;
 using java::io::File;
 using java::lang::String;
 
@@ -25,21 +22,13 @@ using tdme::tools::shared::model::LevelEditorEntity;
 
 using tdme::ext::jsonbox::JsonException;
 
-
-struct default_init_tag;
-
 /** 
  * TDME Model meta data file export
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::files::ModelMetaDataFileExport final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 
 	/** 
@@ -71,15 +60,4 @@ public:
 	 */
 	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
 
-	// Generated
-	ModelMetaDataFileExport();
-protected:
-	ModelMetaDataFileExport(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

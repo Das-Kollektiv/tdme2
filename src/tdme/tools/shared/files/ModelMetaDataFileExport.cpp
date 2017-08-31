@@ -6,7 +6,6 @@
 #include <sstream>
 
 #include <java/lang/Iterable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -53,7 +52,6 @@ using std::ostringstream;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using java::lang::Iterable;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::engine::fileio::models::TMWriter;
@@ -125,26 +123,13 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-ModelMetaDataFileExport::ModelMetaDataFileExport(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-ModelMetaDataFileExport::ModelMetaDataFileExport()
-	: ModelMetaDataFileExport(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 void ModelMetaDataFileExport::copyFile(String* source, String* dest) throw (_FileSystemException)
 {
-	clinit();
 }
 
 void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	{
 		auto finally1 = finally([&] {
 		});
@@ -164,7 +149,6 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	ext::jsonbox::Object jEntityRoot;;
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName() != nullptr) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
@@ -548,17 +532,3 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 
 	return jEntityRoot;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelMetaDataFileExport::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.files.ModelMetaDataFileExport", 47);
-    return c;
-}
-
-java::lang::Class* ModelMetaDataFileExport::getClass0()
-{
-	return class_();
-}
-

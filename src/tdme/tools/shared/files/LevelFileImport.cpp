@@ -71,28 +71,14 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-LevelFileImport::LevelFileImport(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-LevelFileImport::LevelFileImport()
-	: LevelFileImport(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	doImport(pathName, fileName, level, nullptr);
 }
 
 void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
-
 	auto jsonContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 
 	Value jRoot;
@@ -241,17 +227,3 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 	level->setFileName(fileName);
 	level->computeDimension();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelFileImport::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.files.LevelFileImport", 39);
-    return c;
-}
-
-java::lang::Class* LevelFileImport::getClass0()
-{
-	return class_();
-}
-

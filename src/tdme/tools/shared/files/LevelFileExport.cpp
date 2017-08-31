@@ -6,7 +6,6 @@
 #include <sstream>
 
 #include <java/lang/Iterable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/Rotation.h>
@@ -35,7 +34,6 @@ using std::ostringstream;
 
 using tdme::tools::shared::files::LevelFileExport;
 using java::lang::Iterable;
-using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::Rotation;
@@ -81,21 +79,9 @@ private:
 
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
-LevelFileExport::LevelFileExport(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-LevelFileExport::LevelFileExport()
-	: LevelFileExport(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
 
 void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	clinit();
 	level->setFileName(new String(pathName->getCPPWString() + L'/' + fileName->getCPPWString()));
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
@@ -199,17 +185,3 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 
 	_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelFileExport::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.files.LevelFileExport", 39);
-    return c;
-}
-
-java::lang::Class* LevelFileExport::getClass0()
-{
-	return class_();
-}
-
