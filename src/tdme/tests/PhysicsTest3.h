@@ -10,9 +10,7 @@
 #include <tdme/engine/ApplicationInputEventsHandler.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -49,12 +47,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tests::PhysicsTest3 final
-	: public virtual Object, public virtual Application, public virtual ApplicationInputEventsHandler
+	: public virtual Application, public virtual ApplicationInputEventsHandler
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 5 };
@@ -80,12 +74,6 @@ public:
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -105,15 +93,8 @@ public:
 	void onMouseMoved(int x, int y) override;
 	void onMouseButton(int button, int state, int x, int y) override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	PhysicsTest3();
-protected:
-	PhysicsTest3(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

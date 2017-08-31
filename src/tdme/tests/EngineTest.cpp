@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <java/lang/Character.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -59,7 +58,6 @@ using std::vector;
 
 using tdme::tests::EngineTest;
 using java::lang::Character;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
@@ -120,36 +118,8 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-EngineTest::EngineTest(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 EngineTest::EngineTest()
-	: EngineTest(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void EngineTest::main(int argc, char** argv)
-{
-	clinit();
-	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, L"EngineTest", engineTest);
-}
-
-void EngineTest::ctor()
-{
-	super::ctor();
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
@@ -161,6 +131,12 @@ void EngineTest::ctor()
 	entityClicked = nullptr;
 	collision = new CollisionResponse();
 	engine = Engine::getInstance();
+}
+
+void EngineTest::main(int argc, char** argv)
+{
+	auto engineTest = new EngineTest();
+	engineTest->run(argc, argv, L"EngineTest", engineTest);
 }
 
 Model* EngineTest::createWallModel()
@@ -211,7 +187,7 @@ void EngineTest::display()
 		circleTransformations->getTranslation()->setY(0.0f);
 	}
 	circleTransformations->update();
-	(java_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
+	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	for (auto i = 0; i < players.size(); i++) {
@@ -274,7 +250,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
-	if (CollisionDetection::doCollide(java_cast< Capsule* >(playerBoundingVolumeTransformed), java_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
+	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
@@ -451,11 +427,11 @@ void EngineTest::initialize()
 		engine->getEntity(L"firetop")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystemEntity(L"firesmoke", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(new Vector3(2.5f, 0.7f, 0.0f), 0.1f), new Vector3(0.0f, 0.2f, 0.0f), new Vector3(0.0f, 0.4f, 0.0f), new Color4(0.8f, 0.8f, 0.8f, 0.1f), new Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, true));
 		engine->getEntity(L"firesmoke")->setEnabled(true);
-		(java_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->setPickable(false);
-		(java_cast< ParticleSystemEntity* >(engine->getEntity(L"snow")))->setPickable(false);
-		(java_cast< ParticleSystemEntity* >(engine->getEntity(L"firebase")))->setPickable(true);
-		(java_cast< ParticleSystemEntity* >(engine->getEntity(L"firetop")))->setPickable(true);
-		(java_cast< ParticleSystemEntity* >(engine->getEntity(L"firesmoke")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->setPickable(false);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"snow")))->setPickable(false);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firebase")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firetop")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firesmoke")))->setPickable(true);
 	} catch (_Exception& exception) {
 		_Console::print(string("EngineTest::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -510,17 +486,3 @@ void EngineTest::onMouseButton(int button, int state, int x, int y) {
 		});
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* EngineTest::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tests.EngineTest", 21);
-    return c;
-}
-
-java::lang::Class* EngineTest::getClass0()
-{
-	return class_();
-}
-

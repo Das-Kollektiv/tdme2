@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -27,7 +26,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tests::PhysicsTest2;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
@@ -60,35 +58,21 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-
-PhysicsTest2::PhysicsTest2(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-PhysicsTest2::PhysicsTest2() 
-	: PhysicsTest2(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
 constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
 
 constexpr int32_t PhysicsTest2::BOX_COUNT;
 
-void PhysicsTest2::main(int argc, char** argv)
+PhysicsTest2::PhysicsTest2() 
 {
-	clinit();
-	auto physicsTest2 = new PhysicsTest2();
-	physicsTest2->run(argc, argv, L"PhysicsTest2");
-}
-
-void PhysicsTest2::ctor()
-{
-	super::ctor();
 	engine = Engine::getInstance();
 	world = new World();
+}
+
+
+void PhysicsTest2::main(int argc, char** argv)
+{
+	auto physicsTest2 = new PhysicsTest2();
+	physicsTest2->run(argc, argv, L"PhysicsTest2");
 }
 
 void PhysicsTest2::display()
@@ -154,17 +138,3 @@ void PhysicsTest2::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PhysicsTest2::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tests.PhysicsTest2", 23);
-    return c;
-}
-
-java::lang::Class* PhysicsTest2::getClass0()
-{
-	return class_();
-}
-

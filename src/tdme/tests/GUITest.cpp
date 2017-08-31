@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tests/GUITest.java
 #include <tdme/tests/GUITest.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
 #include <java/util/logging/Level.h>
@@ -20,7 +19,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tests::GUITest;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::System;
 using java::util::logging::Level;
@@ -51,42 +49,16 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-GUITest::GUITest(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
 
 GUITest::GUITest()
-	: GUITest(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-GUITest::GUITest(Application* application)
-	: GUITest(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(application);
-}
-
-
-void GUITest::ctor()
-{
-	super::ctor();
 	this->engine = Engine::getInstance();
 }
-
-void GUITest::ctor(Application* application)
-{
-	ctor();
-	this->application = application;
-}
-
 
 void GUITest::initialize()
 {
 	engine->initialize();
-	application->setInputEventHandler(engine->getGUI());
+	setInputEventHandler(engine->getGUI());
 	try {
 		engine->getGUI()->addScreen(u"test"_j, GUIParser::parse(u"resources/tests/gui"_j, u"test.xml"_j));
 		engine->getGUI()->getScreen(u"test"_j)->setScreenSize(640, 480);
@@ -131,21 +103,7 @@ void GUITest::display()
 
 void GUITest::main(int argc, char** argv)
 {
-	clinit();
 	auto guiTest = new GUITest();
 	guiTest->run(argc, argv, L"GUITest");
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITest::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tests.GUITest", 18);
-    return c;
-}
-
-java::lang::Class* GUITest::getClass0()
-{
-	return class_();
 }
 

@@ -10,9 +10,7 @@
 #include <tdme/engine/ApplicationInputEventsHandler.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -41,19 +39,14 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * Engine with physics test 1
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::tests::PhysicsTest1 final
-	: public virtual Object, public virtual Application, public virtual ApplicationInputEventsHandler
+	: public virtual Application, public virtual ApplicationInputEventsHandler
 {
-
-public:
-	typedef Object super;
 
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
@@ -105,13 +98,4 @@ public:
 
 	// Generated
 	PhysicsTest1();
-protected:
-	PhysicsTest1(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

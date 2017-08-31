@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
@@ -36,7 +35,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tests::PhysicsTest1;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
@@ -65,18 +63,6 @@ using tdme::math::Vector4;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-PhysicsTest1::PhysicsTest1(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-PhysicsTest1::PhysicsTest1() 
-	: PhysicsTest1(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
 constexpr int32_t PhysicsTest1::RIGID_TYPEID_STANDARD;
 
 constexpr int32_t PhysicsTest1::BOX_COUNT;
@@ -87,22 +73,20 @@ constexpr int32_t PhysicsTest1::CAPSULE_COUNT;
 
 constexpr int32_t PhysicsTest1::SPHERE_COUNT;
 
-void PhysicsTest1::main(int argc, char** argv)
+PhysicsTest1::PhysicsTest1() 
 {
-	clinit();
-	auto physicsTest1 = new PhysicsTest1();
-	physicsTest1->run(argc, argv, L"PhysicsTest1", physicsTest1);
-}
-
-void PhysicsTest1::ctor()
-{
-	super::ctor();
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
 	keyDown = false;
 	engine = Engine::getInstance();
 	world = new World();
+}
+
+void PhysicsTest1::main(int argc, char** argv)
+{
+	auto physicsTest1 = new PhysicsTest1();
+	physicsTest1->run(argc, argv, L"PhysicsTest1", physicsTest1);
 }
 
 void PhysicsTest1::display()
@@ -395,17 +379,3 @@ void PhysicsTest1::onMouseMoved(int x, int y) {
 
 void PhysicsTest1::onMouseButton(int button, int state, int x, int y) {
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PhysicsTest1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tests.PhysicsTest1", 23);
-    return c;
-}
-
-java::lang::Class* PhysicsTest1::getClass0()
-{
-	return class_();
-}
-

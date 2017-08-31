@@ -15,11 +15,9 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -53,19 +51,14 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * Engine test
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::tests::EngineTest final
-	: public virtual Object, public Application, public virtual ApplicationInputEventsHandler
+	: public Application, public virtual ApplicationInputEventsHandler
 {
-
-public:
-	typedef Object super;
 
 private:
 	Engine* engine {  };
@@ -105,13 +98,6 @@ public:
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Engine test
-	 * @param gl window
-	 */
-	void ctor();
 
 private:
 
@@ -148,15 +134,8 @@ public:
 	void onMouseMoved(int x, int y) override;
 	void onMouseButton(int button, int state, int x, int y) override;
 
-	// Generated
+	/**
+	 * Engine test
+	 */
 	EngineTest();
-protected:
-	EngineTest(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

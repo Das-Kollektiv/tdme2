@@ -9,9 +9,7 @@
 #include <tdme/engine/Application.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
@@ -39,20 +37,14 @@ using java::lang::ComparableArray;
 using java::lang::ObjectArray;
 using java::lang::StringArray;
 
-struct default_init_tag;
-
 /** 
  * Engine with physics test 2
  * @author andreas.drewke
  * @version $Id$
  */
 class tdme::tests::PhysicsTest2 final
-	: public virtual Object, public virtual Application
+	: public virtual Application
 {
-
-public:
-	typedef Object super;
-
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 4 };
@@ -67,28 +59,14 @@ public:
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
-
 public:
 	void display();
 	void dispose();
 	void initialize();
 	void reshape(int32_t width, int32_t height);
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	PhysicsTest2();
-protected:
-	PhysicsTest2(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };
