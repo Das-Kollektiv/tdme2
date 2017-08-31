@@ -27,8 +27,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::MutableString;
 
-struct default_init_tag;
-
 /** 
  * Level Editor Level Logic
  * @author Andreas Drewke
