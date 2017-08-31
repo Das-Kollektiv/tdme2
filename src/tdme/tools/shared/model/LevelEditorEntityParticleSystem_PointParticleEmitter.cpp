@@ -1,34 +1,19 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-LevelEditorEntityParticleSystem_PointParticleEmitter::LevelEditorEntityParticleSystem_PointParticleEmitter(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorEntityParticleSystem_PointParticleEmitter::LevelEditorEntityParticleSystem_PointParticleEmitter() 
-	: LevelEditorEntityParticleSystem_PointParticleEmitter(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void LevelEditorEntityParticleSystem_PointParticleEmitter::ctor()
-{
-	super::ctor();
 	count = 2000;
 	lifeTime = 1500;
 	lifeTimeRnd = 500;
@@ -114,44 +99,5 @@ Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorStart()
 Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorEnd()
 {
 	return colorEnd;
-}
-
-String* LevelEditorEntityParticleSystem_PointParticleEmitter::toString()
-{
-	return ::java::lang::StringBuilder().append(u"PointParticleEmitter [count="_j)->append(count)
-		->append(u", lifeTime="_j)
-		->append(lifeTime)
-		->append(u", lifeTimeRnd="_j)
-		->append(lifeTimeRnd)
-		->append(u", mass="_j)
-		->append(mass)
-		->append(u", massRnd="_j)
-		->append(massRnd)
-		->append(u", position="_j)
-		/*
-		->append(static_cast< Object* >(position))
-		->append(u", velocity="_j)
-		->append(static_cast< Object* >(velocity))
-		->append(u", velocityRnd="_j)
-		->append(static_cast< Object* >(velocityRnd))
-		->append(u", colorStart="_j)
-		->append(static_cast< Object* >(colorStart))
-		->append(u", colorEnd="_j)
-		->append(static_cast< Object* >(colorEnd))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityParticleSystem_PointParticleEmitter::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityParticleSystem.PointParticleEmitter", 76);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityParticleSystem_PointParticleEmitter::getClass0()
-{
-	return class_();
 }
 

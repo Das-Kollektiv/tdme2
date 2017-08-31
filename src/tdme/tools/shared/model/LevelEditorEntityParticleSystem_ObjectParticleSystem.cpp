@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
@@ -13,7 +12,6 @@
 #include <tdme/utils/_ExceptionBase.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::fileio::models::DAEReader;
@@ -24,21 +22,8 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::_ExceptionBase;
 
-LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem() 
-	: LevelEditorEntityParticleSystem_ObjectParticleSystem(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::ctor()
-{
-	super::ctor();
 	scale = new Vector3(1.0f, 1.0f, 1.0f);
 	maxCount = 10;
 	autoEmit = true;
@@ -105,33 +90,5 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(String* 
 			StringConverter::toString(modelFileName->getCPPWString())
 		);
 	}
-}
-
-String* LevelEditorEntityParticleSystem_ObjectParticleSystem::toString()
-{
-	return ::java::lang::StringBuilder().append(u"ObjectParticleSystem [scale="_j)
-		/*
-		->append(static_cast< Object* >(scale))
-		*/
-		->append(u", maxCount="_j)
-		->append(maxCount)
-		/*
-		->append(u", model="_j)
-		->append(static_cast< Object* >(model))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityParticleSystem_ObjectParticleSystem::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityParticleSystem.ObjectParticleSystem", 76);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityParticleSystem_ObjectParticleSystem::getClass0()
-{
-	return class_();
 }
 

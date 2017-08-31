@@ -11,18 +11,14 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
-
-struct default_init_tag;
 
 /** 
  * Model Editor Entity Library
@@ -30,11 +26,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::model::LevelEditorEntityLibrary final
-	: public Object
 {
-
 public:
-	typedef Object super;
 	static constexpr int32_t ID_ALLOCATE { -1 };
 
 private:
@@ -42,12 +35,6 @@ private:
 	map<int32_t, LevelEditorEntity*> entitiesById {  };
 	vector<LevelEditorEntity*> entities {  };
 	int32_t entityIdx {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor(LevelEditorLevel* level);
 
 public:
 
@@ -139,15 +126,8 @@ public:
 	 */
 	int32_t getEntityCount();
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	LevelEditorEntityLibrary(LevelEditorLevel* level);
-protected:
-	LevelEditorEntityLibrary(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

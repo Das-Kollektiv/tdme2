@@ -12,9 +12,6 @@ using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-
-struct default_init_tag;
-
 /** 
  * Level Editor Object
  * @author Andreas Drewke
@@ -23,29 +20,11 @@ struct default_init_tag;
 class tdme::tools::shared::model::LevelEditorObject final
 	: public ModelProperties
 {
-
-public:
-	typedef ModelProperties super;
-
 private:
 	String* id {  };
 	String* description {  };
 	Transformations* transformations {  };
 	LevelEditorEntity* entity {  };
-protected:
-
-	/** 
-	 * Private constructor used for cloning
-	 */
-	void ctor();
-
-	/** 
-	 * Public constructor
-	 * @param id
-	 * @param transformations
-	 * @param entity
-	 */
-	void ctor(String* id, String* description, Transformations* transformations, LevelEditorEntity* entity);
 
 public:
 
@@ -91,23 +70,14 @@ public:
 	 * @return merged properties from entity and object
 	 */
 	ModelProperties* getTotalProperties();
-	LevelEditorObject* clone() override;
-	String* toString() override;
-
-	// Generated
-
-private:
-	LevelEditorObject();
 
 public:
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param transformations
+	 * @param entity
+	 */
 	LevelEditorObject(String* id, String* description, Transformations* transformations, LevelEditorEntity* entity);
-protected:
-	LevelEditorObject(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

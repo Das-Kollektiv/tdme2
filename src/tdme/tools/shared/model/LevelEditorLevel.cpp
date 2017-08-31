@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -32,7 +31,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorLevel;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
@@ -52,29 +50,8 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::_Console;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-LevelEditorLevel::LevelEditorLevel(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorLevel::LevelEditorLevel() 
-	: LevelEditorLevel(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void LevelEditorLevel::ctor()
-{
-	super::ctor();
 	gameRoot = u""_j;
 	pathName = u"."_j;
 	fileName = u"untitled.tl"_j;
@@ -212,24 +189,12 @@ void LevelEditorLevel::computeBoundingBox()
 			bottom = objectBottom;
 			haveDimension = true;
 		} else {
-			if (objectLeft < left)
-				left = objectLeft;
-
-			if (objectRight > right)
-				right = objectRight;
-
-			if (objectNear < near)
-				near = objectNear;
-
-			if (objectFar > far)
-				far = objectFar;
-
-			if (objectTop > top)
-				top = objectTop;
-
-			if (objectBottom < bottom)
-				bottom = objectBottom;
-
+			if (objectLeft < left) left = objectLeft;
+			if (objectRight > right) right = objectRight;
+			if (objectNear < near) near = objectNear;
+			if (objectFar > far) far = objectFar;
+			if (objectTop > top) top = objectTop;
+			if (objectBottom < bottom) bottom = objectBottom;
 		}
 	}
 
@@ -354,59 +319,5 @@ int32_t LevelEditorLevel::getObjectCount()
 LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
 {
 	return objects.at(idx);
-}
-
-String* LevelEditorLevel::toString()
-{
-	return ::java::lang::StringBuilder().append(u"LevelEditorLevel [gameRoot="_j)->append(gameRoot)
-		->append(u", pathName="_j)
-		->append(pathName)
-		->append(u", fileName="_j)
-		->append(fileName)
-		->append(u", rotationOrder="_j)
-		->append(static_cast< Object* >(rotationOrder))
-		/*
-		->append(u", lights="_j)
-		->append(static_cast< Object* >(lights))
-		*/
-		->append(u", entityLibrary="_j)
-		->append(static_cast< Object* >(entityLibrary))
-		/*
-		->append(u", objectsById="_j)
-		->append(static_cast< Object* >(objectsById))
-		->append(u", objects="_j)
-		->append(static_cast< Object* >(objects))
-		*/
-		->append(u", objectIdx="_j)
-		->append(objectIdx)
-		/*
-		->append(u", boundingBox="_j)
-		->append(static_cast< Object* >(boundingBox))
-		->append(u", dimension="_j)
-		->append(static_cast< Object* >(dimension))
-		->append(u", propertiesByName="_j)
-		->append(static_cast< Object* >(propertiesByName))
-		->append(u", properties="_j)
-		->append(static_cast< Object* >(properties))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorLevel::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorLevel", 40);
-    return c;
-}
-
-Object* LevelEditorLevel::clone()
-{
-	return super::clone();
-}
-
-java::lang::Class* LevelEditorLevel::getClass0()
-{
-	return class_();
 }
 

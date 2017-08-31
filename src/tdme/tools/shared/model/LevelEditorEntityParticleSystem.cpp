@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
@@ -16,7 +15,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -30,21 +28,8 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::utils::_Console;
 
-LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem() 
-	: LevelEditorEntityParticleSystem(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void LevelEditorEntityParticleSystem::ctor()
-{
-	super::ctor();
 	type = LevelEditorEntityParticleSystem_Type::NONE;
 	ops = nullptr;
 	pps = nullptr;
@@ -80,7 +65,7 @@ void LevelEditorEntityParticleSystem::setType(LevelEditorEntityParticleSystem_Ty
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setType(): unknown type '"_j)->append(static_cast< Object* >(this->type))
 				->append(u"'"_j)->toString()));
 		}
-end_switch0:;
+		end_switch0:;
 	}
 
 	this->type = type;
@@ -101,7 +86,7 @@ end_switch0:;
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setType(): unknown type '"_j)->append(static_cast< Object* >(this->type))
 				->append(u"'"_j)->toString()));
 		}
-end_switch1:;
+		end_switch1:;
 	}
 
 }
@@ -152,7 +137,7 @@ void LevelEditorEntityParticleSystem::setEmitter(LevelEditorEntityParticleSystem
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '"_j)->append(static_cast< Object* >(this->emitter))
 				->append(u"'"_j)->toString()));
 		}
-end_switch2:;
+		end_switch2:;
 	}
 
 	this->emitter = emitter;
@@ -185,7 +170,7 @@ end_switch2:;
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '"_j)->append(static_cast< Object* >(this->emitter))
 				->append(u"'"_j)->toString()));
 		}
-end_switch3:;
+		end_switch3:;
 	}
 
 }
@@ -214,39 +199,3 @@ LevelEditorEntityParticleSystem_SphereParticleEmitter* LevelEditorEntityParticle
 {
 	return spe;
 }
-
-String* LevelEditorEntityParticleSystem::toString()
-{
-	return ::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem [type="_j)->append(static_cast< Object* >(type))
-		->append(u", ops="_j)
-		->append(static_cast< Object* >(ops))
-		->append(u", pps="_j)
-		->append(static_cast< Object* >(pps))
-		->append(u", emitter="_j)
-		->append(static_cast< Object* >(emitter))
-		->append(u", ppe="_j)
-		->append(static_cast< Object* >(ppe))
-		->append(u", bbpe="_j)
-		->append(static_cast< Object* >(bbpe))
-		->append(u", cpe="_j)
-		->append(static_cast< Object* >(cpe))
-		->append(u", cpepv="_j)
-		->append(static_cast< Object* >(cpepv))
-		->append(u", spe="_j)
-		->append(static_cast< Object* >(spe))
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityParticleSystem::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityParticleSystem", 55);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityParticleSystem::getClass0()
-{
-	return class_();
-}
-

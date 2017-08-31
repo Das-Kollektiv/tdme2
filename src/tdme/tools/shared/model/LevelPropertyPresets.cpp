@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
@@ -32,7 +31,6 @@ using std::string;
 using std::vector;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::HashMap;
@@ -53,54 +51,10 @@ using tdme::utils::_Console;
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-LevelPropertyPresets::LevelPropertyPresets(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
 LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  /* throws(Exception) */
-	: LevelPropertyPresets(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(pathName,fileName);
-}
-
-LevelPropertyPresets* LevelPropertyPresets::instance;
-
-LevelPropertyPresets* LevelPropertyPresets::getInstance()
-{
-	clinit();
-	if (instance == nullptr) {
-		try {
-			instance = new LevelPropertyPresets(u"resources/tools/leveleditor/gd"_j, u"presets.xml"_j);
-		} catch (_Exception& exception) {
-			_Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
-			_Console::print(string(exception.what()));
-			exit(0);
-		}
-	}
-	return instance;
-}
-
-void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
-{
-	for (auto mapProperty: mapPropertiesPreset) {
-		level->addProperty(mapProperty->getName(), mapProperty->getValue());
-	}
-}
-
-void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Exception) */
-{
-	super::ctor();
-
 	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
@@ -166,6 +120,27 @@ void LevelPropertyPresets::ctor(String* pathName, String* fileName) /* throws(Ex
 	}
 }
 
+LevelPropertyPresets* LevelPropertyPresets::getInstance()
+{
+	if (instance == nullptr) {
+		try {
+			instance = new LevelPropertyPresets(u"resources/tools/leveleditor/gd"_j, u"presets.xml"_j);
+		} catch (_Exception& exception) {
+			_Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
+			_Console::print(string(exception.what()));
+			exit(0);
+		}
+	}
+	return instance;
+}
+
+void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
+{
+	for (auto mapProperty: mapPropertiesPreset) {
+		level->addProperty(mapProperty->getName(), mapProperty->getValue());
+	}
+}
+
 const vector<PropertyModelClass*>* LevelPropertyPresets::getMapPropertiesPreset() const
 {
 	return &mapPropertiesPreset;
@@ -183,40 +158,9 @@ const map<wstring, LevelEditorLight*>* LevelPropertyPresets::getLightPresets() c
 
 const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)
 {
-	clinit();
 	vector<TiXmlElement*> elementList;
 	for (auto *child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
 		elementList.push_back(child);
 	}
 	return elementList;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelPropertyPresets::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelPropertyPresets", 44);
-    return c;
-}
-
-void LevelPropertyPresets::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-			instance = nullptr;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* LevelPropertyPresets::getClass0()
-{
-	return class_();
-}
-

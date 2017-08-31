@@ -8,21 +8,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using java::lang::String;
 using java::lang::StringBuilder;
 
-PropertyModelClass::PropertyModelClass(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 PropertyModelClass::PropertyModelClass(String* name, String* value) 
-	: PropertyModelClass(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(name,value);
-}
-
-void PropertyModelClass::ctor(String* name, String* value)
-{
-	super::ctor();
 	this->name = name;
 	this->value = value;
 }
@@ -51,23 +38,3 @@ PropertyModelClass* PropertyModelClass::clone()
 {
 	return new PropertyModelClass(new String(name), new String(value));
 }
-
-String* PropertyModelClass::toString()
-{
-	return ::java::lang::StringBuilder().append(name)->append(u": "_j)
-		->append(value)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* PropertyModelClass::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.PropertyModelClass", 42);
-    return c;
-}
-
-java::lang::Class* PropertyModelClass::getClass0()
-{
-	return class_();
-}
-

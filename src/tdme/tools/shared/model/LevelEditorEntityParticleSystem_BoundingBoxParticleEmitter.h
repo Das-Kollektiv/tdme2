@@ -7,9 +7,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
@@ -23,20 +21,22 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-
-struct default_init_tag;
-
 /** 
  * Bounding box particle emitter 
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
+	friend class LevelEditorEntityParticleSystem;
+	friend class LevelEditorEntityParticleSystem_Type;
+	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
+	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
+	friend class LevelEditorEntityParticleSystem_Emitter;
+	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
+	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
+	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
+	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 
 private:
 	int32_t count {  };
@@ -53,12 +53,6 @@ private:
 	Vector3* obbAxis0 {  };
 	Vector3* obbAxis1 {  };
 	Vector3* obbAxis2 {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -161,26 +155,9 @@ public:
 	 * @return obb axis 2
 	 */
 	virtual Vector3* getObbAxis2();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter();
-protected:
-	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorEntityParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
-	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 };

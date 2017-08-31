@@ -21,7 +21,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::Object;
 using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::model::RotationOrder;
@@ -31,8 +30,6 @@ using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 
-struct default_init_tag;
-
 /** 
  * Level
  * @author Andreas Drewke
@@ -41,10 +38,6 @@ struct default_init_tag;
 class tdme::tools::shared::model::LevelEditorLevel final
 	: public ModelProperties
 {
-
-public:
-	typedef ModelProperties super;
-
 private:
 	String* gameRoot {  };
 	String* pathName {  };
@@ -57,13 +50,6 @@ private:
 	int32_t objectIdx {  };
 	BoundingBox* boundingBox {  };
 	Vector3* dimension {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param default map properties or null
-	 */
-	void ctor();
 
 public:
 
@@ -224,20 +210,9 @@ public:
 	 */
 	LevelEditorObject* getObjectAt(int32_t idx);
 
-	String* toString() override;
-
-	// Generated
+	/**
+	 * Public constructor
+	 * @param default map properties or null
+	 */
 	LevelEditorLevel();
-protected:
-	LevelEditorLevel(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-public: /* protected */
-	virtual Object* clone();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

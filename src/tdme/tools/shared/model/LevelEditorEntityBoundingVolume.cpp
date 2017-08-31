@@ -3,7 +3,6 @@
 
 #include <java/io/Serializable.h>
 #include <java/lang/Integer.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Object3DModel.h>
@@ -28,7 +27,6 @@
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using java::io::Serializable;
 using java::lang::Integer;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::Object3DModel;
@@ -50,23 +48,10 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
-LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
+int32_t LevelEditorEntityBoundingVolume::staticIdx = 0;
 
 LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity) 
-	: LevelEditorEntityBoundingVolume(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(id,levelEditorEntity);
-}
-
-int32_t LevelEditorEntityBoundingVolume::staticIdx;
-
-void LevelEditorEntityBoundingVolume::ctor(int32_t id, LevelEditorEntity* levelEditorEntity)
-{
-	super::ctor();
 	this->id = id;
 	this->levelEditorEntity = levelEditorEntity;
 	modelMeshFile = nullptr;
@@ -221,47 +206,3 @@ void LevelEditorEntityBoundingVolume::updateLevelEditorEntity()
 		levelEditorEntity->model = model;
 
 }
-
-String* LevelEditorEntityBoundingVolume::toString()
-{
-	return ::java::lang::StringBuilder().append(u"LevelEditorEntityBoundingVolume [id="_j)->append(id)
-		->append(u", modelMeshFile="_j)
-		->append(modelMeshFile)
-		->append(u", model="_j)
-		->append((model != nullptr ? model->getId() : L"none"))
-		/*
-		->append(u", boundingVolume="_j)
-		->append(static_cast< Object* >(boundingVolume))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityBoundingVolume::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityBoundingVolume", 55);
-    return c;
-}
-
-void LevelEditorEntityBoundingVolume::clinit()
-{
-	super::clinit();
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		staticIdx = 0;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-
-java::lang::Class* LevelEditorEntityBoundingVolume::getClass0()
-{
-	return class_();
-}
-

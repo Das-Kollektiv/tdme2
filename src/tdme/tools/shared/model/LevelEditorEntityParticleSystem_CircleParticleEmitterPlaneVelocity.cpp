@@ -1,34 +1,19 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity() 
-	: LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::ctor()
-{
-	super::ctor();
 	count = 2000;
 	lifeTime = 1500;
 	lifeTimeRnd = 500;
@@ -148,49 +133,3 @@ Vector3* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::get
 {
 	return axis1;
 }
-
-String* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::toString()
-{
-	return ::java::lang::StringBuilder().append(u"CircleParticleEmitterPlaneVelocity [count="_j)->append(count)
-		->append(u", lifeTime="_j)
-		->append(lifeTime)
-		->append(u", lifeTimeRnd="_j)
-		->append(lifeTimeRnd)
-		->append(u", mass="_j)
-		->append(mass)
-		->append(u", massRnd="_j)
-		->append(massRnd)
-		->append(u", velocity="_j)
-		->append(velocity)
-		->append(u", velocityRnd="_j)
-		->append(velocityRnd)
-		/*
-		->append(u", colorStart="_j)
-		->append(static_cast< Object* >(colorStart))
-		->append(u", colorEnd="_j)
-		->append(static_cast< Object* >(colorEnd))
-		->append(u", center="_j)
-		->append(static_cast< Object* >(center))
-		->append(u", radius="_j)
-		->append(radius)
-		->append(u", axis0="_j)
-		->append(static_cast< Object* >(axis0))
-		->append(u", axis1="_j)
-		->append(static_cast< Object* >(axis1))
-		 */
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityParticleSystem.CircleParticleEmitterPlaneVelocity", 90);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getClass0()
-{
-	return class_();
-}
-

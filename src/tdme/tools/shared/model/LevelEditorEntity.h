@@ -22,8 +22,6 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-struct default_init_tag;
-
 /** 
  * Level Editor Model
  * @author Andreas Drewke
@@ -32,6 +30,7 @@ struct default_init_tag;
 class tdme::tools::shared::model::LevelEditorEntity final
 	: public ModelProperties
 {
+	friend class LevelEditorEntity_EntityType;
 
 public:
 	typedef ModelProperties super;
@@ -49,21 +48,6 @@ public: /* protected */
 	Vector3* pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
-protected:
-
-	/** 
-	 * Creates a level editor model
-	 * @param id
-	 * @param entity type
-	 * @param name
-	 * @param description
-	 * @param entity file name
-	 * @param file name
-	 * @param thumbnail
-	 * @param model
-	 * @param pivot
-	 */
-	void ctor(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot);
 
 public:
 
@@ -161,18 +145,18 @@ public:
 	 * @return level editor entity particle system
 	 */
 	LevelEditorEntityParticleSystem* getParticleSystem();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Creates a level editor model
+	 * @param id
+	 * @param entity type
+	 * @param name
+	 * @param description
+	 * @param entity file name
+	 * @param file name
+	 * @param thumbnail
+	 * @param model
+	 * @param pivot
+	 */
 	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot);
-protected:
-	LevelEditorEntity(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorEntity_EntityType;
 };

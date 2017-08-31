@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Model.h>
@@ -15,7 +14,6 @@
 using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::model::Model;
@@ -24,31 +22,10 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-LevelEditorEntity::LevelEditorEntity(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot) 
-	: LevelEditorEntity(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,entityType,name,description,entityFileName,fileName,thumbnail,model,pivot);
-}
-
 constexpr int32_t LevelEditorEntity::ID_NONE;
 
-void LevelEditorEntity::ctor(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot)
+LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot) 
 {
-	super::ctor();
 	this->id = id;
 	this->type = entityType;
 	this->name = name;
@@ -159,47 +136,3 @@ LevelEditorEntityParticleSystem* LevelEditorEntity::getParticleSystem()
 {
 	return particleSystem;
 }
-
-String* LevelEditorEntity::toString()
-{
-	return ::java::lang::StringBuilder().append(u"LevelEditorEntity [id="_j)->append(id)
-		->append(u", type="_j)
-		->append(static_cast< Object* >(type))
-		->append(u", name="_j)
-		->append(name)
-		->append(u", description="_j)
-		->append(description)
-		->append(u", entityFileName="_j)
-		->append(entityFileName)
-		->append(u", fileName="_j)
-		->append(fileName)
-		->append(u", thumbnail="_j)
-		->append(thumbnail)
-		/*
-		// TODO: implement me
-		->append(u", model="_j)
-		->append(static_cast< Object* >(model))
-		*/
-		/*
-		// TODO: implement me
-		->append(u", boundingVolumes="_j)
-		->append(static_cast< Object* >(boundingVolumes))
-		->append(u", pivot="_j)
-		->append(static_cast< Object* >(pivot))
-		*/
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntity::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntity", 41);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntity::getClass0()
-{
-	return class_();
-}
-

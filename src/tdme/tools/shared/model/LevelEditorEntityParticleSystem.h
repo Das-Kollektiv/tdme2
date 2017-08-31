@@ -4,9 +4,7 @@
 
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
@@ -18,20 +16,22 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 
-
-struct default_init_tag;
-
 /** 
  * Level editor entity particle system
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
+	friend class LevelEditorEntityParticleSystem_Type;
+	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
+	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
+	friend class LevelEditorEntityParticleSystem_Emitter;
+	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
+	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
+	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
+	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
+	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 
 private:
 	LevelEditorEntityParticleSystem_Type* type {  };
@@ -43,12 +43,6 @@ private:
 	LevelEditorEntityParticleSystem_CircleParticleEmitter* cpe {  };
 	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* cpepv {  };
 	LevelEditorEntityParticleSystem_SphereParticleEmitter* spe {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -108,26 +102,9 @@ public:
 	 * @return sphere particle emitter
 	 */
 	virtual LevelEditorEntityParticleSystem_SphereParticleEmitter* getSphereParticleEmitter();
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	LevelEditorEntityParticleSystem();
-protected:
-	LevelEditorEntityParticleSystem(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
-	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 };

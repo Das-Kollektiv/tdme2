@@ -8,17 +8,12 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
-
-
-struct default_init_tag;
 
 /** 
  * Level Editor Entity Bouning Volume
@@ -26,12 +21,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::model::LevelEditorEntityBoundingVolume
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	static int32_t staticIdx;
 	int32_t id {  };
@@ -39,14 +29,6 @@ private:
 	String* modelMeshFile {  };
 	Model* model {  };
 	BoundingVolume* boundingVolume {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param id
-	 * @param level editor entity
-	 */
-	void ctor(int32_t id, LevelEditorEntity* levelEditorEntity);
 
 public:
 
@@ -128,18 +110,11 @@ private:
 	void updateLevelEditorEntity();
 
 public:
-	String* toString() override;
-
-	// Generated
+	/**
+	 * Public constructor
+	 * @param id
+	 * @param level editor entity
+	 */
 	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
-protected:
-	LevelEditorEntityBoundingVolume(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

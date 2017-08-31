@@ -4,13 +4,8 @@
 
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Property model class
@@ -18,23 +13,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::model::PropertyModelClass final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 private:
 	String* name {  };
 	String* value {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param name
-	 * @param value
-	 */
-	void ctor(String* name, String* value);
 
 public:
 
@@ -63,18 +45,12 @@ public:
 	/** 
 	 * Clones this property model entity
 	 */
-	PropertyModelClass* clone() override;
-	String* toString() override;
+	PropertyModelClass* clone();
 
-	// Generated
+	/**
+	 * Constructor
+	 * @param name
+	 * @param value
+	 */
 	PropertyModelClass(String* name, String* value);
-protected:
-	PropertyModelClass(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

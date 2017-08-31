@@ -10,7 +10,6 @@
 #include <java/util/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -20,14 +19,11 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::ext::tinyxml::TiXmlElement;
 
 using tdme::tools::shared::model::LevelEditorLight;
-
-struct default_init_tag;
 
 /** 
  * Level Property Presets
@@ -35,11 +31,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::model::LevelPropertyPresets final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	vector<PropertyModelClass*> mapPropertiesPreset {  };
@@ -59,14 +51,6 @@ public:
 	 * @param level
 	 */
 	void setDefaultLevelProperties(LevelEditorLevel* level);
-protected:
-
-	/** 
-	 * Constructor
-	 * @throws ParserConfigurationException 
-	 * @throws SAXException 
-	 */
-	void ctor(String* pathName, String* fileName) /* throws(Exception) */;
 
 public:
 
@@ -95,18 +79,11 @@ private:
 	 */
 	const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
-	// Generated
-
 public:
+	/**
+	 * Constructor
+	 * @param path name
+	 * @param file name
+	 */
 	LevelPropertyPresets(String* pathName, String* fileName);
-protected:
-	LevelPropertyPresets(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

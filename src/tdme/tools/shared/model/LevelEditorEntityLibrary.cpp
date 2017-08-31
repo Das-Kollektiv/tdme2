@@ -7,7 +7,6 @@
 
 #include <java/lang/CharSequence.h>
 #include <java/lang/Integer.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
@@ -32,7 +31,6 @@ using std::vector;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using java::lang::CharSequence;
 using java::lang::Integer;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::engine::fileio::models::DAEReader;
@@ -50,31 +48,10 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_ExceptionBase;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-LevelEditorEntityLibrary::LevelEditorEntityLibrary(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level) 
-	: LevelEditorEntityLibrary(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(level);
-}
-
 constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
 
-void LevelEditorEntityLibrary::ctor(LevelEditorLevel* level)
+LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level) 
 {
-	super::ctor();
 	this->level = level;
 	this->entityIdx = 0;
 }
@@ -276,17 +253,3 @@ int32_t LevelEditorEntityLibrary::getEntityCount()
 {
 	return entities.size();
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* LevelEditorEntityLibrary::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.LevelEditorEntityLibrary", 48);
-    return c;
-}
-
-java::lang::Class* LevelEditorEntityLibrary::getClass0()
-{
-	return class_();
-}
-

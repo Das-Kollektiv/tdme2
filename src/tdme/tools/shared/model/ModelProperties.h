@@ -11,19 +11,14 @@
 #include <java/util/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using java::lang::Iterable;
 using java::lang::String;
 using tdme::tools::shared::model::PropertyModelClass;
-
-
-struct default_init_tag;
 
 /** 
  * Properties
@@ -31,21 +26,10 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::tools::shared::model::ModelProperties
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	map<wstring, PropertyModelClass*> propertiesByName {  };
 	vector<PropertyModelClass*> properties {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -100,17 +84,9 @@ public:
 	 * @param property name
 	 */
 	virtual bool removeProperty(String* name);
-	String* toString() override;
 
-	// Generated
+	/**
+	 * Public constructor
+	 */
 	ModelProperties();
-protected:
-	ModelProperties(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

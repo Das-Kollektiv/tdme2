@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
@@ -17,34 +16,12 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::tools::shared::model::PropertyModelClass;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-ModelProperties::ModelProperties(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 ModelProperties::ModelProperties() 
-	: ModelProperties(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
-}
-
-void ModelProperties::ctor()
-{
-	super::ctor();
 }
 
 void ModelProperties::clearProperties()
@@ -125,29 +102,3 @@ bool ModelProperties::removeProperty(String* name)
 
 	return false;
 }
-
-String* ModelProperties::toString()
-{
-	return
-		::java::lang::StringBuilder().
-		 /*
-		 append(u"Properties [properties="_j)->
-		 append(static_cast< Object* >(properties))->
-		 append(u"]"_j)->
-		 */
-		 toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* ModelProperties::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.tools.shared.model.ModelProperties", 39);
-    return c;
-}
-
-java::lang::Class* ModelProperties::getClass0()
-{
-	return class_();
-}
-
