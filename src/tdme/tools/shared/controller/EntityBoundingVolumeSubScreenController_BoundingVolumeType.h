@@ -47,7 +47,6 @@ using java::lang::EnumArray;
 using java::lang::ObjectArray;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeTypeArray;
 
-struct default_init_tag;
 class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType final
 	: public Enum
 {
