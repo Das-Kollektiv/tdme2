@@ -183,5 +183,5 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 	ostringstream json;
 	json << jRoot;
 
-	_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
+	_FileSystem::getInstance()->setContentFromString(pathName->getCPPWString(), fileName->getCPPWString(), StringConverter::toWideString(json.str()));
 }

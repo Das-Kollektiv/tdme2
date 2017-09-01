@@ -1,36 +1,27 @@
 // Generated from /tdme/src/tdme/engine/fileio/models/DAEReader.java
 #include <tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <string>
+
+#include <tdme/engine/fileio/models/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/StringUtils.h>
+
+using std::wstring;
+
+using tdme::utils::StringUtils;
 
 using tdme::engine::fileio::models::DAEReader_determineDisplacementFilename_1;
-using java::lang::String;
-using java::lang::StringBuilder;
 
-DAEReader_determineDisplacementFilename_1::DAEReader_determineDisplacementFilename_1(String* finalFilenameCandidate)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, finalFilenameCandidate(finalFilenameCandidate)
+DAEReader_determineDisplacementFilename_1::DAEReader_determineDisplacementFilename_1(const wstring& finalFilenameCandidate)
 {
-	clinit();
-	ctor();
+	this->finalFilenameCandidate = finalFilenameCandidate;
 }
 
-bool DAEReader_determineDisplacementFilename_1::accept(String* dir, String* name)
+bool DAEReader_determineDisplacementFilename_1::accept(const wstring& pathName, const wstring& fileName)
 {
-	return name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".png"_j)->toString()) || name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".tga"_j)->toString()) || name->equalsIgnoreCase(::java::lang::StringBuilder().append(finalFilenameCandidate)->append(u".jpg"_j)->toString());
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* DAEReader_determineDisplacementFilename_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* DAEReader_determineDisplacementFilename_1::getClass0()
-{
-	return class_();
+	return
+		StringUtils::equalsIgnoreCase(fileName, finalFilenameCandidate + L".png") == true ||
+		StringUtils::equalsIgnoreCase(fileName, finalFilenameCandidate + L".jpg") == true;
 }
 

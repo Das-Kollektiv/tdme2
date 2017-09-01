@@ -131,7 +131,7 @@ map<wstring, GUIElement*> GUIParser::elements;
 GUIScreenNode* GUIParser::parse(String* pathName, String* fileName) throw (GUIParserException)
 {
 	clinit();
-	return parse(new String(_FileSystem::getInstance()->getContent(pathName, fileName)));
+	return parse(new String(_FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString())));
 }
 
 GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
@@ -198,7 +198,7 @@ GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
 
 void GUIParser::parse(GUIParentNode* parentNode, String* pathName, String* fileName) throw (GUIParserException)
 {
-	String* xml = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	String* xml = new String(_FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString()));
 	parse(parentNode, xml);
 }
 

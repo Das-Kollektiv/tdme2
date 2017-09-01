@@ -320,7 +320,7 @@ void EngineTest::initialize()
 	light2->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light2->getPosition()));
 	light2->setEnabled(true);
 	try {
-		auto _barrel = DAEReader::read(u"resources/tests/models/barrel"_j, u"barrel.dae"_j);
+		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
 		auto barrel = new Object3D(L"barrel", _barrel);
 		barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		barrel->getTranslation()->set(1.5f, 0.35f, -2.0f);
@@ -334,13 +334,13 @@ void EngineTest::initialize()
 		auto farPlane = new Object3D(L"wall", _farPlane);
 		farPlane->bindDiffuseTexture(L"wall", L"wall", osEngine->getFrameBuffer());
 		engine->addEntity(farPlane);
-		auto _grass = DAEReader::read(u"resources/tests/models/grass"_j, u"grass.dae"_j);
+		auto _grass = DAEReader::read(L"resources/tests/models/grass", L"grass.dae");
 		auto grass = new Object3D(L"ground", _grass);
 		grass->setEnabled(true);
 		grass->getScale()->set(8.0f, 1.0f, 8.0f);
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = DAEReader::read(u"resources/tests/models/dummy"_j, u"testDummy_textured.DAE"_j);
+		auto _player = DAEReader::read(L"resources/tests/models/dummy", L"testDummy_textured.DAE");
 		_player->addAnimationSetup(L"still", 3, 3, true);
 		_player->addAnimationSetup(L"walk", 0, 18, true);
 		playerBoundingVolume = new Capsule(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
@@ -379,7 +379,7 @@ void EngineTest::initialize()
 		player2BoundingVolume->fromTransformations(player2);
 		player2BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
-		auto _cube = DAEReader::read(u"resources/tests/models/test"_j, u"cube.dae"_j);
+		auto _cube = DAEReader::read(L"resources/tests/models/test", L"cube.dae");
 		cube = new Object3D(L"cube", _cube);
 		cube->getTranslation()->add(new Vector3(0.0f, 0.0f, 0.0f));
 		cube->getScale()->set(2.0f, 2.0f, 2.0f);
@@ -396,7 +396,7 @@ void EngineTest::initialize()
 		cubeBoundingVolumeObject3D->fromTransformations(cube);
 		cubeBoundingVolumeObject3D->setEnabled(true);
 		engine->addEntity(cubeBoundingVolumeObject3D);
-		auto _wall = DAEReader::read(u"resources/tests/models/wall"_j, u"wall.dae"_j);
+		auto _wall = DAEReader::read(L"resources/tests/models/wall", L"wall.dae");
 		auto wall0 = new Object3D(L"wall0", _wall);
 		wall0->getTranslation()->add(new Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();

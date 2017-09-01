@@ -27,7 +27,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::io::OutputStream;
 using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
@@ -42,26 +41,6 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 using tdme::os::_FileSystemException;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using java::lang::String;
-using tdme::engine::model::FacesEntityArray;
-using tdme::engine::model::TextureCoordinateArray;
-using tdme::math::Vector3Array;
-
 namespace tdme {
 namespace engine {
 namespace fileio {
@@ -74,44 +53,21 @@ namespace models {
  */
 class TMWriterOutputStream {
 private:
-	int8_tArray* data;
-	int32_t position;
-	int32_t capacity;
+	vector<uint8_t> data;
 public:
 
 	/**
 	 * Constructor
 	 */
 	inline TMWriterOutputStream() throw (ModelFileIOException) {
-		this->capacity = 1024 * 1024;
-		this->data = new (std::nothrow) int8_tArray(capacity);
-		if (this->data == nullptr) {
-			throw ModelFileIOException("Not enough memory");
-		}
-		this->position = 0;
-	}
-
-	/**
-	 * Destructor
-	 */
-	inline ~TMWriterOutputStream() {
-		delete data;
 	}
 
 	/**
 	 * Get data
 	 * @return data
 	 */
-	inline int8_tArray* getData() {
-		return data;
-	}
-
-	/**
-	 * Get position
-	 * @return position
-	 */
-	inline int32_t getPosition() {
-		return position;
+	inline vector<uint8_t>* getData() {
+		return &data;
 	}
 
 	/**
@@ -129,19 +85,7 @@ public:
 	 * @param byte
 	 */
 	inline void writeByte(int8_t b) throw (ModelFileIOException) {
-		if (position + 1 == capacity) {
-			this->capacity+= 1024 * 1024;
-			int8_tArray* dataNew = new (std::nothrow) int8_tArray(capacity);
-			if (dataNew == nullptr) {
-				throw ModelFileIOException("Not enough memory");
-			}
-			for (int i = 0; i < position; i++) {
-				dataNew->set(i, data->get(i));
-			}
-			delete this->data;
-			this->data = dataNew;
-		}
-		data->set(position++, b);
+		data.push_back(b);
 	}
 
 	/**
@@ -296,7 +240,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	static void write(Model* model, String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
+	static void write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException);
 
 private:
 

@@ -33,7 +33,7 @@ String* GUIDropDownOption::NAME;
 void GUIDropDownOption::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"dropdown-option.xml"_j));
+	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown-option.xml"));
 }
 
 String* GUIDropDownOption::getName()

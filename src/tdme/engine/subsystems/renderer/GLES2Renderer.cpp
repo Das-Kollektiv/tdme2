@@ -161,8 +161,9 @@ int32_t GLES2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GLES2Renderer::loadShader(int32_t type, String* pathName, String* fileName)
+int32_t GLES2Renderer::loadShader(int32_t type, const wstring& pathName, const wstring& fileName)
 {
+	/*
 	auto handle = gl->glCreateShader(type);
 	if (handle == 0)
 		return 0;
@@ -215,6 +216,8 @@ int32_t GLES2Renderer::loadShader(int32_t type, String* pathName, String* fileNa
 		}
 	}
 	return handle;
+	*/
+	return -1;
 }
 
 void GLES2Renderer::useProgram(int32_t programId)

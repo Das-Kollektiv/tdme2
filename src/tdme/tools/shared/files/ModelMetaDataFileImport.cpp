@@ -87,11 +87,11 @@ template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 
 LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, String* pathName, String* fileName) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	auto jsonContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto jsonContent = _FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString());
 
 	Value jEntityRoot;
 	jEntityRoot.loadFromString(
-		StringConverter::toString(jsonContent->getCPPWString())
+		StringConverter::toString(jsonContent)
 	);
 
 	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot);
@@ -119,16 +119,17 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 	String* modelFile = nullptr;
 	if (jEntityRoot["file"].isNull() == false) {
 		auto modelFileString = new String(StringConverter::toWideString(jEntityRoot["file"].getString()));
-		modelFile = _FileSystem::getInstance()->getCanonicalPath(
-			_FileSystem::getInstance()->getPathName(modelFileString)->startsWith(u"/"_j) == true?
-				_FileSystem::getInstance()->getPathName(modelFileString):
+		modelFile = new String(_FileSystem::getInstance()->getCanonicalPath(
+			(new String(_FileSystem::getInstance()->getPathName(modelFileString->getCPPWString())))->startsWith(u"/"_j) == true?
+				_FileSystem::getInstance()->getPathName(modelFileString->getCPPWString()):
 				::java::lang::StringBuilder().
 				 	 append(pathName)->
 					 append(u"/"_j)->
-					 append(_FileSystem::getInstance()->getPathName(modelFileString))->
-					 toString(),
-			_FileSystem::getInstance()->getFileName(modelFileString)
-		);
+					 append(_FileSystem::getInstance()->getPathName(modelFileString->getCPPWString()))->
+					 toString()->
+					 getCPPWString(),
+			_FileSystem::getInstance()->getFileName(modelFileString->getCPPWString())
+		));
 	}
 	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? new String(StringConverter::toWideString(jEntityRoot["thumbnail"].getString())) : nullptr;
 	auto name = new String(StringConverter::toWideString(jEntityRoot["name"].getString()));
@@ -145,10 +146,16 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 				 toString();
 		auto modelFile = Tools::getFileName(modelRelativeFileName);
 		if (modelRelativeFileName->toLowerCase()->endsWith(u".dae"_j)) {
-			model = DAEReader::read(modelPath, modelFile);
+			model = DAEReader::read(
+				modelPath->getCPPWString(),
+				modelFile->getCPPWString()
+			);
 		} else
 		if (modelRelativeFileName->toLowerCase()->endsWith(u".tm"_j)) {
-			model = TMReader::read(modelPath, modelFile);
+			model = TMReader::read(
+				modelPath->getCPPWString(),
+				modelFile->getCPPWString()
+			);
 		} else {
 			throw new ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile->getCPPWString()));
 		}
@@ -158,7 +165,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
-		model = DAEReader::read(u"resources/tools/leveleditor/models"_j, u"arrow.dae"_j);
+		model = DAEReader::read(L"resources/tools/leveleditor/models", L"arrow.dae");
 	}
 
 	levelEditorEntity = new LevelEditorEntity(
@@ -167,7 +174,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, String*
 		name,
 		description,
 		nullptr,
-		modelFile != nullptr ? _FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : nullptr,
+		modelFile != nullptr ? new String(_FileSystem::getInstance()->getCanonicalPath(gameRoot->getCPPWString(), modelRelativeFileName->getCPPWString())) : nullptr,
 		modelThumbnail,
 		model,
 		pivot

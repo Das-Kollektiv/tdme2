@@ -128,7 +128,7 @@ String* SharedParticleSystemView::getFileName()
 	if (particleSystemFile == nullptr)
 		return u""_j;
 
-	return _FileSystem::getInstance()->getFileName(particleSystemFile);
+	return new String(_FileSystem::getInstance()->getFileName(particleSystemFile->getCPPWString()));
 }
 
 void SharedParticleSystemView::loadFile(String* pathName, String* fileName)
@@ -180,7 +180,7 @@ void SharedParticleSystemView::display()
 void SharedParticleSystemView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName() != nullptr ? _FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()))->toString());
+		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName() != nullptr ? new String(_FileSystem::getInstance()->getFileName(entity->getEntityFileName()->getCPPWString())) : entity->getName()))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity, nullptr);
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -202,7 +202,7 @@ void SharedParticleSystemView::loadSettings()
 	try {
 		Object* tmp = nullptr;
 		auto settings = new Properties();
-		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"particlesystem.properties"_j));
+		settings->load(L"settings", L"particlesystem.properties");
 		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
@@ -268,8 +268,7 @@ void SharedParticleSystemView::storeSettings()
 		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
 		settings->put(u"particlesystem.path"_j, particleSystemScreenController->getParticleSystemPath()->getPath());
 		settings->put(u"model.path"_j, particleSystemScreenController->getModelPath()->getPath());
-		auto settingsStringArray = settings->storeToStringArray();
-		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"particlesystem.properties"_j, settingsStringArray);
+		settings->store(L"settings", L"particlesystem.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
 		_Console::println(string(exception.what()));
@@ -298,8 +297,8 @@ void SharedParticleSystemView::loadParticleSystem()
 		entity = loadParticleSystem(
 			particleSystemFile,
 			u""_j,
-			_FileSystem::getInstance()->getPathName(particleSystemFile),
-			_FileSystem::getInstance()->getFileName(particleSystemFile)
+			new String(_FileSystem::getInstance()->getPathName(particleSystemFile->getCPPWString())),
+			new String(_FileSystem::getInstance()->getFileName(particleSystemFile->getCPPWString()))
 		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (_Exception& exception) {

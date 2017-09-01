@@ -6,15 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
-#include <java/lang/String.h>
-#include <java/lang/Float.h>
-#include <java/lang/Integer.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/StringTokenizer.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -30,24 +21,21 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemException.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Float.h>
+#include <tdme/utils/Integer.h>
+#include <tdme/utils/StringUtils.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
 
 using std::array;
 using std::map;
-using std::string;
 using std::vector;
+using std::string;
+using std::to_wstring;
 
 using tdme::engine::fileio::models::WFObjReader;
-using java::io::BufferedReader;
-using java::io::DataInputStream;
-using java::io::File;
-using java::io::InputStreamReader;
-using java::lang::Float;
-using java::lang::Integer;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::StringTokenizer;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -63,26 +51,10 @@ using tdme::math::Vector3;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemException;
 using tdme::os::_FileSystemInterface;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
+using tdme::utils::Integer;
+using tdme::utils::Float;
+using tdme::utils::StringUtils;
+using tdme::utils::StringTokenizer;
 
 namespace
 {
@@ -101,22 +73,17 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
+Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	auto model = new Model(
-		::java::lang::StringBuilder().
-		 	 append(pathName)->
-			 append(u"/"_j)->
-			 append(fileName)->
-			 toString()->
-			 getCPPWString(),
-		fileName->getCPPWString(),
+		pathName + L"/" + fileName,
+		fileName,
 		Model_UpVector::Y_UP,
 		RotationOrder::XYZ,
 		nullptr
 	);
-	vector<Vector3*> vertices;
-	vector<TextureCoordinate*> textureCoordinates;
+	vector<Vector3> vertices;
+	vector<TextureCoordinate> textureCoordinates;
 	map<wstring, Material*> materials;
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
@@ -129,73 +96,72 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	vector<TextureCoordinate> groupTextureCoordinates;
 	vector<FacesEntity> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
-	StringArray* lines = nullptr;
 	{
 		auto finally0 = finally([&] {
-			if (lines != nullptr) delete lines;
+			// finally block
 		});
 		{
-			lines = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
-			String* line;
-			for (int lineIdx = 0; lineIdx < lines->length; lineIdx++) {
-				line = lines->get(lineIdx)->trim();
-				if (line->startsWith(u"#"_j)) {
+			StringTokenizer t;
+			StringTokenizer t2;
+			vector<wstring> lines;
+			_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+			wstring line;
+			for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
+				line = StringUtils::trim(lines[lineIdx]);
+				if (StringUtils::startsWith(line, L"#")) {
 					continue;
 				}
-				auto commandEndIdx = line->indexOf(static_cast< int32_t >(u' '));
-				if (commandEndIdx == -1)
-					commandEndIdx = line->length();
-
-				auto command = line->substring(0, commandEndIdx)->trim()->toLowerCase();
-				auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
-				if (command->equals(u"mtllib"_j)) {
+				auto commandEndIdx = line.find(L' ');
+				if (commandEndIdx == -1) commandEndIdx = line.size();
+				auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
+				auto arguments = command.size() + 1 > line.length() ? L"" : StringUtils::substring(line, command.length() + 1);
+				if (command == L"mtllib") {
 					auto materialFileName = arguments;
-					WFObjReader::readMaterials(pathName, materialFileName, materials);
+					WFObjReader::readMaterials(pathName, materialFileName, &materials);
 				} else
-				if (command->equals(u"v"_j)) {
-					auto t = new StringTokenizer(arguments, u" "_j);
-					auto x = Float::parseFloat(t->nextToken());
-					auto y = Float::parseFloat(t->nextToken());
-					auto z = Float::parseFloat(t->nextToken());
+				if (command == L"v") {
+					t.tokenize(arguments, L" ");
+					auto x = Float::parseFloat(t.nextToken());
+					auto y = Float::parseFloat(t.nextToken());
+					auto z = Float::parseFloat(t.nextToken());
 					vertices.push_back(new Vector3(x, y, z));
 				} else
-				if (command->equals(u"vt"_j)) {
-					auto t = new StringTokenizer(arguments, u" "_j);
-					auto u = Float::parseFloat(t->nextToken());
-					auto v = Float::parseFloat(t->nextToken());
-					textureCoordinates.push_back(new TextureCoordinate(u, v));
+				if (command == L"vt") {
+					t.tokenize(arguments, L" ");
+					auto u = Float::parseFloat(t.nextToken());
+					auto v = Float::parseFloat(t.nextToken());
+					textureCoordinates.push_back(TextureCoordinate(u, v));
 				} else
-				if (command->equals(u"f"_j)) {
-					StringTokenizer* t2;
-					auto t = new StringTokenizer(arguments, u" "_j);
+				if (command == L"f") {
+					t.tokenize(arguments, L" ");
 					auto v0 = -1;
 					auto v1 = -1;
 					auto v2 = -1;
 					auto vt0 = -1;
 					auto vt1 = -1;
 					auto vt2 = -1;
-					t2 = new StringTokenizer(t->nextToken(), u"/"_j);
-					v0 = Integer::parseInt(t2->nextToken()) - 1;
-					if (t2->hasMoreTokens()) {
-						vt0 = Integer::parseInt(t2->nextToken()) - 1;
+					t2.tokenize(t.nextToken(), L"/");
+					v0 = Integer::parseInt(t2.nextToken()) - 1;
+					if (t2.hasMoreTokens()) {
+						vt0 = Integer::parseInt(t2.nextToken()) - 1;
 					}
-					t2 = new StringTokenizer(t->nextToken(), u"/"_j);
-					v1 = Integer::parseInt(t2->nextToken()) - 1;
-					if (t2->hasMoreTokens()) {
-						vt1 = Integer::parseInt(t2->nextToken()) - 1;
+					t2.tokenize(t.nextToken(), L"/");
+					v1 = Integer::parseInt(t2.nextToken()) - 1;
+					if (t2.hasMoreTokens()) {
+						vt1 = Integer::parseInt(t2.nextToken()) - 1;
 					}
-					t2 = new StringTokenizer(t->nextToken(), u"/"_j);
-					v2 = Integer::parseInt(t2->nextToken()) - 1;
-					if (t2->hasMoreTokens()) {
-						vt2 = Integer::parseInt(t2->nextToken()) - 1;
+					t2.tokenize(t.nextToken(), L"/");
+					v2 = Integer::parseInt(t2.nextToken()) - 1;
+					if (t2.hasMoreTokens()) {
+						vt2 = Integer::parseInt(t2.nextToken()) - 1;
 					}
-					if (t->hasMoreTokens()) {
+					if (t.hasMoreTokens()) {
 						throw ModelFileIOException("We only support triangulated meshes");
 					}
 					{
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v0);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
-							groupVertices.push_back(vertices.at(v0)->clone());
+							groupVertices.push_back(vertices.at(v0));
 							v0 = groupVertices.size() - 1;
 						} else {
 							v0 = mappedVertexIt->second;
@@ -204,7 +170,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					{
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v1);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
-							groupVertices.push_back(vertices.at(v1)->clone());
+							groupVertices.push_back(vertices.at(v1));
 							v1 = groupVertices.size() - 1;
 						} else {
 							v1 = mappedVertexIt->second;
@@ -213,7 +179,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					{
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v2);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
-							groupVertices.push_back(vertices.at(v2)->clone());
+							groupVertices.push_back(vertices.at(v2));
 							v2 = groupVertices.size() - 1;
 						} else {
 							v2 = mappedVertexIt->second;
@@ -222,7 +188,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					{
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt0);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
-							groupTextureCoordinates.push_back(textureCoordinates.at(vt0)->clone());
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt0));
 							vt0 = groupTextureCoordinates.size() - 1;
 						} else {
 							vt0 = mappedTextureCoordinateIt->second;
@@ -231,7 +197,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					{
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt1);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
-							groupTextureCoordinates.push_back(textureCoordinates.at(vt1)->clone());
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt1));
 							vt1 = groupTextureCoordinates.size() - 1;
 						} else {
 							vt1 = mappedTextureCoordinateIt->second;
@@ -240,7 +206,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					{
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt2);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
-							groupTextureCoordinates.push_back(textureCoordinates.at(vt2)->clone());
+							groupTextureCoordinates.push_back(textureCoordinates.at(vt2));
 							vt2 = groupTextureCoordinates.size() - 1;
 						} else {
 							vt2 = mappedTextureCoordinateIt->second;
@@ -263,7 +229,7 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 					}
 					groupFacesEntityFaces.push_back(face);
 				} else
-				if (command->equals(u"g"_j)) {
+				if (command == L"g") {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
@@ -275,30 +241,33 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 						group->setFacesEntities(&groupFacesEntities);
 						group->determineFeatures();
 					}
-					auto t = new StringTokenizer(arguments, u" "_j);
-					auto name = t->nextToken();
+					t.tokenize(arguments, L" ");
+					auto name = t.nextToken();
 					groupVertices.clear();
 					groupNormals.clear();
 					groupTextureCoordinates.clear();
 					groupFacesEntityFaces.clear();
-					group = new Group(model, nullptr, name->getCPPWString(), name->getCPPWString());
-					groupFacesEntity = new FacesEntity(group, name->getCPPWString());
+					group = new Group(model, nullptr, name, name);
+					groupFacesEntity = new FacesEntity(group, name);
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();
 					modelGroupTextureCoordinatesMapping.clear();
-					(*subGroups)[name->getCPPWString()] = group;
-					(*groups)[name->getCPPWString()] = group;
+					(*subGroups)[name] = group;
+					(*groups)[name] = group;
 				} else
-				if (command->equals(u"usemtl"_j)) {
+				if (command == L"usemtl") {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
-						groupFacesEntity = new FacesEntity(group, ::java::lang::StringBuilder().append(u"#"_j)->append((int32_t)groupFacesEntities.size())->toString()->getCPPWString());
+						groupFacesEntity = new FacesEntity(
+							group,
+							L"#" + to_wstring(groupFacesEntities.size())
+						);
 						groupFacesEntityFaces.clear();
 					}
-					auto materialIt = materials.find(arguments->getCPPWString());
+					auto materialIt = materials.find(arguments);
 					if (materialIt != materials.end()) {
 						Material* material = materialIt->second;
 						(*group->getModel()->getMaterials())[material->getId()] = material;
@@ -327,65 +296,65 @@ Model* WFObjReader::read(String* pathName, String* fileName) throw (_FileSystemE
 	return model;
 }
 
-void WFObjReader::readMaterials(String* pathName, String* fileName, map<wstring, Material*>& materials) throw (_FileSystemException, ModelFileIOException)
+void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (_FileSystemException, ModelFileIOException)
 {
 	Material* current = nullptr;
-	String* line;
 	auto alpha = 1.0f;
-	StringArray* lines = nullptr;
 	{
 		auto finally0 = finally([&] {
-			if (lines != nullptr) delete lines;
+			// finally block
 		});
-		lines = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
-		String* line;
-		for (int lineIdx = 0; lineIdx < lines->length; lineIdx++) {
-			line = lines->get(lineIdx)->trim();
-			if (line->startsWith(u"#"_j)) {
+		StringTokenizer t;
+		vector<wstring> lines;
+		_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+		for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
+			auto line = StringUtils::trim(lines[lineIdx]);
+			if (StringUtils::startsWith(line, L"#") == true) {
 				continue;
 			}
-			auto commandEndIdx = line->indexOf(static_cast< int32_t >(u' '));
-			if (commandEndIdx == -1)
-				commandEndIdx = line->length();
-
-			auto command = line->substring(0, commandEndIdx)->trim()->toLowerCase();
-			auto arguments = command->length() + 1 > line->length() ? u""_j : line->substring(command->length() + 1);
-			if (command->equals(u"newmtl"_j)) {
+			auto commandEndIdx = line.find(L' ');
+			if (commandEndIdx == -1) commandEndIdx = line.length();
+			auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
+			auto arguments = command.length() + 1 > line.length() ? L"" : StringUtils::substring(line, command.length() + 1);
+			if (command == L"newmtl") {
 				auto name = arguments;
-				current = new Material(name->getCPPWString());
-				materials[name->getCPPWString()] = current;
+				current = new Material(name);
+				(*materials)[name] = current;
 			} else
-			if (command->equals(u"map_ka"_j)) {
-				current->setDiffuseTexture(pathName->getCPPWString(), arguments->getCPPWString());
+			if (command == L"map_ka") {
+				current->setDiffuseTexture(pathName, arguments);
 			} else
-			if (command->equals(u"map_kd"_j)) {
-				current->setDiffuseTexture(pathName->getCPPWString(), arguments->getCPPWString());
+			if (command == L"map_kd") {
+				current->setDiffuseTexture(pathName, arguments);
 			} else
-			if (command->equals(u"ka"_j)) {
-				auto t = new StringTokenizer(arguments, u" "_j);
-				current->getAmbientColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			if (command == L"ka") {
+				t.tokenize(arguments, L" ");
+				float r = Float::parseFloat(t.nextToken());
+				float g = Float::parseFloat(t.nextToken());
+				float b = Float::parseFloat(t.nextToken());
+				current->getAmbientColor()->set(r, g, b, alpha);
 			} else
-			if (command->equals(u"kd"_j)) {
-				auto t = new StringTokenizer(arguments, u" "_j);
-				current->getDiffuseColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			if (command == L"kd") {
+				t.tokenize(arguments, L" ");
+				float r = Float::parseFloat(t.nextToken());
+				float g = Float::parseFloat(t.nextToken());
+				float b = Float::parseFloat(t.nextToken());
+				current->getDiffuseColor()->set(r, g, b, alpha);
 			} else
-			if (command->equals(u"ks"_j)) {
-				auto t = new StringTokenizer(arguments, u" "_j);
-				current->getSpecularColor()->set(Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), Float::parseFloat(t->nextToken()), alpha);
+			if (command == L"ks") {
+				t.tokenize(arguments, L" ");
+				float r = Float::parseFloat(t.nextToken());
+				float g = Float::parseFloat(t.nextToken());
+				float b = Float::parseFloat(t.nextToken());
+				current->getSpecularColor()->set(r, g, b, alpha);
 			} else
-			if (command->equals(u"tr"_j)) {
+			if (command == L"tr") {
 				alpha = Float::parseFloat(arguments);
-				current->getAmbientColor()->setAlpha(alpha);
 				current->getDiffuseColor()->setAlpha(alpha);
-				current->getSpecularColor()->setAlpha(alpha);
-				current->getEmissionColor()->setAlpha(alpha);
 			} else
-			if (command->equals(u"d"_j)) {
+			if (command == L"d") {
 				alpha = Float::parseFloat(arguments);
-				current->getAmbientColor()->setAlpha(alpha);
 				current->getDiffuseColor()->setAlpha(alpha);
-				current->getSpecularColor()->setAlpha(alpha);
-				current->getEmissionColor()->setAlpha(alpha);
 			}
 		}
 	}

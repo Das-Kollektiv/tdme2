@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Cloneable.h>
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/util/Iterator.h>
@@ -65,40 +63,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_Exception;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::Cloneable, ObjectArray > CloneableArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::Face, ::java::lang::ObjectArray > FaceArray;
-typedef ::SubArray< ::tdme::engine::model::FacesEntity, ::java::lang::ObjectArray > FacesEntityArray;
-typedef ::SubArray< ::tdme::engine::model::Joint, ::java::lang::ObjectArray > JointArray;
-typedef ::SubArray< ::tdme::engine::model::JointWeight, ::java::lang::ObjectArray > JointWeightArray;
-typedef ::SubArray< ::tdme::engine::model::TextureCoordinate, ::java::lang::ObjectArray > TextureCoordinateArray;
-}  // namespace model
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Matrix4x4, ::java::lang::ObjectArray > Matrix4x4Array;
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-
-namespace engine {
-namespace model {
-typedef ::SubArray< ::tdme::engine::model::JointWeightArray, ::java::lang::CloneableArray, ::java::io::SerializableArray > JointWeightArrayArray;
-}  // namespace model
-}  // namespace engine
-}  // namespace tdme
-
 namespace
 {
 template<typename F>
@@ -116,7 +80,7 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
+void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	TMWriterOutputStream* os = nullptr;
 	auto finally0 = finally([&] {
@@ -141,7 +105,7 @@ void TMWriter::write(Model* model, String* pathName, String* fileName) throw (_F
 		Material* material = it.second;
 		writeMaterial(os, material);
 	}
-	_FileSystem::getInstance()->setContent(pathName, fileName, os->getData(), os->getPosition());
+	_FileSystem::getInstance()->setContent(pathName, fileName, os->getData());
 	writeSubGroups(os, model->getSubGroups());
 }
 

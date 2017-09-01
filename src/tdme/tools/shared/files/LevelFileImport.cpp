@@ -79,11 +79,11 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 
 void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	auto jsonContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto jsonContent = _FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString());
 
 	Value jRoot;
 	jRoot.loadFromString(
-		StringConverter::toString(jsonContent->getCPPWString())
+		StringConverter::toString(jsonContent)
 	);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));

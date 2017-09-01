@@ -2,75 +2,41 @@
 
 #pragma once
 
-#include <Array.h>
+#include <string>
+#include <vector>
+
 #include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
-#include <java/lang/Object.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/fwd-tdme.h>
 
-using java::lang::Object;
+using std::wstring;
+using std::vector;
+
 using tdme::os::_FileSystemInterface;
-using java::io::FilenameFilter;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::String;
+using tdme::utils::FilenameFilter;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
-
-struct default_init_tag;
 class tdme::os::_StandardFileSystem final
-	: public virtual Object
-	, public _FileSystemInterface
+	: public _FileSystemInterface
 {
 
 public:
-	typedef Object super;
-	String* getFileName(String* path, String* fileName) throw (_FileSystemException) override;
-	StringArray* list(String* pathName, FilenameFilter* filter) throw (_FileSystemException) override;
-	bool isPath(String* pathName) throw (_FileSystemException) override;
-	bool fileExists(String* fileName) throw (_FileSystemException) override;
-	String* getContentAsString(String* pathName, String* fileName) throw (_FileSystemException) override;
-	void setContentFromString(String* pathName, String* fileName, String* string) throw (_FileSystemException) override;
-	int8_tArray* getContent(String* pathName, String* fileName) throw (_FileSystemException) override;
-	void setContent(String* pathName, String* fileName, int8_tArray* data, int32_t size = -1) throw (_FileSystemException) override;
-	StringArray* getContentAsStringArray(String* pathName, String* fileName) throw (_FileSystemException) override;
-	void setContentFromStringArray(String* pathName, String* fileName, StringArray* stringArray) throw (_FileSystemException) override;
-	String* getCanonicalPath(String* pathName, String* fileName) throw (_FileSystemException) override;
-	String* getCurrentWorkingPathName() throw (_FileSystemException) override;
-	String* getPathName(String* fileName) throw (_FileSystemException) override;
-	String* getFileName(String* fileName) throw (_FileSystemException) override;
-	void createPath(String* pathName) throw (_FileSystemException) override;
-	void removePath(String* pathName) throw (_FileSystemException) override;
-	void removeFile(String* pathName, String* fileName) throw (_FileSystemException) override;
-
-	// Generated
+	const wstring getFileName(const wstring& path, const wstring& fileName) throw (_FileSystemException) override;
+	void list(const wstring& pathName, vector<wstring>* files, FilenameFilter* filter = nullptr) throw (_FileSystemException) override;
+	bool isPath(const wstring& pathName) throw (_FileSystemException) override;
+	bool fileExists(const wstring& fileName) throw (_FileSystemException) override;
+	const wstring getContentAsString(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) override;
+	void setContentFromString(const wstring& pathName, const wstring& fileName, const wstring& content) throw (_FileSystemException) override;
+	void getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (_FileSystemException) override;
+	void setContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (_FileSystemException) override;
+	void getContentAsStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (_FileSystemException) override;
+	void setContentFromStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (_FileSystemException) override;
+	const wstring getCanonicalPath(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) override;
+	const wstring getCurrentWorkingPathName() throw (_FileSystemException) override;
+	const wstring getPathName(const wstring& fileName) throw (_FileSystemException) override;
+	const wstring getFileName(const wstring& fileName) throw (_FileSystemException) override;
+	void createPath(const wstring& pathName) throw (_FileSystemException) override;
+	void removePath(const wstring& pathName) throw (_FileSystemException) override;
+	void removeFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) override;
 	_StandardFileSystem();
-protected:
-	_StandardFileSystem(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

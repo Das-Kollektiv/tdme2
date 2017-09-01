@@ -75,10 +75,16 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(String* 
 {
 	this->modelFileName = modelFileName;
 	if (modelFileName->toLowerCase()->endsWith(u".tm"_j)) {
-		model = TMReader::read(Tools::getPath(modelFileName), Tools::getFileName(modelFileName));
+		model = TMReader::read(
+			Tools::getPath(modelFileName)->getCPPWString(),
+			Tools::getFileName(modelFileName)->getCPPWString()
+		);
 	} else
 	if (modelFileName->toLowerCase()->endsWith(u".dae"_j)) {
-		model = DAEReader::read(Tools::getPath(modelFileName), Tools::getFileName(modelFileName));
+		model = DAEReader::read(
+			Tools::getPath(modelFileName)->getCPPWString(),
+			Tools::getFileName(modelFileName)->getCPPWString()
+		);
 	} else {
 		throw new _ExceptionBase(
 			string("LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '") +

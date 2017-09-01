@@ -12,6 +12,7 @@
 
 #include <tdme/utils/_HashMap.h>
 #include <tdme/utils/_HashMap_KeysIterator.h>
+#include <tdme/utils/StringUtils.h>
 
 using java::util::Properties;
 using java::lang::String;
@@ -20,6 +21,7 @@ using java::lang::ClassCastException;
 
 using tdme::utils::_HashMap;
 using tdme::utils::_HashMap_KeysIterator;
+using tdme::utils::StringUtils;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace java {
@@ -108,16 +110,17 @@ void Properties::load(InputStream* arg0)
 	unimplemented_(u"void Properties::load(InputStream* arg0)");
 }
 
-void Properties::load(StringArray* arg0)
+void Properties::load(const wstring& pathName, const wstring& fileName) throw (_FileSystemException)
 {
-	if (arg0 == nullptr) return;
-	for (int i = 0; i < arg0->length; i++) {
-		String* line = arg0->get(i)->trim();
-		if (line->length() == 0 || line->startsWith(u"#"_j)) continue;
-		int separatorPos = line->indexOf('=');
+	vector<wstring> lines;
+	_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+	for (int i = 0; i < lines.size(); i++) {
+		wstring line = StringUtils::trim(lines.at(i));
+		if (line.length() == 0 || StringUtils::startsWith(line, L"#")) continue;
+		int separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;
-		String* key = line->substring(0, separatorPos);
-		String* value = line->substring(0, separatorPos);
+		String* key = new String(StringUtils::substring(line, 0, separatorPos));
+		String* value = new String(StringUtils::substring(line, 0, separatorPos));
 		properties->put(key, value);
 	}
 }
@@ -157,15 +160,16 @@ void Properties::store(OutputStream* arg0, String* arg1)
 	unimplemented_(u"void Properties::store(OutputStream* arg0, String* arg1)");
 }
 
-StringArray* Properties::storeToStringArray() {
-	StringArray* result = new StringArray(properties->size());
+void Properties::store(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
+	vector<wstring> result;
 	int32_t idx = 0;
 	for (auto _i = properties->getKeysIterator()->iterator(); _i->hasNext(); ) {
-		String* key = java_cast< String* >(_i->next());
-		String* value = java_cast< String* >(properties->get(key));
-		result->set(idx++, new String(key->getCPPWString() + L"=" + key->getCPPWString()));
+		String* keyString = java_cast< String* >(_i->next());
+		wstring key = keyString->getCPPWString();
+		wstring value = (java_cast< String* >(properties->get(keyString)))->getCPPWString();
+		result.push_back(key + L"=" + value);
 	}
-	return result;
+	_FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, &result);
 }
 
 /* private: void Properties::store0(BufferedWriter* arg0, String* arg1, bool arg2) */

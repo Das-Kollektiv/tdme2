@@ -72,7 +72,10 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
-		auto model = DAEReader::read(pathName, fileName);
+		auto model = DAEReader::read(
+			pathName->getCPPWString(),
+			fileName->getCPPWString()
+		);
 		levelEditorEntity = new LevelEditorEntity(
 			id == ID_ALLOCATE ? allocateEntityId() : id,
 			LevelEditorEntity_EntityType::MODEL,
@@ -97,7 +100,10 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, String* name, 
 		);
 	} else
 	if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
-		auto model = TMReader::read(pathName, fileName);
+		auto model = TMReader::read(
+			pathName->getCPPWString(),
+			fileName->getCPPWString()
+		);
 		levelEditorEntity = new LevelEditorEntity(
 			id == ID_ALLOCATE ? allocateEntityId() : id,
 			LevelEditorEntity_EntityType::MODEL,
@@ -173,7 +179,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, String* name, 
 {
 	auto cacheId = u"leveleditor.empty"_j;
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	auto model = DAEReader::read(u"resources/tools/leveleditor/models"_j, u"arrow.dae"_j);
+	auto model = DAEReader::read(L"resources/tools/leveleditor/models", L"arrow.dae");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::EMPTY,

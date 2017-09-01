@@ -3,15 +3,16 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
-#include <Array.h>
 
 #include <tdme/os/_FileSystemException.h>
 
 #include <ext/libpng/png.h>
 
+using std::vector;
 using std::wstring;
 
 using tdme::engine::fileio::textures::Texture;
@@ -34,7 +35,7 @@ public:
 	 * @author Andreas Drewke
 	 * @version $Id$
 	 */
-	PNGInputStream(int8_tArray* data) {
+	PNGInputStream(vector<uint8_t>* data) {
 		this->offset = 0;
 		this->data = data;
 	}
@@ -43,7 +44,6 @@ public:
 	 * Destructor
 	 */
 	~PNGInputStream() {
-		delete this->data;
 	}
 
 	/**
@@ -52,14 +52,14 @@ public:
 	 * @param out bytes to read
 	 */
 	void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
-		for (int32_t i = 0; i < outBytesToRead && offset < data->length; i++) {
-			outBytes[i] = data->get(offset++);
+		for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
+			outBytes[i] = (*data)[offset++];
 		}
 	}
 
 private:
 	int32_t offset;
-	int8_tArray* data;
+	vector<uint8_t>* data;
 
 };
 

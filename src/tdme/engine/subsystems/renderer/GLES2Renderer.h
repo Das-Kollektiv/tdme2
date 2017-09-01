@@ -49,7 +49,7 @@ public:
 	 */
 	bool isDisplacementMappingAvailable() override;
 	int32_t getTextureUnits() override;
-	int32_t loadShader(int32_t type, String* pathName, String* fileName) override;
+	int32_t loadShader(int32_t type, const wstring& pathName, const wstring& fileName) override;
 	void useProgram(int32_t programId) override;
 	int32_t createProgram() override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;

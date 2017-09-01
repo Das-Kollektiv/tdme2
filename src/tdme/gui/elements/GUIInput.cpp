@@ -31,7 +31,7 @@ String* GUIInput::NAME;
 void GUIInput::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"input.xml"_j));
+	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml"));
 }
 
 String* GUIInput::getName()

@@ -4,8 +4,11 @@
 
 namespace tdme {
 namespace utils {
+		class Float;
+		class Integer;
 		class Key;
 		class MutableString;
+		class FilenameFilter;
 		class StringConverter;
 		class StringTokenizer;
 		class StringUtils;

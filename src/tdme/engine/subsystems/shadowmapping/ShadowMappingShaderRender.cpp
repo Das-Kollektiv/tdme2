@@ -31,13 +31,19 @@ bool ShadowMappingShaderRender::isInitialized()
 void ShadowMappingShaderRender::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	renderVertexShaderGlId = renderer->loadShader(renderer->SHADER_VERTEX_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/shadowmapping"_j)->toString(), u"render_vertexshader.c"_j);
+	renderVertexShaderGlId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"render_vertexshader.c"
+	);
 	if (renderVertexShaderGlId == 0)
 		return;
 
-	renderFragmentShaderGlId = renderer->loadShader(renderer->SHADER_FRAGMENT_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/shadowmapping"_j)->toString(), u"render_fragmentshader.c"_j);
+	renderFragmentShaderGlId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"render_fragmentshader.c"
+	);
 	if (renderFragmentShaderGlId == 0)
 		return;
 

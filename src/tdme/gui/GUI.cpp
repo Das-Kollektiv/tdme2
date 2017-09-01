@@ -182,12 +182,12 @@ vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 GUIFont* GUI::getFont(String* fileName)
 {
 	clinit();
-	String* canonicalFile = nullptr;
-	String* path = nullptr;
-	String* file = nullptr;
+	wstring canonicalFile;
+	wstring path;
+	wstring file;
 	GUIFont* font;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName->getCPPWString());
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
@@ -196,17 +196,17 @@ GUIFont* GUI::getFont(String* fileName)
 		return nullptr;
 	}
 
-	auto fontCacheIt = fontCache.find(canonicalFile->getCPPWString());
+	auto fontCacheIt = fontCache.find(canonicalFile);
 	if (fontCacheIt == fontCache.end()) {
 		try {
-			font = GUIFont::parse(path, file);
+			font = GUIFont::parse(new String(path), new String(file));
 		} catch (_Exception& exception) {
 			_Console::print(string("GUI::getFont(): An error occurred: "));
 			_Console::println(string(exception.what()));
 			return nullptr;
 		}
 
-		fontCache.emplace(canonicalFile->getCPPWString(), font);
+		fontCache[canonicalFile] = font;
 	}
 	else {
 		font = fontCacheIt->second;
@@ -218,11 +218,11 @@ Texture* GUI::getImage(String* fileName)
 {
 	clinit();
 	// TODO: fix me, proper get path, filename
-	String* canonicalFile = nullptr;
-	String* path = nullptr;
-	String* file = nullptr;
+	wstring canonicalFile;
+	wstring path;
+	wstring file;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(u"."_j, fileName);
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName->getCPPWString());
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
@@ -231,17 +231,17 @@ Texture* GUI::getImage(String* fileName)
 		return nullptr;
 	}
 
-	auto imageIt = imageCache.find(canonicalFile->getCPPWString());
+	auto imageIt = imageCache.find(canonicalFile);
 	auto image = imageIt != imageCache.end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureLoader::loadTexture(path->getCPPWString(), file->getCPPWString());
+			image = TextureLoader::loadTexture(path, file);
 		} catch (_Exception& exception) {
 			_Console::print(string("GUI::getImage(): An error occurred: "));
 			_Console::println(string(exception.what()));
 			return nullptr;
 		}
-		imageCache[canonicalFile->getCPPWString()] = image;
+		imageCache[canonicalFile] = image;
 	}
 	return image;
 }

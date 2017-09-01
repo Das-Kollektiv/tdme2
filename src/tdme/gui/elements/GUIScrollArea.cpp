@@ -33,7 +33,7 @@ String* GUIScrollArea::NAME;
 void GUIScrollArea::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"scrollarea.xml"_j));
+	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml"));
 }
 
 String* GUIScrollArea::getName()

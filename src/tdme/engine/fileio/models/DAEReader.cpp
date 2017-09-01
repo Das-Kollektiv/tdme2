@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
@@ -159,11 +158,11 @@ float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
 
 float DAEReader::BLENDER_DIFFUSE_SCALE = 0.8f;
 
-Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
+Model* DAEReader::read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException)
 {
-	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
+	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
 		throw ModelFileIOException(
 			string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
@@ -185,8 +184,8 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 
 	String* tmpString = nullptr;
 	auto model = new Model(
-		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName)->getCPPWString(),
-		fileName->getCPPWString(),
+		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
+		fileName,
 		upVector,
 		rotationOrder,
 		nullptr
@@ -233,7 +232,7 @@ Model* DAEReader::read(String* pathName, String* fileName) throw (ModelFileIOExc
 	return model;
 }
 
-LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException)
+LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException)
 {
 	String* tmpString = nullptr;
 
@@ -243,7 +242,8 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 			append(u"/"_j)->
 			append(fileName)->
 			append(u"-models"_j)->
-			toString();
+			toString()->
+			getCPPWString();
 	if (_FileSystem::getInstance()->fileExists(modelPathName)) {
 		_FileSystem::getInstance()->removePath(modelPathName);
 	}
@@ -252,9 +252,9 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 	);
 
 	auto levelEditorLevel = new LevelEditorLevel();
-	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
+	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
 		throw ModelFileIOException(
 			string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
@@ -344,7 +344,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 				}
 				// FIXME: use canonical path
 				auto model = new Model(
-					modelPathName->getCPPWString(),
+					modelPathName,
 					::java::lang::StringBuilder().
 					 append(fileName)->
 					 append(u'-')->
@@ -437,14 +437,14 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 						TMWriter::write(
 							model,
 							modelPathName,
-							modelFileName
+							modelFileName->getCPPWString()
 						  );
 						levelEditorEntity = entityLibrary->addModel(
 							nodeIdx++,
 							modelName,
 							modelName,
-							modelPathName,
-							modelFileName,
+							new String(modelPathName),
+							new String(modelFileName),
 							new Vector3()
 						);
 					}
@@ -476,7 +476,7 @@ LevelEditorLevel* DAEReader::readLevel(String* pathName, String* fileName) throw
 		}
 	}
 	LevelFileExport::export_(
-		pathName,
+		new String(pathName),
 		::java::lang::StringBuilder().
 			 append(fileName)->
 			 append(u".tl"_j)->
@@ -553,7 +553,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	}
 }
 
-Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	if (xmlInstanceControllers.empty() == false) {
@@ -563,7 +563,7 @@ Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, St
 	}
 }
 
-Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
+Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
 {
 	String* tmpString = nullptr;
 
@@ -745,7 +745,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, String* pathN
 	return group;
 }
 
-Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
+Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
 {
 	String* tmpString = nullptr;
 
@@ -928,7 +928,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	return group;
 }
 
-void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException)
+void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException)
 {
 	StringTokenizer* t;
 	String* tmpString = nullptr;
@@ -1159,7 +1159,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, String* pat
 	group->determineFeatures();
 }
 
-Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId)
+Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId)
 {
 	String* tmpString = nullptr;
 	String* xmlEffectId = nullptr;
@@ -1333,7 +1333,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlDiffuseTextureFilename = getTextureFileNameById(xmlRoot, xmlDiffuseTextureId);
 		if (xmlDiffuseTextureFilename != nullptr) {
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
-			material->setDiffuseTexture(pathName->getCPPWString(), xmlDiffuseTextureFilename->getCPPWString());
+			material->setDiffuseTexture(pathName, xmlDiffuseTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1342,7 +1342,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlSpecularTextureFilename = getTextureFileNameById(xmlRoot, xmlSpecularTextureId);
 		if (xmlSpecularTextureFilename != nullptr) {
 			xmlSpecularTextureFilename = makeFileNameRelative(xmlSpecularTextureFilename);
-			material->setSpecularTexture(pathName->getCPPWString(), xmlSpecularTextureFilename->getCPPWString());
+			material->setSpecularTexture(pathName, xmlSpecularTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1351,7 +1351,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlBumpTextureFilename = getTextureFileNameById(xmlRoot, xmlBumpTextureId);
 		if (xmlBumpTextureFilename != nullptr) {
 			xmlBumpTextureFilename = makeFileNameRelative(xmlBumpTextureFilename);
-			material->setNormalTexture(pathName->getCPPWString(), xmlBumpTextureFilename->getCPPWString());
+			material->setNormalTexture(pathName, xmlBumpTextureFilename->getCPPWString());
 		}
 	}
 
@@ -1363,7 +1363,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 		xmlDisplacementFilename = determineDisplacementFilename(pathName, u"normal"_j, xmlBumpTextureFilename);
 	}
 	if (xmlDisplacementFilename != nullptr) {
-		material->setDisplacementTexture(pathName->getCPPWString(), xmlDisplacementFilename->getCPPWString());
+		material->setDisplacementTexture(pathName, xmlDisplacementFilename->getCPPWString());
 	}
 
 	if (authoringTool == DAEReader_AuthoringTool::BLENDER && material->getAmbientColor()->equals(static_cast< Color4Base* >(BLENDER_AMBIENT_NONE))) {
@@ -1376,7 +1376,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, String
 	return material;
 }
 
-String* DAEReader::determineDisplacementFilename(String* path, String* mapType, String* fileName)
+String* DAEReader::determineDisplacementFilename(const wstring& path, String* mapType, String* fileName)
 {
 	auto tmpFileNameCandidate = fileName->toLowerCase();
 	tmpFileNameCandidate = tmpFileNameCandidate->substring(0, tmpFileNameCandidate->lastIndexOf(static_cast< int32_t >(u'.')));
@@ -1386,13 +1386,13 @@ String* DAEReader::determineDisplacementFilename(String* path, String* mapType, 
 	tmpFileNameCandidate = ::java::lang::StringBuilder(tmpFileNameCandidate).append(u"displacement"_j)->toString();
 	auto const finalFilenameCandidate = tmpFileNameCandidate;
 	try {
-		auto fileNameCandidates = _FileSystem::getInstance()->list(path, new DAEReader_determineDisplacementFilename_1(finalFilenameCandidate));
-		tmpFileNameCandidate = fileNameCandidates->length > 0 ? (*fileNameCandidates)[0] : static_cast< String* >(nullptr);
+		vector<wstring> fileNameCandidates;
+		_FileSystem::getInstance()->list(path, &fileNameCandidates, new DAEReader_determineDisplacementFilename_1(finalFilenameCandidate->getCPPWString()));
 	} catch (_Exception& exception) {
 		_Console::print(string("DAEReader::determineDisplacementFilename(): An exception occurred: "));
 		_Console::println(string(exception.what()));
 	}
-	return tmpFileNameCandidate;
+	return nullptr;
 }
 
 String* DAEReader::makeFileNameRelative(String* fileName)

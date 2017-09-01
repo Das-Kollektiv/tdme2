@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -12,7 +15,13 @@
 #include <java/util/fwd-tdme.h>
 #include <java/util/Hashtable.h>
 
+#include <tdme/os/_FileSystem.h>
+#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_HashMap.h>
+
+using std::vector;
+using std::wstring;
 
 using java::util::Hashtable;
 using java::io::BufferedWriter;
@@ -31,6 +40,9 @@ using java::util::Enumeration;
 using java::util::Properties_LineReader;
 using java::util::Set;
 
+using tdme::os::_FileSystem;
+using tdme::os::_FileSystemException;
+using tdme::os::_FileSystemInterface;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -83,7 +95,7 @@ public:
 	virtual void list(PrintWriter* arg0);
 	virtual void load(Reader* arg0);
 	virtual void load(InputStream* arg0);
-	virtual void load(StringArray* arg0);
+	virtual void load(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
 	/*void load0(Properties_LineReader* arg0); (private) */
 	/*String* loadConvert(char16_tArray* arg0, int32_t arg1, int32_t arg2, char16_tArray* arg3); (private) */
 	virtual void loadFromXML(InputStream* arg0);
@@ -93,7 +105,7 @@ public:
 	virtual Object* setProperty(String* arg0, String* arg1);
 	virtual void store(Writer* arg0, String* arg1);
 	virtual void store(OutputStream* arg0, String* arg1);
-	virtual StringArray* storeToStringArray();
+	virtual void store(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
 	/*void store0(BufferedWriter* arg0, String* arg1, bool arg2); (private) */
 	virtual void storeToXML(OutputStream* arg0, String* arg1);
 	virtual void storeToXML(OutputStream* arg0, String* arg1, String* arg2);

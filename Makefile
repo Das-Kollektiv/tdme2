@@ -354,6 +354,8 @@ SRCS = \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
+	src/tdme/utils/Float.cpp \
+	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/StringConverter.cpp \

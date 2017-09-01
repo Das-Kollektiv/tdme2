@@ -45,7 +45,7 @@ void printVector(Vector3* vector) {
 int main(int argc, char** argv)
 {
     cout << "DAETest" << endl;
-    Model* model = DAEReader::read(u"./resources/tests/models/test"_j, u"cube.dae"_j);
+    Model* model = DAEReader::read(L"./resources/tests/models/test", L"cube.dae");
     for (auto it: *model->getSubGroups()) {
     		Group* group = it.second;
     		wcout << it.first << endl;

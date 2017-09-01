@@ -184,17 +184,14 @@ int32_t GL2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GL2Renderer::loadShader(int32_t type, String* pathName, String* fileName)
+int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wstring& fileName)
 {
 	int32_t handle = glCreateShader(type);
 	if (handle == 0) return 0;
 
-	auto shaderSource = _FileSystem::getInstance()->getContent(pathName, fileName);
-	if (shaderSource == nullptr) return 0;
+	auto shaderSource = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
-	auto shaderSourceString = new String(shaderSource);
-
-	string sourceString = StringConverter::toString(shaderSourceString->getCPPWString());
+	string sourceString = StringConverter::toString(shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	glShaderSource(handle, 1, &sourceHeap, nullptr);

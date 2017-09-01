@@ -5,7 +5,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
@@ -17,7 +16,6 @@
 using std::map;
 using std::wstring;
 
-using java::lang::String;
 using tdme::engine::model::Model;
 using tdme::engine::model::Material;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -40,7 +38,7 @@ public:
 	 * @throws _FileSystemException
 	 * @throws ModelIOException
 	 */
-	static Model* read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException);
 
 private:
 
@@ -52,5 +50,5 @@ private:
 	 * @throws _FileSystemException
 	 * @throws ModelIOException
 	 */
-	static void readMaterials(String* pathName, String* fileName, map<wstring, Material*>& materials) throw (_FileSystemException, ModelFileIOException);
+	static void readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (_FileSystemException, ModelFileIOException);
 };

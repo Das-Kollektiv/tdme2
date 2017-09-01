@@ -270,7 +270,7 @@ void PhysicsTest1::initialize()
 	engine->addEntity(entity);
 	world->addRigidBody(L"capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
 	try {
-		auto _barrel = DAEReader::read(u"resources/tests/models/barrel"_j, u"barrel.dae"_j);
+		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		entity = new Object3D(L"barrel1", _barrel);
 		entity->setDynamicShadowingEnabled(true);
@@ -288,7 +288,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody(L"barrel2", true, RIGID_TYPEID_STANDARD, entity, barrelBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		auto _cone = DAEReader::read(u"resources/tests/models/cone"_j, u"cone.dae"_j);
+		auto _cone = DAEReader::read(L"resources/tests/models/cone", L"cone.dae");
 		auto coneBoundingVolume = new ConvexMesh(new Object3DModel(_cone));
 		entity = new Object3D(L"cone1", _cone);
 		entity->setDynamicShadowingEnabled(true);
@@ -306,7 +306,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody(L"cone2", true, RIGID_TYPEID_STANDARD, entity, coneBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		auto _tire = DAEReader::read(u"resources/tests/models/tire"_j, u"tire.dae"_j);
+		auto _tire = DAEReader::read(L"resources/tests/models/tire", L"tire.dae");
 		auto tireBoundingVolume = new ConvexMesh(new Object3DModel(_tire));
 		entity = new Object3D(L"tire1", _tire);
 		entity->setDynamicShadowingEnabled(true);

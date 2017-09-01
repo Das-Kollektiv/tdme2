@@ -37,7 +37,7 @@ String* GUITabsContent::NAME;
 void GUITabsContent::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContent(u"resources/gui/definitions/elements"_j, u"tabs-content.xml"_j));
+	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-content.xml"));
 }
 
 String* GUITabsContent::getName()

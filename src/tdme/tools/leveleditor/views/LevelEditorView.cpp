@@ -258,7 +258,7 @@ PopUps* LevelEditorView::getPopUps()
 
 String* LevelEditorView::getFileName()
 {
-	return _FileSystem::getInstance()->getFileName(level->getFileName());
+	return new String(_FileSystem::getInstance()->getFileName(level->getFileName()->getCPPWString()));
 }
 
 LevelEditorLevel* LevelEditorView::getLevel()
@@ -704,7 +704,8 @@ void LevelEditorView::loadSettings()
 	try {
 		Object* tmp;
 		auto settings = new Properties();
-		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"leveleditor.properties"_j));
+		vector<wstring> lines;
+		settings->load(L"settings", L"leveleditor.properties");
 		gridEnabled = (tmp = dynamic_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
 		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
 		levelEditorScreenController->getMapPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
@@ -772,8 +773,7 @@ void LevelEditorView::storeSettings()
 		settings->put(u"grid.y"_j, String::valueOf(gridY));
 		settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
 		settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
-		StringArray* settingsStringArray = settings->storeToStringArray();
-		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"leveleditor.properties"_j, settingsStringArray);
+		settings->store(L"settings", L"leveleditor.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -1342,7 +1342,7 @@ void LevelEditorView::loadMap(String* path, String* file)
 	selectedEntity = nullptr;
 	try {
 		if (file->toLowerCase()->endsWith(u".dae"_j) == true) {
-			auto daeLevel = DAEReader::readLevel(path, file);
+			auto daeLevel = DAEReader::readLevel(path->getCPPWString(), file->getCPPWString());
 			file = ::java::lang::StringBuilder(file).append(u".tl"_j)->toString();
 		}
 		LevelFileImport::doImport(path, file, level);

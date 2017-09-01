@@ -1,10 +1,11 @@
 // Generated from /tdme/src/tdme/gui/renderer/GUIFont.java
 #include <tdme/gui/renderer/GUIFont.h>
 
-#include <java/lang/Integer.h>
+#include <vector>
+#include <string>
+
 #include <java/lang/Math.h>
 #include <java/lang/String.h>
-#include <java/util/StringTokenizer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
@@ -13,15 +14,19 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringTokenizer.h>
+#include <tdme/utils/StringUtils.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::vector;
+using std::wstring;
+
 using tdme::gui::renderer::GUIFont;
-using java::lang::Integer;
 using java::lang::Math;
 using java::lang::String;
-using java::util::StringTokenizer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
@@ -30,6 +35,9 @@ using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
+using tdme::utils::Integer;
+using tdme::utils::StringTokenizer;
+using tdme::utils::StringUtils;
 using tdme::utils::MutableString;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
@@ -73,56 +81,64 @@ GUIFont* GUIFont::parse(String* pathName, String* fileName) throw (_FileSystemEx
 	clinit();
 	int lineIdx = 0;
 	auto font = new GUIFont();
-	auto in = _FileSystem::getInstance()->getContentAsStringArray(pathName, fileName);
-	auto info = in->get(lineIdx++);
-	auto common = in->get(lineIdx++);
-	auto page = in->get(lineIdx++);
-	font->texture = TextureLoader::loadTexture(pathName->getCPPWString(), page->substring(page->indexOf(u"file="_j) + u"file=\""_j->length(), page->lastIndexOf(u"\""_j))->getCPPWString());
+	vector<wstring> lines;
+	_FileSystem::getInstance()->getContentAsStringArray(pathName->getCPPWString(), fileName->getCPPWString(), &lines);
+	auto info = lines[lineIdx++];
+	auto common = lines[lineIdx++];
+	auto page = lines[lineIdx++];
+	font->texture = TextureLoader::loadTexture(
+		pathName->getCPPWString(),
+		StringUtils::substring(page, page.find(L"file=") + wstring(L"file=\"").length(), page.find_last_of(L"\""))
+	);
 	auto done = false;
-	while (lineIdx < in->length) {
-		String* line = in->get(lineIdx++);
-		if (line->startsWith(u"chars c"_j)) {
-		} else if (line->startsWith(u"char"_j)) {
+	while (lineIdx < lines.size()) {
+		auto line = lines[lineIdx++];
+		if (StringUtils::startsWith(line, L"chars c")) {
+		} else
+		if (StringUtils::startsWith(line, L"char")) {
 			auto def = font->parseCharacter(line);
 			font->chars->set(def->id, def);
 		}
-		if (line->startsWith(u"kernings c"_j)) {
-		} else if (line->startsWith(u"kerning"_j)) {
-			auto tokens = new StringTokenizer(line, u" ="_j);
-			tokens->nextToken();
-			tokens->nextToken();
-			auto first = Integer::parseInt(tokens->nextToken());
-			tokens->nextToken();
-			auto second = Integer::parseInt(tokens->nextToken());
-			tokens->nextToken();
-			auto offset = Integer::parseInt(tokens->nextToken());
+		if (StringUtils::startsWith(line, L"kernings c")) {
+		} else
+		if (StringUtils::startsWith(line, L"kerning")) {
+			StringTokenizer t;
+			t.tokenize(line, L" =");
+			t.nextToken();
+			t.nextToken();
+			auto first = Integer::parseInt(t.nextToken());
+			t.nextToken();
+			auto second = Integer::parseInt(t.nextToken());
+			t.nextToken();
+			auto offset = Integer::parseInt(t.nextToken());
 		}
 	}
 	font->lineHeight = font->getTextHeight(LINEHEIGHT_STRING);
 	return font;
 }
 
-GUIFont_CharacterDefinition* GUIFont::parseCharacter(String* line)
+GUIFont_CharacterDefinition* GUIFont::parseCharacter(const wstring& line)
 {
 	auto characterDefinition = new GUIFont_CharacterDefinition(this);
-	auto tokens = new StringTokenizer(line, u" ="_j);
-	tokens->nextToken();
-	tokens->nextToken();
-	characterDefinition->id = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->x = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->y = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->width = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->height = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->xOffset = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->yOffset = Integer::parseInt(tokens->nextToken());
-	tokens->nextToken();
-	characterDefinition->xAdvance = Integer::parseInt(tokens->nextToken());
+	StringTokenizer t;
+	t.tokenize(line, L" =");
+	t.nextToken();
+	t.nextToken();
+	characterDefinition->id = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->x = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->y = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->width = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->height = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->xOffset = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->yOffset = Integer::parseInt(t.nextToken());
+	t.nextToken();
+	characterDefinition->xAdvance = Integer::parseInt(t.nextToken());
 	if (characterDefinition->id != u' ') {
 		lineHeight = Math::max(characterDefinition->height + characterDefinition->yOffset, lineHeight);
 	}

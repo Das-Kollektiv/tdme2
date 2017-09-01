@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <string>
+#include <vector>
 
 #include <java/lang/String.h>
 #include <java/nio/ByteBuffer.h>
@@ -16,6 +17,7 @@
 
 #include <ext/libpng/png.h>
 
+using std::vector;
 using std::wstring;
 
 using java::lang::String;
@@ -51,10 +53,12 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id
-	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(new String(path), new String(fileName));
+	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
 
 	// create PNG input stream
-	PNGInputStream* pngInputStream = new PNGInputStream(_FileSystem::getInstance()->getContent(new String(path), new String(fileName)));
+	vector<uint8_t> content;
+	_FileSystem::getInstance()->getContent(path, fileName, &content);
+	PNGInputStream* pngInputStream = new PNGInputStream(&content);
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];
@@ -177,7 +181,7 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 
 	// thats it
 	return new Texture(
-		canonicalFileName->getCPPWString(),
+		canonicalFileName,
 		bytesPerPixel * 8,
 		width,
 		height,

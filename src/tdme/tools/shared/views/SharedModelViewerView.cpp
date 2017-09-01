@@ -132,7 +132,7 @@ String* SharedModelViewerView::getFileName()
 void SharedModelViewerView::loadFile(String* pathName, String* fileName)
 {
 	loadModelRequested = true;
-	modelFile = _FileSystem::getInstance()->getFileName(pathName, fileName);
+	modelFile = new String(_FileSystem::getInstance()->getFileName(pathName->getCPPWString(), fileName->getCPPWString()));
 }
 
 void SharedModelViewerView::saveFile(String* pathName, String* fileName) /* throws(Exception) */
@@ -203,7 +203,7 @@ void SharedModelViewerView::loadSettings()
 	try {
 		Object* tmp;
 		auto settings = new Properties();
-		settings->load(_FileSystem::getInstance()->getContentAsStringArray(u"settings"_j, u"modelviewer.properties"_j));
+		settings->load(L"settings", L"modelviewer.properties");
 		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
@@ -252,8 +252,7 @@ void SharedModelViewerView::storeSettings()
 		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
 		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
 		settings->put(u"model.path"_j, modelViewerScreenController->getModelPath()->getPath());
-		StringArray* settingsStringArray = settings->storeToStringArray();
-		_FileSystem::getInstance()->setContentFromStringArray(u"settings"_j, u"modelviewer.properties"_j, settingsStringArray);
+		settings->store(L"settings", L"modelviewer.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -280,10 +279,10 @@ void SharedModelViewerView::loadModel()
 	try {
 		auto oldModel = entity;
 		entity = loadModel(
-			_FileSystem::getInstance()->getFileName(modelFile),
+			new String(_FileSystem::getInstance()->getFileName(modelFile->getCPPWString())),
 			u""_j,
-			_FileSystem::getInstance()->getPathName(modelFile),
-			_FileSystem::getInstance()->getFileName(modelFile),
+			new String(_FileSystem::getInstance()->getPathName(modelFile->getCPPWString())),
+			new String(_FileSystem::getInstance()->getFileName(modelFile->getCPPWString())),
 			new Vector3());
 		onLoadModel(oldModel, entity);
 	} catch (_Exception& exception) {
@@ -295,8 +294,8 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 {
 	if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
 		auto model = DAEReader::read(
-			pathName,
-			fileName
+			pathName->getCPPWString(),
+			fileName->getCPPWString()
 		);
 		auto levelEditorEntity = new LevelEditorEntity(
 			LevelEditorEntity::ID_NONE,
@@ -326,8 +325,8 @@ LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* descri
 	} else
 	if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
 		auto model = TMReader::read(
-			pathName,
-			fileName
+			pathName->getCPPWString(),
+			fileName->getCPPWString()
 		);
 		auto levelEditorEntity = new LevelEditorEntity(
 			LevelEditorEntity::ID_NONE,

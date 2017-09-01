@@ -2,15 +2,16 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <java/io/FilenameFilter.h>
+#include <string>
 
-using java::io::FilenameFilter;
-using java::io::File;
-using java::lang::String;
+#include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/FilenameFilter.h>
+
+using std::wstring;
+
+using tdme::utils::FilenameFilter;
+
 using tdme::tools::shared::controller::FileDialogScreenController;
 
 class tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1
@@ -19,7 +20,7 @@ class tdme::tools::shared::controller::FileDialogScreenController_setupFileDialo
 	friend class FileDialogScreenController;
 
 public:
-	bool accept(String* directory, String* file) override;
+	bool accept(const wstring& pathName, const wstring& fileName) override;
 
 	// Generated
 	FileDialogScreenController_setupFileDialogListBox_1(FileDialogScreenController* fileDialogScreenController);

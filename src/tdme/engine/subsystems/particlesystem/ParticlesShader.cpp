@@ -34,13 +34,19 @@ bool ParticlesShader::isInitialized()
 void ParticlesShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	renderFragmentShaderId = renderer->loadShader(renderer->SHADER_FRAGMENT_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/particles"_j)->toString(), u"render_fragmentshader.c"_j);
+	renderFragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/particles",
+		L"render_fragmentshader.c"
+	);
 	if (renderFragmentShaderId == 0)
 		return;
 
-	renderVertexShaderId = renderer->loadShader(renderer->SHADER_VERTEX_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/particles"_j)->toString(), u"render_vertexshader.c"_j);
+	renderVertexShaderId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/particles",
+		L"render_vertexshader.c"
+	);
 	if (renderVertexShaderId == 0)
 		return;
 

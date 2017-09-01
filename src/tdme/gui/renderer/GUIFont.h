@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -21,6 +23,8 @@ using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::_FileSystemException;
 using tdme::utils::MutableString;
+
+using std::wstring;
 
 template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
@@ -101,7 +105,7 @@ private:
 	 * @param line The line to be parsed
 	 * @return The character definition from the line
 	 */
-	GUIFont_CharacterDefinition* parseCharacter(String* line);
+	GUIFont_CharacterDefinition* parseCharacter(const wstring& line);
 
 public:
 

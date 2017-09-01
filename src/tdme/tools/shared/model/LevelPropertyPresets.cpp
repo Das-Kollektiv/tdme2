@@ -55,9 +55,9 @@ LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
 LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  /* throws(Exception) */
 {
-	auto xmlContent = new String(_FileSystem::getInstance()->getContent(pathName, fileName));
+	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString());
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xmlContent->getCPPWString()).c_str());
+	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
 		_Console::println(
 			"LevelPropertyPresets::ctor():: Could not parse file '" +

@@ -38,13 +38,19 @@ bool GUIShader::isInitialized()
 void GUIShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	vertexShaderGlId = renderer->loadShader(renderer->SHADER_VERTEX_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/gui"_j)->toString(), u"render_vertexshader.c"_j);
+	vertexShaderGlId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/gui",
+		L"render_vertexshader.c"
+	);
 	if (vertexShaderGlId == 0)
 		return;
 
-	fragmentShaderGlId = renderer->loadShader(renderer->SHADER_FRAGMENT_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/gui"_j)->toString(), u"render_fragmentshader.c"_j);
+	fragmentShaderGlId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/gui",
+		L"render_fragmentshader.c"
+	);
 	if (fragmentShaderGlId == 0)
 		return;
 

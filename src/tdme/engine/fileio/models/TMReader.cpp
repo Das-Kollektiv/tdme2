@@ -90,7 +90,7 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException)
+Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {
 	TMReaderInputStream* is = nullptr;
 	auto finally0 = finally([&] {
@@ -98,7 +98,9 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 			delete is;
 		}
 	});
-	is = new TMReaderInputStream(_FileSystem::getInstance()->getContent(pathName, fileName));
+	vector<uint8_t> content;
+	_FileSystem::getInstance()->getContent(pathName, fileName, &content);
+	is = new TMReaderInputStream(&content);
 	auto fileId = is->readString();
 	if (fileId == nullptr || fileId->equals(u"TDME Model"_j) == false) {
 		throw ModelFileIOException(
@@ -136,7 +138,7 @@ Model* TMReader::read(String* pathName, String* fileName) throw (_FileSystemExce
 		 append(fileName)->
 		 toString()->
 		 getCPPWString(),
-		fileName->getCPPWString(),
+		fileName,
 		upVector,
 		rotationOrder,
 		boundingBox

@@ -383,10 +383,10 @@ String* Tools::getGameRootPath(String* fileName)
 
 String* Tools::getPath(String* fileName)
 {
-	return _FileSystem::getInstance()->getPathName(fileName);
+	return new String(_FileSystem::getInstance()->getPathName(fileName->getCPPWString()));
 }
 
 String* Tools::getFileName(String* fileName)
 {
-	return _FileSystem::getInstance()->getFileName(fileName);
+	return new String(_FileSystem::getInstance()->getFileName(fileName->getCPPWString()));
 }

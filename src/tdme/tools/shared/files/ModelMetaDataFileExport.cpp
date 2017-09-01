@@ -134,13 +134,13 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 		auto finally1 = finally([&] {
 		});
 		try {
-			entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+			entity->setEntityFileName(new String(_FileSystem::getInstance()->getCanonicalPath(pathName->getCPPWString(), fileName->getCPPWString())));
 			auto jEntityRoot = exportToJSON(entity);
 
 			ostringstream json;
 			json << jEntityRoot;
 
-			_FileSystem::getInstance()->setContentFromString(pathName, fileName, new String(StringConverter::toWideString(json.str())));
+			_FileSystem::getInstance()->setContentFromString(pathName->getCPPWString(), fileName->getCPPWString(), StringConverter::toWideString(json.str()));
 		} catch (_Exception& exception) {
 			throw exception;
 		}
@@ -157,7 +157,11 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			 	 append(Tools::getFileName(entity->getFileName()))->
 				 append((entity->getFileName()->endsWith(u".tm"_j) == false ? u".tm"_j : u""_j))->
 				 toString();
-		TMWriter::write(entity->getModel(), modelPathName, modelFileName);
+		TMWriter::write(
+			entity->getModel(),
+			modelPathName->getCPPWString(),
+			modelFileName->getCPPWString()
+		);
 		jEntityRoot["file"] =
 			StringConverter::toString(::java::lang::StringBuilder().append(modelPathName)->append(u"/"_j)->append(modelFileName)->toString()->getCPPWString());
 		/*
@@ -204,7 +208,11 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 								 append(particleSystem->getObjectParticleSystem()->getModelFile())->
 								 append((particleSystem->getObjectParticleSystem()->getModelFile()->endsWith(u".tm"_j) == false ? u".tm"_j : u""_j))->
 								 toString());
-						TMWriter::write(particleSystem->getObjectParticleSystem()->getModel(), modelPathName, modelFileName);
+						TMWriter::write(
+							particleSystem->getObjectParticleSystem()->getModel(),
+							modelPathName->getCPPWString(),
+							modelFileName->getCPPWString()
+						);
 						particleSystem->getObjectParticleSystem()->setModelFile(
 							::java::lang::StringBuilder().
 							 append(modelPathName)->append(u"/"_j)->

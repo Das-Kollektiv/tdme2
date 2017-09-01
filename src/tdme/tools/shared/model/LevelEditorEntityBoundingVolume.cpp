@@ -179,14 +179,14 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(String* pathName, String* 
 		Model* convexMeshModel = nullptr;
 		if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
 			convexMeshModel = DAEReader::read(
-				pathName,
-				fileName
+				pathName->getCPPWString(),
+				fileName->getCPPWString()
 			);
 		} else
 		if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
 			convexMeshModel = TMReader::read(
-				pathName,
-				fileName
+				pathName->getCPPWString(),
+				fileName->getCPPWString()
 			);
 		}
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));

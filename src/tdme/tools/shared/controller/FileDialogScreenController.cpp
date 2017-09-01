@@ -61,7 +61,7 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 
 FileDialogScreenController::FileDialogScreenController() 
 {
-	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPathName();
+	this->cwd = new String(_FileSystem::getInstance()->getCurrentWorkingPathName());
 	this->value = new MutableString();
 	this->applyAction = nullptr;
 }
@@ -110,10 +110,10 @@ void FileDialogScreenController::setupFileDialogListBox()
 
 	caption->getText()->set(captionText)->append(directory);
 
-	auto fileList = new StringArray(0);
+	vector<wstring> fileList;
 	try {
 		auto directory = cwd;
-		fileList = _FileSystem::getInstance()->list(directory, new FileDialogScreenController_setupFileDialogListBox_1(this));
+		_FileSystem::getInstance()->list(directory->getCPPWString(), &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -123,7 +123,8 @@ void FileDialogScreenController::setupFileDialogListBox()
 	auto idx = 1;
 	auto filesInnerNodeSubNodesXML = u""_j;
 	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"<scrollarea width=\"100%\" height=\"100%\">\n"_j)->toString();
-	for (auto file : *fileList) {
+	for (auto fileWString : fileList) {
+		String* file = new String(fileWString);
 		filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(file))
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(file))
@@ -141,7 +142,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 void FileDialogScreenController::show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction)
 {
 	try {
-		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, u""_j);
+		this->cwd = new String(_FileSystem::getInstance()->getCanonicalPath(cwd->getCPPWString(), L""));
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::show(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -164,9 +165,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId()->equals(files->getId()) == true) {
 			auto selectedFile = node->getController()->getValue()->toString();
-			if (_FileSystem::getInstance()->isPath(new String(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString())) == true) {
+			if (_FileSystem::getInstance()->isPath(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString()) == true) {
 				try {
-					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
+					cwd = new String(_FileSystem::getInstance()->getCanonicalPath(cwd->getCPPWString(), selectedFile->getCPPWString()));
 				} catch (_Exception& exception) {
 					_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					_Console::println(string(exception.what()));

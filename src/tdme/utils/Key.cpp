@@ -10,7 +10,6 @@
 #include <Array.h>
 
 using tdme::utils::Key;
-using java::lang::Float;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
@@ -69,7 +68,7 @@ void Key::append(float value)
 	if (length + 4 > LENGTH_MAX) {
 		_Console::println(static_cast< Object* >(u"Key.append: key too long"_j));
 	}
-	auto intValue = Float::floatToIntBits(value);
+	auto intValue = java::lang::Float::floatToIntBits(value);
 	(*data)[length++] = static_cast< char16_t >(((intValue) & 255));
 	(*data)[length++] = static_cast< char16_t >(((intValue >> 8) & 255));
 	(*data)[length++] = static_cast< char16_t >(((intValue >> 16) & 255));

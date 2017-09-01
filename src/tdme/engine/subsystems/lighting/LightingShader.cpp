@@ -53,13 +53,19 @@ bool LightingShader::isInitialized()
 void LightingShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	renderLightingFragmentShaderId = renderer->loadShader(renderer->SHADER_FRAGMENT_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/lighting"_j)->toString(), u"render_fragmentshader.c"_j);
+	renderLightingFragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/lighting",
+		L"render_fragmentshader.c"
+	);
 	if (renderLightingFragmentShaderId == 0)
 		return;
 
-	renderLightingVertexShaderId = renderer->loadShader(renderer->SHADER_VERTEX_SHADER, ::java::lang::StringBuilder().append(u"shader/"_j)->append(rendererVersion)
-		->append(u"/lighting"_j)->toString(), u"render_vertexshader.c"_j);
+	renderLightingVertexShaderId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
+		L"shader/" + rendererVersion->getCPPWString() + L"/lighting",
+		L"render_vertexshader.c"
+	);
 	if (renderLightingVertexShaderId == 0)
 		return;
 

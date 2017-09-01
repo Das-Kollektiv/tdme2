@@ -61,7 +61,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static Model* read(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException);
 
 	/** 
 	 * Reads Collada DAE file level
@@ -71,7 +71,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static LevelEditorLevel* readLevel(String* pathName, String* fileName) throw (ModelFileIOException, _FileSystemException);
+	static LevelEditorLevel* readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException);
 
 private:
 
@@ -115,7 +115,7 @@ private:
 	 * @param frames per second
 	 * @return group
 	 */
-	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a DAE visual scene group node
@@ -129,7 +129,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static Group* readNode(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
+	static Group* readNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a instance controller
@@ -143,7 +143,7 @@ private:
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
+	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a geometry
@@ -156,7 +156,7 @@ private:
 	 * @param material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
@@ -167,7 +167,7 @@ private:
 	 * @param xml node id
 	 * @return material
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, String* pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId);
+	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 
@@ -176,7 +176,7 @@ private:
 	 * @param file name
 	 * @return displacement file name or null
 	 */
-	static String* determineDisplacementFilename(String* path, String* mapType, String* fileName);
+	static String* determineDisplacementFilename(const wstring& path, String* mapType, String* fileName);
 
 	/** 
 	 * Make file name relative

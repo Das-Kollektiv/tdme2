@@ -52,23 +52,16 @@ namespace models {
  */
 class TMReaderInputStream {
 private:
-	int8_tArray* data;
+	vector<uint8_t>* data;
 	int32_t position;
 public:
 	/**
 	 * Constructor
 	 * @param input data array
 	 */
-	inline TMReaderInputStream(int8_tArray* data) {
+	inline TMReaderInputStream(vector<uint8_t>* data) {
 		this->data = data;
 		this->position = 0;
-	}
-
-	/**
-	 * Destructor
-	 */
-	inline ~TMReaderInputStream() {
-		delete data;
 	}
 
 	/**
@@ -86,10 +79,10 @@ public:
 	 * @return byte
 	 */
 	inline int8_t readByte() throw (ModelFileIOException) {
-		if (position == data->length) {
+		if (position == data->size()) {
 			throw ModelFileIOException("Unexpected end of stream");
 		}
-		return data->get(position++);
+		return (*data)[position++];
 	}
 
 	/**
@@ -257,7 +250,7 @@ public:
 	 * @throws model file IO exception
 	 * @return model
 	 */
-	static Model* read(String* pathName, String* fileName) throw (_FileSystemException, ModelFileIOException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException);
 
 private:
 
