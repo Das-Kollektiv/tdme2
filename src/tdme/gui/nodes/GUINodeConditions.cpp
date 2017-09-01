@@ -53,7 +53,13 @@ void GUINodeConditions::add(String* condition)
 
 void GUINodeConditions::remove(String* condition)
 {
-	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
+	for (vector<String*>::iterator i = conditions.begin(); i != conditions.end(); i++) {
+		if (condition->equals(*i)) {
+			conditions.erase(i);
+			return;
+		}
+
+	}
 }
 
 void GUINodeConditions::removeAll()
