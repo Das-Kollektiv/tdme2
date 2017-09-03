@@ -88,21 +88,37 @@ public:
 	 * @param string
 	 * @return trimmed string
 	 */
-	static wstring trim(const wstring& string);
+	static const wstring trim(const wstring& string);
 
 	/**
 	 * Transform string to lower case
 	 * @param string
 	 * @return transformed string
 	 */
-	static wstring toLowerCase(const wstring& string);
+	static const wstring toLowerCase(const wstring& string);
 
 	/**
 	 * Transform string to upper case
 	 * @param string
 	 * @return transformed string
 	 */
-	static wstring toUpperCase(const wstring& string);
+	static const wstring toUpperCase(const wstring& string);
+
+	/**
+	 * Do regex pattern matching
+	 * @param string to test
+	 * @param pattern
+	 * @return if patter matches
+	 */
+	static bool matches(const wstring& string, const wstring& pattern);
+
+	/**
+	 * Replace regex pattern with given string
+	 * @param string to operate on
+	 * @param pattern to search
+	 * @param string that will replace pattern occurrances
+	 */
+	static const wstring replaceAll(const wstring& string, const wstring& pattern, const wstring& by);
 
 };
 

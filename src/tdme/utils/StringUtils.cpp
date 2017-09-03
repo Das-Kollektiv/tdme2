@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <regex>
 #include <string>
 
 using std::find_if;
@@ -9,11 +10,15 @@ using std::isspace;
 using std::not1;
 using std::ptr_fun;
 using std::replace;
+using std::regex_match;
+using std::regex_replace;
 using std::string;
 using std::transform;
 using std::tolower;
 using std::toupper;
 using std::wstring;
+using std::wregex;
+
 
 using tdme::utils::StringUtils;
 
@@ -64,7 +69,7 @@ bool StringUtils::equalsIgnoreCase(const wstring& string1, const wstring& string
 	return stringA == stringB;
 }
 
-wstring StringUtils::trim(const wstring& string) {
+const wstring StringUtils::trim(const wstring& string) {
 	wstring result = string;
 	result.erase(
 		result.begin(),
@@ -77,14 +82,22 @@ wstring StringUtils::trim(const wstring& string) {
 	return result;
 }
 
-wstring StringUtils::toLowerCase(const wstring& string) {
+const wstring StringUtils::toLowerCase(const wstring& string) {
 	wstring result = string;
 	transform(result.begin(), result.end(), result.begin(), (int(*)(int))tolower);
 	return result;
 }
 
-wstring StringUtils::toUpperCase(const wstring& string) {
+const wstring StringUtils::toUpperCase(const wstring& string) {
 	wstring result = string;
 	transform(result.begin(), result.end(), result.begin(), (int(*)(int))toupper);
 	return result;
+}
+
+bool StringUtils::matches(const wstring& string, const wstring& pattern) {
+	return regex_match(string, wregex(pattern));
+}
+
+const wstring StringUtils::replaceAll(const wstring& string, const wstring& pattern, const wstring& by) {
+	return regex_replace(string, wregex(pattern), by);
 }

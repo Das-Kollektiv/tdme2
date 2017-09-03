@@ -156,7 +156,7 @@ private:
 	 * @param material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, String* xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const wstring& xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
@@ -167,7 +167,7 @@ private:
 	 * @param xml node id
 	 * @return material
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, TiXmlElement* xmlRoot, String* xmlNodeId);
+	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, TiXmlElement* xmlRoot, const wstring& xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 
@@ -176,14 +176,14 @@ private:
 	 * @param file name
 	 * @return displacement file name or null
 	 */
-	static String* determineDisplacementFilename(const wstring& path, String* mapType, String* fileName);
+	static const wstring determineDisplacementFilename(const wstring& path, const wstring& mapType, const wstring& fileName);
 
 	/** 
 	 * Make file name relative
 	 * @param file name
 	 * @return file name
 	 */
-	static String* makeFileNameRelative(String* fileName);
+	static const wstring makeFileNameRelative(const wstring& fileName);
 
 	/** 
 	 * Get texture file name by id
@@ -191,7 +191,7 @@ private:
 	 * @param xml texture id
 	 * @return xml texture file name
 	 */
-	static String* getTextureFileNameById(TiXmlElement* xmlRoot, String* xmlTextureId);
+	static const wstring getTextureFileNameById(TiXmlElement* xmlRoot, const wstring& xmlTextureId);
 
 public:
 
