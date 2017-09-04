@@ -26,8 +26,6 @@
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/StringTokenizer.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::array;
 using std::map;
