@@ -56,6 +56,7 @@ public:
 	/*void readObject(ObjectInputStream* arg0); (private) */
 	/*void readObjectNoData(); (private) */
 	String* toString() override;
+	const wstring& toWString();
 	static Enum* valueOf(Class* arg0, String* arg1);
 
 	// Generated

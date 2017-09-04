@@ -80,6 +80,10 @@ String* Enum::toString()
 	return new String(name_);
 }
 
+const wstring& Enum::toWString() {
+	return name_;
+}
+
 Enum* Enum::valueOf(Class* arg0, String* arg1)
 { /* stub */
 	clinit();

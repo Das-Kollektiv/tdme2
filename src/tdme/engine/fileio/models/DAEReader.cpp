@@ -7,9 +7,11 @@
 #include <unordered_set>
 #include <vector>
 
+#include <java/lang/fwd-tdme.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/Math.h>
+#include <java/lang/String.h>
 #include <java/util/Iterator.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Rotation.h>
@@ -75,6 +77,7 @@ using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::Math;
 using java::lang::Object;
+using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Rotation;

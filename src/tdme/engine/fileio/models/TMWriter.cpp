@@ -6,9 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Float.h>
-#include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -28,9 +25,6 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_Exception.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 using std::map;
@@ -38,11 +32,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::fileio::models::TMWriter;
-using java::io::Serializable;
-using java::lang::Cloneable;
-using java::lang::Float;
-using java::lang::String;
-using java::util::Iterator;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -63,50 +52,27 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::_Exception;
 
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
-
 void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {
-	TMWriterOutputStream* os = nullptr;
-	auto finally0 = finally([&] {
-		if (os != nullptr) {
-			delete os;
-		}
-	});
-	os = new TMWriterOutputStream();
-	os->writeString(u"TDME Model"_j);
-	os->writeByte(static_cast< int8_t >(1));
-	os->writeByte(static_cast< int8_t >(0));
-	os->writeByte(static_cast< int8_t >(0));
-	os->writeString(model->getName());
-	os->writeString(model->getUpVector()->toString());
-	os->writeString(model->getRotationOrder()->toString());
-	os->writeFloatArray(model->getBoundingBox()->getMin()->getArray());
-	os->writeFloatArray(model->getBoundingBox()->getMax()->getArray());
-	os->writeFloat(model->getFPS());
-	os->writeFloatArray(model->getImportTransformationsMatrix()->getArray());
-	os->writeInt(model->getMaterials()->size());
+	TMWriterOutputStream os;
+	os.writeString(L"TDME Model");
+	os.writeByte(static_cast< uint8_t >(1));
+	os.writeByte(static_cast< uint8_t >(0));
+	os.writeByte(static_cast< uint8_t >(0));
+	os.writeString(model->getName());
+	os.writeString(model->getUpVector()->toWString());
+	os.writeString(model->getRotationOrder()->toWString());
+	os.writeFloatArray(model->getBoundingBox()->getMin()->getArray());
+	os.writeFloatArray(model->getBoundingBox()->getMax()->getArray());
+	os.writeFloat(model->getFPS());
+	os.writeFloatArray(model->getImportTransformationsMatrix()->getArray());
+	os.writeInt(model->getMaterials()->size());
 	for (auto it: *model->getMaterials()) {
 		Material* material = it.second;
-		writeMaterial(os, material);
+		writeMaterial(&os, material);
 	}
-	_FileSystem::getInstance()->setContent(pathName, fileName, os->getData());
-	writeSubGroups(os, model->getSubGroups());
+	writeSubGroups(&os, model->getSubGroups());
+	_FileSystem::getInstance()->setContent(pathName, fileName, os.getData());
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)

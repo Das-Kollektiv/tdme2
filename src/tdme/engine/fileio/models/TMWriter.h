@@ -7,17 +7,12 @@
 #include <string>
 #include <vector>
 
-#include <Array.h>
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
@@ -27,7 +22,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::FacesEntity;
@@ -115,24 +109,6 @@ public:
 	 * @param string
 	 * @throws model file IO exception
 	 */
-	inline void writeString(String* s) throw (ModelFileIOException) {
-		if (s == nullptr) {
-			writeBoolean(false);
-		} else {
-			writeBoolean(true);
-			writeInt(s->length());
-			for (auto i = 0; i < s->length(); i++) {
-				// FIXME: actually we use wide string
-				writeByte(static_cast< int8_t >(s->charAt(i)));
-			}
-		}
-	}
-
-	/**
-	 * Writes a string to output stream
-	 * @param string
-	 * @throws model file IO exception
-	 */
 	inline void writeString(const wstring& s) throw (ModelFileIOException) {
 		if (s.size() == 0) {
 			writeBoolean(false);
@@ -141,20 +117,8 @@ public:
 			writeInt(s.size());
 			for (auto i = 0; i < s.size(); i++) {
 				// FIXME: actually we use wide string
-				writeByte(static_cast< int8_t >(s[i]));
+				writeByte(static_cast< uint8_t >(s[i]));
 			}
-		}
-	}
-
-	/**
-	 * Writes a float array to output stream
-	 * @param float array
-	 * @throws model file IO exception
-	 */
-	inline void writeFloatArray(floatArray* f) throw (ModelFileIOException) {
-		writeInt(f->length);
-		for (auto i = 0; i < f->length; i++) {
-			writeFloat((*f)[i]);
 		}
 	}
 
