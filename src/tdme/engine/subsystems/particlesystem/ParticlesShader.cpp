@@ -1,8 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/particlesystem/ParticlesShader.java
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -10,8 +8,6 @@
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -36,7 +32,7 @@ void ParticlesShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/particles",
+		L"shader/" + rendererVersion + L"/particles",
 		L"render_fragmentshader.c"
 	);
 	if (renderFragmentShaderId == 0)
@@ -44,7 +40,7 @@ void ParticlesShader::initialize()
 
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/particles",
+		L"shader/" + rendererVersion + L"/particles",
 		L"render_vertexshader.c"
 	);
 	if (renderVertexShaderId == 0)

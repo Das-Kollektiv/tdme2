@@ -16,15 +16,6 @@
 #include <vector>
 #include <string>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Byte.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
-#include <java/lang/Object.h>
-#include <java/lang/StackTraceElement.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/lang/Thread.h>
 #include <java/nio/Buffer.h>
 #include <java/nio/ByteBuffer.h>
 #include <java/nio/ByteOrder.h>
@@ -38,22 +29,13 @@
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/StringConverter.h>
-#include <Array.h>
 
 using std::array;
 using std::vector;
 using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
-using java::io::Serializable;
-using java::lang::Byte;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::Object;
-using java::lang::StackTraceElement;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::lang::Thread;
 using java::nio::Buffer;
 using java::nio::ByteBuffer;
 using java::nio::ByteOrder;
@@ -67,31 +49,6 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
 
 GL3Renderer::GL3Renderer() 
 {
@@ -112,9 +69,9 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 }
 
-String* GL3Renderer::getGLVersion()
+const wstring GL3Renderer::getGLVersion()
 {
-	return u"gl3"_j;
+	return L"gl3";
 }
 
 void GL3Renderer::initialize()
@@ -196,20 +153,18 @@ int32_t GL3Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
-		auto infoLogString = new String(StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer)));
+		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
 		_Console::println(
-			static_cast< Object* >(
-				::java::lang::StringBuilder().
-				 	 append(u"GL3Renderer::loadShader"_j)->
-				 	 append(u"["_j)->
-				 	 append(handle)->
-					 append(u"]"_j)->
-					 append(pathName)->
-					 append(u"/"_j)->
-					 append(fileName)->
-					 append(u": failed: "_j)->
-					 append(infoLogString)->
-					 toString()
+			wstring(
+				wstring(L"GL3Renderer::loadShader") +
+				wstring(L"[") +
+				to_wstring(handle) +
+				wstring(L"]") +
+				pathName +
+				wstring(L"/") +
+				fileName +
+				wstring(L": failed: ") +
+				infoLogString
 			 )
 		 );
 		glDeleteShader(handle);
@@ -246,14 +201,13 @@ bool GL3Renderer::linkProgram(int32_t programId)
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
-		auto infoLogString = new String(StringConverter::toWideString(string(infoLog, infoLogLength)));
-		_Console::println(static_cast< Object* >(
-			::java::lang::StringBuilder().
-			 	 append(u"["_j)->
-				 append(programId)->
-				 append(u"]: failed: "_j)->
-				 append(infoLogString)->
-				 toString()
+		auto infoLogString = StringConverter::toWideString(string(infoLog, infoLogLength));
+		_Console::println(
+			wstring(
+				L"[" +
+				to_wstring(programId) +
+				L"]: failed: " +
+				infoLogString
 			 )
 		);
 		return false;
@@ -275,11 +229,6 @@ void GL3Renderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 void GL3Renderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
-}
-
-void GL3Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* data)
-{
-	glUniformMatrix3fv(uniformId, 1, false, data->getPointer());
 }
 
 void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
@@ -467,7 +416,7 @@ int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 	}
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "_j)->append(fboStatus)->toString()));
+		_Console::println(wstring(L"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_wstring(fboStatus)));
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
@@ -679,13 +628,6 @@ void GL3Renderer::checkGLError()
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"OpenGL Error: ("_j)->append((int32_t)error)
-			->append(u") @:"_j)->toString()));
-			/*
-		auto stackTrace = Thread::currentThread()->getStackTrace();
-		for (auto i = 1; i < stackTrace->length; i++) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"\t"_j)->append(static_cast< Object* >((*stackTrace)[i]))->toString()));
-		}
-		*/
+		_Console::println(wstring(L"OpenGL Error: (" + to_wstring(error) + L") @:"));
 	}
 }

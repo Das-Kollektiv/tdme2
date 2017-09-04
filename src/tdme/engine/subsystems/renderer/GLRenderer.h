@@ -8,7 +8,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -16,13 +15,11 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
-#include <java/lang/Object.h>
 
 using std::array;
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 using java::nio::ByteBuffer;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
@@ -76,9 +73,6 @@ public:
 	bool renderingTexturingClientState {  };
 	float pointSize {  };
 
-public: /* protected */
-	FloatBuffer* pixelDepthBuffer {  };
-
 public:
 
 	/** 
@@ -94,7 +88,7 @@ public:
 	/** 
 	 * @return renderer version e.g. gl2, gl3 or gles2
 	 */
-	virtual String* getGLVersion() = 0;
+	virtual const wstring getGLVersion() = 0;
 
 	/** 
 	 * Checks if buffer objects is available
@@ -190,13 +184,6 @@ public:
 	 * @param value
 	 */
 	virtual void setProgramUniformFloat(int32_t uniformId, float value) = 0;
-
-	/** 
-	 * Set up a float matrix 3x3 uniform value
-	 * @param uniform id
-	 * @param value
-	 */
-	virtual void setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* value) = 0;
 
 	/** 
 	 * Set up a float matrix 4x4 uniform value
@@ -740,7 +727,7 @@ public:
 	 */
 	virtual float readPixelDepth(int32_t x, int32_t y) = 0;
 
-	/** 
+	/**
 	 * Read pixels
 	 * @param x
 	 * @param y

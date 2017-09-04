@@ -4,13 +4,9 @@
 #include <algorithm>
 
 #include <java/lang/Math.h>
-#include <java/lang/System.h>
-#include <java/nio/ByteOrder.h>
-#include <java/nio/ByteBuffer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/Matrix4x4.h>
-#include <Array.h>
 
 using std::copy;
 using std::begin;
@@ -18,7 +14,6 @@ using std::end;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::Math;
-using java::lang::System;
 using java::nio::FloatBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
@@ -61,7 +56,6 @@ void GLRenderer::init()
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
-	pixelDepthBuffer = ByteBuffer::allocateDirect(1)->asFloatBuffer();
 }
 
 Matrix4x4* GLRenderer::getProjectionMatrix()

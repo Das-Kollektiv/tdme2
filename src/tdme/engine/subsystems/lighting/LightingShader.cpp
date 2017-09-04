@@ -4,14 +4,10 @@
 #include <algorithm>
 #include <string>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/lang/System.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <Array.h>
 
 using std::copy;
 using std::begin;
@@ -20,9 +16,6 @@ using std::to_wstring;
 using std::wstring;
 
 using tdme::engine::subsystems::lighting::LightingShader;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::lang::System;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -55,7 +48,7 @@ void LightingShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/lighting",
+		L"shader/" + rendererVersion + L"/lighting",
 		L"render_fragmentshader.c"
 	);
 	if (renderLightingFragmentShaderId == 0)
@@ -63,7 +56,7 @@ void LightingShader::initialize()
 
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/lighting",
+		L"shader/" + rendererVersion + L"/lighting",
 		L"render_vertexshader.c"
 	);
 	if (renderLightingVertexShaderId == 0)

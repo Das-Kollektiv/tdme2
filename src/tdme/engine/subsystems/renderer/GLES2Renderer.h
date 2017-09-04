@@ -7,7 +7,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <java/nio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -19,7 +18,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
-using java::lang::String;
 using java::nio::ByteBuffer;
 using java::nio::FloatBuffer;
 using java::nio::ShortBuffer;
@@ -35,7 +33,7 @@ class tdme::engine::subsystems::renderer::GLES2Renderer
 	: public GLRenderer
 {
 public:
-	String* getGLVersion() override;
+	const wstring getGLVersion() override;
 	void initialize() override;
 	void initializeFrame() override;
 	bool isBufferObjectsAvailable() override;
@@ -57,7 +55,6 @@ public:
 	int32_t getProgramUniformLocation(int32_t programId, const wstring& name) override;
 	void setProgramUniformInteger(int32_t uniformId, int32_t value) override;
 	void setProgramUniformFloat(int32_t uniformId, float value) override;
-	void setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArray* data) override;
 	void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data) override;
 	void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) override;
 	void setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data) override;
@@ -117,23 +114,14 @@ public:
 	void doneGuiMode() override;
 
 private:
-
 	/** 
 	 * Checks if GL error did occour 
 	 */
 	void checkGLError();
 
-	// Generated
-
 public:
+	/**
+	 * Public constructor
+	 */
 	GLES2Renderer();
-protected:
-	GLES2Renderer(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,19 +1,12 @@
 // Generated from /tdme/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.java
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
-
-using java::lang::String;
-using java::lang::StringBuilder;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
-
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
 {
@@ -31,7 +24,7 @@ void ShadowMappingShaderPre::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	preVertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"shader/" + rendererVersion + L"/shadowmapping",
 		L"pre_vertexshader.c"
 	);
 	if (preVertexShaderGlId == 0)
@@ -39,7 +32,7 @@ void ShadowMappingShaderPre::initialize()
 
 	preFragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"shader/" + rendererVersion + L"/shadowmapping",
 		L"pre_fragmentshader.c"
 	);
 	if (preFragmentShaderGlId == 0)

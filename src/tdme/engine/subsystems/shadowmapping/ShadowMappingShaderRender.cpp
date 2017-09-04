@@ -2,16 +2,12 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using java::lang::Math;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -33,7 +29,7 @@ void ShadowMappingShaderRender::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	renderVertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"shader/" + rendererVersion + L"/shadowmapping",
 		L"render_vertexshader.c"
 	);
 	if (renderVertexShaderGlId == 0)
@@ -41,7 +37,7 @@ void ShadowMappingShaderRender::initialize()
 
 	renderFragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/shadowmapping",
+		L"shader/" + rendererVersion + L"/shadowmapping",
 		L"render_fragmentshader.c"
 	);
 	if (renderFragmentShaderGlId == 0)
@@ -90,7 +86,7 @@ void ShadowMappingShaderRender::initialize()
 	if (renderUniformLightDirection == -1)
 		return;
 
-	if (rendererVersion->equals(u"gles2"_j) == false) {
+	if (rendererVersion != L"gles2") {
 		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramGlId, L"lightPosition");
 		if (renderUniformLightPosition == -1)
 			return;

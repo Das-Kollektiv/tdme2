@@ -1,13 +1,9 @@
 // Generated from /tdme/src/tdme/gui/renderer/GUIShader.java
 #include <tdme/gui/renderer/GUIShader.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using tdme::gui::renderer::GUIShader;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 GUIShader::GUIShader(const ::default_init_tag&)
@@ -40,7 +36,7 @@ void GUIShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	vertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/gui",
+		L"shader/" + rendererVersion + L"/gui",
 		L"render_vertexshader.c"
 	);
 	if (vertexShaderGlId == 0)
@@ -48,7 +44,7 @@ void GUIShader::initialize()
 
 	fragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion->getCPPWString() + L"/gui",
+		L"shader/" + rendererVersion + L"/gui",
 		L"render_fragmentshader.c"
 	);
 	if (fragmentShaderGlId == 0)
