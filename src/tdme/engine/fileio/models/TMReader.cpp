@@ -6,13 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <Array.h>
-
-#include <java/lang/Float.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuffer.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
@@ -34,22 +27,16 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::wstring;
 using std::to_string;
+using std::to_wstring;
 
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using java::lang::Float;
-using java::lang::String;
-using java::lang::StringBuffer;
-using java::lang::StringBuilder;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
@@ -72,87 +59,58 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
 
-
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
-
 Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {
-	TMReaderInputStream* is = nullptr;
-	auto finally0 = finally([&] {
-		if (is != nullptr) {
-			delete is;
-		}
-	});
 	vector<uint8_t> content;
 	_FileSystem::getInstance()->getContent(pathName, fileName, &content);
-	is = new TMReaderInputStream(&content);
-	auto fileId = is->readString();
-	if (fileId == nullptr || fileId->equals(u"TDME Model"_j) == false) {
+	TMReaderInputStream is(&content);
+	auto fileId = is.readWString();
+	if (fileId.length() == 0 || fileId != L"TDME Model") {
 		throw ModelFileIOException(
 			"File is not a TDME model file, file id = '" +
-			StringConverter::toString(fileId->getCPPWString()) +
+			StringConverter::toString(fileId) +
 			"'"
 		);
 	}
-	auto version = new int8_tArray(3);
-	(*version)[0] = is->readByte();
-	(*version)[1] = is->readByte();
-	(*version)[2] = is->readByte();
-	if ((*version)[0] != 1 || (*version)[1] != 0 || (*version)[2] != 0) {
+	array<uint8_t, 3> version;
+	version[0] = is.readByte();
+	version[1] = is.readByte();
+	version[2] = is.readByte();
+	if (version[0] != 1 || version[1] != 0 || version[2] != 0) {
 		throw ModelFileIOException(
 			"Version mismatch, should be 1.0.0, but is " +
-			to_string((*version)[0]) +
+			to_string(version[0]) +
 			"." +
-			to_string((*version)[1]) +
+			to_string(version[1]) +
 			"." +
-			to_string((*version)[2])
+			to_string(version[2])
 		);
 	}
-	auto name = is->readString();
-	auto upVector = Model_UpVector::valueOf(is->readWString());
-	auto rotationOrder = RotationOrder::valueOf(is->readWString());
+	auto name = is.readWString();
+	auto upVector = Model_UpVector::valueOf(is.readWString());
+	auto rotationOrder = RotationOrder::valueOf(is.readWString());
 	array<float, 3> boundingBoxMinXYZ;
-	is->readFloatArray(&boundingBoxMinXYZ);
+	is.readFloatArray(&boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
-	is->readFloatArray(&boundingBoxMaxXYZ);
+	is.readFloatArray(&boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(new Vector3(&boundingBoxMinXYZ), new Vector3(&boundingBoxMaxXYZ));
 	auto model = new Model(
-		::java::lang::StringBuilder().
-		 append(pathName)->
-		 append(L'/')->
-		 append(fileName)->
-		 toString()->
-		 getCPPWString(),
+		pathName + L"/" + fileName,
 		fileName,
 		upVector,
 		rotationOrder,
 		boundingBox
 	);
-	model->setFPS(is->readFloat());
+	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
-	is->readFloatArray(&importTransformationsMatrixArray);
+	is.readFloatArray(&importTransformationsMatrixArray);
 	model->getImportTransformationsMatrix()->set(&importTransformationsMatrixArray);
-	auto materialCount = is->readInt();
+	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(is);
+		auto material = readMaterial(&is);
 		(*model->getMaterials())[material->getId()] = material;
 	}
-	readSubGroups(is, model, nullptr, model->getSubGroups());
+	readSubGroups(&is, model, nullptr, model->getSubGroups());
 	return model;
 }
 
@@ -221,16 +179,19 @@ const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputSt
 	return tc;
 }
 
-int32_tArray* TMReader::readIndices(TMReaderInputStream* is) throw (ModelFileIOException)
+bool TMReader::readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices) throw (ModelFileIOException)
 {
 	if (is->readBoolean() == false) {
-		return nullptr;
+		return false;
 	} else {
-		auto indices = new int32_tArray(is->readInt());
-		for (auto i = 0; i < indices->length; i++) {
+		auto length = is->readInt();
+		if (length != indices->size()) {
+			throw ModelFileIOException("Wrong indices array size");
+		}
+		for (auto i = 0; i < indices->size(); i++) {
 			(*indices)[i] = is->readInt();
 		}
-		return indices;
+		return true;
 	}
 }
 
@@ -255,10 +216,10 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	vector<FacesEntity> facesEntities;
 	facesEntities.resize(is->readInt());
 	for (auto i = 0; i < facesEntities.size(); i++) {
-		facesEntities[i] = FacesEntity(g, is->readString()->getCPPWString());
+		facesEntities[i] = FacesEntity(g, is->readWString());
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
-			auto materialIt = g->getModel()->getMaterials()->find(is->readString()->getCPPWString());
+			auto materialIt = g->getModel()->getMaterials()->find(is->readWString());
 			if (materialIt != g->getModel()->getMaterials()->end()) {
 				material = materialIt->second;
 			}
@@ -266,19 +227,32 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 		}
 		vector<Face> faces;
 		faces.resize(is->readInt());
+		array<int32_t,3> vertexIndices;
+		array<int32_t,3> normalIndices;
+		array<int32_t,3> textureCoordinateIndices;
+		array<int32_t,3> tangentIndices;
+		array<int32_t,3> bitangentIndices;
+		bool haveTextureCoordinateIndices;
+		bool haveTangentIndices;
+		bool haveBitangentIndices;
 		for (auto j = 0; j < faces.size(); j++) {
-			auto vertexIndices = readIndices(is);
-			auto normalIndices = readIndices(is);
-			faces[j] = Face(g, (*vertexIndices)[0], (*vertexIndices)[1], (*vertexIndices)[2], (*normalIndices)[0], (*normalIndices)[1], (*normalIndices)[2]);
-			auto textureCoordinateIndices = readIndices(is);
-			if (textureCoordinateIndices != nullptr && textureCoordinateIndices->length > 0) {
-				faces[j].setTextureCoordinateIndices((*textureCoordinateIndices)[0], (*textureCoordinateIndices)[1], (*textureCoordinateIndices)[2]);
+			readIndices(is, &vertexIndices);
+			readIndices(is, &normalIndices);
+			haveTextureCoordinateIndices = readIndices(is, &textureCoordinateIndices);
+			haveTangentIndices = readIndices(is, &tangentIndices);
+			haveBitangentIndices = readIndices(is, &bitangentIndices);
+			faces[j] = Face(g,
+				vertexIndices[0], vertexIndices[1], vertexIndices[2],
+				normalIndices[0], normalIndices[1], normalIndices[2]
+			);
+			if (haveTextureCoordinateIndices == true) {
+				faces[j].setTextureCoordinateIndices(
+					textureCoordinateIndices[0], textureCoordinateIndices[1], textureCoordinateIndices[2]
+				);
 			}
-			auto tangentIndices = readIndices(is);
-			auto bitangentIndices = readIndices(is);
-			if (tangentIndices != nullptr && tangentIndices->length > 0 && bitangentIndices != nullptr && bitangentIndices->length > 0) {
-				faces[j].setTangentIndices((*tangentIndices)[0], (*tangentIndices)[1], (*tangentIndices)[2]);
-				faces[j].setBitangentIndices((*bitangentIndices)[0], (*bitangentIndices)[1], (*bitangentIndices)[2]);
+			if (haveTangentIndices == true && haveBitangentIndices == true) {
+				faces[j].setTangentIndices(tangentIndices[0], tangentIndices[1], tangentIndices[2]);
+				faces[j].setBitangentIndices(bitangentIndices[0], bitangentIndices[1], bitangentIndices[2]);
 			}
 		}
 		facesEntities[i].setFaces(&faces);

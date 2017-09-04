@@ -7,10 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <Array.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/lang/StringBuffer.h>
-
 #include <fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -26,9 +22,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::io::InputStream;
-using java::lang::String;
-using java::lang::StringBuffer;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Group;
@@ -112,25 +105,6 @@ public:
 			((static_cast< int32_t >(readByte()) & 0xFF) << 0);
 		float* floatValue = (float*)&value;
 		return *floatValue;
-	}
-
-	/**
-	 * Reads a string from input stream
-	 * @throws model file IO exception
-	 * @return string
-	 */
-	inline String* readString() throw (ModelFileIOException) {
-		if (readBoolean() == false) {
-			return nullptr;
-		} else {
-			auto l = readInt();
-			auto sb = new StringBuffer();
-			for (auto i = 0; i < l; i++) {
-				// FIXME: actually we use wide string
-				sb->append(static_cast< char16_t >(readByte()));
-			}
-			return sb->toString();
-		}
 	}
 
 	/**
@@ -284,11 +258,12 @@ private:
 	/** 
 	 * Read indices from input stream
 	 * @param input stream
+	 * @param indices
 	 * @throws IOException
 	 * @throws model file IO exception
-	 * @return indicies / int array
+	 * @return if having indices
 	 */
-	static int32_tArray* readIndices(TMReaderInputStream* is) throw (ModelFileIOException);
+	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices) throw (ModelFileIOException);
 
 	/** 
 	 * Read animation from input stream into group
