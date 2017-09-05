@@ -291,7 +291,7 @@ void ParticleSystemScreenController::unsetEntityData()
 
 void ParticleSystemScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
 }
 
 void ParticleSystemScreenController::unsetEntityProperties()

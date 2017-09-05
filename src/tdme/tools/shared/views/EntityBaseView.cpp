@@ -1,18 +1,16 @@
 // Generated from /tdme/src/tdme/tools/shared/views/EntityBaseView.java
 #include <tdme/tools/shared/views/EntityBaseView.h>
 
-#include <java/lang/String.h>
-#include <java/util/Iterator.h>
-#include <java/util/Set.h>
+#include <string>
+
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
+using std::wstring;
+
 using tdme::tools::shared::views::EntityBaseView;
-using java::lang::String;
-using java::util::Iterator;
-using java::util::Set;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelPropertyPresets;
@@ -28,7 +26,7 @@ void EntityBaseView::initialize()
 	entityBaseSubScreenController->setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
-void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* presetId)
+void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const wstring& presetId)
 {
 	if (entity == nullptr)
 		return;
@@ -36,7 +34,7 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* p
 	entity->clearProperties();
 	auto objectPropertiesPreset = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
 	const vector<PropertyModelClass*>* entityPropertyPresetArrayList = nullptr;
-	auto entityPropertyPresetArrayListIt = objectPropertiesPreset->find(presetId->getCPPWString());
+	auto entityPropertyPresetArrayListIt = objectPropertiesPreset->find(presetId);
 	if (entityPropertyPresetArrayListIt != objectPropertiesPreset->end()) {
 		entityPropertyPresetArrayList = &entityPropertyPresetArrayListIt->second;
 	}
@@ -48,12 +46,12 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* p
 	entityBaseSubScreenController->setEntityProperties(entity, presetId, nullptr);
 }
 
-bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, String* oldName, String* name, String* value)
+bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, const wstring& oldName, const wstring& name, const wstring& value)
 {
 	if (entity == nullptr)
 		return false;
 
-	if (entity->updateProperty(oldName->getCPPWString(), name->getCPPWString(), value->getCPPWString()) == true) {
+	if (entity->updateProperty(oldName, name, value) == true) {
 		entityBaseSubScreenController->setEntityProperties(entity, nullptr, name);
 		return true;
 	}
@@ -66,24 +64,24 @@ bool EntityBaseView::entityPropertyAdd(LevelEditorEntity* entity)
 		return false;
 
 	if (entity->addProperty(L"new.property", L"new.value")) {
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, u"new.property"_j);
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, L"new.property");
 		return true;
 	}
 	return false;
 }
 
-bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, String* name)
+bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, const wstring& name)
 {
 	if (entity == nullptr)
 		return false;
 
-	auto idx = entity->getPropertyIndex(name->getCPPWString());
-	if (idx != -1 && entity->removeProperty(name->getCPPWString()) == true) {
+	auto idx = entity->getPropertyIndex(name);
+	if (idx != -1 && entity->removeProperty(name) == true) {
 		auto property = entity->getPropertyByIndex(idx);
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? static_cast< String* >(nullptr) : new String(property->getName()));
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? L"" : property->getName());
 		return true;
 	}
 	return false;

@@ -96,7 +96,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	virtual void setEntityProperties(LevelEditorEntity* entity, String* presetId, String* selectedName);
+	virtual void setEntityProperties(LevelEditorEntity* entity, const wstring& presetId, const wstring& selectedName);
 
 	/** 
 	 * Unset entity properties

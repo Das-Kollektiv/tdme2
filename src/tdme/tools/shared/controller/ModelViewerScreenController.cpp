@@ -176,7 +176,7 @@ void ModelViewerScreenController::unsetEntityData()
 
 void ModelViewerScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
 }
 
 void ModelViewerScreenController::unsetEntityProperties()

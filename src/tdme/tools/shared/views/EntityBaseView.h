@@ -5,14 +5,12 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::wstring;
 
-using java::lang::String;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 
@@ -38,7 +36,7 @@ public:
 	 * @param entity
 	 * @param preset id
 	 */
-	virtual void entityPropertiesPreset(LevelEditorEntity* entity, String* presetId);
+	virtual void entityPropertiesPreset(LevelEditorEntity* entity, const wstring& presetId);
 
 	/** 
 	 * Save a entity property
@@ -48,7 +46,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	virtual bool entityPropertySave(LevelEditorEntity* entity, String* oldName, String* name, String* value);
+	virtual bool entityPropertySave(LevelEditorEntity* entity, const wstring& oldName, const wstring& name, const wstring& value);
 
 	/** 
 	 * Add a entity property
@@ -63,7 +61,7 @@ public:
 	 * @param name
 	 * @return success
 	 */
-	virtual bool entityPropertyRemove(LevelEditorEntity* entity, String* name);
+	virtual bool entityPropertyRemove(LevelEditorEntity* entity, const wstring& name);
 
 	/** 
 	 * Update current model data

@@ -142,7 +142,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector
 	}
 }
 
-void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, String* presetId, String* selectedName)
+void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, const wstring& presetId, const wstring& selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	entityPropertyPresetApply->getController()->setDisabled(false);
@@ -152,7 +152,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
-	entityPropertiesPresets->getController()->setValue(presetId != nullptr ? value->set(presetId) : value->set(u"none"_j));
+	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
 	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto entityPropertiesListBoxSubNodesXML = u""_j;
@@ -166,7 +166,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(entityProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && entityProperty->getName() == selectedName->getCPPWString() ? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName.length() > 0 && entityProperty->getName() == selectedName ? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
@@ -198,7 +198,11 @@ void EntityBaseSubScreenController::unsetEntityProperties()
 
 void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* entity)
 {
-	if (view->entityPropertySave(entity, entityPropertiesList->getController()->getValue()->toString(), entityPropertyName->getController()->getValue()->toString(), entityPropertyValue->getController()->getValue()->toString()) == false) {
+	if (view->entityPropertySave(
+		entity,
+		entityPropertiesList->getController()->getValue()->toString()->getCPPWString(),
+		entityPropertyName->getController()->getValue()->toString()->getCPPWString(),
+		entityPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
 		showErrorPopUp(u"Warning"_j, u"Saving entity property failed"_j);
 	}
 }
@@ -212,7 +216,7 @@ void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
-	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toString()) == false) {
+	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toString()->getCPPWString()) == false) {
 		showErrorPopUp(u"Warning"_j, u"Removing entity property failed"_j);
 	}
 }
@@ -224,7 +228,7 @@ void EntityBaseSubScreenController::showErrorPopUp(String* caption, String* mess
 
 void EntityBaseSubScreenController::onEntityPropertyPresetApply(LevelEditorEntity* model)
 {
-	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->toString());
+	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->toString()->getCPPWString());
 }
 
 void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEditorEntity* entity)
