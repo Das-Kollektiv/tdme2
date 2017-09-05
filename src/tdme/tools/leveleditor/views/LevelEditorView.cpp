@@ -258,7 +258,7 @@ PopUps* LevelEditorView::getPopUps()
 
 String* LevelEditorView::getFileName()
 {
-	return new String(_FileSystem::getInstance()->getFileName(level->getFileName()->getCPPWString()));
+	return new String(_FileSystem::getInstance()->getFileName(level->getFileName()));
 }
 
 LevelEditorLevel* LevelEditorView::getLevel()

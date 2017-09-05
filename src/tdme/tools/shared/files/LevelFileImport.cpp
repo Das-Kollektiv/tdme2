@@ -73,7 +73,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		StringConverter::toString(jsonContent)
 	);
 
-	level->setGameRoot(new String(Tools::getGameRootPath(pathName)));
+	level->setGameRoot(Tools::getGameRootPath(pathName));
 	auto version = Float::parseFloat(new String(StringConverter::toWideString(jRoot["version"].getString())));
 	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(StringConverter::toWideString(jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
@@ -210,7 +210,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		level->addObject(levelEditorObject);
 	}
 	level->setObjectIdx(jRoot["objects_eidx"].getInt());
-	level->setPathName(new String(pathName));
-	level->setFileName(new String(fileName));
+	level->setPathName(pathName);
+	level->setFileName(fileName);
 	level->computeDimension();
 }

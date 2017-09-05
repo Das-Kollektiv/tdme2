@@ -7,8 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -22,8 +20,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::String;
-using java::util::Iterator;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
@@ -40,9 +36,9 @@ class tdme::tools::shared::model::LevelEditorLevel final
 	: public ModelProperties
 {
 private:
-	String* gameRoot {  };
-	String* pathName {  };
-	String* fileName {  };
+	wstring gameRoot {  };
+	wstring pathName {  };
+	wstring fileName {  };
 	RotationOrder* rotationOrder {  };
 	vector<LevelEditorLight*> lights {  };
 	LevelEditorEntityLibrary* entityLibrary {  };
@@ -57,35 +53,35 @@ public:
 	/** 
 	 * @return game root
 	 */
-	String* getGameRoot();
+	const wstring& getGameRoot();
 
 	/** 
 	 * Set game root
 	 * @param gameRoot
 	 */
-	void setGameRoot(String* gameRoot);
+	void setGameRoot(const wstring& gameRoot);
 
 	/** 
 	 * @return path name
 	 */
-	String* getPathName();
+	const wstring& getPathName();
 
 	/** 
 	 * Set up path name
 	 * @param pathName
 	 */
-	void setPathName(String* pathName);
+	void setPathName(const wstring& pathName);
 
 	/** 
 	 * @return file name
 	 */
-	String* getFileName();
+	const wstring& getFileName();
 
 	/** 
 	 * Set up level file name
 	 * @param file name
 	 */
-	void setFileName(String* fileName);
+	void setFileName(const wstring& fileName);
 
 	/** 
 	 * @return rotation order

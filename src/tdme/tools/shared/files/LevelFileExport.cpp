@@ -84,7 +84,7 @@ template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 
 void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	level->setFileName(new String(pathName->getCPPWString() + L'/' + fileName->getCPPWString()));
+	level->setFileName(pathName->getCPPWString() + L'/' + fileName->getCPPWString());
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
 	jRoot["version"] = "0.99";

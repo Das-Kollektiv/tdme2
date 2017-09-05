@@ -6,10 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
-#include <java/util/Set.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
@@ -31,10 +27,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorLevel;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Iterator;
-using java::util::Set;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -52,9 +44,9 @@ using tdme::utils::_Console;
 
 LevelEditorLevel::LevelEditorLevel() 
 {
-	gameRoot = u""_j;
-	pathName = u"."_j;
-	fileName = u"untitled.tl"_j;
+	gameRoot = L"";
+	pathName = L".";
+	fileName = L"untitled.tl";
 	rotationOrder = RotationOrder::XYZ;
 	lights.push_back(new LevelEditorLight(0));
 	lights.push_back(new LevelEditorLight(1));
@@ -78,32 +70,32 @@ LevelEditorLevel::LevelEditorLevel()
 	boundingBox = new BoundingBox();
 }
 
-String* LevelEditorLevel::getGameRoot()
+const wstring& LevelEditorLevel::getGameRoot()
 {
 	return gameRoot;
 }
 
-void LevelEditorLevel::setGameRoot(String* gameRoot)
+void LevelEditorLevel::setGameRoot(const wstring& gameRoot)
 {
 	this->gameRoot = gameRoot;
 }
 
-String* LevelEditorLevel::getPathName()
+const wstring& LevelEditorLevel::getPathName()
 {
 	return pathName;
 }
 
-void LevelEditorLevel::setPathName(String* pathName)
+void LevelEditorLevel::setPathName(const wstring& pathName)
 {
 	this->pathName = pathName;
 }
 
-String* LevelEditorLevel::getFileName()
+const wstring& LevelEditorLevel::getFileName()
 {
 	return fileName;
 }
 
-void LevelEditorLevel::setFileName(String* fileName)
+void LevelEditorLevel::setFileName(const wstring& fileName)
 {
 	this->fileName = fileName;
 }
@@ -288,8 +280,11 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	auto _entity = getObjectById(object->getId());
 	if (_entity != nullptr) {
 		removeObject(object->getId());
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorLevel::addObject():: object with id '"_j)->append(object->getId())
-			->append(u"' already exists. Removing it!"_j)->toString()));
+		_Console::println(
+			L"LevelEditorLevel::addObject():: object with id '" +
+			object->getId() +
+			L"' already exists. Removing it!"
+		);
 	}
 	objectsById[object->getId()] = object;
 	objects.push_back(object);

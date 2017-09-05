@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -19,7 +17,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::String;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::ext::tinyxml::TiXmlElement;
 
