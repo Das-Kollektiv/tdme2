@@ -155,7 +155,7 @@ void SharedParticleSystemView::loadFile(String* pathName, String* fileName)
 
 void SharedParticleSystemView::saveFile(String* pathName, String* fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName, fileName, entity);
+	ModelMetaDataFileExport::export_(pathName->getCPPWString(), fileName->getCPPWString(), entity);
 }
 
 void SharedParticleSystemView::reloadFile()

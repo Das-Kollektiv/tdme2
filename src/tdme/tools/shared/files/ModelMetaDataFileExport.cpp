@@ -4,11 +4,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <string>
 
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
+
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -40,21 +39,17 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/JsonException.h>
 #include <ext/jsonbox/Object.h>
 
 using std::ostringstream;
+using std::wstring;
+
+using java::lang::String;
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
-using java::lang::Iterable;
-using java::lang::Object;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -87,66 +82,19 @@ using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace engine {
-namespace primitives {
-typedef ::SubArray< ::tdme::engine::primitives::BoundingVolume, ::java::lang::ObjectArray > BoundingVolumeArray;
-typedef ::SubArray< ::tdme::engine::primitives::Triangle, ::java::lang::ObjectArray, BoundingVolumeArray > TriangleArray;
-}  // namespace primitives
-}  // namespace engine
-
-namespace math {
-typedef ::SubArray< ::tdme::math::Vector3, ::java::lang::ObjectArray > Vector3Array;
-}  // namespace math
-}  // namespace tdme
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
-
-void ModelMetaDataFileExport::copyFile(String* source, String* dest) throw (_FileSystemException)
+void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException)
 {
 }
 
-void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
+void ModelMetaDataFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	{
-		auto finally1 = finally([&] {
-		});
-		try {
-			entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName->getCPPWString(), fileName->getCPPWString()));
-			auto jEntityRoot = exportToJSON(entity);
+	entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	auto jEntityRoot = exportToJSON(entity);
 
-			ostringstream json;
-			json << jEntityRoot;
+	ostringstream json;
+	json << jEntityRoot;
 
-			_FileSystem::getInstance()->setContentFromString(pathName->getCPPWString(), fileName->getCPPWString(), StringConverter::toWideString(json.str()));
-		} catch (_Exception& exception) {
-			throw exception;
-		}
-	}
+	_FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
 }
 
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
@@ -162,8 +110,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			modelPathName,
 			modelFileName
 		);
-		jEntityRoot["file"] =
-			StringConverter::toString(::java::lang::StringBuilder().append(modelPathName)->append(u"/"_j)->append(modelFileName)->toString()->getCPPWString());
+		jEntityRoot["file"] = StringConverter::toString(modelPathName + L"/" + modelFileName);
 		/*
 		try {
 			auto thumbnail = ::java::lang::StringBuilder().append(modelFileName)->append(u".png"_j)->toString();
@@ -178,7 +125,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		*/
 	}
 	jEntityRoot["version"] = "0.99";
-	jEntityRoot["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
+	jEntityRoot["type"] = StringConverter::toString(entity->getType()->toWString());
 	jEntityRoot["name"] = StringConverter::toString(entity->getName());
 	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription());
 	jEntityRoot["px"] = static_cast< double >(entity->getPivot()->getX());
@@ -187,7 +134,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = entity->getParticleSystem();
 		ext::jsonbox::Object jParticleSystem;
-		jParticleSystem["t"] = StringConverter::toString(particleSystem->getType()->toString()->getCPPWString());
+		jParticleSystem["t"] = StringConverter::toString(particleSystem->getType()->toWString());
 		{
 			auto v = particleSystem->getType();
 			if ((v == LevelEditorEntityParticleSystem_Type::NONE))
@@ -234,11 +181,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			{
 				{
 					_Console::println(
-						static_cast< Object* >(
-							::java::lang::StringBuilder().
-							 	 append(u"ModelMetaDataFileExport::export(): unknown particle system type '"_j)->
-								 append(static_cast< Object* >(particleSystem->getType()))->
-								 append(u"'"_j)->toString()
+						wstring(
+							L"ModelMetaDataFileExport::export(): unknown particle system type '" +
+							particleSystem->getType()->toWString() +
+							L"'"
 						)
 					);
 					goto end_switch0;;
@@ -247,14 +193,15 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			end_switch0:;
 		}
 
-		jParticleSystem["e"] = StringConverter::toString(particleSystem->getEmitter()->toString()->getCPPWString());
+		jParticleSystem["e"] = StringConverter::toString(particleSystem->getEmitter()->toWString());
 		{
 			auto v = particleSystem->getEmitter();
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE))
 			{
 				{
 					goto end_switch1;;
-				}			}
+				}
+			}
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER))
 			{
 				{
@@ -435,11 +382,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
 			{
 				_Console::println(
-					static_cast< Object* >(
-						::java::lang::StringBuilder().
-						 	 append(u"ModelMetaDataFileExport::export(): unknown particle system emitter '"_j)->
-							 append(static_cast< Object* >(particleSystem->getEmitter()))->
-							 append(u"'"_j)->toString()
+					wstring(
+						L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
+						particleSystem->getEmitter()->toWString() +
+						L"'"
 					 )
 				 );
 			}
@@ -460,7 +406,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< Sphere* >(bv) != nullptr) {
-			auto sphere = java_cast< Sphere* >(bv);
+			auto sphere = dynamic_cast< Sphere* >(bv);
 			jBoundingVolume["type"] = "sphere";
 			jBoundingVolume["cx"] = static_cast< double >(sphere->getCenter()->getX());
 			jBoundingVolume["cy"] = static_cast< double >(sphere->getCenter()->getY());
@@ -469,7 +415,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< Capsule* >(bv) != nullptr) {
-			auto capsule = java_cast< Capsule* >(bv);
+			auto capsule = dynamic_cast< Capsule* >(bv);
 			jBoundingVolume["type"] = "capsule";
 			jBoundingVolume["ax"] = static_cast< double >(capsule->getA()->getX());
 			jBoundingVolume["ay"] = static_cast< double >(capsule->getA()->getY());
@@ -481,7 +427,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
-			auto aabb = java_cast< BoundingBox* >(bv);
+			auto aabb = dynamic_cast< BoundingBox* >(bv);
 			jBoundingVolume["type"] = "aabb";
 			jBoundingVolume["mix"] = static_cast< double >(aabb->getMin()->getX());
 			jBoundingVolume["miy"] = static_cast< double >(aabb->getMin()->getY());
@@ -492,7 +438,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
-			auto obb = java_cast< OrientedBoundingBox* >(bv);
+			auto obb = dynamic_cast< OrientedBoundingBox* >(bv);
 			jBoundingVolume["type"] = "obb";
 			jBoundingVolume["cx"] = static_cast< double >(obb->getCenter()->getX());
 			jBoundingVolume["cy"] = static_cast< double >(obb->getCenter()->getY());
@@ -512,7 +458,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
-			auto mesh = java_cast< ConvexMesh* >(bv);
+			auto mesh = dynamic_cast< ConvexMesh* >(bv);
 			jBoundingVolume["type"] = "convexmesh";
 			jBoundingVolume["file"] = StringConverter::toString(entityBoundingVolume->getModelMeshFile());
 			jBoundingVolumes.push_back(jBoundingVolume);

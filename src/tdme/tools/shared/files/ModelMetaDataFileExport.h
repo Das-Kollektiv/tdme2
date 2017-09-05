@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
+#include <string>
+
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
@@ -13,8 +13,7 @@
 #include <ext/jsonbox/Object.h>
 #include <ext/jsonbox/JsonException.h>
 
-using java::io::File;
-using java::lang::String;
+using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::_FileSystemException;
@@ -37,7 +36,7 @@ private:
 	 * @param dest
 	 * @throws file system exception
 	 */
-	static void copyFile(String* source, String* dest) throw (_FileSystemException);
+	static void copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException);
 
 public:
 
@@ -49,7 +48,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void export_(String* pathName, String* fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Export model meta data file to JSON node
