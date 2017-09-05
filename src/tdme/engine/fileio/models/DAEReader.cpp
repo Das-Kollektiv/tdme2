@@ -422,8 +422,8 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 		}
 	}
 	LevelFileExport::export_(
-		new String(pathName),
-		new String(fileName + L".tl"),
+		pathName,
+		fileName + L".tl",
 		levelEditorLevel
 	);
 	return levelEditorLevel;

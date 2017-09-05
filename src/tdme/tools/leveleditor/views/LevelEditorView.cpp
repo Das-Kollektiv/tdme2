@@ -1377,7 +1377,7 @@ void LevelEditorView::loadMap(String* path, String* file)
 void LevelEditorView::saveMap(String* pathName, String* fileName)
 {
 	try {
-		LevelFileExport::export_(pathName, fileName, level);
+		LevelFileExport::export_(pathName->getCPPWString(), fileName->getCPPWString(), level);
 	} catch (_Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			u"Warning: Could not save level file"_j,

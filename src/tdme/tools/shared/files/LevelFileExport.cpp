@@ -6,9 +6,8 @@
 #include <sstream>
 #include <string>
 
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/util/Iterator.h>
+
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -34,10 +33,9 @@
 using std::ostringstream;
 using std::wstring;
 
-using tdme::tools::shared::files::LevelFileExport;
-using java::lang::Iterable;
 using java::lang::String;
-using java::util::Iterator;
+
+using tdme::tools::shared::files::LevelFileExport;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -57,38 +55,13 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::StringConverter;
 
-template<typename T, typename U>
-static T java_cast(U* u)
+void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
-
-void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
-{
-	level->setFileName(pathName->getCPPWString() + L'/' + fileName->getCPPWString());
+	level->setFileName(pathName + L'/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
 	jRoot["version"] = "0.99";
-	jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->toString()->getCPPWString());
+	jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->toWString());
 	tdme::ext::jsonbox::Array jLights;
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		auto light = level->getLightAt(i);
@@ -185,5 +158,5 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 	ostringstream json;
 	json << jRoot;
 
-	_FileSystem::getInstance()->setContentFromString(pathName->getCPPWString(), fileName->getCPPWString(), StringConverter::toWideString(json.str()));
+	_FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
 }
