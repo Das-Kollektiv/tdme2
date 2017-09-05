@@ -7,8 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -16,8 +14,6 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Iterable;
-using java::lang::String;
 using tdme::tools::shared::model::PropertyModelClass;
 
 /** 
@@ -43,7 +39,7 @@ public:
 	 * @param name
 	 * @return property or null
 	 */
-	virtual PropertyModelClass* getProperty(String* name);
+	virtual PropertyModelClass* getProperty(const wstring& name);
 
 	/** 
 	 * @return property count
@@ -55,7 +51,7 @@ public:
 	 * @param name
 	 * @return index or -1 if not found
 	 */
-	virtual int32_t getPropertyIndex(String* name);
+	virtual int32_t getPropertyIndex(const wstring& name);
 
 	/** 
 	 * Get property by index
@@ -68,7 +64,7 @@ public:
 	 * Add a property
 	 * @param property
 	 */
-	virtual bool addProperty(String* name, String* value);
+	virtual bool addProperty(const wstring& name, const wstring& value);
 
 	/** 
 	 * Update a property
@@ -77,13 +73,13 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	virtual bool updateProperty(String* oldName, String* name, String* value);
+	virtual bool updateProperty(const wstring& oldName, const wstring& name, const wstring& value);
 
 	/** 
 	 * Removes a property
 	 * @param property name
 	 */
-	virtual bool removeProperty(String* name);
+	virtual bool removeProperty(const wstring& name);
 
 	/**
 	 * Public constructor

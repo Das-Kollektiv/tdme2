@@ -454,7 +454,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	mapPropertyValue->getController()->setValue(TEXT_EMPTY);
 	mapPropertySave->getController()->setDisabled(true);
 	mapPropertyRemove->getController()->setDisabled(true);
-	auto mapProperty = view->getLevel()->getProperty(mapPropertiesListBox->getController()->getValue()->toString());
+	auto mapProperty = view->getLevel()->getProperty(mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString());
 	if (mapProperty != nullptr) {
 		mapPropertyName->getController()->setValue(value->set(mapProperty->getName()));
 		mapPropertyValue->getController()->setValue(value->set(mapProperty->getValue()));
@@ -555,7 +555,7 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	if (levelEditorObject == nullptr)
 		return;
 
-	auto modelProperty = levelEditorObject->getProperty(objectPropertiesListBox->getController()->getValue()->toString());
+	auto modelProperty = levelEditorObject->getProperty(objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString());
 	if (modelProperty != nullptr) {
 		objectPropertyName->getController()->setValue(value->set(modelProperty->getName()));
 		objectPropertyValue->getController()->setValue(value->set(modelProperty->getValue()));

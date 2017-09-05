@@ -656,7 +656,7 @@ void LevelEditorView::updateGUIElements()
 		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
-			auto preset = levelEditorObject->getProperty(u"preset"_j);
+			auto preset = levelEditorObject->getProperty(L"preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? new String(preset->getValue()) : new String(L""), levelEditorObject, nullptr);
 			levelEditorScreenController->setObject(selectedObject->getTranslation(), selectedObject->getScale(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle());
 			Vector3* objectCenter = nullptr;
@@ -802,9 +802,9 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	if (levelEditorObject == nullptr)
 		return;
 
-	auto colorProperty = levelEditorObject->getProperty(u"object.color"_j);
+	auto colorProperty = levelEditorObject->getProperty(L"object.color");
 	if (colorProperty == nullptr)
-		colorProperty = levelEditorObject->getEntity()->getProperty(u"object.color"_j);
+		colorProperty = levelEditorObject->getEntity()->getProperty(L"object.color");
 
 	if (colorProperty != nullptr) {
 		auto objectColorIt = objectColors.find(colorProperty->getValue());
@@ -1084,9 +1084,9 @@ void LevelEditorView::colorObject()
 			continue;
 
 		auto color = (*OBJECTCOLOR_NAMES)[0];
-		auto colorProperty = levelEditorObject->getProperty(u"object.color"_j);
+		auto colorProperty = levelEditorObject->getProperty(L"object.color");
 		if (colorProperty == nullptr) {
-			levelEditorObject->addProperty(u"object.color"_j, color);
+			levelEditorObject->addProperty(L"object.color", color->getCPPWString());
 		} else {
 			color = new String(colorProperty->getValue());
 			for (auto i = 0; i < OBJECTCOLOR_NAMES->length; i++) {
@@ -1095,10 +1095,10 @@ void LevelEditorView::colorObject()
 					break;
 				}
 			}
-			if (color->equals(u"none"_j)) {
-				levelEditorObject->removeProperty(u"object.color"_j);
+			if (color->getCPPWString() == L"none") {
+				levelEditorObject->removeProperty(L"object.color");
 			} else {
-				levelEditorObject->updateProperty(new String(colorProperty->getName()), u"object.color"_j, color);
+				levelEditorObject->updateProperty(colorProperty->getName(), L"object.color", color->getCPPWString());
 			}
 		}
 		setStandardObjectColorEffect(selectedObject);
@@ -1109,7 +1109,7 @@ void LevelEditorView::colorObject()
 		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
-			auto preset = levelEditorObject->getProperty(u"preset"_j);
+			auto preset = levelEditorObject->getProperty(L"preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? new String(preset->getValue()) : new String(L""), levelEditorObject, nullptr);
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
@@ -1230,7 +1230,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 
 bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* value)
 {
-	if (level->updateProperty(oldName, name, value) == true) {
+	if (level->updateProperty(oldName->getCPPWString(), name->getCPPWString(), value->getCPPWString()) == true) {
 		levelEditorScreenController->setMapProperties(level, name);
 		return true;
 	}
@@ -1239,8 +1239,8 @@ bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* val
 
 bool LevelEditorView::mapPropertyAdd()
 {
-	if (level->addProperty(u"new.property"_j, u"new.value"_j)) {
-		levelEditorScreenController->setMapProperties(level, u"new.property"_j);
+	if (level->addProperty(L"new.property", L"new.value")) {
+		levelEditorScreenController->setMapProperties(level, new String(L"new.property"));
 		return true;
 	}
 	return false;
@@ -1248,8 +1248,8 @@ bool LevelEditorView::mapPropertyAdd()
 
 bool LevelEditorView::mapPropertyRemove(String* name)
 {
-	auto idx = level->getPropertyIndex(name);
-	if (idx != -1 && level->removeProperty(name) == true) {
+	auto idx = level->getPropertyIndex(name->getCPPWString());
+	if (idx != -1 && level->removeProperty(name->getCPPWString()) == true) {
 		auto property = level->getPropertyByIndex(idx);
 		if (property == nullptr) {
 			property = level->getPropertyByIndex(idx - 1);
@@ -1270,8 +1270,8 @@ bool LevelEditorView::objectPropertyRemove(String* name)
 	if (levelEditorObject == nullptr)
 		return false;
 
-	auto idx = levelEditorObject->getPropertyIndex(name);
-	if (idx != -1 && levelEditorObject->removeProperty(name) == true) {
+	auto idx = levelEditorObject->getPropertyIndex(name->getCPPWString());
+	if (idx != -1 && levelEditorObject->removeProperty(name->getCPPWString()) == true) {
 		auto property = levelEditorObject->getPropertyByIndex(idx);
 		if (property == nullptr) {
 			property = levelEditorObject->getPropertyByIndex(idx - 1);
@@ -1301,7 +1301,7 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 	}
 	if (objectPropertyPresetVector != nullptr) {
 		for (auto objectPropertyPreset: *objectPropertyPresetVector) {
-			levelEditorObject->addProperty(new String(objectPropertyPreset->getName()), new String(objectPropertyPreset->getValue()));
+			levelEditorObject->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
 	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject, nullptr);
@@ -1317,7 +1317,7 @@ bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* 
 	if (levelEditorObject == nullptr)
 		return false;
 
-	if (levelEditorObject->updateProperty(oldName, name, value) == true) {
+	if (levelEditorObject->updateProperty(oldName->getCPPWString(), name->getCPPWString(), value->getCPPWString()) == true) {
 		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, name);
 		return true;
 	}
@@ -1334,7 +1334,7 @@ bool LevelEditorView::objectPropertyAdd()
 	if (levelEditorObject == nullptr)
 		return false;
 
-	if (levelEditorObject->addProperty(u"new.property"_j, u"new.value"_j)) {
+	if (levelEditorObject->addProperty(L"new.property", L"new.value")) {
 		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, u"new.property"_j);
 		return true;
 	}
@@ -1468,7 +1468,7 @@ void LevelEditorView::pasteObjects()
 		ModelProperties* properties = pasteObject;
 		for (int i = 0; i < properties->getPropertyCount(); i++) {
 			PropertyModelClass* property = properties->getPropertyByIndex(i);
-			levelEditorObject->addProperty(new String(property->getName()), new String(property->getValue()));
+			levelEditorObject->addProperty(property->getName(), property->getValue());
 		}
 		level->addObject(levelEditorObject);
 		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());

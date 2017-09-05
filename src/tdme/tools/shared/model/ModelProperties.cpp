@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
 using std::map;
@@ -16,8 +14,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::tools::shared::model::PropertyModelClass;
 
 ModelProperties::ModelProperties() 
@@ -30,9 +26,9 @@ void ModelProperties::clearProperties()
 	propertiesByName.clear();
 }
 
-PropertyModelClass* ModelProperties::getProperty(String* name)
+PropertyModelClass* ModelProperties::getProperty(const wstring& name)
 {
-	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {
 		return propertyByNameIt->second;
 	}
@@ -44,10 +40,10 @@ int32_t ModelProperties::getPropertyCount()
 	return properties.size();
 }
 
-int32_t ModelProperties::getPropertyIndex(String* name)
+int32_t ModelProperties::getPropertyIndex(const wstring& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
-		if (properties.at(i)->getName() == name->getCPPWString()) {
+		if (properties.at(i)->getName() == name) {
 			return i;
 		}
 	}
@@ -59,41 +55,41 @@ PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
 	return idx >= 0 && idx < properties.size() ? properties.at(idx) : nullptr;
 }
 
-bool ModelProperties::addProperty(String* name, String* value)
+bool ModelProperties::addProperty(const wstring& name, const wstring& value)
 {
 	if (getProperty(name) != nullptr)
 		return false;
 
-	auto property = new PropertyModelClass(name->getCPPWString(), value->getCPPWString());
-	propertiesByName[name->getCPPWString()] = property;
+	auto property = new PropertyModelClass(name, value);
+	propertiesByName[name] = property;
 	properties.push_back(property);
 	return true;
 }
 
-bool ModelProperties::updateProperty(String* oldName, String* name, String* value)
+bool ModelProperties::updateProperty(const wstring& oldName, const wstring& name, const wstring& value)
 {
-	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt == propertiesByName.end())
 		return false;
 
-	if (oldName->equals(name) == false && getProperty(name) != nullptr) {
+	if (oldName != name && getProperty(name) != nullptr) {
 		return false;
 	}
 
 	propertiesByName.erase(propertyByNameIt);
 
 	PropertyModelClass* property = propertyByNameIt->second;
-	property->setName(name->getCPPWString());
-	property->setValue(value->getCPPWString());
+	property->setName(name);
+	property->setValue(value);
 
 	propertiesByName[property->getName()] = property;
 
 	return true;
 }
 
-bool ModelProperties::removeProperty(String* name)
+bool ModelProperties::removeProperty(const wstring& name)
 {
-	auto propertyByNameIt = propertiesByName.find(name->getCPPWString());
+	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {
 		propertiesByName.erase(propertyByNameIt);
 		properties.erase(remove(properties.begin(), properties.end(), propertyByNameIt->second), properties.end());

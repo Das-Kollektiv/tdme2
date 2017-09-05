@@ -72,15 +72,15 @@ ModelProperties* LevelEditorObject::getTotalProperties()
 	auto properties = new ModelProperties();
 	for (auto i = 0; i < getEntity()->getPropertyCount(); i++) {
 		PropertyModelClass* entityProperty = getEntity()->getPropertyByIndex(i);
-		properties->addProperty(new String(entityProperty->getName()), new String(entityProperty->getValue()));
+		properties->addProperty(entityProperty->getName(), entityProperty->getValue());
 	}
 	for (auto i = 0; i < getPropertyCount(); i++) {
 		PropertyModelClass* objectProperty = getPropertyByIndex(i);
-		auto property = properties->getProperty(new String(objectProperty->getName()));
+		auto property = properties->getProperty(objectProperty->getName());
 		if (property != nullptr) {
-			properties->updateProperty(new String(property->getName()), new String(objectProperty->getName()), new String(objectProperty->getValue()));
+			properties->updateProperty(property->getName(), objectProperty->getName(), objectProperty->getValue());
 		} else {
-			properties->addProperty(new String(objectProperty->getName()), new String(objectProperty->getValue()));
+			properties->addProperty(objectProperty->getName(), objectProperty->getValue());
 		}
 	}
 	return properties;

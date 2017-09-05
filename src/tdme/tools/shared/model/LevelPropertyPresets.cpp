@@ -8,8 +8,7 @@
 #include <vector>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
+
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/math/Vector3.h>
@@ -30,11 +29,9 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::tools::shared::model::LevelPropertyPresets;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::HashMap;
-using java::util::Iterator;
+
+using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::math::Vector3;
@@ -53,15 +50,15 @@ using tdme::ext::tinyxml::TiXmlElement;
 
 LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
-LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  /* throws(Exception) */
+LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstring& fileName)  /* throws(Exception) */
 {
-	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString());
+	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
 		_Console::println(
 			"LevelPropertyPresets::ctor():: Could not parse file '" +
-			StringConverter::toString(pathName->getCPPWString()) + "/" + StringConverter::toString(fileName->getCPPWString()) +
+			StringConverter::toString(pathName) + "/" + StringConverter::toString(fileName) +
 			"'. Error='" +
 			xmlDocument.ErrorDesc() +
 			"'. Exiting.\n"
@@ -100,7 +97,7 @@ LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  
 	for (auto xmlLights: getChildrenByTagName(xmlRoot, "lights")) {
 		for (auto xmlType: getChildrenByTagName(xmlLights, "type")) {
 			{
-				auto typeId = new String(StringConverter::toWideString((xmlType->Attribute("id"))));
+				auto typeId = StringConverter::toWideString((xmlType->Attribute("id")));
 				auto light = new LevelEditorLight(lightId++);
 				light->getAmbient()->set(static_cast< Color4Base* >(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText())))));
 				light->getDiffuse()->set(static_cast< Color4Base* >(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())))));
@@ -114,7 +111,7 @@ LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  
 				light->setSpotExponent(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText()))));
 				light->setSpotCutOff(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText()))));
 				light->setEnabled(true);
-				lightPresets[typeId->getCPPWString()] = light;
+				lightPresets[typeId] = light;
 			}
 		}
 	}
@@ -124,7 +121,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 {
 	if (instance == nullptr) {
 		try {
-			instance = new LevelPropertyPresets(u"resources/tools/leveleditor/gd"_j, u"presets.xml"_j);
+			instance = new LevelPropertyPresets(L"resources/tools/leveleditor/gd", L"presets.xml");
 		} catch (_Exception& exception) {
 			_Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
 			_Console::print(string(exception.what()));
@@ -137,7 +134,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 {
 	for (auto mapProperty: mapPropertiesPreset) {
-		level->addProperty(new String(mapProperty->getName()), new String(mapProperty->getValue()));
+		level->addProperty(mapProperty->getName(), mapProperty->getValue());
 	}
 }
 

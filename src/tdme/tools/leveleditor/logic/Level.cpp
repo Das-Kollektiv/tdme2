@@ -248,7 +248,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			entity->getTranslation()->add(translation);
 		}
 		entity->setPickable(pickable);
-		auto shadowingProperty = properties->getProperty(u"shadowing"_j);
+		auto shadowingProperty = properties->getProperty(L"shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), L"false");
 		entity->setDynamicShadowingEnabled(omitShadowing == true ? false : dynamicShadowing);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {

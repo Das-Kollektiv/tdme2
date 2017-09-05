@@ -81,8 +81,8 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 	for (auto i = 0; i < jMapProperties.size(); i++) {
 		auto& jMapProperty = jMapProperties[i];
 		level->addProperty(
-			new String(StringConverter::toWideString(jMapProperty["name"].getString())),
-			new String(StringConverter::toWideString(jMapProperty["value"].getString()))
+			StringConverter::toWideString(jMapProperty["name"].getString()),
+			StringConverter::toWideString(jMapProperty["value"].getString())
 		);
 	}
 	if (jRoot["lights"].isNull() == false) {
@@ -151,8 +151,8 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			for (auto j = 0; j < jModelProperties.size(); j++) {
 				auto jModelProperty = jModelProperties[j];
 				levelEditorEntity->addProperty(
-					new String(StringConverter::toWideString(jModelProperty["name"].getString())),
-					new String(StringConverter::toWideString(jModelProperty["value"].getString()))
+					StringConverter::toWideString(jModelProperty["name"].getString()),
+					StringConverter::toWideString(jModelProperty["value"].getString())
 				);
 			}
 		}
@@ -202,8 +202,8 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			for (auto j = 0; j < jObjectProperties.size(); j++) {
 				auto jObjectProperty = jObjectProperties[j];
 				levelEditorObject->addProperty(
-					new String(StringConverter::toWideString(jObjectProperty["name"].getString())),
-					new String(StringConverter::toWideString(jObjectProperty["value"].getString()))
+					StringConverter::toWideString(jObjectProperty["name"].getString()),
+					StringConverter::toWideString(jObjectProperty["value"].getString())
 				);
 			}
 		}

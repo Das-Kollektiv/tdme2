@@ -82,5 +82,5 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	LevelPropertyPresets(String* pathName, String* fileName);
+	LevelPropertyPresets(const wstring& pathName, const wstring& fileName);
 };

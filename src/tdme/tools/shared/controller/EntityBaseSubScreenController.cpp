@@ -235,7 +235,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyRemove->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->toString());
+	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->toString()->getCPPWString());
 	if (entityProperty != nullptr) {
 		entityPropertyName->getController()->setValue(value->set(entityProperty->getName()));
 		entityPropertyValue->getController()->setValue(value->set(entityProperty->getValue()));

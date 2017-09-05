@@ -158,8 +158,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	for (auto i = 0; i < jProperties.size(); i++) {
 		auto& jProperty = jProperties[i];
 		levelEditorEntity->addProperty(
-			new String(StringConverter::toWideString(jProperty["name"].getString())),
-			new String(StringConverter::toWideString(jProperty["value"].getString()))
+			StringConverter::toWideString(jProperty["name"].getString()),
+			StringConverter::toWideString(jProperty["value"].getString())
 		);
 	}
 
