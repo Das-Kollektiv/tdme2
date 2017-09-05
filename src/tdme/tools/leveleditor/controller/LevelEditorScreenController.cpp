@@ -42,6 +42,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ExceptionBase.h>
@@ -90,6 +91,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
 using tdme::utils::_ExceptionBase;
 using tdme::utils::_Console;
@@ -481,7 +483,7 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, Stri
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(mapProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && mapProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName != nullptr && mapProperty->getName() == selectedName->getCPPWString() ? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
@@ -588,7 +590,7 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEdi
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(objectProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && objectProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName != nullptr && objectProperty->getName() == selectedName->getCPPWString()? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();

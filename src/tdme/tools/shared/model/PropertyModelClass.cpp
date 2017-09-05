@@ -8,33 +8,33 @@ using tdme::tools::shared::model::PropertyModelClass;
 using java::lang::String;
 using java::lang::StringBuilder;
 
-PropertyModelClass::PropertyModelClass(String* name, String* value) 
+PropertyModelClass::PropertyModelClass(const wstring& name, const wstring& value)
 {
 	this->name = name;
 	this->value = value;
 }
 
-String* PropertyModelClass::getName()
+const wstring& PropertyModelClass::getName()
 {
 	return name;
 }
 
-void PropertyModelClass::setName(String* name)
+void PropertyModelClass::setName(const wstring& name)
 {
 	this->name = name;
 }
 
-String* PropertyModelClass::getValue()
+const wstring& PropertyModelClass::getValue()
 {
 	return value;
 }
 
-void PropertyModelClass::setValue(String* value)
+void PropertyModelClass::setValue(const wstring& value)
 {
 	this->value = value;
 }
 
 PropertyModelClass* PropertyModelClass::clone()
 {
-	return new PropertyModelClass(new String(name), new String(value));
+	return new PropertyModelClass(name, value);
 }

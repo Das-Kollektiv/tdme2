@@ -42,7 +42,7 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, String* p
 	}
 	if (entityPropertyPresetArrayList != nullptr) {
 		for (auto entityPropertyPreset: *entityPropertyPresetArrayList) {
-			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
+			entity->addProperty(new String(entityPropertyPreset->getName()), new String(entityPropertyPreset->getValue()));
 		}
 	}
 	entityBaseSubScreenController->setEntityProperties(entity, presetId, nullptr);
@@ -83,7 +83,7 @@ bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, String* nam
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? static_cast< String* >(nullptr) : property->getName());
+		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? static_cast< String* >(nullptr) : new String(property->getName()));
 		return true;
 	}
 	return false;

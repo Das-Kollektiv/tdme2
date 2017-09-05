@@ -113,8 +113,8 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 	for (auto i = 0; i < level->getPropertyCount(); i++) {
 		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
 		tdme::ext::jsonbox::Object jMapProperty;
-		jMapProperty["name"] = StringConverter::toString(mapProperty->getName()->getCPPWString());
-		jMapProperty["value"] = StringConverter::toString(mapProperty->getValue()->getCPPWString());
+		jMapProperty["name"] = StringConverter::toString(mapProperty->getName());
+		jMapProperty["value"] = StringConverter::toString(mapProperty->getValue());
 		jMapProperties.push_back(jMapProperty);
 	}
 	jRoot["properties"] = jMapProperties;
@@ -145,8 +145,8 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
 			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);
 			tdme::ext::jsonbox::Object jObjectProperty;
-			jObjectProperty["name"] = StringConverter::toString(objectProperty->getName()->getCPPWString());
-			jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue()->getCPPWString());
+			jObjectProperty["name"] = StringConverter::toString(objectProperty->getName());
+			jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue());
 			jObjectProperties.push_back(jObjectProperty);
 		}
 		jObject["properties"] = jObjectProperties;

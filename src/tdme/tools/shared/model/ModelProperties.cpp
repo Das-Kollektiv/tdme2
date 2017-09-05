@@ -47,7 +47,7 @@ int32_t ModelProperties::getPropertyCount()
 int32_t ModelProperties::getPropertyIndex(String* name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
-		if (properties.at(i)->getName()->equals(name) == true) {
+		if (properties.at(i)->getName() == name->getCPPWString()) {
 			return i;
 		}
 	}
@@ -64,7 +64,7 @@ bool ModelProperties::addProperty(String* name, String* value)
 	if (getProperty(name) != nullptr)
 		return false;
 
-	auto property = new PropertyModelClass(name, value);
+	auto property = new PropertyModelClass(name->getCPPWString(), value->getCPPWString());
 	propertiesByName[name->getCPPWString()] = property;
 	properties.push_back(property);
 	return true;
@@ -83,10 +83,10 @@ bool ModelProperties::updateProperty(String* oldName, String* name, String* valu
 	propertiesByName.erase(propertyByNameIt);
 
 	PropertyModelClass* property = propertyByNameIt->second;
-	property->setName(name);
-	property->setValue(value);
+	property->setName(name->getCPPWString());
+	property->setValue(value->getCPPWString());
 
-	propertiesByName[property->getName()->getCPPWString()] = property;
+	propertiesByName[property->getName()] = property;
 
 	return true;
 }

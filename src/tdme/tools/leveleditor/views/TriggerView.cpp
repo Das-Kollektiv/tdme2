@@ -120,7 +120,7 @@ void TriggerView::updateGUIElements()
 	if (entity != nullptr) {
 		triggerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Trigger - "_j)->append(entity->getName())->toString());
 		auto preset = entity->getProperty(u"preset"_j);
-		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), nullptr);
+		triggerScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : static_cast< String* >(nullptr), nullptr);
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		auto dimension = new Vector3();
 		dimension->set(entity->getModel()->getBoundingBox()->getMax());
@@ -144,7 +144,7 @@ void TriggerView::triggerApply(float width, float height, float depth)
 		entity = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, oldModel->getName(), oldModel->getDescription(), width, height, depth);
 		for (auto i = 0; i < oldModel->getPropertyCount(); i++) {
 			auto property = oldModel->getPropertyByIndex(i);
-			entity->addProperty(property->getName(), property->getValue());
+			entity->addProperty(new String(property->getName()), new String(property->getValue()));
 		}
 		TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldModel->getId(), entity->getId());
 		TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldModel->getId());

@@ -187,7 +187,7 @@ void SharedModelViewerView::updateGUIElements()
 	if (entity != nullptr) {
 		modelViewerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Model Viewer - "_j)->append((entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
-		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity, nullptr);
+		modelViewerScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : static_cast< String* >(nullptr), entity, nullptr);
 		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelViewerScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);

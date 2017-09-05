@@ -166,7 +166,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(entityProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && entityProperty->getName()->equals(selectedName) ? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName != nullptr && entityProperty->getName() == selectedName->getCPPWString() ? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();

@@ -74,8 +74,8 @@ LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  
 		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {
 			mapPropertiesPreset.push_back(
 				new PropertyModelClass(
-					new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
-					new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
+					StringConverter::toWideString(xmlProperty->Attribute("name")),
+					StringConverter::toWideString(xmlProperty->Attribute("value"))
 				)
 			);
 		}
@@ -83,13 +83,13 @@ LevelPropertyPresets::LevelPropertyPresets(String* pathName, String* fileName)  
 
 	for (auto xmlObject: getChildrenByTagName(xmlRoot, "object")) {
 		for (auto xmlType: getChildrenByTagName(xmlObject, "type")) {
-			auto typeId = new String(StringConverter::toWideString(xmlType->Attribute("id")));
-			objectPropertiesPresets[typeId->getCPPWString()].push_back(new PropertyModelClass(u"preset"_j, typeId));
+			auto typeId = StringConverter::toWideString(xmlType->Attribute("id"));
+			objectPropertiesPresets[typeId].push_back(new PropertyModelClass(L"preset", typeId));
 			for (auto xmlProperty: getChildrenByTagName(xmlType, "property")) {
-				objectPropertiesPresets[typeId->getCPPWString()].push_back(
+				objectPropertiesPresets[typeId].push_back(
 					new PropertyModelClass(
-						new String(StringConverter::toWideString(xmlProperty->Attribute("name"))),
-						new String(StringConverter::toWideString(xmlProperty->Attribute("value")))
+						StringConverter::toWideString(xmlProperty->Attribute("name")),
+						StringConverter::toWideString(xmlProperty->Attribute("value"))
 					)
 				);
 			}
@@ -137,7 +137,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 {
 	for (auto mapProperty: mapPropertiesPreset) {
-		level->addProperty(mapProperty->getName(), mapProperty->getValue());
+		level->addProperty(new String(mapProperty->getName()), new String(mapProperty->getValue()));
 	}
 }
 

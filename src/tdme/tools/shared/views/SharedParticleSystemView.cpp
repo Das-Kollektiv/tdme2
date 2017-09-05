@@ -198,7 +198,7 @@ void SharedParticleSystemView::updateGUIElements()
 	if (entity != nullptr) {
 		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName().length() > 0 ? _FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
-		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity, nullptr);
+		particleSystemScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : static_cast< String* >(nullptr), entity, nullptr);
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 	} else {

@@ -47,6 +47,7 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 
 using std::vector;
@@ -96,6 +97,7 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 
 Level::Level()
@@ -247,7 +249,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		}
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty(u"shadowing"_j);
-		auto omitShadowing = shadowingProperty != nullptr && shadowingProperty->getValue()->equalsIgnoreCase(u"false"_j);
+		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), L"false");
 		entity->setDynamicShadowingEnabled(omitShadowing == true ? false : dynamicShadowing);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 			entity->getScale()->set(MathTools::sign(entity->getScale()->getX()), MathTools::sign(entity->getScale()->getY()), MathTools::sign(entity->getScale()->getZ()));

@@ -118,7 +118,7 @@ void EmptyView::updateGUIElements()
 	if (entity != nullptr) {
 		emptyScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Empty - "_j)->append(entity->getName())->toString());
 		auto preset = entity->getProperty(u"preset"_j);
-		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), nullptr);
+		emptyScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : nullptr, nullptr);
 		emptyScreenController->setEntityData(entity->getName(), entity->getDescription());
 		auto dimension = new Vector3();
 		dimension->set(entity->getModel()->getBoundingBox()->getMax());

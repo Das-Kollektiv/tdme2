@@ -469,8 +469,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	for (auto i = 0; entity->getPropertyCount(); i++) {
 		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
 		ext::jsonbox::Object jObjectProperty;
-		jObjectProperty["name"] = StringConverter::toString(modelProperty->getName()->getCPPWString());
-		jObjectProperty["value"] = StringConverter::toString(modelProperty->getValue()->getCPPWString());
+		jObjectProperty["name"] = StringConverter::toString(modelProperty->getName());
+		jObjectProperty["value"] = StringConverter::toString(modelProperty->getValue());
 		jModelProperties.push_back(jObjectProperty);
 	}
 	jEntityRoot["properties"] = jModelProperties;

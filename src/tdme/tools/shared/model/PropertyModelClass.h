@@ -2,10 +2,12 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using java::lang::String;
+using std::wstring;
 
 /** 
  * Property model class
@@ -15,32 +17,32 @@ using java::lang::String;
 class tdme::tools::shared::model::PropertyModelClass final
 {
 private:
-	String* name {  };
-	String* value {  };
+	wstring name {  };
+	wstring value {  };
 
 public:
 
 	/** 
 	 * @return name
 	 */
-	String* getName();
+	const wstring& getName();
 
 	/** 
 	 * Set up name 
 	 * @param name
 	 */
-	void setName(String* name);
+	void setName(const wstring& name);
 
 	/** 
 	 * @return value
 	 */
-	String* getValue();
+	const wstring& getValue();
 
 	/** 
 	 * Set up value
 	 * @param value
 	 */
-	void setValue(String* value);
+	void setValue(const wstring& value);
 
 	/** 
 	 * Clones this property model entity
@@ -52,5 +54,5 @@ public:
 	 * @param name
 	 * @param value
 	 */
-	PropertyModelClass(String* name, String* value);
+	PropertyModelClass(const wstring& name, const wstring& value);
 };
