@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -35,6 +37,8 @@
 #include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using java::io::Serializable;
@@ -278,7 +282,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->equals(u"create_trigger"_j) == true) {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, u"New trigger"_j, u""_j, 1.0f, 1.0f, 1.0f);
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, L"New trigger", L"", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
@@ -291,7 +295,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->equals(u"create_empty"_j) == true) {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, u"New empty"_j, u""_j);
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, L"New empty", L"");
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
@@ -306,7 +310,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->equals(u"create_particlesystem"_j) == true) {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, u"New particle system"_j, u""_j);
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, L"New particle system", L"");
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();

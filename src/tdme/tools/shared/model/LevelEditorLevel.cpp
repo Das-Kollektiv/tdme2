@@ -249,14 +249,14 @@ void LevelEditorLevel::clearObjects()
 
 void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 {
-	vector<String*> objectsToRemove;
+	vector<wstring> objectsToRemove;
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == entityId) {
 			objectsToRemove.push_back(object->getId());
 		}
 	}
 	for (auto objectId: objectsToRemove) {
-		removeObject(objectId->getCPPWString());
+		removeObject(objectId);
 	}
 }
 
@@ -285,13 +285,13 @@ void LevelEditorLevel::updatePivot(int32_t modelId, Vector3* pivot)
 
 void LevelEditorLevel::addObject(LevelEditorObject* object)
 {
-	auto _entity = getObjectById(object->getId()->getCPPWString());
+	auto _entity = getObjectById(object->getId());
 	if (_entity != nullptr) {
-		removeObject(object->getId()->getCPPWString());
+		removeObject(object->getId());
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorLevel::addObject():: object with id '"_j)->append(object->getId())
 			->append(u"' already exists. Removing it!"_j)->toString()));
 	}
-	objectsById[object->getId()->getCPPWString()] = object;
+	objectsById[object->getId()] = object;
 	objects.push_back(object);
 }
 

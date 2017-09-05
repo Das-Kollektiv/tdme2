@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -15,6 +17,8 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Exception.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using java::lang::String;
@@ -41,7 +45,14 @@ LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibr
 void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 {
 	try {
-		auto entity = entityLibrary->addModel(LevelEditorEntityLibrary::ID_ALLOCATE, levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(), u""_j, levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(), levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(), new Vector3(0.0f, 0.0f, 0.0f));
+		auto entity = entityLibrary->addModel(
+			LevelEditorEntityLibrary::ID_ALLOCATE,
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName()->getCPPWString(),
+			L"",
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName()->getCPPWString(),
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName()->getCPPWString(),
+			new Vector3(0.0f, 0.0f, 0.0f)
+		);
 		entity->setDefaultBoundingVolumes();
 		levelEditorEntityLibraryScreenController->setEntityLibrary();
 		levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(levelEditorEntityLibraryScreenController->entityLibraryListBoxSelection->set(entity->getId()));

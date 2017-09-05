@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "../../../gui/events/GUIInputEventHandler.h"
 #include "View.h"
 
@@ -28,6 +30,8 @@ class LevelEditorEntity;
 } /* namespace shared */
 } /* namespace tools */
 } /* namespace tdme */
+
+using std::wstring;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
@@ -184,7 +188,7 @@ public: /* protected */
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	virtual LevelEditorEntity* loadModel(String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */;
 
 public:
 

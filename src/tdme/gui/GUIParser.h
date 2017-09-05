@@ -121,6 +121,13 @@ public:
 	 */
 	static String* escapeQuotes(String* string);
 
+	/**
+	 * Escape quotes
+	 * @param string
+	 * @return string with escaped quotes
+	 */
+	static const wstring escapeQuotes(const wstring& string);
+
 	/** 
 	 * Add GUI element
 	 * @param guiElement

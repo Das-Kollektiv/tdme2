@@ -191,7 +191,7 @@ public:
 	 * @param model name
 	 * @param center
 	 */
-	void setObjectData(String* name, String* description, String* modelName, Vector3* center);
+	void setObjectData(const wstring& name, const wstring& description, const wstring& modelName, Vector3* center);
 
 	/** 
 	 * Unset model data

@@ -3,19 +3,18 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
 using std::vector;
+using std::wstring;
 
-using java::lang::String;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -64,7 +63,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addModel(int32_t id, String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */;
+	LevelEditorEntity* addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */;
 
 	/** 
 	 * Add a trigger
@@ -76,7 +75,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addTrigger(int32_t id, String* name, String* description, float width, float height, float depth) /* throws(Exception) */;
+	LevelEditorEntity* addTrigger(int32_t id, const wstring& name, const wstring& description, float width, float height, float depth) /* throws(Exception) */;
 
 	/** 
 	 * Add a empty
@@ -85,7 +84,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addEmpty(int32_t id, String* name, String* description) /* throws(Exception) */;
+	LevelEditorEntity* addEmpty(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */;
 
 	/** 
 	 * Add a empty
@@ -94,7 +93,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addParticleSystem(int32_t id, String* name, String* description) /* throws(Exception) */;
+	LevelEditorEntity* addParticleSystem(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */;
 
 	/** 
 	 * Add a entity

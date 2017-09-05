@@ -969,19 +969,19 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 	if (levelEditorObject == nullptr)
 		return false;
 
-	levelEditorObject->setDescription(description);
-	if (levelEditorObject->getId()->equals(name) == false) {
+	levelEditorObject->setDescription(description->getCPPWString());
+	if (levelEditorObject->getId() != name->getCPPWString()) {
 		if (engine->getEntity(name->getCPPWString()) != nullptr) {
 			return false;
 		}
 		auto oldId = levelEditorObject->getId();
-		level->removeObject(levelEditorObject->getId()->getCPPWString());
-		engine->removeEntity(levelEditorObject->getId()->getCPPWString());
+		level->removeObject(levelEditorObject->getId());
+		engine->removeEntity(levelEditorObject->getId());
 		selectedObjectsById.clear();
 		selectedObjects.clear();
-		levelEditorObject->setId(name);
+		levelEditorObject->setId(name->getCPPWString());
 		level->addObject(levelEditorObject);
-		auto object = new Object3D(levelEditorObject->getId()->getCPPWString(), levelEditorObject->getEntity()->getModel());
+		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
 		object->fromTransformations(levelEditorObject->getTransformations());
 		object->setPickable(true);
 		setStandardObjectColorEffect(object);
@@ -991,7 +991,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		selectedObjectsById[object->getId()] = object;
 		levelEditorScreenController->setObjectListbox(level);
 	}
-	levelEditorObject->setDescription(description);
+	levelEditorObject->setDescription(description->getCPPWString());
 	return true;
 }
 
@@ -1032,11 +1032,15 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 				return;
 			}
 		}
-		auto levelEditorObject = new LevelEditorObject(::java::lang::StringBuilder().append(selectedEntity->getName())->append(u"_"_j)
-			->append(level->allocateObjectId())->toString(), u""_j, levelEditorObjectTransformations, selectedEntity);
+		auto levelEditorObject = new LevelEditorObject(
+			selectedEntity->getName() + L"_" + to_wstring(level->allocateObjectId()),
+			L"",
+			levelEditorObjectTransformations,
+			selectedEntity
+		);
 		level->addObject(levelEditorObject);
 		if (levelEditorObject->getEntity()->getModel() != nullptr) {
-			auto object = new Object3D(levelEditorObject->getId()->getCPPWString(), levelEditorObject->getEntity()->getModel());
+			auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
 			object->fromTransformations(levelEditorObjectTransformations);
 			object->setPickable(true);
 			engine->addEntity(object);
@@ -1345,7 +1349,7 @@ void LevelEditorView::loadMap(String* path, String* file)
 			auto daeLevel = DAEReader::readLevel(path->getCPPWString(), file->getCPPWString());
 			file = ::java::lang::StringBuilder(file).append(u".tl"_j)->toString();
 		}
-		LevelFileImport::doImport(path, file, level);
+		LevelFileImport::doImport(path->getCPPWString(), file->getCPPWString(), level);
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}
@@ -1455,15 +1459,19 @@ void LevelEditorView::pasteObjects()
 				return;
 			}
 		}
-		auto levelEditorObject = new LevelEditorObject(::java::lang::StringBuilder().append(pasteModel->getName())->append(u"_"_j)
-			->append(level->allocateObjectId())->toString(), u""_j, levelEditorObjectTransformations, pasteModel);
+		auto levelEditorObject = new LevelEditorObject(
+			pasteModel->getName() + L"_" + to_wstring(level->allocateObjectId()),
+			L"",
+			levelEditorObjectTransformations,
+			pasteModel
+		 );
 		ModelProperties* properties = pasteObject;
 		for (int i = 0; i < properties->getPropertyCount(); i++) {
 			PropertyModelClass* property = properties->getPropertyByIndex(i);
 			levelEditorObject->addProperty(property->getName(), property->getValue());
 		}
 		level->addObject(levelEditorObject);
-		auto object = new Object3D(levelEditorObject->getId()->getCPPWString(), levelEditorObject->getEntity()->getModel());
+		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
 		object->fromTransformations(levelEditorObjectTransformations);
 		object->setPickable(true);
 		engine->addEntity(object);

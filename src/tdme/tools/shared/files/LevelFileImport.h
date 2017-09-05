@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/_FileSystemException.h>
 #include <ext/jsonbox/JsonException.h>
+
+using std::wstring;
 
 using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -36,7 +40,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void doImport(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
@@ -48,5 +52,5 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level, const wstring& objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException);
 };

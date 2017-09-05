@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/views/SharedParticleSystemView.java
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Properties.h>
@@ -32,8 +34,11 @@
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
+
+using std::wstring;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
 using java::lang::String;
@@ -67,6 +72,7 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
@@ -80,7 +86,17 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	initParticleSystemRequested = false;
 	particleSystemFile = nullptr;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	entity = new LevelEditorEntity(-1, LevelEditorEntity_EntityType::PARTICLESYSTEM, u"Untitled"_j, u""_j, u"Untitled.tps"_j, nullptr, nullptr, nullptr, new Vector3());
+	entity = new LevelEditorEntity(
+		-1,
+		LevelEditorEntity_EntityType::PARTICLESYSTEM,
+		L"Untitled",
+		L"",
+		L"Untitled.tps",
+		L"",
+		L"",
+		nullptr,
+		new Vector3()
+	);
 	entity->setDefaultBoundingVolumes();
 }
 
@@ -110,7 +126,7 @@ void SharedParticleSystemView::initParticleSystem()
 	if (entity == nullptr)
 		return;
 
-	particleSystemFile = entity->getEntityFileName();
+	particleSystemFile = new String(entity->getEntityFileName());
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	BoundingBox* boundingBox = nullptr;
@@ -180,7 +196,7 @@ void SharedParticleSystemView::display()
 void SharedParticleSystemView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName() != nullptr ? new String(_FileSystem::getInstance()->getFileName(entity->getEntityFileName()->getCPPWString())) : entity->getName()))->toString());
+		particleSystemScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Particle System - "_j)->append((entity->getEntityFileName().length() > 0 ? _FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity, nullptr);
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -295,10 +311,10 @@ void SharedParticleSystemView::loadParticleSystem()
 	try {
 		auto oldEntity = entity;
 		entity = loadParticleSystem(
-			particleSystemFile,
-			u""_j,
-			new String(_FileSystem::getInstance()->getPathName(particleSystemFile->getCPPWString())),
-			new String(_FileSystem::getInstance()->getFileName(particleSystemFile->getCPPWString()))
+			particleSystemFile->getCPPWString(),
+			L"",
+			_FileSystem::getInstance()->getPathName(particleSystemFile->getCPPWString()),
+			_FileSystem::getInstance()->getFileName(particleSystemFile->getCPPWString())
 		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (_Exception& exception) {
@@ -306,9 +322,9 @@ void SharedParticleSystemView::loadParticleSystem()
 	}
 }
 
-LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(String* name, String* description, String* pathName, String* fileName) /* throws(Exception) */
+LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
-	if (fileName->toLowerCase()->endsWith(u".tps"_j)) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tps") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;

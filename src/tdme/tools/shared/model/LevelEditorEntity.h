@@ -3,9 +3,9 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -14,9 +14,9 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::String;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -40,11 +40,11 @@ public:
 public: /* protected */
 	int32_t id {  };
 	LevelEditorEntity_EntityType* type {  };
-	String* name {  };
-	String* description {  };
-	String* entityFileName {  };
-	String* fileName {  };
-	String* thumbnail {  };
+	wstring name {  };
+	wstring description {  };
+	wstring entityFileName {  };
+	wstring fileName {  };
+	wstring thumbnail {  };
 	Model* model {  };
 	Vector3 pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
@@ -65,45 +65,45 @@ public:
 	/** 
 	 * @return name
 	 */
-	String* getName();
+	const wstring& getName();
 
 	/** 
 	 * Set up model name
 	 * @param name
 	 */
-	void setName(String* name);
+	void setName(const wstring& name);
 
 	/** 
 	 * @return description
 	 */
-	String* getDescription();
+	const wstring& getDescription();
 
 	/** 
 	 * Set up model description
 	 * @param description
 	 */
-	void setDescription(String* description);
+	void setDescription(const wstring& description);
 
 	/** 
 	 * @return entity file name
 	 */
-	String* getEntityFileName();
+	const wstring& getEntityFileName();
 
 	/** 
 	 * Set entity file name
 	 * @param entity file name
 	 */
-	void setEntityFileName(String* entityFileName);
+	void setEntityFileName(const wstring& entityFileName);
 
 	/** 
 	 * @return file name
 	 */
-	String* getFileName();
+	const wstring& getFileName();
 
 	/** 
 	 * @return thumbnail
 	 */
-	String* getThumbnail();
+	const wstring& getThumbnail();
 
 	/** 
 	 * @return model
@@ -159,5 +159,5 @@ public:
 	 * @param model
 	 * @param pivot
 	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot);
+	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, Vector3* pivot);
 };

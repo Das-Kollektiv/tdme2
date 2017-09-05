@@ -89,7 +89,7 @@ bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, String* nam
 	return false;
 }
 
-void EntityBaseView::setEntityData(LevelEditorEntity* entity, String* name, String* description)
+void EntityBaseView::setEntityData(LevelEditorEntity* entity, const wstring& name, const wstring& description)
 {
 	if (entity == nullptr)
 		return;

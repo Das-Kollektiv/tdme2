@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/views/SharedModelViewerView.java
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
+#include <string>
+
 #include <java/lang/CharSequence.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -34,9 +36,12 @@
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include "../../../engine/subsystems/object/ModelStatistics.h"
+
+using std::wstring;
 
 using tdme::tools::shared::views::SharedModelViewerView;
 using java::lang::CharSequence;
@@ -73,6 +78,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::StringUtils;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
@@ -111,7 +117,7 @@ void SharedModelViewerView::initModel()
 	if (entity == nullptr)
 		return;
 
-	modelFile = entity->getEntityFileName() != nullptr ? entity->getEntityFileName() : entity->getFileName();
+	modelFile = new String(entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName());
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
@@ -179,7 +185,7 @@ void SharedModelViewerView::display()
 void SharedModelViewerView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelViewerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Model Viewer - "_j)->append((entity->getEntityFileName() != nullptr ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())))->toString());
+		modelViewerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Model Viewer - "_j)->append((entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())))->toString());
 		auto preset = entity->getProperty(u"preset"_j);
 		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : static_cast< String* >(nullptr), entity, nullptr);
 		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -279,10 +285,10 @@ void SharedModelViewerView::loadModel()
 	try {
 		auto oldModel = entity;
 		entity = loadModel(
-			new String(_FileSystem::getInstance()->getFileName(modelFile->getCPPWString())),
-			u""_j,
-			new String(_FileSystem::getInstance()->getPathName(modelFile->getCPPWString())),
-			new String(_FileSystem::getInstance()->getFileName(modelFile->getCPPWString())),
+			_FileSystem::getInstance()->getFileName(modelFile->getCPPWString()),
+			L"",
+			_FileSystem::getInstance()->getPathName(modelFile->getCPPWString()),
+			_FileSystem::getInstance()->getFileName(modelFile->getCPPWString()),
 			new Vector3());
 		onLoadModel(oldModel, entity);
 	} catch (_Exception& exception) {
@@ -290,70 +296,47 @@ void SharedModelViewerView::loadModel()
 	}
 }
 
-LevelEditorEntity* SharedModelViewerView::loadModel(String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */
+LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */
 {
-	if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
 		auto model = DAEReader::read(
-			pathName->getCPPWString(),
-			fileName->getCPPWString()
+			pathName,
+			fileName
 		);
 		auto levelEditorEntity = new LevelEditorEntity(
 			LevelEditorEntity::ID_NONE,
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			nullptr,
-			::java::lang::StringBuilder().
-				append(pathName)->
-				append(new String(wstring(L"/")))->
-				append(fileName)->
-				toString(),
-			::java::lang::StringBuilder().
-				append(
-			  		(new String(model->getId()))->
-						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
-						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
-						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j))
-				)->
-					append(u".png"_j)->
-					toString(),
-					model,
-					pivot
+			L"",
+			pathName + L"/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			model,
+			pivot
 			);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	} else
-	if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tm") == true) {
 		auto model = TMReader::read(
-			pathName->getCPPWString(),
-			fileName->getCPPWString()
+			pathName,
+			fileName
 		);
 		auto levelEditorEntity = new LevelEditorEntity(
 			LevelEditorEntity::ID_NONE,
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			nullptr,
-			::java::lang::StringBuilder().
-				append(pathName)->
-				append(L'/')->
-				append(fileName)->toString(),
-			::java::lang::StringBuilder().
-			 	 append(
-					(new String(model->getId()))->
-						replace(static_cast< CharSequence* >(u"\\"_j), static_cast< CharSequence* >(u"_"_j))->
-						replace(static_cast< CharSequence* >(u"/"_j), static_cast< CharSequence* >(u"_"_j))->
-						replace(static_cast< CharSequence* >(u":"_j), static_cast< CharSequence* >(u"_"_j))
-				)->
-					append(u".png"_j)->
-					toString(),
-				model,
-				pivot
+			L"",
+			pathName + L"/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			model,
+			pivot
 		);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	} else
-	if (fileName->toLowerCase()->endsWith(u".tmm"_j)) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
 			LevelEditorEntity::ID_NONE,
 			pathName,

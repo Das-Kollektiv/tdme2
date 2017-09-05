@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/TriggerScreenController.java
 #include <tdme/tools/leveleditor/controller/TriggerScreenController.h>
 
+#include <string>
+
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -22,6 +24,8 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using java::lang::Float;
@@ -88,7 +92,7 @@ void TriggerScreenController::setScreenCaption(String* text)
 	screenNode->layout(screenCaption);
 }
 
-void TriggerScreenController::setEntityData(String* name, String* description)
+void TriggerScreenController::setEntityData(const wstring& name, const wstring& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 }

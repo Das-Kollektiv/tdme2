@@ -70,7 +70,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	virtual void setEntityData(String* name, String* description);
+	virtual void setEntityData(const wstring& name, const wstring& description);
 
 	/** 
 	 * Unset entity data

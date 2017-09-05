@@ -287,7 +287,7 @@ String* LevelEditorScreenController::getObjectPropertyPresetSelection()
 	return u""_j;
 }
 
-void LevelEditorScreenController::setObjectData(String* name, String* description, String* modelName, Vector3* center)
+void LevelEditorScreenController::setObjectData(const wstring& name, const wstring& description, const wstring& modelName, Vector3* center)
 {
 	objectName->getController()->setDisabled(false);
 	objectName->getController()->setValue(value->set(name));

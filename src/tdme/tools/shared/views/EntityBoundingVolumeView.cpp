@@ -287,8 +287,8 @@ void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* 
 
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupConvexMesh(
-		new String(_FileSystem::getInstance()->getPathName(fileName->getCPPWString())),
-		new String(_FileSystem::getInstance()->getFileName(fileName->getCPPWString()))
+		_FileSystem::getInstance()->getPathName(fileName->getCPPWString()),
+		_FileSystem::getInstance()->getFileName(fileName->getCPPWString())
 	);
 	updateModelBoundingVolume(entity, idx);
 }

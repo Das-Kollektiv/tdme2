@@ -37,6 +37,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <Array.h>
@@ -82,6 +83,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
@@ -134,7 +136,7 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 		auto finally1 = finally([&] {
 		});
 		try {
-			entity->setEntityFileName(new String(_FileSystem::getInstance()->getCanonicalPath(pathName->getCPPWString(), fileName->getCPPWString())));
+			entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName->getCPPWString(), fileName->getCPPWString()));
 			auto jEntityRoot = exportToJSON(entity);
 
 			ostringstream json;
@@ -150,17 +152,15 @@ void ModelMetaDataFileExport::export_(String* pathName, String* fileName, LevelE
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
 	ext::jsonbox::Object jEntityRoot;;
-	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName() != nullptr) {
+	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName =
-			::java::lang::StringBuilder().
-			 	 append(Tools::getFileName(entity->getFileName()))->
-				 append((entity->getFileName()->endsWith(u".tm"_j) == false ? u".tm"_j : u""_j))->
-				 toString();
+			 Tools::getFileName(entity->getFileName()) +
+			 (StringUtils::endsWith(entity->getFileName(), L".tm") == false ? L".tm" : L"");
 		TMWriter::write(
 			entity->getModel(),
-			modelPathName->getCPPWString(),
-			modelFileName->getCPPWString()
+			modelPathName,
+			modelFileName
 		);
 		jEntityRoot["file"] =
 			StringConverter::toString(::java::lang::StringBuilder().append(modelPathName)->append(u"/"_j)->append(modelFileName)->toString()->getCPPWString());
@@ -179,8 +179,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	}
 	jEntityRoot["version"] = "0.99";
 	jEntityRoot["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
-	jEntityRoot["name"] = StringConverter::toString(entity->getName()->toString()->getCPPWString());
-	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription()->toString()->getCPPWString());
+	jEntityRoot["name"] = StringConverter::toString(entity->getName());
+	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription());
 	jEntityRoot["px"] = static_cast< double >(entity->getPivot()->getX());
 	jEntityRoot["py"] = static_cast< double >(entity->getPivot()->getY());
 	jEntityRoot["pz"] = static_cast< double >(entity->getPivot()->getZ());
@@ -200,30 +200,21 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			{
 				{
 					ext::jsonbox::Object jObjectParticleSystem;
-					if (particleSystem->getObjectParticleSystem()->getModelFile() != nullptr && particleSystem->getObjectParticleSystem()->getModelFile()->length() > 0) {
+					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
 						auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName =
-							Tools::getFileName(
-								::java::lang::StringBuilder().
-								 append(particleSystem->getObjectParticleSystem()->getModelFile())->
-								 append((particleSystem->getObjectParticleSystem()->getModelFile()->endsWith(u".tm"_j) == false ? u".tm"_j : u""_j))->
-								 toString());
+						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), L".tm") == false ? L".tm" : L""));
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
-							modelPathName->getCPPWString(),
-							modelFileName->getCPPWString()
+							modelPathName,
+							modelFileName
 						);
-						particleSystem->getObjectParticleSystem()->setModelFile(
-							::java::lang::StringBuilder().
-							 append(modelPathName)->append(u"/"_j)->
-							 append(modelFileName)->toString()
-						 );
+						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + L"/" + modelFileName);
 					}
 					jObjectParticleSystem["mc"] = particleSystem->getObjectParticleSystem()->getMaxCount();
 					jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getX());
 					jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getY());
 					jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale()->getZ());
-					jObjectParticleSystem["mf"] = StringConverter::toString(particleSystem->getObjectParticleSystem()->getModelFile()->getCPPWString());
+					jObjectParticleSystem["mf"] = StringConverter::toString(particleSystem->getObjectParticleSystem()->getModelFile());
 					jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
 					jParticleSystem["ops"] = jObjectParticleSystem;
 					goto end_switch0;;
@@ -523,7 +514,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			auto mesh = java_cast< ConvexMesh* >(bv);
 			jBoundingVolume["type"] = "convexmesh";
-			jBoundingVolume["file"] = StringConverter::toString(entityBoundingVolume->getModelMeshFile()->getCPPWString());
+			jBoundingVolume["file"] = StringConverter::toString(entityBoundingVolume->getModelMeshFile());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		}
 	}

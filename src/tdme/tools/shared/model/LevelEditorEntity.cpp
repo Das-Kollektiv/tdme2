@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -14,8 +12,6 @@
 using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -24,7 +20,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, String* name, String* description, String* entityFileName, String* fileName, String* thumbnail, Model* model, Vector3* pivot) 
+LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, Vector3* pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -50,42 +46,42 @@ LevelEditorEntity_EntityType* LevelEditorEntity::getType()
 	return type;
 }
 
-String* LevelEditorEntity::getName()
+const wstring& LevelEditorEntity::getName()
 {
 	return name;
 }
 
-void LevelEditorEntity::setName(String* name)
+void LevelEditorEntity::setName(const wstring& name)
 {
 	this->name = name;
 }
 
-String* LevelEditorEntity::getDescription()
+const wstring& LevelEditorEntity::getDescription()
 {
 	return description;
 }
 
-void LevelEditorEntity::setDescription(String* description)
+void LevelEditorEntity::setDescription(const wstring& description)
 {
 	this->description = description;
 }
 
-String* LevelEditorEntity::getEntityFileName()
+const wstring& LevelEditorEntity::getEntityFileName()
 {
 	return entityFileName;
 }
 
-void LevelEditorEntity::setEntityFileName(String* entityFileName)
+void LevelEditorEntity::setEntityFileName(const wstring& entityFileName)
 {
 	this->entityFileName = entityFileName;
 }
 
-String* LevelEditorEntity::getFileName()
+const wstring& LevelEditorEntity::getFileName()
 {
 	return fileName;
 }
 
-String* LevelEditorEntity::getThumbnail()
+const wstring& LevelEditorEntity::getThumbnail()
 {
 	return thumbnail;
 }

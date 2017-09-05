@@ -1,10 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.java
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
-#include <java/io/Serializable.h>
-#include <java/lang/Integer.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <string>
+
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
@@ -23,12 +21,12 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
+#include <tdme/utils/StringUtils.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using java::io::Serializable;
-using java::lang::Integer;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Object3DModel;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::TMReader;
@@ -47,6 +45,7 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
+using tdme::utils::StringUtils;
 
 int32_t LevelEditorEntityBoundingVolume::staticIdx = 0;
 
@@ -54,7 +53,7 @@ LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, Lev
 {
 	this->id = id;
 	this->levelEditorEntity = levelEditorEntity;
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	model = nullptr;
 	boundingVolume = nullptr;
 }
@@ -69,7 +68,7 @@ LevelEditorEntity* LevelEditorEntityBoundingVolume::getLevelEditorEntity()
 	return levelEditorEntity;
 }
 
-String* LevelEditorEntityBoundingVolume::getModelMeshFile()
+const wstring& LevelEditorEntityBoundingVolume::getModelMeshFile()
 {
 	return modelMeshFile;
 }
@@ -88,7 +87,7 @@ void LevelEditorEntityBoundingVolume::setupNone()
 {
 	boundingVolume = nullptr;
 	model = nullptr;
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	updateLevelEditorEntity();
 }
 
@@ -97,18 +96,15 @@ void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 	boundingVolume = new Sphere(center, radius);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		::java::lang::StringBuilder().
-		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
-		 append(L",")->
-		 append(Integer::valueOf(levelEditorEntity->getId()))->
-		 append(u"_model_bv."_j)->
-		 append(id)->
-		 append(u"."_j)->
-		 append((staticIdx++))->
-		 toString()->
-		 getCPPWString()
+		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
+			wstring(L",") +
+			to_wstring(levelEditorEntity->getId()) +
+			wstring(L"_model_bv.") +
+			to_wstring(id) +
+			wstring(L".") +
+			to_wstring(staticIdx++)
 	);
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	updateLevelEditorEntity();
 }
 
@@ -117,18 +113,15 @@ void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float
 	boundingVolume = new Capsule(a, b, radius);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		::java::lang::StringBuilder().
-		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
-		 append(L",")->
-		 append(Integer::valueOf(levelEditorEntity->getId()))->
-		 append(u"_model_bv."_j)->
-		 append(id)->
-		 append(u"."_j)->
-		 append((staticIdx++))->
-		 toString()->
-		 getCPPWString()
+		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
+			wstring(L",") +
+			to_wstring(levelEditorEntity->getId()) +
+			wstring(L"_model_bv.") +
+			to_wstring(id) +
+			wstring(L".") +
+			to_wstring(staticIdx++)
 	);
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	updateLevelEditorEntity();
 }
 
@@ -137,18 +130,15 @@ void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, 
 	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		::java::lang::StringBuilder().
-		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
-		 append(L",")->
-		 append(Integer::valueOf(levelEditorEntity->getId()))->
-		 append(u"_model_bv."_j)->
-		 append(id)->
-		 append(u"."_j)->
-		 append((staticIdx++))->
-		 toString()->
-		 getCPPWString()
+		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
+			wstring(L",") +
+			to_wstring(levelEditorEntity->getId()) +
+			wstring(L"_model_bv.") +
+			to_wstring(id) +
+			wstring(L".") +
+			to_wstring(staticIdx++)
 	);
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	updateLevelEditorEntity();
 }
 
@@ -157,36 +147,33 @@ void LevelEditorEntityBoundingVolume::setupAabb(Vector3* min, Vector3* max)
 	boundingVolume = new BoundingBox(min, max);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		::java::lang::StringBuilder().
-		 append(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none")->
-		 append(L",")->
-		 append(Integer::valueOf(levelEditorEntity->getId()))->
-		 append(u"_model_bv."_j)->
-		 append(id)->
-		 append(u"."_j)->
-		 append((staticIdx++))->
-		 toString()->
-		 getCPPWString()
+		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
+			wstring(L",") +
+			to_wstring(levelEditorEntity->getId()) +
+			wstring(L"_model_bv.") +
+			to_wstring(id) +
+			wstring(L".") +
+			to_wstring(staticIdx++)
 	);
-	modelMeshFile = nullptr;
+	modelMeshFile = L"";
 	updateLevelEditorEntity();
 }
 
-void LevelEditorEntityBoundingVolume::setupConvexMesh(String* pathName, String* fileName)
+void LevelEditorEntityBoundingVolume::setupConvexMesh(const wstring& pathName, const wstring& fileName)
 {
 	modelMeshFile = fileName;
 	try {
 		Model* convexMeshModel = nullptr;
-		if (fileName->toLowerCase()->endsWith(u".dae"_j)) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
 			convexMeshModel = DAEReader::read(
-				pathName->getCPPWString(),
-				fileName->getCPPWString()
+				pathName,
+				fileName
 			);
 		} else
-		if (fileName->toLowerCase()->endsWith(u".tm"_j)) {
+			if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tm") == true) {
 			convexMeshModel = TMReader::read(
-				pathName->getCPPWString(),
-				fileName->getCPPWString()
+				pathName,
+				fileName
 			);
 		}
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));

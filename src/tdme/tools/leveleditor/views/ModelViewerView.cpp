@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/views/ModelViewerView.java
 #include <tdme/tools/leveleditor/views/ModelViewerView.h>
 
+#include <string>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,6 +11,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::views::ModelViewerView;
 using tdme::engine::Engine;
@@ -42,7 +46,14 @@ void ModelViewerView::onInitAdditionalScreens()
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 }
 
-LevelEditorEntity* ModelViewerView::loadModel(String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */
+LevelEditorEntity* ModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */
 {
-	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(LevelEditorEntityLibrary::ID_ALLOCATE, name, description, pathName, fileName, pivot);
+	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(
+		LevelEditorEntityLibrary::ID_ALLOCATE,
+		name,
+		description,
+		pathName,
+		fileName,
+		pivot
+	);
 }

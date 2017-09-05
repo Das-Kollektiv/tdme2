@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -180,7 +182,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	void setEntityData(String* name, String* description);
+	void setEntityData(const wstring& name, const wstring& description);
 
 	/** 
 	 * Unset entity data

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -61,7 +65,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	void setEntityData(String* name, String* description);
+	void setEntityData(const wstring& name, const wstring& description);
 
 	/** 
 	 * Unset entity data

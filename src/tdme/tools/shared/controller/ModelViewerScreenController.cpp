@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/ModelViewerScreenController.java
 #include <tdme/tools/shared/controller/ModelViewerScreenController.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -31,10 +33,13 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ModelViewerScreenController;
 using java::io::Serializable;
@@ -67,6 +72,7 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
@@ -86,7 +92,6 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(u""_j);
 
 ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
-	: ScreenController()
 {
 	this->modelPath = new FileDialogPath(u"."_j);
 	this->view = view;
@@ -155,7 +160,7 @@ void ModelViewerScreenController::setScreenCaption(String* text)
 	screenNode->layout(screenCaption);
 }
 
-void ModelViewerScreenController::setEntityData(String* name, String* description)
+void ModelViewerScreenController::setEntityData(const wstring& name, const wstring& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 	modelReload->getController()->setDisabled(false);
@@ -215,9 +220,9 @@ void ModelViewerScreenController::onQuit()
 
 void ModelViewerScreenController::onModelLoad()
 {
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():nullptr;
-	if (fileName == nullptr) {
-		fileName = view->getFileName();
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
+	if (fileName.length() == 0) {
+		fileName = view->getFileName()->getCPPWString();
 	}
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
@@ -235,11 +240,11 @@ void ModelViewerScreenController::onModelLoad()
 
 void ModelViewerScreenController::onModelSave()
 {
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():nullptr;
-	if (fileName == nullptr) {
-		fileName = view->getFileName();
-		if (fileName->toLowerCase()->endsWith(u".tmm"_j) == false) {
-			fileName = ::java::lang::StringBuilder(fileName).append(u".tmm"_j)->toString();
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
+	if (fileName.length() == 0) {
+		fileName = view->getFileName()->getCPPWString();
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == false) {
+			fileName = fileName + L".tmm";
 		}
 	}
 	fileName = Tools::getFileName(fileName);
@@ -247,7 +252,7 @@ void ModelViewerScreenController::onModelSave()
 		modelPath->getPath(),
 		u"Save from: "_j,
 		new StringArray({u"tmm"_j}),
-		fileName,
+		new String(fileName),
 		new ModelViewerScreenController_onModelSave_3(this)
 	);
 }

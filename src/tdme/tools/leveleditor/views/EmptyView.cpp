@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/views/EmptyView.java
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
@@ -23,6 +25,8 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::views::EmptyView;
 using java::lang::String;

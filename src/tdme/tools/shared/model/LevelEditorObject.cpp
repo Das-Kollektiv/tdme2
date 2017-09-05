@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorObject.java
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 
+#include <string>
+
 #include <java/lang/Iterable.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -9,6 +11,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
+
+using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorObject;
 using java::lang::Iterable;
@@ -20,7 +24,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 
-LevelEditorObject::LevelEditorObject(String* id, String* description, Transformations* transformations, LevelEditorEntity* entity) 
+LevelEditorObject::LevelEditorObject(const wstring& id, const wstring& description, Transformations* transformations, LevelEditorEntity* entity)
 {
 	this->id = id;
 	this->description = description;
@@ -28,22 +32,22 @@ LevelEditorObject::LevelEditorObject(String* id, String* description, Transforma
 	this->entity = entity;
 }
 
-String* LevelEditorObject::getId()
+const wstring& LevelEditorObject::getId()
 {
 	return id;
 }
 
-void LevelEditorObject::setId(String* id)
+void LevelEditorObject::setId(const wstring& id)
 {
 	this->id = id;
 }
 
-String* LevelEditorObject::getDescription()
+const wstring& LevelEditorObject::getDescription()
 {
 	return description;
 }
 
-void LevelEditorObject::setDescription(String* description)
+void LevelEditorObject::setDescription(const wstring& description)
 {
 	this->description = description;
 }

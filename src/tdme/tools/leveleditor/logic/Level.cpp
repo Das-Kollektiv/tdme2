@@ -2,6 +2,7 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 
 #include <vector>
+#include <string>
 
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -49,6 +50,7 @@
 #include <tdme/utils/_Console.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::tools::leveleditor::logic::Level;
 using java::lang::String;
@@ -130,7 +132,7 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translati
 	}
 }
 
-Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, String* id, bool enableDynamicShadows)
+Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const wstring& id, bool enableDynamicShadows)
 {
 	ParticleEmitter* engineEmitter = nullptr;
 	{
@@ -196,11 +198,11 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				if (objectParticleSystem->getModel() == nullptr)
 					return nullptr;
 
-				return new ObjectParticleSystemEntity(id->getCPPWString(), objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
+				return new ObjectParticleSystemEntity(id, objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
-				return new PointsParticleSystemEntity(id->getCPPWString(), false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
+				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
 				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Level::createParticleSystem(): unknown particle system type '"_j)->append(static_cast< Object* >(particleSystem->getType()))
@@ -231,7 +233,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 		Entity* entity = nullptr;
 		if (object->getEntity()->getModel() != nullptr) {
-			entity = new Object3D(object->getId()->getCPPWString(), object->getEntity()->getModel());
+			entity = new Object3D(object->getId(), object->getEntity()->getModel());
 		} else
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			entity = createParticleSystem(object->getEntity()->getParticleSystem(), object->getId(), false);
@@ -295,7 +297,7 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto entity = engine->getEntity(object->getId()->getCPPWString());
+		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
 
@@ -314,7 +316,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto entity = engine->getEntity(object->getId()->getCPPWString());
+		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
 

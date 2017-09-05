@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+
+using std::wstring;
 
 using java::lang::String;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
@@ -67,7 +71,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	virtual void setEntityData(LevelEditorEntity* entity, String* name, String* description);
+	virtual void setEntityData(LevelEditorEntity* entity, const wstring& name, const wstring& description);
 
 	/**
 	 * Public constructor

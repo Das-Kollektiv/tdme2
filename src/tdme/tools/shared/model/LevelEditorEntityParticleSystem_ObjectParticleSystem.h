@@ -2,14 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -44,7 +46,7 @@ private:
 	int32_t maxCount {  };
 	bool autoEmit {  };
 	Model* model {  };
-	String* modelFileName {  };
+	wstring modelFileName {  };
 
 public:
 
@@ -89,13 +91,13 @@ public:
 	/** 
 	 * @return model file
 	 */
-	virtual String* getModelFile();
+	virtual const wstring& getModelFile();
 
 	/** 
 	 * Set model file
 	 * @param model file name
 	 */
-	virtual void setModelFile(String* modelFileName) /* throws(Exception) */;
+	virtual void setModelFile(const wstring& modelFileName) /* throws(Exception) */;
 
 	/**
 	 * Public constructor

@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/ParticleSystemScreenController.java
 #include <tdme/tools/shared/controller/ParticleSystemScreenController.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -55,6 +57,8 @@
 #include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using java::io::Serializable;
@@ -271,7 +275,7 @@ void ParticleSystemScreenController::setScreenCaption(String* text)
 	screenNode->layout(screenCaption);
 }
 
-void ParticleSystemScreenController::setEntityData(String* name, String* description)
+void ParticleSystemScreenController::setEntityData(const wstring& name, const wstring& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 	particleSystemReload->getController()->setDisabled(false);
@@ -402,7 +406,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getObjectParticleSystem()->getScale()->set(Tools::convertToVector3(opsScale->getController()->getValue()->toString()));
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->equals(u"1"_j));
 				try {
-					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString());
+					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString()->getCPPWString());
 				} catch (_Exception& exception) {
 					view->getPopUpsViews()->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString());
 				}
@@ -750,17 +754,29 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 
 void ParticleSystemScreenController::onParticleSystemLoad()
 {
-	view->getPopUpsViews()->getFileDialogScreenController()->show(particleSystemPath->getPath(), u"Load from: "_j, new StringArray({u"tps"_j}), view->getFileName(), new ParticleSystemScreenController_onParticleSystemLoad_2(this));
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		particleSystemPath->getPath(),
+		u"Load from: "_j,
+		new StringArray({u"tps"_j}),
+		new String(view->getFileName()),
+		new ParticleSystemScreenController_onParticleSystemLoad_2(this)
+	);
 }
 
 void ParticleSystemScreenController::onEntitySave()
 {
 	auto fileName = view->getEntity()->getEntityFileName();
-	if (fileName == nullptr) {
-		fileName = u"untitle.tps"_j;
+	if (fileName.length() == 0) {
+		fileName = L"untitle.tps";
 	}
 	fileName = Tools::getFileName(fileName);
-	view->getPopUpsViews()->getFileDialogScreenController()->show(particleSystemPath->getPath(), u"Save from: "_j, new StringArray({u"tps"_j}), fileName, new ParticleSystemScreenController_onEntitySave_3(this));
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		particleSystemPath->getPath(),
+		u"Save from: "_j,
+		new StringArray({u"tps"_j}),
+		new String(fileName),
+		new ParticleSystemScreenController_onEntitySave_3(this)
+);
 }
 
 void ParticleSystemScreenController::onParticleSystemReload()

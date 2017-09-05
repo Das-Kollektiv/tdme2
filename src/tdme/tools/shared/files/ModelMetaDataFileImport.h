@@ -2,8 +2,9 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
@@ -12,7 +13,8 @@
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/JsonException.h>
 
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
@@ -38,7 +40,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, String* pathName, String* fileName) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Imports a model meta data file from JSON object
@@ -50,7 +52,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, String* pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException);
 
 private:
 
@@ -65,5 +67,5 @@ private:
 	 * @throws model file io exception
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, String* pathName, Value& jBv)  throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv)  throw (_FileSystemException, JsonException, ModelFileIOException);
 };

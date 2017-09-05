@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/files/LevelFileImport.java
 #include <tdme/tools/shared/files/LevelFileImport.h>
 
+#include <string>
+
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -26,6 +28,8 @@
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
+
+using std::wstring;
 
 using tdme::tools::shared::files::LevelFileImport;
 using java::io::File;
@@ -55,38 +59,21 @@ using tdme::utils::_Console;
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::Array;
 
-namespace
+void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
+	doImport(pathName, fileName, level, L"");
 }
 
-void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level, const wstring& objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException)
 {
-	doImport(pathName, fileName, level, nullptr);
-}
-
-void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLevel* level, String* objectIdPrefix) throw (_FileSystemException, JsonException, ModelFileIOException)
-{
-	auto jsonContent = _FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString());
+	auto jsonContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Value jRoot;
 	jRoot.loadFromString(
 		StringConverter::toString(jsonContent)
 	);
 
-	level->setGameRoot(Tools::getGameRootPath(pathName));
+	level->setGameRoot(new String(Tools::getGameRootPath(pathName)));
 	auto version = Float::parseFloat(new String(StringConverter::toWideString(jRoot["version"].getString())));
 	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(StringConverter::toWideString(jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
@@ -202,10 +189,10 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 		transformations->getRotations()->add(new Rotation((*rotation->getArray())[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
 		transformations->update();
 		auto levelEditorObject = new LevelEditorObject(
-			objectIdPrefix != nullptr ?
-				::java::lang::StringBuilder().append(objectIdPrefix)->append(new String(StringConverter::toWideString(jObject["id"].getString())))->toString() :
-				 new String(StringConverter::toWideString(jObject["id"].getString())),
-			 jObject["descr"].isNull() == false?new String(StringConverter::toWideString(jObject["descr"].getString())) : new String(L""),
+			objectIdPrefix != L"" ?
+				objectIdPrefix + StringConverter::toWideString(jObject["id"].getString()) :
+				StringConverter::toWideString(jObject["id"].getString()),
+			 jObject["descr"].isNull() == false?StringConverter::toWideString(jObject["descr"].getString()) : L"",
 			 transformations,
 			 model
 		);
@@ -223,7 +210,7 @@ void LevelFileImport::doImport(String* pathName, String* fileName, LevelEditorLe
 		level->addObject(levelEditorObject);
 	}
 	level->setObjectIdx(jRoot["objects_eidx"].getInt());
-	level->setPathName(pathName);
-	level->setFileName(fileName);
+	level->setPathName(new String(pathName));
+	level->setFileName(new String(fileName));
 	level->computeDimension();
 }

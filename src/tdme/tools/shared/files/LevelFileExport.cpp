@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <string>
 
 #include <java/lang/Iterable.h>
 #include <java/lang/String.h>
@@ -31,6 +32,7 @@
 #include <ext/jsonbox/Object.h>
 
 using std::ostringstream;
+using std::wstring;
 
 using tdme::tools::shared::files::LevelFileExport;
 using java::lang::Iterable;
@@ -128,9 +130,9 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 		auto entity = entityLibrary->getEntityAt(i);
 		tdme::ext::jsonbox::Object jModel;
 		jModel["id"] = entity->getId();
-		jModel["type"] = StringConverter::toString(entity->getType()->toString()->getCPPWString());
-		jModel["name"] = StringConverter::toString(entity->getName()->getCPPWString());
-		jModel["descr"] = StringConverter::toString(entity->getDescription()->getCPPWString());
+		jModel["type"] = StringConverter::toString(entity->getType()->toWString());
+		jModel["name"] = StringConverter::toString(entity->getName());
+		jModel["descr"] = StringConverter::toString(entity->getDescription());
 		jModel["entity"] = ModelMetaDataFileExport::exportToJSON(entity);
 		jEntityLibrary.push_back(jModel);
 	}
@@ -154,8 +156,8 @@ void LevelFileExport::export_(String* pathName, String* fileName, LevelEditorLev
 		auto rotationAroundXAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisXIndex());
 		auto rotationAroundYAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisYIndex());
 		auto rotationAroundZAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisZIndex());
-		jObject["id"] = StringConverter::toString(levelEditorObject->getId()->getCPPWString());
-		jObject["descr"] = StringConverter::toString(levelEditorObject->getDescription()->getCPPWString());
+		jObject["id"] = StringConverter::toString(levelEditorObject->getId());
+		jObject["descr"] = StringConverter::toString(levelEditorObject->getDescription());
 		jObject["mid"] = levelEditorObject->getEntity()->getId();
 		jObject["tx"] = static_cast< double >(translation->getX());
 		jObject["ty"] = static_cast< double >(translation->getY());

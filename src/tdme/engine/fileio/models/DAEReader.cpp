@@ -274,7 +274,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 						if (i > 0) modelNameTry+= to_wstring(i);
 						for (auto entityIdx = 0; entityIdx < entityLibrary->getEntityCount(); entityIdx++) {
 							auto entity = entityLibrary->getEntityAt(entityIdx);
-							if (entity->getName()->getCPPWString() == modelNameTry) {
+							if (entity->getName() == modelNameTry) {
 								haveName = false;
 								break;
 							}
@@ -387,17 +387,17 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 						  );
 						levelEditorEntity = entityLibrary->addModel(
 							nodeIdx++,
-							new String(modelName),
-							new String(modelName),
-							new String(modelPathName),
-							new String(modelFileName),
+							modelName,
+							modelName,
+							modelPathName,
+							modelFileName,
 							new Vector3()
 						);
 					}
 				} else
 				if (entityType == LevelEditorEntity_EntityType::EMPTY) {
 					if (emptyEntity == nullptr) {
-						emptyEntity = entityLibrary->addEmpty(nodeIdx++, u"Default Empty"_j, u""_j);
+						emptyEntity = entityLibrary->addEmpty(nodeIdx++, L"Default Empty", L"");
 					}
 					levelEditorEntity = emptyEntity;
 				} else {
@@ -412,8 +412,8 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 				levelEditorObjectTransformations->getScale()->set(&scale);
 				levelEditorObjectTransformations->update();
 				auto object = new LevelEditorObject(
-					new String(nodeId),
-					new String(nodeId),
+					nodeId,
+					nodeId,
 					levelEditorObjectTransformations,
 					levelEditorEntity
 				);

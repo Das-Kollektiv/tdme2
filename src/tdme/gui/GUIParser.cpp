@@ -2,6 +2,7 @@
 #include <tdme/gui/GUIParser.h>
 
 #include <map>
+#include <string>
 
 #include <java/lang/CharSequence.h>
 #include <java/lang/Object.h>
@@ -46,12 +47,14 @@
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
 using std::map;
+using std::wstring;
 
 using tdme::gui::GUIParser;
 using java::lang::CharSequence;
@@ -97,6 +100,7 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
@@ -786,6 +790,12 @@ String* GUIParser::escapeQuotes(String* string)
 {
 	clinit();
 	return string->replace(static_cast< CharSequence* >(u"\""_j), static_cast< CharSequence* >(u"&quot;"_j));
+}
+
+const wstring GUIParser::escapeQuotes(const wstring& string)
+{
+	clinit();
+	return StringUtils::replace(string, L"\"", L"&quot;");
 }
 
 void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException)

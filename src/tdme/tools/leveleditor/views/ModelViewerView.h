@@ -2,15 +2,17 @@
 
 #pragma once
 
-#include <java/lang/fwd-tdme.h>
+#include <string>
+
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
+using std::wstring;
+
 using tdme::tools::shared::views::SharedModelViewerView;
-using java::lang::String;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
@@ -29,7 +31,7 @@ public:
 	void onInitAdditionalScreens() override;
 
 public: /* protected */
-	LevelEditorEntity* loadModel(String* name, String* description, String* pathName, String* fileName, Vector3* pivot) /* throws(Exception) */ override;
+	LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */ override;
 
 public:
 	/**

@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
+
+using std::wstring;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
 using java::lang::String;
@@ -27,7 +31,7 @@ public:
 	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
 public: /* protected */
-	LevelEditorEntity* loadParticleSystem(String* name, String* description, String* pathName, String* fileName) /* throws(Exception) */ override;
+	LevelEditorEntity* loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */ override;
 
 public:
 	void onInitAdditionalScreens() override;

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+
+using std::wstring;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
@@ -162,7 +166,7 @@ public: /* protected */
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(String* name, String* description, String* pathName, String* fileName) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
 
 public:
 

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+
+using std::wstring;
 
 using java::io::Serializable;
 using java::lang::CharSequence;
@@ -181,7 +185,7 @@ public:
 	 * @param idx
 	 * @param file
 	 */
-	virtual void setupConvexMesh(int32_t idx, String* file);
+	virtual void setupConvexMesh(int32_t idx, const wstring& file);
 
 	/** 
 	 * On pivot apply

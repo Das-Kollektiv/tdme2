@@ -2,13 +2,15 @@
 
 #pragma once
 
-#include <java/lang/fwd-tdme.h>
+#include <string>
+
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
+using std::wstring;
+
 using tdme::tools::shared::model::ModelProperties;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 
@@ -21,8 +23,8 @@ class tdme::tools::shared::model::LevelEditorObject final
 	: public ModelProperties
 {
 private:
-	String* id {  };
-	String* description {  };
+	wstring id {  };
+	wstring description {  };
 	Transformations* transformations {  };
 	LevelEditorEntity* entity {  };
 
@@ -31,24 +33,24 @@ public:
 	/** 
 	 * @return id
 	 */
-	String* getId();
+	const wstring& getId();
 
 	/** 
 	 * Set id
 	 * @param id
 	 */
-	void setId(String* id);
+	void setId(const wstring& id);
 
 	/** 
 	 * @return description
 	 */
-	String* getDescription();
+	const wstring& getDescription();
 
 	/** 
 	 * Set description
 	 * @param description
 	 */
-	void setDescription(String* description);
+	void setDescription(const wstring& description);
 
 	/** 
 	 * @return transformations
@@ -78,6 +80,6 @@ public:
 	 * @param transformations
 	 * @param entity
 	 */
-	LevelEditorObject(String* id, String* description, Transformations* transformations, LevelEditorEntity* entity);
+	LevelEditorObject(const wstring& id, const wstring& description, Transformations* transformations, LevelEditorEntity* entity);
 
 };

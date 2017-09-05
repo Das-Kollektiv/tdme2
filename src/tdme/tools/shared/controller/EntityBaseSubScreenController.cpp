@@ -89,7 +89,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
-void EntityBaseSubScreenController::setEntityData(String* name, String* description)
+void EntityBaseSubScreenController::setEntityData(const wstring& name, const wstring& description)
 {
 	entityName->getController()->setDisabled(false);
 	entityName->getController()->getValue()->set(name);
@@ -112,7 +112,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	if (model == nullptr)
 		return;
 
-	view->setEntityData(model, entityName->getController()->getValue()->toString(), entityDescription->getController()->getValue()->toString());
+	view->setEntityData(model, entityName->getController()->getValue()->toString()->getCPPWString(), entityDescription->getController()->getValue()->toString()->getCPPWString());
 	onSetEntityDataAction->performAction();
 }
 

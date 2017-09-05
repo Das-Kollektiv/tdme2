@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.java
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 
+#include <string>
+
 #include <java/io/Serializable.h>
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
@@ -41,6 +43,8 @@
 #include <tdme/utils/_Exception.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using java::io::Serializable;
@@ -322,7 +326,7 @@ void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t i
 	(*boundingvolumeObbRotationZ)[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
 }
 
-void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, String* file)
+void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const wstring& file)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH);
 	(*boundingvolumeConvexMeshFile)[idx]->getController()->setValue(value->set(file));
@@ -415,10 +419,16 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(Lev
 {
 	auto const idxFinal = idx;
 	auto const entityFinal = entity;
-	view->getPopUpsViews()->getFileDialogScreenController()->show(modelPath->getPath(), u"Load from: "_j, new StringArray({
-		u"dae"_j,
-		u"tm"_j
-	}), entity->getBoundingVolumeAt(idx)->getModelMeshFile() != nullptr ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(), new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(this, idxFinal, entityFinal));
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		modelPath->getPath(),
+		u"Load from: "_j,
+		new StringArray({
+			u"dae"_j,
+			u"tm"_j
+		}),
+		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? new String(entity->getBoundingVolumeAt(idx)->getModelMeshFile()) : new String(entity->getFileName()),
+		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(this, idxFinal, entityFinal)
+	);
 }
 
 void EntityBoundingVolumeSubScreenController::showErrorPopUp(String* caption, String* message)

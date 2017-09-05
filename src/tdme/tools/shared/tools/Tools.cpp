@@ -43,6 +43,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utils/_Exception.h>
+#include <tdme/utils/StringUtils.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -91,6 +92,7 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::_Exception;
+using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
 
@@ -286,7 +288,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	BoundingBox* entityBoundingBox = nullptr;
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(new Vector3(-0.5f, 0.0f, -0.5f), new Vector3(0.5f, 3.0f, 0.5f));
-		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), u"model"_j, true);
+		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), L"model", true);
 		if (particleSystemObject != nullptr) {
 			engine->addEntity(particleSystemObject);
 		}
@@ -343,50 +345,50 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	cam->getUpVector()->set(upVector);
 }
 
-String* Tools::getRelativeResourcesFileName(String* gameRoot, String* fileName)
+const wstring Tools::getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName)
 {
-	fileName = fileName->replace(u'\\', u'/');
+	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
-		cutFileNameIdx = fileName->lastIndexOf(u"/resources/"_j);
+		cutFileNameIdx = fileName.rfind(L"/resources/");
 		if (cutFileNameIdx != -1) {
-			fileName = fileName->substring(cutFileNameIdx + 1);
+			newFileName = StringUtils::substring(fileName, cutFileNameIdx + 1);
 		}
 	}
 	if (cutFileNameIdx == -1) {
-		cutFileNameIdx = fileName->lastIndexOf(u"resources/"_j);
+		cutFileNameIdx = fileName.rfind(L"resources/");
 		if (cutFileNameIdx != -1) {
-			fileName = fileName->substring(cutFileNameIdx);
+			newFileName = StringUtils::substring(fileName, cutFileNameIdx);
 		}
 	}
-	return fileName;
+	return newFileName;
 }
 
-String* Tools::getGameRootPath(String* fileName)
+const wstring Tools::getGameRootPath(const wstring& fileName)
 {
-	fileName = fileName->replace(u'\\', u'/');
+	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
-		filesRootIdx = fileName->lastIndexOf(u"/resources/"_j);
+		filesRootIdx = fileName.rfind(L"/resources/");
 		if (filesRootIdx != -1)
-			fileName = fileName->substring(0, filesRootIdx);
+			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
 
 	}
 	if (filesRootIdx == -1) {
-		filesRootIdx = fileName->lastIndexOf(u"resources/"_j);
+		filesRootIdx = fileName.rfind(L"resources/");
 		if (filesRootIdx != -1)
-			fileName = fileName->substring(0, filesRootIdx);
+			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
 
 	}
-	return fileName;
+	return newFileName;
 }
 
-String* Tools::getPath(String* fileName)
+const wstring Tools::getPath(const wstring& fileName)
 {
-	return new String(_FileSystem::getInstance()->getPathName(fileName->getCPPWString()));
+	return _FileSystem::getInstance()->getPathName(fileName);
 }
 
-String* Tools::getFileName(String* fileName)
+const wstring Tools::getFileName(const wstring& fileName)
 {
-	return new String(_FileSystem::getInstance()->getFileName(fileName->getCPPWString()));
+	return _FileSystem::getInstance()->getFileName(fileName);
 }

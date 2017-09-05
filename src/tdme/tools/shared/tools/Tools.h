@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
@@ -15,6 +16,7 @@
 #include <java/lang/Object.h>
 
 using std::array;
+using std::wstring;
 
 using java::lang::String;
 using tdme::engine::Engine;
@@ -171,26 +173,26 @@ public:
 	 * @param file name
 	 * @return relative resources file name
 	 */
-	static String* getRelativeResourcesFileName(String* gameRoot, String* fileName);
+	static const wstring getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName);
 
 	/** 
 	 * Get game root path
 	 * @param file name
 	 * @return game root path
 	 */
-	static String* getGameRootPath(String* fileName);
+	static const wstring getGameRootPath(const wstring& fileName);
 
 	/** 
 	 * Get path
 	 * @param file name
 	 * @return path
 	 */
-	static String* getPath(String* fileName);
+	static const wstring getPath(const wstring& fileName);
 
 	/** 
 	 * Get file name of given path
 	 * @param file name
 	 * @return file name
 	 */
-	static String* getFileName(String* fileName);
+	static const wstring getFileName(const wstring& fileName);
 };

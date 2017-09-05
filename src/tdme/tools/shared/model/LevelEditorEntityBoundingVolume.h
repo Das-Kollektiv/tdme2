@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -9,7 +11,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
@@ -26,7 +29,7 @@ private:
 	static int32_t staticIdx;
 	int32_t id {  };
 	LevelEditorEntity* levelEditorEntity {  };
-	String* modelMeshFile {  };
+	wstring modelMeshFile {  };
 	Model* model {  };
 	BoundingVolume* boundingVolume {  };
 
@@ -45,7 +48,7 @@ public:
 	/** 
 	 * @return model mesh file
 	 */
-	virtual String* getModelMeshFile();
+	virtual const wstring& getModelMeshFile();
 
 	/** 
 	 * @return model
@@ -100,7 +103,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void setupConvexMesh(String* pathName, String* fileName);
+	virtual void setupConvexMesh(const wstring& pathName, const wstring& fileName);
 
 private:
 

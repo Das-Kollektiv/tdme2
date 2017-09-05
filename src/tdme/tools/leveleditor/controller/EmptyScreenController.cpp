@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/EmptyScreenController.java
 #include <tdme/tools/leveleditor/controller/EmptyScreenController.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -15,6 +17,8 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+
+using std::wstring;
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using java::lang::String;
@@ -70,7 +74,7 @@ void EmptyScreenController::setScreenCaption(String* text)
 	screenNode->layout(screenCaption);
 }
 
-void EmptyScreenController::setEntityData(String* name, String* description)
+void EmptyScreenController::setEntityData(const wstring& name, const wstring& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 }
