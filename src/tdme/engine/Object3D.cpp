@@ -144,7 +144,7 @@ void Object3D::setPickable(bool pickable)
 	Object3DInternal::setPickable(pickable);
 }
 
-Matrix4x4* Object3D::getTransformationsMatrix(String* id)
+Matrix4x4* Object3D::getTransformationsMatrix(const wstring& id)
 {
 	return Object3DInternal::getTransformationsMatrix(id);
 }

@@ -70,5 +70,5 @@ public:
 	virtual bool isPickable();
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 	virtual void setPickable(bool pickable);
-	virtual Matrix4x4* getTransformationsMatrix(String* id);
+	virtual Matrix4x4* getTransformationsMatrix(const wstring& id);
 };

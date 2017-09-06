@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Animation.h>
@@ -33,7 +32,6 @@ using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using java::lang::Math;
-using java::lang::String;
 using java::util::Iterator;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
@@ -184,9 +182,9 @@ float Object3DBase::getOverlayAnimationTime(const wstring& id)
 	return animationState == nullptr ? 1.0f : animationState->time;
 }
 
-Matrix4x4* Object3DBase::getTransformationsMatrix(String* id)
+Matrix4x4* Object3DBase::getTransformationsMatrix(const wstring& id)
 {
-	auto transformationMatrixIt = transformationsMatrices.find(id->getCPPWString());
+	auto transformationMatrixIt = transformationsMatrices.find(id);
 	if (transformationMatrixIt != transformationsMatrices.end()) {
 		return transformationMatrixIt->second;
 	}
@@ -349,10 +347,10 @@ Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator
 	return transformedFacesIterator;
 }
 
-Object3DGroupMesh* Object3DBase::getMesh(String* groupId)
+Object3DGroupMesh* Object3DBase::getMesh(const wstring& groupId)
 {
 	for (auto object3DGroup : object3dGroups) {
-		if (object3DGroup->group->getId() == groupId->getCPPWString()) {
+		if (object3DGroup->group->getId() == groupId) {
 			return object3DGroup->mesh;
 		}
 	}

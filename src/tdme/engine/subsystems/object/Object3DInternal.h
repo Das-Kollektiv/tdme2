@@ -10,7 +10,6 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/Object3DBase.h>
-#include <Array.h>
 
 using std::wstring;
 

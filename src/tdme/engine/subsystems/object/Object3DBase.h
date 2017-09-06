@@ -23,7 +23,6 @@ using std::wstring;
 
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using java::lang::String;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
@@ -126,7 +125,7 @@ public:
 	 * @param group id
 	 * @return transformation matrix or null
 	 */
-	virtual Matrix4x4* getTransformationsMatrix(String* id);
+	virtual Matrix4x4* getTransformationsMatrix(const wstring& id);
 
 public: /* protected */
 
@@ -172,7 +171,7 @@ public:
 	 * @param group id
 	 * @return object3d group mesh object
 	 */
-	virtual Object3DGroupMesh* getMesh(String* groupId);
+	virtual Object3DGroupMesh* getMesh(const wstring& groupId);
 
 private:
 
