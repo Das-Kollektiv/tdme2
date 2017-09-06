@@ -90,7 +90,7 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
 {
 	this->popUps = popUps;
-	this->modelPath = u"."_j;
+	this->modelPath = L".";
 	entityLibraryListBoxSelection = new MutableString();
 }
 
@@ -99,12 +99,12 @@ GUIScreenNode* LevelEditorEntityLibraryScreenController::getScreenNode()
 	return screenNode;
 }
 
-String* LevelEditorEntityLibraryScreenController::getModelPath()
+const wstring& LevelEditorEntityLibraryScreenController::getModelPath()
 {
 	return modelPath;
 }
 
-void LevelEditorEntityLibraryScreenController::setModelPath(String* modelPath)
+void LevelEditorEntityLibraryScreenController::setModelPath(const wstring& modelPath)
 {
 	this->modelPath = modelPath;
 }
@@ -274,11 +274,17 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->equals(u"create_model"_j) == true) {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-			popUps->getFileDialogScreenController()->show(modelPath, u"Load from: "_j, new StringArray({
-				u"tmm"_j,
-				u"dae"_j,
-				u"tm"_j
-			}), u""_j, new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary));
+			popUps->getFileDialogScreenController()->show(
+				modelPath,
+				L"Load from: ",
+				new StringArray({
+					u"tmm"_j,
+					u"dae"_j,
+					u"tm"_j
+				}),
+				L"",
+				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
+			);
 		} else
 		if (node->getController()->getValue()->equals(u"create_trigger"_j) == true) {
 			try {
@@ -288,9 +294,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				onEditEntity();
 			} catch (_Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
-					u"Error"_j,
-					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
-				 );
+					L"Error",
+					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
+				);
 			}
 		} else
 		if (node->getController()->getValue()->equals(u"create_empty"_j) == true) {
@@ -301,8 +307,8 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				onEditEntity();
 			} catch (_Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
-					u"Error"_j,
-					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
+					L"Error",
+					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
 				 );
 			}
 		} else
@@ -316,8 +322,8 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				onEditEntity();
 			} catch (_Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
-					u"Error"_j,
-					::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString()
+					L"Error",
+					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
 				 );
 			}
 		} else {

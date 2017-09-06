@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -11,6 +13,8 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -60,9 +64,9 @@ class tdme::tools::shared::controller::FileDialogScreenController
 
 private:
 	GUIScreenNode* screenNode {  };
-	String* cwd {  };
+	wstring cwd {  };
 	StringArray* extensions {  };
-	String* captionText {  };
+	wstring captionText {  };
 	GUITextNode* caption {  };
 	GUIElementNode* fileName {  };
 	GUIElementNode* files {  };
@@ -75,12 +79,13 @@ public:
 	/** 
 	 * @return path name
 	 */
-	virtual String* getPathName();
+	virtual const wstring& getPathName();
 
 	/** 
 	 * @return file name
 	 */
-	virtual String* getFileName();
+	virtual const wstring& getFileName();
+
 	void initialize() override;
 	void dispose() override;
 
@@ -100,7 +105,7 @@ public:
 	 * @param apply action
 	 * @throws IOException 
 	 */
-	virtual void show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction);
+	virtual void show(const wstring& cwd, const wstring& captionText, StringArray* extensions, const wstring& fileName, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up

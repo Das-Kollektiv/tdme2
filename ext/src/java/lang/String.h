@@ -109,6 +109,7 @@ public:
 	static String* copyValueOf(char16_tArray* arg0, int32_t arg1, int32_t arg2);
 	bool endsWith(String* arg0);
 	bool equals(Object* arg0) override;
+	bool equals(const wstring& arg0);
 	bool equalsIgnoreCase(String* arg0);
 	static String* format(String* arg0, ObjectArray* arg1);
 	static String* format(Locale* arg0, String* arg1, ObjectArray* arg2);

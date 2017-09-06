@@ -48,7 +48,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };
-	String* particleSystemFile {  };
+	wstring particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
 public:
@@ -85,17 +85,17 @@ public:
 	/** 
 	 * @return current particle system file name
 	 */
-	virtual String* getFileName();
+	virtual const wstring getFileName();
 
 	/** 
 	 * Issue particle system loading
 	 */
-	virtual void loadFile(String* pathName, String* fileName);
+	virtual void loadFile(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * Triggers saving a particle system
 	 */
-	virtual void saveFile(String* pathName, String* fileName) /* throws(Exception) */;
+	virtual void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Issue file reloading

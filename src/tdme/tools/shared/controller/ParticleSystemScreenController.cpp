@@ -139,8 +139,8 @@ String* ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER = u"Sphere
 
 ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSystemView* view)
 {
-	this->particleSystemPath = new FileDialogPath(u"."_j);
-	this->modelPath = new FileDialogPath(u"."_j);
+	this->particleSystemPath = new FileDialogPath(L".");
+	this->modelPath = new FileDialogPath(L".");
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ParticleSystemScreenController_ParticleSystemScreenController_1(this, finalView));
@@ -269,7 +269,7 @@ void ParticleSystemScreenController::dispose()
 {
 }
 
-void ParticleSystemScreenController::setScreenCaption(String* text)
+void ParticleSystemScreenController::setScreenCaption(const wstring& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
@@ -289,9 +289,9 @@ void ParticleSystemScreenController::unsetEntityData()
 	particleSystemSave->getController()->setDisabled(true);
 }
 
-void ParticleSystemScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
+void ParticleSystemScreenController::setEntityProperties(const wstring& presetId, LevelEditorEntity* entity, const wstring& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void ParticleSystemScreenController::unsetEntityProperties()
@@ -408,7 +408,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString()->getCPPWString());
 				} catch (_Exception& exception) {
-					view->getPopUpsViews()->getInfoDialogScreenController()->show(u"Error"_j, ::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(string(exception.what()))))->toString());
+					view->getPopUpsViews()->getInfoDialogScreenController()->show(L"Error", L"An error occurred: " + StringConverter::toWideString(string(exception.what())));
 				}
 				goto end_switch1;;
 			}
@@ -426,7 +426,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 		}
 
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 	view->initParticleSystemRequest();
 }
@@ -609,7 +609,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 		}
 
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 	view->initParticleSystemRequest();
 }
@@ -756,9 +756,9 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
-		u"Load from: "_j,
+		L"Load from: ",
 		new StringArray({u"tps"_j}),
-		new String(view->getFileName()),
+		view->getFileName(),
 		new ParticleSystemScreenController_onParticleSystemLoad_2(this)
 	);
 }
@@ -772,9 +772,9 @@ void ParticleSystemScreenController::onEntitySave()
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
-		u"Save from: "_j,
+		L"Save from: ",
 		new StringArray({u"tps"_j}),
-		new String(fileName),
+		fileName,
 		new ParticleSystemScreenController_onEntitySave_3(this)
 );
 }
@@ -784,17 +784,17 @@ void ParticleSystemScreenController::onParticleSystemReload()
 	view->reloadFile();
 }
 
-void ParticleSystemScreenController::saveFile(String* pathName, String* fileName) /* throws(Exception) */
+void ParticleSystemScreenController::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ParticleSystemScreenController::loadFile(String* pathName, String* fileName) /* throws(Exception) */
+void ParticleSystemScreenController::loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->loadFile(pathName, fileName);
 }
 
-void ParticleSystemScreenController::showErrorPopUp(String* caption, String* message)
+void ParticleSystemScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -813,54 +813,55 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(u"button_entity_load"_j)) {
+				if (node->getId()->equals(L"button_entity_load")) {
 					onParticleSystemLoad();
 				} else
-				if (node->getId()->equals(u"button_entity_reload"_j)) {
+				if (node->getId()->equals(L"button_entity_reload")) {
 					onParticleSystemReload();
 				} else
-				if (node->getId()->equals(u"button_entity_save"_j)) {
+				if (node->getId()->equals(L"button_entity_save")) {
 					onEntitySave();
 				} else
-				if (node->getId()->equals(u"button_ps_type_apply"_j)) {
+				if (node->getId()->equals(L"button_ps_type_apply")) {
 					onParticleSystemTypeApply();
 				} else
-				if (node->getId()->equals(u"button_ops_apply"_j) || node->getId()->equals(u"button_pps_type_apply"_j)) {
+				if (node->getId()->equals(L"button_ops_apply") || node->getId()->equals(L"button_pps_type_apply")) {
 					onParticleSystemTypeDataApply();
 				} else
-				if (node->getId()->equals(u"button_emitter_apply"_j)) {
+				if (node->getId()->equals(L"button_emitter_apply")) {
 					onParticleSystemEmitterApply();
 				} else
-				if (node->getId()->equals(u"button_ppe_emitter_apply"_j) || node->getId()->equals(u"button_bbpe_emitter_apply"_j) || node->getId()->equals(u"button_cpe_emitter_apply"_j)|| node->getId()->equals(u"button_cpepv_emitter_apply"_j)|| node->getId()->equals(u"button_spe_emitter_apply"_j)) {
+				if (node->getId()->equals(L"button_ppe_emitter_apply") || node->getId()->equals(L"button_bbpe_emitter_apply") || node->getId()->equals(L"button_cpe_emitter_apply")|| node->getId()->equals(L"button_cpepv_emitter_apply")|| node->getId()->equals(L"button_spe_emitter_apply")) {
 					onParticleSystemEmitterDataApply();
 				} else
-				if (node->getId()->equals(u"button_ops_model_file"_j)) {
+				if (node->getId()->equals(L"button_ops_model_file")) {
 					view->getPopUpsViews()->getFileDialogScreenController()->show(
 						modelPath->getPath(),
-						u"Load from: "_j,
+						L"Load from: ",
 						new StringArray({
 							u"dae"_j,
 							u"tm"_j
 						}),
-						u""_j,
+						L"",
 						new ParticleSystemScreenController_onActionPerformed_4(this)
 					);
 				} else {
-					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onActionPerformed()::unknown, type='"_j)->append(static_cast< Object* >(type))
-						->append(u"', id = '"_j)
+					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(L"ModelViewerScreenController::onActionPerformed()::unknown, type='")->append(static_cast< Object* >(type))
+						->append(L"', id = '")
 						->append(node->getId())
-						->append(u"'"_j)
-						->append(u", name = '"_j)
+						->append(L"'")
+						->append(L", name = '")
 						->append(node->getName())
-						->append(u"'"_j)->toString()));
+						->append(L"'")->toString()));
 				}
 				goto end_switch4;;
 			}		}
 		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
 			{
 				goto end_switch4;;
-			}		}
-			end_switch4:;
+			}
+		}
+		end_switch4:;
 	}
 
 }

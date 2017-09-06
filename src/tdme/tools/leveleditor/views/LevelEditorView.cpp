@@ -256,9 +256,9 @@ PopUps* LevelEditorView::getPopUps()
 	return popUps;
 }
 
-String* LevelEditorView::getFileName()
+const wstring& LevelEditorView::getFileName()
 {
-	return new String(_FileSystem::getInstance()->getFileName(level->getFileName()));
+	return _FileSystem::getInstance()->getFileName(level->getFileName());
 }
 
 LevelEditorLevel* LevelEditorView::getLevel()
@@ -650,14 +650,14 @@ void LevelEditorView::unselectObjects()
 
 void LevelEditorView::updateGUIElements()
 {
-	levelEditorScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Level Editor - "_j)->append(level->getFileName())->toString());
+	levelEditorScreenController->setScreenCaption(L"Level Editor - " + level->getFileName());
 	levelEditorScreenController->setLevelSize(level->getDimension()->getX(), level->getDimension()->getZ(), level->getDimension()->getY());
 	if (selectedObjects.size() == 1) {
 		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(L"preset");
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? new String(preset->getValue()) : new String(L""), levelEditorObject, nullptr);
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, L"");
 			levelEditorScreenController->setObject(selectedObject->getTranslation(), selectedObject->getScale(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle());
 			Vector3* objectCenter = nullptr;
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
@@ -708,8 +708,8 @@ void LevelEditorView::loadSettings()
 		settings->load(L"settings", L"leveleditor.properties");
 		gridEnabled = (tmp = dynamic_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
 		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
-		levelEditorScreenController->getMapPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j);
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		levelEditorScreenController->getMapPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
+		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString()->getCPPWString() : L".");
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -731,7 +731,7 @@ void LevelEditorView::initialize()
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
-	levelEditorScreenController->setMapProperties(level, nullptr);
+	levelEditorScreenController->setMapProperties(level, L"");
 	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
@@ -771,8 +771,8 @@ void LevelEditorView::storeSettings()
 		auto settings = new Properties();
 		settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
 		settings->put(u"grid.y"_j, String::valueOf(gridY));
-		settings->put(u"map.path"_j, levelEditorScreenController->getMapPath()->getPath());
-		settings->put(u"model.path"_j, TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+		settings->put(u"map.path"_j, new String(levelEditorScreenController->getMapPath()->getPath()));
+		settings->put(u"model.path"_j, new String(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath()));
 		settings->store(L"settings", L"leveleditor.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
@@ -956,7 +956,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	return groundPlate;
 }
 
-bool LevelEditorView::objectDataApply(String* name, String* description)
+bool LevelEditorView::objectDataApply(const wstring& name, const wstring& description)
 {
 	if (selectedObjects.size() != 1)
 		return false;
@@ -969,9 +969,9 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 	if (levelEditorObject == nullptr)
 		return false;
 
-	levelEditorObject->setDescription(description->getCPPWString());
-	if (levelEditorObject->getId() != name->getCPPWString()) {
-		if (engine->getEntity(name->getCPPWString()) != nullptr) {
+	levelEditorObject->setDescription(description);
+	if (levelEditorObject->getId() != name) {
+		if (engine->getEntity(name) != nullptr) {
 			return false;
 		}
 		auto oldId = levelEditorObject->getId();
@@ -979,7 +979,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		engine->removeEntity(levelEditorObject->getId());
 		selectedObjectsById.clear();
 		selectedObjects.clear();
-		levelEditorObject->setId(name->getCPPWString());
+		levelEditorObject->setId(name);
 		level->addObject(levelEditorObject);
 		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
 		object->fromTransformations(levelEditorObject->getTransformations());
@@ -991,7 +991,7 @@ bool LevelEditorView::objectDataApply(String* name, String* description)
 		selectedObjectsById[object->getId()] = object;
 		levelEditorScreenController->setObjectListbox(level);
 	}
-	levelEditorObject->setDescription(description->getCPPWString());
+	levelEditorObject->setDescription(description);
 	return true;
 }
 
@@ -1110,7 +1110,7 @@ void LevelEditorView::colorObject()
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(L"preset");
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? new String(preset->getValue()) : new String(L""), levelEditorObject, nullptr);
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, nullptr);
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
 		}
@@ -1228,9 +1228,9 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 	updateGUIElements();
 }
 
-bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* value)
+bool LevelEditorView::mapPropertySave(const wstring& oldName, const wstring& name, const wstring& value)
 {
-	if (level->updateProperty(oldName->getCPPWString(), name->getCPPWString(), value->getCPPWString()) == true) {
+	if (level->updateProperty(oldName, name, value) == true) {
 		levelEditorScreenController->setMapProperties(level, name);
 		return true;
 	}
@@ -1240,27 +1240,27 @@ bool LevelEditorView::mapPropertySave(String* oldName, String* name, String* val
 bool LevelEditorView::mapPropertyAdd()
 {
 	if (level->addProperty(L"new.property", L"new.value")) {
-		levelEditorScreenController->setMapProperties(level, new String(L"new.property"));
+		levelEditorScreenController->setMapProperties(level, L"new.property");
 		return true;
 	}
 	return false;
 }
 
-bool LevelEditorView::mapPropertyRemove(String* name)
+bool LevelEditorView::mapPropertyRemove(const wstring& name)
 {
-	auto idx = level->getPropertyIndex(name->getCPPWString());
-	if (idx != -1 && level->removeProperty(name->getCPPWString()) == true) {
+	auto idx = level->getPropertyIndex(name);
+	if (idx != -1 && level->removeProperty(name) == true) {
 		auto property = level->getPropertyByIndex(idx);
 		if (property == nullptr) {
 			property = level->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setMapProperties(level, property == nullptr ? static_cast< String* >(nullptr) : new String(property->getName()));
+		levelEditorScreenController->setMapProperties(level, property == nullptr ? L"" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-bool LevelEditorView::objectPropertyRemove(String* name)
+bool LevelEditorView::objectPropertyRemove(const wstring& name)
 {
 	if (selectedObjects.size() != 1)
 		return false;
@@ -1270,19 +1270,19 @@ bool LevelEditorView::objectPropertyRemove(String* name)
 	if (levelEditorObject == nullptr)
 		return false;
 
-	auto idx = levelEditorObject->getPropertyIndex(name->getCPPWString());
-	if (idx != -1 && levelEditorObject->removeProperty(name->getCPPWString()) == true) {
+	auto idx = levelEditorObject->getPropertyIndex(name);
+	if (idx != -1 && levelEditorObject->removeProperty(name) == true) {
 		auto property = levelEditorObject->getPropertyByIndex(idx);
 		if (property == nullptr) {
 			property = levelEditorObject->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, property == nullptr ? static_cast< String* >(nullptr) : new String(property->getName()));
+		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, property == nullptr ? L"" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-void LevelEditorView::objectPropertiesPreset(String* presetId)
+void LevelEditorView::objectPropertiesPreset(const wstring& presetId)
 {
 	if (selectedObjects.size() != 1)
 		return;
@@ -1295,7 +1295,7 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 	levelEditorObject->clearProperties();
 	auto objectPropertiesPresets = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
 	const vector<PropertyModelClass*>* objectPropertyPresetVector = nullptr;
-	auto objectPropertyPresetVectorIt = objectPropertiesPresets->find(presetId->getCPPWString());
+	auto objectPropertyPresetVectorIt = objectPropertiesPresets->find(presetId);
 	if (objectPropertyPresetVectorIt != objectPropertiesPresets->end()) {
 		objectPropertyPresetVector = &objectPropertyPresetVectorIt->second;
 	}
@@ -1304,10 +1304,10 @@ void LevelEditorView::objectPropertiesPreset(String* presetId)
 			levelEditorObject->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
-	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject, nullptr);
+	levelEditorScreenController->setObjectProperties(presetId, levelEditorObject, L"");
 }
 
-bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* value)
+bool LevelEditorView::objectPropertySave(const wstring& oldName, const wstring& name, const wstring& value)
 {
 	if (selectedObjects.size() != 1)
 		return false;
@@ -1317,8 +1317,8 @@ bool LevelEditorView::objectPropertySave(String* oldName, String* name, String* 
 	if (levelEditorObject == nullptr)
 		return false;
 
-	if (levelEditorObject->updateProperty(oldName->getCPPWString(), name->getCPPWString(), value->getCPPWString()) == true) {
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, name);
+	if (levelEditorObject->updateProperty(oldName, name, value) == true) {
+		levelEditorScreenController->setObjectProperties(L"", levelEditorObject, name);
 		return true;
 	}
 	return false;
@@ -1335,25 +1335,26 @@ bool LevelEditorView::objectPropertyAdd()
 		return false;
 
 	if (levelEditorObject->addProperty(L"new.property", L"new.value")) {
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, u"new.property"_j);
+		levelEditorScreenController->setObjectProperties(L"", levelEditorObject, L"new.property");
 		return true;
 	}
 	return false;
 }
 
-void LevelEditorView::loadMap(String* path, String* file)
+void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 {
 	selectedEntity = nullptr;
 	try {
-		if (file->toLowerCase()->endsWith(u".dae"_j) == true) {
-			auto daeLevel = DAEReader::readLevel(path->getCPPWString(), file->getCPPWString());
-			file = ::java::lang::StringBuilder(file).append(u".tl"_j)->toString();
+		wstring tlFile = file;
+		if (StringUtils::startsWith(StringUtils::toLowerCase(file), L".dae") == true) {
+			auto daeLevel = DAEReader::readLevel(path, file);
+			tlFile = file + L".tl";
 		}
-		LevelFileImport::doImport(path->getCPPWString(), file->getCPPWString(), level);
+		LevelFileImport::doImport(path, tlFile, level);
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}
-		levelEditorScreenController->setMapProperties(level, nullptr);
+		levelEditorScreenController->setMapProperties(level, L"");
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
@@ -1368,20 +1369,20 @@ void LevelEditorView::loadMap(String* path, String* file)
 		updateGUIElements();
 	} catch (_Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
-			u"Warning: Could not load level file"_j,
-			new String(StringConverter::toWideString(string(exception.what())))
+			L"Warning: Could not load level file",
+			StringConverter::toWideString(string(exception.what()))
 		);
 	}
 }
 
-void LevelEditorView::saveMap(String* pathName, String* fileName)
+void LevelEditorView::saveMap(const wstring& pathName, const wstring& fileName)
 {
 	try {
-		LevelFileExport::export_(pathName->getCPPWString(), fileName->getCPPWString(), level);
+		LevelFileExport::export_(pathName, fileName, level);
 	} catch (_Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
-			u"Warning: Could not save level file"_j,
-			new String(StringConverter::toWideString(string(exception.what())))
+			L"Warning: Could not save level file",
+			StringConverter::toWideString(string(exception.what()))
 		);
 	}
 	updateGUIElements();

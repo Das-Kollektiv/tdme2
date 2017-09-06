@@ -66,7 +66,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };
 	bool initModelRequested {  };
-	String* modelFile {  };
+	wstring modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
 public:
@@ -98,17 +98,17 @@ public:
 	/** 
 	 * @return current model file name
 	 */
-	virtual String* getFileName();
+	virtual const wstring& getFileName();
 
 	/** 
 	 * Issue file loading
 	 */
-	virtual void loadFile(String* pathName, String* fileName);
+	virtual void loadFile(const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * Triggers saving a map
 	 */
-	virtual void saveFile(String* pathName, String* fileName) /* throws(Exception) */;
+	virtual void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Issue file reloading

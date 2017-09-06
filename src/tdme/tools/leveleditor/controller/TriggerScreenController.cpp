@@ -86,7 +86,7 @@ void TriggerScreenController::dispose()
 {
 }
 
-void TriggerScreenController::setScreenCaption(String* text)
+void TriggerScreenController::setScreenCaption(const wstring& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
@@ -102,9 +102,9 @@ void TriggerScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void TriggerScreenController::setEntityProperties(String* presetId, String* selectedName)
+void TriggerScreenController::setEntityProperties(const wstring& presetId, const wstring& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void TriggerScreenController::unsetEntityProperties()
@@ -147,11 +147,11 @@ void TriggerScreenController::onTriggerApply()
 		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toString());
 		view->triggerApply(width, height, depth);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
-void TriggerScreenController::showErrorPopUp(String* caption, String* message)
+void TriggerScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -183,7 +183,7 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 			}
 		}
 		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-				{
+			{
 				goto end_switch0;;
 			}
 		}

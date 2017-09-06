@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -43,7 +47,7 @@ public:
 	/** 
 	 * Shows the pop up
 	 */
-	virtual void show(String* caption, String* message);
+	virtual void show(const wstring& caption, const wstring& message);
 
 	/** 
 	 * Closes the pop up

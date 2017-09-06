@@ -47,10 +47,10 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 	try {
 		auto entity = entityLibrary->addModel(
 			LevelEditorEntityLibrary::ID_ALLOCATE,
-			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName()->getCPPWString(),
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 			L"",
-			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName()->getCPPWString(),
-			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName()->getCPPWString(),
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
+			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 			new Vector3(0.0f, 0.0f, 0.0f)
 		);
 		entity->setDefaultBoundingVolumes();
@@ -59,8 +59,8 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		levelEditorEntityLibraryScreenController->onEditEntity();
 	} catch (_Exception& exception) {
 		levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
-			u"Error"_j,
-			::java::lang::StringBuilder().append(u"An error occurred: "_j)->append(new String(StringConverter::toWideString(exception.what())))->toString()
+			L"Error",
+			L"An error occurred: " + StringConverter::toWideString(exception.what())
 		);
 	}
 	levelEditorEntityLibraryScreenController->modelPath = levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();

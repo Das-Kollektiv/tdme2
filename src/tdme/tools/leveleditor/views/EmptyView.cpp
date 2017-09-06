@@ -116,15 +116,15 @@ void EmptyView::display()
 void EmptyView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		emptyScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Empty - "_j)->append(entity->getName())->toString());
+		emptyScreenController->setScreenCaption(L"Empty - " + entity->getName());
 		auto preset = entity->getProperty(L"preset");
-		emptyScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : nullptr, nullptr);
+		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
 		emptyScreenController->setEntityData(entity->getName(), entity->getDescription());
 		auto dimension = new Vector3();
 		dimension->set(entity->getModel()->getBoundingBox()->getMax());
 		dimension->sub(entity->getModel()->getBoundingBox()->getMin());
 	} else {
-		emptyScreenController->setScreenCaption(u"Empty - no trigger loaded"_j);
+		emptyScreenController->setScreenCaption(L"Empty - no trigger loaded");
 		emptyScreenController->unsetEntityProperties();
 		emptyScreenController->unsetEntityData();
 	}

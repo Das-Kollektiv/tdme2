@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -12,6 +14,8 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -43,7 +47,7 @@ private:
 	MutableString* entityLibraryListBoxSelection {  };
 	MutableString* dropdownEntityActionReset {  };
 	PopUps* popUps {  };
-	String* modelPath {  };
+	wstring modelPath {  };
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -51,13 +55,13 @@ public:
 	/** 
 	 * @return model path
 	 */
-	virtual String* getModelPath();
+	virtual const wstring& getModelPath();
 
 	/** 
 	 * Set model path
 	 * @param model path
 	 */
-	virtual void setModelPath(String* modelPath);
+	virtual void setModelPath(const wstring& modelPath);
 	void initialize() override;
 	void dispose() override;
 

@@ -128,7 +128,7 @@ MutableString* LevelEditorScreenController::TEXT_EMPTY = new MutableString(u""_j
 LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view) 
 {
 	this->view = view;
-	this->mapPath = new FileDialogPath(u"."_j);
+	this->mapPath = new FileDialogPath(L".");
 }
 
 GUIScreenNode* LevelEditorScreenController::getScreenNode()
@@ -248,7 +248,7 @@ void LevelEditorScreenController::dispose()
 {
 }
 
-void LevelEditorScreenController::setScreenCaption(String* text)
+void LevelEditorScreenController::setScreenCaption(const wstring& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
@@ -284,9 +284,9 @@ void LevelEditorScreenController::unsetObjectProperties()
 	objectPropertiesListBoxInnerNode->clearSubNodes();
 }
 
-String* LevelEditorScreenController::getObjectPropertyPresetSelection()
+const wstring& LevelEditorScreenController::getObjectPropertyPresetSelection()
 {
-	return u""_j;
+	return L"";
 }
 
 void LevelEditorScreenController::setObjectData(const wstring& name, const wstring& description, const wstring& modelName, Vector3* center)
@@ -315,8 +315,8 @@ void LevelEditorScreenController::unsetObjectData()
 
 void LevelEditorScreenController::onObjectDataApply()
 {
-	if (view->objectDataApply(objectName->getController()->getValue()->toString(), objectDescription->getController()->getValue()->toString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Changing object data failed"_j);
+	if (view->objectDataApply(objectName->getController()->getValue()->toString()->getCPPWString(), objectDescription->getController()->getValue()->toString()->getCPPWString()) == false) {
+		showErrorPopUp(L"Warning", L"Changing object data failed");
 	}
 }
 
@@ -465,7 +465,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, String* selectedName)
+void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, const wstring& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -483,7 +483,7 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, Stri
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(mapProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && mapProperty->getName() == selectedName->getCPPWString() ? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName.length() > 0 && mapProperty->getName() == selectedName ? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
@@ -498,22 +498,25 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, Stri
 
 void LevelEditorScreenController::onMapPropertySave()
 {
-	if (view->mapPropertySave(mapPropertiesListBox->getController()->getValue()->toString(), mapPropertyName->getController()->getValue()->toString(), mapPropertyValue->getController()->getValue()->toString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Saving map property failed"_j);
+	if (view->mapPropertySave(
+		mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString(),
+		mapPropertyName->getController()->getValue()->toString()->getCPPWString(),
+		mapPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
+		showErrorPopUp(L"Warning", L"Saving map property failed");
 	}
 }
 
 void LevelEditorScreenController::onMapPropertyAdd()
 {
 	if (view->mapPropertyAdd() == false) {
-		showErrorPopUp(u"Warning"_j, u"Adding new map property failed"_j);
+		showErrorPopUp(L"Warning", L"Adding new map property failed");
 	}
 }
 
 void LevelEditorScreenController::onMapPropertyRemove()
 {
-	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue()->toString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Removing map property failed"_j);
+	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString()) == false) {
+		showErrorPopUp(L"Warning", L"Removing map property failed");
 	}
 }
 
@@ -566,7 +569,7 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEditorObject* object, String* selectedName)
+void LevelEditorScreenController::setObjectProperties(const wstring& presetId, LevelEditorObject* object, const wstring& selectedName)
 {
 	objectPropertiesPresets->getController()->setDisabled(false);
 	btnObjectPropertyPresetApply->getController()->setDisabled(false);
@@ -576,7 +579,7 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEdi
 	btnObjectPropertySave->getController()->setDisabled(true);
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setDisabled(true);
-	objectPropertiesPresets->getController()->setValue(presetId != nullptr ? value->set(presetId) : value->set(u"none"_j));
+	objectPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
 	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
 	auto idx = 1;
 	auto objectPropertiesListBoxSubNodesXML = u""_j;
@@ -590,7 +593,7 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEdi
 			->append(u"\" value=\""_j)
 			->append(GUIParser::escapeQuotes(objectProperty->getName()))
 			->append(u"\" "_j)
-			->append((selectedName != nullptr && objectProperty->getName() == selectedName->getCPPWString()? u"selected=\"true\" "_j : u""_j))
+			->append((selectedName.length() > 0 && objectProperty->getName() == selectedName? u"selected=\"true\" "_j : u""_j))
 			->append(u"/>\n"_j)->toString())->toString();
 	}
 	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
@@ -605,22 +608,25 @@ void LevelEditorScreenController::setObjectProperties(String* presetId, LevelEdi
 
 void LevelEditorScreenController::onObjectPropertySave()
 {
-	if (view->objectPropertySave(objectPropertiesListBox->getController()->getValue()->toString(), objectPropertyName->getController()->getValue()->toString(), objectPropertyValue->getController()->getValue()->toString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Saving object property failed"_j);
+	if (view->objectPropertySave(
+		objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString(),
+		objectPropertyName->getController()->getValue()->toString()->getCPPWString(),
+		objectPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
+		showErrorPopUp(L"Warning", L"Saving object property failed");
 	}
 }
 
 void LevelEditorScreenController::onObjectPropertyAdd()
 {
 	if (view->objectPropertyAdd() == false) {
-		showErrorPopUp(u"Warning"_j, u"Adding new object property failed"_j);
+		showErrorPopUp(L"Warning", L"Adding new object property failed");
 	}
 }
 
 void LevelEditorScreenController::onObjectPropertyRemove()
 {
-	if (view->objectPropertyRemove(objectPropertiesListBox->getController()->getValue()->toString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Removing object property failed"_j);
+	if (view->objectPropertyRemove(objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString()) == false) {
+		showErrorPopUp(L"Warning", L"Removing object property failed");
 	}
 }
 
@@ -637,7 +643,7 @@ void LevelEditorScreenController::onObjectTranslationApply()
 		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toString());
 		view->objectTranslationApply(x, y, z);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
@@ -658,7 +664,7 @@ void LevelEditorScreenController::onObjectScaleApply()
 
 		view->objectScaleApply(x, y, z);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
@@ -679,7 +685,7 @@ void LevelEditorScreenController::onObjectRotationsApply()
 
 		view->objectRotationsApply(x, y, z);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
@@ -702,7 +708,7 @@ void LevelEditorScreenController::onMapLoad()
 {
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
-		u"Load from: "_j,
+		L"Load from: ",
 		new StringArray({
 			u"tl"_j,
 			u"dae"_j
@@ -714,7 +720,13 @@ void LevelEditorScreenController::onMapLoad()
 
 void LevelEditorScreenController::onMapSave()
 {
-	view->getPopUps()->getFileDialogScreenController()->show(mapPath->getPath(), u"Save to: "_j, new StringArray({u"tl"_j}), view->getFileName(), new LevelEditorScreenController_onMapSave_2(this));
+	view->getPopUps()->getFileDialogScreenController()->show(
+		mapPath->getPath(),
+		L"Save to: ",
+		new StringArray({u"tl"_j}),
+		view->getFileName(),
+		new LevelEditorScreenController_onMapSave_2(this)
+	);
 }
 
 void LevelEditorScreenController::onGridApply()
@@ -727,13 +739,13 @@ void LevelEditorScreenController::onGridApply()
 		view->setGridY(gridY);
 		view->setGridEnabled(gridEnabled->getController()->getValue()->equals(CHECKBOX_CHECKED));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
 void LevelEditorScreenController::onObjectPropertyPresetApply()
 {
-	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toString());
+	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toString()->getCPPWString());
 }
 
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
@@ -745,7 +757,7 @@ void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEdi
 		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append((*lightsPresets)[i]->getId())
 			->append(u"_inner_scrollarea\" width=\"100%\" height=\"50\">\n"_j)->toString())->toString();
 		for (auto it: *lightPresetIds) {
-			String* lightPresetId = new String(it.first);
+			wstring lightPresetId = it.first;
 			lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(lightPresetId))
 				->append(u"\" value=\""_j)
 				->append(GUIParser::escapeQuotes(lightPresetId))
@@ -834,7 +846,7 @@ void LevelEditorScreenController::onLightApply(int32_t lightIdx)
 		(*lightsSpotCutoff)[lightIdx]->getController()->setDisabled(enabled == false);
 		(*ligthsSpotDirectionCompute)[lightIdx]->getController()->setDisabled(enabled == false);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
@@ -894,26 +906,28 @@ void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
 	try {
 		view->computeSpotDirection(lightIdx, Tools::convertToVector4((*lightsPosition)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector3((*lightsSpotTo)[lightIdx]->getController()->getValue()->toString()));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
-void LevelEditorScreenController::saveFile(String* pathName, String* fileName) /* throws(Exception) */
+void LevelEditorScreenController::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->saveMap(pathName, fileName);
 }
 
-void LevelEditorScreenController::loadFile(String* pathName, String* fileName) /* throws(Exception) */
+void LevelEditorScreenController::loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->loadMap(pathName, fileName);
 }
 
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId()->equals(u"objects_listbox"_j) == true) {
-	} else if (node->getId()->equals(u"map_properties_listbox"_j) == true) {
+	if (node->getId()->equals(L"objects_listbox") == true) {
+	} else
+	if (node->getId()->equals(L"map_properties_listbox") == true) {
 		onMapPropertiesSelectionChanged();
-	} else if (node->getId()->equals(u"object_properties_listbox"_j) == true) {
+	} else
+	if (node->getId()->equals(L"object_properties_listbox") == true) {
 		onObjectPropertiesSelectionChanged();
 	} else {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorScreenController::onValueChanged: "_j)->append(node->getId())->toString()));
@@ -923,68 +937,97 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (type == GUIActionListener_Type::PERFORMED) {
-		if (node->getId()->equals(u"button_objects_select"_j) == true) {
+		if (node->getId()->equals(L"button_objects_select") == true) {
 			onObjectsSelect();
-		} else if (node->getId()->equals(u"button_objects_unselect"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_objects_unselect") == true) {
 			onObjectsUnselect();
-		} else if (node->getId()->equals(u"button_grid_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_grid_apply") == true) {
 			onGridApply();
-		} else if (node->getId()->equals(u"button_map_load"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_map_load") == true) {
 			onMapLoad();
-		} else if (node->getId()->equals(u"button_map_save"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_map_save") == true) {
 			onMapSave();
-		} else if (node->getId()->equals(u"button_map_properties_add"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_map_properties_add") == true) {
 			onMapPropertyAdd();
-		} else if (node->getId()->equals(u"button_map_properties_remove"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_map_properties_remove") == true) {
 			onMapPropertyRemove();
-		} else if (node->getId()->equals(u"button_map_properties_save"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_map_properties_save") == true) {
 			onMapPropertySave();
-		} else if (node->getId()->equals(u"button_objectdata_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_objectdata_apply") == true) {
 			onObjectDataApply();
-		} else if (node->getId()->equals(u"button_translation_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_translation_apply") == true) {
 			onObjectTranslationApply();
-		} else if (node->getId()->equals(u"button_scale_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_scale_apply") == true) {
 			onObjectScaleApply();
-		} else if (node->getId()->equals(u"button_rotation_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_rotation_apply") == true) {
 			onObjectRotationsApply();
-			;
-		} else if (node->getId()->equals(u"button_object_color"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_color") == true) {
 			onObjectColor();
-		} else if (node->getId()->equals(u"button_object_center"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_center") == true) {
 			onObjectCenter();
-		} else if (node->getId()->equals(u"button_object_remove"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_remove") == true) {
 			onObjectRemove();
-		} else if (node->getId()->equals(u"button_object_properties_presetapply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_properties_presetapply") == true) {
 			onObjectPropertyPresetApply();
-		} else if (node->getId()->equals(u"button_object_properties_add"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_properties_add") == true) {
 			onObjectPropertyAdd();
-		} else if (node->getId()->equals(u"button_object_properties_remove"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_properties_remove") == true) {
 			onObjectPropertyRemove();
-		} else if (node->getId()->equals(u"button_object_properties_save"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_object_properties_save") == true) {
 			onObjectPropertySave();
-		} else if (node->getId()->equals(u"button_light0_presetapply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light0_presetapply") == true) {
 			onLight0PresetApply();
-		} else if (node->getId()->equals(u"button_light0_spotdirection_compute"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light0_spotdirection_compute") == true) {
 			onLight0SpotDirectionCompute();
-		} else if (node->getId()->equals(u"button_light0_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light0_apply") == true) {
 			onLight0Apply();
-		} else if (node->getId()->equals(u"button_light1_presetapply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light1_presetapply") == true) {
 			onLight1PresetApply();
-		} else if (node->getId()->equals(u"button_light1_spotdirection_compute"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light1_spotdirection_compute") == true) {
 			onLight1SpotDirectionCompute();
-		} else if (node->getId()->equals(u"button_light1_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light1_apply") == true) {
 			onLight1Apply();
-		} else if (node->getId()->equals(u"button_light2_presetapply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light2_presetapply") == true) {
 			onLight2PresetApply();
-		} else if (node->getId()->equals(u"button_light2_spotdirection_compute"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light2_spotdirection_compute") == true) {
 			onLight2SpotDirectionCompute();
-		} else if (node->getId()->equals(u"button_light2_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light2_apply") == true) {
 			onLight2Apply();
-		} else if (node->getId()->equals(u"button_light3_presetapply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light3_presetapply") == true) {
 			onLight3PresetApply();
-		} else if (node->getId()->equals(u"button_light3_spotdirection_compute"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light3_spotdirection_compute") == true) {
 			onLight3SpotDirectionCompute();
-		} else if (node->getId()->equals(u"button_light3_apply"_j) == true) {
+		} else
+		if (node->getId()->equals(L"button_light3_apply") == true) {
 			onLight3Apply();
 		} else {
 			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorScreenController::onActionPerformed: "_j)->append(node->getId())->toString()));
@@ -992,7 +1035,7 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 	}
 }
 
-void LevelEditorScreenController::showErrorPopUp(String* caption, String* message)
+void LevelEditorScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(caption)->append(u":"_j)
 		->append(message)->toString()));

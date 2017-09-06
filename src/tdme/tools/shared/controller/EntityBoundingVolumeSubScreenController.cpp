@@ -370,7 +370,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 	try {
 		view->applyBoundingVolumeSphere(entity, idx, Tools::convertToVector3((*boundingvolumeSphereCenter)[idx]->getController()->getValue()->toString()), Tools::convertToFloat((*boundingvolumeSphereRadius)[idx]->getController()->getValue()->toString()));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
@@ -379,7 +379,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 	try {
 		view->applyBoundingVolumeCapsule(entity, idx, Tools::convertToVector3((*boundingvolumeCapsuleA)[idx]->getController()->getValue()->toString()), Tools::convertToVector3((*boundingvolumeCapsuleB)[idx]->getController()->getValue()->toString()), Tools::convertToFloat((*boundingvolumeCapsuleRadius)[idx]->getController()->getValue()->toString()));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
@@ -388,7 +388,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 	try {
 		view->applyBoundingVolumeAabb(entity, idx, Tools::convertToVector3((*boundingvolumeBoundingBoxMin)[idx]->getController()->getValue()->toString()), Tools::convertToVector3((*boundingvolumeBoundingBoxMax)[idx]->getController()->getValue()->toString()));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
@@ -406,7 +406,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		rotations->getTransformationsMatrix()->getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(entity, idx, Tools::convertToVector3((*boundingvolumeObbCenter)[idx]->getController()->getValue()->toString()), xAxis, yAxis, zAxis, Tools::convertToVector3((*boundingvolumeObbHalfextension)[idx]->getController()->getValue()->toString()));
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
@@ -421,17 +421,17 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(Lev
 	auto const entityFinal = entity;
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		u"Load from: "_j,
+		L"Load from: ",
 		new StringArray({
 			u"dae"_j,
 			u"tm"_j
 		}),
-		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? new String(entity->getBoundingVolumeAt(idx)->getModelMeshFile()) : new String(entity->getFileName()),
+		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
 		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(this, idxFinal, entityFinal)
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::showErrorPopUp(String* caption, String* message)
+void EntityBoundingVolumeSubScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }

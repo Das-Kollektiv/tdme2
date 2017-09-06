@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/InfoDialogScreenController.java
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -11,6 +13,8 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+
+using std::wstring;
 
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using java::lang::String;
@@ -52,7 +56,7 @@ void InfoDialogScreenController::dispose()
 {
 }
 
-void InfoDialogScreenController::show(String* caption, String* message)
+void InfoDialogScreenController::show(const wstring& caption, const wstring& message)
 {
 	screenNode->setVisible(true);
 	captionNode->getText()->set(value->set(caption));

@@ -246,7 +246,7 @@ public:
 	/** 
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(String* caption, String* message);
+	virtual void showErrorPopUp(const wstring& caption, const wstring& message);
 
 	/** 
 	 * On action performed

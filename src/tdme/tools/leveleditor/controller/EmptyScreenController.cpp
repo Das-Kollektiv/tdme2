@@ -68,7 +68,7 @@ void EmptyScreenController::dispose()
 {
 }
 
-void EmptyScreenController::setScreenCaption(String* text)
+void EmptyScreenController::setScreenCaption(const wstring& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
@@ -84,9 +84,9 @@ void EmptyScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void EmptyScreenController::setEntityProperties(String* presetId, String* selectedName)
+void EmptyScreenController::setEntityProperties(const wstring& presetId, const wstring& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void EmptyScreenController::unsetEntityProperties()
@@ -99,7 +99,7 @@ void EmptyScreenController::onQuit()
 	TDMEViewer::getInstance()->quit();
 }
 
-void EmptyScreenController::showErrorPopUp(String* caption, String* message)
+void EmptyScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }

@@ -293,6 +293,10 @@ bool String::equals(Object* arg0) { /* stub */
 	return arg0->toString()->cppwstring == cppwstring;
 }
 
+bool String::equals(const wstring& arg0) { /* stub */
+	return arg0 == cppwstring;
+}
+
 bool String::operator==(const String& b) const {
 	return this->cppwstring == b.cppwstring;
 }

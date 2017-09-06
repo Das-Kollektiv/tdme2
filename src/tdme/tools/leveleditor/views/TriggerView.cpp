@@ -118,16 +118,16 @@ void TriggerView::display()
 void TriggerView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		triggerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Trigger - "_j)->append(entity->getName())->toString());
+		triggerScreenController->setScreenCaption(L"Trigger - " + entity->getName());
 		auto preset = entity->getProperty(L"preset");
-		triggerScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : static_cast< String* >(nullptr), nullptr);
+		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		auto dimension = new Vector3();
 		dimension->set(entity->getModel()->getBoundingBox()->getMax());
 		dimension->sub(entity->getModel()->getBoundingBox()->getMin());
 		triggerScreenController->setTrigger(dimension->getX(), dimension->getY(), dimension->getZ());
 	} else {
-		triggerScreenController->setScreenCaption(u"Trigger - no trigger loaded"_j);
+		triggerScreenController->setScreenCaption(L"Trigger - no trigger loaded");
 		triggerScreenController->unsetEntityProperties();
 		triggerScreenController->unsetEntityData();
 		triggerScreenController->unsetTrigger();
@@ -153,12 +153,9 @@ void TriggerView::triggerApply(float width, float height, float depth)
 		updateGUIElements();
 	} catch (_Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(
-			u"Error"_j,
-			::java::lang::StringBuilder().
-			 	 append(u"An error occurred: "_j)->
-				 append(new String(StringConverter::toWideString(string(exception.what()))))->
-				 toString()
-		 );
+			L"Error",
+			L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
+		);
 	}
 }
 

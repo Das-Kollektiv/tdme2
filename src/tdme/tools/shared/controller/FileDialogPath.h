@@ -2,8 +2,12 @@
 
 #pragma once
 
+#include <string>
+
 #include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+
+using std::wstring;
 
 using java::lang::String;
 
@@ -15,23 +19,23 @@ using java::lang::String;
 class tdme::tools::shared::controller::FileDialogPath
 {
 private:
-	String* path {  };
+	wstring path {  };
 
 public:
 
 	/** 
 	 * @return path
 	 */
-	virtual String* getPath();
+	virtual const wstring& getPath();
 
 	/** 
 	 * Set path
 	 * @param path
 	 */
-	virtual void setPath(String* path);
+	virtual void setPath(const wstring& path);
 
 	/**
 	 * Public constructor
 	 */
-	FileDialogPath(String* path);
+	FileDialogPath(const wstring& path);
 };

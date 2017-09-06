@@ -146,7 +146,7 @@ MutableString* MutableString::append(String* s)
 MutableString* MutableString::append(const wstring& s)
 {
 	for (auto i = 0; i < s.length(); i++) {
-		append(s[i]);
+		append((char16_t)s[i]);
 	}
 	return this;
 }

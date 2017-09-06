@@ -158,7 +158,7 @@ public:
 	/** 
 	 * @return level file name
 	 */
-	String* getFileName();
+	const wstring& getFileName();
 
 	/** 
 	 * @return level
@@ -313,7 +313,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	bool objectDataApply(String* name, String* description);
+	bool objectDataApply(const wstring& name, const wstring& description);
 
 	/** 
 	 * Places selected model on selected object
@@ -371,7 +371,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	bool mapPropertySave(String* oldName, String* name, String* value);
+	bool mapPropertySave(const wstring& oldName, const wstring& name, const wstring& value);
 
 	/** 
 	 * Add a map property
@@ -384,20 +384,20 @@ public:
 	 * @param name
 	 * @return success
 	 */
-	bool mapPropertyRemove(String* name);
+	bool mapPropertyRemove(const wstring& name);
 
 	/** 
 	 * Remove a object property from object properties
 	 * @param name
 	 * @return success
 	 */
-	bool objectPropertyRemove(String* name);
+	bool objectPropertyRemove(const wstring& name);
 
 	/** 
 	 * Apply object property preset
 	 * @param preset id
 	 */
-	void objectPropertiesPreset(String* presetId);
+	void objectPropertiesPreset(const wstring& presetId);
 
 	/** 
 	 * Save a model property
@@ -406,7 +406,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	bool objectPropertySave(String* oldName, String* name, String* value);
+	bool objectPropertySave(const wstring& oldName, const wstring& name, const wstring& value);
 
 	/** 
 	 * Add a model property
@@ -417,12 +417,12 @@ public:
 	/** 
 	 * Triggers loading a map
 	 */
-	void loadMap(String* path, String* file);
+	void loadMap(const wstring& path, const wstring& file);
 
 	/** 
 	 * Triggers saving a map
 	 */
-	void saveMap(String* pathName, String* fileName);
+	void saveMap(const wstring& pathName, const wstring& fileName);
 
 private:
 

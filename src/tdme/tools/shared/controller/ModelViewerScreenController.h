@@ -95,7 +95,7 @@ public:
 	 * Set screen caption
 	 * @param text
 	 */
-	void setScreenCaption(String* text);
+	void setScreenCaption(const wstring& text);
 
 	/** 
 	 * Set up general entity data
@@ -115,7 +115,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName);
+	void setEntityProperties(const wstring& presetId, LevelEditorEntity* entity, const wstring& selectedName);
 
 	/** 
 	 * Unset entity properties
@@ -165,13 +165,13 @@ public:
 	 * On pivot apply
 	 */
 	void onPivotApply();
-	void saveFile(String* pathName, String* fileName) /* throws(Exception) */;
-	void loadFile(String* pathName, String* fileName) /* throws(Exception) */;
+	void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	void loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(String* caption, String* message);
+	void showErrorPopUp(const wstring& caption, const wstring& message);
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 

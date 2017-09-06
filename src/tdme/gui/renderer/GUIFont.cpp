@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/gui/renderer/GUIFont.java
 #include <tdme/gui/renderer/GUIFont.h>
 
+#include <map>
 #include <vector>
 #include <string>
 
@@ -21,6 +22,7 @@
 #include <ObjectArray.h>
 #include <SubArray.h>
 
+using std::map;
 using std::vector;
 using std::wstring;
 
@@ -69,7 +71,6 @@ void GUIFont::ctor()
 
 void GUIFont::init()
 {
-	chars = new GUIFont_CharacterDefinitionArray(CHARACTERS_MAX);
 }
 
 MutableString* GUIFont::LINEHEIGHT_STRING;
@@ -97,7 +98,7 @@ GUIFont* GUIFont::parse(String* pathName, String* fileName) throw (_FileSystemEx
 		} else
 		if (StringUtils::startsWith(line, L"char")) {
 			auto def = font->parseCharacter(line);
-			font->chars->set(def->id, def);
+			font->chars[def->id] = def;
 		}
 		if (StringUtils::startsWith(line, L"kernings c")) {
 		} else
@@ -145,6 +146,12 @@ GUIFont_CharacterDefinition* GUIFont::parseCharacter(const wstring& line)
 	return characterDefinition;
 }
 
+GUIFont_CharacterDefinition* GUIFont::getCharacter(int32_t charId) {
+	auto charIt = chars.find(charId);
+	if (charIt != chars.end()) return charIt->second;
+	return nullptr;
+}
+
 void GUIFont::initialize()
 {
 	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture);
@@ -165,14 +172,10 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, Mutable
 
 	for (auto i = offset; i < text->length() && i < length; i++) {
 		int32_t id = text->charAt(i);
-		if (id >= chars->length) {
-			continue;
-		}
-		if ((*chars)[id] == nullptr) {
-			continue;
-		}
-		(*chars)[id]->draw(guiRenderer, x, y);
-		auto xAdvance = (*chars)[id]->xAdvance;
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		charDef->draw(guiRenderer, x, y);
+		auto xAdvance = charDef->xAdvance;
 		x += xAdvance;
 	}
 	guiRenderer->render();
@@ -186,13 +189,9 @@ int32_t GUIFont::getTextIndexX(MutableString* text, int32_t offset, int32_t leng
 	auto x = 0;
 	for (auto i = offset; i < index && i < text->length() && i < length; i++) {
 		int32_t id = text->charAt(i);
-		if (id >= chars->length) {
-			continue;
-		}
-		if ((*chars)[id] == nullptr) {
-			continue;
-		}
-		auto xAdvance = (*chars)[id]->xAdvance;
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		auto xAdvance = charDef->xAdvance;
 		x += xAdvance;
 	}
 	return x;
@@ -207,13 +206,9 @@ int32_t GUIFont::getTextIndexByX(MutableString* text, int32_t offset, int32_t le
 
 	for (; index < text->length() && index < length; index++) {
 		int32_t id = text->charAt(index);
-		if (id >= chars->length) {
-			continue;
-		}
-		if ((*chars)[id] == nullptr) {
-			continue;
-		}
-		auto xAdvance = (*chars)[id]->xAdvance;
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		auto xAdvance = charDef->xAdvance;
 		x += xAdvance;
 		if (x - xAdvance / 2 > textX) {
 			return index;
@@ -227,10 +222,9 @@ int32_t GUIFont::getYOffset(MutableString* text)
 	auto minYOffset = 10000;
 	for (auto i = 0; i < text->length(); i++) {
 		int32_t id = text->charAt(i);
-		if ((*chars)[id] == nullptr) {
-			continue;
-		}
-		minYOffset = Math::min((*chars)[id]->yOffset, minYOffset);
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		minYOffset = Math::min(charDef->yOffset, minYOffset);
 	}
 	return minYOffset;
 }
@@ -240,13 +234,12 @@ int32_t GUIFont::getTextHeight(MutableString* text)
 	auto maxHeight = 0;
 	for (auto i = 0; i < text->length(); i++) {
 		int32_t id = text->charAt(i);
-		if ((*chars)[id] == nullptr) {
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		if (id == L' ') {
 			continue;
 		}
-		if (id == u' ') {
-			continue;
-		}
-		maxHeight = Math::max((*chars)[id]->height + (*chars)[id]->yOffset, maxHeight);
+		maxHeight = Math::max(charDef->height + charDef->yOffset, maxHeight);
 	}
 	return maxHeight;
 }
@@ -256,10 +249,9 @@ int32_t GUIFont::getTextWidth(MutableString* text)
 	auto width = 0;
 	for (auto i = 0; i < text->length(); i++) {
 		int32_t id = text->charAt(i);
-		if ((*chars)[id] == nullptr) {
-			continue;
-		}
-		auto xAdvance = (*chars)[id]->xAdvance;
+		GUIFont_CharacterDefinition* charDef = getCharacter(id);
+		if (charDef == nullptr) continue;
+		auto xAdvance = charDef->xAdvance;
 		width += xAdvance;
 	}
 	return width;

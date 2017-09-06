@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 
 #include <fwd-tdme.h>
@@ -24,19 +25,8 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::_FileSystemException;
 using tdme::utils::MutableString;
 
+using std::map;
 using std::wstring;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace gui {
-namespace renderer {
-typedef ::SubArray< ::tdme::gui::renderer::GUIFont_CharacterDefinition, ::java::lang::ObjectArray > GUIFont_CharacterDefinitionArray;
-}  // namespace renderer
-}  // namespace gui
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::gui::renderer::GUIFont_CharacterDefinitionArray;
 
 struct default_init_tag;
 
@@ -82,7 +72,7 @@ private:
 	/** 
 	 * The characters building up the font 
 	 */
-	GUIFont_CharacterDefinitionArray* chars {  };
+	map<int32_t, GUIFont_CharacterDefinition*> chars {  };
 
 	/** 
 	 * The height of a line 
@@ -106,6 +96,13 @@ private:
 	 * @return The character definition from the line
 	 */
 	GUIFont_CharacterDefinition* parseCharacter(const wstring& line);
+
+	/**
+	 * Get character defintion
+	 * @param character id
+	 * @return character definition
+	 */
+	GUIFont_CharacterDefinition* getCharacter(int32_t charId);
 
 public:
 

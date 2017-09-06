@@ -63,7 +63,7 @@ public:
 	 * Set screen caption
 	 * @param text
 	 */
-	void setScreenCaption(String* text);
+	void setScreenCaption(const wstring& text);
 
 	/** 
 	 * Set up general entity data
@@ -83,7 +83,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(String* presetId, String* selectedName);
+	void setEntityProperties(const wstring& presetId, const wstring& selectedName);
 
 	/** 
 	 * Unset entity properties
@@ -114,7 +114,7 @@ public:
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(String* caption, String* message);
+	void showErrorPopUp(const wstring& caption, const wstring& message);
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 

@@ -6,17 +6,17 @@
 using tdme::tools::shared::controller::FileDialogPath;
 using java::lang::String;
 
-FileDialogPath::FileDialogPath(String* path) 
+FileDialogPath::FileDialogPath(const wstring& path)
 {
 	this->path = path;
 }
 
-String* FileDialogPath::getPath()
+const wstring& FileDialogPath::getPath()
 {
 	return path;
 }
 
-void FileDialogPath::setPath(String* path)
+void FileDialogPath::setPath(const wstring& path)
 {
 	this->path = path;
 }

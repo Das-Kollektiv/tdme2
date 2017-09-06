@@ -158,7 +158,7 @@ public:
 	 * Set up screen caption
 	 * @param text
 	 */
-	void setScreenCaption(String* text);
+	void setScreenCaption(const wstring& text);
 
 	/** 
 	 * Set grid
@@ -182,7 +182,7 @@ public:
 	/** 
 	 * @return object property preset selection
 	 */
-	String* getObjectPropertyPresetSelection();
+	const wstring& getObjectPropertyPresetSelection();
 
 	/** 
 	 * Set up general object data
@@ -262,7 +262,7 @@ public:
 	 * @param map properties
 	 * @param selected name
 	 */
-	void setMapProperties(LevelEditorLevel* level, String* selectedName);
+	void setMapProperties(LevelEditorLevel* level, const wstring& selectedName);
 
 	/** 
 	 * On map property save
@@ -298,7 +298,7 @@ public:
 	 * @param object properties
 	 * @param selected name
 	 */
-	void setObjectProperties(String* presetId, LevelEditorObject* object, String* selectedName);
+	void setObjectProperties(const wstring& presetId, LevelEditorObject* object, const wstring& selectedName);
 
 	/** 
 	 * On object property save
@@ -475,15 +475,15 @@ public:
 	 * On Light spot direction compute for given light idx 
 	 */
 	void onLightSpotDirectionCompute(int32_t lightIdx);
-	void saveFile(String* pathName, String* fileName) /* throws(Exception) */;
-	void loadFile(String* pathName, String* fileName) /* throws(Exception) */;
+	void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	void loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(String* caption, String* message);
+	void showErrorPopUp(const wstring& caption, const wstring& message);
 
 	/**
 	 * Public constructor

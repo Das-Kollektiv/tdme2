@@ -92,7 +92,7 @@ SharedModelViewerView::SharedModelViewerView(PopUps* popUps)
 	loadModelRequested = false;
 	initModelRequested = false;
 	entity = nullptr;
-	modelFile = nullptr;
+	modelFile = L"";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
@@ -117,7 +117,7 @@ void SharedModelViewerView::initModel()
 	if (entity == nullptr)
 		return;
 
-	modelFile = new String(entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName());
+	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
@@ -127,23 +127,20 @@ void SharedModelViewerView::initModel()
 	updateGUIElements();
 }
 
-String* SharedModelViewerView::getFileName()
+const wstring& SharedModelViewerView::getFileName()
 {
-	if (modelFile == nullptr)
-		return u""_j;
-
 	return modelFile;
 }
 
-void SharedModelViewerView::loadFile(String* pathName, String* fileName)
+void SharedModelViewerView::loadFile(const wstring& pathName, const wstring& fileName)
 {
 	loadModelRequested = true;
-	modelFile = new String(_FileSystem::getInstance()->getFileName(pathName->getCPPWString(), fileName->getCPPWString()));
+	modelFile = _FileSystem::getInstance()->getFileName(pathName, fileName);
 }
 
-void SharedModelViewerView::saveFile(String* pathName, String* fileName) /* throws(Exception) */
+void SharedModelViewerView::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName->getCPPWString(), fileName->getCPPWString(), entity);
+	ModelMetaDataFileExport::export_(pathName, fileName, entity);
 }
 
 void SharedModelViewerView::reloadFile()
@@ -185,14 +182,14 @@ void SharedModelViewerView::display()
 void SharedModelViewerView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelViewerScreenController->setScreenCaption(::java::lang::StringBuilder().append(u"Model Viewer - "_j)->append((entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())))->toString());
+		modelViewerScreenController->setScreenCaption(L"Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
 		auto preset = entity->getProperty(L"preset");
-		modelViewerScreenController->setEntityProperties(preset != nullptr ? new String(preset->getValue()) : static_cast< String* >(nullptr), entity, nullptr);
+		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", entity, L"");
 		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelViewerScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 	} else {
-		modelViewerScreenController->setScreenCaption(u"Model Viewer - no entity loaded"_j);
+		modelViewerScreenController->setScreenCaption(L"Model Viewer - no entity loaded");
 		modelViewerScreenController->unsetEntityProperties();
 		modelViewerScreenController->unsetEntityData();
 		modelViewerScreenController->unsetPivot();
@@ -213,7 +210,7 @@ void SharedModelViewerView::loadSettings()
 		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
 		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		modelViewerScreenController->getModelPath()->setPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j);
+		modelViewerScreenController->getModelPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -257,7 +254,7 @@ void SharedModelViewerView::storeSettings()
 		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
 		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
 		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-		settings->put(u"model.path"_j, modelViewerScreenController->getModelPath()->getPath());
+		settings->put(u"model.path"_j, new String(modelViewerScreenController->getModelPath()->getPath()));
 		settings->store(L"settings", L"modelviewer.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
@@ -281,18 +278,18 @@ void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldModel, LevelEditor
 
 void SharedModelViewerView::loadModel()
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Model file: "_j)->append(static_cast< Object* >(modelFile))->toString()));
+	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Model file: "_j)->append(modelFile)->toString()));
 	try {
 		auto oldModel = entity;
 		entity = loadModel(
-			_FileSystem::getInstance()->getFileName(modelFile->getCPPWString()),
+			_FileSystem::getInstance()->getFileName(modelFile),
 			L"",
-			_FileSystem::getInstance()->getPathName(modelFile->getCPPWString()),
-			_FileSystem::getInstance()->getFileName(modelFile->getCPPWString()),
+			_FileSystem::getInstance()->getPathName(modelFile),
+			_FileSystem::getInstance()->getFileName(modelFile),
 			new Vector3());
 		onLoadModel(oldModel, entity);
 	} catch (_Exception& exception) {
-		popUps->getInfoDialogScreenController()->show(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 

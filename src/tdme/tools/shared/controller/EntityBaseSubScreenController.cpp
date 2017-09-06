@@ -203,25 +203,25 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 		entityPropertiesList->getController()->getValue()->toString()->getCPPWString(),
 		entityPropertyName->getController()->getValue()->toString()->getCPPWString(),
 		entityPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Saving entity property failed"_j);
+		showErrorPopUp(L"Warning", L"Saving entity property failed");
 	}
 }
 
 void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entity)
 {
 	if (view->entityPropertyAdd(entity) == false) {
-		showErrorPopUp(u"Warning"_j, u"Adding new entity property failed"_j);
+		showErrorPopUp(L"Warning", L"Adding new entity property failed");
 	}
 }
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
 	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toString()->getCPPWString()) == false) {
-		showErrorPopUp(u"Warning"_j, u"Removing entity property failed"_j);
+		showErrorPopUp(L"Warning", L"Removing entity property failed");
 	}
 }
 
-void EntityBaseSubScreenController::showErrorPopUp(String* caption, String* message)
+void EntityBaseSubScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

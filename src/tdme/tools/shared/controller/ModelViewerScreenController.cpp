@@ -93,7 +93,7 @@ MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(u""_j
 
 ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
 {
-	this->modelPath = new FileDialogPath(u"."_j);
+	this->modelPath = new FileDialogPath(L".");
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelViewerScreenController_ModelViewerScreenController_1(this, finalView));
@@ -154,7 +154,7 @@ void ModelViewerScreenController::dispose()
 {
 }
 
-void ModelViewerScreenController::setScreenCaption(String* text)
+void ModelViewerScreenController::setScreenCaption(const wstring& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
@@ -174,9 +174,9 @@ void ModelViewerScreenController::unsetEntityData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setEntityProperties(String* presetId, LevelEditorEntity* entity, String* selectedName)
+void ModelViewerScreenController::setEntityProperties(const wstring& presetId, LevelEditorEntity* entity, const wstring& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId->getCPPWString(), selectedName->getCPPWString());
+	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
 void ModelViewerScreenController::unsetEntityProperties()
@@ -222,12 +222,12 @@ void ModelViewerScreenController::onModelLoad()
 {
 	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
 	if (fileName.length() == 0) {
-		fileName = view->getFileName()->getCPPWString();
+		fileName = view->getFileName();
 	}
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		u"Load from: "_j,
+		L"Load from: ",
 		new StringArray({
 			u"tmm"_j,
 			u"dae"_j,
@@ -242,7 +242,7 @@ void ModelViewerScreenController::onModelSave()
 {
 	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
 	if (fileName.length() == 0) {
-		fileName = view->getFileName()->getCPPWString();
+		fileName = view->getFileName();
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == false) {
 			fileName = fileName + L".tmm";
 		}
@@ -250,9 +250,9 @@ void ModelViewerScreenController::onModelSave()
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		u"Save from: "_j,
+		L"Save from: ",
 		new StringArray({u"tmm"_j}),
-		new String(fileName),
+		fileName,
 		new ModelViewerScreenController_onModelSave_3(this)
 	);
 }
@@ -270,21 +270,21 @@ void ModelViewerScreenController::onPivotApply()
 		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toString());
 		view->pivotApply(x, y, z);
 	} catch (_Exception& exception) {
-		showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(string(exception.what()))));
+		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
 
-void ModelViewerScreenController::saveFile(String* pathName, String* fileName) /* throws(Exception) */
+void ModelViewerScreenController::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::loadFile(String* pathName, String* fileName) /* throws(Exception) */
+void ModelViewerScreenController::loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
 {
 	view->loadFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::showErrorPopUp(String* caption, String* message)
+void ModelViewerScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }

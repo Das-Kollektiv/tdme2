@@ -21,6 +21,7 @@
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 #include <SubArray.h>
 #include <ObjectArray.h>
 
@@ -43,6 +44,7 @@ using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
@@ -61,7 +63,7 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 
 FileDialogScreenController::FileDialogScreenController() 
 {
-	this->cwd = new String(_FileSystem::getInstance()->getCurrentWorkingPathName());
+	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
 }
@@ -71,14 +73,14 @@ GUIScreenNode* FileDialogScreenController::getScreenNode()
 	return screenNode;
 }
 
-String* FileDialogScreenController::getPathName()
+const wstring& FileDialogScreenController::getPathName()
 {
 	return cwd;
 }
 
-String* FileDialogScreenController::getFileName()
+const wstring& FileDialogScreenController::getFileName()
 {
-	return fileName->getController()->getValue()->toString();
+	return fileName->getController()->getValue()->toString()->getCPPWString();
 }
 
 void FileDialogScreenController::initialize()
@@ -104,8 +106,8 @@ void FileDialogScreenController::dispose()
 void FileDialogScreenController::setupFileDialogListBox()
 {
 	auto directory = cwd;
-	if (directory->length() > 50) {
-		directory = ::java::lang::StringBuilder().append(u"..."_j)->append(directory->substring(directory->length() - 50 + 3))->toString();
+	if (directory.length() > 50) {
+		directory = L"..." + StringUtils::substring(directory, directory.length() - 50 + 3);
 	}
 
 	caption->getText()->set(captionText)->append(directory);
@@ -113,7 +115,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	vector<wstring> fileList;
 	try {
 		auto directory = cwd;
-		_FileSystem::getInstance()->list(directory->getCPPWString(), &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
+		_FileSystem::getInstance()->list(directory, &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -139,10 +141,10 @@ void FileDialogScreenController::setupFileDialogListBox()
 	}
 }
 
-void FileDialogScreenController::show(String* cwd, String* captionText, StringArray* extensions, String* fileName, Action* applyAction)
+void FileDialogScreenController::show(const wstring& cwd, const wstring& captionText, StringArray* extensions, const wstring& fileName, Action* applyAction)
 {
 	try {
-		this->cwd = new String(_FileSystem::getInstance()->getCanonicalPath(cwd->getCPPWString(), L""));
+		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, L"");
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::show(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -165,9 +167,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId()->equals(files->getId()) == true) {
 			auto selectedFile = node->getController()->getValue()->toString();
-			if (_FileSystem::getInstance()->isPath(cwd->getCPPWString() + L"/" + selectedFile->getCPPWString()) == true) {
+			if (_FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile->getCPPWString()) == true) {
 				try {
-					cwd = new String(_FileSystem::getInstance()->getCanonicalPath(cwd->getCPPWString(), selectedFile->getCPPWString()));
+					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile->getCPPWString());
 				} catch (_Exception& exception) {
 					_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					_Console::println(string(exception.what()));
@@ -190,7 +192,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 		if ((v == GUIActionListener_Type::PERFORMED))
 		{
 			{
-				if (node->getId()->equals(u"filedialog_apply"_j)) {
+				if (node->getId()->equals(L"filedialog_apply")) {
 					if (applyAction != nullptr)
 						applyAction->performAction();
 

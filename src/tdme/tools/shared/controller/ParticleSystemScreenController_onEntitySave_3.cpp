@@ -32,6 +32,6 @@ void ParticleSystemScreenController_onEntitySave_3::performAction()
 		particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 		particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 	} catch (_Exception& exception) {
-		particleSystemScreenController->showErrorPopUp(u"Warning"_j, new String(StringConverter::toWideString(exception.what())));
+		particleSystemScreenController->showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
