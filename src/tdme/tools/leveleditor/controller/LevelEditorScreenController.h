@@ -7,8 +7,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -29,10 +27,6 @@ using std::vector;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using java::lang::Iterable;
-using java::lang::String;
-using java::util::Collection;
-using java::util::Iterator;
 using tdme::engine::model::Color4;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;

@@ -5,7 +5,6 @@
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/gui/events/Action.h>
 
-using java::lang::Object;
 using tdme::gui::events::Action;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 
