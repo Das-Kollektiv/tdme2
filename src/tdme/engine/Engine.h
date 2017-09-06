@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -24,7 +23,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::array;
 using std::map;
@@ -409,7 +407,7 @@ public:
 	 * @param file name
 	 * @return success
 	 */
-	bool makeScreenshot(String* pathName, String* fileName);
+	bool makeScreenshot(const wstring& pathName, const wstring& fileName);
 
 	// Generated
 

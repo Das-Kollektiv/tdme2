@@ -1,9 +1,8 @@
 // Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 
-#include <java/lang/Float.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <string>
+
 #include <java/nio/ByteBuffer.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/EngineGL2Renderer.h>
@@ -45,17 +44,14 @@
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
+
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::Engine;
-using java::lang::Float;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::nio::ByteBuffer;
-using java::util::Iterator;
 using tdme::engine::Camera;
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::EngineGL2Renderer;
@@ -95,15 +91,8 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
+using tdme::utils::Float;
 using tdme::utils::_Console;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 namespace
 {
@@ -174,7 +163,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	clinit();
 	if (instance == nullptr || instance->initialized == false) {
-		_Console::println(static_cast< Object* >(u"Engine::createOffScreenInstance(): Engine not created or not initialized."_j));
+		_Console::println(wstring(L"Engine::createOffScreenInstance(): Engine not created or not initialized."));
 		return nullptr;
 	}
 	auto offScreenEngine = new Engine();
@@ -388,8 +377,8 @@ void Engine::initialize(bool debug)
 	#ifdef __APPLE__
 	{
 		renderer = new EngineGL3Renderer(this);
-		_Console::println(static_cast< Object* >(u"TDME::Using GL3"_j));
-		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+		_Console::println(wstring(L"TDME::Using GL3"));
+		// _Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -398,8 +387,8 @@ void Engine::initialize(bool debug)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
-		_Console::println(static_cast< Object* >(u"TDME::Using GL2"_j));
-		// _Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+		_Console::println(wstring(L"TDME::Using GL2"));
+		// _Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -408,7 +397,7 @@ void Engine::initialize(bool debug)
 	/*
 	// GLES2
 	if (drawable->getGL()->isGLES2()) {
-		auto gl = java_cast< GLES2* >(drawable->getGL()->getGLES2());
+		auto gl = dynamic_cast< GLES2* >(drawable->getGL()->getGLES2());
 		if (debug == true) {
 			drawable->setGL(new DebugGLES2(gl));
 		}
@@ -451,33 +440,33 @@ void Engine::initialize(bool debug)
 	guiShader = new GUIShader(renderer);
 	guiShader->initialize();
 	if (renderer->isBufferObjectsAvailable()) {
-		_Console::println(static_cast< Object* >(u"TDME::VBOs are available."_j));
+		_Console::println(wstring(L"TDME::VBOs are available."));
 	} else {
-		_Console::println(static_cast< Object* >(u"TDME::VBOs are not available! Engine will not work!"_j));
+		_Console::println(wstring(L"TDME::VBOs are not available! Engine will not work!"));
 		initialized = false;
 	}
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		_Console::println(static_cast< Object* >(u"TDME::Basic FBOs are not available!"_j));
+		_Console::println(wstring(L"TDME::Basic FBOs are not available!"));
 		shadowMappingEnabled = false;
 	} else {
-		_Console::println(static_cast< Object* >(u"TDME::Basic FBOs are available."_j));
+		_Console::println(wstring(L"TDME::Basic FBOs are available."));
 	}
 	if (shadowMappingEnabled == true) {
-		_Console::println(static_cast< Object* >(u"TDME::Using shadow mapping"_j));
+		_Console::println(wstring(L"TDME::Using shadow mapping"));
 		shadowMappingShaderPre = new ShadowMappingShaderPre(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, object3DVBORenderer);
 	} else {
-		_Console::println(static_cast< Object* >(u"TDME::Not using shadow mapping"_j));
+		_Console::println(wstring(L"TDME::Not using shadow mapping"));
 	}
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
 	initialized &= particlesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::initialized & ready: "_j)->append(initialized)->toString()));
+	_Console::println(wstring(L"TDME::initialized & ready: ") + to_wstring(initialized));
 }
 
 void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -524,19 +513,19 @@ void Engine::computeTransformations()
 	}
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
 		if (dynamic_cast< Object3D* >(entity) != nullptr) {
-			auto object = java_cast< Object3D* >(entity);
+			auto object = dynamic_cast< Object3D* >(entity);
 			object->computeTransformations();
 			visibleObjects.push_back(object);
 		} else
 		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-			auto opse = java_cast< ObjectParticleSystemEntity* >(entity);
+			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
 			for (auto object3D: *opse->getEnabledObjects()) {
 				visibleObjects.push_back(object3D);
 			}
 			visibleOpses.push_back(opse);
 		} else
 		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-			auto ppse = java_cast< PointsParticleSystemEntity* >(entity);
+			auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
 			visiblePpses.push_back(ppse);
 		}
 	}
@@ -757,7 +746,7 @@ void Engine::doneGUIMode()
 
 }
 
-bool Engine::makeScreenshot(String* pathName, String* fileName)
+bool Engine::makeScreenshot(const wstring& pathName, const wstring& fileName)
 {
 	if (frameBuffer != nullptr)
 		frameBuffer->enableFrameBuffer();

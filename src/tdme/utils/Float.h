@@ -16,6 +16,7 @@ using std::wstring;
 class tdme::utils::Float final
 {
 public:
+	static constexpr float MAX_VALUE { 3.4028235E38f };
 
 	/**
 	 * Parse float
