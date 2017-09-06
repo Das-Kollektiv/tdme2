@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/math/Vector3.h>
@@ -21,8 +19,6 @@
 using std::wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::math::Vector3;

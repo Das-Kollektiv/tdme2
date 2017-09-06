@@ -3,11 +3,8 @@
 
 #include <string>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -39,13 +36,11 @@
 #include <ObjectArray.h>
 
 using std::wstring;
+using std::to_wstring;
+
+using java::lang::String;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -73,19 +68,6 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
 {
@@ -141,24 +123,30 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
 	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 	entityLibraryListBoxSelection->set(entityLibraryListBox->getController()->getValue());
-	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityLibraryListBox->getId())->append(u"_inner"_j)->toString())));
+	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(new String(entityLibraryListBox->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 1;
-	auto entityLibraryListBoxSubNodesXML = u""_j;
-	entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityLibraryListBox->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
+	wstring entityLibraryListBoxSubNodesXML;
+	entityLibraryListBoxSubNodesXML =
+		entityLibraryListBoxSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		entityLibraryListBox->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 		auto objectId = entityLibrary->getEntityAt(i)->getId();
 		auto objectName = entityLibrary->getEntityAt(i)->getName();
-		entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(objectName))
-			->append(u"\" value=\""_j)
-			->append(objectId)
-			->append(u"\" "_j)
-			->append((i == 0 ? u"selected=\"true\" "_j : u""_j))
-			->append(u"/>\n"_j)->toString())->toString();
+		entityLibraryListBoxSubNodesXML =
+			entityLibraryListBoxSubNodesXML +
+			L"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(objectName) +
+			L"\" value=\"" +
+			to_wstring(objectId) +
+			L"\" " +
+			(i == 0 ? L"selected=\"true\" " : L"") +
+			L"/>\n";
 	}
-	entityLibraryListBoxSubNodesXML = ::java::lang::StringBuilder(entityLibraryListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	entityLibraryListBoxSubNodesXML = entityLibraryListBoxSubNodesXML + L"</scrollarea-vertical>\n";
 	try {
-		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
+		entityLibraryListBoxInnerNode->replaceSubNodes(new String(entityLibraryListBoxSubNodesXML), false);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -327,11 +315,11 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: "_j)->append(static_cast< Object* >(node->getController()->getValue()))->toString()));
+			_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->toString()->getCPPWString());
 		}
 		node->getController()->setValue(dropdownEntityActionReset);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityLibraryScreenController::onValueChanged: "_j)->append(node->getId())->toString()));
+		_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId()->getCPPWString());
 	}
 }
 
@@ -343,7 +331,7 @@ void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListen
 		} else if (node->getId()->equals(u"button_level_edit"_j) == true) {
 			onEditLevel();
 		} else {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorScreenController::onActionPerformed: "_j)->append(node->getId())->toString()));
+			_Console::println(L"LevelEditorScreenController::onActionPerformed: " + node->getId()->getCPPWString());
 		}
 	}
 }
