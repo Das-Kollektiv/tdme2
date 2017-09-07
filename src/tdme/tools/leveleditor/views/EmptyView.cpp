@@ -4,7 +4,6 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -30,7 +29,6 @@ using std::wstring;
 
 using tdme::tools::leveleditor::views::EmptyView;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;

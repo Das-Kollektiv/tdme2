@@ -12,7 +12,6 @@
 #include <java/lang/Float.h>
 #include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
 #include <java/util/Properties.h>
 #include <java/util/Set.h>
@@ -93,7 +92,6 @@ using java::lang::Comparable;
 using java::lang::Float;
 using java::lang::Iterable;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Iterator;
 using java::util::Properties;
 using java::util::Set;

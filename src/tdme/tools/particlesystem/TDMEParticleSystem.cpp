@@ -1,8 +1,9 @@
 // Generated from /tdme/src/tdme/tools/particlesystem/TDMEParticleSystem.java
 #include <tdme/tools/particlesystem/TDMEParticleSystem.h>
 
+#include <string>
+
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
 #include <java/util/logging/Level.h>
 #include <java/util/logging/Logger.h>
@@ -14,9 +15,10 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/_Console.h>
 
+using std::wstring;
+
 using tdme::tools::particlesystem::TDMEParticleSystem;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::lang::System;
 using java::util::logging::Level;
 using java::util::logging::Logger;
@@ -58,8 +60,8 @@ TDMEParticleSystem::TDMEParticleSystem()
 
 void TDMEParticleSystem::main(int argc, char** argv)
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEParticleSystem "_j)->append(VERSION)->toString()));
-	_Console::println(static_cast< Object* >(u"Programmed 2017 by Andreas Drewke, drewke.net."_j));
+	_Console::println(wstring(L"TDMEParticleSystem " + VERSION->getCPPWString()));
+	_Console::println(wstring(L"Programmed 2017 by Andreas Drewke, drewke.net."));
 	_Console::println();
 	auto tdmeParticleSystem = new TDMEParticleSystem();
 	tdmeParticleSystem->run(argc, argv, L"TDMEParticleSystem");
