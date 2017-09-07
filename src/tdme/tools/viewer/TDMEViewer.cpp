@@ -2,7 +2,6 @@
 
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
 #include <java/util/logging/Level.h>
 #include <java/util/logging/Logger.h>
@@ -17,7 +16,6 @@
 using tdme::tools::viewer::TDMEViewer;
 using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::lang::System;
 using java::util::logging::Level;
 using java::util::logging::Logger;
@@ -60,8 +58,8 @@ TDMEViewer::TDMEViewer()
 void TDMEViewer::main(int argc, char** argv)
 {
 	String* modelFileName = nullptr;
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDMEViewer "_j)->append(VERSION)->toString()));
-	_Console::println(static_cast< Object* >(u"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."_j));
+	_Console::println(wstring(L"TDMEViewer "+ VERSION->getCPPWString()));
+	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	_Console::println();
 
 	auto tdmeLevelEditor = new TDMEViewer();
