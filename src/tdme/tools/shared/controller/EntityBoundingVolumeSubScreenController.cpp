@@ -412,7 +412,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx)
 {
-	view->applyBoundingVolumeConvexMesh(entity, idx, (*boundingvolumeConvexMeshFile)[idx]->getController()->getValue()->toString());
+	view->applyBoundingVolumeConvexMesh(entity, idx, (*boundingvolumeConvexMeshFile)[idx]->getController()->getValue()->toString()->getCPPWString());
 }
 
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)

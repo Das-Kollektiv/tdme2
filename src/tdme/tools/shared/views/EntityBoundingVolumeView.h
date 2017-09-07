@@ -2,15 +2,17 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
@@ -130,7 +132,7 @@ public:
 	 * @param bounding volume index
 	 * @param file name
 	 */
-	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, String* fileName);
+	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const wstring& fileName);
 
 	/**
 	 * Public constructor

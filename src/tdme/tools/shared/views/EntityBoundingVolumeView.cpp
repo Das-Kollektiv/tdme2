@@ -280,15 +280,15 @@ void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity,
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, String* fileName)
+void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const wstring& fileName)
 {
 	if (entity == nullptr)
 		return;
 
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupConvexMesh(
-		_FileSystem::getInstance()->getPathName(fileName->getCPPWString()),
-		_FileSystem::getInstance()->getFileName(fileName->getCPPWString())
+		_FileSystem::getInstance()->getPathName(fileName),
+		_FileSystem::getInstance()->getFileName(fileName)
 	);
 	updateModelBoundingVolume(entity, idx);
 }
