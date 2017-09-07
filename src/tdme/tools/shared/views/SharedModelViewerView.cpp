@@ -5,7 +5,6 @@
 
 #include <java/lang/CharSequence.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Properties.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
@@ -47,7 +46,6 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using java::lang::CharSequence;
 using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Properties;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
@@ -278,7 +276,7 @@ void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldModel, LevelEditor
 
 void SharedModelViewerView::loadModel()
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Model file: "_j)->append(modelFile)->toString()));
+	_Console::println(wstring(L"Model file: " + modelFile));
 	try {
 		auto oldModel = entity;
 		entity = loadModel(

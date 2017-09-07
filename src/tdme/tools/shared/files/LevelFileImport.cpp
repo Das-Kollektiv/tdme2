@@ -5,7 +5,6 @@
 
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -36,7 +35,6 @@ using java::io::File;
 using java::io::InputStream;
 using java::lang::Float;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;

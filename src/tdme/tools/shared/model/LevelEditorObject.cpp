@@ -3,10 +3,7 @@
 
 #include <string>
 
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
@@ -15,10 +12,7 @@
 using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorObject;
-using java::lang::Iterable;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::ModelProperties;

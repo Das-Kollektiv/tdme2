@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -15,7 +14,6 @@
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -90,13 +88,18 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 				if (node->getId()->equals(u"button_display_apply"_j)) {
 					onDisplayApply();
 				} else {
-					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ModelViewerScreenController::onActionPerformed()::unknown, type='"_j)->append(static_cast< Object* >(type))
-						->append(u"', id = '"_j)
-						->append(node->getId())
-						->append(u"'"_j)
-						->append(u", name = '"_j)
-						->append(node->getName())
-						->append(u"'"_j)->toString()));
+					_Console::println(
+						wstring(
+							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							type->toWString() +
+							L"', id = '" +
+							node->getId()->getCPPWString() +
+							L"'" +
+							L", name = '" +
+							node->getName()->getCPPWString() +
+							L"'"
+						)
+					);
 				}
 				goto end_switch0;;
 			}
