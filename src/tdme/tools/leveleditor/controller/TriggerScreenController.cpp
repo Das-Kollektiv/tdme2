@@ -5,7 +5,6 @@
 
 #include <java/lang/Float.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -30,7 +29,6 @@ using std::wstring;
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using java::lang::Float;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -168,16 +166,21 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(u"button_trigger_apply"_j)) {
+				if (node->getId()->equals(L"button_trigger_apply")) {
 					onTriggerApply();
 				} else {
-					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TriggerScreenController::onActionPerformed()::unknown, type='"_j)->append(static_cast< Object* >(type))
-						->append(u"', id = '"_j)
-						->append(node->getId())
-						->append(u"'"_j)
-						->append(u", name = '"_j)
-						->append(node->getName())
-						->append(u"'"_j)->toString()));
+					_Console::println(
+						wstring(
+							L"TriggerScreenController::onActionPerformed()::unknown, type='" +
+							type->toWString() +
+							L"', id = '" +
+							node->getId()->getCPPWString() +
+							L"'" +
+							L", name = '" +
+							node->getName()->getCPPWString() +
+							L"'"
+						)
+					);
 				}
 				goto end_switch0;;
 			}
