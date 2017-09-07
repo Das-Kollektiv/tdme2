@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.h>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -14,7 +13,6 @@
 
 using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_4;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -31,7 +29,7 @@ ParticleSystemScreenController_onActionPerformed_4::ParticleSystemScreenControll
 
 void ParticleSystemScreenController_onActionPerformed_4::performAction()
 {
-	particleSystemScreenController->opsModel->getController()->setValue(particleSystemScreenController->value->set(::java::lang::StringBuilder().append(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName())->append(u"/"_j)->append(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName())->toString()));
+	particleSystemScreenController->opsModel->getController()->setValue(particleSystemScreenController->value->set(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + L"/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
 	particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 	particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }
