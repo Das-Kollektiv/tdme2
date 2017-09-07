@@ -4,7 +4,6 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Properties.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -42,7 +41,6 @@ using std::wstring;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Properties;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -305,7 +303,7 @@ void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity
 
 void SharedParticleSystemView::loadParticleSystem()
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Particle system file: "_j)->append(particleSystemFile)->toString()));
+	_Console::println(wstring(L"Particle system file: " + particleSystemFile));
 	try {
 		auto oldEntity = entity;
 		entity = loadParticleSystem(
