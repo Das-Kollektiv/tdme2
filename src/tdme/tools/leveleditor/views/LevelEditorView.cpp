@@ -1110,7 +1110,7 @@ void LevelEditorView::colorObject()
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(L"preset");
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, nullptr);
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, L"");
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
 		}
@@ -1276,7 +1276,7 @@ bool LevelEditorView::objectPropertyRemove(const wstring& name)
 		if (property == nullptr) {
 			property = levelEditorObject->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setObjectProperties(nullptr, levelEditorObject, property == nullptr ? L"" : property->getName());
+		levelEditorScreenController->setObjectProperties(L"", levelEditorObject, property == nullptr ? L"" : property->getName());
 		return true;
 	}
 	return false;
