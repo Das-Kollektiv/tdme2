@@ -2,7 +2,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -16,7 +15,6 @@
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -62,8 +60,7 @@ void LevelEditorEntityParticleSystem::setType(LevelEditorEntityParticleSystem_Ty
 			goto end_switch0;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setType(): unknown type '"_j)->append(static_cast< Object* >(this->type))
-				->append(u"'"_j)->toString()));
+			_Console::println(wstring(L"LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->toWString() + L"'"));
 		}
 		end_switch0:;
 	}
@@ -83,8 +80,7 @@ void LevelEditorEntityParticleSystem::setType(LevelEditorEntityParticleSystem_Ty
 			goto end_switch1;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setType(): unknown type '"_j)->append(static_cast< Object* >(this->type))
-				->append(u"'"_j)->toString()));
+			_Console::println(wstring(L"LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->toWString() + L"'"));
 		}
 		end_switch1:;
 	}
@@ -134,8 +130,7 @@ void LevelEditorEntityParticleSystem::setEmitter(LevelEditorEntityParticleSystem
 			goto end_switch2;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '"_j)->append(static_cast< Object* >(this->emitter))
-				->append(u"'"_j)->toString()));
+			_Console::println(wstring(L"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '" + this->emitter->toWString() + L"'"));
 		}
 		end_switch2:;
 	}
@@ -167,8 +162,7 @@ void LevelEditorEntityParticleSystem::setEmitter(LevelEditorEntityParticleSystem
 			goto end_switch3;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '"_j)->append(static_cast< Object* >(this->emitter))
-				->append(u"'"_j)->toString()));
+			_Console::println(wstring(L"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '" + this->emitter->toWString() + L"'"));
 		}
 		end_switch3:;
 	}
