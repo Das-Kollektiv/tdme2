@@ -50,7 +50,7 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(u""_j);
+MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(L"");
 
 TriggerScreenController::TriggerScreenController(TriggerView* view) 
 {

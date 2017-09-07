@@ -36,7 +36,7 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString(u""_j);
+MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString(L"");
 
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
 {

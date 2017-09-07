@@ -48,7 +48,7 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString(u""_j);
+MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString(L"");
 
 EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction) 
 {

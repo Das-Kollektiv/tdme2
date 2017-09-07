@@ -63,14 +63,14 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 		map<wstring, MutableString*> values;
 		node->getScreenNode()->getValues(&values);
 		values.clear();
-		values.emplace(L"select", new MutableString(u"8"_j));
-		values.emplace(L"input", new MutableString(u"Enter some more text here!"_j));
-		values.emplace(L"checkbox1", new MutableString(u"1"_j));
-		values.emplace(L"checkbox2", new MutableString(u"1"_j));
-		values.emplace(L"checkbox3", new MutableString(u"1"_j));
-		values.emplace(L"dropdown", new MutableString(u"11"_j));
-		values.emplace(L"radio", new MutableString(u"3"_j));
-		values.emplace(L"selectmultiple", new MutableString(u"|1|2|3|15|16|17|"_j));
+		values.emplace(L"select", new MutableString(L"8"));
+		values.emplace(L"input", new MutableString(L"Enter some more text here!"));
+		values.emplace(L"checkbox1", new MutableString(L"1"));
+		values.emplace(L"checkbox2", new MutableString(L"1"));
+		values.emplace(L"checkbox3", new MutableString(L"1"));
+		values.emplace(L"dropdown", new MutableString(L"11"));
+		values.emplace(L"radio", new MutableString(L"3"));
+		values.emplace(L"selectmultiple", new MutableString(L"|1|2|3|15|16|17|"));
 		node->getScreenNode()->setValues(&values);
 		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab1"_j)->getController()))->selectTab();
 	} else if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button2"_j)) {

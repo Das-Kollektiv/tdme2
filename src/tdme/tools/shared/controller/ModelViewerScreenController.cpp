@@ -89,7 +89,7 @@ typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableA
 }  // namespace lang
 }  // namespace java
 
-MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(u""_j);
+MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(L"");
 
 ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
 {

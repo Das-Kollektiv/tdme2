@@ -119,11 +119,11 @@ typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUI
 }  // namespace gui
 }  // namespace tdme
 
-MutableString* LevelEditorScreenController::CHECKBOX_CHECKED = new MutableString(u"1"_j);
+MutableString* LevelEditorScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
 
-MutableString* LevelEditorScreenController::CHECKBOX_UNCHECKED = new MutableString(u""_j);
+MutableString* LevelEditorScreenController::CHECKBOX_UNCHECKED = new MutableString(L"");
 
-MutableString* LevelEditorScreenController::TEXT_EMPTY = new MutableString(u""_j);
+MutableString* LevelEditorScreenController::TEXT_EMPTY = new MutableString(L"");
 
 LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view) 
 {

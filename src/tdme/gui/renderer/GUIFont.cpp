@@ -277,7 +277,7 @@ void GUIFont::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-		LINEHEIGHT_STRING = new MutableString(u"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789"_j);
+		LINEHEIGHT_STRING = new MutableString(L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 		}
 	};
 

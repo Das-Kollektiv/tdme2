@@ -26,9 +26,9 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString(u"1"_j);
+MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
 
-MutableString* EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = new MutableString(u""_j);
+MutableString* EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = new MutableString(L"");
 
 EntityDisplaySubScreenController::EntityDisplaySubScreenController() 
 {

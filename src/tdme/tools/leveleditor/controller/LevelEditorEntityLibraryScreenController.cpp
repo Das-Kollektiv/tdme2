@@ -106,7 +106,7 @@ void LevelEditorEntityLibraryScreenController::initialize()
 	}
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
-	dropdownEntityActionReset = new MutableString(u"action"_j);
+	dropdownEntityActionReset = new MutableString(L"action");
 }
 
 void LevelEditorEntityLibraryScreenController::dispose()
