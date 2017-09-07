@@ -68,7 +68,7 @@ bool ModelProperties::addProperty(const wstring& name, const wstring& value)
 
 bool ModelProperties::updateProperty(const wstring& oldName, const wstring& name, const wstring& value)
 {
-	auto propertyByNameIt = propertiesByName.find(name);
+	auto propertyByNameIt = propertiesByName.find(oldName);
 	if (propertyByNameIt == propertiesByName.end())
 		return false;
 

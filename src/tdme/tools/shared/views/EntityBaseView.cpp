@@ -43,7 +43,7 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const wst
 			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
-	entityBaseSubScreenController->setEntityProperties(entity, presetId, nullptr);
+	entityBaseSubScreenController->setEntityProperties(entity, presetId, L"");
 }
 
 bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, const wstring& oldName, const wstring& name, const wstring& value)
@@ -52,7 +52,7 @@ bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, const wstring
 		return false;
 
 	if (entity->updateProperty(oldName, name, value) == true) {
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, name);
+		entityBaseSubScreenController->setEntityProperties(entity, L"", name);
 		return true;
 	}
 	return false;
@@ -64,7 +64,7 @@ bool EntityBaseView::entityPropertyAdd(LevelEditorEntity* entity)
 		return false;
 
 	if (entity->addProperty(L"new.property", L"new.value")) {
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, L"new.property");
+		entityBaseSubScreenController->setEntityProperties(entity, L"", L"new.property");
 		return true;
 	}
 	return false;
@@ -81,7 +81,7 @@ bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, const wstri
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, nullptr, property == nullptr ? L"" : property->getName());
+		entityBaseSubScreenController->setEntityProperties(entity, L"", property == nullptr ? L"" : property->getName());
 		return true;
 	}
 	return false;
