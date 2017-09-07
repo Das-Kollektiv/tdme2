@@ -5,7 +5,6 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Light.h>
@@ -52,10 +51,10 @@
 
 using std::vector;
 using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::leveleditor::logic::Level;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Light;
@@ -180,8 +179,13 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			}		
 		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Level::createParticleSystem(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
-				->append(u"'"_j)->toString()));
+			_Console::println(
+				wstring(
+					L"Level::createParticleSystem(): unknown particle system emitter '" +
+					particleSystem->getEmitter()->toWString() +
+					L"'"
+				)
+			);
 			return nullptr;
 		}
 		end_switch0:;
@@ -207,8 +211,13 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"Level::createParticleSystem(): unknown particle system type '"_j)->append(static_cast< Object* >(particleSystem->getType()))
-					->append(u"'"_j)->toString()));
+				_Console::println(
+					wstring(
+						L"Level::createParticleSystem(): unknown particle system type '" +
+						particleSystem->getType()->toWString() +
+						L"'"
+					)
+				);
 				return nullptr;
 			}
 			end_switch1:;
@@ -280,15 +289,14 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 			auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
-			auto worldId = ::java::lang::StringBuilder().append(object->getId())->append(u".bv."_j)
-				->append(j)->toString();
+			wstring worldId = object->getId() + L".bv." + to_wstring(j);
 			auto transformations = new Transformations();
 			transformations->fromTransformations(object->getTransformations());
 			if (translation != nullptr) {
 				transformations->getTranslation()->add(translation);
 				transformations->update();
 			}
-			auto rigidBody = world->addStaticRigidBody(worldId->getCPPWString(), enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
+			auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 			rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
 			rigidBodies.push_back(rigidBody);
 		}
