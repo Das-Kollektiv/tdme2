@@ -5,7 +5,6 @@
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -30,7 +29,6 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -121,20 +119,25 @@ void FileDialogScreenController::setupFileDialogListBox()
 		_Console::println(string(exception.what()));
 	}
 
-	auto filesInnerNode = dynamic_cast< GUIParentNode* >((files->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(files->getId())->append(u"_inner"_j)->toString())));
+	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(new String(files->getId()->getCPPWString() + L"_inner")));
 	auto idx = 1;
-	auto filesInnerNodeSubNodesXML = u""_j;
-	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"<scrollarea width=\"100%\" height=\"100%\">\n"_j)->toString();
-	for (auto fileWString : fileList) {
-		String* file = new String(fileWString);
-		filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(file))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(file))
-			->append(u"\" />\n"_j)->toString())->toString();
+	wstring filesInnerNodeSubNodesXML = L"";
+	filesInnerNodeSubNodesXML =
+		filesInnerNodeSubNodesXML +
+		L"<scrollarea width=\"100%\" height=\"100%\">\n";
+	for (auto& file : fileList) {
+		filesInnerNodeSubNodesXML =
+			filesInnerNodeSubNodesXML +
+			L"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(file) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(file) +
+			L"\" />\n";
 	}
-	filesInnerNodeSubNodesXML = ::java::lang::StringBuilder(filesInnerNodeSubNodesXML).append(u"</scrollarea>\n"_j)->toString();
+	filesInnerNodeSubNodesXML =
+		filesInnerNodeSubNodesXML + L"</scrollarea>\n";
 	try {
-		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, true);
+		filesInnerNode->replaceSubNodes(new String(filesInnerNodeSubNodesXML), true);
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		_Console::println(string(exception.what()));
