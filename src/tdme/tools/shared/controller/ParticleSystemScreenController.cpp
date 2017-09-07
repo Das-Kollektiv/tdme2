@@ -7,8 +7,6 @@
 #include <java/lang/CharSequence.h>
 #include <java/lang/Comparable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -65,8 +63,6 @@ using java::io::Serializable;
 using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -301,23 +297,31 @@ void ParticleSystemScreenController::unsetEntityProperties()
 
 void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
 {
-	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >((particleSystemTypes->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemTypes->getId())->append(u"_inner"_j)->toString())));
+	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(new String(particleSystemTypes->getId()->getCPPWString() + L"_inner")));
 	auto idx = 0;
-	auto particleSystemTypesInnerNodeSubNodesXML = u""_j;
-	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemTypes->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
+	wstring particleSystemTypesInnerNodeSubNodesXML = L"";
+	particleSystemTypesInnerNodeSubNodesXML =
+		particleSystemTypesInnerNodeSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		particleSystemTypes->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystem: *particleSystemTypesCollection) {
-		particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystem))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(particleSystem))
-			->append(u"\" "_j)
-			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-			->append(u" />\n"_j)->toString())->toString();
+		particleSystemTypesInnerNodeSubNodesXML =
+			particleSystemTypesInnerNodeSubNodesXML +
+			L"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(particleSystem->getCPPWString()) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(particleSystem->getCPPWString()) +
+			L"\" " +
+			(idx == 0 ? L"selected=\"true\" " : L"") +
+			L" />\n";
 		idx++;
 	}
-	particleSystemTypesInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemTypesInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
+	particleSystemTypesInnerNodeSubNodesXML =
+		particleSystemTypesInnerNodeSubNodesXML +
+		L"</scrollarea-vertical>";
 	try {
-		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
+		particleSystemTypesInnerNode->replaceSubNodes(new String(particleSystemTypesInnerNodeSubNodesXML), true);
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -326,23 +330,31 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 
 void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
 {
-	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(particleSystemEmitters->getId())->append(u"_inner"_j)->toString())));
+	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(new String(particleSystemEmitters->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 0;
-	auto particleSystemEmittersInnerNodeSubNodesXML = u""_j;
-	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(particleSystemEmitters->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
+	wstring particleSystemEmittersInnerNodeSubNodesXML = L"";
+	particleSystemEmittersInnerNodeSubNodesXML =
+		particleSystemEmittersInnerNodeSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		particleSystemEmitters->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystemEmitter: *emittersCollection) {
-		particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(particleSystemEmitter))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(particleSystemEmitter))
-			->append(u"\" "_j)
-			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-			->append(u" />\n"_j)->toString())->toString();
+		particleSystemEmittersInnerNodeSubNodesXML =
+			particleSystemEmittersInnerNodeSubNodesXML +
+			L"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(particleSystemEmitter->getCPPWString()) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(particleSystemEmitter->getCPPWString()) +
+			L"\" " +
+			(idx == 0 ? L"selected=\"true\" " : L"") +
+			L" />\n";
 		idx++;
 	}
-	particleSystemEmittersInnerNodeSubNodesXML = ::java::lang::StringBuilder(particleSystemEmittersInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
+	particleSystemEmittersInnerNodeSubNodesXML =
+		particleSystemEmittersInnerNodeSubNodesXML +
+		L"</scrollarea-vertical>";
 	try {
-		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
+		particleSystemEmittersInnerNode->replaceSubNodes(new String(particleSystemEmittersInnerNodeSubNodesXML), true);
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -382,9 +394,14 @@ void ParticleSystemScreenController::setParticleSystemType()
 			goto end_switch0;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '"_j)->append(static_cast< Object* >(particleSystem->getType()))
-				->append(u"'"_j)->toString()));
-			goto end_switch0;;
+			_Console::println(
+				wstring(
+					L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
+					particleSystem->getType()->toWString() +
+					L"'"
+				)
+			);
+			goto end_switch0;
 		}
 		end_switch0:;
 	}
@@ -418,8 +435,13 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				goto end_switch1;;
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '"_j)->append(static_cast< Object* >(particleSystem->getType()))
-					->append(u"'"_j)->toString()));
+				_Console::println(
+					wstring(
+						L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
+						particleSystem->getType()->toWString() +
+						L"'"
+					)
+				);
 				goto end_switch1;;
 			}
 			end_switch1:;
@@ -443,8 +465,13 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 	} else if (particleSystemTypeString->equals(TYPE_POINTSPARTICLESYSTEM) == true) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemTypeApply(): unknown particle system type '"_j)->append(particleSystemTypeString)
-			->append(u"'"_j)->toString()));
+		_Console::println(
+			wstring(
+				L"ParticleSystemScreenController::onParticleSystemTypeApply(): unknown particle system type '" +
+				particleSystemTypeString->getCPPWString() +
+				L"'"
+			)
+		);
 	}
 	setParticleSystemType();
 	view->initParticleSystemRequest();
@@ -469,8 +496,13 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 	} else if (particleSystemEmitterString->equals(EMITTER_SPHEREPARTICLEEMITTER) == true) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER);
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '"_j)->append(particleSystemEmitterString)
-			->append(u"'"_j)->toString()));
+		_Console::println(
+			wstring(
+				L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
+				particleSystemEmitterString->getCPPWString() +
+				L"'"
+			)
+		);
 	}
 	setParticleSystemEmitter();
 }
@@ -602,8 +634,13 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 			}
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
 			{
-				_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
-					->append(u"'"_j)->toString()));
+				_Console::println(
+					wstring(
+						L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
+						particleSystem->getEmitter()->toWString() +
+						L"'"
+					)
+				);
 			}
 			end_switch2:;
 		}
@@ -743,8 +780,13 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			}
 		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '"_j)->append(static_cast< Object* >(particleSystem->getEmitter()))
-				->append(u"'"_j)->toString()));
+			_Console::println(
+				wstring(
+					L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
+					particleSystem->getEmitter()->toWString() +
+					L"'"
+				)
+			);
 		}
 		end_switch3:;
 	}
@@ -846,13 +888,18 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 						new ParticleSystemScreenController_onActionPerformed_4(this)
 					);
 				} else {
-					_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(L"ModelViewerScreenController::onActionPerformed()::unknown, type='")->append(static_cast< Object* >(type))
-						->append(L"', id = '")
-						->append(node->getId())
-						->append(L"'")
-						->append(L", name = '")
-						->append(node->getName())
-						->append(L"'")->toString()));
+					_Console::println(
+						wstring(
+							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							type->toWString() +
+							L"', id = '" +
+							node->getId()->getCPPWString() +
+							L"'" +
+							L", name = '" +
+							node->getName()->getCPPWString() +
+							L"'"
+						)
+					);
 				}
 				goto end_switch4;;
 			}		}
