@@ -113,9 +113,9 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		jEntityRoot["file"] = StringConverter::toString(modelPathName + L"/" + modelFileName);
 		/*
 		try {
-			auto thumbnail = ::java::lang::StringBuilder().append(modelFileName)->append(u".png"_j)->toString();
-			jEntityRoot->put(u"thumbnail"_j, static_cast< Object* >(thumbnail));
-			copyFile(new File(u"./tmp"_j, entity->getThumbnail()), new File(Tools::getPath(entity->getFileName()), thumbnail));
+			auto thumbnail = modelFileName + L".png";
+			jEntityRoot["thumbnail] = StringConverter::toString(thumbnail));
+			copyFile(L"./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
 		} catch (_Exception& exception) {
 			_Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
 			_Console::print(entity->getFileName());
