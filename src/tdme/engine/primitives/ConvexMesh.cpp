@@ -3,10 +3,6 @@
 
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>

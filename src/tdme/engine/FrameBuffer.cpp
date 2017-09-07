@@ -1,14 +1,10 @@
 // Generated from /tdme/src/tdme/engine/FrameBuffer.java
 #include <tdme/engine/FrameBuffer.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using tdme::engine::FrameBuffer;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 

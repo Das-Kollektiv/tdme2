@@ -1,13 +1,9 @@
 // Generated from /tdme/src/tdme/engine/Timing.java
 #include <tdme/engine/Timing.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
 
 using tdme::engine::Timing;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::lang::System;
 
 Timing::Timing() 

@@ -2,18 +2,11 @@
 #include <tdme/engine/Rotation.h>
 
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
 
 using tdme::engine::Rotation;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 

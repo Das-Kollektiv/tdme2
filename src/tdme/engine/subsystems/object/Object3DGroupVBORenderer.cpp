@@ -6,8 +6,6 @@
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
 #include <java/lang/Short.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/nio/FloatBuffer.h>
 #include <java/nio/ShortBuffer.h>
 #include <tdme/engine/Engine.h>

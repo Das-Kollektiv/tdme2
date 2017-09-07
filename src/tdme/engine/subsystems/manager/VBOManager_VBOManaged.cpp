@@ -8,8 +8,6 @@
 using std::wstring;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::subsystems::manager::VBOManager;
 
 VBOManager_VBOManaged::VBOManager_VBOManaged(const wstring& id, vector<int32_t>* vboGlIds)

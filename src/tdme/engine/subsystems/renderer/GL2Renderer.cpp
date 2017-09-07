@@ -17,7 +17,6 @@
 
 #include <java/nio/Buffer.h>
 #include <java/nio/ByteBuffer.h>
-#include <java/nio/ByteOrder.h>
 #include <java/nio/FloatBuffer.h>
 #include <java/nio/IntBuffer.h>
 #include <java/nio/ShortBuffer.h>
@@ -35,19 +34,10 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using java::io::BufferedReader;
-using java::io::DataInputStream;
-using java::io::InputStreamReader;
 using java::io::Serializable;
 using java::lang::Byte;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::nio::Buffer;
 using java::nio::ByteBuffer;
-using java::nio::ByteOrder;
 using java::nio::FloatBuffer;
 using java::nio::IntBuffer;
 using java::nio::ShortBuffer;

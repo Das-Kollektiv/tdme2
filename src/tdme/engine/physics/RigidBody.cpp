@@ -23,9 +23,6 @@ using std::vector;
 
 using tdme::engine::physics::RigidBody;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;

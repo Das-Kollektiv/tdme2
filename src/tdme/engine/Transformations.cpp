@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/engine/Transformations.java
 #include <tdme/engine/Transformations.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/math/Matrix4x4.h>
@@ -11,9 +8,6 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Transformations;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::math::Matrix4x4;

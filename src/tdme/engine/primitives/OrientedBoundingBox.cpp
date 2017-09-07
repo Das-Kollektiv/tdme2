@@ -22,10 +22,6 @@ using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;

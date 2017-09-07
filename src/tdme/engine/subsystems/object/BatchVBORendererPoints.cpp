@@ -5,12 +5,9 @@
 
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/nio/ByteBuffer.h>
 #include <java/nio/ByteOrder.h>
 #include <java/nio/FloatBuffer.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -30,7 +27,6 @@ using java::lang::Float;
 using java::nio::ByteBuffer;
 using java::nio::ByteOrder;
 using java::nio::FloatBuffer;
-using java::util::Arrays;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;

@@ -5,10 +5,6 @@
 #include <array>
 
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/lang/System.h>
-#include <java/util/Arrays.h>
 #include <tdme/math/MathTools.h>
 
 using std::array;
@@ -18,10 +14,6 @@ using std::end;
 
 using tdme::engine::model::Color4Base;
 using java::lang::Math;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::lang::System;
-using java::util::Arrays;
 using tdme::math::MathTools;
 
 Color4Base::Color4Base() 

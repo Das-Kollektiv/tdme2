@@ -1,16 +1,9 @@
 // Generated from /tdme/src/tdme/engine/model/Face.java
 #include <tdme/engine/model/Face.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/model/Group.h>
-#include <Array.h>
 
 using tdme::engine::model::Face;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::model::Group;
 
 Face::Face()

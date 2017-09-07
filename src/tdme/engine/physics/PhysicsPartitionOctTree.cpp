@@ -8,8 +8,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -30,8 +28,6 @@ using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using java::lang::Math;
-using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;

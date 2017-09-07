@@ -1,12 +1,7 @@
 // Generated from /tdme/src/tdme/engine/model/JointWeight.java
 #include <tdme/engine/model/JointWeight.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-
 using tdme::engine::model::JointWeight;
-using java::lang::String;
-using java::lang::StringBuilder;
 
 JointWeight::JointWeight()
 {

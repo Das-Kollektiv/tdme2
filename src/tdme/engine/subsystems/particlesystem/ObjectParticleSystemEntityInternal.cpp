@@ -5,10 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
@@ -25,9 +21,6 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::vector;
 using std::remove;

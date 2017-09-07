@@ -1,9 +1,6 @@
 // Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderPoint.java
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 

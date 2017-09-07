@@ -7,10 +7,6 @@
 #include <set>
 #include <string>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
@@ -59,10 +55,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::subsystems::object::Object3DVBORenderer;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystemEntity;
@@ -143,7 +135,7 @@ BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer
 		if (batchVBORenderer->acquire()) return batchVBORenderer;
 
 	}
-	_Console::println(static_cast< Object* >(u"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"_j));
+	_Console::println(wstring(L"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
 	return nullptr;
 }
 
