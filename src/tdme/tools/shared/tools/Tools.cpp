@@ -7,7 +7,6 @@
 #include <java/lang/Float.h>
 #include <java/lang/Integer.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Locale.h>
 #include <java/util/StringTokenizer.h>
 #include <tdme/engine/Camera.h>
@@ -56,7 +55,6 @@ using tdme::tools::shared::tools::Tools;
 using java::lang::Float;
 using java::lang::Integer;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Locale;
 using java::util::StringTokenizer;
 using tdme::engine::Camera;
@@ -108,20 +106,26 @@ String* Tools::formatFloat(float value)
 
 String* Tools::formatVector3(Vector3* value)
 {
-	return ::java::lang::StringBuilder().append(formatFloat(value->getX()))->append(u", "_j)
-		->append(formatFloat(value->getY()))
-		->append(u", "_j)
-		->append(formatFloat(value->getZ()))->toString();
+	return new String(
+		formatFloat(value->getX())->getCPPWString() +
+		L", " +
+		formatFloat(value->getY())->getCPPWString() +
+		L", " +
+		formatFloat(value->getZ())->getCPPWString()
+	);
 }
 
 String* Tools::formatColor4(Color4* value)
 {
-	return ::java::lang::StringBuilder().append(formatFloat(value->getRed()))->append(u", "_j)
-		->append(formatFloat(value->getGreen()))
-		->append(u", "_j)
-		->append(formatFloat(value->getBlue()))
-		->append(u", "_j)
-		->append(formatFloat(value->getAlpha()))->toString();
+	return new String(
+		formatFloat(value->getRed())->getCPPWString() +
+		L", " +
+		formatFloat(value->getGreen())->getCPPWString() +
+		L", " +
+		formatFloat(value->getBlue())->getCPPWString() +
+		L", " +
+		formatFloat(value->getAlpha())->getCPPWString()
+	);
 }
 
 void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */
@@ -223,7 +227,7 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 	// osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
 	osEngine->getSceneColor()->set(0.8f, 0.0f, 0.0f, 1.0f);
 	osEngine->display();
-	// osEngine->makeScreenshot(u"tmp"_j, ::java::lang::StringBuilder().append(u"selected_"_j)->append(model->getThumbnail())->toString());
+	// osEngine->makeScreenshot(u"tmp"_j, L"selected_" + model->getThumbnail());
 	osEngine->reset();
 }
 
