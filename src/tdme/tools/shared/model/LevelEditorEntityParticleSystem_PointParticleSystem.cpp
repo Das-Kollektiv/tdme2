@@ -1,12 +1,7 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using java::lang::String;
-using java::lang::StringBuilder;
 
 LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSystem_PointParticleSystem() 
 {

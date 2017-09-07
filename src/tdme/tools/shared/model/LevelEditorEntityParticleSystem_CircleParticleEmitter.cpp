@@ -1,14 +1,10 @@
 // Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 

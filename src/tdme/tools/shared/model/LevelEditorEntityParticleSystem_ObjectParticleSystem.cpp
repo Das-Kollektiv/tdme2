@@ -15,8 +15,6 @@
 using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
