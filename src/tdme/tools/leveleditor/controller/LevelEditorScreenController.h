@@ -176,7 +176,7 @@ public:
 	/** 
 	 * @return object property preset selection
 	 */
-	const wstring& getObjectPropertyPresetSelection();
+	const wstring getObjectPropertyPresetSelection();
 
 	/** 
 	 * Set up general object data

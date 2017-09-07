@@ -9,9 +9,7 @@
 #include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
 #include <java/lang/Iterable.h>
-#include <java/lang/Object.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/util/Collection.h>
 #include <java/util/Iterator.h>
 #include <java/util/StringTokenizer.h>
@@ -51,6 +49,7 @@
 
 using std::vector;
 using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using java::io::Serializable;
@@ -58,9 +57,7 @@ using java::lang::CharSequence;
 using java::lang::Comparable;
 using java::lang::Float;
 using java::lang::Iterable;
-using java::lang::Object;
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::util::Collection;
 using java::util::Iterator;
 using java::util::StringTokenizer;
@@ -208,33 +205,20 @@ void LevelEditorScreenController::initialize()
 		ligthsSpotDirectionCompute = new GUIElementNodeArray(4);
 		lightsEnabled = new GUIElementNodeArray(4);
 		for (auto i = 0; i < 4; i++) {
-			lightsPresets->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"presets_light"_j)->append(i)->toString())));
-			lightsAmbient->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_ambient"_j)->toString())));
-			lightsDiffuse->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_diffuse"_j)->toString())));
-			lightsSpecular->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_specular"_j)->toString())));
-			lightsPosition->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_position"_j)->toString())));
-			lightsLinAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_linear_attenuation"_j)->toString())));
-			lightsConstAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_constant_attenuation"_j)->toString())));
-			lightsQuadAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_quadratic_attenuation"_j)->toString())));
-			lightsSpotTo->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_spot_to"_j)->toString())));
-			lightsSpotDirection->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_spot_direction"_j)->toString())));
-			lightsSpotExponent->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_spot_exponent"_j)->toString())));
-			lightsSpotCutoff->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_spot_cutoff"_j)->toString())));
-			ligthsSpotDirectionCompute->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"button_light"_j)->append(i)
-				->append(u"_spotdirection_compute"_j)->toString())));
-			lightsEnabled->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(::java::lang::StringBuilder().append(u"light"_j)->append(i)
-				->append(u"_enabled"_j)->toString())));
+			lightsPresets->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"presets_light" + to_wstring(i)))));
+			lightsAmbient->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_ambient"))));
+			lightsDiffuse->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_diffuse"))));
+			lightsSpecular->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_specular"))));
+			lightsPosition->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_position"))));
+			lightsLinAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_linear_attenuation"))));
+			lightsConstAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_constant_attenuation"))));
+			lightsQuadAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_quadratic_attenuation"))));
+			lightsSpotTo->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_to"))));
+			lightsSpotDirection->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_direction"))));
+			lightsSpotExponent->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_exponent"))));
+			lightsSpotCutoff->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_cutoff"))));
+			ligthsSpotDirectionCompute->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"button_light" + to_wstring(i) + L"_spotdirection_compute"))));
+			lightsEnabled->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_enabled"))));
 		}
 		value = new MutableString();
 		selectedObjects = new MutableString();
@@ -280,11 +264,11 @@ void LevelEditorScreenController::unsetObjectProperties()
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
 	objectPropertyValue->getController()->setDisabled(true);
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
 	objectPropertiesListBoxInnerNode->clearSubNodes();
 }
 
-const wstring& LevelEditorScreenController::getObjectPropertyPresetSelection()
+const wstring LevelEditorScreenController::getObjectPropertyPresetSelection()
 {
 	return L"";
 }
@@ -323,22 +307,30 @@ void LevelEditorScreenController::onObjectDataApply()
 void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
-	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectsListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(new String(objectsListBox->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 1;
-	auto objectsListBoxSubNodesXML = u""_j;
-	objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectsListBox->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
+	wstring objectsListBoxSubNodesXML = L"";
+	objectsListBoxSubNodesXML =
+		objectsListBoxSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		objectsListBox->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (int i = 0; i < level->getObjectCount(); i++) {
 		auto objectId = level->getObjectAt(i)->getId();
-		objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-multiple-option text=\""_j)->append(GUIParser::escapeQuotes(objectId))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(objectId))
-			->append(u"\" "_j)
-			->append(u"/>\n"_j)->toString())->toString();
+		objectsListBoxSubNodesXML =
+			objectsListBoxSubNodesXML +
+			L"<selectbox-multiple-option text=\"" +
+			GUIParser::escapeQuotes(objectId) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(objectId) +
+			L"\" " +
+			L"/>\n";
 	}
-	objectsListBoxSubNodesXML = ::java::lang::StringBuilder(objectsListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	objectsListBoxSubNodesXML =
+		objectsListBoxSubNodesXML +
+		L"</scrollarea-vertical>\n";
 	try {
-		objectsListBoxInnerNode->replaceSubNodes(objectsListBoxSubNodesXML, false);
+		objectsListBoxInnerNode->replaceSubNodes(new String(objectsListBoxSubNodesXML), false);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorScreenController::setObjectListbox(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -470,25 +462,33 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
 	mapPropertySave->getController()->setDisabled(true);
-	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(mapPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(new String(mapPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 1;
-	auto mapPropertiesListBoxSubNodesXML = u""_j;
-	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(mapPropertiesListBox->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
+	wstring mapPropertiesListBoxSubNodesXML = L"";
+	mapPropertiesListBoxSubNodesXML =
+		mapPropertiesListBoxSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		mapPropertiesListBox->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < level->getPropertyCount(); i++) {
 		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
-		mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(mapProperty->getName()))
-			->append(u": "_j)
-			->append(GUIParser::escapeQuotes(mapProperty->getValue()))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(mapProperty->getName()))
-			->append(u"\" "_j)
-			->append((selectedName.length() > 0 && mapProperty->getName() == selectedName ? u"selected=\"true\" "_j : u""_j))
-			->append(u"/>\n"_j)->toString())->toString();
+		mapPropertiesListBoxSubNodesXML =
+			mapPropertiesListBoxSubNodesXML +
+			L"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(mapProperty->getName()) +
+			L": " +
+			GUIParser::escapeQuotes(mapProperty->getValue()) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(mapProperty->getName()) +
+			L"\" " +
+			(selectedName.length() > 0 && mapProperty->getName() == selectedName ? L"selected=\"true\" " : L"") +
+			L"/>\n";
 	}
-	mapPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(mapPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	mapPropertiesListBoxSubNodesXML =
+		mapPropertiesListBoxSubNodesXML +
+		L"</scrollarea-vertical>\n";
 	try {
-		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
+		mapPropertiesListBoxInnerNode->replaceSubNodes(new String(mapPropertiesListBoxSubNodesXML), false);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -522,24 +522,32 @@ void LevelEditorScreenController::onMapPropertyRemove()
 
 void LevelEditorScreenController::setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds)
 {
-	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(new String(objectPropertiesPresets->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 0;
-	auto objectPropertiesPresetsInnerNodeSubNodesXML = u""_j;
-	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesPresets->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
+	wstring objectPropertiesPresetsInnerNodeSubNodesXML = L"";
+	objectPropertiesPresetsInnerNodeSubNodesXML =
+		objectPropertiesPresetsInnerNodeSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		objectPropertiesPresets->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: *objectPresetIds) {
-		auto modelPresetId = new String(it.first);
-		objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(modelPresetId))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(modelPresetId))
-			->append(u"\" "_j)
-			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-			->append(u" />\n"_j)->toString())->toString();
+		auto modelPresetId = it.first;
+		objectPropertiesPresetsInnerNodeSubNodesXML =
+			objectPropertiesPresetsInnerNodeSubNodesXML +
+			L"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(modelPresetId) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(modelPresetId) +
+			L"\" " +
+			(idx == 0 ? L"selected=\"true\" " : L"") +
+			L" />\n";
 		idx++;
 	}
-	objectPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(objectPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	objectPropertiesPresetsInnerNodeSubNodesXML =
+		objectPropertiesPresetsInnerNodeSubNodesXML +
+		L"</scrollarea-vertical>\n";
 	try {
-		objectPropertiesPresetsInnerNode->replaceSubNodes(objectPropertiesPresetsInnerNodeSubNodesXML, true);
+		objectPropertiesPresetsInnerNode->replaceSubNodes(new String(objectPropertiesPresetsInnerNodeSubNodesXML), true);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorScreenController::setObjectPresetIds(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -580,25 +588,33 @@ void LevelEditorScreenController::setObjectProperties(const wstring& presetId, L
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setDisabled(true);
 	objectPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(objectPropertiesListBox->getId())->append(u"_inner"_j)->toString())));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 1;
-	auto objectPropertiesListBoxSubNodesXML = u""_j;
-	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(objectPropertiesListBox->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
+	wstring objectPropertiesListBoxSubNodesXML = L"";
+	objectPropertiesListBoxSubNodesXML =
+		objectPropertiesListBoxSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		objectPropertiesListBox->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < object->getPropertyCount(); i++) {
 	PropertyModelClass* objectProperty = object->getPropertyByIndex(i);
-		objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(objectProperty->getName()))
-			->append(u": "_j)
-			->append(GUIParser::escapeQuotes(objectProperty->getValue()))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(objectProperty->getName()))
-			->append(u"\" "_j)
-			->append((selectedName.length() > 0 && objectProperty->getName() == selectedName? u"selected=\"true\" "_j : u""_j))
-			->append(u"/>\n"_j)->toString())->toString();
+		objectPropertiesListBoxSubNodesXML =
+			objectPropertiesListBoxSubNodesXML +
+			L"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(objectProperty->getName()) +
+			L": " +
+			GUIParser::escapeQuotes(objectProperty->getValue()) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(objectProperty->getName()) +
+			L"\" " +
+			(selectedName.length() > 0 && objectProperty->getName() == selectedName? L"selected=\"true\" " : L"") +
+			L"/>\n";
 	}
-	objectPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(objectPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	objectPropertiesListBoxSubNodesXML =
+		objectPropertiesListBoxSubNodesXML +
+		L"</scrollarea-vertical>\n";
 	try {
-		objectPropertiesListBoxInnerNode->replaceSubNodes(objectPropertiesListBoxSubNodesXML, false);
+		objectPropertiesListBoxInnerNode->replaceSubNodes(new String(objectPropertiesListBoxSubNodesXML), false);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorScreenController::setObjectProperties(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -751,24 +767,32 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
-		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(::java::lang::StringBuilder().append((*lightsPresets)[i]->getId())->append(u"_inner"_j)->toString())));
+		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(new String((*lightsPresets)[i]->getId()->getCPPWString() + L"_inner"))));
 		auto idx = 0;
-		auto lightPresetsInnerNodeSubNodesXML = u""_j;
-		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append((*lightsPresets)[i]->getId())
-			->append(u"_inner_scrollarea\" width=\"100%\" height=\"50\">\n"_j)->toString())->toString();
+		wstring lightPresetsInnerNodeSubNodesXML = L"";
+		lightPresetsInnerNodeSubNodesXML =
+			lightPresetsInnerNodeSubNodesXML +
+			L"<scrollarea-vertical id=\"" +
+			(*lightsPresets)[i]->getId()->getCPPWString() +
+			L"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 		for (auto it: *lightPresetIds) {
 			wstring lightPresetId = it.first;
-			lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(lightPresetId))
-				->append(u"\" value=\""_j)
-				->append(GUIParser::escapeQuotes(lightPresetId))
-				->append(u"\" "_j)
-				->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-				->append(u" />\n"_j)->toString())->toString();
+			lightPresetsInnerNodeSubNodesXML =
+				lightPresetsInnerNodeSubNodesXML +
+				L"<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(lightPresetId) +
+				L"\" value=\"" +
+				GUIParser::escapeQuotes(lightPresetId) +
+				L"\" " +
+				(idx == 0 ? L"selected=\"true\" " : L"") +
+				L" />\n";
 			idx++;
 		}
-		lightPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(lightPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+		lightPresetsInnerNodeSubNodesXML =
+			lightPresetsInnerNodeSubNodesXML +
+			L"</scrollarea-vertical>\n";
 		try {
-			lightPresetsInnerNode->replaceSubNodes(lightPresetsInnerNodeSubNodesXML, true);
+			lightPresetsInnerNode->replaceSubNodes(new String(lightPresetsInnerNodeSubNodesXML), true);
 		} catch (_Exception& exception) {
 			_Console::print(string("LevelEditorScreenController::setLightPresetsIds(): An error occurred: "));
 			_Console::println(string(exception.what()));
@@ -930,7 +954,7 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId()->equals(L"object_properties_listbox") == true) {
 		onObjectPropertiesSelectionChanged();
 	} else {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorScreenController::onValueChanged: "_j)->append(node->getId())->toString()));
+		_Console::println(wstring(L"LevelEditorScreenController::onValueChanged: " + node->getId()->getCPPWString()));
 	}
 }
 
@@ -1030,14 +1054,13 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 		if (node->getId()->equals(L"button_light3_apply") == true) {
 			onLight3Apply();
 		} else {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"LevelEditorScreenController::onActionPerformed: "_j)->append(node->getId())->toString()));
+			_Console::println(wstring(L"LevelEditorScreenController::onActionPerformed: " + node->getId()->getCPPWString()));
 		}
 	}
 }
 
 void LevelEditorScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(caption)->append(u":"_j)
-		->append(message)->toString()));
+	_Console::println(wstring(caption + L":" + message));
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
