@@ -1,12 +1,11 @@
 // Generated from /tdme/src/tdme/tools/shared/model/PropertyModelClass.java
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <string>
 
 using tdme::tools::shared::model::PropertyModelClass;
-using java::lang::String;
-using java::lang::StringBuilder;
+
+using std::wstring;
 
 PropertyModelClass::PropertyModelClass(const wstring& name, const wstring& value)
 {
