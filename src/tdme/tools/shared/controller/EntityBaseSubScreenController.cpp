@@ -5,12 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Collection.h>
-#include <java/util/Iterator.h>
-#include <java/util/Set.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -34,12 +29,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using java::lang::Iterable;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::util::Collection;
-using java::util::Iterator;
-using java::util::Set;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -118,24 +108,29 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 
 void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds)
 {
-	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesPresets->getId())->append(u"_inner"_j)->toString())));
+	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(new String(entityPropertiesPresets->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 0;
-	auto entityPropertiesPresetsInnerNodeSubNodesXML = u""_j;
-	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesPresets->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100\">\n"_j)->toString())->toString();
+	wstring entityPropertiesPresetsInnerNodeSubNodesXML = L"";
+	entityPropertiesPresetsInnerNodeSubNodesXML =
+		entityPropertiesPresetsInnerNodeSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		entityPropertiesPresets->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: *entityPresetIds) {
-		String* entityPresetId = new String(it.first);
-		entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(::java::lang::StringBuilder().append(u"<dropdown-option text=\""_j)->append(GUIParser::escapeQuotes(entityPresetId))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(entityPresetId))
-			->append(u"\" "_j)
-			->append((idx == 0 ? u"selected=\"true\" "_j : u""_j))
-			->append(u" />\n"_j)->toString())->toString();
+		auto entityPresetId = it.first;
+		entityPropertiesPresetsInnerNodeSubNodesXML =
+			entityPropertiesPresetsInnerNodeSubNodesXML + L"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(entityPresetId) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(entityPresetId) +
+			L"\" " +
+			(idx == 0 ? L"selected=\"true\" " : L"") +
+			L" />\n";
 		idx++;
 	}
-	entityPropertiesPresetsInnerNodeSubNodesXML = ::java::lang::StringBuilder(entityPropertiesPresetsInnerNodeSubNodesXML).append(u"</scrollarea-vertical>"_j)->toString();
+	entityPropertiesPresetsInnerNodeSubNodesXML = entityPropertiesPresetsInnerNodeSubNodesXML + L"</scrollarea-vertical>";
 	try {
-		entityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
+		entityPropertiesPresetsInnerNode->replaceSubNodes(new String(entityPropertiesPresetsInnerNodeSubNodesXML), true);
 	} catch (_Exception& exception) {
 		_Console::print(string("EntityBaseSubScreenController::setEntityPresetIds(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -153,25 +148,31 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
 	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
-	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId()->getCPPWString() + L"_inner"))));
 	auto idx = 1;
-	auto entityPropertiesListBoxSubNodesXML = u""_j;
-	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<scrollarea-vertical id=\""_j)->append(entityPropertiesList->getId())
-		->append(u"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n"_j)->toString())->toString();
+	wstring entityPropertiesListBoxSubNodesXML = L"";
+	entityPropertiesListBoxSubNodesXML =
+		entityPropertiesListBoxSubNodesXML +
+		L"<scrollarea-vertical id=\"" +
+		entityPropertiesList->getId()->getCPPWString() +
+		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
 		PropertyModelClass* entityProperty = entity->getPropertyByIndex(i);
-		entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(::java::lang::StringBuilder().append(u"<selectbox-option text=\""_j)->append(GUIParser::escapeQuotes(entityProperty->getName()))
-			->append(u": "_j)
-			->append(GUIParser::escapeQuotes(entityProperty->getValue()))
-			->append(u"\" value=\""_j)
-			->append(GUIParser::escapeQuotes(entityProperty->getName()))
-			->append(u"\" "_j)
-			->append((selectedName.length() > 0 && entityProperty->getName() == selectedName ? u"selected=\"true\" "_j : u""_j))
-			->append(u"/>\n"_j)->toString())->toString();
+		entityPropertiesListBoxSubNodesXML =
+			entityPropertiesListBoxSubNodesXML +
+			L"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(entityProperty->getName()) +
+			L": " +
+			GUIParser::escapeQuotes(entityProperty->getValue()) +
+			L"\" value=\"" +
+			GUIParser::escapeQuotes(entityProperty->getName()) +
+			L"\" " +
+			(selectedName.length() > 0 && entityProperty->getName() == selectedName ? L"selected=\"true\" " : L"") +
+			L"/>\n";
 	}
-	entityPropertiesListBoxSubNodesXML = ::java::lang::StringBuilder(entityPropertiesListBoxSubNodesXML).append(u"</scrollarea-vertical>\n"_j)->toString();
+	entityPropertiesListBoxSubNodesXML = entityPropertiesListBoxSubNodesXML + L"</scrollarea-vertical>\n";
 	try {
-		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
+		entityPropertiesListBoxInnerNode->replaceSubNodes(new String(entityPropertiesListBoxSubNodesXML), false);
 	} catch (_Exception& exception) {
 		_Console::print(string("EntityBaseSubScreenController::setEntityProperties(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -181,7 +182,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::unsetEntityProperties()
 {
-	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(entityPropertiesList->getId())->append(u"_inner"_j)->toString())));
+	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId()->getCPPWString() + L"_inner"))));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
 	entityPropertiesPresets->getController()->setValue(value->set(u"none"_j));
 	entityPropertiesPresets->getController()->setDisabled(true);
@@ -265,19 +266,19 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 		if ((v == GUIActionListener_Type::PERFORMED))
 		{
 			{
-				if (node->getId()->equals(u"button_entity_apply"_j)) {
+				if (node->getId()->equals(L"button_entity_apply")) {
 					onEntityDataApply(entity);
 				} else
-				if (node->getId()->equals(u"button_entity_properties_presetapply"_j)) {
+				if (node->getId()->equals(L"button_entity_properties_presetapply")) {
 					onEntityPropertyPresetApply(entity);
 				} else
-				if (node->getId()->equals(u"button_entity_properties_add"_j)) {
+				if (node->getId()->equals(L"button_entity_properties_add")) {
 					onEntityPropertyAdd(entity);
 				} else
-				if (node->getId()->equals(u"button_entity_properties_remove"_j)) {
+				if (node->getId()->equals(L"button_entity_properties_remove")) {
 					onEntityPropertyRemove(entity);
 				} else
-				if (node->getId()->equals(u"button_entity_properties_save"_j)) {
+				if (node->getId()->equals(L"button_entity_properties_save")) {
 					onEntityPropertySave(entity);
 				} else {
 				}
