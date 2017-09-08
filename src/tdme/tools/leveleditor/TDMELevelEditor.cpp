@@ -1,10 +1,10 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/TDMELevelEditor.java
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 
-#include <java/lang/String.h>
+#include <string>
+
 #include <java/lang/System.h>
-#include <java/util/logging/Level.h>
-#include <java/util/logging/Logger.h>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -22,11 +22,12 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/_Console.h>
 
+using std::wstring;
+
 using tdme::tools::leveleditor::TDMELevelEditor;
-using java::lang::String;
+
 using java::lang::System;
-using java::util::logging::Level;
-using java::util::logging::Logger;
+
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
@@ -44,20 +45,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-String* TDMELevelEditor::VERSION = u"0.9.9"_j;
+wstring TDMELevelEditor::VERSION = L"0.9.9";
 
 TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
@@ -76,7 +64,7 @@ TDMELevelEditor::TDMELevelEditor()
 void TDMELevelEditor::main(int argc, char** argv)
 {
 	String* modelFileName = nullptr;
-	_Console::println(wstring(L"TDMELevelEditor " + VERSION->getCPPWString()));
+	_Console::println(wstring(L"TDMELevelEditor " + VERSION));
 	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	_Console::println();
 	auto tdmeLevelEditor = new TDMELevelEditor();

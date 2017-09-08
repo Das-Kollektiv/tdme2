@@ -4,10 +4,8 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
-#include <java/util/logging/Level.h>
-#include <java/util/logging/Logger.h>
+
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -26,11 +24,10 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tests::PhysicsTest2;
+
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::lang::System;
-using java::util::logging::Level;
-using java::util::logging::Logger;
+
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -44,19 +41,6 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
 
@@ -125,7 +109,7 @@ void PhysicsTest2::initialize()
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString()->getCPPWString(), boxModel);
+		entity = new Object3D(L"box" + to_wstring(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(i * 2.0f + 1.0f);
 		entity->update();

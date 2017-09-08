@@ -29,14 +29,3 @@ void unimplemented_(const char16_t *name) {
     while(*name) std::wcerr << static_cast<wchar_t>(*(name++));
     std::wcerr << std::endl;
 }
-
-void init_jvm() {
-    // This will be called by the generated main file before running any java code
-    // Use it to initialize system properties and other stuff the JVM should provide
-}
-
-java::lang::StringArray* make_args(int args, char** argv) {
-    // Helper that should convert strings passed to app into
-    // StringArray passed to java main
-    return nullptr;
-}

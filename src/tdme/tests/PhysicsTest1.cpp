@@ -4,8 +4,8 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
+
 #include <java/util/logging/Level.h>
 #include <java/util/logging/Logger.h>
 #include <tdme/engine/Camera.h>
@@ -35,9 +35,10 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tests::PhysicsTest1;
+
 using java::lang::String;
-using java::lang::StringBuilder;
 using java::lang::System;
+
 using java::util::logging::Level;
 using java::util::logging::Logger;
 using tdme::engine::Camera;
@@ -133,8 +134,7 @@ void PhysicsTest1::display()
 	world->synch(engine);
 	engine->display();
 	auto end = System::currentTimeMillis();
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"PhysicsTest::display::"_j)->append((end - start))
-		->append(u"ms"_j)->toString()));
+	_Console::println(wstring(L"PhysicsTest::display::" + to_wstring(end - start) + L"ms"));
 }
 
 void PhysicsTest1::dispose()
@@ -206,7 +206,7 @@ void PhysicsTest1::initialize()
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append(i)->toString()->getCPPWString(), boxModel);
+		entity = new Object3D(L"box" + to_wstring(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(10.0f + i * 3.0f);
 		entity->getTranslation()->addX(-2.0f + i * 0.1f);
@@ -215,7 +215,7 @@ void PhysicsTest1::initialize()
 		world->addRigidBody(L"box" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"box"_j)->append((BOX_COUNT + i))->toString()->getCPPWString(), boxModel);
+		entity = new Object3D(L"box" + to_wstring(BOX_COUNT + i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(1.6f + (i * 1.2f));
 		entity->getTranslation()->addX(+3.0f);
@@ -229,7 +229,7 @@ void PhysicsTest1::initialize()
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.5f, 0.8f, 0.8f, 1.0f);
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(0.0f, 1.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"sphere"_j)->append(i)->toString()->getCPPWString(), sphereModel);
+		entity = new Object3D(L"sphere" + to_wstring(i), sphereModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(12.0f + (i * 1.0f));
 		entity->getTranslation()->addX(0.45f * i - 3.0f);
@@ -243,7 +243,7 @@ void PhysicsTest1::initialize()
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.0f, 0.8f, 1.0f);
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
-		entity = new Object3D(::java::lang::StringBuilder().append(u"capsule"_j)->append(i)->toString()->getCPPWString(), capsuleModel);
+		entity = new Object3D(L"capsule" + to_wstring(i), capsuleModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation()->addY(14.0f + (i * 2.0f));
 		entity->getTranslation()->addX((i * 0.5f));

@@ -6,10 +6,6 @@
 
 #include <java/lang/Character.h>
 #include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
-#include <java/lang/System.h>
-#include <java/util/logging/Level.h>
-#include <java/util/logging/Logger.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -59,10 +55,6 @@ using std::vector;
 using tdme::tests::EngineTest;
 using java::lang::Character;
 using java::lang::String;
-using java::lang::StringBuilder;
-using java::lang::System;
-using java::util::logging::Level;
-using java::util::logging::Logger;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -105,19 +97,6 @@ using tdme::math::Vector4;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
 EngineTest::EngineTest()
 {
 	keyLeft = false;
@@ -127,7 +106,7 @@ EngineTest::EngineTest()
 	keyA = false;
 	keyS = false;
 	keyD = false;
-	mouseClicked_ = nullptr;
+	mouseClicked = false;
 	entityClicked = nullptr;
 	collision = new CollisionResponse();
 	engine = Engine::getInstance();
@@ -195,20 +174,20 @@ void EngineTest::display()
 	}
 	osEngine->display();
 	engine->display();
-	if (mouseClicked_ != nullptr) {
+	if (mouseClicked == true) {
 		if (entityClicked != nullptr) {
 			entityClicked->getEffectColorMul()->setRed(1.0f);
 			entityClicked->getEffectColorMul()->setGreen(1.0f);
 			entityClicked->getEffectColorMul()->setBlue(1.0f);
 		}
-		auto _object3DClicked = engine->getObjectByMousePosition((*mouseClicked_)[0], (*mouseClicked_)[1]);
+		auto _object3DClicked = engine->getObjectByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
 		if (_object3DClicked != nullptr) {
 			_object3DClicked->getEffectColorMul()->setRed(2.0f);
 			_object3DClicked->getEffectColorMul()->setGreen(2.0f);
 			_object3DClicked->getEffectColorMul()->setBlue(2.0f);
 		}
 		entityClicked = _object3DClicked;
-		mouseClicked_ = nullptr;
+		mouseClicked = false;
 	}
 }
 
@@ -480,9 +459,8 @@ void EngineTest::onMouseMoved(int x, int y) {
 
 void EngineTest::onMouseButton(int button, int state, int x, int y) {
 	if (state == MOUSE_BUTTON_DOWN) {
-		mouseClicked_ = new int32_tArray({
-			x,
-			y
-		});
+		mouseClicked = true;
+		mouseClickedXY[0] = x;
+		mouseClickedXY[1] = y;
 	}
 }

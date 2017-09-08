@@ -2,41 +2,20 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/tools/particlesystem/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::String;
+using std::wstring;
+
 using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
 
 /** 
  * TDME Particle System
@@ -47,7 +26,7 @@ class tdme::tools::particlesystem::TDMEParticleSystem final
 	: public virtual Application
 {
 private:
-	static String* VERSION;
+	static wstring VERSION;
 	static TDMEParticleSystem* instance;
 	Engine* engine {  };
 	View* view {  };

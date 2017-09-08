@@ -2,10 +2,10 @@
 
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
@@ -16,12 +16,11 @@
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
+using std::array;
 using std::vector;
 
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
 using java::lang::String;
+
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::Engine;
@@ -31,25 +30,6 @@ using tdme::engine::Transformations;
 using tdme::engine::model::Model;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingVolume;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
 
 /** 
  * Engine test
@@ -81,7 +61,8 @@ public: /* package */
 	Entity* entityClicked {  };
 
 private:
-	int32_tArray* mouseClicked_ {  };
+	bool mouseClicked;
+	array<int, 2> mouseClickedXY {  };
 	bool keyLeft {  };
 	bool keyRight {  };
 	bool keyUp {  };

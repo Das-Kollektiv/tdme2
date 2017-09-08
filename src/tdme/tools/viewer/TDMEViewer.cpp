@@ -1,10 +1,9 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
+#include <string>
+
 #include <java/lang/System.h>
-#include <java/util/logging/Level.h>
-#include <java/util/logging/Logger.h>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -13,12 +12,12 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/_Console.h>
 
+using std::wstring;
+
 using tdme::tools::viewer::TDMEViewer;
-using java::lang::Object;
-using java::lang::String;
+
 using java::lang::System;
-using java::util::logging::Level;
-using java::util::logging::Logger;
+
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
@@ -27,20 +26,7 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::shared::views::View;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-String* TDMEViewer::VERSION = u"0.9.9"_j;
+wstring TDMEViewer::VERSION = L"0.9.9";
 
 TDMEViewer* TDMEViewer::instance = nullptr;
 
@@ -58,7 +44,7 @@ TDMEViewer::TDMEViewer()
 void TDMEViewer::main(int argc, char** argv)
 {
 	String* modelFileName = nullptr;
-	_Console::println(wstring(L"TDMEViewer "+ VERSION->getCPPWString()));
+	_Console::println(wstring(L"TDMEViewer "+ VERSION));
 	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	_Console::println();
 
