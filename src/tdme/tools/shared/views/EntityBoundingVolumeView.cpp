@@ -1,11 +1,9 @@
 // Generated from /tdme/src/tdme/tools/shared/views/EntityBoundingVolumeView.java
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
 #include <java/lang/Math.h>
 #include <java/lang/String.h>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
@@ -24,16 +22,12 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using tdme::tools::shared::views::EntityBoundingVolumeView;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
+
 using java::lang::Math;
 using java::lang::String;
+
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
@@ -86,15 +80,16 @@ PopUps* EntityBoundingVolumeView::getPopUpsViews()
 
 void EntityBoundingVolumeView::initialize()
 {
+	vector<wstring> boundingVolumeTypes = {
+		L"None",
+		L"Sphere",
+		L"Capsule",
+		L"Bounding Box",
+		L"Oriented Bounding Box",
+		L"Convex Mesh"
+	};
 	for (auto i = 0; i < EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-		modelViewerScreenController->setupBoundingVolumeTypes(i, new StringArray({
-			u"None"_j,
-			u"Sphere"_j,
-			u"Capsule"_j,
-			u"Bounding Box"_j,
-			u"Oriented Bounding Box"_j,
-			u"Convex Mesh"_j
-		}));
+		modelViewerScreenController->setupBoundingVolumeTypes(i, &boundingVolumeTypes);
 		modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE);
 	}
 }
@@ -217,15 +212,15 @@ void EntityBoundingVolumeView::selectBoundingVolumeType(int32_t idx, int32_t bvT
 void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
-	auto id = (*EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS)[idx];
-	auto modelBoundingVolumeObject = engine->getEntity(id->getCPPWString());
+	auto id = EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
+	auto modelBoundingVolumeObject = engine->getEntity(id);
 	if (modelBoundingVolumeObject != nullptr) {
-		engine->removeEntity(id->getCPPWString());
+		engine->removeEntity(id);
 	}
 	if (entityBoundingVolume->getModel() == nullptr)
 		return;
 
-	modelBoundingVolumeObject = new Object3D(id->getCPPWString(), entityBoundingVolume->getModel());
+	modelBoundingVolumeObject = new Object3D(id, entityBoundingVolume->getModel());
 	modelBoundingVolumeObject->setEnabled(false);
 	engine->addEntity(modelBoundingVolumeObject);
 }

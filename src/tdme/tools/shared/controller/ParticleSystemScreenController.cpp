@@ -2,11 +2,10 @@
 #include <tdme/tools/shared/controller/ParticleSystemScreenController.h>
 
 #include <string>
+#include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
 #include <java/lang/String.h>
+
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -53,15 +52,11 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
+using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
 using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
@@ -109,19 +104,6 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 String* ParticleSystemScreenController::TYPE_NONE = u"None"_j;
 String* ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = u"Object Particle System"_j;
@@ -796,10 +778,13 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 
 void ParticleSystemScreenController::onParticleSystemLoad()
 {
+	vector<wstring> extensions = {
+		L"tps"
+	};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
 		L"Load from: ",
-		new StringArray({u"tps"_j}),
+		&extensions,
 		view->getFileName(),
 		new ParticleSystemScreenController_onParticleSystemLoad_2(this)
 	);
@@ -812,10 +797,13 @@ void ParticleSystemScreenController::onEntitySave()
 		fileName = L"untitle.tps";
 	}
 	fileName = Tools::getFileName(fileName);
+	vector<wstring> extensions = {
+		L"tps"
+	};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
 		L"Save from: ",
-		new StringArray({u"tps"_j}),
+		&extensions,
 		fileName,
 		new ParticleSystemScreenController_onEntitySave_3(this)
 );
@@ -877,13 +865,14 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					onParticleSystemEmitterDataApply();
 				} else
 				if (node->getId()->equals(L"button_ops_model_file")) {
+					vector<wstring> extensions = {
+						L"dae",
+						L"tm"
+					};
 					view->getPopUpsViews()->getFileDialogScreenController()->show(
 						modelPath->getPath(),
 						L"Load from: ",
-						new StringArray({
-							u"dae"_j,
-							u"tm"_j
-						}),
+						&extensions,
 						L"",
 						new ParticleSystemScreenController_onActionPerformed_4(this)
 					);

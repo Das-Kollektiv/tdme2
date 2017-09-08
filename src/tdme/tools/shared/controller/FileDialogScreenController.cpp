@@ -1,10 +1,11 @@
 // Generated from /tdme/src/tdme/tools/shared/controller/FileDialogScreenController.java
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
+#include <string>
+#include <vector>
+
 #include <java/lang/String.h>
+
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -21,14 +22,13 @@
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
+
+using std::vector;
+using std::wstring;
+
+using java::lang::String;
 
 using tdme::tools::shared::controller::FileDialogScreenController;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -45,19 +45,6 @@ using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 FileDialogScreenController::FileDialogScreenController() 
 {
@@ -144,7 +131,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	}
 }
 
-void FileDialogScreenController::show(const wstring& cwd, const wstring& captionText, StringArray* extensions, const wstring& fileName, Action* applyAction)
+void FileDialogScreenController::show(const wstring& cwd, const wstring& captionText, vector<wstring>* extensions, const wstring& fileName, Action* applyAction)
 {
 	try {
 		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, L"");
@@ -153,7 +140,7 @@ void FileDialogScreenController::show(const wstring& cwd, const wstring& caption
 		_Console::println(string(exception.what()));
 	}
 	this->captionText = captionText;
-	this->extensions = extensions;
+	this->extensions = *extensions;
 	this->fileName->getController()->setValue(value->set(fileName));
 	setupFileDialogListBox();
 	screenNode->setVisible(true);

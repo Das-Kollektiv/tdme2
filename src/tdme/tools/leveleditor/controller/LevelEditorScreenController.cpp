@@ -1,18 +1,12 @@
 // Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 
+#include <array>
 #include <vector>
 #include <string>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
-#include <java/lang/Float.h>
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/util/Collection.h>
-#include <java/util/Iterator.h>
-#include <java/util/StringTokenizer.h>
+
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -38,29 +32,24 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ExceptionBase.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
+using std::array;
 using std::vector;
 using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::Float;
-using java::lang::Iterable;
+
 using java::lang::String;
-using java::util::Collection;
-using java::util::Iterator;
-using java::util::StringTokenizer;
+
 using tdme::engine::model::Color4;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
@@ -86,35 +75,14 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
+using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
 using tdme::utils::_ExceptionBase;
 using tdme::utils::_Console;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace gui {
-namespace nodes {
-typedef ::SubArray< ::tdme::gui::nodes::GUINode, ::java::lang::ObjectArray > GUINodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIParentNode, GUINodeArray > GUIParentNodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUIElementNodeArray;
-}  // namespace nodes
-}  // namespace gui
-}  // namespace tdme
 
 MutableString* LevelEditorScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
 
@@ -190,35 +158,21 @@ void LevelEditorScreenController::initialize()
 		mapHeight->getController()->setDisabled(true);
 		objectModel->getController()->setDisabled(true);
 		objectCenter->getController()->setDisabled(true);
-		lightsPresets = new GUIElementNodeArray(4);
-		lightsAmbient = new GUIElementNodeArray(4);
-		lightsDiffuse = new GUIElementNodeArray(4);
-		lightsSpecular = new GUIElementNodeArray(4);
-		lightsPosition = new GUIElementNodeArray(4);
-		lightsConstAttenuation = new GUIElementNodeArray(4);
-		lightsLinAttenuation = new GUIElementNodeArray(4);
-		lightsQuadAttenuation = new GUIElementNodeArray(4);
-		lightsSpotTo = new GUIElementNodeArray(4);
-		lightsSpotDirection = new GUIElementNodeArray(4);
-		lightsSpotExponent = new GUIElementNodeArray(4);
-		lightsSpotCutoff = new GUIElementNodeArray(4);
-		ligthsSpotDirectionCompute = new GUIElementNodeArray(4);
-		lightsEnabled = new GUIElementNodeArray(4);
 		for (auto i = 0; i < 4; i++) {
-			lightsPresets->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"presets_light" + to_wstring(i)))));
-			lightsAmbient->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_ambient"))));
-			lightsDiffuse->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_diffuse"))));
-			lightsSpecular->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_specular"))));
-			lightsPosition->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_position"))));
-			lightsLinAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_linear_attenuation"))));
-			lightsConstAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_constant_attenuation"))));
-			lightsQuadAttenuation->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_quadratic_attenuation"))));
-			lightsSpotTo->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_to"))));
-			lightsSpotDirection->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_direction"))));
-			lightsSpotExponent->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_exponent"))));
-			lightsSpotCutoff->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_cutoff"))));
-			ligthsSpotDirectionCompute->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"button_light" + to_wstring(i) + L"_spotdirection_compute"))));
-			lightsEnabled->set(i, dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_enabled"))));
+			lightsPresets[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"presets_light" + to_wstring(i))));
+			lightsAmbient[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_ambient")));
+			lightsDiffuse[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_diffuse")));
+			lightsSpecular[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_specular")));
+			lightsPosition[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_position")));
+			lightsLinAttenuation[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_linear_attenuation")));
+			lightsConstAttenuation[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_constant_attenuation")));
+			lightsQuadAttenuation[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_quadratic_attenuation")));
+			lightsSpotTo[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_to")));
+			lightsSpotDirection[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_direction")));
+			lightsSpotExponent[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_exponent")));
+			lightsSpotCutoff[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_spot_cutoff")));
+			ligthsSpotDirectionCompute[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"button_light" + to_wstring(i) + L"_spotdirection_compute")));
+			lightsEnabled[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(new String(L"light" + to_wstring(i) + L"_enabled")));
 		}
 		value = new MutableString();
 		selectedObjects = new MutableString();
@@ -368,9 +322,10 @@ void LevelEditorScreenController::selectObjectInObjectListbox(const wstring& obj
 void LevelEditorScreenController::onObjectsSelect()
 {
 	vector<wstring> selectedObjectList;
-	auto t = new StringTokenizer(objectsListBox->getController()->getValue()->toString(), u"|"_j);
-	while (t->hasMoreTokens()) {
-		selectedObjectList.push_back(t->nextToken()->getCPPWString());
+	StringTokenizer t;
+	t.tokenize(objectsListBox->getController()->getValue()->toString()->getCPPWString(), L"|");
+	while (t.hasMoreTokens()) {
+		selectedObjectList.push_back(t.nextToken());
 	}
 	if (selectedObjectList.empty() == false)
 		view->selectObjects(&selectedObjectList);
@@ -654,9 +609,9 @@ void LevelEditorScreenController::onQuit()
 void LevelEditorScreenController::onObjectTranslationApply()
 {
 	try {
-		auto x = Float::parseFloat(objectTranslationX->getController()->getValue()->toString());
-		auto y = Float::parseFloat(objectTranslationY->getController()->getValue()->toString());
-		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toString());
+		auto x = Float::parseFloat(objectTranslationX->getController()->getValue()->toString()->getCPPWString());
+		auto y = Float::parseFloat(objectTranslationY->getController()->getValue()->toString()->getCPPWString());
+		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toString()->getCPPWString());
 		view->objectTranslationApply(x, y, z);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
@@ -666,9 +621,9 @@ void LevelEditorScreenController::onObjectTranslationApply()
 void LevelEditorScreenController::onObjectScaleApply()
 {
 	try {
-		auto x = Float::parseFloat(objectScaleX->getController()->getValue()->toString());
-		auto y = Float::parseFloat(objectScaleY->getController()->getValue()->toString());
-		auto z = Float::parseFloat(objectScaleZ->getController()->getValue()->toString());
+		auto x = Float::parseFloat(objectScaleX->getController()->getValue()->toString()->getCPPWString());
+		auto y = Float::parseFloat(objectScaleY->getController()->getValue()->toString()->getCPPWString());
+		auto z = Float::parseFloat(objectScaleZ->getController()->getValue()->toString()->getCPPWString());
 		if (x < -10.0f || x > 10.0f)
 			throw _ExceptionBase("x scale must be within -10 .. +10");
 
@@ -687,9 +642,9 @@ void LevelEditorScreenController::onObjectScaleApply()
 void LevelEditorScreenController::onObjectRotationsApply()
 {
 	try {
-		auto x = Float::parseFloat(objectRotationX->getController()->getValue()->toString());
-		auto y = Float::parseFloat(objectRotationY->getController()->getValue()->toString());
-		auto z = Float::parseFloat(objectRotationZ->getController()->getValue()->toString());
+		auto x = Float::parseFloat(objectRotationX->getController()->getValue()->toString()->getCPPWString());
+		auto y = Float::parseFloat(objectRotationY->getController()->getValue()->toString()->getCPPWString());
+		auto z = Float::parseFloat(objectRotationZ->getController()->getValue()->toString()->getCPPWString());
 		if (x < -360.0f || x > 360.0f)
 			throw _ExceptionBase("x axis rotation must be within -360 .. +360");
 
@@ -722,13 +677,14 @@ void LevelEditorScreenController::onObjectCenter()
 
 void LevelEditorScreenController::onMapLoad()
 {
+	vector<wstring> extensions = {
+		L"tl",
+		L"dae"
+	};
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		L"Load from: ",
-		new StringArray({
-			u"tl"_j,
-			u"dae"_j
-		}),
+		&extensions,
 		view->getFileName(),
 		new LevelEditorScreenController_onMapLoad_1(this)
 	);
@@ -736,10 +692,13 @@ void LevelEditorScreenController::onMapLoad()
 
 void LevelEditorScreenController::onMapSave()
 {
+	vector<wstring> extensions = {
+		L"tl",
+	};
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		L"Save to: ",
-		new StringArray({u"tl"_j}),
+		&extensions,
 		view->getFileName(),
 		new LevelEditorScreenController_onMapSave_2(this)
 	);
@@ -748,7 +707,7 @@ void LevelEditorScreenController::onMapSave()
 void LevelEditorScreenController::onGridApply()
 {
 	try {
-		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue()->toString());
+		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue()->toString()->getCPPWString());
 		if (gridY < -5.0f || gridY > 5.0f)
 			throw _ExceptionBase("grid y position must be within -5 .. +5");
 
@@ -767,13 +726,13 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
-		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >(((*lightsPresets)[i]->getScreenNode()->getNodeById(new String((*lightsPresets)[i]->getId()->getCPPWString() + L"_inner"))));
+		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(new String(lightsPresets[i]->getId()->getCPPWString() + L"_inner"))));
 		auto idx = 0;
 		wstring lightPresetsInnerNodeSubNodesXML = L"";
 		lightPresetsInnerNodeSubNodesXML =
 			lightPresetsInnerNodeSubNodesXML +
 			L"<scrollarea-vertical id=\"" +
-			(*lightsPresets)[i]->getId()->getCPPWString() +
+			lightsPresets[i]->getId()->getCPPWString() +
 			L"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 		for (auto it: *lightPresetIds) {
 			wstring lightPresetId = it.first;
@@ -806,30 +765,30 @@ void LevelEditorScreenController::unselectLightPresets()
 
 void LevelEditorScreenController::setLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, Vector3* spotTo, Vector3* spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
-	(*lightsAmbient)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(ambient->getRed()))->append(u", "_j)->append(Tools::formatFloat(ambient->getGreen()))->append(u", "_j)->append(Tools::formatFloat(ambient->getBlue()))->append(u", "_j)->append(Tools::formatFloat(ambient->getAlpha())));
-	(*lightsDiffuse)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(diffuse->getRed()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getGreen()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getBlue()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getAlpha())));
-	(*lightsSpecular)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(specular->getRed()))->append(u", "_j)->append(Tools::formatFloat(specular->getGreen()))->append(u", "_j)->append(Tools::formatFloat(specular->getBlue()))->append(u", "_j)->append(Tools::formatFloat(specular->getAlpha())));
-	(*lightsPosition)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(position->getX()))->append(u", "_j)->append(Tools::formatFloat(position->getY()))->append(u", "_j)->append(Tools::formatFloat(position->getZ()))->append(u", "_j)->append(Tools::formatFloat(position->getW())));
-	(*lightsConstAttenuation)[i]->getController()->setValue(value->set(Tools::formatFloat(constAttenuation)));
-	(*lightsLinAttenuation)[i]->getController()->setValue(value->set(Tools::formatFloat(linearAttenuation)));
-	(*lightsQuadAttenuation)[i]->getController()->setValue(value->set(Tools::formatFloat(quadraticAttenuation)));
-	(*lightsSpotTo)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(spotTo->getX()))->append(u", "_j)->append(Tools::formatFloat(spotTo->getY()))->append(u", "_j)->append(Tools::formatFloat(spotTo->getZ())));
-	(*lightsSpotDirection)[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(spotDirection->getX()))->append(u", "_j)->append(Tools::formatFloat(spotDirection->getY()))->append(u", "_j)->append(Tools::formatFloat(spotDirection->getZ())));
-	(*lightsSpotExponent)[i]->getController()->setValue(value->set(Tools::formatFloat(spotExponent)));
-	(*lightsSpotCutoff)[i]->getController()->setValue(value->set(Tools::formatFloat(spotCutoff)));
-	(*lightsEnabled)[i]->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
-	(*lightsAmbient)[i]->getController()->setDisabled(enabled == false);
-	(*lightsDiffuse)[i]->getController()->setDisabled(enabled == false);
-	(*lightsSpecular)[i]->getController()->setDisabled(enabled == false);
-	(*lightsPosition)[i]->getController()->setDisabled(enabled == false);
-	(*lightsConstAttenuation)[i]->getController()->setDisabled(enabled == false);
-	(*lightsLinAttenuation)[i]->getController()->setDisabled(enabled == false);
-	(*lightsQuadAttenuation)[i]->getController()->setDisabled(enabled == false);
-	(*lightsSpotTo)[i]->getController()->setDisabled(enabled == false);
-	(*lightsSpotDirection)[i]->getController()->setDisabled(enabled == false);
-	(*lightsSpotExponent)[i]->getController()->setDisabled(enabled == false);
-	(*lightsSpotCutoff)[i]->getController()->setDisabled(enabled == false);
-	(*ligthsSpotDirectionCompute)[i]->getController()->setDisabled(enabled == false);
+	lightsAmbient[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(ambient->getRed()))->append(u", "_j)->append(Tools::formatFloat(ambient->getGreen()))->append(u", "_j)->append(Tools::formatFloat(ambient->getBlue()))->append(u", "_j)->append(Tools::formatFloat(ambient->getAlpha())));
+	lightsDiffuse[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(diffuse->getRed()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getGreen()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getBlue()))->append(u", "_j)->append(Tools::formatFloat(diffuse->getAlpha())));
+	lightsSpecular[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(specular->getRed()))->append(u", "_j)->append(Tools::formatFloat(specular->getGreen()))->append(u", "_j)->append(Tools::formatFloat(specular->getBlue()))->append(u", "_j)->append(Tools::formatFloat(specular->getAlpha())));
+	lightsPosition[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(position->getX()))->append(u", "_j)->append(Tools::formatFloat(position->getY()))->append(u", "_j)->append(Tools::formatFloat(position->getZ()))->append(u", "_j)->append(Tools::formatFloat(position->getW())));
+	lightsConstAttenuation[i]->getController()->setValue(value->set(Tools::formatFloat(constAttenuation)));
+	lightsLinAttenuation[i]->getController()->setValue(value->set(Tools::formatFloat(linearAttenuation)));
+	lightsQuadAttenuation[i]->getController()->setValue(value->set(Tools::formatFloat(quadraticAttenuation)));
+	lightsSpotTo[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(spotTo->getX()))->append(u", "_j)->append(Tools::formatFloat(spotTo->getY()))->append(u", "_j)->append(Tools::formatFloat(spotTo->getZ())));
+	lightsSpotDirection[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(spotDirection->getX()))->append(u", "_j)->append(Tools::formatFloat(spotDirection->getY()))->append(u", "_j)->append(Tools::formatFloat(spotDirection->getZ())));
+	lightsSpotExponent[i]->getController()->setValue(value->set(Tools::formatFloat(spotExponent)));
+	lightsSpotCutoff[i]->getController()->setValue(value->set(Tools::formatFloat(spotCutoff)));
+	lightsEnabled[i]->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	lightsAmbient[i]->getController()->setDisabled(enabled == false);
+	lightsDiffuse[i]->getController()->setDisabled(enabled == false);
+	lightsSpecular[i]->getController()->setDisabled(enabled == false);
+	lightsPosition[i]->getController()->setDisabled(enabled == false);
+	lightsConstAttenuation[i]->getController()->setDisabled(enabled == false);
+	lightsLinAttenuation[i]->getController()->setDisabled(enabled == false);
+	lightsQuadAttenuation[i]->getController()->setDisabled(enabled == false);
+	lightsSpotTo[i]->getController()->setDisabled(enabled == false);
+	lightsSpotDirection[i]->getController()->setDisabled(enabled == false);
+	lightsSpotExponent[i]->getController()->setDisabled(enabled == false);
+	lightsSpotCutoff[i]->getController()->setDisabled(enabled == false);
+	ligthsSpotDirectionCompute[i]->getController()->setDisabled(enabled == false);
 }
 
 void LevelEditorScreenController::onLight0Apply()
@@ -855,20 +814,34 @@ void LevelEditorScreenController::onLight3Apply()
 void LevelEditorScreenController::onLightApply(int32_t lightIdx)
 {
 	try {
-		auto enabled = (*lightsEnabled)[lightIdx]->getController()->getValue()->equals(CHECKBOX_CHECKED);
-		view->applyLight(lightIdx, Tools::convertToColor4((*lightsAmbient)[lightIdx]->getController()->getValue()->toString()), Tools::convertToColor4((*lightsDiffuse)[lightIdx]->getController()->getValue()->toString()), Tools::convertToColor4((*lightsSpecular)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector4((*lightsPosition)[lightIdx]->getController()->getValue()->toString()), Tools::convertToFloat((*lightsConstAttenuation)[lightIdx]->getController()->getValue()->toString()), Tools::convertToFloat((*lightsLinAttenuation)[lightIdx]->getController()->getValue()->toString()), Tools::convertToFloat((*lightsQuadAttenuation)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector3((*lightsSpotTo)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector3((*lightsSpotDirection)[lightIdx]->getController()->getValue()->toString()), Tools::convertToFloat((*lightsSpotExponent)[lightIdx]->getController()->getValue()->toString()), Tools::convertToFloat((*lightsSpotCutoff)[lightIdx]->getController()->getValue()->toString()), enabled);
-		(*lightsAmbient)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsDiffuse)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsSpecular)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsPosition)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsConstAttenuation)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsLinAttenuation)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsQuadAttenuation)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsSpotTo)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsSpotDirection)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsSpotExponent)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*lightsSpotCutoff)[lightIdx]->getController()->setDisabled(enabled == false);
-		(*ligthsSpotDirectionCompute)[lightIdx]->getController()->setDisabled(enabled == false);
+		auto enabled = lightsEnabled[lightIdx]->getController()->getValue()->equals(CHECKBOX_CHECKED);
+		view->applyLight(
+			lightIdx,
+			Tools::convertToColor4(lightsAmbient[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToColor4(lightsDiffuse[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToColor4(lightsSpecular[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToFloat(lightsConstAttenuation[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToFloat(lightsLinAttenuation[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToFloat(lightsQuadAttenuation[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToVector3(lightsSpotDirection[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToFloat(lightsSpotExponent[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToFloat(lightsSpotCutoff[lightIdx]->getController()->getValue()->toString()),
+			enabled
+		);
+		lightsAmbient[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsDiffuse[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsSpecular[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsPosition[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsConstAttenuation[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsLinAttenuation[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsQuadAttenuation[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsSpotTo[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsSpotDirection[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsSpotExponent[lightIdx]->getController()->setDisabled(enabled == false);
+		lightsSpotCutoff[lightIdx]->getController()->setDisabled(enabled == false);
+		ligthsSpotDirectionCompute[lightIdx]->getController()->setDisabled(enabled == false);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
@@ -898,7 +871,7 @@ void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
-	auto lightPresetIt = lightPresets->find((*lightsPresets)[lightIdx]->getController()->getValue()->toString()->getCPPWString());
+	auto lightPresetIt = lightPresets->find(lightsPresets[lightIdx]->getController()->getValue()->toString()->getCPPWString());
 	if (lightPresetIt != lightPresets->end()) lightPreset = lightPresetIt->second;
 	if (lightPreset == nullptr) return;
 
@@ -928,7 +901,11 @@ void LevelEditorScreenController::onLight3SpotDirectionCompute()
 void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
 {
 	try {
-		view->computeSpotDirection(lightIdx, Tools::convertToVector4((*lightsPosition)[lightIdx]->getController()->getValue()->toString()), Tools::convertToVector3((*lightsSpotTo)[lightIdx]->getController()->getValue()->toString()));
+		view->computeSpotDirection(
+			lightIdx,
+			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toString())
+		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}

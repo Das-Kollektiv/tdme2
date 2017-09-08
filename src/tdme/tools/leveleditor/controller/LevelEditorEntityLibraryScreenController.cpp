@@ -32,8 +32,6 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -262,14 +260,15 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->equals(u"create_model"_j) == true) {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
+			vector<wstring> extensions = {
+				L"tmm",
+				L"dae",
+				L"tm"
+			};
 			popUps->getFileDialogScreenController()->show(
 				modelPath,
 				L"Load from: ",
-				new StringArray({
-					u"tmm"_j,
-					u"dae"_j,
-					u"tm"_j
-				}),
+				&extensions,
 				L"",
 				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
 			);

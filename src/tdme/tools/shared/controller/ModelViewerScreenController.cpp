@@ -2,12 +2,10 @@
 #include <tdme/tools/shared/controller/ModelViewerScreenController.h>
 
 #include <string>
+#include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
-#include <java/lang/Float.h>
 #include <java/lang/String.h>
+
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -30,6 +28,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
@@ -38,14 +37,13 @@
 #include <SubArray.h>
 #include <ObjectArray.h>
 
+using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::controller::ModelViewerScreenController;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::Float;
+
 using java::lang::String;
+
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -68,24 +66,12 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::viewer::TDMEViewer;
+using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(L"");
 
@@ -223,14 +209,15 @@ void ModelViewerScreenController::onModelLoad()
 		fileName = view->getFileName();
 	}
 	fileName = Tools::getFileName(fileName);
+	vector<wstring> extensions = {
+		L"tmm",
+		L"dae",
+		L"tm"
+	};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		L"Load from: ",
-		new StringArray({
-			u"tmm"_j,
-			u"dae"_j,
-			u"tm"_j
-		}),
+		&extensions,
 		view->getFileName(),
 		new ModelViewerScreenController_onModelLoad_2(this)
 	);
@@ -245,11 +232,14 @@ void ModelViewerScreenController::onModelSave()
 			fileName = fileName + L".tmm";
 		}
 	}
+	vector<wstring> extensions = {
+		L"tmm"
+	};
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		L"Save from: ",
-		new StringArray({u"tmm"_j}),
+		&extensions,
 		fileName,
 		new ModelViewerScreenController_onModelSave_3(this)
 	);
@@ -263,9 +253,9 @@ void ModelViewerScreenController::onModelReload()
 void ModelViewerScreenController::onPivotApply()
 {
 	try {
-		auto x = Float::parseFloat(pivotX->getController()->getValue()->toString());
-		auto y = Float::parseFloat(pivotY->getController()->getValue()->toString());
-		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toString());
+		auto x = Float::parseFloat(pivotX->getController()->getValue()->toString()->getCPPWString());
+		auto y = Float::parseFloat(pivotY->getController()->getValue()->toString()->getCPPWString());
+		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toString()->getCPPWString());
 		view->pivotApply(x, y, z);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));

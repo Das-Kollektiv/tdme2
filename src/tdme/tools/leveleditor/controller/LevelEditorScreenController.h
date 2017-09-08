@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
+using std::array;
 using std::map;
 using std::wstring;
 using std::vector;
@@ -44,22 +46,6 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using java::lang::Object;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace gui {
-namespace nodes {
-typedef ::SubArray< ::tdme::gui::nodes::GUINode, ::java::lang::ObjectArray > GUINodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIParentNode, GUINodeArray > GUIParentNodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUIElementNodeArray;
-}  // namespace nodes
-}  // namespace gui
-}  // namespace tdme
-
-using java::lang::ObjectArray;
-using tdme::gui::nodes::GUIElementNodeArray;
-using tdme::gui::nodes::GUINodeArray;
-using tdme::gui::nodes::GUIParentNodeArray;
 
 /** 
  * Level Editor Screen Controller
@@ -120,20 +106,20 @@ private:
 	GUIElementNode* objectPropertiesListBox {  };
 	GUIElementNode* objectPropertiesPresets {  };
 	GUIElementNode* objectsListBox {  };
-	GUIElementNodeArray* lightsPresets {  };
-	GUIElementNodeArray* lightsAmbient {  };
-	GUIElementNodeArray* lightsDiffuse {  };
-	GUIElementNodeArray* lightsSpecular {  };
-	GUIElementNodeArray* lightsPosition {  };
-	GUIElementNodeArray* lightsLinAttenuation {  };
-	GUIElementNodeArray* lightsConstAttenuation {  };
-	GUIElementNodeArray* lightsQuadAttenuation {  };
-	GUIElementNodeArray* lightsSpotTo {  };
-	GUIElementNodeArray* lightsSpotDirection {  };
-	GUIElementNodeArray* lightsSpotExponent {  };
-	GUIElementNodeArray* lightsSpotCutoff {  };
-	GUIElementNodeArray* ligthsSpotDirectionCompute {  };
-	GUIElementNodeArray* lightsEnabled {  };
+	array<GUIElementNode*, 4> lightsPresets {  };
+	array<GUIElementNode*, 4> lightsAmbient {  };
+	array<GUIElementNode*, 4> lightsDiffuse {  };
+	array<GUIElementNode*, 4> lightsSpecular {  };
+	array<GUIElementNode*, 4> lightsPosition {  };
+	array<GUIElementNode*, 4> lightsLinAttenuation {  };
+	array<GUIElementNode*, 4> lightsConstAttenuation {  };
+	array<GUIElementNode*, 4> lightsQuadAttenuation {  };
+	array<GUIElementNode*, 4> lightsSpotTo {  };
+	array<GUIElementNode*, 4> lightsSpotDirection {  };
+	array<GUIElementNode*, 4> lightsSpotExponent {  };
+	array<GUIElementNode*, 4> lightsSpotCutoff {  };
+	array<GUIElementNode*, 4> ligthsSpotDirectionCompute {  };
+	array<GUIElementNode*, 4> lightsEnabled {  };
 	MutableString* value {  };
 	MutableString* selectedObjects {  };
 	FileDialogPath* mapPath {  };

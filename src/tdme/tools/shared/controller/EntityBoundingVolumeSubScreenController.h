@@ -2,11 +2,11 @@
 
 #pragma once
 
+#include <array>
 #include <string>
+#include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -15,12 +15,10 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
+using std::array;
+using std::vector;
 using std::wstring;
 
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
-using java::lang::String;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -34,38 +32,6 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-namespace tdme {
-namespace gui {
-namespace nodes {
-typedef ::SubArray< ::tdme::gui::nodes::GUINode, ::java::lang::ObjectArray > GUINodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIParentNode, GUINodeArray > GUIParentNodeArray;
-typedef ::SubArray< ::tdme::gui::nodes::GUIElementNode, GUIParentNodeArray > GUIElementNodeArray;
-}  // namespace nodes
-}  // namespace gui
-}  // namespace tdme
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
-using tdme::gui::nodes::GUIElementNodeArray;
-using tdme::gui::nodes::GUINodeArray;
-using tdme::gui::nodes::GUIParentNodeArray;
-
 /** 
  * Entity bounding volume sub screen controller
  * @author Andreas Drewke
@@ -78,27 +44,27 @@ class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
 
 public:
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 8 };
-	static StringArray* MODEL_BOUNDINGVOLUME_IDS;
+	static vector<wstring> MODEL_BOUNDINGVOLUME_IDS;
 
 private:
 	FileDialogPath* modelPath {  };
 	EntityBoundingVolumeView* view {  };
-	GUIElementNodeArray* boundingVolumeTypeDropDown {  };
-	GUIElementNodeArray* boundingVolumeNoneApply {  };
-	GUIElementNodeArray* boundingVolume {  };
-	GUIElementNodeArray* boundingvolumeSphereCenter {  };
-	GUIElementNodeArray* boundingvolumeSphereRadius {  };
-	GUIElementNodeArray* boundingvolumeCapsuleA {  };
-	GUIElementNodeArray* boundingvolumeCapsuleB {  };
-	GUIElementNodeArray* boundingvolumeCapsuleRadius {  };
-	GUIElementNodeArray* boundingvolumeBoundingBoxMin {  };
-	GUIElementNodeArray* boundingvolumeBoundingBoxMax {  };
-	GUIElementNodeArray* boundingvolumeObbCenter {  };
-	GUIElementNodeArray* boundingvolumeObbHalfextension {  };
-	GUIElementNodeArray* boundingvolumeObbRotationX {  };
-	GUIElementNodeArray* boundingvolumeObbRotationY {  };
-	GUIElementNodeArray* boundingvolumeObbRotationZ {  };
-	GUIElementNodeArray* boundingvolumeConvexMeshFile {  };
+	array<GUIElementNode*, 8> boundingVolumeTypeDropDown {  };
+	array<GUIElementNode*, 8> boundingVolumeNoneApply {  };
+	array<GUIElementNode*, 8> boundingVolume {  };
+	array<GUIElementNode*, 8> boundingvolumeSphereCenter {  };
+	array<GUIElementNode*, 8> boundingvolumeSphereRadius {  };
+	array<GUIElementNode*, 8> boundingvolumeCapsuleA {  };
+	array<GUIElementNode*, 8> boundingvolumeCapsuleB {  };
+	array<GUIElementNode*, 8> boundingvolumeCapsuleRadius {  };
+	array<GUIElementNode*, 8> boundingvolumeBoundingBoxMin {  };
+	array<GUIElementNode*, 8> boundingvolumeBoundingBoxMax {  };
+	array<GUIElementNode*, 8> boundingvolumeObbCenter {  };
+	array<GUIElementNode*, 8> boundingvolumeObbHalfextension {  };
+	array<GUIElementNode*, 8> boundingvolumeObbRotationX {  };
+	array<GUIElementNode*, 8> boundingvolumeObbRotationY {  };
+	array<GUIElementNode*, 8> boundingvolumeObbRotationZ {  };
+	array<GUIElementNode*, 8> boundingvolumeConvexMeshFile {  };
 	MutableString* value {  };
 
 public:
@@ -137,7 +103,7 @@ public:
 	 * @param idx
 	 * @param bounding volume types
 	 */
-	virtual void setupBoundingVolumeTypes(int32_t idx, StringArray* boundingVolumeTypes);
+	virtual void setupBoundingVolumeTypes(int32_t idx, vector<wstring>* boundingVolumeTypes);
 
 	/** 
 	 * Display given bounding volume GUI elements
