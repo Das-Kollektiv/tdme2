@@ -2,40 +2,24 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
+using std::vector;
+using std::wstring;
+
 using java::lang::String;
+
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
 
 /** 
  * Entity display view
@@ -45,7 +29,7 @@ using java::lang::StringArray;
 class tdme::tools::shared::views::EntityDisplayView
 {
 private:
-	static StringArray* MODEL_BOUNDINGVOLUME_IDS;
+	static vector<wstring> MODEL_BOUNDINGVOLUME_IDS;
 	Engine* engine {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	bool displayGroundPlate {  };
