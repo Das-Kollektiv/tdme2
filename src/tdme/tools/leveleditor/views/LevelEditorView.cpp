@@ -5,16 +5,11 @@
 #include <string>
 #include <vector>
 
-#include <java/io/Serializable.h>
-#include <java/lang/CharSequence.h>
 #include <java/lang/Character.h>
-#include <java/lang/Comparable.h>
 #include <java/lang/Float.h>
-#include <java/lang/Iterable.h>
 #include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <java/util/Properties.h>
-#include <java/util/Set.h>
+
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -74,9 +69,6 @@
 #include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::find;
 using std::remove;
@@ -85,16 +77,12 @@ using std::to_wstring;
 using std::wstring;
 
 using tdme::tools::leveleditor::views::LevelEditorView;
-using java::io::Serializable;
-using java::lang::CharSequence;
+
 using java::lang::Character;
-using java::lang::Comparable;
 using java::lang::Float;
-using java::lang::Iterable;
 using java::lang::String;
-using java::util::Iterator;
+
 using java::util::Properties;
-using java::util::Set;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -155,26 +143,13 @@ using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-StringArray* LevelEditorView::OBJECTCOLOR_NAMES = (new StringArray({
-	u"blue"_j,
-	u"yellow"_j,
-	u"magenta"_j,
-	u"cyan"_j,
-	u"none"_j
-}));
+vector<wstring> LevelEditorView::OBJECTCOLOR_NAMES = {
+	L"blue",
+	L"yellow",
+	L"magenta",
+	L"cyan",
+	L"none"
+};
 
 constexpr int32_t LevelEditorView::MOUSE_BUTTON_NONE;
 
@@ -1081,22 +1056,22 @@ void LevelEditorView::colorObject()
 		if (levelEditorObject == nullptr)
 			continue;
 
-		auto color = (*OBJECTCOLOR_NAMES)[0];
+		auto color = OBJECTCOLOR_NAMES[0];
 		auto colorProperty = levelEditorObject->getProperty(L"object.color");
 		if (colorProperty == nullptr) {
-			levelEditorObject->addProperty(L"object.color", color->getCPPWString());
+			levelEditorObject->addProperty(L"object.color", color);
 		} else {
-			color = new String(colorProperty->getValue());
-			for (auto i = 0; i < OBJECTCOLOR_NAMES->length; i++) {
-				if (color->equalsIgnoreCase((*OBJECTCOLOR_NAMES)[i])) {
-					color = (*OBJECTCOLOR_NAMES)[(i + 1) % OBJECTCOLOR_NAMES->length];
+			color = colorProperty->getValue();
+			for (auto i = 0; i < OBJECTCOLOR_NAMES.size(); i++) {
+				if (StringUtils::equalsIgnoreCase(color, OBJECTCOLOR_NAMES[i]) == true) {
+					color = OBJECTCOLOR_NAMES[(i + 1) % OBJECTCOLOR_NAMES.size()];
 					break;
 				}
 			}
-			if (color->getCPPWString() == L"none") {
+			if (color == L"none") {
 				levelEditorObject->removeProperty(L"object.color");
 			} else {
-				levelEditorObject->updateProperty(colorProperty->getName(), L"object.color", color->getCPPWString());
+				levelEditorObject->updateProperty(colorProperty->getName(), L"object.color", color);
 			}
 		}
 		setStandardObjectColorEffect(selectedObject);

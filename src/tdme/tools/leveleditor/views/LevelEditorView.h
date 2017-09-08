@@ -7,9 +7,7 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -27,10 +25,9 @@ using std::vector;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
+
 using java::lang::String;
+
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
@@ -46,25 +43,6 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::views::PopUps;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
-
-using java::io::SerializableArray;
-using java::lang::CharSequenceArray;
-using java::lang::ComparableArray;
-using java::lang::ObjectArray;
-using java::lang::StringArray;
-
 /** 
  * TDME Level Editor View
  * @author andreas.drewke
@@ -78,7 +56,7 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 	friend class LevelEditorView_LevelEditorView_1;
 
 private:
-	static StringArray* OBJECTCOLOR_NAMES;
+	static vector<wstring> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
 	static constexpr int32_t MOUSE_BUTTON_MIDDLE { 2 };
