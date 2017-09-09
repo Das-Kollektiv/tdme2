@@ -196,12 +196,12 @@ void GUIElementNode::layout()
 	computeVerticalChildrenAlignment();
 }
 
-wstring& GUIElementNode::getName()
+const wstring& GUIElementNode::getName()
 {
 	return name;
 }
 
-wstring& GUIElementNode::getValue()
+const wstring& GUIElementNode::getValue()
 {
 	return value;
 }

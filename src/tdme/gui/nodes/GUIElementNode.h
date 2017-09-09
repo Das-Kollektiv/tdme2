@@ -122,12 +122,12 @@ public:
 	/** 
 	 * @return name
 	 */
-	wstring& getName();
+	const wstring& getName();
 
 	/** 
 	 * @return value
 	 */
-	wstring& getValue();
+	const wstring& getValue();
 
 	/** 
 	 * @return is selected
