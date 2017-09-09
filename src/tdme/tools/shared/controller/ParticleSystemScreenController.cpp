@@ -105,15 +105,15 @@ using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
 using tdme::utils::_Console;
 
-String* ParticleSystemScreenController::TYPE_NONE = u"None"_j;
-String* ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = u"Object Particle System"_j;
-String* ParticleSystemScreenController::TYPE_POINTSPARTICLESYSTEM = u"Points Particle System"_j;
-String* ParticleSystemScreenController::EMITTER_NONE = u"None"_j;
-String* ParticleSystemScreenController::EMITTER_POINTPARTICLEEMITTER = u"Point Particle Emitter"_j;
-String* ParticleSystemScreenController::EMITTER_BOUNDINGBOXPARTICLEEMITTER = u"BoundingBox Particle Emitter"_j;
-String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTER = u"Circle Particle Emitter"_j;
-String* ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY = u"Circle Particle Emitter Plane Velocity"_j;
-String* ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER = u"Sphere Particle Emitter"_j;
+wstring ParticleSystemScreenController::TYPE_NONE = L"None";
+wstring ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = L"Object Particle System";
+wstring ParticleSystemScreenController::TYPE_POINTSPARTICLESYSTEM = L"Points Particle System";
+wstring ParticleSystemScreenController::EMITTER_NONE = L"None";
+wstring ParticleSystemScreenController::EMITTER_POINTPARTICLEEMITTER = L"Point Particle Emitter";
+wstring ParticleSystemScreenController::EMITTER_BOUNDINGBOXPARTICLEEMITTER = L"BoundingBox Particle Emitter";
+wstring ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTER = L"Circle Particle Emitter";
+wstring ParticleSystemScreenController::EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY = L"Circle Particle Emitter Plane Velocity";
+wstring ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER = L"Sphere Particle Emitter";
 
 ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSystemView* view)
 {
@@ -439,7 +439,7 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 {
 	auto particleSystemTypeString = particleSystemTypes->getController()->getValue()->toString();
 	particleSystemType->getActiveConditions()->removeAll();
-	particleSystemType->getActiveConditions()->add(particleSystemTypeString);
+	particleSystemType->getActiveConditions()->add(particleSystemTypeString->getCPPWString());
 	if (particleSystemTypeString->equals(TYPE_NONE) == true) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::NONE);
 	} else if (particleSystemTypeString->equals(TYPE_OBJECTPARTICLESYSTEM) == true) {
@@ -464,7 +464,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 	auto particleSystem = view->getEntity()->getParticleSystem();
 	auto particleSystemEmitterString = particleSystemEmitters->getController()->getValue()->toString();
 	particleSystemEmitter->getActiveConditions()->removeAll();
-	particleSystemEmitter->getActiveConditions()->add(particleSystemEmitterString);
+	particleSystemEmitter->getActiveConditions()->add(particleSystemEmitterString->getCPPWString());
 	if (particleSystemEmitterString->equals(EMITTER_NONE) == true) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::NONE);
 	} else if (particleSystemEmitterString->equals(EMITTER_POINTPARTICLEEMITTER) == true) {

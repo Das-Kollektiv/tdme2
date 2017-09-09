@@ -57,13 +57,13 @@ void GUIRadioButtonController::init()
 	value = new MutableString();
 }
 
-String* GUIRadioButtonController::CONDITION_SELECTED;
+wstring GUIRadioButtonController::CONDITION_SELECTED;
 
-String* GUIRadioButtonController::CONDITION_UNSELECTED;
+wstring GUIRadioButtonController::CONDITION_UNSELECTED;
 
-String* GUIRadioButtonController::CONDITION_DISABLED;
+wstring GUIRadioButtonController::CONDITION_DISABLED;
 
-String* GUIRadioButtonController::CONDITION_ENABLED;
+wstring GUIRadioButtonController::CONDITION_ENABLED;
 
 map<wstring, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
 
@@ -209,10 +209,10 @@ void GUIRadioButtonController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_SELECTED = u"selected"_j;
-	CONDITION_UNSELECTED = u"unselected"_j;
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_SELECTED = L"selected";
+	CONDITION_UNSELECTED = L"unselected";
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

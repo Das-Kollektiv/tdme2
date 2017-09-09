@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -13,9 +14,9 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
@@ -39,10 +40,10 @@ public:
 	typedef GUINodeController super;
 
 private:
-	static String* CONDITION_DISABLED;
-	static String* CONDITION_ENABLED;
-	static String* CONDITION_OPENED;
-	static String* CONDITION_CLOSED;
+	static wstring CONDITION_DISABLED;
+	static wstring CONDITION_ENABLED;
+	static wstring CONDITION_OPENED;
+	static wstring CONDITION_CLOSED;
 	vector<GUINode*> childControllerNodes {  };
 	vector<GUIDropDownOptionController*> dropDownOptionControllers {  };
 	bool isOpen_ {  };

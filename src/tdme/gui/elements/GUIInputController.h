@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
@@ -34,8 +38,8 @@ public:
 	typedef GUINodeController super;
 
 private:
-	static String* CONDITION_DISABLED;
-	static String* CONDITION_ENABLED;
+	static wstring CONDITION_DISABLED;
+	static wstring CONDITION_ENABLED;
 	GUIInputInternalNode* textInputNode {  };
 	bool disabled {  };
 protected:

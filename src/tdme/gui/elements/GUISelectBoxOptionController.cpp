@@ -46,13 +46,13 @@ GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	ctor(node);
 }
 
-String* GUISelectBoxOptionController::CONDITION_SELECTED;
+wstring GUISelectBoxOptionController::CONDITION_SELECTED;
 
-String* GUISelectBoxOptionController::CONDITION_UNSELECTED;
+wstring GUISelectBoxOptionController::CONDITION_UNSELECTED;
 
-String* GUISelectBoxOptionController::CONDITION_DISABLED;
+wstring GUISelectBoxOptionController::CONDITION_DISABLED;
 
-String* GUISelectBoxOptionController::CONDITION_ENABLED;
+wstring GUISelectBoxOptionController::CONDITION_ENABLED;
 
 void GUISelectBoxOptionController::ctor(GUINode* node)
 {
@@ -184,10 +184,10 @@ void GUISelectBoxOptionController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_SELECTED = u"selected"_j;
-	CONDITION_UNSELECTED = u"unselected"_j;
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_SELECTED = L"selected";
+	CONDITION_UNSELECTED = L"unselected";
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

@@ -64,9 +64,9 @@ void GUISelectBoxMultipleController::init()
 	searchValue = new MutableString();
 }
 
-String* GUISelectBoxMultipleController::CONDITION_DISABLED;
+wstring GUISelectBoxMultipleController::CONDITION_DISABLED;
 
-String* GUISelectBoxMultipleController::CONDITION_ENABLED;
+wstring GUISelectBoxMultipleController::CONDITION_ENABLED;
 
 constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
 
@@ -317,8 +317,8 @@ void GUISelectBoxMultipleController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

@@ -40,8 +40,8 @@ void GUITabContentController::ctor(GUINode* node)
 {
 	super::ctor(node);
 	this->selected = false;
-	CONDITION_SELECTED = ::java::lang::StringBuilder().append(node->getId())->append(u"-selected"_j)->toString();
-	CONDITION_UNSELECTED = ::java::lang::StringBuilder().append(node->getId())->append(u"-unselected"_j)->toString();
+	CONDITION_SELECTED = node->getId() + L"-selected";
+	CONDITION_UNSELECTED = node->getId() + L"-unselected";
 }
 
 bool GUITabContentController::isDisabled()

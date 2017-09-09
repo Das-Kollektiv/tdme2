@@ -46,17 +46,17 @@ GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINo
 	ctor(node);
 }
 
-String* GUISelectBoxMultipleOptionController::CONDITION_SELECTED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_SELECTED;
 
-String* GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED;
 
-String* GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED;
 
-String* GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED;
 
-String* GUISelectBoxMultipleOptionController::CONDITION_DISABLED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_DISABLED;
 
-String* GUISelectBoxMultipleOptionController::CONDITION_ENABLED;
+wstring GUISelectBoxMultipleOptionController::CONDITION_ENABLED;
 
 void GUISelectBoxMultipleOptionController::ctor(GUINode* node)
 {
@@ -220,12 +220,12 @@ void GUISelectBoxMultipleOptionController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_SELECTED = u"selected"_j;
-	CONDITION_UNSELECTED = u"unselected"_j;
-	CONDITION_FOCUSSED = u"focussed"_j;
-	CONDITION_UNFOCUSSED = u"unfocussed"_j;
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_SELECTED = L"selected";
+	CONDITION_UNSELECTED = L"unselected";
+	CONDITION_FOCUSSED = L"focussed";
+	CONDITION_UNFOCUSSED = L"unfocussed";
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

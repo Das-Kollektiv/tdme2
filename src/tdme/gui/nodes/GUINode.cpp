@@ -360,7 +360,7 @@ GUINodeConditions* GUINode::createConditions(const wstring& conditions)
 	StringTokenizer strTokenizer;
 	strTokenizer.tokenize(conditions, L",");
 	while (strTokenizer.hasMoreTokens()) {
-		guiNodeConditions->add(new String(StringUtils::trim(strTokenizer.nextToken())));
+		guiNodeConditions->add(StringUtils::trim(strTokenizer.nextToken()));
 	}
 	return guiNodeConditions;
 }
@@ -371,12 +371,12 @@ bool GUINode::checkConditions()
 	auto hideOn = this->hideOn->conditions;
 
 	for (auto i = 0; i < showOn.size(); i++) {
-		if (java_cast< String* >(showOn.at(i))->equals(GUIElementNode::CONDITION_ALWAYS))
+		if (showOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
 			return true;
 
 	}
 	for (auto i = 0; i < hideOn.size(); i++) {
-		if (java_cast< String* >(hideOn.at(i))->equals(GUIElementNode::CONDITION_ALWAYS))
+		if (hideOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
 			return false;
 
 	}
@@ -390,14 +390,14 @@ bool GUINode::checkConditions()
 	auto elementNode = java_cast< GUIElementNode* >(node);
 	for (auto i = 0; i < hideOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
-			if (java_cast< String* >(hideOn.at(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions.at(j))))
+			if (hideOn.at(i) == elementNode->activeConditions->conditions.at(j))
 				return false;
 
 		}
 	}
 	for (auto i = 0; i < showOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
-			if (java_cast< String* >(showOn.at(i))->equals(java_cast< String* >(elementNode->activeConditions->conditions.at(j))))
+			if (showOn.at(i) == elementNode->activeConditions->conditions.at(j))
 				return true;
 
 		}

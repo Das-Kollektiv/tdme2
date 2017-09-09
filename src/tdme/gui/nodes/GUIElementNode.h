@@ -42,12 +42,12 @@ public:
 	typedef GUIParentNode super;
 
 public: /* protected */
-	static String* CONDITION_ALWAYS;
-	static String* CONDITION_ONMOUSEOVER;
-	static String* CONDITION_CLICK;
+	static wstring CONDITION_ALWAYS;
+	static wstring CONDITION_ONMOUSEOVER;
+	static wstring CONDITION_CLICK;
 
 public:
-	static String* CONDITION_FOCUS;
+	static wstring CONDITION_FOCUS;
 
 public: /* protected */
 	wstring name {  };

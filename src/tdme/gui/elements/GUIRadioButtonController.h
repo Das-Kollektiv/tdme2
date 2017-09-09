@@ -42,10 +42,10 @@ public:
 	typedef GUINodeController super;
 
 private:
-	static String* CONDITION_SELECTED;
-	static String* CONDITION_UNSELECTED;
-	static String* CONDITION_DISABLED;
-	static String* CONDITION_ENABLED;
+	static wstring CONDITION_SELECTED;
+	static wstring CONDITION_UNSELECTED;
+	static wstring CONDITION_DISABLED;
+	static wstring CONDITION_ENABLED;
 	bool selected {  };
 	bool disabled {  };
 	static map<wstring, vector<GUIElementNode*>> radioButtonGroupNodesByName;

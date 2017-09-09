@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
@@ -10,6 +11,7 @@
 #include <java/lang/Object.h>
 
 using std::vector;
+using std::wstring;
 
 using java::lang::Object;
 using java::lang::String;
@@ -30,7 +32,7 @@ public:
 	typedef Object super;
 
 public: /* protected */
-	vector<String*> conditions {  };
+	vector<wstring> conditions {  };
 protected:
 
 	/** 
@@ -43,19 +45,19 @@ public:
 	/** 
 	 * @return conditions
 	 */
-	vector<String*>* getConditions();
+	vector<wstring>* getConditions();
 
 	/** 
 	 * Add a condition
 	 * @param condition
 	 */
-	void add(String* condition);
+	void add(const wstring& condition);
 
 	/** 
 	 * Remove a condition
 	 * @param condition
 	 */
-	void remove(String* condition);
+	void remove(const wstring& condition);
 
 	/** 
 	 * Remove all

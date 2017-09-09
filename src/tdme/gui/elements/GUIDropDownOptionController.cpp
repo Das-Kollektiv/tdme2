@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDownOptionController.java
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
@@ -14,6 +16,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/utils/MutableString.h>
+
+using std::wstring;
 
 using tdme::gui::elements::GUIDropDownOptionController;
 using java::lang::String;
@@ -50,9 +54,9 @@ GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node)
 	ctor(node);
 }
 
-String* GUIDropDownOptionController::CONDITION_SELECTED;
+wstring GUIDropDownOptionController::CONDITION_SELECTED;
 
-String* GUIDropDownOptionController::CONDITION_UNSELECTED;
+wstring GUIDropDownOptionController::CONDITION_UNSELECTED;
 
 void GUIDropDownOptionController::ctor(GUINode* node)
 {
@@ -182,8 +186,8 @@ void GUIDropDownOptionController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_SELECTED = u"selected"_j;
-	CONDITION_UNSELECTED = u"unselected"_j;
+	CONDITION_SELECTED = L"selected";
+	CONDITION_UNSELECTED = L"unselected";
 	}
 };
 

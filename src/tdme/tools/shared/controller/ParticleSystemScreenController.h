@@ -23,7 +23,6 @@ using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using java::lang::Iterable;
-using java::lang::String;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -52,15 +51,15 @@ class tdme::tools::shared::controller::ParticleSystemScreenController final
 	friend class ParticleSystemScreenController_onActionPerformed_4;
 
 private:
-	static String* TYPE_NONE;
-	static String* TYPE_OBJECTPARTICLESYSTEM;
-	static String* TYPE_POINTSPARTICLESYSTEM;
-	static String* EMITTER_NONE;
-	static String* EMITTER_POINTPARTICLEEMITTER;
-	static String* EMITTER_BOUNDINGBOXPARTICLEEMITTER;
-	static String* EMITTER_CIRCLEPARTICLEEMITTER;
-	static String* EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
-	static String* EMITTER_SPHEREPARTICLEEMITTER;
+	static wstring TYPE_NONE;
+	static wstring TYPE_OBJECTPARTICLESYSTEM;
+	static wstring TYPE_POINTSPARTICLESYSTEM;
+	static wstring EMITTER_NONE;
+	static wstring EMITTER_POINTPARTICLEEMITTER;
+	static wstring EMITTER_BOUNDINGBOXPARTICLEEMITTER;
+	static wstring EMITTER_CIRCLEPARTICLEEMITTER;
+	static wstring EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
+	static wstring EMITTER_SPHEREPARTICLEEMITTER;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };

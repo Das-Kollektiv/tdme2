@@ -52,13 +52,13 @@ GUITabController::GUITabController(GUINode* node)
 	ctor(node);
 }
 
-String* GUITabController::CONDITION_DISABLED;
+wstring GUITabController::CONDITION_DISABLED;
 
-String* GUITabController::CONDITION_ENABLED;
+wstring GUITabController::CONDITION_ENABLED;
 
-String* GUITabController::CONDITION_SELECTED;
+wstring GUITabController::CONDITION_SELECTED;
 
-String* GUITabController::CONDITION_UNSELECTED;
+wstring GUITabController::CONDITION_UNSELECTED;
 
 void GUITabController::ctor(GUINode* node)
 {
@@ -206,10 +206,10 @@ void GUITabController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
-	CONDITION_SELECTED = u"selected"_j;
-	CONDITION_UNSELECTED = u"unselected"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
+	CONDITION_SELECTED = L"selected";
+	CONDITION_UNSELECTED = L"unselected";
 	}
 };
 

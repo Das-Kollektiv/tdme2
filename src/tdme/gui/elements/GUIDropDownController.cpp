@@ -1,6 +1,7 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDownController.java
 #include <tdme/gui/elements/GUIDropDownController.h>
 
+#include <string>
 #include <vector>
 
 #include <java/lang/Object.h>
@@ -21,6 +22,7 @@
 #include <tdme/utils/MutableString.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::gui::elements::GUIDropDownController;
 using java::lang::Object;
@@ -69,13 +71,13 @@ void GUIDropDownController::init()
 	value = new MutableString();
 }
 
-String* GUIDropDownController::CONDITION_DISABLED;
+wstring GUIDropDownController::CONDITION_DISABLED;
 
-String* GUIDropDownController::CONDITION_ENABLED;
+wstring GUIDropDownController::CONDITION_ENABLED;
 
-String* GUIDropDownController::CONDITION_OPENED;
+wstring GUIDropDownController::CONDITION_OPENED;
 
-String* GUIDropDownController::CONDITION_CLOSED;
+wstring GUIDropDownController::CONDITION_CLOSED;
 
 void GUIDropDownController::ctor(GUINode* node)
 {
@@ -317,10 +319,10 @@ void GUIDropDownController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
-	CONDITION_OPENED = u"opened"_j;
-	CONDITION_CLOSED = u"closed"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
+	CONDITION_OPENED = L"opened";
+	CONDITION_CLOSED = L"closed";
 	}
 };
 

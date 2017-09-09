@@ -40,9 +40,9 @@ GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node
 	ctor(node);
 }
 
-String* GUIElementIgnoreEventsController::CONDITION_DISABLED;
+wstring GUIElementIgnoreEventsController::CONDITION_DISABLED;
 
-String* GUIElementIgnoreEventsController::CONDITION_ENABLED;
+wstring GUIElementIgnoreEventsController::CONDITION_ENABLED;
 
 void GUIElementIgnoreEventsController::ctor(GUINode* node)
 {
@@ -129,8 +129,8 @@ void GUIElementIgnoreEventsController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

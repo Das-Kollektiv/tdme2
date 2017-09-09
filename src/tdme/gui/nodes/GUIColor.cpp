@@ -8,7 +8,6 @@
 
 #include <Array.h>
 #include <java/lang/Integer.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Arrays.h>
 #include <tdme/engine/model/Color4.h>
@@ -23,7 +22,6 @@ using std::vector;
 
 using tdme::gui::nodes::GUIColor;
 using java::lang::Integer;
-using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Arrays;
 using tdme::engine::model::Color4;

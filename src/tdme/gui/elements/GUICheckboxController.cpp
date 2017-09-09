@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUICheckboxController.java
 #include <tdme/gui/elements/GUICheckboxController.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -14,7 +13,6 @@
 #include <tdme/utils/MutableString.h>
 
 using tdme::gui::elements::GUICheckboxController;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -46,13 +44,13 @@ GUICheckboxController::GUICheckboxController(GUINode* node)
 	ctor(node);
 }
 
-String* GUICheckboxController::CONDITION_CHECKED;
+wstring GUICheckboxController::CONDITION_CHECKED;
 
-String* GUICheckboxController::CONDITION_UNCHECKED;
+wstring GUICheckboxController::CONDITION_UNCHECKED;
 
-String* GUICheckboxController::CONDITION_DISABLED;
+wstring GUICheckboxController::CONDITION_DISABLED;
 
-String* GUICheckboxController::CONDITION_ENABLED;
+wstring GUICheckboxController::CONDITION_ENABLED;
 
 void GUICheckboxController::ctor(GUINode* node)
 {
@@ -177,10 +175,10 @@ void GUICheckboxController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_CHECKED = u"checked"_j;
-	CONDITION_UNCHECKED = u"unchecked"_j;
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_CHECKED = L"checked";
+	CONDITION_UNCHECKED = L"unchecked";
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
@@ -33,8 +37,8 @@ public:
 	typedef GUINodeController super;
 
 private:
-	String* CONDITION_SELECTED {  };
-	String* CONDITION_UNSELECTED {  };
+	wstring CONDITION_SELECTED {  };
+	wstring CONDITION_UNSELECTED {  };
 	bool selected {  };
 protected:
 

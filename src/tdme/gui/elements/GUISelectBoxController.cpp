@@ -59,9 +59,9 @@ void GUISelectBoxController::init()
 	value = new MutableString();
 }
 
-String* GUISelectBoxController::CONDITION_DISABLED;
+wstring GUISelectBoxController::CONDITION_DISABLED;
 
-String* GUISelectBoxController::CONDITION_ENABLED;
+wstring GUISelectBoxController::CONDITION_ENABLED;
 
 void GUISelectBoxController::ctor(GUINode* node)
 {
@@ -267,8 +267,8 @@ void GUISelectBoxController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

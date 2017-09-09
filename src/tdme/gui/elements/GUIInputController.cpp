@@ -1,6 +1,8 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIInputController.java
 #include <tdme/gui/elements/GUIInputController.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
@@ -11,6 +13,8 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
+
+using std::wstring;
 
 using tdme::gui::elements::GUIInputController;
 using java::lang::String;
@@ -44,9 +48,9 @@ GUIInputController::GUIInputController(GUINode* node)
 	ctor(node);
 }
 
-String* GUIInputController::CONDITION_DISABLED;
+wstring GUIInputController::CONDITION_DISABLED;
 
-String* GUIInputController::CONDITION_ENABLED;
+wstring GUIInputController::CONDITION_ENABLED;
 
 void GUIInputController::ctor(GUINode* node)
 {
@@ -132,8 +136,8 @@ void GUIInputController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

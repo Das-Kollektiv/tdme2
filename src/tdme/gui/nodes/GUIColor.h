@@ -18,7 +18,6 @@ using std::wstring;
 using std::vector;
 
 using tdme::engine::model::Color4Base;
-using java::lang::String;
 using tdme::engine::model::Color4;
 using java::lang::Object;
 using tdme::gui::nodes::GUIColor;

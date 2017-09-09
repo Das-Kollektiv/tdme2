@@ -46,9 +46,9 @@ GUIElementController::GUIElementController(GUINode* node)
 	ctor(node);
 }
 
-String* GUIElementController::CONDITION_DISABLED;
+wstring GUIElementController::CONDITION_DISABLED;
 
-String* GUIElementController::CONDITION_ENABLED;
+wstring GUIElementController::CONDITION_ENABLED;
 
 void GUIElementController::ctor(GUINode* node)
 {
@@ -167,8 +167,8 @@ void GUIElementController::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_DISABLED = u"disabled"_j;
-	CONDITION_ENABLED = u"enabled"_j;
+	CONDITION_DISABLED = L"disabled";
+	CONDITION_ENABLED = L"enabled";
 	}
 };
 

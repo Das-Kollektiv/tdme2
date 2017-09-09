@@ -63,13 +63,13 @@ void GUIElementNode::init()
 	activeConditions = new GUINodeConditions();
 }
 
-String* GUIElementNode::CONDITION_ALWAYS;
+wstring GUIElementNode::CONDITION_ALWAYS;
 
-String* GUIElementNode::CONDITION_ONMOUSEOVER;
+wstring GUIElementNode::CONDITION_ONMOUSEOVER;
 
-String* GUIElementNode::CONDITION_CLICK;
+wstring GUIElementNode::CONDITION_CLICK;
 
-String* GUIElementNode::CONDITION_FOCUS;
+wstring GUIElementNode::CONDITION_FOCUS;
 
 void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */
 {
@@ -285,10 +285,10 @@ void GUIElementNode::clinit()
 {
 struct string_init_ {
 	string_init_() {
-	CONDITION_ALWAYS = u"always"_j;
-	CONDITION_ONMOUSEOVER = u"mouseover"_j;
-	CONDITION_CLICK = u"click"_j;
-	CONDITION_FOCUS = u"focus"_j;
+	CONDITION_ALWAYS = L"always";
+	CONDITION_ONMOUSEOVER = L"mouseover";
+	CONDITION_CLICK = L"click";
+	CONDITION_FOCUS = L"focus";
 	}
 };
 

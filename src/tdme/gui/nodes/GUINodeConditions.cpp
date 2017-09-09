@@ -40,21 +40,21 @@ void GUINodeConditions::ctor()
 	super::ctor();
 }
 
-vector<String*>* GUINodeConditions::getConditions()
+vector<wstring>* GUINodeConditions::getConditions()
 {
 	return &conditions;
 }
 
-void GUINodeConditions::add(String* condition)
+void GUINodeConditions::add(const wstring& condition)
 {
 	remove(condition);
 	conditions.push_back(condition);
 }
 
-void GUINodeConditions::remove(String* condition)
+void GUINodeConditions::remove(const wstring& condition)
 {
-	for (vector<String*>::iterator i = conditions.begin(); i != conditions.end(); i++) {
-		if (condition->equals(*i)) {
+	for (vector<wstring>::iterator i = conditions.begin(); i != conditions.end(); i++) {
+		if (condition == *i) {
 			conditions.erase(i);
 			return;
 		}

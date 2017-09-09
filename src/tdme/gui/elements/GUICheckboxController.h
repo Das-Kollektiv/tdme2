@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,8 +12,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::wstring;
+
 using tdme::gui::nodes::GUINodeController;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
@@ -33,10 +36,10 @@ public:
 	typedef GUINodeController super;
 
 private:
-	static String* CONDITION_CHECKED;
-	static String* CONDITION_UNCHECKED;
-	static String* CONDITION_DISABLED;
-	static String* CONDITION_ENABLED;
+	static wstring CONDITION_CHECKED;
+	static wstring CONDITION_UNCHECKED;
+	static wstring CONDITION_DISABLED;
+	static wstring CONDITION_ENABLED;
 	bool checked {  };
 	bool disabled {  };
 	MutableString* value {  };

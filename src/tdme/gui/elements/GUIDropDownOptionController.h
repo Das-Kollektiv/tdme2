@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,8 +12,9 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using std::wstring;
+
 using tdme::gui::nodes::GUINodeController;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
@@ -34,8 +37,8 @@ public:
 	typedef GUINodeController super;
 
 private:
-	static String* CONDITION_SELECTED;
-	static String* CONDITION_UNSELECTED;
+	static wstring CONDITION_SELECTED;
+	static wstring CONDITION_UNSELECTED;
 	GUIParentNode* dropDownNode {  };
 	bool selected {  };
 protected:
