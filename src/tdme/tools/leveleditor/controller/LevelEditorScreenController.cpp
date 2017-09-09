@@ -218,7 +218,7 @@ void LevelEditorScreenController::unsetObjectProperties()
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
 	objectPropertyValue->getController()->setDisabled(true);
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId() + L"_inner"))));
 	objectPropertiesListBoxInnerNode->clearSubNodes();
 }
 
@@ -261,13 +261,13 @@ void LevelEditorScreenController::onObjectDataApply()
 void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 {
 	selectedObjects->set(objectsListBox->getController()->getValue());
-	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(new String(objectsListBox->getId()->getCPPWString() + L"_inner"))));
+	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(new String(objectsListBox->getId() + L"_inner"))));
 	auto idx = 1;
 	wstring objectsListBoxSubNodesXML = L"";
 	objectsListBoxSubNodesXML =
 		objectsListBoxSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		objectsListBox->getId()->getCPPWString() +
+		objectsListBox->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (int i = 0; i < level->getObjectCount(); i++) {
 		auto objectId = level->getObjectAt(i)->getId();
@@ -417,13 +417,13 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
 	mapPropertySave->getController()->setDisabled(true);
-	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(new String(mapPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
+	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(new String(mapPropertiesListBox->getId() + L"_inner"))));
 	auto idx = 1;
 	wstring mapPropertiesListBoxSubNodesXML = L"";
 	mapPropertiesListBoxSubNodesXML =
 		mapPropertiesListBoxSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		mapPropertiesListBox->getId()->getCPPWString() +
+		mapPropertiesListBox->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < level->getPropertyCount(); i++) {
 		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
@@ -477,13 +477,13 @@ void LevelEditorScreenController::onMapPropertyRemove()
 
 void LevelEditorScreenController::setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds)
 {
-	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(new String(objectPropertiesPresets->getId()->getCPPWString() + L"_inner"))));
+	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(new String(objectPropertiesPresets->getId() + L"_inner"))));
 	auto idx = 0;
 	wstring objectPropertiesPresetsInnerNodeSubNodesXML = L"";
 	objectPropertiesPresetsInnerNodeSubNodesXML =
 		objectPropertiesPresetsInnerNodeSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		objectPropertiesPresets->getId()->getCPPWString() +
+		objectPropertiesPresets->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: *objectPresetIds) {
 		auto modelPresetId = it.first;
@@ -543,13 +543,13 @@ void LevelEditorScreenController::setObjectProperties(const wstring& presetId, L
 	objectPropertyName->getController()->setDisabled(true);
 	objectPropertyValue->getController()->setDisabled(true);
 	objectPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId()->getCPPWString() + L"_inner"))));
+	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(new String(objectPropertiesListBox->getId() + L"_inner"))));
 	auto idx = 1;
 	wstring objectPropertiesListBoxSubNodesXML = L"";
 	objectPropertiesListBoxSubNodesXML =
 		objectPropertiesListBoxSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		objectPropertiesListBox->getId()->getCPPWString() +
+		objectPropertiesListBox->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < object->getPropertyCount(); i++) {
 	PropertyModelClass* objectProperty = object->getPropertyByIndex(i);
@@ -726,13 +726,13 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
-		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(new String(lightsPresets[i]->getId()->getCPPWString() + L"_inner"))));
+		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(new String(lightsPresets[i]->getId() + L"_inner"))));
 		auto idx = 0;
 		wstring lightPresetsInnerNodeSubNodesXML = L"";
 		lightPresetsInnerNodeSubNodesXML =
 			lightPresetsInnerNodeSubNodesXML +
 			L"<scrollarea-vertical id=\"" +
-			lightsPresets[i]->getId()->getCPPWString() +
+			lightsPresets[i]->getId() +
 			L"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 		for (auto it: *lightPresetIds) {
 			wstring lightPresetId = it.first;
@@ -923,115 +923,115 @@ void LevelEditorScreenController::loadFile(const wstring& pathName, const wstrin
 
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId()->equals(L"objects_listbox") == true) {
+	if (node->getId().compare(L"objects_listbox") == 0) {
 	} else
-	if (node->getId()->equals(L"map_properties_listbox") == true) {
+	if (node->getId().compare(L"map_properties_listbox") == 0) {
 		onMapPropertiesSelectionChanged();
 	} else
-	if (node->getId()->equals(L"object_properties_listbox") == true) {
+	if (node->getId().compare(L"object_properties_listbox") == 0) {
 		onObjectPropertiesSelectionChanged();
 	} else {
-		_Console::println(wstring(L"LevelEditorScreenController::onValueChanged: " + node->getId()->getCPPWString()));
+		_Console::println(wstring(L"LevelEditorScreenController::onValueChanged: " + node->getId()));
 	}
 }
 
 void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (type == GUIActionListener_Type::PERFORMED) {
-		if (node->getId()->equals(L"button_objects_select") == true) {
+		if (node->getId().compare(L"button_objects_select") == 0) {
 			onObjectsSelect();
 		} else
-		if (node->getId()->equals(L"button_objects_unselect") == true) {
+		if (node->getId().compare(L"button_objects_unselect") == 0) {
 			onObjectsUnselect();
 		} else
-		if (node->getId()->equals(L"button_grid_apply") == true) {
+		if (node->getId().compare(L"button_grid_apply") == 0) {
 			onGridApply();
 		} else
-		if (node->getId()->equals(L"button_map_load") == true) {
+		if (node->getId().compare(L"button_map_load") == 0) {
 			onMapLoad();
 		} else
-		if (node->getId()->equals(L"button_map_save") == true) {
+		if (node->getId().compare(L"button_map_save") == 0) {
 			onMapSave();
 		} else
-		if (node->getId()->equals(L"button_map_properties_add") == true) {
+		if (node->getId().compare(L"button_map_properties_add") == 0) {
 			onMapPropertyAdd();
 		} else
-		if (node->getId()->equals(L"button_map_properties_remove") == true) {
+		if (node->getId().compare(L"button_map_properties_remove") == 0) {
 			onMapPropertyRemove();
 		} else
-		if (node->getId()->equals(L"button_map_properties_save") == true) {
+		if (node->getId().compare(L"button_map_properties_save") == 0) {
 			onMapPropertySave();
 		} else
-		if (node->getId()->equals(L"button_objectdata_apply") == true) {
+		if (node->getId().compare(L"button_objectdata_apply") == 0) {
 			onObjectDataApply();
 		} else
-		if (node->getId()->equals(L"button_translation_apply") == true) {
+		if (node->getId().compare(L"button_translation_apply") == 0) {
 			onObjectTranslationApply();
 		} else
-		if (node->getId()->equals(L"button_scale_apply") == true) {
+		if (node->getId().compare(L"button_scale_apply") == 0) {
 			onObjectScaleApply();
 		} else
-		if (node->getId()->equals(L"button_rotation_apply") == true) {
+		if (node->getId().compare(L"button_rotation_apply") == 0) {
 			onObjectRotationsApply();
 		} else
-		if (node->getId()->equals(L"button_object_color") == true) {
+		if (node->getId().compare(L"button_object_color") == 0) {
 			onObjectColor();
 		} else
-		if (node->getId()->equals(L"button_object_center") == true) {
+		if (node->getId().compare(L"button_object_center") == 0) {
 			onObjectCenter();
 		} else
-		if (node->getId()->equals(L"button_object_remove") == true) {
+		if (node->getId().compare(L"button_object_remove") == 0) {
 			onObjectRemove();
 		} else
-		if (node->getId()->equals(L"button_object_properties_presetapply") == true) {
+		if (node->getId().compare(L"button_object_properties_presetapply") == 0) {
 			onObjectPropertyPresetApply();
 		} else
-		if (node->getId()->equals(L"button_object_properties_add") == true) {
+		if (node->getId().compare(L"button_object_properties_add") == 0) {
 			onObjectPropertyAdd();
 		} else
-		if (node->getId()->equals(L"button_object_properties_remove") == true) {
+		if (node->getId().compare(L"button_object_properties_remove") == 0) {
 			onObjectPropertyRemove();
 		} else
-		if (node->getId()->equals(L"button_object_properties_save") == true) {
+		if (node->getId().compare(L"button_object_properties_save") == 0) {
 			onObjectPropertySave();
 		} else
-		if (node->getId()->equals(L"button_light0_presetapply") == true) {
+		if (node->getId().compare(L"button_light0_presetapply") == 0) {
 			onLight0PresetApply();
 		} else
-		if (node->getId()->equals(L"button_light0_spotdirection_compute") == true) {
+		if (node->getId().compare(L"button_light0_spotdirection_compute") == 0) {
 			onLight0SpotDirectionCompute();
 		} else
-		if (node->getId()->equals(L"button_light0_apply") == true) {
+		if (node->getId().compare(L"button_light0_apply") == 0) {
 			onLight0Apply();
 		} else
-		if (node->getId()->equals(L"button_light1_presetapply") == true) {
+		if (node->getId().compare(L"button_light1_presetapply") == 0) {
 			onLight1PresetApply();
 		} else
-		if (node->getId()->equals(L"button_light1_spotdirection_compute") == true) {
+		if (node->getId().compare(L"button_light1_spotdirection_compute") == 0) {
 			onLight1SpotDirectionCompute();
 		} else
-		if (node->getId()->equals(L"button_light1_apply") == true) {
+		if (node->getId().compare(L"button_light1_apply") == 0) {
 			onLight1Apply();
 		} else
-		if (node->getId()->equals(L"button_light2_presetapply") == true) {
+		if (node->getId().compare(L"button_light2_presetapply") == 0) {
 			onLight2PresetApply();
 		} else
-		if (node->getId()->equals(L"button_light2_spotdirection_compute") == true) {
+		if (node->getId().compare(L"button_light2_spotdirection_compute") == 0) {
 			onLight2SpotDirectionCompute();
 		} else
-		if (node->getId()->equals(L"button_light2_apply") == true) {
+		if (node->getId().compare(L"button_light2_apply") == 0) {
 			onLight2Apply();
 		} else
-		if (node->getId()->equals(L"button_light3_presetapply") == true) {
+		if (node->getId().compare(L"button_light3_presetapply") == 0) {
 			onLight3PresetApply();
 		} else
-		if (node->getId()->equals(L"button_light3_spotdirection_compute") == true) {
+		if (node->getId().compare(L"button_light3_spotdirection_compute") == 0) {
 			onLight3SpotDirectionCompute();
 		} else
-		if (node->getId()->equals(L"button_light3_apply") == true) {
+		if (node->getId().compare(L"button_light3_apply") == 0) {
 			onLight3Apply();
 		} else {
-			_Console::println(wstring(L"LevelEditorScreenController::onActionPerformed: " + node->getId()->getCPPWString()));
+			_Console::println(wstring(L"LevelEditorScreenController::onActionPerformed: " + node->getId()));
 		}
 	}
 }

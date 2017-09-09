@@ -291,13 +291,13 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(u"button_model_load"_j)) {
+				if (node->getId().compare(L"button_model_load") == 0) {
 					onModelLoad();
-				} else if (node->getId()->equals(u"button_model_reload"_j)) {
+				} else if (node->getId().compare(L"button_model_reload") == 0) {
 					onModelReload();
-				} else if (node->getId()->equals(u"button_model_save"_j)) {
+				} else if (node->getId().compare(L"button_model_save") == 0) {
 					onModelSave();
-				} else if (node->getId()->equals(u"button_pivot_apply"_j)) {
+				} else if (node->getId().compare(L"button_pivot_apply") == 0) {
 					onPivotApply();
 				} else {
 					_Console::println(
@@ -305,10 +305,10 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->toWString() +
 							L"', id = '" +
-							node->getId()->getCPPWString() +
+							node->getId() +
 							L"'" +
 							L", name = '" +
-							node->getName()->getCPPWString() +
+							node->getName() +
 							L"'"
 						)
 					);

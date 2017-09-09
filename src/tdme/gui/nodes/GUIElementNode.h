@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
 using java::lang::String;
@@ -46,8 +50,8 @@ public:
 	static String* CONDITION_FOCUS;
 
 public: /* protected */
-	String* name {  };
-	String* value {  };
+	wstring name {  };
+	wstring value {  };
 	bool selected {  };
 	bool disabled {  };
 	GUINodeConditions* activeConditions {  };
@@ -78,7 +82,7 @@ protected:
 	 * @param ignore events
 	 * @throws GUIParserException
 	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* name, String* value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */;
+	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */;
 
 public: /* protected */
 
@@ -118,12 +122,12 @@ public:
 	/** 
 	 * @return name
 	 */
-	String* getName();
+	wstring& getName();
 
 	/** 
 	 * @return value
 	 */
-	String* getValue();
+	wstring& getValue();
 
 	/** 
 	 * @return is selected
@@ -143,7 +147,7 @@ public:
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	// Generated
-	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* name, String* value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
+	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
 protected:
 	GUIElementNode(const ::default_init_tag&);
 

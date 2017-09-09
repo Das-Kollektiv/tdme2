@@ -112,7 +112,7 @@ public:
 	 * @param string
 	 * @return string with unescaped quotes
 	 */
-	static String* unescapeQuotes(String* string);
+	static const wstring unescapeQuotes(const wstring& string);
 
 	/** 
 	 * Escape quotes

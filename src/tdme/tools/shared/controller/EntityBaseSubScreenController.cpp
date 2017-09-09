@@ -108,13 +108,13 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 
 void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds)
 {
-	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(new String(entityPropertiesPresets->getId()->getCPPWString() + L"_inner"))));
+	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(new String(entityPropertiesPresets->getId() + L"_inner"))));
 	auto idx = 0;
 	wstring entityPropertiesPresetsInnerNodeSubNodesXML = L"";
 	entityPropertiesPresetsInnerNodeSubNodesXML =
 		entityPropertiesPresetsInnerNodeSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		entityPropertiesPresets->getId()->getCPPWString() +
+		entityPropertiesPresets->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: *entityPresetIds) {
 		auto entityPresetId = it.first;
@@ -148,13 +148,13 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
 	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
-	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId()->getCPPWString() + L"_inner"))));
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId() + L"_inner"))));
 	auto idx = 1;
 	wstring entityPropertiesListBoxSubNodesXML = L"";
 	entityPropertiesListBoxSubNodesXML =
 		entityPropertiesListBoxSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		entityPropertiesList->getId()->getCPPWString() +
+		entityPropertiesList->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
 		PropertyModelClass* entityProperty = entity->getPropertyByIndex(i);
@@ -182,7 +182,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::unsetEntityProperties()
 {
-	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId()->getCPPWString() + L"_inner"))));
+	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(new String(entityPropertiesList->getId() + L"_inner"))));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
 	entityPropertiesPresets->getController()->setValue(value->set(u"none"_j));
 	entityPropertiesPresets->getController()->setDisabled(true);
@@ -266,19 +266,19 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 		if ((v == GUIActionListener_Type::PERFORMED))
 		{
 			{
-				if (node->getId()->equals(L"button_entity_apply")) {
+				if (node->getId().compare(L"button_entity_apply") == 0) {
 					onEntityDataApply(entity);
 				} else
-				if (node->getId()->equals(L"button_entity_properties_presetapply")) {
+				if (node->getId().compare(L"button_entity_properties_presetapply") == 0) {
 					onEntityPropertyPresetApply(entity);
 				} else
-				if (node->getId()->equals(L"button_entity_properties_add")) {
+				if (node->getId().compare(L"button_entity_properties_add") == 0) {
 					onEntityPropertyAdd(entity);
 				} else
-				if (node->getId()->equals(L"button_entity_properties_remove")) {
+				if (node->getId().compare(L"button_entity_properties_remove") == 0) {
 					onEntityPropertyRemove(entity);
 				} else
-				if (node->getId()->equals(L"button_entity_properties_save")) {
+				if (node->getId().compare(L"button_entity_properties_save") == 0) {
 					onEntityPropertySave(entity);
 				} else {
 				}

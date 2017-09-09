@@ -2,12 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::String;
@@ -44,7 +48,7 @@ public:
 	 * @param s
 	 * @return max length
 	 */
-	static int32_t createMaxLength(String* s);
+	static int32_t createMaxLength(const wstring& s);
 
 private:
 	GUIFont* font {  };
@@ -72,7 +76,7 @@ protected:
 	 * @param text
 	 * @throws Exception
 	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, String* colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */;
+	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */;
 
 public: /* protected */
 
@@ -104,7 +108,7 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
-	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, String* colorDisabled, MutableString* text, int32_t maxLength);
+	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength);
 protected:
 	GUIInputInternalNode(const ::default_init_tag&);
 

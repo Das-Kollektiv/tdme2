@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/gui/GUIParserException.h>
 
 using std::array;
+using std::wstring;
 using std::vector;
 
 using tdme::engine::model::Color4Base;
@@ -45,7 +47,7 @@ public:
 
 private:
 	static vector<GUIColor*> COLOR_INSTANCES;
-	static vector<String*> COLOR_NAMES;
+	static vector<wstring> COLOR_NAMES;
 
 public:
 	/**
@@ -83,5 +85,5 @@ public:
 	 * Public constructor
 	 * @param color as string
 	 */
-	GUIColor(String* colorString) throw (GUIParserException);
+	GUIColor(const wstring& colorString) throw (GUIParserException);
 };

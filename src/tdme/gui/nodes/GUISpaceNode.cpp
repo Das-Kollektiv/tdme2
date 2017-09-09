@@ -1,16 +1,22 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUISpaceNode.java
 #include <tdme/gui/nodes/GUISpaceNode.h>
 
+#include <string>
+
 #include <java/lang/String.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/utils/StringUtils.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUISpaceNode;
 using java::lang::String;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::utils::StringUtils;
 
 GUISpaceNode::GUISpaceNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -18,13 +24,13 @@ GUISpaceNode::GUISpaceNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) 
+GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 	: GUISpaceNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn);
 }
 
-void GUISpaceNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
+void GUISpaceNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 }
@@ -49,18 +55,18 @@ int32_t GUISpaceNode::getContentHeight()
 	return computedConstraints->height;
 }
 
-GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(String* left, String* top, String* width, String* height)
+GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
 {
 	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(left->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(left->trim(), 0);
-	constraints->topType = getRequestedConstraintsType(top->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(top->trim(), 0);
-	constraints->widthType = getRequestedConstraintsType(width->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->width = getRequestedConstraintsValue(width->trim(), 1);
-	constraints->heightType = getRequestedConstraintsType(height->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->height = getRequestedConstraintsValue(height->trim(), 1);
+	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
+	constraints->topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
+	constraints->widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->width = getRequestedConstraintsValue(StringUtils::trim(width), 1);
+	constraints->heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->height = getRequestedConstraintsValue(StringUtils::trim(height), 1);
 	return constraints;
 }
 

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::String;
@@ -70,7 +72,7 @@ protected:
 	 * @param show on
 	 * @param hide on 
 	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */;
+	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */;
 
 public:
 
@@ -191,7 +193,7 @@ public: /* protected */
 	String* toString(int32_t indent) override;
 
 	// Generated
-	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 protected:
 	GUIParentNode(const ::default_init_tag&);
 

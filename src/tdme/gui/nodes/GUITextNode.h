@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -12,6 +13,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::String;
@@ -66,7 +68,7 @@ protected:
 	 * @param text
 	 * @throws Exception
 	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, MutableString* text) /* throws(Exception) */;
+	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, MutableString* text) /* throws(Exception) */;
 
 public: /* protected */
 
@@ -88,7 +90,7 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
-	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, MutableString* text);
+	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, MutableString* text);
 protected:
 	GUITextNode(const ::default_init_tag&);
 

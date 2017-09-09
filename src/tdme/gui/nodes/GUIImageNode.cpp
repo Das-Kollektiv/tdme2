@@ -31,7 +31,7 @@ GUIImageNode::GUIImageNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* src, GUIColor* effectColorMul, GUIColor* effectColorAdd)  /* throws(GUIParserException) */
+GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd)  /* throws(GUIParserException) */
 	: GUIImageNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,src,effectColorMul,effectColorAdd);
@@ -47,7 +47,7 @@ void GUIImageNode::init()
 	}));
 }
 
-void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */
+void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();

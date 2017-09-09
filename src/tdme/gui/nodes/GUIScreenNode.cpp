@@ -61,7 +61,7 @@ GUIScreenNode::GUIScreenNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUIScreenNode::GUIScreenNode(String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
+GUIScreenNode::GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
 	: GUIScreenNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,scrollable,popUp);
@@ -73,7 +73,7 @@ void GUIScreenNode::init()
 	guiEffectOffsetY = 0;
 }
 
-void GUIScreenNode::ctor(String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp) /* throws(GUIParserException) */
+void GUIScreenNode::ctor(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp) /* throws(GUIParserException) */
 {
 	super::ctor(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();
@@ -243,19 +243,19 @@ String* GUIScreenNode::allocateNodeId()
 
 bool GUIScreenNode::addNode(GUINode* node)
 {
-	if (node->id->length() == 0) {
-		node->id = allocateNodeId();
+	if (node->id.length() == 0) {
+		node->id = allocateNodeId()->getCPPWString();
 	}
-	if (nodesById.find(node->id->getCPPWString()) != nodesById.end()) {
+	if (nodesById.find(node->id) != nodesById.end()) {
 		return false;
 	}
-	nodesById[node->id->getCPPWString()] = node;
+	nodesById[node->id] = node;
 	return true;
 }
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
-	nodesById.erase(node->id->getCPPWString());
+	nodesById.erase(node->id);
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = java_cast< GUIParentNode* >(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -382,7 +382,7 @@ void GUIScreenNode::getValues(map<wstring, MutableString*>* values)
 		auto guiElementNode = (java_cast< GUIElementNode* >(childControllerNode));
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto name = guiElementNode->getName()->getCPPWString();
+			auto name = guiElementNode->getName();
 			auto value = guiElementNodeController->getValue();
 			auto currentValueIt = values->find(name);
 			if (currentValueIt == values->end() || currentValueIt->second->length() == 0) {
@@ -403,7 +403,7 @@ void GUIScreenNode::setValues(map<wstring, MutableString*>* values)
 		auto guiElementNode = (java_cast< GUIElementNode* >(childControllerNode));
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto name = guiElementNode->getName()->getCPPWString();
+			auto name = guiElementNode->getName();
 			auto newValueIt = values->find(name);
 			if (newValueIt == values->end())
 				continue;

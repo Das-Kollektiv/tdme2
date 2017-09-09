@@ -25,7 +25,6 @@ using std::vector;
 using std::wstring;
 
 using java::lang::Object;
-using java::lang::String;
 using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
 using tdme::engine::ApplicationInputEventsHandler;
@@ -141,34 +140,34 @@ public:
 	 * @param file name
 	 * @return
 	 */
-	static GUIFont* getFont(String* fileName);
+	static GUIFont* getFont(const wstring& fileName);
 
 	/** 
 	 * Get image
 	 * @param file name
 	 * @return
 	 */
-	static Texture* getImage(String* fileName);
+	static Texture* getImage(const wstring& fileName);
 
 	/** 
 	 * Get screen
 	 * @param id
 	 * @return screen
 	 */
-	GUIScreenNode* getScreen(String* id);
+	GUIScreenNode* getScreen(const wstring& id);
 
 	/** 
 	 * Add screen
 	 * @param id
 	 * @param gui
 	 */
-	void addScreen(String* id, GUIScreenNode* screen);
+	void addScreen(const wstring& id, GUIScreenNode* screen);
 
 	/** 
 	 * Removes an screen
 	 * @param id
 	 */
-	void removeScreen(wstring* id);
+	void removeScreen(const wstring* id);
 
 	/** 
 	 * Removes all screens and caches
@@ -184,7 +183,7 @@ public:
 	 * Add render screen
 	 * @param screenId
 	 */
-	void addRenderScreen(String* screenId);
+	void addRenderScreen(const wstring& screenId);
 
 	/** 
 	 * @return focussed border color

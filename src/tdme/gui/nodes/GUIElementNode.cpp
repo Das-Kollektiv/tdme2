@@ -52,7 +52,7 @@ GUIElementNode::GUIElementNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* name, String* value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
+GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
 	: GUIElementNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,name,value,selected,disabled,focusable,ignoreEvents);
@@ -71,7 +71,7 @@ String* GUIElementNode::CONDITION_CLICK;
 
 String* GUIElementNode::CONDITION_FOCUS;
 
-void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* name, String* value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */
+void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */
 {
 	super::ctor(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();
@@ -196,12 +196,12 @@ void GUIElementNode::layout()
 	computeVerticalChildrenAlignment();
 }
 
-String* GUIElementNode::getName()
+wstring& GUIElementNode::getName()
 {
 	return name;
 }
 
-String* GUIElementNode::getValue()
+wstring& GUIElementNode::getValue()
 {
 	return value;
 }

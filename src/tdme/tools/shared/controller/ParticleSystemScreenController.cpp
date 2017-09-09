@@ -279,13 +279,13 @@ void ParticleSystemScreenController::unsetEntityProperties()
 
 void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
 {
-	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(new String(particleSystemTypes->getId()->getCPPWString() + L"_inner")));
+	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(new String(particleSystemTypes->getId() + L"_inner")));
 	auto idx = 0;
 	wstring particleSystemTypesInnerNodeSubNodesXML = L"";
 	particleSystemTypesInnerNodeSubNodesXML =
 		particleSystemTypesInnerNodeSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		particleSystemTypes->getId()->getCPPWString() +
+		particleSystemTypes->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystem: *particleSystemTypesCollection) {
 		particleSystemTypesInnerNodeSubNodesXML =
@@ -312,13 +312,13 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 
 void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
 {
-	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(new String(particleSystemEmitters->getId()->getCPPWString() + L"_inner"))));
+	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(new String(particleSystemEmitters->getId() + L"_inner"))));
 	auto idx = 0;
 	wstring particleSystemEmittersInnerNodeSubNodesXML = L"";
 	particleSystemEmittersInnerNodeSubNodesXML =
 		particleSystemEmittersInnerNodeSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		particleSystemEmitters->getId()->getCPPWString() +
+		particleSystemEmitters->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystemEmitter: *emittersCollection) {
 		particleSystemEmittersInnerNodeSubNodesXML =
@@ -843,28 +843,28 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(L"button_entity_load")) {
+				if (node->getId().compare(L"button_entity_load") == 0) {
 					onParticleSystemLoad();
 				} else
-				if (node->getId()->equals(L"button_entity_reload")) {
+				if (node->getId().compare(L"button_entity_reload") == 0) {
 					onParticleSystemReload();
 				} else
-				if (node->getId()->equals(L"button_entity_save")) {
+				if (node->getId().compare(L"button_entity_save") == 0) {
 					onEntitySave();
 				} else
-				if (node->getId()->equals(L"button_ps_type_apply")) {
+				if (node->getId().compare(L"button_ps_type_apply") == 0) {
 					onParticleSystemTypeApply();
 				} else
-				if (node->getId()->equals(L"button_ops_apply") || node->getId()->equals(L"button_pps_type_apply")) {
+				if (node->getId().compare(L"button_ops_apply") == 0 || node->getId().compare(L"button_pps_type_apply") == 0) {
 					onParticleSystemTypeDataApply();
 				} else
-				if (node->getId()->equals(L"button_emitter_apply")) {
+				if (node->getId().compare(L"button_emitter_apply") == 0) {
 					onParticleSystemEmitterApply();
 				} else
-				if (node->getId()->equals(L"button_ppe_emitter_apply") || node->getId()->equals(L"button_bbpe_emitter_apply") || node->getId()->equals(L"button_cpe_emitter_apply")|| node->getId()->equals(L"button_cpepv_emitter_apply")|| node->getId()->equals(L"button_spe_emitter_apply")) {
+				if (node->getId().compare(L"button_ppe_emitter_apply") == 0 || node->getId().compare(L"button_bbpe_emitter_apply") == 0 || node->getId().compare(L"button_cpe_emitter_apply") == 0 || node->getId().compare(L"button_cpepv_emitter_apply") == 0 || node->getId().compare(L"button_spe_emitter_apply") == 0) {
 					onParticleSystemEmitterDataApply();
 				} else
-				if (node->getId()->equals(L"button_ops_model_file")) {
+				if (node->getId().compare(L"button_ops_model_file") == 0) {
 					vector<wstring> extensions = {
 						L"dae",
 						L"tm"
@@ -882,10 +882,10 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->toWString() +
 							L"', id = '" +
-							node->getId()->getCPPWString() +
+							node->getId() +
 							L"'" +
 							L", name = '" +
-							node->getName()->getCPPWString() +
+							node->getName() +
 							L"'"
 						)
 					);

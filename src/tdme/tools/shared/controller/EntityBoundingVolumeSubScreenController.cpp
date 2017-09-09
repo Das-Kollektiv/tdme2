@@ -35,6 +35,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 
@@ -75,6 +76,7 @@ using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
@@ -180,7 +182,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 
 void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t idx, vector<wstring>* boundingVolumeTypes)
 {
-	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(new String(boundingVolumeTypeDropDown[idx]->getId()->getCPPWString() + L"_inner"))));
+	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(new String(boundingVolumeTypeDropDown[idx]->getId() + L"_inner"))));
 	auto bvIdx = 0;
 	wstring boundingVolumeTypeDropDownSubNodesXML = L"";
 	boundingVolumeTypeDropDownSubNodesXML =
@@ -429,31 +431,31 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->startsWith(u"button_boundingvolume_apply_"_j)) {
-					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
-				} else if (node->getId()->startsWith(u"button_boundingvolume_sphere_apply_"_j)) {
-					onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
-				} else if (node->getId()->startsWith(u"button_boundingvolume_capsule_apply_"_j)) {
-					onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
-				} else if (node->getId()->startsWith(u"button_boundingvolume_obb_apply_"_j)) {
-					onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
-				} else if (node->getId()->startsWith(u"button_boundingvolume_aabb_apply_"_j)) {
-					onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
-				} else if (node->getId()->startsWith(u"button_boundingvolume_convexmesh_apply_"_j)) {
-					onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
+				if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_apply_")) {
+					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_sphere_apply_")) {
+					onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_capsule_apply_")) {
+					onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_obb_apply_")) {
+					onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_aabb_apply_")) {
+					onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_convexmesh_apply_")) {
+					onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
 				}
-				if (node->getId()->startsWith(u"button_boundingvolume_convexmesh_file_"_j)) {
-					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId()->substring(node->getId()->lastIndexOf(static_cast< int32_t >(u'_')) + 1)));
+				if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_convexmesh_file_")) {
+					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
 				} else {
 					_Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->toWString() +
 							L"', id = '" +
-							node->getId()->getCPPWString() +
+							node->getId() +
 							L"'" +
 							L", name = '" +
-							node->getName()->getCPPWString() +
+							node->getName() +
 							L"'"
 						)
 					);

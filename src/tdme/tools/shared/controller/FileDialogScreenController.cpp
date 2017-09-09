@@ -106,7 +106,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 		_Console::println(string(exception.what()));
 	}
 
-	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(new String(files->getId()->getCPPWString() + L"_inner")));
+	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(new String(files->getId() + L"_inner")));
 	auto idx = 1;
 	wstring filesInnerNodeSubNodesXML = L"";
 	filesInnerNodeSubNodesXML =
@@ -155,7 +155,7 @@ void FileDialogScreenController::close()
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
 	try {
-		if (node->getId()->equals(files->getId()) == true) {
+		if (node->getId().compare(files->getId()) == 0) {
 			auto selectedFile = node->getController()->getValue()->toString();
 			if (_FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile->getCPPWString()) == true) {
 				try {
@@ -182,11 +182,11 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 		if ((v == GUIActionListener_Type::PERFORMED))
 		{
 			{
-				if (node->getId()->equals(L"filedialog_apply")) {
+				if (node->getId().compare(L"filedialog_apply") == 0) {
 					if (applyAction != nullptr)
 						applyAction->performAction();
 
-				} else if (node->getId()->equals(u"filedialog_abort"_j)) {
+				} else if (node->getId().compare(L"filedialog_abort") == 0) {
 					close();
 				}
 				goto end_switch0;;

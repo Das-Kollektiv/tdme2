@@ -1,11 +1,12 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode.h>
 
+#include <string>
+
 #include <java/lang/Integer.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/util/StringTokenizer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -25,14 +26,17 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/StringTokenizer.h>
+#include <tdme/utils/StringUtils.h>
 #include <Array.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::Integer;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::util::StringTokenizer;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -52,6 +56,8 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::StringTokenizer;
+using tdme::utils::StringUtils;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -67,13 +73,13 @@ GUINode::GUINode(const ::default_init_tag&)
 	clinit();
 }
 
-GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) 
+GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 	: GUINode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn);
 }
 
-void GUINode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
+void GUINode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 {
 	super::ctor();
 	this->screenNode = screenNode;
@@ -106,7 +112,7 @@ GUIParentNode* GUINode::getParentNode()
 	return parentNode;
 }
 
-String* GUINode::getId()
+const wstring& GUINode::getId()
 {
 	return id;
 }
@@ -227,89 +233,89 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 	return -1;
 }
 
-GUINode_Alignments* GUINode::createAlignments(String* horizontal, String* vertical)
+GUINode_Alignments* GUINode::createAlignments(const wstring& horizontal, const wstring& vertical)
 {
 	clinit();
 	auto alignments = new GUINode_Alignments();
-	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal != nullptr && horizontal->length() > 0 ? horizontal->toUpperCase()->getCPPWString() : L"LEFT");
-	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical != nullptr && vertical->length() > 0 ? vertical->toUpperCase()->getCPPWString() : L"TOP");
+	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : L"LEFT");
+	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : L"TOP");
 	return alignments;
 }
 
-GUINode_RequestedConstraints* GUINode::createRequestedConstraints(String* left, String* top, String* width, String* height)
+GUINode_RequestedConstraints* GUINode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
 {
 	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(left->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(left->trim(), 0);
-	constraints->topType = getRequestedConstraintsType(top->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(top->trim(), 0);
-	constraints->widthType = getRequestedConstraintsType(width->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->width = getRequestedConstraintsValue(width->trim(), -1);
-	constraints->heightType = getRequestedConstraintsType(height->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->height = getRequestedConstraintsValue(height->trim(), -1);
+	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
+	constraints->topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
+	constraints->widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
+	constraints->heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
 	return constraints;
 }
 
-GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedConstraintsType(String* constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType)
+GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedConstraintsType(const wstring& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType)
 {
 	clinit();
-	if (constraint == nullptr || constraint->length() == 0) {
+	if (constraint.empty() == true || constraint.length() == 0) {
 		return defaultConstraintsType;
-	} else if (constraint->equals(u"auto"_j)) {
+	} else if (constraint.compare(L"auto") == 0) {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::AUTO;
-	} else if (constraint->equals(u"*"_j)) {
+	} else if (constraint.compare(L"*") == 0) {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::STAR;
-	} else if (constraint->endsWith(u"%"_j)) {
+	} else if (StringUtils::endsWith(constraint, L"%")) {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT;
 	} else {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	}
 }
 
-int32_t GUINode::getRequestedConstraintsValue(String* constraint, int32_t defaultConstraintsValue)
+int32_t GUINode::getRequestedConstraintsValue(const wstring& constraint, int32_t defaultConstraintsValue)
 {
 	clinit();
-	if (constraint == nullptr || constraint->length() == 0) {
+	if (constraint.empty() == true || constraint.length() == 0) {
 		return defaultConstraintsValue;
-	} else if (constraint->equals(u"auto"_j)) {
+	} else if (constraint.compare(L"auto") == 0) {
 		return -1;
-	} else if (constraint->equals(u"*"_j)) {
+	} else if (constraint.compare(L"*") == 0) {
 		return -1;
-	} else if (constraint->endsWith(u"%"_j)) {
-		return (Integer::valueOf(constraint->substring(0, constraint->length() - 1)))->intValue();
+	} else if (StringUtils::endsWith(constraint, L"%")) {
+		return (Integer::valueOf(new String(constraint.substr(0, constraint.length() - 1))))->intValue();
 	} else {
-		return (Integer::valueOf(constraint))->intValue();
+		return (Integer::valueOf(new String(constraint)))->intValue();
 	}
 }
 
-int32_t GUINode::getRequestedPixelValue(String* value, int32_t defaultValue)
+int32_t GUINode::getRequestedPixelValue(const wstring& value, int32_t defaultValue)
 {
 	clinit();
-	if (value == nullptr || value->length() == 0) {
+	if (value.empty() == true || value.length() == 0) {
 		return defaultValue;
 	} else {
-		return (Integer::valueOf(value))->intValue();
+		return (Integer::valueOf(new String(value)))->intValue();
 	}
 }
 
-GUIColor* GUINode::getRequestedColor(String* color, GUIColor* defaultColor) /* throws(GUIParserException) */
+GUIColor* GUINode::getRequestedColor(const wstring& color, GUIColor* defaultColor) /* throws(GUIParserException) */
 {
 	clinit();
-	if (color == nullptr || color->length() == 0) {
+	if (color.empty() == true || color.length() == 0) {
 		return defaultColor;
 	} else {
 		return new GUIColor(color);
 	}
 }
 
-GUINode_Flow* GUINode::createFlow(String* flow)
+GUINode_Flow* GUINode::createFlow(const wstring& flow)
 {
 	clinit();
-	return GUINode_Flow::valueOf(flow != nullptr && flow->length() > 0 ? flow->toUpperCase()->getCPPWString() : L"INTEGRATED");
+	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringUtils::toUpperCase(flow) : L"INTEGRATED");
 }
 
-GUINode_Border* GUINode::createBorder(String* allBorder, String* left, String* top, String* right, String* bottom, String* allBorderColor, String* leftColor, String* topColor, String* rightColor, String* bottomColor) /* throws(GUIParserException) */
+GUINode_Border* GUINode::createBorder(const wstring& allBorder, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom, const wstring& allBorderColor, const wstring& leftColor, const wstring& topColor, const wstring& rightColor, const wstring& bottomColor) /* throws(GUIParserException) */
 {
 	clinit();
 	auto border = new GUINode_Border();
@@ -332,7 +338,7 @@ GUINode_Border* GUINode::createBorder(String* allBorder, String* left, String* t
 	return border;
 }
 
-GUINode_Padding* GUINode::createPadding(String* allPadding, String* left, String* top, String* right, String* bottom) /* throws(GUIParserException) */
+GUINode_Padding* GUINode::createPadding(const wstring& allPadding, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom) /* throws(GUIParserException) */
 {
 	clinit();
 	auto padding = new GUINode_Padding();
@@ -347,13 +353,14 @@ GUINode_Padding* GUINode::createPadding(String* allPadding, String* left, String
 	return padding;
 }
 
-GUINodeConditions* GUINode::createConditions(String* conditions)
+GUINodeConditions* GUINode::createConditions(const wstring& conditions)
 {
 	clinit();
 	auto guiNodeConditions = new GUINodeConditions();
-	auto t = new StringTokenizer(conditions, u","_j);
-	while (t->hasMoreTokens()) {
-		guiNodeConditions->add(t->nextToken()->trim());
+	StringTokenizer strTokenizer;
+	strTokenizer.tokenize(conditions, L",");
+	while (strTokenizer.hasMoreTokens()) {
+		guiNodeConditions->add(new String(StringUtils::trim(strTokenizer.nextToken())));
 	}
 	return guiNodeConditions;
 }

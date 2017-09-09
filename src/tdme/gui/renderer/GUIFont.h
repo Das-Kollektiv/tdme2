@@ -16,8 +16,10 @@
 #include <java/lang/Object.h>
 #include <tdme/os/_FileSystemException.h>
 
+using std::map;
+using std::wstring;
+
 using java::lang::Object;
-using java::lang::String;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
@@ -25,8 +27,6 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::_FileSystemException;
 using tdme::utils::MutableString;
 
-using std::map;
-using std::wstring;
 
 struct default_init_tag;
 
@@ -86,7 +86,7 @@ public:
 	 * @param font file
 	 * @throws _FileSystemException
 	 */
-	static GUIFont* parse(String* pathName, String* fileName) throw (_FileSystemException);
+	static GUIFont* parse(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
 
 private:
 

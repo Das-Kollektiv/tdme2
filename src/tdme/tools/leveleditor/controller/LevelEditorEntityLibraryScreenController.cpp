@@ -121,13 +121,13 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
 	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 	entityLibraryListBoxSelection->set(entityLibraryListBox->getController()->getValue());
-	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(new String(entityLibraryListBox->getId()->getCPPWString() + L"_inner"))));
+	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(new String(entityLibraryListBox->getId() + L"_inner"))));
 	auto idx = 1;
 	wstring entityLibraryListBoxSubNodesXML;
 	entityLibraryListBoxSubNodesXML =
 		entityLibraryListBoxSubNodesXML +
 		L"<scrollarea-vertical id=\"" +
-		entityLibraryListBox->getId()->getCPPWString() +
+		entityLibraryListBox->getId() +
 		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 		auto objectId = entityLibrary->getEntityAt(i)->getId();
@@ -248,10 +248,10 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 
 void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId()->equals(u"entity_library_listbox"_j) == true) {
+	if (node->getId().compare(L"entity_library_listbox") == 0) {
 		onEntitySelectionChanged();
 	} else
-		if (node->getId()->equals(u"dropdown_entity_action"_j) == true) {
+		if (node->getId().compare(L"dropdown_entity_action") == 0) {
 		if (node->getController()->getValue()->equals(u"edit"_j) == true) {
 			onEditEntity();
 		} else
@@ -318,19 +318,19 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		}
 		node->getController()->setValue(dropdownEntityActionReset);
 	} else {
-		_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId()->getCPPWString());
+		_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId());
 	}
 }
 
 void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (type == GUIActionListener_Type::PERFORMED) {
-		if (node->getId()->equals(u"button_entity_place"_j) == true) {
+		if (node->getId().compare(L"button_entity_place") == 0) {
 			onPlaceEntity();
-		} else if (node->getId()->equals(u"button_level_edit"_j) == true) {
+		} else if (node->getId().compare(L"button_level_edit") == 0) {
 			onEditLevel();
 		} else {
-			_Console::println(L"LevelEditorScreenController::onActionPerformed: " + node->getId()->getCPPWString());
+			_Console::println(L"LevelEditorScreenController::onActionPerformed: " + node->getId());
 		}
 	}
 }

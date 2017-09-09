@@ -2,7 +2,9 @@
 #include <tdme/tests/GUITest.h>
 
 #include <java/lang/String.h>
-
+#include <java/lang/System.h>
+#include <java/util/logging/Level.h>
+#include <java/util/logging/Logger.h>
 #include <tdme/engine/Application.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
@@ -17,9 +19,10 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tests::GUITest;
-
 using java::lang::String;
-
+using java::lang::System;
+using java::util::logging::Level;
+using java::util::logging::Logger;
 using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::gui::GUI;
@@ -32,6 +35,19 @@ using tdme::tests::GUITest_init_1;
 using tdme::tests::GUITest_init_2;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
+
+template<typename ComponentType, typename... Bases> struct SubArray;
+namespace java {
+namespace io {
+typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
+}  // namespace io
+
+namespace lang {
+typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
+typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
+typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
+}  // namespace lang
+}  // namespace java
 
 
 GUITest::GUITest()

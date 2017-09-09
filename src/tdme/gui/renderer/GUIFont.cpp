@@ -77,18 +77,18 @@ MutableString* GUIFont::LINEHEIGHT_STRING;
 
 constexpr int32_t GUIFont::CHARACTERS_MAX;
 
-GUIFont* GUIFont::parse(String* pathName, String* fileName) throw (_FileSystemException)
+GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw (_FileSystemException)
 {
 	clinit();
 	int lineIdx = 0;
 	auto font = new GUIFont();
 	vector<wstring> lines;
-	_FileSystem::getInstance()->getContentAsStringArray(pathName->getCPPWString(), fileName->getCPPWString(), &lines);
+	_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	auto info = lines[lineIdx++];
 	auto common = lines[lineIdx++];
 	auto page = lines[lineIdx++];
 	font->texture = TextureLoader::loadTexture(
-		pathName->getCPPWString(),
+		pathName,
 		StringUtils::substring(page, page.find(L"file=") + wstring(L"file=\"").length(), page.find_last_of(L"\""))
 	);
 	auto done = false;

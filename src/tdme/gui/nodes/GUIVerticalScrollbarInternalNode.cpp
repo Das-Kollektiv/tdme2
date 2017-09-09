@@ -2,6 +2,7 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 
 #include <array>
+#include <string>
 
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
@@ -15,6 +16,7 @@
 #include <Array.h>
 
 using std::array;
+using std::wstring;
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using java::lang::String;
@@ -41,13 +43,13 @@ GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(const ::defau
 	clinit();
 }
 
-GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging) 
+GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
 	: GUIVerticalScrollbarInternalNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,barColorNone,barColorMouseOver,barColorDragging);
 }
 
-void GUIVerticalScrollbarInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
+void GUIVerticalScrollbarInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->controller = new GUIVerticalScrollbarInternalController(this);

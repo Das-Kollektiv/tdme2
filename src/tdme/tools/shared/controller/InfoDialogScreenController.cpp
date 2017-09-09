@@ -75,7 +75,7 @@ void InfoDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(u"infodialog_ok"_j)) {
+				if (node->getId().compare(L"infodialog_ok") == 0) {
 					close();
 				}
 				goto end_switch0;;

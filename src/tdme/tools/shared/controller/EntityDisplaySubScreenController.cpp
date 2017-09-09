@@ -85,7 +85,7 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(u"button_display_apply"_j)) {
+				if (node->getId().compare(L"button_display_apply") == 0) {
 					onDisplayApply();
 				} else {
 					_Console::println(
@@ -93,10 +93,10 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->toWString() +
 							L"', id = '" +
-							node->getId()->getCPPWString() +
+							node->getId() +
 							L"'" +
 							L", name = '" +
-							node->getName()->getCPPWString() +
+							node->getName() +
 							L"'"
 						)
 					);

@@ -10,7 +10,6 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/System.h>
 #include <java/util/Iterator.h>
 #include <java/util/concurrent/locks/ReentrantLock.h>
@@ -51,7 +50,6 @@ using std::to_wstring;
 
 using tdme::gui::GUI;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::System;
 using java::util::Iterator;
 using java::util::concurrent::locks::ReentrantLock;
@@ -127,7 +125,7 @@ void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = new GUIColor(u"#8080FF"_j);
+		this->foccussedBorderColor = new GUIColor(L"#8080FF");
 	} catch (_Exception& exception) {
 		_Console::print(string("GUI::ctor(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -179,7 +177,7 @@ vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 	return &keyboardEvents;
 }
 
-GUIFont* GUI::getFont(String* fileName)
+GUIFont* GUI::getFont(const wstring& fileName)
 {
 	clinit();
 	wstring canonicalFile;
@@ -187,7 +185,7 @@ GUIFont* GUI::getFont(String* fileName)
 	wstring file;
 	GUIFont* font;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName->getCPPWString());
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName);
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
@@ -199,7 +197,7 @@ GUIFont* GUI::getFont(String* fileName)
 	auto fontCacheIt = fontCache.find(canonicalFile);
 	if (fontCacheIt == fontCache.end()) {
 		try {
-			font = GUIFont::parse(new String(path), new String(file));
+			font = GUIFont::parse(path, file);
 		} catch (_Exception& exception) {
 			_Console::print(string("GUI::getFont(): An error occurred: "));
 			_Console::println(string(exception.what()));
@@ -214,7 +212,7 @@ GUIFont* GUI::getFont(String* fileName)
 	return font;
 }
 
-Texture* GUI::getImage(String* fileName)
+Texture* GUI::getImage(const wstring& fileName)
 {
 	clinit();
 	// TODO: fix me, proper get path, filename
@@ -222,7 +220,7 @@ Texture* GUI::getImage(String* fileName)
 	wstring path;
 	wstring file;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName->getCPPWString());
+		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName);
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
@@ -246,21 +244,21 @@ Texture* GUI::getImage(String* fileName)
 	return image;
 }
 
-GUIScreenNode* GUI::getScreen(String* id)
+GUIScreenNode* GUI::getScreen(const wstring& id)
 {
-	auto screensIt = screens.find(id->getCPPWString());
+	auto screensIt = screens.find(id);
 	if (screensIt == screens.end()) {
 		return nullptr;
 	}
 	return screensIt->second;
 }
 
-void GUI::addScreen(String* id, GUIScreenNode* screen)
+void GUI::addScreen(const wstring& id, GUIScreenNode* screen)
 {
-	screens.emplace(id->getCPPWString(), screen);
+	screens.emplace(id, screen);
 }
 
-void GUI::removeScreen(wstring* id)
+void GUI::removeScreen(const wstring* id)
 {
 	auto screensIt = screens.find(*id);
 
@@ -291,9 +289,9 @@ void GUI::resetRenderScreens()
 	renderScreens.clear();
 }
 
-void GUI::addRenderScreen(String* screenId)
+void GUI::addRenderScreen(const wstring& screenId)
 {
-	auto screenIt = screens.find(screenId->getCPPWString());
+	auto screenIt = screens.find(screenId);
 	if (screenIt == screens.end())
 		return;
 

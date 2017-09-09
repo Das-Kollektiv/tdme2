@@ -166,7 +166,7 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId()->equals(L"button_trigger_apply")) {
+				if (node->getId().compare(L"button_trigger_apply") == 0) {
 					onTriggerApply();
 				} else {
 					_Console::println(
@@ -174,10 +174,10 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 							L"TriggerScreenController::onActionPerformed()::unknown, type='" +
 							type->toWString() +
 							L"', id = '" +
-							node->getId()->getCPPWString() +
+							node->getId() +
 							L"'" +
 							L", name = '" +
-							node->getName()->getCPPWString() +
+							node->getName() +
 							L"'"
 						)
 					);

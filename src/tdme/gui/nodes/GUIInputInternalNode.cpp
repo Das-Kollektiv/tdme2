@@ -57,17 +57,17 @@ GUIInputInternalNode::GUIInputInternalNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, String* colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
+GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
 	: GUIInputInternalNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,font,color,colorDisabled,text,maxLength);
 }
 
-int32_t GUIInputInternalNode::createMaxLength(String* s)
+int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 {
 	clinit();
 	try {
-		auto maxLength = Integer::parseInt(s);
+		auto maxLength = Integer::parseInt(new String(s));
 		return maxLength;
 	} catch (_Exception& exception) {
 		_Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
@@ -76,12 +76,12 @@ int32_t GUIInputInternalNode::createMaxLength(String* s)
 	}
 }
 
-void GUIInputInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* font, String* color, String* colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */
+void GUIInputInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->font = GUI::getFont(font);
-	this->color = color == nullptr || color->length() == 0 ? new GUIColor() : new GUIColor(color);
-	this->colorDisabled = colorDisabled == nullptr || colorDisabled->length() == 0 ? new GUIColor() : new GUIColor(colorDisabled);
+	this->color = color.empty() == true || color.length() == 0 ? new GUIColor() : new GUIColor(color);
+	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? new GUIColor() : new GUIColor(colorDisabled);
 	this->text = text;
 	this->maxLength = maxLength;
 	this->font->initialize();

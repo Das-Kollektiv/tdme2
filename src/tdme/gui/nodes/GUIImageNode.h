@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
+
+using std::wstring;
 
 using tdme::gui::nodes::GUINode;
 using java::lang::String;
@@ -63,7 +67,7 @@ protected:
 	 * @param effect color mul
 	 * @param effect color add
 	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */;
+	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */;
 
 public: /* protected */
 
@@ -80,7 +84,7 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	// Generated
-	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, String* src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
+	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
 protected:
 	GUIImageNode(const ::default_init_tag&);
 

@@ -70,13 +70,13 @@ GUIParentNode::GUIParentNode(const ::default_init_tag&)
 	clinit();
 }
 
-GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)  /* throws(GUIParserException) */
+GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)  /* throws(GUIParserException) */
 	: GUIParentNode(*static_cast< ::default_init_tag* >(0))
 {
 	ctor(screenNode,parentNode,id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn);
 }
 
-void GUIParentNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, String* id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */
+void GUIParentNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */
 {
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->overflowX = overflowX;
@@ -136,9 +136,9 @@ void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
 	if (screenNode->addNode(node) == false) {
 		throw GUIParserException(
 			"Screen '" +
-			StringConverter::toString(screenNode->id->getCPPWString()) +
+			StringConverter::toString(screenNode->id) +
 			"' already has a node attached with given node id '" +
-			StringConverter::toString(node->id->getCPPWString()) +
+			StringConverter::toString(node->id) +
 			"'"
 		);
 	}
@@ -202,14 +202,14 @@ GUINode_RequestedConstraints* GUIParentNode::createRequestedConstraints(String* 
 {
 	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(left->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(left->trim(), 0);
-	constraints->topType = getRequestedConstraintsType(top->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(top->trim(), 0);
-	constraints->widthType = getRequestedConstraintsType(width->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->width = getRequestedConstraintsValue(width->trim(), -1);
-	constraints->heightType = getRequestedConstraintsType(height->trim(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->height = getRequestedConstraintsValue(height->trim(), -1);
+	constraints->leftType = getRequestedConstraintsType(left->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->left = getRequestedConstraintsValue(left->trim()->getCPPWString(), 0);
+	constraints->topType = getRequestedConstraintsType(top->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->top = getRequestedConstraintsValue(top->trim()->getCPPWString(), 0);
+	constraints->widthType = getRequestedConstraintsType(width->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->width = getRequestedConstraintsValue(width->trim()->getCPPWString(), -1);
+	constraints->heightType = getRequestedConstraintsType(height->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->height = getRequestedConstraintsValue(height->trim()->getCPPWString(), -1);
 	return constraints;
 }
 

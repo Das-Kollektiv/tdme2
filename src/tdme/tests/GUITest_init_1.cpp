@@ -58,7 +58,7 @@ GUITest_init_1::GUITest_init_1(GUITest *GUITest_this)
 
 void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
-	if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button"_j)) {
+	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button") == 0) {
 		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(node->getId())->append(u".actionPerformed()"_j)->toString()));
 		map<wstring, MutableString*> values;
 		node->getScreenNode()->getValues(&values);
@@ -73,7 +73,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 		values.emplace(L"selectmultiple", new MutableString(L"|1|2|3|15|16|17|"));
 		node->getScreenNode()->setValues(&values);
 		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab1"_j)->getController()))->selectTab();
-	} else if (type == GUIActionListener_Type::PERFORMED && node->getName()->equals(u"button2"_j)) {
+	} else if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button2") == 0) {
 		try {
 			{
 				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(u"sadd_inner"_j)));

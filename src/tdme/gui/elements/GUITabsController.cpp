@@ -106,7 +106,7 @@ void GUITabsController::unselect()
 	}
 }
 
-void GUITabsController::setTabContentSelected(String* id)
+void GUITabsController::setTabContentSelected(const wstring& id)
 {
 	tabContentNodeId->set(id)->append(u"-content"_j);
 	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);

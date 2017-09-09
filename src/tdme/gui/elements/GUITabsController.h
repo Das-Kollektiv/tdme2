@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
+using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
 using java::lang::String;
@@ -65,7 +67,7 @@ public: /* protected */
 	 * Set tab content selected
 	 * @param id
 	 */
-	void setTabContentSelected(String* id);
+	void setTabContentSelected(const wstring& id);
 
 public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
