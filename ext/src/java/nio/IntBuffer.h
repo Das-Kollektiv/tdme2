@@ -22,6 +22,7 @@ protected:
 	void ctor(Buffer* buffer);
 
 public:
+	virtual int32_t position();
 	int32_t get(int32_t position);
 	Buffer* put(int32_t arg0);
 	Buffer* put(int32_tArray* arg0);

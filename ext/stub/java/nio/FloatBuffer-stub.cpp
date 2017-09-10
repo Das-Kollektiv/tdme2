@@ -1,7 +1,14 @@
 // Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <java/nio/FloatBuffer.h>
 
+#include <java/lang/Byte.h>
+#include <java/lang/Float.h>
+
 using java::nio::FloatBuffer;
+
+using java::lang::Byte;
+using java::lang::Float;
+
 extern void unimplemented_(const char16_t* name);
 
 java::nio::FloatBuffer::FloatBuffer(const ::default_init_tag&)
@@ -26,6 +33,10 @@ void FloatBuffer::ctor(int32_t capacity) {
 
 void FloatBuffer::ctor(Buffer* buffer) {
 	super::ctor(buffer);
+}
+
+int32_t FloatBuffer::position() {
+	return Buffer::position() / (Float::SIZE / Byte::SIZE);
 }
 
 float FloatBuffer::get(int32_t position) {

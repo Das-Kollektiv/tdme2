@@ -1,6 +1,13 @@
 #include <java/nio/ShortBuffer.h>
 
+#include <java/lang/Byte.h>
+#include <java/lang/Short.h>
+
 using java::nio::ShortBuffer;
+
+using java::lang::Byte;
+using java::lang::Short;
+
 extern void unimplemented_(const char16_t* name);
 
 java::nio::ShortBuffer::ShortBuffer(const ::default_init_tag&)
@@ -25,6 +32,10 @@ void ShortBuffer::ctor(int32_t capacity) {
 
 void ShortBuffer::ctor(Buffer* buffer) {
 	super::ctor(buffer);
+}
+
+int32_t ShortBuffer::position() {
+	return Buffer::position() / (Short::SIZE / Byte::SIZE);
 }
 
 short ShortBuffer::get(int32_t position) {

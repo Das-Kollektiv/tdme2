@@ -77,7 +77,7 @@ void BatchVBORendererTriangles::render()
 	if (fbVertices->position() == 0 || fbNormals->position() == 0 || fbTextureCoordinates->position() == 0)
 		return;
 
-	auto triangles = fbVertices->position() / 3 /*vertices*/ / 3 /*vector components*/ / 4 /* bytes per float*/;
+	auto triangles = fbVertices->position() / 3 /*vertices*/ / 3 /*vector components*/;
 	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
 	renderer->uploadBufferObject((*vboIds)[1], fbNormals->position() * Float::SIZE / Byte::SIZE, fbNormals);
 	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);

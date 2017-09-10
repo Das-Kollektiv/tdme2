@@ -1,6 +1,13 @@
 #include <java/nio/IntBuffer.h>
 
+#include <java/lang/Byte.h>
+#include <java/lang/Integer.h>
+
 using java::nio::IntBuffer;
+
+using java::lang::Byte;
+using java::lang::Integer;
+
 extern void unimplemented_(const char16_t* name);
 
 java::nio::IntBuffer::IntBuffer(const ::default_init_tag&)
@@ -25,6 +32,10 @@ void IntBuffer::ctor(int32_t capacity) {
 
 void IntBuffer::ctor(Buffer* buffer) {
 	super::ctor(buffer);
+}
+
+int32_t IntBuffer::position() {
+	return Buffer::position() / (Integer::SIZE / Byte::SIZE);
 }
 
 int32_t IntBuffer::get(int32_t position) {

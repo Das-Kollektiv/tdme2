@@ -26,6 +26,7 @@ protected:
 	void ctor(Buffer* buffer);
 
 public:
+	virtual int32_t position();
 	float get(int32_t position);
 	Buffer* put(float arg0);
 	Buffer* put(floatArray* arg0);

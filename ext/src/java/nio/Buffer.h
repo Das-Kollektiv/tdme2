@@ -33,7 +33,7 @@ public:
 
 public:
 	Buffer* clear();
-	int32_t position();
+	virtual int32_t position();
 
 	int8_t get(int32_t position);
 	Buffer* put(int8_t arg0);
