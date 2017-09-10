@@ -3,8 +3,6 @@
 #include <cctype>
 #include <vector>
 
-#include <java/lang/Character.h>
-#include <java/lang/String.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -52,8 +50,6 @@ using std::tolower;
 using std::vector;
 
 using tdme::tests::EngineTest;
-using java::lang::Character;
-using java::lang::String;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;

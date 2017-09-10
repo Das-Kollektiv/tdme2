@@ -2,11 +2,8 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <java/lang/System.h>
 
-#include <java/util/logging/Level.h>
-#include <java/util/logging/Logger.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -35,11 +32,8 @@ using std::to_wstring;
 
 using tdme::tests::PhysicsTest1;
 
-using java::lang::String;
 using java::lang::System;
 
-using java::util::logging::Level;
-using java::util::logging::Logger;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;

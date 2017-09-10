@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <java/lang/System.h>
 
 #include <tdme/engine/Camera.h>
@@ -24,7 +23,6 @@ using std::to_wstring;
 
 using tdme::tests::PhysicsTest2;
 
-using java::lang::String;
 using java::lang::System;
 
 using tdme::engine::Camera;

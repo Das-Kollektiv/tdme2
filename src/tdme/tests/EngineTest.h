@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/engine/ApplicationInputEventsHandler.h>
@@ -18,8 +17,6 @@
 
 using std::array;
 using std::vector;
-
-using java::lang::String;
 
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
