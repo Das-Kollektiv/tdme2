@@ -4,12 +4,10 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using java::lang::Object;
 using java::lang::String;
 using tdme::math::Matrix4x4;
 

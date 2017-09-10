@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/Math.h>
 
 #include <tdme/engine/Transformations.h>
