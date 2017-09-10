@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include <java/lang/String.h>
-
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
@@ -16,7 +14,6 @@ using std::cout;
 using std::endl;
 using std::find;
 
-using java::lang::String;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::engine::fileio::models::DAEReader;
