@@ -3,7 +3,6 @@
 #include <array>
 
 #include <java/lang/Math.h>
-#include <java/lang/System.h>
 #include <tdme/math/MathTools.h>
 
 using std::array;

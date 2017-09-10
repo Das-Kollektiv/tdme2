@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/ConstraintsSolver.h>
 #include <tdme/engine/physics/ContactCache_ContactCacheInfo.h>
@@ -14,7 +13,6 @@ using std::map;
 using std::wstring;
 
 using tdme::engine::physics::ContactCache;
-using java::lang::String;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ConstraintsSolver;
 using tdme::engine::physics::ContactCache_ContactCacheInfo;

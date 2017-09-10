@@ -3,7 +3,6 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
 using tdme::engine::subsystems::object::Object3DGroup;

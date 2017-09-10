@@ -1,7 +1,5 @@
 #include <tdme/engine/primitives/Sphere.h>
 
-#include <java/lang/String.h>
-
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -14,7 +12,6 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Sphere;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;

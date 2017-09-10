@@ -21,7 +21,6 @@ using std::wstring;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;

@@ -3,9 +3,7 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Class.h>
 #include <java/lang/Math.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Rotation.h>
@@ -28,7 +26,6 @@
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::map;
 using std::wstring;

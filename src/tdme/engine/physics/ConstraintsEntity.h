@@ -6,13 +6,10 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <java/lang/Object.h>
 
 using std::array;
 using std::vector;

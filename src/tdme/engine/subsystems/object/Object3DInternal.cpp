@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/model/Color4.h>
@@ -19,7 +18,6 @@
 using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DInternal;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::model::Color4;

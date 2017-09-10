@@ -3,7 +3,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/physics/ConstraintsEntity.h>
 #include <tdme/engine/physics/ContactCache_ContactCacheInfo.h>
 #include <tdme/engine/physics/ContactCache.h>
@@ -21,7 +20,6 @@ using std::vector;
 
 using tdme::engine::physics::ConstraintsSolver;
 using java::lang::Math;
-using java::util::Iterator;
 using tdme::engine::physics::ConstraintsEntity;
 using tdme::engine::physics::ContactCache_ContactCacheInfo;
 using tdme::engine::physics::ContactCache;

@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>

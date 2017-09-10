@@ -4,7 +4,6 @@
 
 #include <java/lang/fwd-tdme.h>
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -21,7 +20,6 @@
 using std::vector;
 
 using java::lang::Math;
-using java::lang::String;
 
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Transformations;

@@ -4,8 +4,6 @@
 #include <vector>
 
 #include <java/lang/Math.h>
-#include <java/lang/System.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
@@ -27,8 +25,6 @@ using std::vector;
 
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
 using java::lang::Math;
-using java::lang::System;
-using java::util::Iterator;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Partition;

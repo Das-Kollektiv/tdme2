@@ -8,15 +8,12 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::wstring;
 
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-
-
 
 /** 
  * Particle System Entity Interface
