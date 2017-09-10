@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 
-#include <java/io/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
