@@ -5,13 +5,13 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 #include <tdme/utils/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 
 #include <ext/libpng/png.h>
@@ -19,7 +19,6 @@
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 using tdme::utils::ByteBuffer;
 
 using tdme::engine::fileio::textures::TextureLoader;
@@ -28,12 +27,13 @@ using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::_FileSystem;
 using tdme::os::_FileSystemInterface;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 using tdme::utils::_Console;
 
 Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException)
 {
 	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
-	if ((new String(fileName))->toLowerCase()->endsWith(new String(L".png")) == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
 		Texture* texture = TextureLoader::loadPNG(path, fileName);
 		return texture;
 	}
