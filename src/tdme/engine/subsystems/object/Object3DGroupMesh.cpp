@@ -4,12 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Byte.h>
-#include <java/lang/Float.h>
 #include <java/lang/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/Short.h>
-#include <java/lang/String.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
@@ -24,22 +19,13 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-using java::lang::Byte;
-using java::lang::Cloneable;
-using java::lang::Float;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::Short;
-using java::lang::String;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
@@ -251,7 +237,7 @@ bool Object3DGroupMesh::hasRecreatedBuffers()
 
 ShortBuffer* Object3DGroupMesh::setupVertexIndicesBuffer()
 {
-	auto sbIndices = _Buffer::getByteBuffer(faceCount * 3 * Short::SIZE / Byte::SIZE)->asShortBuffer();
+	auto sbIndices = _Buffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
 	for (auto index : indices) {
 		sbIndices->put(index);
 	}
@@ -264,7 +250,7 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 	if (groupTextureCoordinates == nullptr)
 		return nullptr;
 
-	auto fbTextureCoordinates = _Buffer::getByteBuffer(groupTextureCoordinates->size() * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	auto fbTextureCoordinates = _Buffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates->put(textureCoordinate.getArray());
 	}
@@ -273,7 +259,7 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 
 FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 {
-	auto fbVertices = _Buffer::getByteBuffer(vertices->size() * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	auto fbVertices = _Buffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& vertex : *vertices) {
 		fbVertices->put(vertex.getArray());
 	}
@@ -282,7 +268,7 @@ FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 
 FloatBuffer* Object3DGroupMesh::setupNormalsBuffer()
 {
-	auto fbNormals = _Buffer::getByteBuffer(normals->size() * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	auto fbNormals = _Buffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& normal : *normals) {
 		fbNormals->put(normal.getArray());
 	}
@@ -294,7 +280,7 @@ FloatBuffer* Object3DGroupMesh::setupTangentsBuffer()
 	if (tangents == nullptr) {
 		return nullptr;
 	}
-	auto fbTangents = _Buffer::getByteBuffer(tangents->size() * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	auto fbTangents = _Buffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& tangent : *tangents) {
 		fbTangents->put(tangent.getArray());
 	}
@@ -306,7 +292,7 @@ FloatBuffer* Object3DGroupMesh::setupBitangentsBuffer()
 	if (bitangents == nullptr) {
 		return nullptr;
 	}
-	auto fbBitangents = _Buffer::getByteBuffer(bitangents->size() * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	auto fbBitangents = _Buffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& bitangent : *bitangents) {
 		fbBitangents->put(bitangent.getArray());
 	}

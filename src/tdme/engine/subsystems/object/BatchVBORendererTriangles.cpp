@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <java/lang/Byte.h>
-#include <java/lang/Float.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/engine/Engine.h>
@@ -12,7 +10,6 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -38,9 +35,9 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 	this->renderer = renderer;
 	this->acquired = false;
 	this->vertices = 0;
-	this->fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	this->fbNormals = ByteBuffer::allocate(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	this->fbTextureCoordinates = ByteBuffer::allocate(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))->asFloatBuffer();
+	this->fbNormals = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))->asFloatBuffer();
+	this->fbTextureCoordinates = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float))->asFloatBuffer();
 }
 
 bool BatchVBORendererTriangles::isAcquired()
@@ -76,9 +73,9 @@ void BatchVBORendererTriangles::render()
 		return;
 
 	auto triangles = fbVertices->getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbNormals->getPosition() * Float::SIZE / Byte::SIZE, fbNormals);
-	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->getPosition() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * sizeof(float), fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbNormals->getPosition() * sizeof(float), fbNormals);
+	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->getPosition() * sizeof(float), fbTextureCoordinates);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);
