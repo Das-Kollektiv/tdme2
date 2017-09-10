@@ -34,7 +34,7 @@ public:
 	 * @return absolute value
 	 */
 	inline static float abs(float value) {
-		return ::abs(value);
+		return ::fabs(value);
 	}
 
 	/**
@@ -183,8 +183,8 @@ public:
 	 * @param value
 	 * @return tangent
 	 */
-	inline static float tan(float arg0) {
-		return ::tan(arg0);
+	inline static float tan(float value) {
+		return ::tan(value);
 	}
 
 };
