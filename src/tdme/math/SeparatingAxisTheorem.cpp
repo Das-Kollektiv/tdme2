@@ -2,19 +2,20 @@
 
 #include <vector>
 
-#include <Array.h>
-#include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Float.h>
 
 using std::vector;
 
 using tdme::math::SeparatingAxisTheorem;
-using java::lang::Float;
+
 using java::lang::Math;
+
 using tdme::math::MathTools;
 using tdme::math::Vector3;
+using tdme::utils::Float;
 
 bool SeparatingAxisTheorem::checkAxis(Vector3* axis)
 {

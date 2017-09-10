@@ -1,16 +1,17 @@
 #include <tdme/math/Vector3.h>
 
-#include <java/lang/Math.h>
-#include <java/lang/Float.h>
-#include <tdme/math/MathTools.h>
-#include <tdme/math/Vector4.h>
 #include <cmath>
 
+#include <java/lang/Math.h>
+#include <tdme/math/MathTools.h>
+#include <tdme/math/Vector4.h>
+#include <tdme/utils/Float.h>
+
+using java::lang::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using java::lang::Math;
-using java::lang::Float;
 using tdme::math::MathTools;
+using tdme::utils::Float;
 
 Vector3::Vector3() 
 {
