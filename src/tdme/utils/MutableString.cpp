@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/MutableString.java
 #include <tdme/utils/MutableString.h>
 
 #include <string>

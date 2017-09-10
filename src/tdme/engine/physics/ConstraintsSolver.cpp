@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/ConstraintsSolver.java
 #include <tdme/engine/physics/ConstraintsSolver.h>
 
 #include <vector>

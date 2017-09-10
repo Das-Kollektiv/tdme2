@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/TriangleTriangleIntersection.java
 #include <tdme/math/TriangleTriangleIntersection.h>
 
 #include <array>

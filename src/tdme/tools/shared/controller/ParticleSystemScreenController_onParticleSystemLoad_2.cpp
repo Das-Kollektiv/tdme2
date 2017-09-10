@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/ParticleSystemScreenController.java
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.h>
 
 #include <tdme/tools/shared/controller/FileDialogPath.h>

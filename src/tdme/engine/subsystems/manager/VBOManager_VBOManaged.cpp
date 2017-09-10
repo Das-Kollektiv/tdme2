@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/manager/VBOManager.java
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 
 #include <string>

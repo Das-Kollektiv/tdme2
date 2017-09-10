@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/DAEReader.java
 #include <tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/RigidBody.java
 #include <tdme/engine/physics/RigidBody.h>
 
 #include <vector>

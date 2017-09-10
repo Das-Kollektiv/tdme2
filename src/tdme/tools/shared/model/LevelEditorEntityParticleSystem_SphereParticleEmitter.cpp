@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.java
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
 
 #include <tdme/engine/model/Color4.h>

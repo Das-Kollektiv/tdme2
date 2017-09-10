@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Rotations.java
 #include <tdme/engine/Rotations.h>
 
 #include <vector>

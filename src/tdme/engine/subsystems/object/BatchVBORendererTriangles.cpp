@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/BatchVBORendererTriangles.java
 #include <tdme/engine/subsystems/object/BatchVBORendererTriangles.h>
 
 #include <string>

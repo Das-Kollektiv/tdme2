@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Skinning.java
 #include <tdme/engine/model/Skinning.h>
 
 #include <map>

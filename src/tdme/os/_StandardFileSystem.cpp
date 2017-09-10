@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/os/_StandardFileSystem.java
 #include <tdme/os/_StandardFileSystem.h>
 
 #include <limits.h>

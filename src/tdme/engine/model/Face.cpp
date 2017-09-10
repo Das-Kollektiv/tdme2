@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Face.java
 #include <tdme/engine/model/Face.h>
 
 #include <tdme/engine/model/Group.h>

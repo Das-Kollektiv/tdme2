@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.java
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
 #include <java/lang/Math.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.java
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 
 #include <java/lang/Math.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/CameraRotationInputHandler.java
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
 #include <java/lang/Character.h>

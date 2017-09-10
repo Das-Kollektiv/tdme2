@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/InfoDialogScreenController.java
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 
 #include <string>

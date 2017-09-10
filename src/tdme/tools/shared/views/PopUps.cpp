@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/PopUps.java
 #include <tdme/tools/shared/views/PopUps.h>
 
 #include <tdme/engine/Engine.h>

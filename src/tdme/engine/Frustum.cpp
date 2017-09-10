@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Frustum.java
 #include <tdme/engine/Frustum.h>
 
 #include <array>

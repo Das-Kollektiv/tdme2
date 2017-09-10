@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/textures/TextureLoader.java
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 
 #include <stdlib.h>

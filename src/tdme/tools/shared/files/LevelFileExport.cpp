@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/files/LevelFileExport.java
 #include <tdme/tools/shared/files/LevelFileExport.h>
 
 #include <iostream>

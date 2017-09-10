@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelEditorLight.java
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 
 #include <java/lang/String.h>

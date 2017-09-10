@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderPoint.java
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 
 #include <tdme/engine/model/Color4.h>

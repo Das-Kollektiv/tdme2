@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 
 #include <string>

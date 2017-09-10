@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/ParticlesShader.java
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 
 #include <tdme/engine/Engine.h>

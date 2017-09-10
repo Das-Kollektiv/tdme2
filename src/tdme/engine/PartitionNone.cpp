@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/PartitionNone.java
 #include <tdme/engine/PartitionNone.h>
 
 #include <vector>

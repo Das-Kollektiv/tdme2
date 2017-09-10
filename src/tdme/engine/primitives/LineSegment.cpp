@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/LineSegment.java
 #include <tdme/engine/primitives/LineSegment.h>
 
 #include <java/lang/Math.h>

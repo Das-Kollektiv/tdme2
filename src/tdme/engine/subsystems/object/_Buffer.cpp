@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/_Buffer.java
 #include <tdme/engine/subsystems/object/_Buffer.h>
 
 #include <java/nio/ByteBuffer.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Matrix4x4Negative.java
 #include <tdme/math/Matrix4x4Negative.h>
 
 #include <tdme/math/Matrix4x4.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/PhysicsTest3.java
 #include <tdme/tests/PhysicsTest3.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Sphere.java
 #include <tdme/engine/primitives/Sphere.h>
 
 #include <java/lang/String.h>

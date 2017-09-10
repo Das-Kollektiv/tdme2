@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Material.java
 #include <tdme/engine/model/Material.h>
 
 #include <string>

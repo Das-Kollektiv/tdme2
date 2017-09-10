@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/views/EmptyView.java
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/AngleTest.java
 #include <tdme/tests/AngleTest.h>
 
 #include <tdme/math/Vector3.h>

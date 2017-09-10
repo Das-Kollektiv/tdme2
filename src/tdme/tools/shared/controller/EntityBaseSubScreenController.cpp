@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/EntityBaseSubScreenController.java
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 
 #include <map>

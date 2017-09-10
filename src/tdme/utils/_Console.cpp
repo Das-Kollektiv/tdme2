@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/_Console.java
 #include <iostream>
 #include <string>
 

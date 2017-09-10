@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/FacesEntity.java
 #include <tdme/engine/model/FacesEntity.h>
 
 #include <vector>

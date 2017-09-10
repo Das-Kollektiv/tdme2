@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/EntityDisplaySubScreenController.java
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 
 #include <java/lang/String.h>

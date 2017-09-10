@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/ConstraintsEntity.java
 #include <tdme/engine/physics/ConstraintsEntity.h>
 
 #include <array>

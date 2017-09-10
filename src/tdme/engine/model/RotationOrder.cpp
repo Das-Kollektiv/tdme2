@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/RotationOrder.java
 #include <tdme/engine/model/RotationOrder.h>
 
 #include <java/io/Serializable.h>

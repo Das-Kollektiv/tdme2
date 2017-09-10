@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/_HashMap.java
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 
 #include <java/lang/Object.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Timing.java
 #include <tdme/engine/Timing.h>
 
 #include <java/lang/System.h>

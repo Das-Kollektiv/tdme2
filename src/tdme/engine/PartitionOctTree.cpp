@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/PartitionOctTree.java
 #include <tdme/engine/PartitionOctTree.h>
 
 #include <algorithm>

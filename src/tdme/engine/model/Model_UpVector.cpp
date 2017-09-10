@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Model.java
 #include <tdme/engine/model/Model_UpVector.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/World.java
 #include <tdme/engine/physics/World.h>
 
 #include <map>

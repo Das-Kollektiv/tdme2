@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/files/LevelFileImport.java
 #include <tdme/tools/shared/files/LevelFileImport.h>
 
 #include <string>

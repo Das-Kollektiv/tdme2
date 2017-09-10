@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/Vector6.java
 #include <tdme/engine/physics/Vector6.h>
 
 #include <algorithm>

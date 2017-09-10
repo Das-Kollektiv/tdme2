@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/Key.java
 #include <tdme/utils/Key.h>
 
 #include <java/lang/Float.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/AnimationSetup.java
 #include <tdme/engine/model/AnimationSetup.h>
 
 #include <tdme/engine/model/Model.h>

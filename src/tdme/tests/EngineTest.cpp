@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/EngineTest.java
 #include <tdme/tests/EngineTest.h>
 
 #include <cctype>

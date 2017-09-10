@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.java
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.h>
 
 #include <tdme/gui/nodes/GUIElementNode.h>

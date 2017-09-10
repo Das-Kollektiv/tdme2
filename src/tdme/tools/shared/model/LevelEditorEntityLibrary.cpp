@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityLibrary.java
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 
 #include <algorithm>

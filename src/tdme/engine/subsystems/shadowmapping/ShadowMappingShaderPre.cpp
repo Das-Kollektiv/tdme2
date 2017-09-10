@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.java
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>

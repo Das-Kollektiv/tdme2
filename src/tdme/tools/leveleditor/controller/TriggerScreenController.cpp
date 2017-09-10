@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/controller/TriggerScreenController.java
 #include <tdme/tools/leveleditor/controller/TriggerScreenController.h>
 
 #include <string>

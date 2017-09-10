@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/EntityBoundingVolumeView.java
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 
 #include <java/lang/Math.h>

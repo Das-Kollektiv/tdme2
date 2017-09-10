@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/PhysicsPartitionOctTree.java
 #include <tdme/engine/physics/PhysicsPartitionOctTree.h>
 
 #include <algorithm>

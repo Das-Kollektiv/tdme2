@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/ParticleSystemScreenController.java
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.h>
 
 #include <java/lang/String.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.java
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 
 #include <java/lang/Math.h>

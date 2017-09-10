@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/FrameBuffer.java
 #include <tdme/engine/FrameBuffer.h>
 
 #include <tdme/engine/Engine.h>

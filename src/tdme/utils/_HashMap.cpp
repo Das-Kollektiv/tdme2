@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/_HashMap.java
 #include <tdme/utils/_HashMap.h>
 
 #include <java/lang/Math.h>

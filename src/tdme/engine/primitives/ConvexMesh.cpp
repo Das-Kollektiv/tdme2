@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/ConvexMesh.java
 #include <tdme/engine/primitives/ConvexMesh.h>
 
 #include <vector>

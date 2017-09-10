@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/CollisionResponse.java
 #include <tdme/engine/physics/CollisionResponse.h>
 
 #include <java/lang/Math.h>

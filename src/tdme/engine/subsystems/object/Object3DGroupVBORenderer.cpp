@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroupVBORenderer.java
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 
 #include <vector>

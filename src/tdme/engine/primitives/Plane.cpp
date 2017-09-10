@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Plane.java
 #include <tdme/engine/primitives/Plane.h>
 
 #include <tdme/math/Vector3.h>

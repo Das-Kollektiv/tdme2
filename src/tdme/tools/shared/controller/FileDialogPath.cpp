@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/FileDialogPath.java
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 
 #include <java/lang/String.h>

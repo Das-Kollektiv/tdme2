@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Light.java
 #include <tdme/engine/Light.h>
 
 #include <tdme/engine/model/Color4.h>

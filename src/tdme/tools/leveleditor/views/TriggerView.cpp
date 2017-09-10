@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/views/TriggerView.java
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 
 #include <java/lang/String.h>

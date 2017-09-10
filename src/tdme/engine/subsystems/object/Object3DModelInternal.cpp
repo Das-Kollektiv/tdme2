@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/Object3DModelInternal.java
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
 
 using tdme::engine::subsystems::object::Object3DModelInternal;

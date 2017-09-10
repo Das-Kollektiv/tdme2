@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/AudioTest.java
 #include <tdme/tests/AudioTest_main_1.h>
 
 #include <java/lang/Thread.h>

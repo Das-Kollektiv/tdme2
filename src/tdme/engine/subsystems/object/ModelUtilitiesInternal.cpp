@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/ModelUtilitiesInternal.java
 #include <tdme/engine/subsystems/object/ModelUtilitiesInternal.h>
 
 #include <map>

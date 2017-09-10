@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/renderer/GL3Renderer.java
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
 #ifdef __APPLE__

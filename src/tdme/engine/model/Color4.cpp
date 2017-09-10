@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Color4.java
 #include <tdme/engine/model/Color4.h>
 
 #include <array>

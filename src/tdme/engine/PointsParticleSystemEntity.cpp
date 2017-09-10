@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/PointsParticleSystemEntity.java
 #include <tdme/engine/PointsParticleSystemEntity.h>
 
 #include <string>

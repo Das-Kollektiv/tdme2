@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/FileDialogScreenController.java
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 
 #include <tdme/os/_FileSystem.h>

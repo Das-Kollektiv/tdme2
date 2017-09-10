@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Animation.java
 #include <tdme/engine/model/Animation.h>
 
 #include <tdme/math/Matrix4x4.h>

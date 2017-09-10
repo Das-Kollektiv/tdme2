@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/ModelProperties.java
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 #include <algorithm>

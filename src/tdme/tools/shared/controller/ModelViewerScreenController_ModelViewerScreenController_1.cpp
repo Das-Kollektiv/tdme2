@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/ModelViewerScreenController.java
 #include <tdme/tools/shared/controller/ModelViewerScreenController_ModelViewerScreenController_1.h>
 
 #include <tdme/tools/shared/controller/ModelViewerScreenController.h>

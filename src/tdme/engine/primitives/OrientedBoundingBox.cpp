@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/OrientedBoundingBox.java
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 
 #include <array>

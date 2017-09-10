@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Quaternion.java
 #include <tdme/math/Quaternion.h>
 
 #include <array>

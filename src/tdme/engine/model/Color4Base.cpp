@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Color4Base.java
 #include <tdme/engine/model/Color4Base.h>
 
 #include <algorithm>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/PrimitiveModel.java
 #include <tdme/engine/primitives/PrimitiveModel.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/files/ModelMetaDataFileImport.java
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 
 #include <string>

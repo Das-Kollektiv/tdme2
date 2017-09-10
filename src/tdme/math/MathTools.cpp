@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/MathTools.java
 #include <tdme/math/MathTools.h>
 
 #include <java/lang/Math.h>

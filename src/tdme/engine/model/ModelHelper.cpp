@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/ModelHelper.java
 #include <tdme/engine/model/ModelHelper.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/lighting/LightingShader.java
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
 #include <algorithm>

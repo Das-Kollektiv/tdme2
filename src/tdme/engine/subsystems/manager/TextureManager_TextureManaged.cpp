@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/manager/TextureManager.java
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 
 #include <string>

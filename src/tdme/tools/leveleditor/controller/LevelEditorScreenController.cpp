@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/controller/LevelEditorScreenController.java
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelPropertyPresets.java
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 
 #include <stdlib.h>

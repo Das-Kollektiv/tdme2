@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/Matrix1x6.java
 #include <tdme/engine/physics/Matrix1x6.h>
 
 #include <algorithm>

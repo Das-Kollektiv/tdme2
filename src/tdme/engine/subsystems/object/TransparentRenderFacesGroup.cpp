@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesGroup.h>
 
 #include <string>

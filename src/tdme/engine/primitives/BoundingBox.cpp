@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/BoundingBox.java
 #include <tdme/engine/primitives/BoundingBox.h>
 
 #include <vector>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/TextureCoordinate.java
 #include <tdme/engine/model/TextureCoordinate.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/SharedModelViewerView.java
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
 #include <string>

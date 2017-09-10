@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.java
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
 
 #include <algorithm>

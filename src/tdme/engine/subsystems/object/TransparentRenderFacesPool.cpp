@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderFacesPool.java
 #include <tdme/engine/subsystems/object/TransparentRenderFacesPool.h>
 
 #include <vector>

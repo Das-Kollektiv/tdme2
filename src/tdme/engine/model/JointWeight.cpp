@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/JointWeight.java
 #include <tdme/engine/model/JointWeight.h>
 
 using tdme::engine::model::JointWeight;

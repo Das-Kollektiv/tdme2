@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/views/ParticleSystemView.java
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 
 #include <string>

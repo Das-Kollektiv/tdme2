@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/ObjectParticleSystemEntity.java
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 
 #include <vector>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Triangle.java
 #include <tdme/engine/primitives/Triangle.h>
 
 #include <vector>

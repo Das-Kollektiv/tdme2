@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/PhysicsPartitionNone.java
 #include <tdme/engine/physics/PhysicsPartitionNone.h>
 
 #include <vector>

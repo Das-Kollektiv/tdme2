@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/Object3DBase.java
 #include <tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.h>
 
 #include <Array.h>

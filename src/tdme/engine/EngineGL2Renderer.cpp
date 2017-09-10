@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>

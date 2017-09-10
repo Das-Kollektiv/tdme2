@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/logic/Level.java
 #include <tdme/tools/leveleditor/logic/Level.h>
 
 #include <vector>

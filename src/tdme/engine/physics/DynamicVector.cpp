@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/DynamicVector.java
 #include <tdme/engine/physics/DynamicVector.h>
 
 #include <vector>

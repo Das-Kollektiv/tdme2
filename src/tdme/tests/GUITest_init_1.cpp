@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/GUITest.java
 #include <tdme/tests/GUITest_init_1.h>
 
 #include <stdlib.h>

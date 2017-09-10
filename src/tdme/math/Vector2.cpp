@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Vector2.java
 #include <tdme/math/Vector2.h>
 
 #include <array>

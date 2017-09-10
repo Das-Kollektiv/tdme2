@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/controller/EmptyScreenController.java
 #include <tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.h>
 
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>

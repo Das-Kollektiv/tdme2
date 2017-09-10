@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/tools/Tools.java
 #include <tdme/tools/shared/tools/Tools.h>
 
 #include <array>

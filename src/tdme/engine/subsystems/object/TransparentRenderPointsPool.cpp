@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/TransparentRenderPointsPool.java
 #include <tdme/engine/subsystems/object/TransparentRenderPointsPool.h>
 
 #include <algorithm>

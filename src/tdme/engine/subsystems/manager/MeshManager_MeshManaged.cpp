@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/manager/MeshManager.java
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
 
 #include <string>

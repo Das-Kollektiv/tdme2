@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/shadowmapping/ShadowMapping.java
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 
 #include <string>

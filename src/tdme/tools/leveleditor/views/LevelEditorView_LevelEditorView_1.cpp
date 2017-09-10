@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/views/LevelEditorView.java
 #include <tdme/tools/leveleditor/views/LevelEditorView_LevelEditorView_1.h>
 
 #include <java/lang/String.h>

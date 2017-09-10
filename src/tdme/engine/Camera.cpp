@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Camera.java
 #include <tdme/engine/Camera.h>
 
 #include <java/lang/Math.h>

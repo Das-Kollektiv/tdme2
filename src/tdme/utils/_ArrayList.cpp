@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/_ArrayList.java
 #include <tdme/utils/_ArrayList.h>
 
 #include <java/lang/Object.h>

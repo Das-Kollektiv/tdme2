@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 #include <tdme/engine/fileio/models/TMReader.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar
 #include <string>
 #include <vector>
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/TMWriter.java
 #include <tdme/engine/fileio/models/TMWriter.h>
 
 #include <array>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/WFObjReader.java
 #include <tdme/engine/fileio/models/WFObjReader.h>
 
 #include <array>

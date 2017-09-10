@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Rotation.java
 #include <tdme/engine/Rotation.h>
 
 #include <java/lang/Math.h>

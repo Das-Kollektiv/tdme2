@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Capsule.java
 #include <tdme/engine/primitives/Capsule.h>
 
 #include <java/lang/Math.h>

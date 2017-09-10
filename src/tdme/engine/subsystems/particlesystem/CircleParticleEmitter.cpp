@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.java
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
 
 #include <java/lang/Math.h>

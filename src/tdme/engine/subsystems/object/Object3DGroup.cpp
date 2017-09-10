@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/Object3DGroup.java
 #include <tdme/engine/subsystems/object/Object3DGroup.h>
 
 #include <map>

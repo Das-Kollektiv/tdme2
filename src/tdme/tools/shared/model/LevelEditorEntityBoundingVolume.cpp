@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.java
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
 #include <string>

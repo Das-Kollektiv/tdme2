@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/SharedParticleSystemView.java
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/Object3DVBORenderer.java
 #include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/object/TransparentRenderFacesGroup.h>
 #include "Object3DVBORenderer_TransparentRenderFacesGroupPool.h"

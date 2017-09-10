@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Group.java
 #include <tdme/engine/model/Group.h>
 
 #include <map>

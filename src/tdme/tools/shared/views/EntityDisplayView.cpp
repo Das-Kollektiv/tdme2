@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/EntityDisplayView.java
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 
 #include <string>

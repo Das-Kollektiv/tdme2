@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/Engine.java
 #include <tdme/engine/Engine.h>
 
 #include <string>

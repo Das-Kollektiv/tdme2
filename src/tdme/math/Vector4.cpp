@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Vector4.java
 #include <tdme/math/Vector4.h>
 
 #include <array>

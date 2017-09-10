@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Vector3.java
 #include <tdme/math/Vector3.h>
 
 #include <java/lang/Math.h>

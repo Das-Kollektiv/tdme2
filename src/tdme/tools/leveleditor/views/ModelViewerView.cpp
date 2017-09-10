@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/views/ModelViewerView.java
 #include <tdme/tools/leveleditor/views/ModelViewerView.h>
 
 #include <string>
