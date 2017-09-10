@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/CollisionResponse.h>
@@ -18,14 +17,13 @@
 #include <tdme/math/SeparatingAxisTheorem.h>
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/_Console.h>
 
 using std::wstring;
 
 using tdme::engine::physics::CollisionDetection;
-using java::lang::Float;
 using java::lang::Math;
-using java::lang::Object;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
@@ -40,6 +38,7 @@ using tdme::math::MathTools;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
+using tdme::utils::Float;
 using tdme::utils::_Console;
 
 constexpr bool CollisionDetection::VERBOSE;

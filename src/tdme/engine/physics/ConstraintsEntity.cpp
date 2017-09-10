@@ -3,7 +3,6 @@
 #include <array>
 #include <vector>
 
-#include <java/lang/Float.h>
 #include <java/lang/Math.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/DynamicVector.h>
@@ -11,12 +10,12 @@
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Float.h>
 
 using std::array;
 using std::vector;
 
 using tdme::engine::physics::ConstraintsEntity;
-using java::lang::Float;
 using java::lang::Math;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::DynamicVector;
@@ -24,6 +23,7 @@ using tdme::engine::physics::Matrix1x6;
 using tdme::engine::physics::RigidBody;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
+using tdme::utils::Float;
 
 ConstraintsEntity::ConstraintsEntity() 
 {
