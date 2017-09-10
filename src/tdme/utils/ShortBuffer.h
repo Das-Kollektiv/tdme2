@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Buffer.h>
 
 using tdme::utils::Buffer;
@@ -49,7 +49,6 @@ public:
 	 * Public constructor
 	 * @param buffer
 	 */
-	ShortBuffer(Buffer* buffer) {
-		Buffer(buffer);
+	ShortBuffer(Buffer* buffer) : Buffer(buffer) {
 	}
 };

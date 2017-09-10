@@ -15,12 +15,11 @@
 #include <vector>
 #include <string>
 
-#include <java/nio/Buffer.h>
-#include <java/nio/ByteBuffer.h>
-#include <java/nio/ByteOrder.h>
-#include <java/nio/FloatBuffer.h>
-#include <java/nio/IntBuffer.h>
-#include <java/nio/ShortBuffer.h>
+#include <tdme/utils/Buffer.h>
+#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
@@ -35,12 +34,11 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
-using java::nio::Buffer;
-using java::nio::ByteBuffer;
-using java::nio::ByteOrder;
-using java::nio::FloatBuffer;
-using java::nio::IntBuffer;
-using java::nio::ShortBuffer;
+using tdme::utils::Buffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;

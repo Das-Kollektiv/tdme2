@@ -4,9 +4,8 @@
 
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
-#include <java/nio/ByteBuffer.h>
-#include <java/nio/ByteOrder.h>
-#include <java/nio/FloatBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utils/FloatBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -23,9 +22,8 @@ using tdme::engine::subsystems::object::BatchVBORendererPoints;
 
 using java::lang::Byte;
 using java::lang::Float;
-using java::nio::ByteBuffer;
-using java::nio::ByteOrder;
-using java::nio::FloatBuffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -41,8 +39,8 @@ BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id)
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
-	fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbColors = ByteBuffer::allocateDirect(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbColors = ByteBuffer::allocate(VERTEX_COUNT * 4 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 bool BatchVBORendererPoints::isAcquired()
@@ -74,12 +72,12 @@ void BatchVBORendererPoints::initialize()
 
 void BatchVBORendererPoints::render()
 {
-	if (fbVertices->position() == 0 || fbColors->position() == 0)
+	if (fbVertices->getPosition() == 0 || fbColors->getPosition() == 0)
 		return;
 
-	auto points = fbVertices->position() / 3 /* 3 components */;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
+	auto points = fbVertices->getPosition() / 3 /* 3 components */;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbColors->getPosition() * Float::SIZE / Byte::SIZE, fbColors);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindColorsBufferObject((*vboIds)[1]);
 	renderer->drawPointsFromBufferObjects(points, 0);

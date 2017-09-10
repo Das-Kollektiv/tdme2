@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <java/nio/ByteBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/EngineGL2Renderer.h>
 #include <tdme/engine/EngineGL3Renderer.h>
@@ -50,7 +50,7 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::Engine;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 using tdme::engine::Camera;
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::EngineGL2Renderer;

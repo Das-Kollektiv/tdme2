@@ -5,13 +5,13 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::vector;
 
-using java::nio::FloatBuffer;
+using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::GLRenderer;
 

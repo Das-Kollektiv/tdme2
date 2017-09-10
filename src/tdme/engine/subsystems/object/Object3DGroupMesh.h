@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -21,8 +21,8 @@ using std::map;
 using std::vector;
 using std::wstring;
 
-using java::nio::FloatBuffer;
-using java::nio::ShortBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;

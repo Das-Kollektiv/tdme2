@@ -4,9 +4,8 @@
 
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
-#include <java/nio/ByteBuffer.h>
-#include <java/nio/ByteOrder.h>
-#include <java/nio/FloatBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utils/FloatBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -21,9 +20,8 @@ using std::to_wstring;
 using tdme::engine::subsystems::object::BatchVBORendererTriangles;
 using java::lang::Byte;
 using java::lang::Float;
-using java::nio::ByteBuffer;
-using java::nio::ByteOrder;
-using java::nio::FloatBuffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -40,9 +38,9 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 	this->renderer = renderer;
 	this->acquired = false;
 	this->vertices = 0;
-	this->fbVertices = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	this->fbNormals = ByteBuffer::allocateDirect(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	this->fbTextureCoordinates = ByteBuffer::allocateDirect(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbNormals = ByteBuffer::allocate(VERTEX_COUNT * 3 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	this->fbTextureCoordinates = ByteBuffer::allocate(VERTEX_COUNT * 2 * Float::SIZE / Byte::SIZE)->asFloatBuffer();
 }
 
 bool BatchVBORendererTriangles::isAcquired()
@@ -74,13 +72,13 @@ void BatchVBORendererTriangles::initialize()
 
 void BatchVBORendererTriangles::render()
 {
-	if (fbVertices->position() == 0 || fbNormals->position() == 0 || fbTextureCoordinates->position() == 0)
+	if (fbVertices->getPosition() == 0 || fbNormals->getPosition() == 0 || fbTextureCoordinates->getPosition() == 0)
 		return;
 
-	auto triangles = fbVertices->position() / 3 /*vertices*/ / 3 /*vector components*/;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbNormals->position() * Float::SIZE / Byte::SIZE, fbNormals);
-	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+	auto triangles = fbVertices->getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbNormals->getPosition() * Float::SIZE / Byte::SIZE, fbNormals);
+	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->getPosition() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);

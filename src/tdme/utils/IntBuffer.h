@@ -1,8 +1,7 @@
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Buffer.h>
-#include <Array.h>
 
 using tdme::utils::Buffer;
 
@@ -53,8 +52,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	inline IntBuffer(Buffer* buffer) {
-		Buffer(buffer);
+	inline IntBuffer(Buffer* buffer) : Buffer(buffer) {
 	}
 
 };

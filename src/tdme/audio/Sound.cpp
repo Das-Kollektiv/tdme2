@@ -4,7 +4,7 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/nio/ByteBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/audio/AudioBufferManager.h>
@@ -17,7 +17,7 @@ using java::io::File;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::audio::AudioBufferManager;

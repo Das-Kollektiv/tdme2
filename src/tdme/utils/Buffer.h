@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 
 #include <vector>
 
@@ -15,7 +15,6 @@ class tdme::utils::Buffer
 {
 private:
 	bool createdBuffer;
-	int32_t capacity { 0 };
 	int32_t position { 0 };
 	vector<uint8_t>* buffer { nullptr };
 
@@ -33,7 +32,7 @@ public:
 	 * @returns capacity
 	 */
 	inline virtual int32_t getCapacity() {
-		return capacity;
+		return buffer->size();
 	}
 
 	/**
@@ -48,14 +47,14 @@ public:
 	 * @param position
 	 */
 	inline uint8_t get(int32_t position) {
-		return buffer[position];
+		return (*buffer)[position];
 	}
 
 	/**
 	 * Put value into buffer
 	 */
 	inline Buffer* put(uint8_t value) {
-		buffer[position++] = value;
+		(*buffer)[position++] = value;
 		return this;
 	}
 
@@ -72,8 +71,8 @@ public:
 	 */
 	inline Buffer(int32_t capacity) {
 		this->createdBuffer = true;
-		this->capacity = capacity;
-		this->buffer = new vector(this->capacity);
+		this->position = 0;
+		this->buffer = new vector<uint8_t>(capacity);
 	}
 
 	/**
@@ -82,8 +81,18 @@ public:
 	 */
 	inline Buffer(Buffer* buffer) {
 		this->createdBuffer = false;
-		this->capacity = buffer->capacity;
-		this->buffer = buffer;
+		this->position = 0;
+		this->buffer = buffer->buffer;
+	}
+
+	/**
+	 * Public constructor
+	 * @param data
+	 */
+	inline Buffer(vector<uint8_t>* data) {
+		this->createdBuffer = false;
+		this->position = 0;
+		this->buffer = data;
 	}
 
 	/**

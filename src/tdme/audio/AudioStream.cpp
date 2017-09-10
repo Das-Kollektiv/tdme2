@@ -4,7 +4,7 @@
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
-#include <java/nio/ByteBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
@@ -16,7 +16,7 @@ using tdme::audio::AudioStream;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 using tdme::audio::Audio;
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
@@ -203,7 +203,7 @@ bool AudioStream::initialize()
 	alSourceId = (*sourceIds)[0];
 	*/
 	updateProperties();
-	data = ByteBuffer::allocateDirect(BUFFER_SIZE);
+	data = ByteBuffer::allocate(BUFFER_SIZE);
 	initiated = true;
 	return true;
 }

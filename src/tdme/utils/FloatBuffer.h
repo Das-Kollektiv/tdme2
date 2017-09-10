@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include <fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Buffer.h>
 
 using std::array;
@@ -46,7 +46,7 @@ public:
 	 * @param value
 	 */
 	inline FloatBuffer* put(float value) {
-		uint8_t* floatAsInt8 = ((int8_t*)&value);
+		uint8_t* floatAsInt8 = ((uint8_t*)&value);
 		Buffer::put(floatAsInt8[0]);
 		Buffer::put(floatAsInt8[1]);
 		Buffer::put(floatAsInt8[2]);
@@ -92,8 +92,7 @@ public:
 	 * Public constructor
 	 * @param buffer
 	 */
-	FloatBuffer(Buffer* buffer) {
-		Buffer(buffer);
+	FloatBuffer(Buffer* buffer) : Buffer(buffer) {
 	}
 
 };

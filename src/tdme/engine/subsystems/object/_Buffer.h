@@ -3,10 +3,10 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 
 /** 
  * Buffer

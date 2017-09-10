@@ -10,9 +10,9 @@
 #include <java/lang/Object.h>
 #include <java/lang/Short.h>
 #include <java/lang/String.h>
-#include <java/nio/ByteBuffer.h>
-#include <java/nio/FloatBuffer.h>
-#include <java/nio/ShortBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
@@ -40,9 +40,9 @@ using java::lang::Math;
 using java::lang::Object;
 using java::lang::Short;
 using java::lang::String;
-using java::nio::ByteBuffer;
-using java::nio::FloatBuffer;
-using java::nio::ShortBuffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;

@@ -4,7 +4,11 @@
 
 #include <vector>
 
-#include <fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Buffer.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 
 using std::vector;
 
@@ -50,8 +54,7 @@ public:
 	 * Public constructor
 	 * @param capacity
 	 */
-	inline ByteBuffer(int32_t capacity) {
-		Buffer::Buffer(capacity);
+	inline ByteBuffer(int32_t capacity) : Buffer(capacity) {
 	}
 
 	/**
@@ -59,7 +62,6 @@ public:
 	 * @param capacity
 	 * @param data
 	 */
-	inline ByteBuffer(int32_t _capacity, vector<uint8_t>* data) {
-		Buffer::Buffer(capacity, data);
+	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {
 	}
 };

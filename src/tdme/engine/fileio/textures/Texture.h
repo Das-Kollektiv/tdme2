@@ -5,12 +5,12 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 
 using std::wstring;
 
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 
 /** 
  * Texture

@@ -4,14 +4,14 @@
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
 
 using tdme::audio::AudioEntity;
 using java::lang::String;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 using tdme::audio::decoder::AudioDecoder;
 
 

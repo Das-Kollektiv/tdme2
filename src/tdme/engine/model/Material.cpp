@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <java/nio/ByteBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/model/Color4.h>
@@ -11,7 +11,7 @@
 using std::wstring;
 
 using tdme::engine::model::Material;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::model::Color4;

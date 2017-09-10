@@ -8,10 +8,9 @@
 #include <java/lang/Short.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
-#include <java/nio/ByteBuffer.h>
-#include <java/nio/ByteOrder.h>
-#include <java/nio/FloatBuffer.h>
-#include <java/nio/ShortBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
@@ -31,10 +30,9 @@ using java::lang::Object;
 using java::lang::Short;
 using java::lang::String;
 using java::lang::System;
-using java::nio::ByteBuffer;
-using java::nio::ByteOrder;
-using java::nio::FloatBuffer;
-using java::nio::ShortBuffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
@@ -59,10 +57,10 @@ GUIRenderer::GUIRenderer(GLRenderer* renderer)
 
 void GUIRenderer::init()
 {
-	sbIndices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * Short::SIZE / Byte::SIZE)->asShortBuffer();
-	fbVertices = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 3* Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbColors = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 4* Float::SIZE / Byte::SIZE)->asFloatBuffer();
-	fbTextureCoordinates = ByteBuffer::allocateDirect(QUAD_COUNT * 6 * 2* Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	sbIndices = ByteBuffer::allocate(QUAD_COUNT * 6 * Short::SIZE / Byte::SIZE)->asShortBuffer();
+	fbVertices = ByteBuffer::allocate(QUAD_COUNT * 6 * 3* Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbColors = ByteBuffer::allocate(QUAD_COUNT * 6 * 4* Float::SIZE / Byte::SIZE)->asFloatBuffer();
+	fbTextureCoordinates = ByteBuffer::allocate(QUAD_COUNT * 6 * 2* Float::SIZE / Byte::SIZE)->asFloatBuffer();
 	renderAreaLeft = 0.0f;
 	renderAreaTop = 0.0f;
 	renderAreaRight = 0.0f;
@@ -114,7 +112,7 @@ void GUIRenderer::initialize()
 			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
 		}
 		// sbIndices->flip();
-		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->position() * Short::SIZE / Byte::SIZE, sbIndices);
+		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->getPosition() * Short::SIZE / Byte::SIZE, sbIndices);
 	}
 }
 
@@ -416,14 +414,9 @@ void GUIRenderer::render()
 		effectColorAdd = *GUIColor::BLACK->getArray();
 		return;
 	}
-	/*
-	fbVertices->flip();
-	fbColors->flip();
-	fbTextureCoordinates->flip();
-	*/
-	renderer->uploadBufferObject((*vboIds)[1], fbVertices->position() * Float::SIZE / Byte::SIZE, fbVertices);
-	renderer->uploadBufferObject((*vboIds)[2], fbColors->position() * Float::SIZE / Byte::SIZE, fbColors);
-	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->position() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
+	renderer->uploadBufferObject((*vboIds)[1], fbVertices->getPosition() * Float::SIZE / Byte::SIZE, fbVertices);
+	renderer->uploadBufferObject((*vboIds)[2], fbColors->getPosition() * Float::SIZE / Byte::SIZE, fbColors);
+	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->getPosition() * Float::SIZE / Byte::SIZE, fbTextureCoordinates);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];

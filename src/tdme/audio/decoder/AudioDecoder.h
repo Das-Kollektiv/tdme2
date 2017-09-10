@@ -4,13 +4,13 @@
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <java/lang/Object.h>
 
 using java::lang::Object;
 using java::lang::String;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 
 
 struct default_init_tag;

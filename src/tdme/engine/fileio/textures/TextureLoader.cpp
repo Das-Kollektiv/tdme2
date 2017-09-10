@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <java/lang/String.h>
-#include <java/nio/ByteBuffer.h>
+#include <tdme/utils/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/_FileSystem.h>
@@ -20,7 +20,7 @@ using std::vector;
 using std::wstring;
 
 using java::lang::String;
-using java::nio::ByteBuffer;
+using tdme::utils::ByteBuffer;
 
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
@@ -158,11 +158,11 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 	png_read_update_info(png, info);
 
 	// allocate pixel buffer
-	unsigned char* pixels = new unsigned char[width * height * bytesPerPixel];
+	ByteBuffer* pixelByteBuffer = ByteBuffer::allocate(width * height * bytesPerPixel);
 
 	// setup array with row pointers into pixel buffer
 	png_bytep rows[height];
-	unsigned char *p = pixels;
+	uint8_t* p = (uint8_t*)pixelByteBuffer->getBuffer();
 	for(int i = 0; i < height; i++) {
 	    rows[i] = p;
 	    p += width * bytesPerPixel;
@@ -186,6 +186,6 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 		height,
 		width,
 		height,
-		new ByteBuffer(width * height * bytesPerPixel, (int8_t*)pixels)
+		pixelByteBuffer
 	);
 }

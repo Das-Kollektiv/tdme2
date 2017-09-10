@@ -13,7 +13,7 @@ using std::end;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using java::lang::Math;
-using java::nio::FloatBuffer;
+using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::math::Matrix4x4;

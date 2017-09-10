@@ -8,7 +8,7 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/nio/fwd-tdme.h>
+#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
@@ -20,9 +20,9 @@ using std::array;
 using std::vector;
 using std::wstring;
 
-using java::nio::ByteBuffer;
-using java::nio::FloatBuffer;
-using java::nio::ShortBuffer;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
