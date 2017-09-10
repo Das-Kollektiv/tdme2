@@ -5,6 +5,7 @@
 
 using std::string;
 using std::stof;
+using std::isnan;
 
 using tdme::utils::Float;
 
@@ -25,5 +26,5 @@ float Float::parseFloat(const wstring& string) {
 
 bool Float::isNaN(float value)
 {
-	return isnan(value) != 0;
+	return isnan(value);
 }

@@ -228,7 +228,7 @@ PopUps* LevelEditorView::getPopUps()
 	return popUps;
 }
 
-const wstring& LevelEditorView::getFileName()
+const wstring LevelEditorView::getFileName()
 {
 	return _FileSystem::getInstance()->getFileName(level->getFileName());
 }

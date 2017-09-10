@@ -136,7 +136,7 @@ public:
 	/** 
 	 * @return level file name
 	 */
-	const wstring& getFileName();
+	const wstring getFileName();
 
 	/** 
 	 * @return level
