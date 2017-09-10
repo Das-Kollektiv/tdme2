@@ -8,7 +8,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using java::lang::String;
 using tdme::math::Matrix4x4;
 
 using std::wstring;
