@@ -1,12 +1,12 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

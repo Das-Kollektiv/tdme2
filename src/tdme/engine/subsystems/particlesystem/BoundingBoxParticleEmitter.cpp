@@ -1,6 +1,6 @@
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -9,7 +9,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::primitives::BoundingVolume;

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
@@ -25,7 +25,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;

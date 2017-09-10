@@ -2,13 +2,13 @@
 
 #include <array>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
 
 using std::array;
 
 using tdme::engine::model::TextureCoordinate;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::math::MathTools;
 
 TextureCoordinate::TextureCoordinate()

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
@@ -24,7 +24,7 @@ using std::wstring;
 using std::vector;
 
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Partition;

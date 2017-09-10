@@ -1,6 +1,6 @@
 #include <tdme/engine/primitives/Capsule.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -13,7 +13,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Capsule;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;

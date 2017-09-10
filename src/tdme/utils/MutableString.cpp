@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
 #include <java/util/Arrays.h>
@@ -11,7 +11,7 @@
 using std::wstring;
 
 using tdme::utils::MutableString;
-using java::lang::Math;
+using tdme::math::Math;
 using java::lang::String;
 using java::lang::System;
 using java::util::Arrays;

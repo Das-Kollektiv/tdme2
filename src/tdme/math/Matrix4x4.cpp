@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -11,7 +11,7 @@
 using std::array;
 
 using tdme::math::Matrix4x4;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::math::MathTools;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

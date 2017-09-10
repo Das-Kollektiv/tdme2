@@ -1,11 +1,11 @@
 #include <tdme/engine/Rotation.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Rotation;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 

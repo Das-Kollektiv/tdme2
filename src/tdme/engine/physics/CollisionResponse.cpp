@@ -1,13 +1,13 @@
 #include <tdme/engine/physics/CollisionResponse.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
 
 using tdme::engine::physics::CollisionResponse;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::MathTools;
 using tdme::math::Vector3;

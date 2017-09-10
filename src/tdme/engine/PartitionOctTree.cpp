@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
@@ -26,7 +26,7 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::PartitionOctTree;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::PartitionOctTree_PartitionTreeNode;

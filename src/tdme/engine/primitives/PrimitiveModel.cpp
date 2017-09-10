@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -29,7 +29,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::primitives::PrimitiveModel;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;

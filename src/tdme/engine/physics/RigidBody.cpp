@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -21,7 +21,7 @@
 using std::vector;
 
 using tdme::engine::physics::RigidBody;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;

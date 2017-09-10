@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -27,7 +27,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::renderer::GUIFont;
-using java::lang::Math;
+using tdme::math::Math;
 using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;

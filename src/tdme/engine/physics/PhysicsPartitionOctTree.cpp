@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -26,7 +26,7 @@ using std::to_wstring;
 using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
-using java::lang::Math;
+using tdme::math::Math;
 using java::util::Iterator;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;

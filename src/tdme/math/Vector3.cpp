@@ -2,12 +2,12 @@
 
 #include <cmath>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Float.h>
 
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::MathTools;

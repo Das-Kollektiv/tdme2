@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -23,7 +23,7 @@
 using std::wstring;
 
 using tdme::engine::physics::CollisionDetection;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;

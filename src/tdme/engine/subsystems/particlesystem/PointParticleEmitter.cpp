@@ -1,6 +1,6 @@
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -9,7 +9,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;

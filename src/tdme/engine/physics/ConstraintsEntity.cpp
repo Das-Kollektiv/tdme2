@@ -3,7 +3,7 @@
 #include <array>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/DynamicVector.h>
 #include <tdme/engine/physics/Matrix1x6.h>
@@ -16,7 +16,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::physics::ConstraintsEntity;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::DynamicVector;
 using tdme::engine::physics::Matrix1x6;

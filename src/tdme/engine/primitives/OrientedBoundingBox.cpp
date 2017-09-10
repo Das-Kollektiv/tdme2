@@ -3,7 +3,7 @@
 #include <array>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -20,7 +20,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;

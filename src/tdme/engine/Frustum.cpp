@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Plane.h>
 #include <tdme/engine/primitives/Sphere.h>
@@ -13,7 +13,7 @@
 using std::array;
 
 using tdme::engine::Frustum;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;

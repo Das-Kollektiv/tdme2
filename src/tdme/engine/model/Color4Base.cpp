@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <array>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
 
 using std::array;
@@ -12,7 +12,7 @@ using std::copy;
 using std::end;
 
 using tdme::engine::model::Color4Base;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::math::MathTools;
 
 Color4Base::Color4Base() 

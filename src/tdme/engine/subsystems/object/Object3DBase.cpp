@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Animation.h>
@@ -30,8 +30,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::subsystems::object::Object3DBase;
-using java::lang::Math;
-using java::util::Iterator;
+using tdme::math::Math;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::model::Animation;

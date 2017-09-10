@@ -1,6 +1,6 @@
 #include <tdme/engine/Camera.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/MathTools.h>
@@ -8,7 +8,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Camera;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::MathTools;

@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
@@ -67,7 +67,7 @@ using std::to_wstring;
 using std::wstring;
 
 using tdme::engine::fileio::models::DAEReader;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;

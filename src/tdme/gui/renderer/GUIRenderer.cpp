@@ -3,7 +3,7 @@
 
 #include <java/lang/Byte.h>
 #include <java/lang/Float.h>
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/Short.h>
 #include <java/lang/String.h>
@@ -25,7 +25,7 @@
 using tdme::gui::renderer::GUIRenderer;
 using java::lang::Byte;
 using java::lang::Float;
-using java::lang::Math;
+using tdme::math::Math;
 using java::lang::Object;
 using java::lang::Short;
 using java::lang::String;

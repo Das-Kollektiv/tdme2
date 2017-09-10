@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/Matrix4x4.h>
@@ -12,7 +12,7 @@ using std::begin;
 using std::end;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;

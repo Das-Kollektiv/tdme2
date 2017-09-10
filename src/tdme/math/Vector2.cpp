@@ -2,12 +2,12 @@
 
 #include <array>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 
 using std::array;
 
 using tdme::math::Vector2;
-using java::lang::Math;
+using tdme::math::Math;
 
 Vector2::Vector2() 
 {

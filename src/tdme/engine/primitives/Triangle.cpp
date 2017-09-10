@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -19,7 +19,7 @@
 
 using std::vector;
 
-using java::lang::Math;
+using tdme::math::Math;
 
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Transformations;

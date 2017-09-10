@@ -1,6 +1,6 @@
 #include <tdme/utils/_HashMap.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
@@ -12,7 +12,7 @@
 #include <tdme/utils/_HashMap_ValuesIterator.h>
 
 using tdme::utils::_HashMap;
-using java::lang::Math;
+using tdme::math::Math;
 using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;

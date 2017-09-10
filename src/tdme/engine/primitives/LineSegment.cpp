@@ -1,6 +1,6 @@
 #include <tdme/engine/primitives/LineSegment.h>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/MathTools.h>
@@ -10,7 +10,7 @@
 #include <SubArray.h>
 
 using tdme::engine::primitives::LineSegment;
-using java::lang::Math;
+using tdme::math::Math;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::MathTools;

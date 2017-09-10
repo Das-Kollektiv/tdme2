@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Math.h>
+#include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Rotation.h>
@@ -33,7 +33,7 @@ using std::to_wstring;
 
 using tdme::engine::physics::World;
 using java::lang::Class;
-using java::lang::Math;
+using tdme::math::Math;
 using java::util::Iterator;
 using tdme::engine::Engine;
 using tdme::engine::Entity;

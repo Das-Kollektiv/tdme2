@@ -13,9 +13,11 @@
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::math::MathTools final
+class tdme::math::Math final
 {
 public:
+	static constexpr double E { 2.718281828459045 };
+	static constexpr double PI { 3.141592653589793 };
 
 	inline static int32_t abs(int32_t arg0) {
 		return ::abs(arg0);
@@ -81,11 +83,11 @@ public:
 		return ::sinf(arg0);
 	}
 
-	inline static float static sqrt(float arg0) {
+	inline static float sqrt(float arg0) {
 		return ::sqrtf(arg0);
 	}
 
-	inline static float double tan(float arg0) {
+	inline static float tan(float arg0) {
 		return ::tanf(arg0);
 	}
 
