@@ -32,7 +32,6 @@ using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
-using java::lang::Object;
 
 /** 
  * Object3DInternal base class, contains 

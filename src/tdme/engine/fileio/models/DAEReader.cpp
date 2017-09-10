@@ -7,11 +7,7 @@
 #include <vector>
 
 #include <java/lang/fwd-tdme.h>
-#include <java/lang/CharSequence.h>
-#include <java/lang/Comparable.h>
 #include <java/lang/Math.h>
-#include <java/lang/String.h>
-#include <java/util/Iterator.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
@@ -71,13 +67,7 @@ using std::to_wstring;
 using std::wstring;
 
 using tdme::engine::fileio::models::DAEReader;
-using java::io::Serializable;
-using java::lang::CharSequence;
-using java::lang::Comparable;
 using java::lang::Math;
-using java::lang::Object;
-using java::lang::String;
-using java::util::Iterator;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;

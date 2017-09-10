@@ -9,7 +9,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 

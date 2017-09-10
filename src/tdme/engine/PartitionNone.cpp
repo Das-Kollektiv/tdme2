@@ -2,14 +2,12 @@
 
 #include <vector>
 
-#include <java/lang/Object.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 
 using std::vector;
 
 using tdme::engine::PartitionNone;
-using java::lang::Object;
 using tdme::engine::Entity;
 using tdme::utils::ArrayListIteratorMultiple;
 
