@@ -3,11 +3,7 @@
 #include <array>
 #include <string>
 
-#include <java/lang/Float.h>
-#include <java/lang/Integer.h>
 #include <java/lang/String.h>
-#include <java/util/Locale.h>
-#include <java/util/StringTokenizer.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -40,8 +36,11 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Float.h>
+#include <tdme/utils/Integer.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
+#include <tdme/utils/_Exception.h>
 #include <Array.h>
 #include <ObjectArray.h>
 #include <SubArray.h>
@@ -51,11 +50,8 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::shared::tools::Tools;
-using java::lang::Float;
-using java::lang::Integer;
 using java::lang::String;
 using java::util::Locale;
-using java::util::StringTokenizer;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -89,6 +85,9 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::_Exception;
+using tdme::utils::Float;
+using tdme::utils::Integer;
+using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
@@ -130,18 +129,20 @@ String* Tools::formatColor4(Color4* value)
 void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
-	auto t = new StringTokenizer(text, u","_j);
-	while (t->hasMoreTokens() && i < array->size()) {
-		(*array)[i++] = Float::parseFloat(t->nextToken());
+	StringTokenizer t;
+	t.tokenize(text->getCPPWString(), L",");
+	while (t.hasMoreTokens() && i < array->size()) {
+		(*array)[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
 void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
-	auto t = new StringTokenizer(text, u","_j);
-	while (t->hasMoreTokens() && i < array->size()) {
-		(*array)[i++] = Float::parseFloat(t->nextToken());
+	StringTokenizer t;
+	t.tokenize(text->getCPPWString(), L",");
+	while (t.hasMoreTokens() && i < array->size()) {
+		(*array)[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
@@ -168,18 +169,18 @@ Color4* Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
 
 float Tools::convertToFloat(String* text) /* throws(NumberFormatException) */
 {
-	return Float::parseFloat(text);
+	return Float::parseFloat(text->getCPPWString());
 }
 
 int32_t Tools::convertToInt(String* text) /* throws(NumberFormatException) */
 {
-	return Integer::parseInt(text);
+	return Integer::parseInt(text->getCPPWString());
 }
 
 int32_t Tools::convertToIntSilent(String* text)
 {
 	try {
-		return Integer::parseInt(text);
+		return Integer::parseInt(text->getCPPWString());
 	} catch (_Exception& exception) {
 		return -1;
 	}
@@ -329,12 +330,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto dimension = entityBoundingBox->getMax()->clone()->sub(entityBoundingBox->getMin());
+	auto dimension = entityBoundingBox->getMax()->clone2().sub(entityBoundingBox->getMin());
 	auto maxAxisDimension = computeMaxAxisDimension(entityBoundingBox);
 	auto cam = engine->getCamera();
 	cam->setZNear(maxAxisDimension / 5000.0f);
 	cam->setZFar(maxAxisDimension);
-	auto lookAt = entityBoundingBox->getMin()->clone()->add(dimension->clone()->scale(0.5f));
+	auto lookAt = entityBoundingBox->getMin()->clone2().add(dimension->clone2().scale(0.5f));
 	cam->getLookAt()->set(lookAt);
 	auto lookAtToFromVector = new Vector3(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
 	auto lookAtToFromVectorTransformed = new Vector3();
@@ -343,7 +344,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	lookFromRotations->getTransformationsMatrix()->multiply(lookAtToFromVector, lookAtToFromVectorTransformed);
 	lookAtToFromVectorScaled->set(lookAtToFromVectorTransformed)->scale(scale);
 	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(new Vector3(0.0f, 1.0f, 0.0f), upVector);
-	auto lookFrom = lookAt->clone()->add(lookAtToFromVectorScaled);
+	auto lookFrom = lookAt->clone2().add(lookAtToFromVectorScaled);
 	cam->getLookFrom()->set(lookFrom);
 	cam->getUpVector()->set(upVector);
 }

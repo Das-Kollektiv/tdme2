@@ -172,7 +172,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const wstring& id, int3
 
 	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-			auto vertex = (new Vector3(static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))), static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))))->scale(radius)->add(center);
+			auto vertex = (new Vector3(((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), ((Math::cos(Math::PI * ySegment / segmentsY))), ((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))))->scale(radius)->add(center);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 
@@ -186,24 +186,34 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const wstring& id, int3
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
-				&vertices.at(vi0),
-				&vertices.at(vi1),
-				&vertices.at(vi2)
-			})) {
-				normals.push_back(normal);
+			{
+				array<Vector3, 3> faceVertices = {
+					vertices.at(vi0),
+					vertices.at(vi1),
+					vertices.at(vi2)
+				};
+				array<Vector3, 3> faceNormals;
+				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				for (auto& normal : faceNormals) {
+					normals.push_back(normal);
+				}
 			}
 			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
-				&vertices.at(vi0),
-				&vertices.at(vi1),
-				&vertices.at(vi2)
-			})) {
-				normals.push_back(normal);
+			{
+				array<Vector3, 3> faceVertices = {
+					vertices.at(vi0),
+					vertices.at(vi1),
+					vertices.at(vi2)
+				};
+				array<Vector3, 3> faceNormals;
+				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				for (auto& normal : faceNormals) {
+					normals.push_back(normal);
+				}
 			}
 			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}
@@ -230,17 +240,17 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	auto b = capsule->getB();
 	auto rotationQuaternion = new Quaternion();
 	rotationQuaternion->identity();
-	auto yAxis = new Vector3(0.0f, -1.0f, 0.0f);
-	auto abNormalized = a->clone()->sub(b)->normalize();
-	auto abNormalizedVectorXYZ = abNormalized->getArray();
-	Vector3* rotationAxis;
+	Vector3 yAxis(0.0f, -1.0f, 0.0f);
+	Vector3 abNormalized = a->clone2().sub(b)->normalize();
+	auto abNormalizedVectorXYZ = abNormalized.getArray();
+	Vector3 rotationAxis;
 	if (Math::abs((*abNormalizedVectorXYZ)[0]) < MathTools::EPSILON && Math::abs((*abNormalizedVectorXYZ)[2]) < MathTools::EPSILON) {
-		rotationAxis = new Vector3((*abNormalizedVectorXYZ)[1], 0.0f, 0.0f);
+		rotationAxis.set((*abNormalizedVectorXYZ)[1], 0.0f, 0.0f);
 	} else {
-		rotationAxis = Vector3::computeCrossProduct(yAxis, abNormalized)->normalize();
+		Vector3::computeCrossProduct(&yAxis, &abNormalized, &rotationAxis)->normalize();
 	}
-	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
-	rotationQuaternion->rotate(angle, rotationAxis);
+	auto angle = Vector3::computeAngle(&yAxis, &abNormalized, &yAxis);
+	rotationQuaternion->rotate(angle, &rotationAxis);
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -256,9 +266,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 			auto vertex = Vector3();
 			rotationQuaternion->multiply(
 				new Vector3(
-					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-					static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))),
-					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					((Math::cos(Math::PI * ySegment / segmentsY))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
 					&vertex
 				);
 			vertex.scale(radius);
@@ -270,9 +280,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 			auto vertex = Vector3();
 			rotationQuaternion->multiply(
 				new Vector3(
-					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-					static_cast< float >((Math::cos(Math::PI * ySegment / segmentsY))),
-					static_cast< float >((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					((Math::cos(Math::PI * ySegment / segmentsY))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
 					&vertex
 				);
 			vertex.scale(radius);
@@ -290,24 +300,33 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			ni = normals.size();
-			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
-				&vertices.at(vi0),
-				&vertices.at(vi1),
-				&vertices.at(vi2)
-			})) {
-				normals.push_back(normal);
+			{
+				array<Vector3, 3> faceVertices = {
+					vertices.at(vi0),
+					vertices.at(vi1),
+					vertices.at(vi2)
+				};
+				array<Vector3, 3> faceNormals;
+				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				for (auto& normal : faceNormals) {
+					normals.push_back(normal);
+				}
 			}
 			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
-			ni = normals.size();
-			for (auto normal : ModelHelper::computeNormals(array<Vector3,3>{
-				&vertices.at(vi0),
-				&vertices.at(vi1),
-				&vertices.at(vi2)
-			})) {
-				normals.push_back(normal);
+			{
+				array<Vector3, 3> faceVertices = {
+					vertices.at(vi0),
+					vertices.at(vi1),
+					vertices.at(vi2)
+				};
+				array<Vector3, 3> faceNormals;
+				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				for (auto& normal : faceNormals) {
+					normals.push_back(normal);
+				}
 			}
 			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}

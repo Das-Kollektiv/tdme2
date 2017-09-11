@@ -7,7 +7,9 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
@@ -48,7 +50,19 @@ public:
 	 * @param collision response
 	 * @return collision 
 	 */
-	static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2);
+	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {
+		auto b1MinXYZ = b1->getMin()->getArray();
+		auto b1MaxXYZ = b1->getMax()->getArray();
+		auto b2MinXYZ = b2->getMin()->getArray();
+		auto b2MaxXYZ = b2->getMax()->getArray();
+		if ((*b2MaxXYZ)[0] - (*b1MinXYZ)[0] < 0.0f) return false;
+		if ((*b1MaxXYZ)[0] - (*b2MinXYZ)[0] < 0.0f) return false;
+		if ((*b2MaxXYZ)[1] - (*b1MinXYZ)[1] < 0.0f) return false;
+		if ((*b1MaxXYZ)[1] - (*b2MinXYZ)[1] < 0.0f) return false;
+		if ((*b2MaxXYZ)[2] - (*b1MinXYZ)[2] < 0.0f) return false;
+		if ((*b1MaxXYZ)[2] - (*b2MinXYZ)[2] < 0.0f) return false;
+		return true;
+	}
 
 	/** 
 	 * Returns if axis aligned bounding boxes do collide

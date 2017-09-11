@@ -15,8 +15,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::subsystems::object::BatchVBORendererTriangles;
-using java::lang::Byte;
-using java::lang::Float;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::Engine;

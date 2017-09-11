@@ -209,11 +209,16 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 							vt2 = mappedTextureCoordinateIt->second;
 						}
 					}
-					auto faceVertexNormals = ModelHelper::computeNormals(array<Vector3, 3>{
+					array<Vector3, 3> faceVertices = {
 						groupVertices.at(v0),
 						groupVertices.at(v1),
 						groupVertices.at(v2)
-					});
+					};
+					array<Vector3, 3> faceVertexNormals;
+					ModelHelper::computeNormals(
+						&faceVertices,
+						&faceVertexNormals
+					);
 					auto n0 = groupNormals.size();
 					groupNormals.push_back(faceVertexNormals[0]);
 					auto n1 = groupNormals.size();

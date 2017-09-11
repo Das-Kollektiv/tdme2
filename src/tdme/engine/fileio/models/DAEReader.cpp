@@ -302,6 +302,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 				Vector3 xAxis;
 				Vector3 yAxis;
 				Vector3 zAxis;
+				Vector3 tmpAxis;
 				Matrix4x4 nodeTransformationsMatrix;
 				auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
 				if (xmlMatrixElements.empty() == false) {
@@ -327,8 +328,8 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 				yAxis.normalize();
 				zAxis.normalize();
 				nodeTransformationsMatrix.setAxes(&xAxis, &yAxis, &zAxis);
-				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &yAxis), &zAxis) < 0.0f) ||
-					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &zAxis), &yAxis) < 0.0f)) {
+				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &yAxis, &tmpAxis), &zAxis) < 0.0f) ||
+					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &zAxis, &tmpAxis), &yAxis) < 0.0f)) {
 					xAxis.scale(-1.0f);
 					yAxis.scale(-1.0f);
 					zAxis.scale(-1.0f);

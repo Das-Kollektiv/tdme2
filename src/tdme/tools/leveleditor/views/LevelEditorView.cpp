@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <java/lang/Character.h>
-#include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <java/util/Properties.h>
 
@@ -63,6 +62,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_ArrayList.h>
@@ -78,7 +78,6 @@ using std::wstring;
 using tdme::tools::leveleditor::views::LevelEditorView;
 
 using java::lang::Character;
-using java::lang::Float;
 using java::lang::String;
 
 using java::util::Properties;
@@ -136,6 +135,7 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Float;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_ArrayList;
@@ -679,7 +679,7 @@ void LevelEditorView::loadSettings()
 		vector<wstring> lines;
 		settings->load(L"settings", L"leveleditor.properties");
 		gridEnabled = (tmp = dynamic_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
-		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()) : 0.0f;
+		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()->getCPPWString()) : 0.0f;
 		levelEditorScreenController->getMapPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString()->getCPPWString() : L".");
 	} catch (_Exception& exception) {
@@ -982,9 +982,9 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 		auto selectedLevelEditorObject = level->getObjectById(selectedObject->getId());
 		auto levelEditorObjectTransformations = new Transformations();
 		levelEditorObjectTransformations->getTranslation()->set(selectedObject->getTranslation());
-		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin()->clone()->add(selectedObject->getBoundingBox()->getMax())->scale(0.5f);
-		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter()->clone() : new Vector3(0.0f, 0.0f, 0.0f);
-		levelEditorObjectTransformations->getTranslation()->add(centerNewObject->clone()->add(centerSelectedObject));
+		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin()->clone2().add(selectedObject->getBoundingBox()->getMax())->scale(0.5f);
+		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter()->clone2() : Vector3(0.0f, 0.0f, 0.0f);
+		levelEditorObjectTransformations->getTranslation()->add(centerNewObject.clone2().add(centerSelectedObject));
 		if (selectedLevelEditorObject == nullptr || selectedLevelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM || selectedEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			levelEditorObjectTransformations->getTranslation()->setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin()->getY() : 0.0f));
 		} else {
@@ -1098,7 +1098,7 @@ void LevelEditorView::centerObject()
 	}
 	auto center = new Vector3();
 	for (auto selectedObject: selectedObjects) {
-		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone()->add(selectedObject->getBoundingBoxTransformed()->getMax())->scale(0.5f));
+		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone2().add(selectedObject->getBoundingBoxTransformed()->getMax())->scale(0.5f));
 	}
 	engine->getCamera()->getLookAt()->set(center->scale(1.0f / selectedObjects.size()));
 }
@@ -1455,7 +1455,7 @@ void LevelEditorView::pasteObjects()
 void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)
 {
 	auto _from = new Vector3(position);
-	auto spotDirection = spotTo->clone()->sub(_from);
+	auto spotDirection = spotTo->clone2().sub(_from);
 	level->getLightAt(i)->getPosition()->set(position->getX(), position->getY(), position->getZ(), position->getW());
 	level->getLightAt(i)->getSpotTo()->set(spotTo->getX(), spotTo->getY(), spotTo->getZ());
 	level->getLightAt(i)->getSpotDirection()->set(spotDirection->getX(), spotDirection->getY(), spotDirection->getZ());

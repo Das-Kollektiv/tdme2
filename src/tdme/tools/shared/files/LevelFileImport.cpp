@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/Float.h>
 #include <java/lang/String.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
@@ -20,6 +19,7 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
@@ -32,7 +32,6 @@ using std::wstring;
 using tdme::tools::shared::files::LevelFileImport;
 using java::io::File;
 using java::io::InputStream;
-using java::lang::Float;
 using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
@@ -50,6 +49,7 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::tools::Tools;
+using tdme::utils::Float;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 
@@ -71,7 +71,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 	);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
-	auto version = Float::parseFloat(new String(StringConverter::toWideString(jRoot["version"].getString())));
+	auto version = Float::parseFloat(StringConverter::toWideString(jRoot["version"].getString()));
 	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(StringConverter::toWideString(jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
 	auto jMapProperties = jRoot["properties"].getArray();

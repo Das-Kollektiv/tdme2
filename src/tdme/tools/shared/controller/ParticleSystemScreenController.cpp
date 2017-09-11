@@ -705,9 +705,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpeColorEnd->getController()->setValue(value->set(Tools::formatColor4(emitter->getColorEnd())));
 				cpeCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getCenter())));
 				cpeRadius->getController()->setValue(value->set(emitter->getRadius(), 4));
+				Vector3 tmpAxis;
 				auto rotation = new Vector3();
 				auto rotationMatrix = (new Matrix4x4())->identity();
-				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1()), emitter->getAxis1());
+				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), emitter->getAxis1());
 				rotationMatrix->computeEulerAngles(rotation);
 				cpeRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
 				cpeRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
@@ -731,9 +732,10 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpepvColorEnd->getController()->setValue(value->set(Tools::formatColor4(emitter->getColorEnd())));
 				cpepvCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getCenter())));
 				cpepvRadius->getController()->setValue(value->set(emitter->getRadius(), 4));
+				Vector3 tmpAxis;
 				auto rotation = new Vector3();
 				auto rotationMatrix = (new Matrix4x4())->identity();
-				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1()), emitter->getAxis1());
+				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), emitter->getAxis1());
 				rotationMatrix->computeEulerAngles(rotation);
 				cpepvRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
 				cpepvRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));

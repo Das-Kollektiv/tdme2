@@ -44,12 +44,12 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3> vertices)
+ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
 {
 	auto edgeSum = 0;
-	for (auto i = 0; i < vertices.size(); i++) {
-		auto currentVertexXYZ = vertices[i].getArray();
-		auto nextVertexXYZ = vertices[(i + 1) % vertices.size()].getArray();
+	for (auto i = 0; i < vertices->size(); i++) {
+		auto currentVertexXYZ = (*vertices)[i].getArray();
+		auto nextVertexXYZ = (*vertices)[(i + 1) % vertices->size()].getArray();
 		edgeSum +=
 			((*nextVertexXYZ)[0] - (*currentVertexXYZ)[0]) * ((*nextVertexXYZ)[1] - (*currentVertexXYZ)[1]) * ((*nextVertexXYZ)[2] - (*currentVertexXYZ)[0]);
 	}
@@ -60,22 +60,22 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3> vert
 	}
 }
 
-Vector3* ModelHelper::computeNormal(array<Vector3,3> vertices)
+void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3* normal)
 {
-	return Vector3::computeCrossProduct(
-		vertices[1].clone()->sub(&vertices[0]),
-		vertices[2].clone()->sub(&vertices[0])
+	Vector3::computeCrossProduct(
+		(*vertices)[1].clone2().sub(&(*vertices)[0]),
+		(*vertices)[2].clone2().sub(&(*vertices)[0]),
+		normal
 	)->normalize();
 }
 
-array<Vector3,3> ModelHelper::computeNormals(array<Vector3,3> vertices)
+void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* normals)
 {
-	auto normal = computeNormal(vertices);
-	array<Vector3,3> normals;
-	for (auto i = 0; i < vertices.size(); i++) {
-		normals[i].set(normal);
+	Vector3 normal;
+	computeNormal(vertices, &normal);
+	for (auto i = 0; i < vertices->size(); i++) {
+		(*normals)[i].set(&normal);
 	}
-	return normals;
 }
 
 void ModelHelper::createNormalTangentsAndBitangents(Group* group)

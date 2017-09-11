@@ -220,12 +220,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		}
 	}
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
+		player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
+		player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
@@ -234,7 +234,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			continue;
 
 		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
-			player->getTranslation()->sub(collision->getNormal()->clone()->scale(collision->getPenetration()));
+			player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
 			player->update();
 			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 		}

@@ -6,8 +6,18 @@
 
 #include <fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/MathTools.h>
+#include <tdme/math/Vector4.h>
+#include <tdme/utils/Float.h>
 
 using std::array;
+
+using tdme::math::Math;
+using tdme::math::Vector3;
+using tdme::math::Vector4;
+using tdme::math::MathTools;
+using tdme::utils::Float;
 
 /** 
  * Vector3 class
@@ -30,118 +40,161 @@ public:
 	 * @param x
 	 * @return this vector
 	 */
-	Vector3* set(float x, float y, float z);
+	inline Vector3* set(float x, float y, float z) {
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+		return this;
+	}
 
 	/** 
 	 * Set up vector
 	 * @param float array containing x,y,z values
 	 * @return this vector
 	 */
-	Vector3* set(array<float, 3>* v);
+	inline Vector3* set(array<float, 3>* v) {
+		data = *v;
+		return this;
+	}
 
 	/** 
 	 * Set up vector
 	 * @param v
 	 * @return this vector
 	 */
-	Vector3* set(Vector3* v);
+	inline Vector3* set(Vector3* v) {
+		data = v->data;
+		return this;
+	}
 
 	/** 
 	 * Set up vector
 	 * @param v
 	 * @return this vector
 	 */
-	Vector3* set(Vector4* v);
+	inline Vector3* set(Vector4* v) {
+		data[0] = v->data[0];
+		data[1] = v->data[1];
+		data[2] = v->data[2];
+		return this;
+	}
 
 	/**
 	 * @return x
 	 */
-	float getX();
+	inline float getX() {
+		return data[0];
+	}
 
 	/** 
 	 * Set X
 	 * @param x
 	 */
-	void setX(float x);
+	inline Vector3* setX(float x) {
+		data[0] = x;
+		return this;
+	}
 
 	/** 
 	 * add to x component
 	 * @param x
 	 * @return this vector
 	 */
-	Vector3* addX(float x);
+	inline Vector3* addX(float x) {
+		data[0]+= x;
+		return this;
+	}
 
 	/** 
 	 * sub from x component
 	 * @param x
 	 * @return this vector
 	 */
-	Vector3* subX(float x);
+	inline Vector3* subX(float x) {
+		data[0]-= x;
+		return this;
+	}
 
 	/** 
 	 * @return y
 	 */
-	float getY();
+	inline float getY() {
+		return data[1];
+	}
 
 	/** 
 	 * Set Y
 	 * @param y
 	 * @return this vector
 	 */
-	Vector3* setY(float y);
+	inline Vector3* setY(float y) {
+		data[1] = y;
+		return this;
+	}
 
 	/** 
 	 * add to y component
 	 * @param y
 	 * @return this vector
 	 */
-	Vector3* addY(float y);
+	inline Vector3* addY(float y) {
+		data[1]+= y;
+		return this;
+	}
 
 	/** 
 	 * sub from y component
 	 * @param y
 	 * @return this vector
 	 */
-	Vector3* subY(float y);
+	inline Vector3* subY(float y) {
+		data[1]-= y;
+		return this;
+	}
 
 	/** 
 	 * @return z
 	 */
-	float getZ();
+	inline float getZ() {
+		return data[2];
+	}
 
 	/** 
 	 * Set Z
 	 * @param z
 	 * @return this vector
 	 */
-	Vector3* setZ(float z);
+	inline Vector3* setZ(float z) {
+		data[2] = z;
+		return this;
+	}
 
 	/** 
 	 * add to z component
 	 * @param z
 	 * @return this vector
 	 */
-	Vector3* addZ(float z);
+	inline Vector3* addZ(float z) {
+		data[2]+= z;
+		return this;
+	}
 
 	/** 
 	 * sub from z component
 	 * @param z
 	 * @return this vector
 	 */
-	Vector3* subZ(float z);
+	inline Vector3* subZ(float z) {
+		data[2]-= z;
+		return this;
+	}
 
 	/** 
 	 * @return vector as array
 	 */
-	array<float,3>* getArray();
-
-	/** 
-	 * Compute the cross product of vector v1 and v2
-	 * @param v1
-	 * @param v2
-	 * @return cross product vector of v1 and v2
-	 */
-	static Vector3* computeCrossProduct(Vector3* v1, Vector3* v2);
+	inline array<float,3>* getArray() {
+		return &data;
+	}
 
 	/** 
 	 * Compute the cross product of vector v1 and v2
@@ -150,7 +203,13 @@ public:
 	 * @param destination vector
 	 * @return destination vector
 	 */
-	static Vector3* computeCrossProduct(Vector3* v1, Vector3* v2, Vector3* dest);
+	inline static Vector3* computeCrossProduct(Vector3* v1, Vector3* v2, Vector3* dest) {
+		dest->set(
+			(v1->data[1] * v2->data[2]) - (v1->data[2] * v2->data[1]),
+			(v1->data[2] * v2->data[0]) - (v1->data[0] * v2->data[2]),
+			(v1->data[0] * v2->data[1]) - (v1->data[1] * v2->data[0]));
+		return dest;
+	}
 
 	/** 
 	 * Compute the dot product of vector v1 and v2
@@ -158,22 +217,23 @@ public:
 	 * @param v2
 	 * @return Vector3
 	 */
-	static float computeDotProduct(Vector3* v1, Vector3* v2);
+	inline static float computeDotProduct(Vector3* v1, Vector3* v2) {
+		return (v1->data[0] * v2->data[0]) + (v1->data[1] * v2->data[1]) + (v1->data[2] * v2->data[2]);
+	}
 
 	/** 
 	 * @return the vectors length
 	 */
-	float computeLength();
-
-	/** 
-	 * @return the vectors volume if it would span a box
-	 */
-	float computeVolume();
+	inline float computeLength() {
+		return static_cast< float >(Math::sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2])));
+	}
 
 	/** 
 	 * @return the vectors length squared
 	 */
-	float computeLengthSquared();
+	inline float computeLengthSquared() {
+		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]);
+	}
 
 	/** 
 	 * Computes angle between a and b from 0..180
@@ -181,7 +241,9 @@ public:
 	 * @param vector b, must be normalized
 	 * @return
 	 */
-	static float computeAngle(Vector3* a, Vector3* b);
+	inline static float computeAngle(Vector3* a, Vector3* b) {
+		return 180.0 / Math::PI * Math::acos(Vector3::computeDotProduct(a, b));
+	}
 
 	/** 
 	 * Computes angle between a and b 
@@ -190,81 +252,143 @@ public:
 	 * @param plane normal n where a and b live in, must be normalized
 	 * @return
 	 */
-	static float computeAngle(Vector3* a, Vector3* b, Vector3* n);
+	inline static float computeAngle(Vector3* a, Vector3* b, Vector3* n) {
+		Vector3 c;
+		auto angle = Vector3::computeAngle(a, b);
+		auto sign = MathTools::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b, &c)));
+		if (Float::isNaN(sign) == true) sign = 1.0f;
+		return std::fmod(((angle * sign) + 360.0f), 360.0f);
+	}
 
 	/** 
 	 * Normalize the vector
 	 * @return this vector
 	 */
-	Vector3* normalize();
+	inline Vector3* normalize() {
+		auto length = computeLength();
+		data[0] /= length;
+		data[1] /= length;
+		data[2] /= length;
+		return this;
+	}
 
 	/** 
 	 * Computes a orthogonal vector from this vector
 	 * @param destination vector
 	 * @return destination vector
 	 */
-	Vector3* computeOrthogonalVector(Vector3* dest);
+	inline Vector3* computeOrthogonalVector(Vector3* dest) {
+		if (Math::abs(data[0]) > MathTools::EPSILON) {
+			dest->data[1] = data[0];
+			dest->data[2] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[2]) / (2 * (data[2] * data[2] + data[0] * data[0])));
+			dest->data[0] = ((-data[0] * data[1] - data[2] * dest->data[2]) / data[0]);
+		} else
+		if (Math::abs(data[1]) > MathTools::EPSILON) {
+			dest->data[2] = data[1];
+			dest->data[0] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[1]) / (2 * (data[1] * data[1] + data[0] * data[0])));
+			dest->data[1] = ((-data[2] * data[1] - data[0] * dest->data[0]) / data[1]);
+		} else
+		if (Math::abs(data[2]) > MathTools::EPSILON) {
+			dest->data[0] = data[2];
+			dest->data[1] = ((-2 * data[0] * data[1]* data[2] + 2 * data[1] * data[2]) / (2 * (data[2] * data[2] + data[1] * data[1])));
+			dest->data[2] = ((-data[0] * data[2] - data[1] * dest->data[1]) / data[2]);
+		}
+		return dest;
+	}
 
 	/** 
 	 * Adds a vector
 	 * @param v
 	 * @return this vector
 	 */
-	Vector3* add(Vector3* v);
+	inline Vector3* add(Vector3* v) {
+		data[0] += v->data[0];
+		data[1] += v->data[1];
+		data[2] += v->data[2];
+		return this;
+	}
 
 	/** 
 	 * Adds a float to each vector component
 	 * @param v
 	 * @return this vector
 	 */
-	Vector3* add(float value);
+	inline Vector3* add(float value) {
+		data[0] += value;
+		data[1] += value;
+		data[2] += value;
+		return this;
+	}
 
 	/** 
 	 * Adds a vector
 	 * @param v
 	 * @return this vector 
 	 */
-	Vector3* sub(Vector3* v);
+	inline Vector3* sub(Vector3* v) {
+		data[0] -= v->data[0];
+		data[1] -= v->data[1];
+		data[2] -= v->data[2];
+		return this;
+	}
 
 	/** 
 	 * Subtracts a float from each vector component
 	 * @param v
 	 * @return this vector
 	 */
-	Vector3* sub(float value);
+	inline Vector3* sub(float value) {
+		data[0] -= value;
+		data[1] -= value;
+		data[2] -= value;
+		return this;
+	}
 
 	/** 
 	 * Scale this vector
 	 * @param scale
 	 * @return this vector 
 	 */
-	Vector3* scale(float scale);
+	inline Vector3* scale(float scale) {
+		data[0] *= scale;
+		data[1] *= scale;
+		data[2] *= scale;
+		return this;
+	}
 
 	/** 
 	 * Scale this vector
 	 * @param scale
 	 * @return this vector 
 	 */
-	Vector3* scale(Vector3* scale);
+	inline Vector3* scale(Vector3* scale) {
+		data[0] *= scale->data[0];
+		data[1] *= scale->data[1];
+		data[2] *= scale->data[2];
+		return this;
+	}
 
-	/** 
+	/**
 	 * Clones the vector
 	 * @return new cloned vector
 	 */
-	Vector3* clone();
-
-	/** 
-	 * Clones the vector
-	 * @return new cloned vector
-	 */
-	Vector3 clone2();
+	inline Vector3 clone2() {
+		return Vector3(&data);
+	}
 
 	/**
 	 * Compares this vector with given vector
 	 * @param vector v
 	 * @return equality
 	 */
-	bool equals(Vector3* v);
+	inline bool equals(Vector3* v) {
+		return (this == v) ||
+			(
+				Math::abs(data[0] - v->data[0]) < MathTools::EPSILON &&
+				Math::abs(data[1] - v->data[1]) < MathTools::EPSILON &&
+				Math::abs(data[2] - v->data[2]) < MathTools::EPSILON
+			);
+	}
 
 	/** 
 	 * Compares this vector with given vector
@@ -272,12 +396,21 @@ public:
 	 * @param tolerance
 	 * @return equality
 	 */
-	bool equals(Vector3* v, float tolerance);
+	inline bool equals(Vector3* v, float tolerance) {
+		return (this == v) ||
+			(
+				Math::abs(data[0] - v->data[0]) < tolerance &&
+				Math::abs(data[1] - v->data[1]) < tolerance &&
+				Math::abs(data[2] - v->data[2]) < tolerance
+			);
+	}
 
 	/**
 	 * Public constructor
 	 */
-	Vector3();
+	inline Vector3() {
+		data.fill(0.0f);
+	}
 
 	/**
 	 * Public constructor
@@ -285,23 +418,35 @@ public:
 	 * @param y
 	 * @param z
 	 */
-	Vector3(float x, float y, float z);
+	inline Vector3(float x, float y, float z) {
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+	}
 
 	/**
 	 * Public constructor
 	 * @param values
 	 */
-	Vector3(array<float,3>* v);
+	inline Vector3(array<float,3>* v) {
+		data = *v;
+	}
 
 	/**
 	 * Public constructor
 	 * @param vector
 	 */
-	Vector3(Vector3* v);
+	inline Vector3(Vector3* v) {
+		data = v->data;
+	}
 
 	/**
 	 * Public constructor
 	 * @param vector
 	 */
-	Vector3(Vector4* v);
+	inline Vector3(Vector4* v) {
+		data[0] = v->data[0];
+		data[1] = v->data[1];
+		data[2] = v->data[2];
+	}
 };

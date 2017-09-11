@@ -36,22 +36,23 @@ public:
 	 * @param vertices
 	 * @return vertex order
 	 */
-	static ModelHelper_VertexOrder* determineVertexOrder(array<Vector3,3> vertices);
+	static ModelHelper_VertexOrder* determineVertexOrder(array<Vector3,3>* vertices);
 
 	/** 
 	 * Computes face normal for given face vertices
 	 * @param face vertices
-	 * @return face normal
+	 * @param face normal
+	 * @return computed face normal
 	 */
-	static Vector3* computeNormal(array<Vector3,3> vertices);
+	static void computeNormal(array<Vector3,3>* vertices, Vector3* normal);
 
 	/** 
 	 * Computes face normals for given face vertices
 	 * these normals will not be smooth
 	 * @param face vertices
-	 * @return face normals
+	 * @param computed face normals
 	 */
-	static array<Vector3,3> computeNormals(array<Vector3,3> vertices);
+	static void computeNormals(array<Vector3,3>* vertices, array<Vector3,3>* normals);
 
 	/** 
 	 * Create normal tangents and bitangents for groups with normal mapping
