@@ -25,37 +25,53 @@ public: /* protected */
 	 * Change size
 	 * @param size
 	 */
-	void setSize(int32_t size);
+	inline void setSize(int32_t size) {
+		data.resize(size);
+	}
 
 	/** 
 	 * Set value
 	 * @param idx
 	 * @param value
 	 */
-	void setValue(int32_t idx, float value);
+	inline void setValue(int32_t idx, float value) {
+		data[idx] = value;
+	}
 
 	/** 
 	 * Retrieves value
 	 * @param idx
 	 * @return value
 	 */
-	float getValue(int32_t idx);
+	inline float getValue(int32_t idx) {
+		return data[idx];
+	}
 
 	/** 
 	 * Scales this vector with given value into dest vector
 	 * @param value
 	 * @param dest
 	 */
-	void scale(float value, DynamicVector* dest);
+	inline void scale(float value, DynamicVector* dest) {
+		if (data.size() != dest->data.size()) {
+			dest->setSize(data.size());
+		}
+		for (auto i = 0; i < data.size(); i++) {
+			dest->data[i] = data[i] * value;
+		}
+	}
 
 	/**
 	 * Constructor
 	 */
-	DynamicVector();
+	inline DynamicVector() {
+	}
 
 	/**
 	 * Constructor
 	 * @param size
 	 */
-	DynamicVector(int32_t size);
+	inline DynamicVector(int32_t size) {
+		data.resize(size);
+	}
 };
