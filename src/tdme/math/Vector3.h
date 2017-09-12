@@ -8,14 +8,12 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
-#include <tdme/math/Vector4.h>
 #include <tdme/utils/Float.h>
 
 using std::array;
 
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::math::Vector4;
 using tdme::math::MathTools;
 using tdme::utils::Float;
 
@@ -64,18 +62,6 @@ public:
 	 */
 	inline Vector3* set(Vector3* v) {
 		data = v->data;
-		return this;
-	}
-
-	/** 
-	 * Set up vector
-	 * @param v
-	 * @return this vector
-	 */
-	inline Vector3* set(Vector4* v) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
 		return this;
 	}
 
@@ -440,13 +426,4 @@ public:
 		data = v->data;
 	}
 
-	/**
-	 * Public constructor
-	 * @param vector
-	 */
-	inline Vector3(Vector4* v) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
-	}
 };

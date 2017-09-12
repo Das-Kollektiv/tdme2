@@ -1454,7 +1454,7 @@ void LevelEditorView::pasteObjects()
 
 void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)
 {
-	auto _from = new Vector3(position);
+	auto _from = new Vector3(position->getX(), position->getY(), position->getZ());
 	auto spotDirection = spotTo->clone2().sub(_from);
 	level->getLightAt(i)->getPosition()->set(position->getX(), position->getY(), position->getZ(), position->getW());
 	level->getLightAt(i)->getSpotTo()->set(spotTo->getX(), spotTo->getY(), spotTo->getZ());

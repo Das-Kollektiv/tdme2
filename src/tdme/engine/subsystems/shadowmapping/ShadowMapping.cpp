@@ -130,8 +130,10 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		auto shadowMap = shadowMaps[i];
 		auto light = engine->getLightAt(i);
-		shader->setProgramLightPosition(lightPosition3Transformed.set(tmpVector3.set(renderer->getCameraMatrix()->multiply(light->getPosition(), &lightPosition4Transformed)->scale(1.0f / lightPosition4Transformed.getW()))));
-		shader->setProgramLightDirection(spotDirection3Transformed.set(tmpVector3.set(renderer->getCameraMatrix()->multiply(spotDirection4.set(light->getSpotDirection(), 0.0f), &spotDirection4Transformed))));
+		renderer->getCameraMatrix()->multiply(light->getPosition(), &lightPosition4Transformed)->scale(1.0f / lightPosition4Transformed.getW());
+		shader->setProgramLightPosition(lightPosition3Transformed.set(lightPosition4Transformed.getX(), lightPosition4Transformed.getY(), lightPosition4Transformed.getZ()));
+		renderer->getCameraMatrix()->multiply(spotDirection4.set(light->getSpotDirection(), 0.0f), &spotDirection4Transformed);
+		shader->setProgramLightDirection(spotDirection3Transformed.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()));
 		shader->setProgramLightSpotExponent(light->getSpotExponent());
 		shader->setProgramLightSpotCosCutOff(light->getSpotCutOff());
 		shader->setProgramLightConstantAttenuation(light->getConstantAttenuation());
