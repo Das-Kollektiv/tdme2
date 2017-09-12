@@ -7,14 +7,14 @@
 #include <fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::array;
 
 using tdme::math::Math;
-using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::math::Matrix4x4;
 
 /** 
  * Quaternion
