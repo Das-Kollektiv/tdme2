@@ -63,14 +63,24 @@ public:
 	/** 
 	 * @return mesh vertices
 	 */
-	vector<Vector3>* getVertices();
+	vector<Vector3>* getVertices() {
+		return &vertices;
+	}
+
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint) override;
 	bool containsPoint(Vector3* point) override;
 	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
-	Vector3* getCenter() override;
-	float getSphereRadius() override;
+
+	inline Vector3* getCenter() override {
+		return &center;
+	}
+
+	float getSphereRadius() override {
+		return sphereRadius;
+	}
+
 	float computeDimensionOnAxis(Vector3* axis) override;
 	void update() override;
 	BoundingVolume* clone() override;

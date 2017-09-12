@@ -23,28 +23,40 @@ public:
 	/** 
 	 * @return float distance from origin
 	 */
-	float getDistance();
+	inline float getDistance() {
+		return distance;
+	}
 
 	/** 
 	 * Set up distance from origin
 	 * @param distance
 	 */
-	void setDistance(float distance);
+	inline void setDistance(float distance) {
+		this->distance = distance;
+	}
 
 	/** 
 	 * @return normal
 	 */
-	Vector3* getNormal();
+	inline Vector3* getNormal() {
+		return &normal;
+	}
 
 	/**
 	 * Public constructor
 	 */
-	Plane();
+	inline Plane() {
+		normal.set(0.0f, 0.0f, 0.0f);
+		distance = 0.0f;
+	}
 
 	/**
 	 * Public constructor
 	 * @param normal
 	 * @param distance
 	 */
-	Plane(Vector3* normal, float distance);
+	inline Plane(Vector3* normal, float distance) {
+		this->normal.set(normal);
+		this->distance = distance;
+	}
 };

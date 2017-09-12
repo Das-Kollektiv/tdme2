@@ -1144,34 +1144,6 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 	}
 }
 
-bool CollisionDetection::doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2)
-{
-	Vector3 axis;
-	return axis.set(bv1->getCenter())->sub(bv2->getCenter())->computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
-}
-
-bool CollisionDetection::checkMovementFallback(Vector3* normalCandidate, Vector3* movement, CollisionResponse* collision)
-{
-	if (movement == nullptr) {
-		if (VERBOSE) {
-			_Console::println(wstring(L"checkMovementFallback::fallback::movement = null"));
-			// TODO: print stack trace
-		}
-		return false;
-	}
-	Vector3 zeroVector(0.0f, 0.0f, 0.0f);
-	if (normalCandidate->equals(&zeroVector) == true) {
-		if (VERBOSE) {
-			_Console::println(wstring(L"checkMovementFallback::fallback"));
-			// TODO: print stack trace
-		}
-		collision->reset();
-		collision->addResponse(-movement->computeLength())->getNormal()->set(movement)->scale(-1.0f)->normalize();
-		return true;
-	}
-	return false;
-}
-
 void CollisionDetection::checkCollision(CollisionResponse* collision)
 {
 	auto normalXYZ = collision->getNormal()->getArray();

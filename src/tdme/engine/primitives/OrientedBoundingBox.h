@@ -51,8 +51,13 @@ public:
 	static Vector3 AABB_AXIS_Z;
 
 public:
-	Vector3* getCenter() override;
-	float getSphereRadius() override;
+	inline Vector3* getCenter() override {
+		return &center;
+	}
+
+	inline float getSphereRadius() override {
+		return sphereRadius;
+	}
 
 	/** 
 	 * @return 3 axes
@@ -82,12 +87,17 @@ public:
 	/** 
 	 * @return oriented bounding box vertices
 	 */
-	vector<Vector3>* getVertices();
+	inline vector<Vector3>* getVertices() {
+		return &vertices;
+	}
 
 	/** 
 	 * @return faces vertices indexes
 	 */
-	static array<array<int32_t,3>,12>* getFacesVerticesIndexes();
+	inline static array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
+		return &facesVerticesIndexes;
+	}
+
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
 
 	/** 

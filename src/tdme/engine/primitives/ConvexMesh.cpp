@@ -87,11 +87,6 @@ vector<Triangle>* ConvexMesh::getTriangles()
 	return &triangles;
 }
 
-vector<Vector3>* ConvexMesh::getVertices()
-{
-	return &vertices;
-}
-
 void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< ConvexMesh* >(original) != nullptr == false) {
@@ -199,16 +194,6 @@ bool ConvexMesh::doesCollideWith(BoundingVolume* bv2, Vector3* movement, Collisi
 	} else {
 		return false;
 	}
-}
-
-Vector3* ConvexMesh::getCenter()
-{
-	return &center;
-}
-
-float ConvexMesh::getSphereRadius()
-{
-	return sphereRadius;
 }
 
 float ConvexMesh::computeDimensionOnAxis(Vector3* axis)

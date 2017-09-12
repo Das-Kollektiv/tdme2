@@ -89,16 +89,6 @@ OrientedBoundingBox::OrientedBoundingBox()
 	update();
 }
 
-Vector3* OrientedBoundingBox::getCenter()
-{
-	return &center;
-}
-
-float OrientedBoundingBox::getSphereRadius()
-{
-	return sphereRadius;
-}
-
 array<Vector3, 3>* OrientedBoundingBox::getAxes()
 {
 	return &axes;
@@ -209,16 +199,6 @@ void OrientedBoundingBox::update()
 	vertices[7].add(axis.set(&axes[1])->scale(+(*halfExtensionXYZ)[1]));
 	vertices[7].add(axis.set(&axes[2])->scale(+(*halfExtensionXYZ)[2]));
 	sphereRadius = halfExtension.computeLength();
-}
-
-vector<Vector3>* OrientedBoundingBox::getVertices()
-{
-	return &vertices;
-}
-
-array<array<int32_t,3>,12>* OrientedBoundingBox::getFacesVerticesIndexes()
-{
-	return &facesVerticesIndexes;
 }
 
 void OrientedBoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)

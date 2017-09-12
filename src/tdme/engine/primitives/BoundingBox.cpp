@@ -88,11 +88,6 @@ vector<Vector3>* BoundingBox::getVertices()
 	return &vertices;
 }
 
-array<array<int32_t,3>,12>* BoundingBox::getFacesVerticesIndexes()
-{
-	return &facesVerticesIndexes;
-}
-
 void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
@@ -177,16 +172,6 @@ bool BoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, Collis
 	} else {
 		return false;
 	}
-}
-
-Vector3* BoundingBox::getCenter()
-{
-	return &center;
-}
-
-float BoundingBox::getSphereRadius()
-{
-	return sphereRadius;
 }
 
 float BoundingBox::computeDimensionOnAxis(Vector3* axis)

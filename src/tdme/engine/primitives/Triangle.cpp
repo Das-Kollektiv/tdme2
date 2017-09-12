@@ -48,12 +48,6 @@ Triangle::Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2)
 	update();
 }
 
-
-vector<Vector3>* Triangle::getVertices()
-{
-	return &vertices;
-}
-
 void Triangle::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< Triangle* >(original) != nullptr == false) {
@@ -175,16 +169,6 @@ bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3* movement, Collision
 	} else {
 		return false;
 	}
-}
-
-Vector3* Triangle::getCenter()
-{
-	return &center;
-}
-
-float Triangle::getSphereRadius()
-{
-	return sphereRadius;
 }
 
 float Triangle::computeDimensionOnAxis(Vector3* axis)

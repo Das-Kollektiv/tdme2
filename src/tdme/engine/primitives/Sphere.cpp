@@ -59,17 +59,7 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	radius = axis.sub(&center)->computeLength();
 }
 
-Vector3* Sphere::getCenter()
-{
-	return &center;
-}
-
 float Sphere::getRadius()
-{
-	return radius;
-}
-
-float Sphere::getSphereRadius()
 {
 	return radius;
 }

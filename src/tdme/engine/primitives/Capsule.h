@@ -47,8 +47,15 @@ public:
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void update() override;
-	Vector3* getCenter() override;
-	float getSphereRadius() override;
+
+	inline Vector3* getCenter() override {
+		return &center;
+	}
+
+	inline float getSphereRadius() override {
+		return sphereRadius;
+	}
+
 	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
 	bool containsPoint(Vector3* point) override;
 	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;

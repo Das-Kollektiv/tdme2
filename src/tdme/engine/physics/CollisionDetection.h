@@ -6,11 +6,13 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_Console.h>
 
 using std::array;
 
@@ -26,6 +28,7 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
+using tdme::utils::_Console;
 
 /** 
  * Collision detection
@@ -468,7 +471,10 @@ public:
 	 * @param bounding volume 2
 	 * @return
 	 */
-	static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2);
+	inline static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2) {
+		Vector3 axis;
+		return axis.set(bv1->getCenter())->sub(bv2->getCenter())->computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
+	}
 
 private:
 
@@ -479,7 +485,26 @@ private:
 	 * @param collision
 	 * @return collision
 	 */
-	static bool checkMovementFallback(Vector3* normalCandidate, Vector3* movement, CollisionResponse* collision);
+	inline static bool checkMovementFallback(Vector3* normalCandidate, Vector3* movement, CollisionResponse* collision) {
+		if (movement == nullptr) {
+			if (VERBOSE) {
+				_Console::println(wstring(L"checkMovementFallback::fallback::movement = null"));
+				// TODO: print stack trace
+			}
+			return false;
+		}
+		Vector3 zeroVector(0.0f, 0.0f, 0.0f);
+		if (normalCandidate->equals(&zeroVector) == true) {
+			if (VERBOSE) {
+				_Console::println(wstring(L"checkMovementFallback::fallback"));
+				// TODO: print stack trace
+			}
+			collision->reset();
+			collision->addResponse(-movement->computeLength())->getNormal()->set(movement)->scale(-1.0f)->normalize();
+			return true;
+		}
+		return false;
+	}
 
 	/** 
 	 * Check collision validity

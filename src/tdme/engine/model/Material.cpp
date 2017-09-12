@@ -112,7 +112,7 @@ void Material::checkDiffuseTextureTransparency()
 		auto textureData = diffuseTexture->getTextureData();
 		for (auto i = 0; i < diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight(); i++) {
 			auto alpha = textureData->get(i * 4 + 3);
-			if (alpha != static_cast< int8_t >(255)) {
+			if (alpha != 255) {
 				diffuseTextureTransparency = true;
 				break;
 			}

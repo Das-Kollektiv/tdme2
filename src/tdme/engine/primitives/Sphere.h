@@ -30,13 +30,19 @@ private:
 public:
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
-	Vector3* getCenter() override;
+
+	inline Vector3* getCenter() override {
+		return &center;
+	}
 
 	/** 
 	 * @return float radius
 	 */
 	float getRadius();
-	float getSphereRadius() override;
+
+	inline float getSphereRadius() override {
+		return radius;
+	}
 
 	/** 
 	 * Set up radius

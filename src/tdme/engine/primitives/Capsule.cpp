@@ -90,16 +90,6 @@ void Capsule::update()
 	sphereRadius = baSubLength / 2.0f + radius;
 }
 
-Vector3* Capsule::getCenter()
-{
-	return &center;
-}
-
-float Capsule::getSphereRadius()
-{
-	return sphereRadius;
-}
-
 void Capsule::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
 {
 	Vector3 baSub;
