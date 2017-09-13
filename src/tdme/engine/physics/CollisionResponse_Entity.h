@@ -7,13 +7,16 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_Console.h>
 
 using std::vector;
 
-using tdme::engine::physics::CollisionResponse;
+using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
+using tdme::utils::_Console;
 
 /** 
  * Collision Response Entity
@@ -22,8 +25,6 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::CollisionResponse_Entity final
 {
-	friend class CollisionResponse;
-
 public: /* protected */
 	float distance {  };
 	Vector3 normal {  };
@@ -34,44 +35,63 @@ public:
 	/** 
 	 * @return distance
 	 */
-	float getDistance();
+	inline float getDistance() {
+		return distance;
+	}
 
 	/** 
 	 * Set distance
 	 * @param distance
 	 */
-	void setDistance(float distance);
+	inline void setDistance(float distance) {
+		this->distance = distance;
+	}
 
 	/** 
 	 * @return penetration
 	 */
-	float getPenetration();
+	inline float getPenetration() {
+		return -distance;
+	}
 
 	/** 
 	 * @return normal
 	 */
-	Vector3* getNormal();
+	inline Vector3* getNormal() {
+		return &normal;
+	}
 
 	/** 
 	 * Adds a hit point
 	 * @param hit point
 	 */
-	void addHitPoint(Vector3* hitPoint);
+	inline void addHitPoint(Vector3* hitPoint) {
+		for (auto i = 0; i < hitPoints.size(); i++) {
+			if (hitPoints.at(i).equals(hitPoint, 0.1f))
+				return;
+		}
+		hitPoints.push_back(*hitPoint);
+	}
 
 	/** 
 	 * @return hit points count
 	 */
-	int32_t getHitPointsCount();
+	inline int32_t getHitPointsCount() {
+		return hitPoints.size();
+	}
 
 	/** 
 	 * Get hit point of given index 
 	 * @param i
 	 * @return hit point for given hit points index
 	 */
-	Vector3* getHitPointAt(int32_t i);
+	inline Vector3* getHitPointAt(int32_t i) {
+		return &hitPoints.at(i);
+	}
 
 	/**
 	 * Public constructor
 	 */
-	CollisionResponse_Entity();
+	inline CollisionResponse_Entity() {
+	}
 };

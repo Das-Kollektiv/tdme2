@@ -22,7 +22,7 @@ using tdme::math::Vector3;
 FacesEntity::FacesEntity()
 {
 	this->id = L"";
-	this->group = group;
+	this->group = nullptr;
 	this->material = nullptr;
 	this->textureCoordinatesAvailable = false;
 	this->tangentBitangentAvailable = false;

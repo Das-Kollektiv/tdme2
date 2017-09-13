@@ -8,12 +8,20 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/MathTools.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/_Console.h>
 
 using std::vector;
 
+using tdme::engine::physics::CollisionResponse;
+using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse_Entity;
+using tdme::math::MathTools;
 using tdme::math::Vector3;
+using tdme::utils::_Console;
 
 /** 
  * Collision response
@@ -34,83 +42,121 @@ public:
 	/** 
 	 * Reset
 	 */
-	void reset();
+	inline void reset() {
+		entities.clear();
+		selectedEntity = nullptr;
+	}
 
 	/** 
 	 * Adds a collision response entity 
 	 * @param distance
 	 * @return Entity or null
 	 */
-	CollisionResponse_Entity* addResponse(float distance);
+	inline CollisionResponse_Entity* addResponse(float distance) {
+		entities.push_back(CollisionResponse_Entity());
+		auto& entity = entities.at(entities.size() - 1);
+		entity.distance = distance;
+		if (selectedEntity == nullptr || distance > selectedEntity->distance) {
+			selectedEntity = &entity;
+		}
+		return &entity;
+	}
 
 	/** 
 	 * @return entity count
 	 */
-	int32_t getEntityCount();
+	inline int32_t getEntityCount() {
+		return entities.size();
+	}
 
 	/** 
 	 * @return selected entity
 	 */
-	CollisionResponse_Entity* getSelectedEntity();
+	inline CollisionResponse_Entity* getSelectedEntity() {
+		return selectedEntity;
+	}
 
 	/** 
 	 * Selects entity at given index
 	 * @param idx
 	 * @return
 	 */
-	CollisionResponse_Entity* getEntityAt(int32_t idx);
+	inline CollisionResponse_Entity* getEntityAt(int32_t idx) {
+		if (idx < 0 || idx >= entities.size()) return nullptr;
+		return &entities.at(idx);
+	}
 
 	/** 
 	 * Selects entity at given index
 	 * @param idx
 	 * @return
 	 */
-	CollisionResponse* selectEntityAt(int32_t idx);
+	inline CollisionResponse* selectEntityAt(int32_t idx) {
+		if (idx < 0 || idx >= entities.size()) return this;
+		selectedEntity = &entities.at(idx);
+		return this;
+	}
 
-	/** 
-	 * Select entity with least penetration but exclude given axis
-	 * @param axis
-	 * @param respect direction
-	 * @return
-	 */
-	CollisionResponse* selectEntityExcludeAxis(Vector3* axis, bool respectDirection);
+	inline bool hasEntitySelected() {
+		return selectedEntity != nullptr;
+	}
 
-	/** 
-	 * Select entity on given axis with least penetration
-	 * @param axis
-	 * @param respect direction
-	 * @return
-	 */
-	CollisionResponse* selectEntityOnAxis(Vector3* axis, bool respectDirection);
-	bool hasEntitySelected();
-	float getDistance();
-	bool hasPenetration();
-	float getPenetration();
-	Vector3* getNormal();
+	inline float getDistance() {
+		if (selectedEntity == nullptr) return 0.0f;
+		return selectedEntity->distance;
+	}
+
+	inline bool hasPenetration() {
+		if (selectedEntity == nullptr) return false;
+		return selectedEntity->distance < -MathTools::EPSILON;
+	}
+
+	inline float getPenetration() {
+		if (selectedEntity == nullptr) return 0.0f;
+		return -selectedEntity->distance;
+	}
+
+	inline Vector3* getNormal() {
+		if (selectedEntity == nullptr) return nullptr;
+		return &selectedEntity->normal;
+	}
 
 	/**
 	 * @return get hit points
 	 */
-	vector<Vector3>* getHitPoints();
+	inline vector<Vector3>* getHitPoints() {
+		if (selectedEntity == nullptr) return nullptr;
+		return &selectedEntity->hitPoints;
+	}
 
 	/** 
 	 * @return hit points count
 	 */
-	int32_t getHitPointsCount();
+	inline int32_t getHitPointsCount() {
+		if (selectedEntity == nullptr) return 0;
+		return selectedEntity->hitPoints.size();
+	}
 
 	/** 
 	 * Get hit point of given index 
 	 * @param i
 	 * @return hit point for given hit points index
 	 */
-	Vector3* getHitPointAt(int32_t i);
+	inline Vector3* getHitPointAt(int32_t i) {
+		if (selectedEntity == nullptr) return nullptr;
+		return &selectedEntity->hitPoints.at(i);
+	}
 
 public: /* protected */
 
 	/** 
 	 * Invert normals
 	 */
-	void invertNormals();
+	inline void invertNormals() {
+		for (auto i = 0; i < entities.size(); i++) {
+			entities.at(i).getNormal()->scale(-1.0f);
+		}
+	}
 
 public:
 
@@ -118,18 +164,50 @@ public:
 	 * Set up response from given collision response
 	 * @param response
 	 */
-	CollisionResponse* fromResponse(CollisionResponse* response);
+	inline CollisionResponse* fromResponse(CollisionResponse* response) {
+		selectedEntity = nullptr;
+		entities = response->entities;
+		if (response->selectedEntity != nullptr)
+		for (auto i = 0; i < response->entities.size(); i++) {
+			if (&response->entities.at(i) == response->selectedEntity) {
+				selectedEntity = &entities.at(i);
+				return this;
+			}
+		}
+		return this;
+	}
 
 	/** 
 	 * Set up response from given collision response
 	 * @param response
 	 */
-	CollisionResponse* mergeResponse(CollisionResponse* response);
+	inline CollisionResponse* mergeResponse(CollisionResponse* response) {
+		for (auto i = 0; i < response->entities.size(); i++) {
+			auto& srcEntity = response->entities.at(i);
+			CollisionResponse_Entity* dstEntity = nullptr;
+			if (entities.size() > 0) dstEntity = &entities.at(0);
+			if (dstEntity == nullptr || srcEntity.distance > dstEntity->distance) {
+				if (dstEntity == nullptr) {
+					entities.push_back(CollisionResponse_Entity());
+					dstEntity = &entities.at(entities.size() - 1);
+				}
+				dstEntity->distance = srcEntity.distance;
+				dstEntity->normal.set(&srcEntity.normal);
+			}
+			selectedEntity = &entities.at(0);
+			for (auto j = 0; j < srcEntity.hitPoints.size(); j++) {
+				dstEntity->addHitPoint(&srcEntity.hitPoints.at(j));
+			}
+		}
+		return this;
+	}
 
 	/**
 	 * Public constructor
 	 * @param distance
 	 * @param normal
 	 */
-	CollisionResponse();
+	inline CollisionResponse() {
+	}
+
 };
