@@ -57,7 +57,7 @@ public: /* protected */
 	 * @param rb2
 	 * @param collision
 	 */
-	void set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision) {
+	inline void set(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision) {
 		this->collision.fromResponse(collision);
 		this->rb1 = rb1;
 		this->rb2 = rb2;
@@ -72,7 +72,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param jacobian matrices
 	 */
-	void computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6, 2>>* jacobianMatrices) {
+	inline void computeJacobian(int32_t constraintIdx, vector<array<Matrix1x6, 2>>* jacobianMatrices) {
 		Vector3 r1;
 		Vector3 r2;
 		Vector3 r1CrossN;
@@ -129,7 +129,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param lower bounds
 	 */
-	void computeLowerBound(int32_t constraintIdx, DynamicVector* lowerBounds) {
+	inline void computeLowerBound(int32_t constraintIdx, DynamicVector* lowerBounds) {
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
 			lowerBounds->setValue(currentConstraintIdx++, 0.0f);
@@ -143,7 +143,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param upper bounds
 	 */
-	void computeUpperBound(int32_t constraintIdx, DynamicVector* upperBounds) {
+	inline void computeUpperBound(int32_t constraintIdx, DynamicVector* upperBounds) {
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
 			upperBounds->setValue(currentConstraintIdx++, Float::POSITIVE_INFINITY);
@@ -157,7 +157,7 @@ public: /* protected */
 	 * @param constraint idx
 	 * @param error values
 	 */
-	void computeBaumgarte(int32_t constraintIdx, DynamicVector* errorValues) {
+	inline void computeBaumgarte(int32_t constraintIdx, DynamicVector* errorValues) {
 		auto currentConstraintIdx = constraintIdx;
 		auto restitutionCoeff = rb1->restitution + rb2->restitution;
 		auto penetration = collision.getPenetration();
@@ -173,6 +173,6 @@ public: /* protected */
 	/**
 	 * Protected constructor
 	 */
-	ConstraintsEntity() {
+	inline ConstraintsEntity() {
 	}
 };

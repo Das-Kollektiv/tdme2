@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 
-#include <fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/ContactCache_ContactCacheInfo.h>
+#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 
 using std::map;
 using std::vector;
@@ -37,7 +39,9 @@ public: /* protected */
 	/** 
 	 * Clear contact cache
 	 */
-	void clear();
+	inline void clear() {
+		contactCache.clear();
+	}
 
 	/** 
 	 * @param rb1
@@ -45,7 +49,15 @@ public: /* protected */
 	 * @param collision
 	 * @param lamdaValues
 	 */
-	void add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision, vector<float>* lamdaValues);
+	inline void add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision, vector<float>* lamdaValues) {
+		ContactCache_ContactCacheInfo contactCacheInfo;
+		contactCacheInfo.rb1 = rb1;
+		contactCacheInfo.rb2 = rb2;
+		contactCacheInfo.hitPoints = *collision->getHitPoints();
+		contactCacheInfo.lamdas = *lamdaValues;
+		wstring key = rb1->id + L"," + rb2->id;
+		contactCache[key] = contactCacheInfo;
+	}
 
 	/** 
 	 * Retrieve contact cache info
@@ -54,10 +66,28 @@ public: /* protected */
 	 * @param collision response
 	 * @return contact cache info
 	 */
-	ContactCache_ContactCacheInfo* get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision);
+	inline ContactCache_ContactCacheInfo* get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision) {
+		wstring key = rb1->id + L"," + rb2->id;
+		ContactCache_ContactCacheInfo* contactCacheInfo = nullptr;
+		auto contactCacheInfoIt = contactCache.find(key);
+		if (contactCacheInfoIt != contactCache.end()) {
+			contactCacheInfo = &contactCacheInfoIt->second;
+		}
+		if (contactCacheInfo != nullptr) {
+			if (collision->getHitPointsCount() != contactCacheInfo->hitPoints.size()) return nullptr;
+			Vector3 tmpVector3;
+			for (auto i = 0; i < contactCacheInfo->hitPoints.size(); i++) {
+				tmpVector3.set(collision->getHitPointAt(i))->sub(&contactCacheInfo->hitPoints[i]);
+				if (tmpVector3.computeLength() > 0.1f) return nullptr;
+			}
+			return contactCacheInfo;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Constructor
 	 */
-	ContactCache();
+	inline ContactCache() {
+	}
 };
