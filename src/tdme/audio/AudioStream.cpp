@@ -1,9 +1,9 @@
 // Generated from /tdme/src/tdme/audio/AudioStream.java
 #include <tdme/audio/AudioStream.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <array>
+#include <string>
+
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/decoder/AudioDecoder.h>
@@ -12,10 +12,10 @@
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 
+using std::array;
+using std::wstring;
+
 using tdme::audio::AudioStream;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::utils::ByteBuffer;
 using tdme::audio::Audio;
 using tdme::audio::decoder::AudioDecoder;
@@ -23,34 +23,15 @@ using tdme::audio::decoder::AudioDecoderException;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-AudioStream::AudioStream(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-AudioStream::AudioStream(String* id, String* pathName, String* fileName) 
-	: AudioStream(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,pathName,fileName);
-}
-
-void AudioStream::init()
-{
-	initiated = false;
-}
-
 constexpr int32_t AudioStream::BUFFER_COUNT;
 
 constexpr int32_t AudioStream::BUFFER_SIZE;
 
-void AudioStream::ctor(String* id, String* pathName, String* fileName)
+AudioStream::AudioStream(const wstring& id, const wstring& pathName, const wstring& fileName) : AudioEntity(id)
 {
-	super::ctor(id);
-	init();
+	initiated = false;
 	this->pathName = pathName;
 	this->fileName = fileName;
-	alBufferIds = nullptr;
 	alSourceId = Audio::ALSOURCEID_NONE;
 	decoder = nullptr;
 	format = -1;
@@ -97,7 +78,7 @@ void AudioStream::play()
 
 	updateProperties();
 	auto buffersToPlay = 0;
-	for (auto i = 0; i < alBufferIds->length; i++) {
+	for (auto i = 0; i < alBufferIds.size(); i++) {
 		data->clear();
 		/*try {*/
 			auto bytesDecoded = decoder->readFromStream(data);
@@ -309,17 +290,3 @@ void AudioStream::dispose()
 
 	initiated = false;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* AudioStream::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.audio.AudioStream", 22);
-    return c;
-}
-
-java::lang::Class* AudioStream::getClass0()
-{
-	return class_();
-}
-

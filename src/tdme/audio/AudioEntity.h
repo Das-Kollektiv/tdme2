@@ -2,18 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Vector3.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::math::Vector3;
-
-
-struct default_init_tag;
 
 /** 
  * Audio Entity Class
@@ -21,35 +19,23 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::audio::AudioEntity
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
-	String* id {  };
+	wstring id {  };
 	bool looping {  };
 	bool fixed {  };
 	float pitch {  };
 	float gain {  };
-	Vector3* sourcePosition {  };
-	Vector3* sourceDirection {  };
-	Vector3* sourceVelocity {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param id
-	 */
-	void ctor(String* id);
+	Vector3 sourcePosition {  };
+	Vector3 sourceDirection {  };
+	Vector3 sourceVelocity {  };
 
 public:
 
 	/** 
 	 * @return id
 	 */
-	virtual String* getId();
+	virtual const wstring& getId();
 
 	/** 
 	 * @return if sound will be looped
@@ -151,16 +137,8 @@ public: /* protected */
 	 */
 	virtual void dispose() = 0;
 
-	// Generated
-	AudioEntity(String* id);
-protected:
-	AudioEntity(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Constructor
+	 */
+	AudioEntity(const wstring& id);
 };

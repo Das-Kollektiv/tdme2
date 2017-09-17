@@ -2,22 +2,21 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
+#include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
+#include <tdme/math/Vector3.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::map;
+using std::wstring;
+
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
-using tdme::utils::_HashMap;
-
-
-struct default_init_tag;
 
 /** 
  * Interface to TDME audio methods
@@ -25,40 +24,27 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::audio::Audio final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
 public: /* protected */
 	static constexpr int32_t ALBUFFERID_NONE { -1 };
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
 	static Audio* instance;
 
 private:
-	static _HashMap* audioEntities;
+	map<wstring, AudioEntity*> audioEntities;
 
 public: /* protected */
-	AudioBufferManager* audioBufferManager {  };
-	// static AL* al;
-	Vector3* listenerPosition {  };
-	Vector3* listenerVelocity {  };
-	Vector3* listenerOrientationAt {  };
-	Vector3* listenerOrientationUp {  };
+	AudioBufferManager audioBufferManager {  };
+	Vector3 listenerPosition {  };
+	Vector3 listenerVelocity {  };
+	Vector3 listenerOrientationAt {  };
+	Vector3 listenerOrientationUp {  };
 
 public:
-
 	/** 
 	 * @return audio singleton instance
 	 */
 	static Audio* getInstance();
-protected:
-
-	/** 
-	 * Private constructor
-	 */
-	void ctor();
 
 public:
 
@@ -87,7 +73,7 @@ public:
 	 * @param id
 	 * @return audio entity
 	 */
-	AudioEntity* getEntity(String* id);
+	AudioEntity* getEntity(const wstring& id);
 
 	/** 
 	 * Adds an stream
@@ -97,7 +83,7 @@ public:
 	 * @param file name
 	 * @return audio entity
 	 */
-	AudioEntity* addStream(String* id, String* pathName, String* fileName);
+	AudioEntity* addStream(const wstring& id, const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * Adds an sound
@@ -107,13 +93,13 @@ public:
 	 * @param file name
 	 * @return audio entity
 	 */
-	AudioEntity* addSound(String* id, String* pathName, String* fileName);
+	AudioEntity* addSound(const wstring& id, const wstring& pathName, const wstring& fileName);
 
 	/** 
 	 * Removes an audio entity
 	 * @param id
 	 */
-	void removeEntity(String* id);
+	void removeEntity(const wstring& id);
 
 	/** 
 	 * Clears all audio entities
@@ -133,16 +119,8 @@ public:
 	// Generated
 
 private:
+	/**
+	 * Private constructor
+	 */
 	Audio();
-protected:
-	Audio(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	static void clinit();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -17,7 +17,7 @@ using tdme::utils::_Console;
 
 void AudioTest::main() /* throws(Exception) */
 {
-	auto test = Audio::getInstance()->addStream(u"test"_j, u"resources/tests/music"_j, u"memento-sanchez_monate_spaeter.ogg"_j);
+	auto test = Audio::getInstance()->addStream(L"test", L"resources/tests/music", L"memento-sanchez_monate_spaeter.ogg");
 	test->setLooping(true);
 	test->setFixed(true);
 	test->play();

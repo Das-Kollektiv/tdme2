@@ -1,22 +1,18 @@
 // Generated from /tdme/src/tdme/audio/Sound.java
 #include <tdme/audio/Sound.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
+#include <string>
+
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
+
+using std::wstring;
 
 using tdme::audio::Sound;
-using java::io::File;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::utils::ByteBuffer;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
@@ -24,37 +20,15 @@ using tdme::audio::AudioBufferManager;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-Sound::Sound(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
-Sound::Sound(String* id, String* pathName, String* fileName) 
-	: Sound(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id,pathName,fileName);
-}
-
-void Sound::init()
+Sound::Sound(const wstring& id, const wstring& pathName, const wstring& fileName) : AudioEntity(id)
 {
 	initiated = false;
-}
-
-void Sound::ctor(String* id, String* pathName, String* fileName)
-{
-	super::ctor(id);
-	init();
-	this->bufferId =
-		::java::lang::StringBuilder().
-			append(pathName)->
-			append(u"/"_j)->
-			append(fileName)->
-			toString();
+	this->bufferId = pathName + L"/" + fileName;
 	this->pathName = pathName;
 	this->fileName = fileName;
 	alBufferId = Audio::ALBUFFERID_NONE;
 	alSourceId = Audio::ALSOURCEID_NONE;
+
 }
 
 bool Sound::isPlaying()
@@ -217,17 +191,3 @@ void Sound::dispose()
 	*/
 	initiated = false;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* Sound::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.audio.Sound", 16);
-    return c;
-}
-
-java::lang::Class* Sound::getClass0()
-{
-	return class_();
-}
-

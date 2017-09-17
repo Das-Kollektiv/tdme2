@@ -2,18 +2,15 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
+using std::wstring;
+
 using tdme::utils::ByteBuffer;
-
-
-struct default_init_tag;
 
 /** 
  * Audio decoder base class
@@ -21,11 +18,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::audio::decoder::AudioDecoder
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
 	static constexpr int32_t CHANNELS_NONE { -1 };
 	static constexpr int32_t SAMPLERATE_NONE { -1 };
 	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
@@ -42,7 +36,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void openFile(String* pathName, String* fileName) /* throws(IOException, AudioDecoderException) */ = 0;
+	virtual void openFile(const wstring& pathName, const wstring& fileName) /* throws(IOException, AudioDecoderException) */ = 0;
 
 	/** 
 	 * Resets this audio decoder, if a stream was open it will be rewinded
@@ -76,17 +70,8 @@ public:
 	 */
 	virtual void close() = 0;
 
-	// Generated
+	/**
+	 * Constructor
+	 */
 	AudioDecoder();
-protected:
-	void ctor();
-	AudioDecoder(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,44 +1,28 @@
 // Generated from /tdme/src/tdme/audio/AudioEntity.java
 #include <tdme/audio/AudioEntity.h>
 
-#include <java/lang/String.h>
+#include <string>
+
 #include <tdme/math/Vector3.h>
 
+using std::wstring;
+
 using tdme::audio::AudioEntity;
-using java::lang::String;
 using tdme::math::Vector3;
 
-AudioEntity::AudioEntity(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+AudioEntity::AudioEntity(const wstring& id)
 {
-	clinit();
-}
-
-AudioEntity::AudioEntity(String* id) 
-	: AudioEntity(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(id);
-}
-
-void AudioEntity::init()
-{
+	this->id = id;
 	looping = false;
 	fixed = false;
 	pitch = 1.0f;
 	gain = 1.0f;
-	sourcePosition = new Vector3();
-	sourceDirection = new Vector3();
-	sourceVelocity = new Vector3();
+	sourcePosition.set(0.0f, 0.0f, 0.0f);
+	sourceDirection.set(0.0f, 0.0f, 0.0f);
+	sourceVelocity.set(0.0f, 0.0f, 0.0f);
 }
 
-void AudioEntity::ctor(String* id)
-{
-	super::ctor();
-	init();
-	this->id = id;
-}
-
-String* AudioEntity::getId()
+const wstring& AudioEntity::getId()
 {
 	return id;
 }
@@ -85,29 +69,15 @@ void AudioEntity::setGain(float gain)
 
 Vector3* AudioEntity::getSourcePosition()
 {
-	return sourcePosition;
+	return &sourcePosition;
 }
 
 Vector3* AudioEntity::getSourceDirection()
 {
-	return sourceDirection;
+	return &sourceDirection;
 }
 
 Vector3* AudioEntity::getSourceVelocity()
 {
-	return sourceVelocity;
+	return &sourceVelocity;
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* AudioEntity::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.audio.AudioEntity", 22);
-    return c;
-}
-
-java::lang::Class* AudioEntity::getClass0()
-{
-	return class_();
-}
-

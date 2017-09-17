@@ -2,16 +2,16 @@
 
 #pragma once
 
+#include <string>
+
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
 
+using std::wstring;
+
 using tdme::audio::AudioEntity;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Simple sound implementation
@@ -21,26 +21,13 @@ struct default_init_tag;
 class tdme::audio::Sound final
 	: public AudioEntity
 {
-
-public:
-	typedef AudioEntity super;
-
 private:
 	bool initiated {  };
-	String* pathName {  };
-	String* fileName {  };
-	String* bufferId {  };
+	wstring pathName {  };
+	wstring fileName {  };
+	wstring bufferId {  };
 	int32_t alBufferId {  };
 	int32_t alSourceId {  };
-protected:
-
-	/** 
-	 * Protected constructor
-	 * @param id
-	 * @param path name
-	 * @param file name
-	 */
-	void ctor(String* id, String* pathName, String* fileName);
 
 public:
 	bool isPlaying() override;
@@ -54,16 +41,11 @@ public: /* protected */
 	void update() override;
 	void dispose() override;
 
-	// Generated
-	Sound(String* id, String* pathName, String* fileName);
-protected:
-	Sound(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	void init();
-	virtual ::java::lang::Class* getClass0();
+	/**
+	 * Protected constructor
+	 * @param id
+	 * @param path name
+	 * @param file name
+	 */
+	Sound(const wstring& id, const wstring& pathName, const wstring& fileName);
 };
