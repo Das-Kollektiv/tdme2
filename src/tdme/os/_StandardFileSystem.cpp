@@ -34,23 +34,6 @@ using tdme::utils::StringUtils;
 using tdme::utils::StringTokenizer;
 using tdme::utils::_Console;
 
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
-
 _StandardFileSystem::_StandardFileSystem()
 {
 }
@@ -91,7 +74,7 @@ bool _StandardFileSystem::fileExists(const wstring& fileName) throw (_FileSystem
 const wstring _StandardFileSystem::getContentAsString(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (ifs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 	stringstream stringStream;
 	stringStream << ifs.rdbuf();
