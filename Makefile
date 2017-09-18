@@ -1,4 +1,4 @@
-INCLUDES := $(INCLUDES) -Isrc -Iext/src -I./
+INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -29,6 +29,7 @@ NATIVE = native
 TINYXML = tinyxml
 JSONBOX = jsonbox
 LIBPNG = libpng
+VORBIS = vorbis
 
 SRCS = \
 	src/j2c.cpp \
@@ -539,6 +540,33 @@ EXT_LIBPNG_SRCS = \
 	ext/libpng/png.c \
 	ext/libpng/pngrtran.c \
 
+EXT_VORBIS_SRCS = \
+	ext/vorbis/analysis.c \
+	ext/vorbis/barkmel.c \
+	ext/vorbis/bitrate.c \
+	ext/vorbis/block.c \
+	ext/vorbis/codebook.c \
+	ext/vorbis/envelope.c \
+	ext/vorbis/floor0.c \
+	ext/vorbis/floor1.c \
+	ext/vorbis/info.c \
+	ext/vorbis/lookup.c \
+	ext/vorbis/lpc.c \
+	ext/vorbis/lsp.c \
+	ext/vorbis/mapping0.c \
+	ext/vorbis/mdct.c \
+	ext/vorbis/misc.c \
+	ext/vorbis/psy.c \
+	ext/vorbis/registry.c \
+	ext/vorbis/res0.c \
+	ext/vorbis/sharedbook.c \
+	ext/vorbis/smallft.c \
+	ext/vorbis/synthesis.c \
+	ext/vorbis/tone.c \
+	ext/vorbis/vorbisenc.c \
+	ext/vorbis/vorbisfile.c \
+	ext/vorbis/window.c \
+
 EXT_NATIVE_SRCS = \
 	ext/native/java/io/FileInputStream-native.cpp \
 	ext/native/java/io/FileOutputStream-native.cpp \
@@ -579,12 +607,18 @@ EXT_NATIVE_OBJS = $(EXT_NATIVE_SRCS:ext/$(NATIVE)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
+EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
 define cc-command
 @mkdir -p $(dir $@); 
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+endef
+
+define c-command
+@mkdir -p $(dir $@); 
+@echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
@@ -612,7 +646,10 @@ $(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
 	$(cc-command)
 
 $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
-	$(cc-command)
+	$(c-command)
+
+$(EXT_VORBIS_OBJS):$(OBJ)/%.o: ext/$(VORBIS)/%.c | print-opts
+	$(c-command)
 
 %.a:
 	@echo Archive $@
@@ -622,7 +659,7 @@ $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
