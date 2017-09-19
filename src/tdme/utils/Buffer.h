@@ -61,7 +61,7 @@ public:
 	/**
 	 * @returns pointer to underlying data
 	 */
-	inline const uint8_t* getBuffer() {
+	inline uint8_t* getBuffer() {
 		return buffer->data();
 	}
 
