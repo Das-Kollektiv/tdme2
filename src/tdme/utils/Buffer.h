@@ -43,6 +43,14 @@ public:
 	}
 
 	/**
+	 * @returns position
+	 */
+	inline virtual Buffer* setPosition(int32_t position) {
+		this->position = position;
+		return this;
+	}
+
+	/**
 	 * @returns value at given position
 	 * @param position
 	 */

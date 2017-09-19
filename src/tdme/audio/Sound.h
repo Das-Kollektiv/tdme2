@@ -26,8 +26,8 @@ private:
 	wstring pathName {  };
 	wstring fileName {  };
 	wstring bufferId {  };
-	int32_t alBufferId {  };
-	int32_t alSourceId {  };
+	uint32_t alBufferId {  };
+	uint32_t alSourceId {  };
 
 public:
 	bool isPlaying() override;

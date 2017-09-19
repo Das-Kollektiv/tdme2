@@ -1,6 +1,9 @@
 // Generated from /tdme/src/tdme/audio/Audio.java
 #include <tdme/audio/Audio.h>
 
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+
 #include <array>
 #include <map>
 #include <string>
@@ -28,6 +31,13 @@ using tdme::utils::_Console;
 
 Audio::Audio() 
 {
+	// TODO: error handling
+	ALCdevice* device;
+	ALCcontext* context;
+	device = alcOpenDevice(NULL);
+	context = alcCreateContext(device, NULL);
+	alcMakeContextCurrent(context);
+	//
 	listenerPosition.set(0.0f, 0.0f, 0.0);
 	listenerVelocity.set(0.0f, 0.0f, 0.0);
 	listenerOrientationAt.set(0.0f, 0.0f, -1.0f);
@@ -134,10 +144,8 @@ void Audio::update()
 	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
 		it->second->update();
 	}
-	/*
-	al->alListenerfv(AL::AL_POSITION, listenerPosition->getArray(), 0);
-	al->alListenerfv(AL::AL_VELOCITY, listenerVelocity->getArray(), 0);
-	*/
+	alListenerfv(AL_POSITION, listenerPosition.getArray()->data());
+	alListenerfv(AL_VELOCITY, listenerVelocity.getArray()->data());
 	auto listenerOrientationAtArray = listenerOrientationAt.getArray();
 	auto listenerOrientationUpArray = listenerOrientationUp.getArray();
 	array<float, 6> listenerOrientation = {
@@ -148,7 +156,5 @@ void Audio::update()
 		(*listenerOrientationUpArray)[1],
 		(*listenerOrientationUpArray)[2]
 	};
-	/*
-	al->alListenerfv(AL::AL_ORIENTATION, listenerOrientation, 0);
-	*/
+	alListenerfv(AL_ORIENTATION, listenerOrientation.data());
 }

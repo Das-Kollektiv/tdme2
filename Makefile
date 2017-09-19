@@ -3,7 +3,7 @@ INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
-	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -L/usr/lib -lz
+	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -L/usr/lib -lz
 else ifeq ($(OS), Linux)
 	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lglut
 endif
@@ -30,6 +30,7 @@ TINYXML = tinyxml
 JSONBOX = jsonbox
 LIBPNG = libpng
 VORBIS = vorbis
+OGG = ogg
 
 SRCS = \
 	src/j2c.cpp \
@@ -277,7 +278,6 @@ SRCS = \
 	src/tdme/os/_StandardFileSystem.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
-	src/tdme/tests/AudioTest_main_1.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
@@ -568,6 +568,10 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/vorbisfile.c \
 	ext/vorbis/window.c \
 
+EXT_OGG_SRCS = \
+	ext/ogg/bitwise.c \
+	ext/ogg/framing.c \
+
 EXT_NATIVE_SRCS = \
 	ext/native/java/io/FileInputStream-native.cpp \
 	ext/native/java/io/FileOutputStream-native.cpp \
@@ -609,6 +613,7 @@ EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
+EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -652,6 +657,9 @@ $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 $(EXT_VORBIS_OBJS):$(OBJ)/%.o: ext/$(VORBIS)/%.c | print-opts
 	$(c-command)
 
+$(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
+	$(c-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -660,7 +668,7 @@ $(EXT_VORBIS_OBJS):$(OBJ)/%.o: ext/$(VORBIS)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

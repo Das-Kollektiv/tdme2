@@ -26,11 +26,6 @@ public:
 	static constexpr int32_t SAMPLERATE_NONE { -1 };
 	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
 
-public: /* protected */
-	int32_t channels {  };
-	int32_t sampleRate {  };
-	int32_t bitsPerSample {  };
-
 public:
 
 	/**
@@ -38,24 +33,24 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, AudioDecoderException) = 0;
+	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, AudioDecoderException);
 
 	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
 	 */
-	virtual void reset() throw (_FileSystemException, AudioDecoderException) = 0;
+	virtual void reset() throw (_FileSystemException, AudioDecoderException);
 
 	/**
 	 * Read raw PCM data from stream
 	 * @param byte buffer
 	 * @return number of bytes read
 	 */
-	virtual int32_t readFromStream(ByteBuffer* data) throw (_FileSystemException, AudioDecoderException) = 0;
+	virtual int32_t readFromStream(ByteBuffer* data) throw (_FileSystemException, AudioDecoderException);
 
 	/**
 	 * Closes the audio file
 	 */
-	virtual void close() throw (_FileSystemException, AudioDecoderException) = 0;
+	virtual void close() throw (_FileSystemException, AudioDecoderException);
 
 	/**
 	 * Constructor
