@@ -1,11 +1,12 @@
-// Generated from /tdme/src/tdme/audio/decoder/AudioDecoder.java
-
 #pragma once
+
+#include <vorbis/vorbisfile.h>
 
 #include <string>
 
 #include <fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
+#include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/fwd-tdme.h>
 #include <tdme/os/_FileSystemException.h>
@@ -13,16 +14,12 @@
 
 using std::wstring;
 
+using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::os::_FileSystemException;
 using tdme::utils::ByteBuffer;
 
-/** 
- * Audio decoder base class
- * @author Andreas Drewke
- * @version $Id$
- */
-class tdme::audio::decoder::AudioDecoder
+class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
 {
 public:
 	static constexpr int32_t CHANNELS_NONE { -1 };
@@ -36,41 +33,26 @@ public: /* protected */
 
 public:
 
-	/** 
+	/**
 	 * Open a local file
 	 * @param path name
 	 * @param file name
 	 */
 	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, AudioDecoderException) = 0;
 
-	/** 
+	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
 	 */
 	virtual void reset() throw (_FileSystemException, AudioDecoderException) = 0;
 
-	/** 
-	 * @return number of channels or CHANNELS_NONE
-	 */
-	virtual int32_t getChannels();
-
-	/** 
-	 * @return sample rate in hz or SAMPLERATE_NONE
-	 */
-	virtual int32_t getSampleRate();
-
-	/** 
-	 * @return bits per sample or BITSPERSAMPLES_NONE
-	 */
-	virtual int32_t getBitsPerSample();
-
-	/** 
-	 * Read raw PCM data from stream 
+	/**
+	 * Read raw PCM data from stream
 	 * @param byte buffer
 	 * @return number of bytes read
 	 */
 	virtual int32_t readFromStream(ByteBuffer* data) throw (_FileSystemException, AudioDecoderException) = 0;
 
-	/** 
+	/**
 	 * Closes the audio file
 	 */
 	virtual void close() throw (_FileSystemException, AudioDecoderException) = 0;
@@ -78,5 +60,11 @@ public:
 	/**
 	 * Constructor
 	 */
-	AudioDecoder();
+	VorbisDecoder();
+
+private:
+	wstring pathName;
+	wstring fileName;
+	OggVorbis_File vf;
+	int section;
 };
