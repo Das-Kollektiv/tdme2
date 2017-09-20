@@ -1,0 +1,17 @@
+<screen id="popup_infodialog" background-color="#00000080" popup="true">
+	<panel alignment="none" width="100%" height="100%" vertical-align="center" horizontal-align="center" background-color="#ffffff00">
+		<panel alignment="vertical" width="80%" height="200" horizontal-align="center">
+			<space height="10" />
+			<text id="infodialog_caption" font="resources/gui/fonts/Foo_20.fnt" text="Info" width="auto" height="auto"/>
+			<space height="*" />
+			<text id="infodialog_message" font="resources/gui/fonts/Foo_20.fnt" text="An message should be displayed here!" width="auto" height="auto"/>
+			<space height="*" />
+			<layout width="100%" height="auto" alignment="horizontal">
+				<space width="*" />
+				<button id="infodialog_ok" name="infodialog_okay" text="Okay" />
+				<space width="*" />
+			</layout>
+			<space height="10" />
+		</panel>
+	</panel>
+</screen>
