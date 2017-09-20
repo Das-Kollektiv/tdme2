@@ -9,6 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
+#include <tdme/audio/decoder/VorbisDecoder.h>
 #include <tdme/audio/AudioEntity.h>
 
 using std::array;
@@ -17,6 +18,7 @@ using std::wstring;
 using tdme::audio::AudioEntity;
 using tdme::utils::ByteBuffer;
 using tdme::audio::decoder::AudioDecoder;
+using tdme::audio::decoder::VorbisDecoder;
 
 /** 
  * Audio Stream 
@@ -32,11 +34,11 @@ private:
 	bool initiated {  };
 	wstring pathName {  };
 	wstring fileName {  };
-	array<int32_t, BUFFER_COUNT> alBufferIds {  };
-	int32_t alSourceId {  };
-	AudioDecoder* decoder {  };
+	array<uint32_t, BUFFER_COUNT> alBufferIds {  };
+	uint32_t alSourceId {  };
 	int32_t format {  };
 	int32_t frequency {  };
+	VorbisDecoder decoder;
 	ByteBuffer* data {  };
 
 public:
