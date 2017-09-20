@@ -1,7 +1,11 @@
 // Generated from /tdme/src/tdme/audio/AudioStream.java
 #include <tdme/audio/AudioStream.h>
 
-#include <OpenAL/al.h>
+#if defined(__APPLE__)
+	#include <OpenAL/al.h>
+#elif defined(__linux__)
+	#include <AL/al.h>
+#endif
 
 #include <array>
 #include <string>

@@ -1,8 +1,13 @@
 // Generated from /tdme/src/tdme/audio/Audio.java
 #include <tdme/audio/Audio.h>
 
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#if defined(__APPLE__)
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
+#elif defined(__linux__)
+	#include <AL/al.h>
+	#include <AL/alc.h>
+#endif
 
 #include <array>
 #include <map>
