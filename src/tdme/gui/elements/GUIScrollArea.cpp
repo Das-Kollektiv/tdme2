@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIScrollArea.java
 #include <tdme/gui/elements/GUIScrollArea.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -9,7 +8,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUIScrollArea;
-using java::lang::String;
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -28,36 +26,36 @@ GUIScrollArea::GUIScrollArea() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIScrollArea::NAME;
+wstring GUIScrollArea::NAME = L"scrollarea";
 
 void GUIScrollArea::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml");
 }
 
-String* GUIScrollArea::getName()
+const wstring& GUIScrollArea::getName()
 {
 	return NAME;
 }
 
-String* GUIScrollArea::getTemplate()
+const wstring& GUIScrollArea::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"100%"_j;
-	attributes[L"height"] = u"100%"_j;
-	attributes[L"horizontal-align"] = u"left"_j;
-	attributes[L"vertical-align"] = u"top"_j;
-	attributes[L"alignment"] = u"vertical"_j;
-	attributes[L"background-color"] = u"transparent"_j;
-	attributes[L"show-on"] = u""_j;
-	attributes[L"hide-on"] = u""_j;
+	attributes[L"width"] = L"100%";
+	attributes[L"height"] = L"100%";
+	attributes[L"horizontal-align"] = L"left";
+	attributes[L"vertical-align"] = L"top";
+	attributes[L"alignment"] = L"vertical";
+	attributes[L"background-color"] = L"transparent";
+	attributes[L"show-on"] = L"";
+	attributes[L"hide-on"] = L"";
 	return &attributes;
 }
 
@@ -72,19 +70,6 @@ java::lang::Class* GUIScrollArea::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIScrollArea", 31);
     return c;
-}
-
-void GUIScrollArea::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"scrollarea"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIScrollArea::getClass0()

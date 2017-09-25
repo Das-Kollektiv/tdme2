@@ -52,10 +52,10 @@ GUIScreenNode* EmptyScreenController::getScreenNode()
 void EmptyScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_empty.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/leveleditor/gui", L"screen_empty.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
 	} catch (_Exception& exception) {
 		_Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));

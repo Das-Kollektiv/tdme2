@@ -3,13 +3,11 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 
 using std::wstring;
 
 using tdme::gui::nodes::GUIPanelNode;
-using java::lang::String;
 using tdme::gui::events::GUIMouseEvent;
 
 GUIPanelNode::GUIPanelNode(const ::default_init_tag&)
@@ -29,9 +27,9 @@ void GUIPanelNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, co
 	super::ctor(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn, alignment);
 }
 
-String* GUIPanelNode::getNodeType()
+const wstring GUIPanelNode::getNodeType()
 {
-	return u"panel"_j;
+	return L"panel";
 }
 
 void GUIPanelNode::handleMouseEvent(GUIMouseEvent* event)

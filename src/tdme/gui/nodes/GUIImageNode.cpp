@@ -57,9 +57,9 @@ void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, co
 	this->effectColorAdd = effectColorAdd;
 }
 
-String* GUIImageNode::getNodeType()
+const wstring GUIImageNode::getNodeType()
 {
-	return u"image"_j;
+	return L"image";
 }
 
 bool GUIImageNode::isContentNode()

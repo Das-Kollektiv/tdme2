@@ -71,39 +71,41 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 		values.emplace(L"radio", new MutableString(L"3"));
 		values.emplace(L"selectmultiple", new MutableString(L"|1|2|3|15|16|17|"));
 		node->getScreenNode()->setValues(&values);
-		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab1"_j)->getController()))->selectTab();
+		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab1")->getController()))->selectTab();
 	} else if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button2") == 0) {
 		try {
 			{
-				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(u"sadd_inner"_j)));
-				parentNode->replaceSubNodes(::java::lang::StringBuilder().append(u"<dropdown-option text=\"Option 1\" value=\"1\" />"_j)->append(u"<dropdown-option text=\"Option 2\" value=\"2\" />"_j)
-					->append(u"<dropdown-option text=\"Option 3\" value=\"3\" />"_j)
-					->append(u"<dropdown-option text=\"Option 4\" value=\"4\" />"_j)
-					->append(u"<dropdown-option text=\"Option 5\" value=\"5\" />"_j)
-					->append(u"<dropdown-option text=\"Option 6\" value=\"6\" />"_j)
-					->append(u"<dropdown-option text=\"Option 7\" value=\"7\" />"_j)
-					->append(u"<dropdown-option text=\"Option 8\" value=\"8\" selected=\"true\" />"_j)
-					->append(u"<dropdown-option text=\"Option 9\" value=\"9\" />"_j)
-					->append(u"<dropdown-option text=\"Option 10\" value=\"10\" />"_j)->toString(), true);
+				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sadd_inner")));
+				parentNode->replaceSubNodes(wstring(L"<dropdown-option text=\"Option 1\" value=\"1\" />") +
+					L"<dropdown-option text=\"Option 2\" value=\"2\" />" +
+					L"<dropdown-option text=\"Option 3\" value=\"3\" />" +
+					L"<dropdown-option text=\"Option 4\" value=\"4\" />" +
+					L"<dropdown-option text=\"Option 5\" value=\"5\" />" +
+					L"<dropdown-option text=\"Option 6\" value=\"6\" />" +
+					L"<dropdown-option text=\"Option 7\" value=\"7\" />" +
+					L"<dropdown-option text=\"Option 8\" value=\"8\" selected=\"true\" />" +
+					L"<dropdown-option text=\"Option 9\" value=\"9\" />" +
+					L"<dropdown-option text=\"Option 10\" value=\"10\" />", true);
 			}
 			{
-				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(u"sasb_inner"_j)));
-				parentNode->replaceSubNodes(::java::lang::StringBuilder().append(u"<selectbox-option text=\"Option 1\" value=\"1\" />"_j)->append(u"<selectbox-option text=\"Option 2\" value=\"2\" />"_j)
-					->append(u"<selectbox-option text=\"Option 3\" value=\"3\" />"_j)
-					->append(u"<selectbox-option text=\"Option 4\" value=\"4\" selected=\"true\" />"_j)
-					->append(u"<selectbox-option text=\"Option 5\" value=\"5\" />"_j)
-					->append(u"<selectbox-option text=\"Option 6\" value=\"6\" />"_j)
-					->append(u"<selectbox-option text=\"Option 7\" value=\"7\" />"_j)
-					->append(u"<selectbox-option text=\"Option 8\" value=\"8\" />"_j)
-					->append(u"<selectbox-option text=\"Option 9\" value=\"9\" />"_j)
-					->append(u"<selectbox-option text=\"Option 10\" value=\"10\" />"_j)->toString(), true);
+				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sasb_inner")));
+				parentNode->replaceSubNodes(wstring(L"<selectbox-option text=\"Option 1\" value=\"1\" />") +
+					L"<selectbox-option text=\"Option 2\" value=\"2\" />" +
+					L"<selectbox-option text=\"Option 3\" value=\"3\" />" +
+					L"<selectbox-option text=\"Option 4\" value=\"4\" selected=\"true\" />" +
+					L"<selectbox-option text=\"Option 5\" value=\"5\" />" +
+					L"<selectbox-option text=\"Option 6\" value=\"6\" />" +
+					L"<selectbox-option text=\"Option 7\" value=\"7\" />" +
+					L"<selectbox-option text=\"Option 8\" value=\"8\" />" +
+					L"<selectbox-option text=\"Option 9\" value=\"9\" />" +
+					L"<selectbox-option text=\"Option 10\" value=\"10\" />", true);
 			}
 		} catch (_Exception& exception) {
 			_Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
 			_Console::println(string(exception.what()));
 			exit(0);
 		}
-		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(u"tab2"_j)->getController()))->selectTab();
+		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab2")->getController()))->selectTab();
 	}
 }
 

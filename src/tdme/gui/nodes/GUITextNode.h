@@ -16,7 +16,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::nodes::GUINode;
-using java::lang::String;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
@@ -75,7 +74,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 	bool isContentNode() override;
 
 public:

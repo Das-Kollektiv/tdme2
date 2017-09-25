@@ -86,7 +86,7 @@ public:
 	 * @param xml
 	 * @param reset scroll offsets
 	 */
-	virtual void replaceSubNodes(String* xml, bool resetScrollOffsets) /* throws(Exception) */;
+	virtual void replaceSubNodes(const wstring& xml, bool resetScrollOffsets) /* throws(Exception) */;
 
 	/** 
 	 * Add sub node

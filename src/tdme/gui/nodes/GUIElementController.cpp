@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIElementController.java
 #include <tdme/gui/nodes/GUIElementController.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -14,7 +13,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::nodes::GUIElementController;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIKeyboardEvent_Type;

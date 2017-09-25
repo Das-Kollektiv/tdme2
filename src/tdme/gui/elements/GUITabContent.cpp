@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -15,7 +14,6 @@ using std::map;
 using std::wstring;
 
 using tdme::gui::elements::GUITabContent;
-using java::lang::String;
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -34,30 +32,30 @@ GUITabContent::GUITabContent() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUITabContent::NAME;
+wstring GUITabContent::NAME = L"tab-content";
 
 void GUITabContent::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tab-content.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tab-content.xml");
 }
 
-String* GUITabContent::getName()
+const wstring& GUITabContent::getName()
 {
 	return NAME;
 }
 
-String* GUITabContent::getTemplate()
+const wstring& GUITabContent::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"horizontal-align"] = u"center"_j;
-	attributes[L"vertical-align"] = u"center"_j;
+	attributes[L"horizontal-align"] = L"center";
+	attributes[L"vertical-align"] = L"center";
 	return &attributes;
 }
 
@@ -72,19 +70,6 @@ java::lang::Class* GUITabContent::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabContent", 31);
     return c;
-}
-
-void GUITabContent::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"tab-content"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUITabContent::getClass0()

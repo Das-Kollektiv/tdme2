@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDown.java
 #include <tdme/gui/elements/GUIDropDown.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -9,7 +8,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUIDropDown;
-using java::lang::String;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -28,31 +26,31 @@ GUIDropDown::GUIDropDown() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIDropDown::NAME;
+wstring GUIDropDown::NAME = L"dropdown";
 
 void GUIDropDown::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml");
 }
 
-String* GUIDropDown::getName()
+const wstring& GUIDropDown::getName()
 {
 	return NAME;
 }
 
-String* GUIDropDown::getTemplate()
+const wstring& GUIDropDown::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"100%"_j;
-	attributes[L"height"] = u"auto"_j;
-	attributes[L"text"] = u"10"_j;
+	attributes[L"width"] = L"100%";
+	attributes[L"height"] = L"auto";
+	attributes[L"text"] = L"10";
 	return &attributes;
 }
 
@@ -67,19 +65,6 @@ java::lang::Class* GUIDropDown::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDown", 29);
     return c;
-}
-
-void GUIDropDown::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"dropdown"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIDropDown::getClass0()

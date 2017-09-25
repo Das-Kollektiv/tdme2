@@ -87,7 +87,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	virtual String* getNodeType() = 0;
+	virtual const wstring getNodeType() = 0;
 
 public:
 

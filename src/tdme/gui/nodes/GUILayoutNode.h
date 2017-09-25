@@ -8,7 +8,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::String;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -58,7 +57,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 	bool isContentNode() override;
 
 public:

@@ -1,14 +1,12 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIInput.java
 #include <tdme/gui/elements/GUIInput.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUIInput;
-using java::lang::String;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -26,32 +24,32 @@ GUIInput::GUIInput() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIInput::NAME;
+wstring GUIInput::NAME = L"input";
 
 void GUIInput::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
 }
 
-String* GUIInput::getName()
+const wstring& GUIInput::getName()
 {
 	return NAME;
 }
 
-String* GUIInput::getTemplate()
+const wstring& GUIInput::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIInput::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"auto"_j;
-	attributes[L"height"] = u"auto"_j;
-	attributes[L"text"] = u""_j;
-	attributes[L"maxlength"] = u"0"_j;
+	attributes[L"width"] = L"auto";
+	attributes[L"height"] = L"auto";
+	attributes[L"text"] = L"";
+	attributes[L"maxlength"] = L"0";
 	return &attributes;
 }
 
@@ -66,19 +64,6 @@ java::lang::Class* GUIInput::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIInput", 26);
     return c;
-}
-
-void GUIInput::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"input"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIInput::getClass0()

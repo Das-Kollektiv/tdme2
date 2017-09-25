@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaVerticalController.java
 #include <tdme/gui/elements/GUIScrollAreaVerticalController.h>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIScrollAreaVerticalController_initialize_1.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,7 +9,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUIScrollAreaVerticalController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::elements::GUIScrollAreaVerticalController_initialize_1;
 using tdme::gui::nodes::GUIElementNode;
@@ -54,9 +52,9 @@ void GUIScrollAreaVerticalController::setDisabled(bool disabled)
 
 void GUIScrollAreaVerticalController::initialize()
 {
-	auto const contentNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_inner"_j)->toString()));
-	auto const upArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_scrollbar_vertical_layout_up"_j)->toString()));
-	auto const downArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_scrollbar_vertical_layout_down"_j)->toString()));
+	auto const contentNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_inner"));
+	auto const upArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_scrollbar_vertical_layout_up"));
+	auto const downArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_scrollbar_vertical_layout_down"));
 	node->getScreenNode()->addActionListener(new GUIScrollAreaVerticalController_initialize_1(this, upArrowNode, contentNode, downArrowNode));
 }
 

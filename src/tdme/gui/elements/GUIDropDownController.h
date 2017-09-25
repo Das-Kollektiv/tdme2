@@ -126,7 +126,6 @@ protected:
 
 public:
 	static ::java::lang::Class *class_();
-	static void clinit();
 
 private:
 	void init();

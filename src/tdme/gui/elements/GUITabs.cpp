@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -15,7 +14,6 @@ using std::map;
 using std::wstring;
 
 using tdme::gui::elements::GUITabs;
-using java::lang::String;
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -34,30 +32,30 @@ GUITabs::GUITabs() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUITabs::NAME;
+wstring GUITabs::NAME = L"tabs";
 
 void GUITabs::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs.xml");
 }
 
-String* GUITabs::getName()
+const wstring& GUITabs::getName()
 {
 	return NAME;
 }
 
-String* GUITabs::getTemplate()
+const wstring& GUITabs::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUITabs::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUITabs::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"100%"_j;
-	attributes[L"height"] = u"*"_j;
+	attributes[L"width"] = L"100%";
+	attributes[L"height"] = L"*";
 	return &attributes;
 }
 
@@ -72,19 +70,6 @@ java::lang::Class* GUITabs::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabs", 25);
     return c;
-}
-
-void GUITabs::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"tabs"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUITabs::getClass0()

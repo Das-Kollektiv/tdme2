@@ -4,7 +4,6 @@
 #include <array>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
@@ -19,7 +18,6 @@ using std::array;
 using std::wstring;
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
@@ -58,9 +56,9 @@ void GUIVerticalScrollbarInternalNode::ctor(GUIScreenNode* screenNode, GUIParent
 	this->barColorDragging = barColorDragging;
 }
 
-String* GUIVerticalScrollbarInternalNode::getNodeType()
+const wstring GUIVerticalScrollbarInternalNode::getNodeType()
 {
-	return u"scrollbar"_j;
+	return L"scrollbar";
 }
 
 bool GUIVerticalScrollbarInternalNode::isContentNode()

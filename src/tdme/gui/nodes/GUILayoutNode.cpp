@@ -58,9 +58,9 @@ void GUILayoutNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, c
 	this->alignment = alignment;
 }
 
-String* GUILayoutNode::getNodeType()
+const wstring GUILayoutNode::getNodeType()
 {
-	return u"layout"_j;
+	return L"layout";
 }
 
 bool GUILayoutNode::isContentNode()

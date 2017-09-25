@@ -6,7 +6,6 @@
 #include <string>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
 #include <tdme/gui/GUI.h>
@@ -29,7 +28,6 @@ using std::wstring;
 
 using tdme::gui::nodes::GUIScreenNode;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::gui::GUI;
@@ -222,29 +220,29 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->computedConstraints->height = height;
 }
 
-String* GUIScreenNode::getNodeType()
+const wstring GUIScreenNode::getNodeType()
 {
-	return u"screen"_j;
+	return L"screen";
 }
 
-GUINode* GUIScreenNode::getNodeById(String* nodeId)
+GUINode* GUIScreenNode::getNodeById(const wstring& nodeId)
 {
-	auto nodesByIdIt = nodesById.find(nodeId->getCPPWString());
+	auto nodesByIdIt = nodesById.find(nodeId);
 	if (nodesByIdIt == nodesById.end()) {
 		return nullptr;
 	}
 	return nodesByIdIt->second;
 }
 
-String* GUIScreenNode::allocateNodeId()
+const wstring GUIScreenNode::allocateNodeId()
 {
-	return ::java::lang::StringBuilder().append(u"tdme_gui_anonymous_node_"_j)->append((nodeCounter++))->toString();
+	return L"tdme_gui_anonymous_node_" + to_wstring(nodeCounter++);
 }
 
 bool GUIScreenNode::addNode(GUINode* node)
 {
 	if (node->id.length() == 0) {
-		node->id = allocateNodeId()->getCPPWString();
+		node->id = allocateNodeId();
 	}
 	if (nodesById.find(node->id) != nodesById.end()) {
 		return false;
@@ -413,27 +411,27 @@ void GUIScreenNode::setValues(map<wstring, MutableString*>* values)
 	}
 }
 
-bool GUIScreenNode::addEffect(String* id, GUIEffect* effect)
+bool GUIScreenNode::addEffect(const wstring& id, GUIEffect* effect)
 {
-	if (effects.find(id->getCPPWString()) != effects.end()) {
+	if (effects.find(id) != effects.end()) {
 		return false;
 	}
-	effects[id->getCPPWString()] = effect;
+	effects[id] = effect;
 	return true;
 }
 
-GUIEffect* GUIScreenNode::getEffect(String* id)
+GUIEffect* GUIScreenNode::getEffect(const wstring& id)
 {
-	auto effectsIt = effects.find(id->getCPPWString());
+	auto effectsIt = effects.find(id);
 	if (effectsIt == effects.end()) {
 		return nullptr;
 	}
 	return effectsIt->second;
 }
 
-bool GUIScreenNode::removeEffect(String* id)
+bool GUIScreenNode::removeEffect(const wstring& id)
 {
-	auto eraseCount = effects.erase(id->getCPPWString());
+	auto eraseCount = effects.erase(id);
 	if (eraseCount == 0) {
 		return false;
 	}

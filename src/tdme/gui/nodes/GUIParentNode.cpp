@@ -97,7 +97,7 @@ void GUIParentNode::clearSubNodes()
 	subNodes.clear();
 }
 
-void GUIParentNode::replaceSubNodes(String* xml, bool resetScrollOffsets) /* throws(Exception) */
+void GUIParentNode::replaceSubNodes(const wstring& xml, bool resetScrollOffsets) /* throws(Exception) */
 {
 	if (resetScrollOffsets == true) {
 		childrenRenderOffsetX = 0.0f;

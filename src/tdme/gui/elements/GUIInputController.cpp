@@ -73,7 +73,7 @@ void GUIInputController::setDisabled(bool disabled)
 
 void GUIInputController::initialize()
 {
-	textInputNode = java_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_text-input"_j)->toString()));
+	textInputNode = java_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_text-input"));
 	setDisabled(disabled);
 }
 

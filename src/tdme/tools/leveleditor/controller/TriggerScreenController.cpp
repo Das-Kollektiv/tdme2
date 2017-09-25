@@ -64,14 +64,14 @@ GUIScreenNode* TriggerScreenController::getScreenNode()
 void TriggerScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_trigger.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/leveleditor/gui", L"screen_trigger.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		triggerWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_width"_j));
-		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_height"_j));
-		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"trigger_depth"_j));
-		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_trigger_apply"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
+		triggerWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_width"));
+		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_height"));
+		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_depth"));
+		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_trigger_apply"));
 	} catch (_Exception& exception) {
 		_Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));

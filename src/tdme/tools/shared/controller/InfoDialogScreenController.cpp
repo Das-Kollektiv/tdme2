@@ -40,11 +40,11 @@ GUIScreenNode* InfoDialogScreenController::getScreenNode()
 void InfoDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/shared/gui"_j, u"infodialog.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/shared/gui", L"infodialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
-		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_caption"_j));
-		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"infodialog_message"_j));
+		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_caption"));
+		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_message"));
 	} catch (_Exception& exception) {
 		_Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));

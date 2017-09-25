@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIRadioButtonController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -15,7 +14,6 @@ using std::map;
 using std::wstring;
 
 using tdme::gui::elements::GUIRadioButton;
-using java::lang::String;
 using tdme::gui::elements::GUIRadioButtonController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -34,29 +32,29 @@ GUIRadioButton::GUIRadioButton() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIRadioButton::NAME;
+wstring GUIRadioButton::NAME = L"radiobutton";
 
 void GUIRadioButton::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"radiobutton.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"radiobutton.xml");
 }
 
-String* GUIRadioButton::getName()
+const wstring& GUIRadioButton::getName()
 {
 	return NAME;
 }
 
-String* GUIRadioButton::getTemplate()
+const wstring& GUIRadioButton::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"name"] = u""_j;
+	attributes[L"name"] = L"";
 	return &attributes;
 }
 
@@ -71,19 +69,6 @@ java::lang::Class* GUIRadioButton::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIRadioButton", 32);
     return c;
-}
-
-void GUIRadioButton::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"radiobutton"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIRadioButton::getClass0()

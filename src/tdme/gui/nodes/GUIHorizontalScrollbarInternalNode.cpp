@@ -58,9 +58,9 @@ void GUIHorizontalScrollbarInternalNode::ctor(GUIScreenNode* screenNode, GUIPare
 	this->barColorDragging = barColorDragging;
 }
 
-String* GUIHorizontalScrollbarInternalNode::getNodeType()
+const wstring GUIHorizontalScrollbarInternalNode::getNodeType()
 {
-	return u"scrollbar"_j;
+	return L"scrollbar";
 }
 
 bool GUIHorizontalScrollbarInternalNode::isContentNode()

@@ -89,9 +89,9 @@ void GUIInputInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parent
 	this->controller->initialize();
 }
 
-String* GUIInputInternalNode::getNodeType()
+const wstring GUIInputInternalNode::getNodeType()
 {
-	return u"text"_j;
+	return L"text";
 }
 
 bool GUIInputInternalNode::isContentNode()

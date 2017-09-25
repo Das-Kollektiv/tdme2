@@ -15,7 +15,6 @@ using std::map;
 using std::wstring;
 
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
@@ -38,19 +37,19 @@ public:
 	/** 
 	 * @return name
 	 */
-	virtual String* getName() = 0;
+	virtual const wstring& getName() = 0;
 
 	/** 
 	 * @return template
 	 */
-	virtual String* getTemplate() = 0;
+	virtual const wstring& getTemplate() = 0;
 
 	/** 
 	 * Get default attributes
 	 * @param screen node
 	 * @return default attributes
 	 */
-	virtual map<wstring, String*>* getAttributes(GUIScreenNode* screenNode) = 0;
+	virtual map<wstring, wstring>* getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/** 
 	 * Create controller which is attached to this node
