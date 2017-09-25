@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUISelectBoxOptionController.java
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
@@ -14,7 +13,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUISelectBoxOptionController;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::events::GUIMouseEvent_Type;

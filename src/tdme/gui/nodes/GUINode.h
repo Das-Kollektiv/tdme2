@@ -409,7 +409,7 @@ public: /* protected */
 	 * @param ident
 	 * @return indented string
 	 */
-	virtual String* indent(int32_t indent);
+	virtual const wstring indent(int32_t indent);
 
 public:
 	String* toString() override;

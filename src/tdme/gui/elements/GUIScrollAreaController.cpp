@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaController.java
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIScrollAreaController_initialize_1.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,7 +9,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUIScrollAreaController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::elements::GUIScrollAreaController_initialize_1;
 using tdme::gui::nodes::GUIElementNode;

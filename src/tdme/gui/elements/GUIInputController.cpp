@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -17,7 +16,6 @@
 using std::wstring;
 
 using tdme::gui::elements::GUIInputController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;

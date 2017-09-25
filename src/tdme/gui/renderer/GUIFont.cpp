@@ -6,7 +6,6 @@
 #include <string>
 
 #include <tdme/math/Math.h>
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
@@ -28,7 +27,6 @@ using std::wstring;
 
 using tdme::gui::renderer::GUIFont;
 using tdme::math::Math;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;

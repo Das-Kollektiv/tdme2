@@ -2,7 +2,6 @@
 #include <tdme/gui/elements/GUISelectBoxController.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -19,7 +18,6 @@
 
 using tdme::gui::elements::GUISelectBoxController;
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxOptionController;
 using tdme::gui::events::GUIKeyboardEvent_Type;

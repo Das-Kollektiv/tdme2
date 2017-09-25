@@ -20,7 +20,6 @@ using std::map;
 using std::vector;
 
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -103,7 +102,7 @@ private:
 	 * @param node
 	 * @return string
 	 */
-	static String* getInnerXml(TiXmlElement* node);
+	static const wstring getInnerXml(TiXmlElement* node);
 
 public:
 
@@ -113,13 +112,6 @@ public:
 	 * @return string with unescaped quotes
 	 */
 	static const wstring unescapeQuotes(const wstring& string);
-
-	/** 
-	 * Escape quotes
-	 * @param string
-	 * @return string with escaped quotes
-	 */
-	static String* escapeQuotes(String* string);
 
 	/**
 	 * Escape quotes

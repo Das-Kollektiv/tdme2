@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabController.java
 #include <tdme/gui/elements/GUITabController.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/elements/GUITabsHeaderController.h>
@@ -17,7 +16,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUITabController;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::elements::GUITabsHeaderController;

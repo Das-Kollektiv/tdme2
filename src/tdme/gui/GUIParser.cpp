@@ -6,7 +6,6 @@
 
 #include <java/lang/CharSequence.h>
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
 #include <tdme/gui/GUIParserException.h>
@@ -59,7 +58,6 @@ using std::wstring;
 using tdme::gui::GUIParser;
 using java::lang::CharSequence;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::gui::GUIParserException;
@@ -158,8 +156,8 @@ GUIScreenNode* GUIParser::parse(const wstring& xml) throw (GUIParserException)
 	guiScreenNode = new GUIScreenNode(
 		StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),
-		GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x"))))),
-		GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-y"))))),
+		GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x")))),
+		GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-y")))),
 		GUINode::createAlignments(
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("horizontal-align"))),
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("vertical-align")))
@@ -233,17 +231,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), new GUIColor(L"#F0F0F0")),
 					GUINode::createBorder(
@@ -267,7 +265,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUILayoutNode::createAlignment(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment")))))
+					GUILayoutNode::createAlignment(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiPanelNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -285,17 +283,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -319,7 +317,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUILayoutNode::createAlignment(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment")))))
+					GUILayoutNode::createAlignment(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiLayoutNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -342,10 +340,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -385,17 +383,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -447,10 +445,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -498,10 +496,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -549,10 +547,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -602,10 +600,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -653,10 +651,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -715,7 +713,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$" + newGuiElementAttributesIt.first + L"}", guiElementAttributeValue);
 				}
 
-				newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$innerXml}", getInnerXml(node)->getCPPWString());
+				newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$innerXml}", getInnerXml(node));
 				auto newGuiElementDocumentXML =  L"<gui-element>\n" + newGuiElementTemplate + L"</gui-element>\n";
 
 				TiXmlDocument newGuiElementDocument;
@@ -744,27 +742,20 @@ const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent
 	return elementList;
 }
 
-String* GUIParser::getInnerXml(TiXmlElement* node)
+const wstring GUIParser::getInnerXml(TiXmlElement* node)
 {
 	clinit();
 	std::stringstream ss;
 	for (auto *childNode = node->FirstChildElement(); childNode != nullptr; childNode = childNode->NextSiblingElement()) {
 		ss << (*childNode);
 	}
-	return new String(StringConverter::toWideString(ss.str()));
+	return StringConverter::toWideString(ss.str());
 }
 
 const wstring GUIParser::unescapeQuotes(const wstring& string)
 {
 	clinit();
 	return StringUtils::replace(string, L"&quot;", L"\"");
-}
-
-String* GUIParser::escapeQuotes(String* string)
-{
-	clinit();
-	return string->replace(static_cast< CharSequence* >(u"\""_j), static_cast< CharSequence* >(u"&quot;"_j));
-
 }
 
 const wstring GUIParser::escapeQuotes(const wstring& string)

@@ -2,7 +2,6 @@
 #include <tdme/gui/elements/GUIRadioButtonController.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -18,7 +17,6 @@
 
 using tdme::gui::elements::GUIRadioButtonController;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent_Type;
