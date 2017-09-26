@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaHorizontalController.java
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController_initialize_1.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,7 +9,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUIScrollAreaHorizontalController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::elements::GUIScrollAreaHorizontalController_initialize_1;
 using tdme::gui::nodes::GUIElementNode;
@@ -54,9 +52,9 @@ void GUIScrollAreaHorizontalController::setDisabled(bool disabled)
 
 void GUIScrollAreaHorizontalController::initialize()
 {
-	auto const contentNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_inner"_j)->toString()));
-	auto const leftArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_scrollbar_horizontal_layout_left"_j)->toString()));
-	auto const rightArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_scrollbar_horizontal_layout_right"_j)->toString()));
+	auto const contentNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_inner"));
+	auto const leftArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_scrollbar_horizontal_layout_left"));
+	auto const rightArrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_scrollbar_horizontal_layout_right"));
 	node->getScreenNode()->addActionListener(new GUIScrollAreaHorizontalController_initialize_1(this, leftArrowNode, contentNode, rightArrowNode));
 }
 

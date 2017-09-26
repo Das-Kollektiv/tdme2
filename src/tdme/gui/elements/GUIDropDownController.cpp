@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
@@ -26,7 +25,6 @@ using std::wstring;
 
 using tdme::gui::elements::GUIDropDownController;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIDropDownOptionController;
@@ -53,7 +51,6 @@ static T java_cast(U* u)
 GUIDropDownController::GUIDropDownController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIDropDownController::GUIDropDownController(GUINode* node) 
@@ -71,13 +68,13 @@ void GUIDropDownController::init()
 	value = new MutableString();
 }
 
-wstring GUIDropDownController::CONDITION_DISABLED;
+wstring GUIDropDownController::CONDITION_DISABLED = L"disabled";
 
-wstring GUIDropDownController::CONDITION_ENABLED;
+wstring GUIDropDownController::CONDITION_ENABLED = L"enabled";
 
-wstring GUIDropDownController::CONDITION_OPENED;
+wstring GUIDropDownController::CONDITION_OPENED = L"opened";
 
-wstring GUIDropDownController::CONDITION_CLOSED;
+wstring GUIDropDownController::CONDITION_CLOSED = L"closed";
 
 void GUIDropDownController::ctor(GUINode* node)
 {
@@ -107,9 +104,9 @@ void GUIDropDownController::setDisabled(bool disabled)
 
 void GUIDropDownController::initialize()
 {
-	dropDownNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_layout_horizontal"_j)->toString()));
-	arrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_arrow"_j)->toString()));
-	textElementNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_layout_horizontal_element"_j)->toString()));
+	dropDownNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal"));
+	arrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_arrow"));
+	textElementNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal_element"));
 	(java_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	setDisabled(disabled);
@@ -313,22 +310,6 @@ java::lang::Class* GUIDropDownController::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDownController", 39);
     return c;
-}
-
-void GUIDropDownController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	CONDITION_OPENED = L"opened";
-	CONDITION_CLOSED = L"closed";
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIDropDownController::getClass0()

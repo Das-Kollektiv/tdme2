@@ -91,12 +91,12 @@ void LevelEditorEntityLibraryScreenController::setModelPath(const wstring& model
 void LevelEditorEntityLibraryScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/leveleditor/gui"_j, u"screen_leveleditor_entitylibrary.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/leveleditor/gui", L"screen_leveleditor_entitylibrary.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"entity_library_listbox"_j));
-		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_place"_j));
-		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_level_edit"_j));
+		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_library_listbox"));
+		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_place"));
+		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_level_edit"));
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -120,7 +120,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
 	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 	entityLibraryListBoxSelection->set(entityLibraryListBox->getController()->getValue());
-	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(new String(entityLibraryListBox->getId() + L"_inner"))));
+	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(entityLibraryListBox->getId() + L"_inner")));
 	auto idx = 1;
 	wstring entityLibraryListBoxSubNodesXML;
 	entityLibraryListBoxSubNodesXML =
@@ -143,7 +143,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	}
 	entityLibraryListBoxSubNodesXML = entityLibraryListBoxSubNodesXML + L"</scrollarea-vertical>\n";
 	try {
-		entityLibraryListBoxInnerNode->replaceSubNodes(new String(entityLibraryListBoxSubNodesXML), false);
+		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		_Console::println(string(exception.what()));

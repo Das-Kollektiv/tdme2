@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -17,7 +16,6 @@
 using std::wstring;
 
 using tdme::gui::elements::GUIInputController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
@@ -73,7 +71,7 @@ void GUIInputController::setDisabled(bool disabled)
 
 void GUIInputController::initialize()
 {
-	textInputNode = java_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_text-input"_j)->toString()));
+	textInputNode = java_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_text-input"));
 	setDisabled(disabled);
 }
 

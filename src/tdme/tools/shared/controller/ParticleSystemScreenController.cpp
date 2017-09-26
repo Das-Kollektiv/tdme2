@@ -154,85 +154,85 @@ FileDialogPath* ParticleSystemScreenController::getModelPath()
 void ParticleSystemScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/particlesystem/gui"_j, u"screen_particlesystem.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/particlesystem/gui", L"screen_particlesystem.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		particleSystemReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_reload"_j));
-		particleSystemSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_entity_save"_j));
-		particleSystemTypes = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_types"_j));
-		particleSystemType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_type"_j));
-		particleSystemEmitters = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitters"_j));
-		particleSystemEmitter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ps_emitter"_j));
-		opsScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_scale"_j));
-		opsMaxCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_maxcount"_j));
-		opsModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_model"_j));
-		opsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ops_auto_emit"_j));
-		ppsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_maxpoints"_j));
-		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pps_auto_emit"_j));
-		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_count"_j));
-		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetime"_j));
-		ppeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_lifetimernd"_j));
-		ppeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_mass"_j));
-		ppeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_massrnd"_j));
-		ppePosition = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_position"_j));
-		ppeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocity"_j));
-		ppeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_velocityrnd"_j));
-		ppeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorstart"_j));
-		ppeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"ppe_colorend"_j));
-		bbpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_count"_j));
-		bbpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetime"_j));
-		bbpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_lifetimernd"_j));
-		bbpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_mass"_j));
-		bbpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_massrnd"_j));
-		bbpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocity"_j));
-		bbpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_velocityrnd"_j));
-		bbpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorstart"_j));
-		bbpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_colorend"_j));
-		bbpeObbCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_center"_j));
-		bbpeObbHalfextension = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_halfextension"_j));
-		bbpeObbRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_x"_j));
-		bbpeObbRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_y"_j));
-		bbpeObbRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"bbpe_obb_rotation_z"_j));
-		cpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_count"_j));
-		cpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetime"_j));
-		cpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_lifetimernd"_j));
-		cpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_mass"_j));
-		cpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_massrnd"_j));
-		cpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocity"_j));
-		cpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_velocityrnd"_j));
-		cpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorstart"_j));
-		cpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_colorend"_j));
-		cpeCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_center"_j));
-		cpeRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_radius"_j));
-		cpeRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_x"_j));
-		cpeRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_y"_j));
-		cpeRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpe_rotation_z"_j));
-		cpepvCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_count"_j));
-		cpepvLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetime"_j));
-		cpepvLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_lifetimernd"_j));
-		cpepvMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_mass"_j));
-		cpepvMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_massrnd"_j));
-		cpepvVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocity"_j));
-		cpepvVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_velocityrnd"_j));
-		cpepvColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorstart"_j));
-		cpepvColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_colorend"_j));
-		cpepvCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_center"_j));
-		cpepvRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_radius"_j));
-		cpepvRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_x"_j));
-		cpepvRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_y"_j));
-		cpepvRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"cpepv_rotation_z"_j));
-		speCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_count"_j));
-		speLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetime"_j));
-		speLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_lifetimernd"_j));
-		speMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_mass"_j));
-		speMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_massrnd"_j));
-		speVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocity"_j));
-		speVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_velocityrnd"_j));
-		speColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorstart"_j));
-		speColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_colorend"_j));
-		speCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_center"_j));
-		speRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"spe_radius"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
+		particleSystemReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_reload"));
+		particleSystemSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_save"));
+		particleSystemTypes = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ps_types"));
+		particleSystemType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ps_type"));
+		particleSystemEmitters = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ps_emitters"));
+		particleSystemEmitter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ps_emitter"));
+		opsScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ops_scale"));
+		opsMaxCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ops_maxcount"));
+		opsModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ops_model"));
+		opsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ops_auto_emit"));
+		ppsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pps_maxpoints"));
+		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pps_auto_emit"));
+		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_count"));
+		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_lifetime"));
+		ppeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_lifetimernd"));
+		ppeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_mass"));
+		ppeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_massrnd"));
+		ppePosition = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_position"));
+		ppeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_velocity"));
+		ppeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_velocityrnd"));
+		ppeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_colorstart"));
+		ppeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"ppe_colorend"));
+		bbpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_count"));
+		bbpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_lifetime"));
+		bbpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_lifetimernd"));
+		bbpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_mass"));
+		bbpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_massrnd"));
+		bbpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_velocity"));
+		bbpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_velocityrnd"));
+		bbpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_colorstart"));
+		bbpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_colorend"));
+		bbpeObbCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_obb_center"));
+		bbpeObbHalfextension = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_obb_halfextension"));
+		bbpeObbRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_obb_rotation_x"));
+		bbpeObbRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_obb_rotation_y"));
+		bbpeObbRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"bbpe_obb_rotation_z"));
+		cpeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_count"));
+		cpeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_lifetime"));
+		cpeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_lifetimernd"));
+		cpeMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_mass"));
+		cpeMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_massrnd"));
+		cpeVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_velocity"));
+		cpeVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_velocityrnd"));
+		cpeColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_colorstart"));
+		cpeColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_colorend"));
+		cpeCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_center"));
+		cpeRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_radius"));
+		cpeRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_rotation_x"));
+		cpeRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_rotation_y"));
+		cpeRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpe_rotation_z"));
+		cpepvCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_count"));
+		cpepvLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_lifetime"));
+		cpepvLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_lifetimernd"));
+		cpepvMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_mass"));
+		cpepvMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_massrnd"));
+		cpepvVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_velocity"));
+		cpepvVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_velocityrnd"));
+		cpepvColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_colorstart"));
+		cpepvColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_colorend"));
+		cpepvCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_center"));
+		cpepvRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_radius"));
+		cpepvRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_rotation_x"));
+		cpepvRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_rotation_y"));
+		cpepvRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"cpepv_rotation_z"));
+		speCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_count"));
+		speLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_lifetime"));
+		speLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_lifetimernd"));
+		speMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_mass"));
+		speMassRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_massrnd"));
+		speVelocity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_velocity"));
+		speVelocityRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_velocityrnd"));
+		speColorStart = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_colorstart"));
+		speColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_colorend"));
+		speCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_center"));
+		speRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_radius"));
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -278,7 +278,7 @@ void ParticleSystemScreenController::unsetEntityProperties()
 
 void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
 {
-	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(new String(particleSystemTypes->getId() + L"_inner")));
+	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(particleSystemTypes->getId() + L"_inner"));
 	auto idx = 0;
 	wstring particleSystemTypesInnerNodeSubNodesXML = L"";
 	particleSystemTypesInnerNodeSubNodesXML =
@@ -302,7 +302,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 		particleSystemTypesInnerNodeSubNodesXML +
 		L"</scrollarea-vertical>";
 	try {
-		particleSystemTypesInnerNode->replaceSubNodes(new String(particleSystemTypesInnerNodeSubNodesXML), true);
+		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -311,7 +311,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 
 void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
 {
-	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(new String(particleSystemEmitters->getId() + L"_inner"))));
+	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(particleSystemEmitters->getId() + L"_inner")));
 	auto idx = 0;
 	wstring particleSystemEmittersInnerNodeSubNodesXML = L"";
 	particleSystemEmittersInnerNodeSubNodesXML =
@@ -335,7 +335,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<Stri
 		particleSystemEmittersInnerNodeSubNodesXML +
 		L"</scrollarea-vertical>";
 	try {
-		particleSystemEmittersInnerNode->replaceSubNodes(new String(particleSystemEmittersInnerNodeSubNodesXML), true);
+		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
 		_Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
 		_Console::println(string(exception.what()));

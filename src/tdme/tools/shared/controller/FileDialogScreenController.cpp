@@ -70,13 +70,13 @@ const wstring& FileDialogScreenController::getFileName()
 void FileDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/shared/gui"_j, u"filedialog.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/shared/gui", L"filedialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		caption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"filedialog_caption"_j));
-		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_files"_j));
-		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"filedialog_filename"_j));
+		caption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"filedialog_caption"));
+		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"filedialog_files"));
+		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"filedialog_filename"));
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -105,7 +105,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 		_Console::println(string(exception.what()));
 	}
 
-	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(new String(files->getId() + L"_inner")));
+	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(files->getId() + L"_inner"));
 	auto idx = 1;
 	wstring filesInnerNodeSubNodesXML = L"";
 	filesInnerNodeSubNodesXML =
@@ -123,7 +123,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	filesInnerNodeSubNodesXML =
 		filesInnerNodeSubNodesXML + L"</scrollarea>\n";
 	try {
-		filesInnerNode->replaceSubNodes(new String(filesInnerNodeSubNodesXML), true);
+		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
 		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		_Console::println(string(exception.what()));

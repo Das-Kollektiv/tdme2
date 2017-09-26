@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
@@ -12,7 +11,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUISpaceNode;
-using java::lang::String;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
@@ -35,9 +33,9 @@ void GUISpaceNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, co
 	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 }
 
-String* GUISpaceNode::getNodeType()
+const wstring GUISpaceNode::getNodeType()
 {
-	return u"space"_j;
+	return L"space";
 }
 
 bool GUISpaceNode::isContentNode()

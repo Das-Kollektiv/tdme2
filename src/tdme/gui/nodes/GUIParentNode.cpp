@@ -27,6 +27,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/StringConverter.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::vector;
 using std::wstring;
@@ -55,6 +56,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::StringConverter;
+using tdme::utils::StringUtils;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -67,7 +69,6 @@ static T java_cast(U* u)
 GUIParentNode::GUIParentNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)  /* throws(GUIParserException) */
@@ -97,7 +98,7 @@ void GUIParentNode::clearSubNodes()
 	subNodes.clear();
 }
 
-void GUIParentNode::replaceSubNodes(String* xml, bool resetScrollOffsets) /* throws(Exception) */
+void GUIParentNode::replaceSubNodes(const wstring& xml, bool resetScrollOffsets) /* throws(Exception) */
 {
 	if (resetScrollOffsets == true) {
 		childrenRenderOffsetX = 0.0f;
@@ -155,24 +156,23 @@ GUIParentNode_Overflow* GUIParentNode::getOverflowY()
 	return overflowY;
 }
 
-GUIParentNode_Overflow* GUIParentNode::createOverflow(String* overflow) throw (GUIParserException)
+GUIParentNode_Overflow* GUIParentNode::createOverflow(const wstring& overflow) throw (GUIParserException)
 {
-	clinit();
-	if (overflow->trim()->equalsIgnoreCase(u"hidden"_j) == true) {
+	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), L"hidden") == true) {
 		return GUIParentNode_Overflow::HIDDEN;
 	} else
-	if (overflow->trim()->equalsIgnoreCase(u"downsize-children"_j) == true) {
+	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), L"downsize-children") == true) {
 		return GUIParentNode_Overflow::DOWNSIZE_CHILDREN;
 	} else
-	if (overflow->trim()->equalsIgnoreCase(u"scroll"_j) == true) {
+	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), L"scroll") == true) {
 		return GUIParentNode_Overflow::SCROLL;
 	} else
-	if (overflow == nullptr || overflow->trim()->length() == 0) {
+	if (overflow.empty() == true || StringUtils::trim(overflow).length() == 0) {
 		return GUIParentNode_Overflow::HIDDEN;
 	} else {
 		throw GUIParserException(
 			"Unknown overflow '" +
-			StringConverter::toString(overflow->toString()->getCPPWString()) +
+			StringConverter::toString(overflow) +
 			"'"
 		);
 	}
@@ -198,18 +198,17 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffSetY)
 	this->childrenRenderOffsetY = childrenRenderOffSetY;
 }
 
-GUINode_RequestedConstraints* GUIParentNode::createRequestedConstraints(String* left, String* top, String* width, String* height)
+GUINode_RequestedConstraints* GUIParentNode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
 {
-	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(left->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(left->trim()->getCPPWString(), 0);
-	constraints->topType = getRequestedConstraintsType(top->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(top->trim()->getCPPWString(), 0);
-	constraints->widthType = getRequestedConstraintsType(width->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->width = getRequestedConstraintsValue(width->trim()->getCPPWString(), -1);
-	constraints->heightType = getRequestedConstraintsType(height->trim()->getCPPWString(), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->height = getRequestedConstraintsValue(height->trim()->getCPPWString(), -1);
+	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
+	constraints->topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints->top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
+	constraints->widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
+	constraints->heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints->height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
 	return constraints;
 }
 

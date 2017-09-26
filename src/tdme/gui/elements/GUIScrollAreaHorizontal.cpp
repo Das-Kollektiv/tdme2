@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaHorizontal.java
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -9,7 +8,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUIScrollAreaHorizontal;
-using java::lang::String;
 using tdme::gui::elements::GUIScrollAreaHorizontalController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -28,39 +26,39 @@ GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIScrollAreaHorizontal::NAME;
+wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
 
 void GUIScrollAreaHorizontal::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
 }
 
-String* GUIScrollAreaHorizontal::getName()
+const wstring& GUIScrollAreaHorizontal::getName()
 {
 	return NAME;
 }
 
-String* GUIScrollAreaHorizontal::getTemplate()
+const wstring& GUIScrollAreaHorizontal::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"100%"_j;
-	attributes[L"height"] = u"100%"_j;
-	attributes[L"horizontal-align"] = u"left"_j;
-	attributes[L"vertical-align"] = u"top"_j;
-	attributes[L"alignment"] = u"vertical"_j;
-	attributes[L"background-color"] = u"transparent"_j;
-	attributes[L"border"] = u"0"_j;
-	attributes[L"border-color"] = u"transparent"_j;
-	attributes[L"padding"] = u"0"_j;
-	attributes[L"show-on"] = u""_j;
-	attributes[L"hide-on"] = u""_j;
+	attributes[L"width"] = L"100%";
+	attributes[L"height"] = L"100%";
+	attributes[L"horizontal-align"] = L"left";
+	attributes[L"vertical-align"] = L"top";
+	attributes[L"alignment"] = L"vertical";
+	attributes[L"background-color"] = L"transparent";
+	attributes[L"border"] = L"0";
+	attributes[L"border-color"] = L"transparent";
+	attributes[L"padding"] = L"0";
+	attributes[L"show-on"] = L"";
+	attributes[L"hide-on"] = L"";
 	return &attributes;
 }
 
@@ -75,19 +73,6 @@ java::lang::Class* GUIScrollAreaHorizontal::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIScrollAreaHorizontal", 41);
     return c;
-}
-
-void GUIScrollAreaHorizontal::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"scrollarea-horizontal"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIScrollAreaHorizontal::getClass0()

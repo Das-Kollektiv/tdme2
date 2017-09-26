@@ -12,7 +12,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUILayoutNode;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -64,7 +63,7 @@ protected:
 	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment) /* throws(GUIParserException) */;
 
 public: /* protected */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 
 public:
 	void handleMouseEvent(GUIMouseEvent* event) override;

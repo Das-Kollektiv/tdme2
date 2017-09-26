@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -16,7 +15,6 @@ using std::vector;
 
 using tdme::gui::elements::GUITabsController;
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::elements::GUITabController;
 using tdme::gui::nodes::GUINode;
@@ -108,7 +106,7 @@ void GUITabsController::unselect()
 
 void GUITabsController::setTabContentSelected(const wstring& id)
 {
-	tabContentNodeId->set(id)->append(u"-content"_j);
+	tabContentNodeId->set(id + L"-content");
 	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));

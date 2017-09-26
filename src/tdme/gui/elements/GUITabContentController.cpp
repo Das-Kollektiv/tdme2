@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUITabContentController.java
 #include <tdme/gui/elements/GUITabContentController.h>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -9,7 +8,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::elements::GUITabContentController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

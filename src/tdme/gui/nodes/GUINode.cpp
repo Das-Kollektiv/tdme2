@@ -668,11 +668,11 @@ void GUINode::scrollToNodeX(GUIParentNode* toNode)
 	scrollXParentNode->scrollToNodeX(toNode);
 }
 
-String* GUINode::indent(int32_t indent)
+const wstring GUINode::indent(int32_t indent)
 {
-	auto tmp = u""_j;
+	wstring tmp = L"";
 	for (auto i = 0; i < indent; i++) 
-				tmp = ::java::lang::StringBuilder(tmp).append(u"\t"_j)->toString();
+				tmp += L"\t";
 
 	return tmp;
 }

@@ -20,7 +20,6 @@ using std::map;
 using std::vector;
 
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -53,7 +52,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(String* pathName, String* fileName) throw (GUIParserException);
+	static GUIScreenNode* parse(const wstring& pathName, const wstring& fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content
@@ -61,7 +60,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(String* xml) throw (GUIParserException);
+	static GUIScreenNode* parse(const wstring& xml) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML file into parent node
@@ -70,7 +69,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, String* pathName, String* fileName) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const wstring& pathName, const wstring& fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content into parent node
@@ -78,7 +77,7 @@ public:
 	 * @param xml
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, String* xml) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const wstring& xml) throw (GUIParserException);
 
 private:
 
@@ -103,7 +102,7 @@ private:
 	 * @param node
 	 * @return string
 	 */
-	static String* getInnerXml(TiXmlElement* node);
+	static const wstring getInnerXml(TiXmlElement* node);
 
 public:
 
@@ -113,13 +112,6 @@ public:
 	 * @return string with unescaped quotes
 	 */
 	static const wstring unescapeQuotes(const wstring& string);
-
-	/** 
-	 * Escape quotes
-	 * @param string
-	 * @return string with escaped quotes
-	 */
-	static String* escapeQuotes(String* string);
 
 	/**
 	 * Escape quotes

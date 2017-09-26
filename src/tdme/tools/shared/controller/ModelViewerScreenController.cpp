@@ -107,19 +107,19 @@ FileDialogPath* ModelViewerScreenController::getModelPath()
 void ModelViewerScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(u"resources/tools/viewer/gui"_j, u"screen_modelviewer.xml"_j);
+		screenNode = GUIParser::parse(L"resources/tools/viewer/gui", L"screen_modelviewer.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(u"screen_caption"_j));
-		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_reload"_j));
-		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_model_save"_j));
-		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_x"_j));
-		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_y"_j));
-		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"pivot_z"_j));
-		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"button_pivot_apply"_j));
-		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_opaque_faces"_j));
-		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_transparent_faces"_j));
-		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"stats_material_count"_j));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
+		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_model_reload"));
+		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_model_save"));
+		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_x"));
+		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_y"));
+		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_z"));
+		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_pivot_apply"));
+		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_opaque_faces"));
+		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_transparent_faces"));
+		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_material_count"));
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);

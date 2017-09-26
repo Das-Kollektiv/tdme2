@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -14,7 +13,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
@@ -56,7 +54,7 @@ void GUIHorizontalScrollbarInternalController::ctor(GUINode* node)
 {
 	super::ctor(node);
 	init();
-	this->contentNode = java_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getParentControllerNode()->id)->append(u"_inner"_j)->toString()));
+	this->contentNode = java_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 bool GUIHorizontalScrollbarInternalController::isDisabled()

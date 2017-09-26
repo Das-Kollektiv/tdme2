@@ -21,7 +21,6 @@ using std::wstring;
 using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::GUIActionListener_Type;
@@ -210,7 +209,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 
 public:
 
@@ -219,13 +218,13 @@ public:
 	 * @param nodeId
 	 * @return GUI node or null
 	 */
-	GUINode* getNodeById(String* nodeId);
+	GUINode* getNodeById(const wstring& nodeId);
 
 	/** 
 	 * Allocate node id
 	 * @return node id
 	 */
-	String* allocateNodeId();
+	const wstring allocateNodeId();
 
 public: /* protected */
 
@@ -331,21 +330,21 @@ public:
 	 * @param effect
 	 * @return success
 	 */
-	bool addEffect(String* id, GUIEffect* effect);
+	bool addEffect(const wstring& id, GUIEffect* effect);
 
 	/** 
 	 * Get effect
 	 * @param id
 	 * @return effect or null
 	 */
-	GUIEffect* getEffect(String* id);
+	GUIEffect* getEffect(const wstring& id);
 
 	/** 
 	 * Remove effect
 	 * @param id
 	 * @return success
 	 */
-	bool removeEffect(String* id);
+	bool removeEffect(const wstring& id);
 
 	// Generated
 	GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);

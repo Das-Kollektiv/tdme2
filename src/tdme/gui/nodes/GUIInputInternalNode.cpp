@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalNode.java
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
-#include <java/lang/Integer.h>
 #include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
@@ -20,10 +19,10 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+#include <tdme/utils/Integer.h>
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
-using java::lang::Integer;
 using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
@@ -42,6 +41,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
+using tdme::utils::Integer;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -67,7 +67,7 @@ int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 {
 	clinit();
 	try {
-		auto maxLength = Integer::parseInt(new String(s));
+		auto maxLength = Integer::parseInt(s);
 		return maxLength;
 	} catch (_Exception& exception) {
 		_Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
@@ -89,9 +89,9 @@ void GUIInputInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parent
 	this->controller->initialize();
 }
 
-String* GUIInputInternalNode::getNodeType()
+const wstring GUIInputInternalNode::getNodeType()
 {
-	return u"text"_j;
+	return L"text";
 }
 
 bool GUIInputInternalNode::isContentNode()

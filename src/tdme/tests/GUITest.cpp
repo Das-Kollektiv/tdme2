@@ -43,7 +43,7 @@ void GUITest::initialize()
 	engine->initialize();
 	setInputEventHandler(engine->getGUI());
 	try {
-		engine->getGUI()->addScreen(L"test", GUIParser::parse(u"resources/tests/gui"_j, u"test.xml"_j));
+		engine->getGUI()->addScreen(L"test", GUIParser::parse(L"resources/tests/gui", L"test.xml"));
 		engine->getGUI()->getScreen(L"test")->setScreenSize(640, 480);
 		engine->getGUI()->getScreen(L"test")->addActionListener(new GUITest_init_1(this));
 		engine->getGUI()->getScreen(L"test")->addChangeListener(new GUITest_init_2(this));
@@ -52,13 +52,13 @@ void GUITest::initialize()
 		effectFadeIn->getColorMulEnd()->set(1.0f, 1.0f, 1.0f, 1.0f);
 		effectFadeIn->setTimeTotal(1.0f);
 		effectFadeIn->start();
-		engine->getGUI()->getScreen(L"test")->addEffect(u"fadein"_j, effectFadeIn);
+		engine->getGUI()->getScreen(L"test")->addEffect(L"fadein", effectFadeIn);
 		auto effectScrollIn = new GUIPositionEffect();
 		effectScrollIn->setPositionXStart(-800.0f);
 		effectScrollIn->setPositionXEnd(0.0f);
 		effectScrollIn->setTimeTotal(1.0f);
 		effectScrollIn->start();
-		engine->getGUI()->getScreen(L"test")->addEffect(u"scrollin"_j, effectScrollIn);
+		engine->getGUI()->getScreen(L"test")->addEffect(L"scrollin", effectScrollIn);
 		engine->getGUI()->addRenderScreen(L"test");
 	} catch (_Exception& exception) {
 		_Console::print(string("GUITest::initialize(): An error occurred: "));

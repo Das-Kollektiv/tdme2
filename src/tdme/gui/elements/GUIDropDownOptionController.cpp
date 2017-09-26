@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
@@ -20,7 +19,6 @@
 using std::wstring;
 
 using tdme::gui::elements::GUIDropDownOptionController;
-using java::lang::String;
 using java::lang::StringBuilder;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::events::GUIMouseEvent_Type;
@@ -84,11 +82,11 @@ void GUIDropDownOptionController::select()
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto dropDownOptionTextNode = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(node->getId())->append(u"_unselected"_j)->toString()));
-	auto dropDownTextNodeEnabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(dropDownNode->getId())->append(u"_text_enabled"_j)->toString()));
+	auto dropDownOptionTextNode = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_unselected"));
+	auto dropDownTextNodeEnabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_enabled"));
 	dropDownTextNodeEnabled->getText()->reset();
 	dropDownTextNodeEnabled->getText()->append(dropDownOptionTextNode->getText());
-	auto dropDownTextNodeDisabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(::java::lang::StringBuilder().append(dropDownNode->getId())->append(u"_text_disabled"_j)->toString()));
+	auto dropDownTextNodeDisabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_disabled"));
 	dropDownTextNodeDisabled->getText()->reset();
 	dropDownTextNodeDisabled->getText()->append(dropDownOptionTextNode->getText());
 }

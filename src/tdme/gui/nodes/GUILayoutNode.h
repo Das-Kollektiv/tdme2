@@ -8,7 +8,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::String;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -58,7 +57,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 	bool isContentNode() override;
 
 public:
@@ -77,7 +76,7 @@ public:
 	 * @param alignment
 	 * @return alignment
 	 */
-	static GUILayoutNode_Alignment* createAlignment(String* alignment);
+	static GUILayoutNode_Alignment* createAlignment(const wstring& alignment);
 
 	// Generated
 	GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);

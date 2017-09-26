@@ -13,7 +13,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -89,7 +88,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	String* getNodeType() override;
+	const wstring getNodeType() override;
 	bool isContentNode() override;
 
 public:

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
@@ -17,7 +16,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::nodes::GUITextNode;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
@@ -47,9 +45,9 @@ void GUITextNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, con
 	this->font->initialize();
 }
 
-String* GUITextNode::getNodeType()
+const wstring GUITextNode::getNodeType()
 {
-	return u"text"_j;
+	return L"text";
 }
 
 bool GUITextNode::isContentNode()

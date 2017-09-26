@@ -87,7 +87,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	virtual String* getNodeType() = 0;
+	virtual const wstring getNodeType() = 0;
 
 public:
 
@@ -409,7 +409,7 @@ public: /* protected */
 	 * @param ident
 	 * @return indented string
 	 */
-	virtual String* indent(int32_t indent);
+	virtual const wstring indent(int32_t indent);
 
 public:
 	String* toString() override;

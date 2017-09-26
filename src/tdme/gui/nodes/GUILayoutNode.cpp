@@ -2,7 +2,6 @@
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -15,10 +14,10 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/utils/StringUtils.h>
 
 using tdme::gui::nodes::GUILayoutNode;
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
@@ -31,6 +30,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::utils::StringUtils;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -58,9 +58,9 @@ void GUILayoutNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, c
 	this->alignment = alignment;
 }
 
-String* GUILayoutNode::getNodeType()
+const wstring GUILayoutNode::getNodeType()
 {
-	return u"layout"_j;
+	return L"layout";
 }
 
 bool GUILayoutNode::isContentNode()
@@ -311,10 +311,9 @@ void GUILayoutNode::setLeft(int32_t left)
 	}
 }
 
-GUILayoutNode_Alignment* GUILayoutNode::createAlignment(String* alignment)
+GUILayoutNode_Alignment* GUILayoutNode::createAlignment(const wstring& alignment)
 {
-	clinit();
-	return GUILayoutNode_Alignment::valueOf(alignment != nullptr && alignment->length() > 0 ? alignment->toUpperCase()->getCPPWString() : L"NONE");
+	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringUtils::toUpperCase(alignment) : L"NONE");
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

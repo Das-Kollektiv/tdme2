@@ -40,9 +40,9 @@ EntityDisplayView* EntityDisplaySubScreenController::getView()
 void EntityDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
-		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"display_boundingvolume"_j));
-		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"display_shadowing"_j));
-		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(u"display_ground"_j));
+		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_boundingvolume"));
+		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_shadowing"));
+		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_ground"));
 	} catch (_Exception& exception) {
 		_Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
 		_Console::println(string(exception.what()));

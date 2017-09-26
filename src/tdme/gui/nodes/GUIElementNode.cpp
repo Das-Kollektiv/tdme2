@@ -2,7 +2,6 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -21,7 +20,6 @@
 
 using tdme::gui::nodes::GUIElementNode;
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -85,9 +83,9 @@ void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, 
 	this->controller->initialize();
 }
 
-String* GUIElementNode::getNodeType()
+const wstring GUIElementNode::getNodeType()
 {
-	return u"element"_j;
+	return L"element";
 }
 
 bool GUIElementNode::isContentNode()

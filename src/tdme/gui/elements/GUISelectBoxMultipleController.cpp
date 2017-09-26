@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -23,7 +22,6 @@ using std::vector;
 
 using tdme::gui::elements::GUISelectBoxMultipleController;
 using java::lang::Object;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
 using tdme::gui::events::GUIKeyboardEvent_Type;

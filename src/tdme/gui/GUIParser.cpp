@@ -6,7 +6,6 @@
 
 #include <java/lang/CharSequence.h>
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/util/Iterator.h>
 #include <tdme/gui/GUIParserException.h>
@@ -59,7 +58,6 @@ using std::wstring;
 using tdme::gui::GUIParser;
 using java::lang::CharSequence;
 using java::lang::Object;
-using java::lang::String;
 using java::lang::StringBuilder;
 using java::util::Iterator;
 using tdme::gui::GUIParserException;
@@ -132,18 +130,18 @@ GUIParser::GUIParser()
 
 map<wstring, GUIElement*> GUIParser::elements;
 
-GUIScreenNode* GUIParser::parse(String* pathName, String* fileName) throw (GUIParserException)
+GUIScreenNode* GUIParser::parse(const wstring& pathName, const wstring& fileName) throw (GUIParserException)
 {
 	clinit();
-	return parse(new String(_FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString())));
+	return parse(_FileSystem::getInstance()->getContentAsString(pathName, fileName));
 }
 
-GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
+GUIScreenNode* GUIParser::parse(const wstring& xml) throw (GUIParserException)
 {
 	clinit();
 
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xml->getCPPWString()).c_str());
+	xmlDocument.Parse(StringConverter::toString(xml).c_str());
 	if (xmlDocument.Error() == true) {
 		throw GUIParserException(
 			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc())
@@ -155,12 +153,11 @@ GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
 		throw GUIParserException("XML root node must be <screen>");
 	}
 
-	String* tmpString = nullptr;
 	guiScreenNode = new GUIScreenNode(
 		StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),
-		GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x"))))),
-		GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-y"))))),
+		GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x")))),
+		GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-y")))),
 		GUINode::createAlignments(
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("horizontal-align"))),
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("vertical-align")))
@@ -193,38 +190,36 @@ GUIScreenNode* GUIParser::parse(String* xml) throw (GUIParserException)
 		),
 		GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("show-on")))),
 		GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("hide-on")))),
-		(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))))->trim()->equalsIgnoreCase(u"true"_j),
-		(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))))->trim()->equalsIgnoreCase(u"true"_j)
+		StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), L"true"),
+		StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), L"true")
 	);
 	parseGUINode(guiScreenNode, xmlRoot, nullptr);
 	return guiScreenNode;
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, String* pathName, String* fileName) throw (GUIParserException)
+void GUIParser::parse(GUIParentNode* parentNode, const wstring& pathName, const wstring& fileName) throw (GUIParserException)
 {
-	String* xml = new String(_FileSystem::getInstance()->getContentAsString(pathName->getCPPWString(), fileName->getCPPWString()));
+	wstring xml = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	parse(parentNode, xml);
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, String* xml) throw (GUIParserException)
+void GUIParser::parse(GUIParentNode* parentNode, const wstring& xml) throw (GUIParserException)
 {
 	clinit();
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(wstring(L"<gui-element>") + xml->getCPPWString() + wstring(L"</gui-element>")).c_str());
+	xmlDocument.Parse(StringConverter::toString(wstring(L"<gui-element>") + xml + wstring(L"</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
 		throw GUIParserException(
 			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc())
 		);
 	}
 	TiXmlElement* xmlNode = xmlDocument.RootElement();
-
 	parseGUINode(parentNode, xmlNode, nullptr);
 }
 
 void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException)
 {
 	clinit();
-	String* tmpString = nullptr;
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
 	for (auto *node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
@@ -236,17 +231,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), new GUIColor(L"#F0F0F0")),
 					GUINode::createBorder(
@@ -270,7 +265,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUILayoutNode::createAlignment(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment")))))
+					GUILayoutNode::createAlignment(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiPanelNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -288,17 +283,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -322,7 +317,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUILayoutNode::createAlignment(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment")))))
+					GUILayoutNode::createAlignment(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiLayoutNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -345,10 +340,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -388,17 +383,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiParentNode,
 					StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("id"))),
 					GUINode::createFlow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x"))))),
-					GUIParentNode::createOverflow(new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y"))))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
 					GUINode::createAlignments(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -424,10 +419,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("name")))),
 					unescapeQuotes(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("value")))),
-					(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("selected")))))->trim()->equalsIgnoreCase(u"true"_j),
-					(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("disabled")))))->trim()->equalsIgnoreCase(u"true"_j),
-					(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("focusable")))))->trim()->equalsIgnoreCase(u"true"_j),
-					(tmpString = new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("ignore-events")))))->trim()->equalsIgnoreCase(u"true"_j)
+					StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("selected")))), L"true"),
+					StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("disabled")))), L"true"),
+					StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("focusable")))), L"true"),
+					StringUtils::equalsIgnoreCase(StringUtils::trim(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("ignore-events")))), L"true")
 				);
 				guiParentNode->addSubNode(guiElementNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -450,10 +445,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -501,10 +496,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -552,10 +547,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -605,10 +600,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -656,10 +651,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
 					GUIParentNode::createRequestedConstraints(
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width")))),
-						new String(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height"))))
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::TRANSPARENT),
 					GUINode::createBorder(
@@ -696,57 +691,33 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiElementControllerInstalled = true;
 				}
 			} else {
-				String* nodeTagNameString = new String(StringConverter::toWideString(nodeTagName));
-				auto guiElementIt = elements.find(nodeTagNameString->getCPPWString());
+				auto nodeTagNameString = StringConverter::toWideString(nodeTagName);
+				const auto guiElementIt = elements.find(nodeTagNameString);
 				if (guiElementIt == elements.end()) {
 					throw GUIParserException(
 						"Unknown element '" +
-						StringConverter::toString(nodeTagNameString->getCPPWString()) +
+						StringConverter::toString(nodeTagNameString) +
 						"'"
 					);
 				}
 				auto newGuiElementTemplate = guiElementIt->second->getTemplate();
 				for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
-					String* attributeKey = new String(StringConverter::toWideString(attribute->Name()));
-					String* attributeValue =  new String(StringConverter::toWideString(attribute->Value()));
-					newGuiElementTemplate =
-						newGuiElementTemplate->replace(
-							static_cast< CharSequence* >(
-								::java::lang::StringBuilder().
-								 append(u"{$"_j)->
-								 append(attributeKey)->
-								 append(u"}"_j)->
-								 toString()
-							),
-							static_cast< CharSequence* >(
-								escapeQuotes(
-									attributeValue
-								)
-							)
-						);
+					auto attributeKey = StringConverter::toWideString(attribute->Name());
+					auto attributeValue = StringConverter::toWideString(attribute->Value());
+					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$" + attributeKey + L"}", escapeQuotes(attributeValue));
 				}
 
 				auto newGuiElementAttributes = guiElementIt->second->getAttributes(guiParentNode->getScreenNode());
 				for (auto newGuiElementAttributesIt : *newGuiElementAttributes) {
 					auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-					newGuiElementTemplate = newGuiElementTemplate->replace(static_cast< CharSequence* >(::java::lang::StringBuilder().append(u"{$"_j)->append(newGuiElementAttributesIt.first)
-						->append(u"}"_j)->toString()), static_cast< CharSequence* >(guiElementAttributeValue));
+					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$" + newGuiElementAttributesIt.first + L"}", guiElementAttributeValue);
 				}
 
-				newGuiElementTemplate = newGuiElementTemplate->replace(
-					static_cast< CharSequence* >(u"{$innerXml}"_j),
-					static_cast< CharSequence* >(getInnerXml(node))
-				);
-				String* newGuiElementDocumentXML =
-					new String(::java::lang::StringBuilder().
-						append(u"<gui-element>\n"_j)->
-						append(newGuiElementTemplate)->
-						append(u"</gui-element>\n"_j)->
-						toString()
-					);
+				newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, L"{$innerXml}", getInnerXml(node));
+				auto newGuiElementDocumentXML =  L"<gui-element>\n" + newGuiElementTemplate + L"</gui-element>\n";
 
 				TiXmlDocument newGuiElementDocument;
-				newGuiElementDocument.Parse(StringConverter::toString(newGuiElementDocumentXML->getCPPWString()).c_str());
+				newGuiElementDocument.Parse(StringConverter::toString(newGuiElementDocumentXML).c_str());
 				if (newGuiElementDocument.Error() == true) {
 					throw GUIParserException(
 						"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
@@ -771,27 +742,20 @@ const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent
 	return elementList;
 }
 
-String* GUIParser::getInnerXml(TiXmlElement* node)
+const wstring GUIParser::getInnerXml(TiXmlElement* node)
 {
 	clinit();
 	std::stringstream ss;
 	for (auto *childNode = node->FirstChildElement(); childNode != nullptr; childNode = childNode->NextSiblingElement()) {
 		ss << (*childNode);
 	}
-	return new String(StringConverter::toWideString(ss.str()));
+	return StringConverter::toWideString(ss.str());
 }
 
 const wstring GUIParser::unescapeQuotes(const wstring& string)
 {
 	clinit();
 	return StringUtils::replace(string, L"&quot;", L"\"");
-}
-
-String* GUIParser::escapeQuotes(String* string)
-{
-	clinit();
-	return string->replace(static_cast< CharSequence* >(u"\""_j), static_cast< CharSequence* >(u"&quot;"_j));
-
 }
 
 const wstring GUIParser::escapeQuotes(const wstring& string)
@@ -803,14 +767,14 @@ const wstring GUIParser::escapeQuotes(const wstring& string)
 void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException)
 {
 	clinit();
-	if (elements.find(guiElement->getName()->getCPPWString()) != elements.end()) {
+	if (elements.find(guiElement->getName()) != elements.end()) {
 		throw GUIParserException(
 			"Element with given name '" +
-			StringConverter::toString(guiElement->getName()->getCPPWString()) +
+			StringConverter::toString(guiElement->getName()) +
 			"' already exists"
 		);
 	}
-	elements.emplace(guiElement->getName()->getCPPWString(), guiElement);
+	elements.emplace(guiElement->getName(), guiElement);
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

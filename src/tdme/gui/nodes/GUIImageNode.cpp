@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIImageNode.java
 #include <tdme/gui/nodes/GUIImageNode.h>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -14,7 +13,6 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIImageNode;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -57,9 +55,9 @@ void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, co
 	this->effectColorAdd = effectColorAdd;
 }
 
-String* GUIImageNode::getNodeType()
+const wstring GUIImageNode::getNodeType()
 {
-	return u"image"_j;
+	return L"image";
 }
 
 bool GUIImageNode::isContentNode()

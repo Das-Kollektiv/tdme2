@@ -86,7 +86,7 @@ public:
 	 * @param xml
 	 * @param reset scroll offsets
 	 */
-	virtual void replaceSubNodes(String* xml, bool resetScrollOffsets) /* throws(Exception) */;
+	virtual void replaceSubNodes(const wstring& xml, bool resetScrollOffsets) /* throws(Exception) */;
 
 	/** 
 	 * Add sub node
@@ -110,7 +110,7 @@ public:
 	 * @return over flow
 	 * @throws gui parser exception
 	 */
-	static GUIParentNode_Overflow* createOverflow(String* overflow) throw (GUIParserException);
+	static GUIParentNode_Overflow* createOverflow(const wstring& overflow) throw (GUIParserException);
 
 	/** 
 	 * @return children render offset x
@@ -142,7 +142,7 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(String* left, String* top, String* width, String* height);
+	static GUINode_RequestedConstraints* createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height);
 
 public: /* protected */
 

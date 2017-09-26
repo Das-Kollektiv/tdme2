@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUIDropDownOption.java
 #include <tdme/gui/elements/GUIDropDownOption.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -9,7 +8,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUIDropDownOption;
-using java::lang::String;
 using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -28,25 +26,25 @@ GUIDropDownOption::GUIDropDownOption() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUIDropDownOption::NAME;
+wstring GUIDropDownOption::NAME = L"dropdown-option";
 
 void GUIDropDownOption::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown-option.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown-option.xml");
 }
 
-String* GUIDropDownOption::getName()
+const wstring& GUIDropDownOption::getName()
 {
 	return NAME;
 }
 
-String* GUIDropDownOption::getTemplate()
+const wstring& GUIDropDownOption::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
@@ -64,19 +62,6 @@ java::lang::Class* GUIDropDownOption::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDownOption", 35);
     return c;
-}
-
-void GUIDropDownOption::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"dropdown-option"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUIDropDownOption::getClass0()

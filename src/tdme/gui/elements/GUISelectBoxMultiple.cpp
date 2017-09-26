@@ -1,7 +1,6 @@
 // Generated from /tdme/src/tdme/gui/elements/GUISelectBoxMultiple.java
 #include <tdme/gui/elements/GUISelectBoxMultiple.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/_FileSystem.h>
@@ -9,7 +8,6 @@
 #include <tdme/os/_FileSystemInterface.h>
 
 using tdme::gui::elements::GUISelectBoxMultiple;
-using java::lang::String;
 using tdme::gui::elements::GUISelectBoxMultipleController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::_FileSystem;
@@ -28,30 +26,30 @@ GUISelectBoxMultiple::GUISelectBoxMultiple() throw (_FileSystemException)
 	ctor();
 }
 
-String* GUISelectBoxMultiple::NAME;
+wstring GUISelectBoxMultiple::NAME = L"selectbox-multiple";
 
 void GUISelectBoxMultiple::ctor() throw (_FileSystemException)
 {
 	super::ctor();
-	template_ = new String(_FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-multiple.xml"));
+	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-multiple.xml");
 }
 
-String* GUISelectBoxMultiple::getName()
+const wstring& GUISelectBoxMultiple::getName()
 {
 	return NAME;
 }
 
-String* GUISelectBoxMultiple::getTemplate()
+const wstring& GUISelectBoxMultiple::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, String*>* GUISelectBoxMultiple::getAttributes(GUIScreenNode* screenNode)
+map<wstring, wstring>* GUISelectBoxMultiple::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = u"100%"_j;
-	attributes[L"height"] = u"auto"_j;
+	attributes[L"width"] = L"100%";
+	attributes[L"height"] = L"auto";
 	return &attributes;
 }
 
@@ -66,19 +64,6 @@ java::lang::Class* GUISelectBoxMultiple::class_()
 {
     static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUISelectBoxMultiple", 38);
     return c;
-}
-
-void GUISelectBoxMultiple::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	NAME = u"selectbox-multiple"_j;
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	super::clinit();
 }
 
 java::lang::Class* GUISelectBoxMultiple::getClass0()
