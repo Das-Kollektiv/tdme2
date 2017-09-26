@@ -22,8 +22,8 @@ const wstring& Joint::getGroupId()
 	return groupId;
 }
 
-Matrix4x4* Joint::getBindMatrix()
+Matrix4x4& Joint::getBindMatrix()
 {
-	return &bindMatrix;
+	return bindMatrix;
 }
 

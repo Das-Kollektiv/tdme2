@@ -32,7 +32,7 @@ public:
 	 * Bind matrix
 	 * @return matrix
 	 */
-	Matrix4x4* getBindMatrix();
+	Matrix4x4& getBindMatrix();
 
 	/**
 	 * Public constructor

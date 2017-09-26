@@ -143,11 +143,11 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 	array<Vector3, 3> axisTransformed;
 	Vector3 scale;
 	auto obb = dynamic_cast< OrientedBoundingBox* >(original);
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(&obb->center, &center);
-	transformationsMatrix->multiplyNoTranslation(&obb->axes[0], &axisTransformed[0]);
-	transformationsMatrix->multiplyNoTranslation(&obb->axes[1], &axisTransformed[1]);
-	transformationsMatrix->multiplyNoTranslation(&obb->axes[2], &axisTransformed[2]);
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	transformationsMatrix.multiply(obb->center, center);
+	transformationsMatrix.multiplyNoTranslation(obb->axes[0], axisTransformed[0]);
+	transformationsMatrix.multiplyNoTranslation(obb->axes[1], axisTransformed[1]);
+	transformationsMatrix.multiplyNoTranslation(obb->axes[2], axisTransformed[2]);
 	axes[0].set(&axisTransformed[0])->normalize();
 	axes[1].set(&axisTransformed[1])->normalize();
 	axes[2].set(&axisTransformed[2])->normalize();

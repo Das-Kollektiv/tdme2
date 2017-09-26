@@ -44,9 +44,9 @@ Rotations* Transformations::getRotations()
 	return &rotations;
 }
 
-Matrix4x4* Transformations::getTransformationsMatrix()
+Matrix4x4& Transformations::getTransformationsMatrix()
 {
-	return &transformationsMatrix;
+	return transformationsMatrix;
 }
 
 void Transformations::fromTransformations(Transformations* transformations)
@@ -67,25 +67,25 @@ void Transformations::fromTransformations(Transformations* transformations)
 	while (rotationIdx < rotations.size()) {
 		rotations.remove(rotations.size() - 1);
 	}
-	translationMatrix.set(&transformations->translationMatrix);
-	scaleMatrix.set(&transformations->scaleMatrix);
-	transformationsMatrix.set(&transformations->transformationsMatrix);
+	translationMatrix.set(transformations->translationMatrix);
+	scaleMatrix.set(transformations->scaleMatrix);
+	transformationsMatrix.set(transformations->transformationsMatrix);
 }
 
 void Transformations::update()
 {
 	transformationsMatrix.identity();
-	translationMatrix.identity()->translate(&translation);
-	scaleMatrix.identity()->scale(&scale);
+	translationMatrix.identity().translate(translation);
+	scaleMatrix.identity().scale(scale);
 	rotations.update();
 	rotationsMatrix.identity();
 	rotationsPivot.set(&pivot)->scale(-1.0f);
-	rotationsMatrix.translate(&rotationsPivot);
+	rotationsMatrix.translate(rotationsPivot);
 	rotations.quaternion.computeMatrix(&rotationsQuaternionMatrix);
-	rotationsMatrix.multiply(&rotationsQuaternionMatrix);
-	rotationsTranslationsMatrix.identity()->translate(&pivot);
-	rotationsMatrix.multiply(&rotationsTranslationsMatrix);
-	transformationsMatrix.multiply(&scaleMatrix);
-	transformationsMatrix.multiply(&rotationsMatrix);
-	transformationsMatrix.multiply(&translationMatrix);
+	rotationsMatrix.multiply(rotationsQuaternionMatrix);
+	rotationsTranslationsMatrix.identity().translate(pivot);
+	rotationsMatrix.multiply(rotationsTranslationsMatrix);
+	transformationsMatrix.multiply(scaleMatrix);
+	transformationsMatrix.multiply(rotationsMatrix);
+	transformationsMatrix.multiply(translationMatrix);
 }

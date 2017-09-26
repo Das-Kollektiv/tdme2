@@ -313,7 +313,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 					for (auto i = 0; i < nodeTransformationsMatrixArray.size(); i++) {
 						nodeTransformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 					}
-					nodeTransformationsMatrix.set(&nodeTransformationsMatrixArray)->transpose();
+					nodeTransformationsMatrix.set(&nodeTransformationsMatrixArray).transpose();
 				} else {
 					throw ModelFileIOException(
 						"missing node transformations matrix for node '" +
@@ -321,29 +321,29 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 						"'"
 					);
 				}
-				nodeTransformationsMatrix.getAxes(&xAxis, &yAxis, &zAxis);
-				nodeTransformationsMatrix.getTranslation(&translation);
-				nodeTransformationsMatrix.getScale(&scale);
+				nodeTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
+				nodeTransformationsMatrix.getTranslation(translation);
+				nodeTransformationsMatrix.getScale(scale);
 				xAxis.normalize();
 				yAxis.normalize();
 				zAxis.normalize();
-				nodeTransformationsMatrix.setAxes(&xAxis, &yAxis, &zAxis);
+				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
 				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &yAxis, &tmpAxis), &zAxis) < 0.0f) ||
 					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &zAxis, &tmpAxis), &yAxis) < 0.0f)) {
 					xAxis.scale(-1.0f);
 					yAxis.scale(-1.0f);
 					zAxis.scale(-1.0f);
-					nodeTransformationsMatrix.setAxes(&xAxis, &yAxis, &zAxis);
+					nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
 					scale.scale(-1.0f);
 				}
-				nodeTransformationsMatrix.computeEulerAngles(&rotation);
-				modelImportRotationMatrix.multiply(&scale, &scale);
-				modelImportRotationMatrix.multiply(&rotation, &rotation);
-				model->getImportTransformationsMatrix()->multiply(&translation, &translation);
+				nodeTransformationsMatrix.computeEulerAngles(rotation);
+				modelImportRotationMatrix.multiply(scale, scale);
+				modelImportRotationMatrix.multiply(rotation, rotation);
+				model->getImportTransformationsMatrix().multiply(translation, translation);
 				model->setFPS(fps);
 				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
-					group->getTransformationsMatrix()->identity();
+					group->getTransformationsMatrix().identity();
 					(*model->getSubGroups())[group->getId()] = group;
 					(*model->getGroups())[group->getId()] = group;
 				}
@@ -462,10 +462,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringUtils::equalsIgnoreCase(upAxis, L"Y_UP") == true) {
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, L"Z_UP") == true) {
-				model->getImportTransformationsMatrix()->rotate(-90.0f, new Vector3(1.0f, 0.0f, 0.0f));
+				model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, L"X_UP") == true) {
-				model->getImportTransformationsMatrix()->rotate(-90.0f, new Vector3(0.0f, 1.0f, 0.0f));
+				model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f));
 			} else {
 				_Console::println(wstring(L"Warning: Unknown up axis: " + upAxis));
 			}
@@ -479,7 +479,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 		for (auto xmlAssetUnit: getChildrenByTagName(xmlAsset, "unit")) {
 			wstring tmp;
 			if ((tmp = StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter")))).length() > 0) {
-				model->getImportTransformationsMatrix()->scale(Float::parseFloat(tmp));
+				model->getImportTransformationsMatrix().scale(Float::parseFloat(tmp));
 			}
 		}
 	}
@@ -513,8 +513,8 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring
 		for (auto i = 0; i < transformationsMatrixArray.size(); i++) {
 			transformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 		}
-		transformationsMatrix.set(&transformationsMatrixArray)->transpose();
-		group->getTransformationsMatrix()->multiply(&transformationsMatrix);
+		transformationsMatrix.set(&transformationsMatrixArray).transpose();
+		group->getTransformationsMatrix().multiply(transformationsMatrix);
 	}
 
 	auto xmlAnimationsLibrary = getChildrenByTagName(xmlRoot, "library_animations");
@@ -605,7 +605,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring
 											frameIdx++;
 											continue;
 										}
-										Matrix4x4::interpolateLinear(tansformationsMatrixLast, transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), &(*transformationsMatrices)[frameIdx]);
+										Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), (*transformationsMatrices)[frameIdx]);
 										frameIdx++;
 									}
 									timeStampLast = timeStamp;
@@ -719,7 +719,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		bindShapeMatrixArray[i] = Float::parseFloat(t.nextToken());
 	}
 	Matrix4x4 bindShapeMatrix;
-	bindShapeMatrix.set(&bindShapeMatrixArray)->transpose();
+	bindShapeMatrix.set(&bindShapeMatrixArray).transpose();
 
 	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
 	auto skinning = group->createSkinning();
@@ -772,8 +772,8 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 				for (auto i = 0; i < bindMatrixArray.size(); i++) {
 					bindMatrixArray[i] = Float::parseFloat(t.nextToken());
 				}
-				(*_joints)[i].getBindMatrix()->multiply(&bindShapeMatrix);
-				(*_joints)[i].getBindMatrix()->multiply((Matrix4x4(&bindMatrixArray)).transpose());
+				(*_joints)[i].getBindMatrix().multiply(bindShapeMatrix);
+				(*_joints)[i].getBindMatrix().multiply((Matrix4x4(bindMatrixArray)).transpose());
 			}
 		}
 	}

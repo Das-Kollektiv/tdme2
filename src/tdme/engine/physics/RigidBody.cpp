@@ -37,7 +37,7 @@ using tdme::math::Vector3;
 using tdme::utils::_Console;
 
 
-RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia)
+RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia)
 {
 	this->world = world;
 	this->idx = -1;
@@ -46,7 +46,7 @@ RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t type
 	this->typeId = typeId;
 	this->collisionTypeIds = TYPEIDS_ALL;
 	this->transformations = new Transformations();
-	this->inverseInertia = inverseInertia;
+	this->inverseInertia.set(inverseInertia);
 	this->restitution = restitution;
 	this->friction = friction;
 	this->isSleeping_ = false;
@@ -63,23 +63,23 @@ constexpr float RigidBody::VELOCITY_SLEEPTOLERANCE;
 
 constexpr int32_t RigidBody::SLEEPING_FRAMES;
 
-Matrix4x4* RigidBody::getNoRotationInertiaMatrix()
+Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
 {
-	return new Matrix4x4(0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	return Matrix4x4(0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix4x4* RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
+Matrix4x4 RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
 {
 	auto width = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_X);
 	auto height = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Y);
 	auto depth = bv->computeDimensionOnAxis(&OrientedBoundingBox::AABB_AXIS_Z);
 	return
-		(new Matrix4x4(
+		(Matrix4x4(
 			scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f,
 			0.0f, scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth), 0.0f, 0.0f,
 			0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
-		))->invert();
+		)).invert();
 }
 
 void RigidBody::setIdx(int32_t idx)
@@ -238,7 +238,7 @@ void RigidBody::sleep()
 void RigidBody::computeWorldInverseInertiaMatrix()
 {
 	orientation.computeMatrix(&orientationMatrix);
-	worldInverseInertia.set(&orientationMatrix)->transpose()->multiply(&inverseInertia)->multiply(&orientationMatrix);
+	worldInverseInertia.set(orientationMatrix).transpose().multiply(inverseInertia).multiply(orientationMatrix);
 }
 
 void RigidBody::synch(Transformations* transformations)

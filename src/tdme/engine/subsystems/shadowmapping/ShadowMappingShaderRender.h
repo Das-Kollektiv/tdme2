@@ -106,7 +106,7 @@ public:
 	 * Set up program depth bias mvp matrix
 	 * @param depth bias mvp matrix
 	 */
-	void setProgramDepthBiasMVPMatrix(Matrix4x4* depthBiasMVPMatrix);
+	void setProgramDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix);
 
 	/** 
 	 * Set up light spot exponent

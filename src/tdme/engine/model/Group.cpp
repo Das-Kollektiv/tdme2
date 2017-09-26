@@ -69,9 +69,9 @@ void Group::setJoint(bool isJoint)
 	this->isJoint_ = isJoint;
 }
 
-Matrix4x4* Group::getTransformationsMatrix()
+Matrix4x4& Group::getTransformationsMatrix()
 {
-	return &transformationsMatrix;
+	return transformationsMatrix;
 }
 
 vector<Vector3>* Group::getVertices()

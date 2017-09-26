@@ -128,7 +128,7 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	renderer->setEffectColorAdd(effectColorAdd.getArray());
 	renderer->onUpdateEffect();
 	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx);
-	renderer->getModelViewMatrix()->identity();
+	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
 	for (auto batchVBORendererTriangles: batchVBORenderers) {
 		batchVBORendererTriangles->render();
@@ -137,6 +137,6 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	}
 	batchVBORenderers.clear();
 	renderer->unbindBufferObjects();
-	renderer->getModelViewMatrix()->set(&modelViewMatrix);
+	renderer->getModelViewMatrix().set(modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
 }

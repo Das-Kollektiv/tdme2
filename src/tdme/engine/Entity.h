@@ -135,7 +135,7 @@ struct tdme::engine::Entity
 	/** 
 	 * @return this transformations matrix
 	 */
-	virtual Matrix4x4* getTransformationsMatrix() = 0;
+	virtual Matrix4x4& getTransformationsMatrix() = 0;
 
 	/** 
 	 * Set up this transformations from given transformations

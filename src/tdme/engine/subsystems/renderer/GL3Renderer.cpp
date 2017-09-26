@@ -228,9 +228,9 @@ void GL3Renderer::setProgramUniformFloat(int32_t uniformId, float value)
 	glUniform1f(uniformId, value);
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
+void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& data)
 {
-	glUniformMatrix4fv(uniformId, 1, false, data->data());
+	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
 void GL3Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)

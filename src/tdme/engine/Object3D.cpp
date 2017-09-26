@@ -103,7 +103,7 @@ Vector3* Object3D::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4* Object3D::getTransformationsMatrix()
+Matrix4x4& Object3D::getTransformationsMatrix()
 {
 	return Transformations::getTransformationsMatrix();
 }

@@ -52,10 +52,10 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	}
 	Vector3 axis;
 	auto sphere = dynamic_cast< Sphere* >(original);
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(&sphere->center, &center);
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	transformationsMatrix.multiply(sphere->center, center);
 	axis.set(&sphere->center)->addX(sphere->radius);
-	transformationsMatrix->multiply(&axis, &axis);
+	transformationsMatrix.multiply(axis, axis);
 	radius = axis.sub(&center)->computeLength();
 }
 

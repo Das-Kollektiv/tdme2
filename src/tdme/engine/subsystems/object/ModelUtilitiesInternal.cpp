@@ -59,9 +59,9 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	animationState.time = 0.0f;
 	animationState.finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
-		Matrix4x4 parentTransformationsMatrix = *object3DModelInternal->getModel()->getImportTransformationsMatrix();
+		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), &parentTransformationsMatrix, &animationState, 0);
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, 0);
 		Object3DGroup::computeTransformations(&object3DModelInternal->object3dGroups);
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {
@@ -163,7 +163,7 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 		auto object3DGroupModel2 = object3DModel2Internal->object3dGroups[i];
 		auto facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
 		auto facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
-		if (object3DGroupModel1->group->getTransformationsMatrix()->equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
+		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
 			return false;
 
 		if (facesEntitiesModel1->size() != facesEntitiesModel2->size())

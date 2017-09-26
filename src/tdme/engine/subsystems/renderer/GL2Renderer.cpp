@@ -241,9 +241,9 @@ void GL2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t c
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GL2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
+void GL2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& data)
 {
-	glUniformMatrix4fv(uniformId, 1, false, data->data());
+	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
 void GL2Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data)

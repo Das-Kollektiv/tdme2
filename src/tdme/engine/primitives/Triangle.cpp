@@ -67,9 +67,9 @@ void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, T
 		return;
 	}
 	auto triangle = dynamic_cast< Triangle* >(original);
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	for (auto i = 0; i < 3; i++) {
-		transformationsMatrix->multiply(&triangle->vertices[i], &vertices[i]);
+		transformationsMatrix.multiply(triangle->vertices[i], vertices[i]);
 	}
 	update();
 }

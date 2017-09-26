@@ -83,7 +83,7 @@ void World::setPartition(PhysicsPartition* partition)
 	this->partition = partition;
 }
 
-RigidBody* World::addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix)
+RigidBody* World::addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
@@ -488,7 +488,7 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->angularVelocityLast.set(&rigidBody->angularVelocityLast);
 	clonedRigidBody->movement.set(&rigidBody->movement);
 	clonedRigidBody->position.set(&rigidBody->position);
-	clonedRigidBody->worldInverseInertia.set(&rigidBody->worldInverseInertia);
+	clonedRigidBody->worldInverseInertia.set(rigidBody->worldInverseInertia);
 	clonedRigidBody->transformations->fromTransformations(rigidBody->transformations);
 }
 

@@ -281,8 +281,8 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 		return;
 
 	mvMatrix.set(renderer->getModelViewMatrix());
-	mvpMatrix.set(&mvMatrix)->multiply(renderer->getProjectionMatrix());
-	normalMatrix.set(&mvMatrix)->invert()->transpose();
+	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+	normalMatrix.set(mvMatrix).invert().transpose();
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
 	renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());

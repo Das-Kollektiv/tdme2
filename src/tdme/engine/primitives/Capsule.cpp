@@ -71,12 +71,12 @@ void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tr
 		return;
 	}
 	auto capsule = dynamic_cast< Capsule* >(original);
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(&capsule->a, &a);
-	transformationsMatrix->multiply(&capsule->b, &b);
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	transformationsMatrix.multiply(capsule->a, a);
+	transformationsMatrix.multiply(capsule->b, b);
 	Vector3 side;
 	side.set(&capsule->a)->addX(capsule->radius);
-	transformationsMatrix->multiply(&side, &side);
+	transformationsMatrix.multiply(side, side);
 	radius = side.sub(&a)->computeLength();
 	update();
 }

@@ -154,14 +154,14 @@ void ObjectParticleSystemEntityInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
 }
 
 void ObjectParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
 }
 
 ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()

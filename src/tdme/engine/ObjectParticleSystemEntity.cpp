@@ -115,7 +115,7 @@ Vector3* ObjectParticleSystemEntity::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4* ObjectParticleSystemEntity::getTransformationsMatrix()
+Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix()
 {
 	return Transformations::getTransformationsMatrix();
 }

@@ -108,7 +108,7 @@ Vector3* PointsParticleSystemEntity::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4* PointsParticleSystemEntity::getTransformationsMatrix()
+Matrix4x4& PointsParticleSystemEntity::getTransformationsMatrix()
 {
 	return Transformations::getTransformationsMatrix();
 }

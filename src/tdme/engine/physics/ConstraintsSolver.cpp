@@ -132,15 +132,15 @@ void ConstraintsSolver::fillMatrices()
 			invInertiaMatrix.setValue(0, 0, rb->inverseMass);
 			invInertiaMatrix.setValue(1, 1, rb->inverseMass);
 			invInertiaMatrix.setValue(2, 2, rb->inverseMass);
-			invInertiaMatrix.setValue(3, 3, (*worldInverseInertiaArray)[0 + 0]);
-			invInertiaMatrix.setValue(3, 4, (*worldInverseInertiaArray)[0 + 1]);
-			invInertiaMatrix.setValue(3, 5, (*worldInverseInertiaArray)[0 + 2]);
-			invInertiaMatrix.setValue(4, 3, (*worldInverseInertiaArray)[4 + 0]);
-			invInertiaMatrix.setValue(4, 4, (*worldInverseInertiaArray)[4 + 1]);
-			invInertiaMatrix.setValue(4, 5, (*worldInverseInertiaArray)[4 + 2]);
-			invInertiaMatrix.setValue(5, 3, (*worldInverseInertiaArray)[8 + 0]);
-			invInertiaMatrix.setValue(5, 4, (*worldInverseInertiaArray)[8 + 1]);
-			invInertiaMatrix.setValue(5, 5, (*worldInverseInertiaArray)[8 + 2]);
+			invInertiaMatrix.setValue(3, 3, worldInverseInertiaArray[0 + 0]);
+			invInertiaMatrix.setValue(3, 4, worldInverseInertiaArray[0 + 1]);
+			invInertiaMatrix.setValue(3, 5, worldInverseInertiaArray[0 + 2]);
+			invInertiaMatrix.setValue(4, 3, worldInverseInertiaArray[4 + 0]);
+			invInertiaMatrix.setValue(4, 4, worldInverseInertiaArray[4 + 1]);
+			invInertiaMatrix.setValue(4, 5, worldInverseInertiaArray[4 + 2]);
+			invInertiaMatrix.setValue(5, 3, worldInverseInertiaArray[8 + 0]);
+			invInertiaMatrix.setValue(5, 4, worldInverseInertiaArray[8 + 1]);
+			invInertiaMatrix.setValue(5, 5, worldInverseInertiaArray[8 + 2]);
 		}
 	}
 }
@@ -438,7 +438,7 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 			getConstrainedVelocity(body, &newLinearVelocity, &newAngularVelocity);
 		}
 		force.set(&body->force)->scale(body->inverseMass * deltaTime);
-		body->worldInverseInertia.multiply(&body->torque, &torque)->scale(deltaTime);
+		body->worldInverseInertia.multiply(body->torque, torque).scale(deltaTime);
 		newLinearVelocity.add(&force);
 		newAngularVelocity.add(&torque);
 		newLinearVelocity.add(&body->linearVelocity);

@@ -274,16 +274,17 @@ void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, Vect
 
 void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
 {
-	auto rotation = new Vector3();
-	auto rotationMatrix = (new Matrix4x4())->identity();
-	rotationMatrix->setAxes(axis0, axis1, axis2);
-	rotationMatrix->computeEulerAngles(rotation);
+	Vector3 rotation;
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.identity();
+	rotationMatrix.setAxes(*axis0, *axis1, *axis2);
+	rotationMatrix.computeEulerAngles(rotation);
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 	boundingvolumeObbCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center->getX()))->append(u", "_j)->append(Tools::formatFloat(center->getY()))->append(u", "_j)->append(Tools::formatFloat(center->getZ())));
 	boundingvolumeObbHalfextension[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(halfExtension->getX()))->append(u", "_j)->append(Tools::formatFloat(halfExtension->getY()))->append(u", "_j)->append(Tools::formatFloat(halfExtension->getZ())));
-	boundingvolumeObbRotationX[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
-	boundingvolumeObbRotationY[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
-	boundingvolumeObbRotationZ[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
+	boundingvolumeObbRotationX[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
+	boundingvolumeObbRotationY[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
+	boundingvolumeObbRotationZ[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));
 }
 
 void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const wstring& file)
@@ -378,7 +379,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		auto xAxis = new Vector3();
 		auto yAxis = new Vector3();
 		auto zAxis = new Vector3();
-		rotations->getTransformationsMatrix()->getAxes(xAxis, yAxis, zAxis);
+		rotations->getTransformationsMatrix().getAxes(*xAxis, *yAxis, *zAxis);
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,

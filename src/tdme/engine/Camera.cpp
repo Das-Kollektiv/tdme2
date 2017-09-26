@@ -105,7 +105,7 @@ Matrix4x4* Camera::computeProjectionMatrix(float yfieldOfView, float aspect, flo
 
 Matrix4x4* Camera::computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far)
 {
-	return projectionMatrix.set(
+	return &projectionMatrix.set(
 		2.0f * near / (right - left),
 		0.0f,
 		0.0f,
@@ -139,10 +139,10 @@ Matrix4x4* Camera::computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Ve
 	auto forwardXYZ = tmpForward.getArray();
 	auto upXYZ = tmpUp.getArray();
 	modelViewMatrix.
-		identity()->
+		identity().
 		translate(
-			tmpLookFromInverted.set(lookFrom)->scale(-1.0f)
-		)->
+			*tmpLookFromInverted.set(lookFrom)->scale(-1.0f)
+		).
 		multiply(
 			tmpAxesMatrix.set(
 				(*sideXYZ)[0],
@@ -175,15 +175,15 @@ void Camera::update(int32_t width, int32_t height)
 		aspect = static_cast< float >(width) / static_cast< float >(height);
 		this->width = width;
 		this->height = height;
-		renderer->getViewportMatrix()->set(width / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, height / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0 + (width / 2.0f), 0 + (height / 2.0f), 0.0f, 1.0f);
+		renderer->getViewportMatrix().set(width / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, height / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0 + (width / 2.0f), 0 + (height / 2.0f), 0.0f, 1.0f);
 	} else {
 		aspect = static_cast< float >(width) / static_cast< float >(height);
 	}
-	renderer->getProjectionMatrix()->set(computeProjectionMatrix(fovY, aspect, zNear, zFar));
+	renderer->getProjectionMatrix().set(*computeProjectionMatrix(fovY, aspect, zNear, zFar));
 	renderer->onUpdateProjectionMatrix();
-	renderer->getModelViewMatrix()->set(computeModelViewMatrix(&lookFrom, &lookAt, &upVector));
+	renderer->getModelViewMatrix().set(*computeModelViewMatrix(&lookFrom, &lookAt, &upVector));
 	renderer->onUpdateModelViewMatrix();
-	renderer->getCameraMatrix()->set(renderer->getModelViewMatrix());
+	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
 	renderer->onUpdateCameraMatrix();
 	frustum->updateFrustum();
 }

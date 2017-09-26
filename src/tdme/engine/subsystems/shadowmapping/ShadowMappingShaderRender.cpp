@@ -159,9 +159,9 @@ void ShadowMappingShaderRender::setProgramLightDirection(Vector3* lightDirection
 	renderer->setProgramUniformFloatVec3(renderUniformLightDirection, lightDirection->getArray());
 }
 
-void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(Matrix4x4* depthBiasMVPMatrix)
+void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
 }
 
 void ShadowMappingShaderRender::setProgramLightSpotExponent(float spotExponent)

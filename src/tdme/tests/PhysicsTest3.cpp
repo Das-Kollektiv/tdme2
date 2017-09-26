@@ -271,7 +271,7 @@ void PhysicsTest3::initialize()
 	world->addRigidBody(L"capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
 	try {
 		auto _terrainModel = DAEReader::read(L"resources/tests/environment/terrain_test", L"terrain_test.dae");
-		_terrainModel->getImportTransformationsMatrix()->scale(1.5f);
+		_terrainModel->getImportTransformationsMatrix().scale(1.5f);
 		entity = new Object3D(L"terrain", _terrainModel);
 		entity->getTranslation()->setY(-4.0f);
 		entity->update();

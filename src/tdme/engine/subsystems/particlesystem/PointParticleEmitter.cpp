@@ -83,5 +83,5 @@ void PointParticleEmitter::emit(Particle* particle)
 void PointParticleEmitter::fromTransformations(Transformations* transformations)
 {
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(&position, &positionTransformed);
+	transformationsMatrix.multiply(position, positionTransformed);
 }

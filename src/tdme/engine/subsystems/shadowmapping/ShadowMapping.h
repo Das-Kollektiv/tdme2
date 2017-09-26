@@ -112,7 +112,7 @@ public:
 	 * @param gl
 	 * @param transformations matrix
 	 */
-	void startObjectTransformations(Matrix4x4* transformationsMatrix);
+	void startObjectTransformations(Matrix4x4& transformationsMatrix);
 
 	/** 
 	 * End object transformations
@@ -128,7 +128,7 @@ public:
 	/** 
 	 * Update depth bias mvp matrix with given matrix
 	 */
-	void updateDepthBiasMVPMatrix(Matrix4x4* depthBiasMVPMatrix);
+	void updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix);
 
 	/** 
 	 * Update depth bias mvp matrix / upload only

@@ -38,7 +38,7 @@ TransparentRenderFacesPool::TransparentRenderFacesPool()
 	transparentRenderFacesPool = new TransparentRenderFacesPool_TransparentRenderFacesPool();
 }
 
-void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4* modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx)
+void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto& facesEntity = (*facesEntities)[facesEntityIdx];
@@ -57,7 +57,7 @@ void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4* modelVi
 		tmpVector3.add(&(*groupTransformedVertices)[(*faceVertexIndices)[1]]);
 		tmpVector3.add(&(*groupTransformedVertices)[(*faceVertexIndices)[2]]);
 		tmpVector3.scale(1.0f / 3.0f);
-		modelViewMatrix->multiply(&tmpVector3, &tmpVector3);
+		modelViewMatrix.multiply(tmpVector3, tmpVector3);
 		distanceFromCamera = -tmpVector3.getZ();
 		auto transparentRenderFace = transparentRenderFacesPool->allocate();
 		transparentRenderFace->object3DGroup = object3DGroup;

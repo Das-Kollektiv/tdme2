@@ -23,8 +23,8 @@ using tdme::engine::model::Animation;
 using tdme::utils::_Console;
 using tdme::utils::Key;
 
-void printMatrix(Matrix4x4* matrix) {
-	for (auto value: *matrix->getArray()) {
+void printMatrix(Matrix4x4& matrix) {
+	for (auto value: matrix.getArray()) {
 		cout << value;
 		cout << " ";
 	}
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     		wcout << "--" << endl;
     		Animation* animation = group->getAnimation();
     		for (auto& matrix: *animation->getTransformationsMatrices()) {
-    			printMatrix(&matrix);
+    			printMatrix(matrix);
     		}
     }
 }

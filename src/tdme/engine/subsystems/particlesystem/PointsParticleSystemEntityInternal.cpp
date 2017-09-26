@@ -133,14 +133,14 @@ void PointsParticleSystemEntityInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
 }
 
 void PointsParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix()->set(this->getTransformationsMatrix())->invert();
+	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
 }
 
 void PointsParticleSystemEntityInternal::updateParticles()
@@ -178,7 +178,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		(*color)[1] += (*colorAdd)[1] * static_cast< float >(timeDelta);
 		(*color)[2] += (*colorAdd)[2] * static_cast< float >(timeDelta);
 		(*color)[3] += (*colorAdd)[3] * static_cast< float >(timeDelta);
-		modelViewMatrix->multiply(&particle.position, &point);
+		modelViewMatrix.multiply(particle.position, point);
 		if (doCollisionTests == true) {
 			for (auto _i = engine->getPartition()->getObjectsNearTo(&particle.position)->iterator(); _i->hasNext(); ) {
 				Entity* entity = dynamic_cast< Entity* >(_i->next());

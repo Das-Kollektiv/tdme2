@@ -153,9 +153,9 @@ bool Model::hasAnimations()
 	return animationSetups.size() > 0;
 }
 
-Matrix4x4* Model::getImportTransformationsMatrix()
+Matrix4x4& Model::getImportTransformationsMatrix()
 {
-	return &importTransformationsMatrix;
+	return importTransformationsMatrix;
 }
 
 BoundingBox* Model::getBoundingBox()
@@ -166,40 +166,28 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-Matrix4x4* Model::computeTransformationsMatrix(int32_t frame, const wstring& groupId)
-{
-	return computeTransformationsMatrix(&subGroups, &importTransformationsMatrix, frame, groupId);
-}
-
-Matrix4x4* Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId)
+bool Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const wstring& groupId, Matrix4x4& transformationsMatrix)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
-		Matrix4x4* transformationsMatrix = nullptr;
 		auto animation = group->getAnimation();
 		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
-			transformationsMatrix = (*animationMatrices)[frame % animationMatrices->size()].clone();
-		}
-		if (transformationsMatrix == nullptr) {
-			transformationsMatrix = group->getTransformationsMatrix()->clone();
+			transformationsMatrix.set((*animationMatrices)[frame % animationMatrices->size()]);
+			transformationsMatrix.multiply(group->getTransformationsMatrix());
 		} else {
-			transformationsMatrix->multiply(group->getTransformationsMatrix());
+			transformationsMatrix.set(group->getTransformationsMatrix());
 		}
-		if (parentTransformationsMatrix != nullptr) {
-			transformationsMatrix->multiply(parentTransformationsMatrix);
-		}
-		if (group->getId() == groupId)
-			return transformationsMatrix;
+		transformationsMatrix.multiply(parentTransformationsMatrix);
+		if (group->getId() == groupId) return true;
 
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
-			auto tmp = computeTransformationsMatrix(subGroups, transformationsMatrix, frame, groupId);
-			if (tmp != nullptr)
-				return tmp;
-
+			Matrix4x4 parentTransformationsMatrix = transformationsMatrix;
+			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
+			if (haveTransformationsMatrix == true) return true;
 		}
 	}
 
-	return nullptr;
+	return false;
 }

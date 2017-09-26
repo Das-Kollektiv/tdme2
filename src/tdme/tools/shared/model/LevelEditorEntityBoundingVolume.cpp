@@ -176,7 +176,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const wstring& pathName, c
 			);
 		}
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
-		convexMeshModel->getImportTransformationsMatrix()->scale(1.01f);
+		convexMeshModel->getImportTransformationsMatrix().scale(1.01f);
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (_Exception& exception) {

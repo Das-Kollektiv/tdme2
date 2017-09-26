@@ -44,7 +44,6 @@ class tdme::engine::subsystems::object::Object3DBase
 public: /* protected */
 	Model* model {  };
 	map<wstring, Matrix4x4*> transformationsMatrices {  };
-	Matrix4x4* tmpMatrix1 {  };
 	bool hasSkinning {  };
 	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
 	vector<Group*> skinningGroups {  };
@@ -142,7 +141,7 @@ public: /* protected */
 	 * @param animation state
 	 * @param depth
 	 */
-	virtual void computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
+	virtual void computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
 
 public:
 
@@ -229,7 +228,7 @@ public: /* protected */
 	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
 
 public:
-	virtual Matrix4x4* getTransformationsMatrix();
+	virtual Matrix4x4& getTransformationsMatrix();
 
 private:
 	friend class Object3DBase_TransformedFacesIterator;

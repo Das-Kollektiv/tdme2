@@ -540,7 +540,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix()->getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
+					rotations->getTransformationsMatrix().getAxes(*emitter->getObbAxis0(), *emitter->getObbAxis1(), *emitter->getObbAxis2());
 					goto end_switch2;;
 				}
 			}
@@ -565,7 +565,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix()->getAxes(emitter->getAxis0(), new Vector3(), emitter->getAxis1());
+					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}
@@ -590,7 +590,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix()->getAxes(emitter->getAxis0(), new Vector3(), emitter->getAxis1());
+					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}
@@ -679,13 +679,14 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				bbpeColorEnd->getController()->setValue(value->set(Tools::formatColor4(emitter->getColorEnd())));
 				bbpeObbCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getObbCenter())));
 				bbpeObbHalfextension->getController()->setValue(value->set(Tools::formatVector3(emitter->getObbHalfextension())));
-				auto rotation = new Vector3();
-				auto rotationMatrix = (new Matrix4x4())->identity();
-				rotationMatrix->setAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
-				rotationMatrix->computeEulerAngles(rotation);
-				bbpeObbRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
-				bbpeObbRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
-				bbpeObbRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
+				Vector3 rotation;
+				Matrix4x4 rotationMatrix;
+				rotationMatrix.identity();
+				rotationMatrix.setAxes(*emitter->getObbAxis0(), *emitter->getObbAxis1(), *emitter->getObbAxis2());
+				rotationMatrix.computeEulerAngles(rotation);
+				bbpeObbRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
+				bbpeObbRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
+				bbpeObbRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));
 				goto end_switch3;;
 			}
 		}
@@ -706,13 +707,14 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpeCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getCenter())));
 				cpeRadius->getController()->setValue(value->set(emitter->getRadius(), 4));
 				Vector3 tmpAxis;
-				auto rotation = new Vector3();
-				auto rotationMatrix = (new Matrix4x4())->identity();
-				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), emitter->getAxis1());
-				rotationMatrix->computeEulerAngles(rotation);
-				cpeRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
-				cpeRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
-				cpeRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
+				Vector3 rotation;
+				Matrix4x4 rotationMatrix;
+				rotationMatrix.identity();
+				rotationMatrix.setAxes(*emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), *emitter->getAxis1());
+				rotationMatrix.computeEulerAngles(rotation);
+				cpeRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
+				cpeRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
+				cpeRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));
 				goto end_switch3;;
 			}
 		}
@@ -733,13 +735,14 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				cpepvCenter->getController()->setValue(value->set(Tools::formatVector3(emitter->getCenter())));
 				cpepvRadius->getController()->setValue(value->set(emitter->getRadius(), 4));
 				Vector3 tmpAxis;
-				auto rotation = new Vector3();
-				auto rotationMatrix = (new Matrix4x4())->identity();
-				rotationMatrix->setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), emitter->getAxis1());
-				rotationMatrix->computeEulerAngles(rotation);
-				cpepvRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation->getX())));
-				cpepvRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation->getY())));
-				cpepvRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation->getZ())));
+				Vector3 rotation;
+				Matrix4x4 rotationMatrix;
+				rotationMatrix.identity();
+				rotationMatrix.setAxes(*emitter->getAxis0(), *Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), &tmpAxis), *emitter->getAxis1());
+				rotationMatrix.computeEulerAngles(rotation);
+				cpepvRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
+				cpepvRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
+				cpepvRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));
 				goto end_switch3;;
 			}
 		}

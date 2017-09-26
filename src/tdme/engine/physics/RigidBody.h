@@ -118,7 +118,7 @@ public:
 	 * @param mass
 	 * @return inertia matrix
 	 */
-	static Matrix4x4* getNoRotationInertiaMatrix();
+	static Matrix4x4 getNoRotationInertiaMatrix();
 
 	/** 
 	 * Computes the inertia matrix
@@ -126,7 +126,7 @@ public:
 	 * @param mass
 	 * @return inertia matrix
 	 */
-	static Matrix4x4* computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
+	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 public:
 
@@ -347,6 +347,7 @@ public: /* protected */
 	 * @param collision response
 	 */
 	void fireOnCollisionEnd(RigidBody* other);
+
 public: /* protected */
 	/**
 	 * Protected constructor
@@ -359,5 +360,5 @@ public: /* protected */
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, Matrix4x4* inverseInertia);
+	RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
 };

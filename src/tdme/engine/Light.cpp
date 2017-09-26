@@ -147,8 +147,8 @@ void Light::update()
 		renderer->setLightEnabled(id);
 		renderer->setLightAmbient(id, ambient.getArray());
 		renderer->setLightDiffuse(id, diffuse.getArray());
-		renderer->setLightPosition(id, renderer->getCameraMatrix()->multiply(&position, &lightPositionTransformed)->scale(1.0f / lightPositionTransformed.getW())->getArray());
-		renderer->getCameraMatrix()->multiply(spotDirection4.set(&spotDirection, 0.0f), &spotDirection4Transformed);
+		renderer->setLightPosition(id, renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(1.0f / lightPositionTransformed.getW())->getArray());
+		renderer->getCameraMatrix().multiply(*spotDirection4.set(&spotDirection, 0.0f), spotDirection4Transformed);
 		renderer->setLightSpotDirection(id, tmpVector3.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ())->getArray());
 		renderer->setLightSpotExponent(id, spotExponent);
 		renderer->setLightSpotCutOff(id, spotCutOff);

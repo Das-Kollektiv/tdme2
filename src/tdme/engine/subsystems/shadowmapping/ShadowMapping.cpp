@@ -48,7 +48,6 @@ ShadowMapping::ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORe
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		shadowMaps[i] = nullptr;
 	}
-	shadowTransformationsMatrix = new Matrix4x4();
 	depthBiasMVPMatrix.identity();
 	mvMatrix.identity();
 	mvpMatrix.identity();
@@ -130,9 +129,9 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		auto shadowMap = shadowMaps[i];
 		auto light = engine->getLightAt(i);
-		renderer->getCameraMatrix()->multiply(light->getPosition(), &lightPosition4Transformed)->scale(1.0f / lightPosition4Transformed.getW());
+		renderer->getCameraMatrix().multiply(*light->getPosition(), lightPosition4Transformed).scale(1.0f / lightPosition4Transformed.getW());
 		shader->setProgramLightPosition(lightPosition3Transformed.set(lightPosition4Transformed.getX(), lightPosition4Transformed.getY(), lightPosition4Transformed.getZ()));
-		renderer->getCameraMatrix()->multiply(spotDirection4.set(light->getSpotDirection(), 0.0f), &spotDirection4Transformed);
+		renderer->getCameraMatrix().multiply(*spotDirection4.set(light->getSpotDirection(), 0.0f), spotDirection4Transformed);
 		shader->setProgramLightDirection(spotDirection3Transformed.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()));
 		shader->setProgramLightSpotExponent(light->getSpotExponent());
 		shader->setProgramLightSpotCosCutOff(light->getSpotCutOff());
@@ -170,15 +169,15 @@ void ShadowMapping::dispose()
 	}
 }
 
-void ShadowMapping::startObjectTransformations(Matrix4x4* transformationsMatrix)
+void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
 	Matrix4x4 tmpMatrix;
-	shadowTransformationsMatrix.set(&depthBiasMVPMatrix);
-	tmpMatrix.set(&depthBiasMVPMatrix);
-	depthBiasMVPMatrix.set(transformationsMatrix)->multiply(&tmpMatrix);
+	shadowTransformationsMatrix.set(depthBiasMVPMatrix);
+	tmpMatrix.set(depthBiasMVPMatrix);
+	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
 	updateDepthBiasMVPMatrix();
 }
 
@@ -187,7 +186,7 @@ void ShadowMapping::endObjectTransformations()
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
-	depthBiasMVPMatrix.set(&shadowTransformationsMatrix);
+	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
 void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
@@ -196,8 +195,8 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 		return;
 
 	mvMatrix.set(renderer->getModelViewMatrix());
-	mvpMatrix.set(&mvMatrix)->multiply(renderer->getProjectionMatrix());
-	normalMatrix.set(&mvMatrix)->invert()->transpose();
+	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+	normalMatrix.set(mvMatrix).invert().transpose();
 	{
 		auto v = runState;
 		if ((v == ShadowMapping_RunState::PRE)) {
@@ -226,7 +225,7 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 
 }
 
-void ShadowMapping::updateDepthBiasMVPMatrix(Matrix4x4* depthBiasMVPMatrix)
+void ShadowMapping::updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
@@ -240,5 +239,5 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
-	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(&depthBiasMVPMatrix);
+	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }

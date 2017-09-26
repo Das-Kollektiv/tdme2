@@ -341,7 +341,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	auto lookAtToFromVectorTransformed = new Vector3();
 	auto lookAtToFromVectorScaled = new Vector3();
 	auto upVector = new Vector3();
-	lookFromRotations->getTransformationsMatrix()->multiply(lookAtToFromVector, lookAtToFromVectorTransformed);
+	lookFromRotations->getTransformationsMatrix().multiply(*lookAtToFromVector, *lookAtToFromVectorTransformed);
 	lookAtToFromVectorScaled->set(lookAtToFromVectorTransformed)->scale(scale);
 	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(new Vector3(0.0f, 1.0f, 0.0f), upVector);
 	auto lookFrom = lookAt->clone2().add(lookAtToFromVectorScaled);

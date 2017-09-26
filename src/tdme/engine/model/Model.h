@@ -167,20 +167,12 @@ public:
 	/** 
 	 * @return import transformations matrix like converting Z-UP to Y-UP
 	 */
-	Matrix4x4* getImportTransformationsMatrix();
+	Matrix4x4& getImportTransformationsMatrix();
 
 	/** 
 	 * @return bounding box
 	 */
 	BoundingBox* getBoundingBox();
-
-	/** 
-	 * Computes a transformations matrix for a given frame and group id
-	 * @param frame
-	 * @param group id
-	 * @return group transformations matrix or null
-	 */
-	Matrix4x4* computeTransformationsMatrix(int32_t frame, const wstring& groupId);
 
 public: /* protected */
 
@@ -192,7 +184,7 @@ public: /* protected */
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	Matrix4x4* computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4* parentTransformationsMatrix, int32_t frame, const wstring& groupId);
+	bool computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const wstring& groupId, Matrix4x4& transformationsMatrix);
 
 	/**
 	 * Public constructor

@@ -190,7 +190,7 @@ public:
 	 * @param uniform id
 	 * @param value
 	 */
-	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* value) = 0;
+	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& value) = 0;
 
 	/** 
 	 * Set up a float matrices 4x4 uniform values
@@ -239,7 +239,7 @@ public:
 	/** 
 	 * @return projection matrix
 	 */
-	virtual Matrix4x4* getProjectionMatrix();
+	virtual Matrix4x4& getProjectionMatrix();
 
 	/** 
 	 * Update projection matrix event
@@ -249,7 +249,7 @@ public:
 	/** 
 	 * @return camera matrix
 	 */
-	virtual Matrix4x4* getCameraMatrix();
+	virtual Matrix4x4& getCameraMatrix();
 
 	/** 
 	 * Update camera matrix event
@@ -259,7 +259,7 @@ public:
 	/** 
 	 * @return model view matrix
 	 */
-	virtual Matrix4x4* getModelViewMatrix();
+	virtual Matrix4x4& getModelViewMatrix();
 
 	/** 
 	 * Update model view matrix event
@@ -269,7 +269,7 @@ public:
 	/** 
 	 * @return view port matrix
 	 */
-	virtual Matrix4x4* getViewportMatrix();
+	virtual Matrix4x4& getViewportMatrix();
 
 	/** 
 	 * Update texture matrix for active texture unit event

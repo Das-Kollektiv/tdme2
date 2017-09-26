@@ -75,7 +75,7 @@ public:
 	virtual Vector3* getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3* getScale();
-	virtual Matrix4x4* getTransformationsMatrix();
+	virtual Matrix4x4& getTransformationsMatrix();
 	virtual Vector3* getTranslation();
 	virtual bool isDynamicShadowingEnabled();
 	virtual bool isEnabled();

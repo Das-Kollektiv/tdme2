@@ -104,7 +104,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, Matrix4x4* inertiaMatrix);
+	RigidBody* addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body

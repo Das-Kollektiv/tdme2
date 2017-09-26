@@ -82,7 +82,7 @@ public:
 	void setProgramUniformInteger(int32_t uniformId, int32_t value) override;
 	void setProgramUniformFloat(int32_t uniformId, float value) override;
 	void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) override;
-	void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data) override;
+	void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& data) override;
 	void setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data) override;
 	void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data) override;
 	void setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name) override;

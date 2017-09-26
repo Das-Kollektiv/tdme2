@@ -184,13 +184,13 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {
 					auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					auto cTransformationsMatrix = cSkinningJointTransformationsMatrices[vertexIndex][vertexJointWeightIdx];
-					transformedVertex->add(cTransformationsMatrix->multiply(vertex, &tmpVector3)->scale(weight));
-					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(normal, &tmpVector3)->scale(weight));
+					transformedVertex->add(cTransformationsMatrix->multiply(*vertex, tmpVector3).scale(weight));
+					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(*normal, tmpVector3).scale(weight));
 					if (tangent != nullptr) {
-						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(tangent, &tmpVector3)->scale(weight));
+						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(*tangent, tmpVector3).scale(weight));
 					}
 					if (bitangent != nullptr) {
-						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(bitangent, &tmpVector3)->scale(weight));
+						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(*bitangent, tmpVector3).scale(weight));
 					}
 					totalWeights += weight;
 				}
@@ -211,10 +211,10 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 		}
 	} else if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
-			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply(&(*groupVertices)[vertexIndex], &tmpVector3));
+			(*vertices)[vertexIndex].set(&cGroupTransformationsMatrix->multiply((*groupVertices)[vertexIndex], tmpVector3));
 		}
 		for (auto normalIndex = 0; normalIndex < groupNormals->size(); normalIndex++) {
-			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation(&(*groupNormals)[normalIndex], &tmpVector3)->normalize());
+			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation((*groupNormals)[normalIndex], tmpVector3).normalize());
 		}
 		recreateBuffers();
 	}

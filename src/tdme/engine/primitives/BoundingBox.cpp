@@ -108,10 +108,10 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 		return;
 	}
 	auto boundingBox = dynamic_cast< BoundingBox* >(original);
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
-		transformationsMatrix->multiply(&(*_vertices)[i], &vertices[i]);
+		transformationsMatrix.multiply((*_vertices)[i], vertices[i]);
 	}
 	auto vertexXYZ = vertices[0].getArray();
 	float minX = (*vertexXYZ)[0], minY = (*vertexXYZ)[1], minZ = (*vertexXYZ)[2];

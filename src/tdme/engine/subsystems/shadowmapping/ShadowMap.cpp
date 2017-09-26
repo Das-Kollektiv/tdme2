@@ -127,10 +127,10 @@ void ShadowMap::computeDepthBiasMVPMatrix()
 {
 	auto modelViewMatrix = shadowMapping->renderer->getModelViewMatrix();
 	auto projectionMatrix = shadowMapping->renderer->getProjectionMatrix();
-	depthBiasMVPMatrix.set(modelViewMatrix)->multiply(projectionMatrix)->multiply(&biasMatrix);
+	depthBiasMVPMatrix.set(modelViewMatrix).multiply(projectionMatrix).multiply(biasMatrix);
 }
 
 void ShadowMap::updateDepthBiasMVPMatrix()
 {
-	shadowMapping->updateDepthBiasMVPMatrix(&depthBiasMVPMatrix);
+	shadowMapping->updateDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }

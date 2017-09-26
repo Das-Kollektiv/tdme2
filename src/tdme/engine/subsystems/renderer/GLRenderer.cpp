@@ -57,24 +57,24 @@ void GLRenderer::init()
 	FRONTFACE_CCW = -1;
 }
 
-Matrix4x4* GLRenderer::getProjectionMatrix()
+Matrix4x4& GLRenderer::getProjectionMatrix()
 {
-	return &projectionMatrix;
+	return projectionMatrix;
 }
 
-Matrix4x4* GLRenderer::getCameraMatrix()
+Matrix4x4& GLRenderer::getCameraMatrix()
 {
-	return &cameraMatrix;
+	return cameraMatrix;
 }
 
-Matrix4x4* GLRenderer::getModelViewMatrix()
+Matrix4x4& GLRenderer::getModelViewMatrix()
 {
-	return &modelViewMatrix;
+	return modelViewMatrix;
 }
 
-Matrix4x4* GLRenderer::getViewportMatrix()
+Matrix4x4& GLRenderer::getViewportMatrix()
 {
-	return &viewportMatrix;
+	return viewportMatrix;
 }
 
 void GLRenderer::setLightEnabled(int32_t lightId)

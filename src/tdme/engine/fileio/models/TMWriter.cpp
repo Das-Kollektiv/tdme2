@@ -64,7 +64,7 @@ void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileN
 	os.writeFloatArray(model->getBoundingBox()->getMin()->getArray());
 	os.writeFloatArray(model->getBoundingBox()->getMax()->getArray());
 	os.writeFloat(model->getFPS());
-	os.writeFloatArray(model->getImportTransformationsMatrix()->getArray());
+	os.writeFloatArray(model->getImportTransformationsMatrix().getArray());
 	os.writeInt(model->getMaterials()->size());
 	for (auto it: *model->getMaterials()) {
 		Material* material = it.second;
@@ -171,7 +171,7 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>*
 void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) throw (ModelFileIOException)
 {
 	os->writeString(joint->getGroupId());
-	os->writeFloatArray(joint->getBindMatrix()->getArray());
+	os->writeFloatArray(joint->getBindMatrix().getArray());
 }
 
 void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) throw (ModelFileIOException)
@@ -215,7 +215,7 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIO
 	os->writeString(g->getId());
 	os->writeString(g->getName());
 	os->writeBoolean(g->isJoint());
-	os->writeFloatArray(g->getTransformationsMatrix()->getArray());
+	os->writeFloatArray(g->getTransformationsMatrix().getArray());
 	writeVertices(os, g->getVertices());
 	writeVertices(os, g->getNormals());
 	writeTextureCoordinates(os, g->getTextureCoordinates());

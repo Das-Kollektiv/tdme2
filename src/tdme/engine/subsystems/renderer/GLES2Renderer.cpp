@@ -279,9 +279,9 @@ void GLES2Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, floatArra
 	gl->glUniformMatrix3fv(uniformId, 1, false, data, 0);
 }
 
-void GLES2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>* data)
+void GLES2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& data)
 {
-	gl->glUniformMatrix4fv(uniformId, 1, false, data->data(), 0);
+	gl->glUniformMatrix4fv(uniformId, 1, false, data.data(), 0);
 }
 
 void GLES2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)

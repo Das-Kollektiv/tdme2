@@ -178,8 +178,8 @@ public:
 	/** 
 	 * @return vector as array
 	 */
-	inline array<float,3>* getArray() {
-		return &data;
+	inline array<float,3>* getArray() const {
+		return (array<float,3>*)&data;
 	}
 
 	/** 

@@ -112,7 +112,7 @@ void ParticlesShader::updateMatrices(GLRenderer* renderer)
 	if (isRunning == false)
 		return;
 
-	mvpMatrix.set(renderer->getModelViewMatrix())->multiply(renderer->getProjectionMatrix());
+	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, renderer->getModelViewMatrix()->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, renderer->getModelViewMatrix().getArray());
 }

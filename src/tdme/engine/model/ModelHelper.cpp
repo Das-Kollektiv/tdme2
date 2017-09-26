@@ -289,7 +289,7 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 		transformationsMatrices = root->getAnimation()->getTransformationsMatrices();
 		animation = root->createAnimation(frames);
 		for (auto i = 0; i < transformationsMatrices->size(); i++) {
-			(*animation->getTransformationsMatrices())[i].set(&(*transformationsMatrices)[i]);
+			(*animation->getTransformationsMatrices())[i].set((*transformationsMatrices)[i]);
 		}
 	}
 	for (auto it: *root->getSubGroups()) {

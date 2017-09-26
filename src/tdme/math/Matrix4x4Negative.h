@@ -30,11 +30,11 @@ public:
 	 * @param matrix
 	 * @return negative
 	 */
-	inline bool isNegative(Matrix4x4* matrix) {
-		auto transformationsMatrixData = matrix->getArray();
-		xAxis.set((*transformationsMatrixData)[0], (*transformationsMatrixData)[1], (*transformationsMatrixData)[2]);
-		yAxis.set((*transformationsMatrixData)[4], (*transformationsMatrixData)[5], (*transformationsMatrixData)[6]);
-		zAxis.set((*transformationsMatrixData)[8], (*transformationsMatrixData)[9], (*transformationsMatrixData)[10]);
+	inline bool isNegative(Matrix4x4& matrix) {
+		auto& transformationsMatrixData = matrix.getArray();
+		xAxis.set(transformationsMatrixData[0], transformationsMatrixData[1], transformationsMatrixData[2]);
+		yAxis.set(transformationsMatrixData[4], transformationsMatrixData[5], transformationsMatrixData[6]);
+		zAxis.set(transformationsMatrixData[8], transformationsMatrixData[9], transformationsMatrixData[10]);
 		return Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &yAxis, &tmpAxis), &zAxis) < 0.0f;
 	}
 

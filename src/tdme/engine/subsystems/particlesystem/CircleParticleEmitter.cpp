@@ -97,11 +97,11 @@ void CircleParticleEmitter::emit(Particle* particle)
 void CircleParticleEmitter::fromTransformations(Transformations* transformations)
 {
 	Vector3 side;
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
-	transformationsMatrix->multiply(&center, &centerTransformed);
-	transformationsMatrix->multiplyNoTranslation(&axis0, &axis0Transformed);
-	transformationsMatrix->multiplyNoTranslation(&axis1, &axis1Transformed);
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	transformationsMatrix.multiply(center, centerTransformed);
+	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
+	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
 	side.set(&axis0)->scale(radius)->add(&center);
-	transformationsMatrix->multiply(&side, &side);
+	transformationsMatrix.multiply(side, side);
 	radius = side.sub(&center)->computeLength();
 }

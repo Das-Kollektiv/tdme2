@@ -116,9 +116,9 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto meshTriangleVertices = mesh->triangles[i].getVertices();
 		auto triangleVertices = triangles[i].getVertices();
-		transformations->getTransformationsMatrix()->multiply(&(*meshTriangleVertices)[0], &(*triangleVertices)[0]);
-		transformations->getTransformationsMatrix()->multiply(&(*meshTriangleVertices)[1], &(*triangleVertices)[1]);
-		transformations->getTransformationsMatrix()->multiply(&(*meshTriangleVertices)[2], &(*triangleVertices)[2]);
+		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[0], (*triangleVertices)[0]);
+		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[1], (*triangleVertices)[1]);
+		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[2], (*triangleVertices)[2]);
 		triangles[i].update();
 	}
 	update();

@@ -55,7 +55,7 @@ public:
 	/** 
 	 * @return this transformations matrix
 	 */
-	virtual Matrix4x4* getTransformationsMatrix();
+	virtual Matrix4x4& getTransformationsMatrix();
 
 	/** 
 	 * Set up this transformations from given transformations

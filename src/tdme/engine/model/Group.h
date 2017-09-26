@@ -83,7 +83,7 @@ public:
 	/** 
 	 * @return transformations matrix related to parent group
 	 */
-	Matrix4x4* getTransformationsMatrix();
+	Matrix4x4& getTransformationsMatrix();
 
 	/** 
 	 * Set up vertices

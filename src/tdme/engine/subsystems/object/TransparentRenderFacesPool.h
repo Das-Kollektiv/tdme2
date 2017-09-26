@@ -40,7 +40,7 @@ public: /* protected */
 	 * @param face index for texture coordinates
 	 * @return
 	 */
-	void createTransparentRenderFaces(Matrix4x4* modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx);
+	void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx);
 
 public:
 

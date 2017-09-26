@@ -42,7 +42,7 @@ void Object3DBase_TransformedFacesIterator::reset()
 	if (object3DGroup->mesh->skinning == true) {
 		matrix.identity();
 	} else {
-		matrix.set(object3DGroup->groupTransformationsMatrix);
+		matrix.set(*object3DGroup->groupTransformationsMatrix);
 	}
 	matrix.multiply(object3DBase->getTransformationsMatrix());
 }
@@ -66,9 +66,9 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 	auto& face = (*faces)[faceIdx];
 	auto faceVertexIndices = face.getVertexIndices();
 	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[0]], &vertices[0]);
-	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[1]], &vertices[1]);
-	matrix.multiply(&(*groupVerticesTransformed)[(*faceVertexIndices)[2]], &vertices[2]);
+	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[0]], vertices[0]);
+	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[1]], vertices[1]);
+	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[2]], vertices[2]);
 	faceIdxTotal++;
 	faceIdx++;
 	if (faceIdxTotal < faceCount) {
@@ -82,7 +82,7 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 				if (object3DGroup->mesh->skinning == true) {
 					matrix.identity();
 				} else {
-					matrix.set(object3DGroup->groupTransformationsMatrix);
+					matrix.set(*object3DGroup->groupTransformationsMatrix);
 				}
 				matrix.multiply(object3DBase->getTransformationsMatrix());
 			}

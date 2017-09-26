@@ -199,7 +199,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	if (object3DGroup->mesh->skinning == true) {
 		modelViewMatrix.identity();
 	} else {
-		modelViewMatrix.set(object3DGroup->groupTransformationsMatrix)->multiply(object3D->getTransformationsMatrix())->multiply(renderer->getModelViewMatrix());
+		modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix()).multiply(renderer->getModelViewMatrix());
 	}
 	auto model = object3DGroup->object->getModel();
 	auto facesEntities = object3DGroup->group->getFacesEntities();
@@ -233,8 +233,8 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(
-				modelViewMatrix.multiply(&(*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], &transformedVector),
-				modelViewMatrix.multiplyNoTranslation(&(*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], &transformedNormal),
+				&modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
+				&modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
 				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
 					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
 					static_cast< TextureCoordinate* >(nullptr)
@@ -301,9 +301,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_object3DGroup->mesh->skinning == true ?
 								modelViewMatrix.identity() :
-								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-							)->
-								multiply(object->getTransformationsMatrix())->multiply(&modelViewMatrixBackup),
+								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+							).
+								multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
 								object->object3dGroups[object3DGroupIdx],
 								faceEntityIdx,
 								faceIdx
@@ -338,8 +338,8 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_object3DGroup->mesh->skinning == true ?
 								modelViewMatrix.identity() :
-								modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-							)->multiply(object->getTransformationsMatrix())->multiply(&modelViewMatrixBackup),
+								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+							).multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
 							_object3DGroup,
 							faceEntityIdx,
 							faceIdx
@@ -362,13 +362,13 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					renderer->bindTangentsBufferObject((*currentVBOTangentBitangentIds)[0]);
 					renderer->bindBitangentsBufferObject((*currentVBOTangentBitangentIds)[1]);
 				}
-				renderer->getModelViewMatrix()->set(
+				renderer->getModelViewMatrix().set(
 					(_object3DGroup->mesh->skinning == true ?
 						modelViewMatrix.identity() :
-						modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-					)->
-						multiply(object->getTransformationsMatrix())->
-						multiply(&modelViewMatrixBackup)
+						modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+					).
+						multiply(object->getTransformationsMatrix()).
+						multiply(modelViewMatrixBackup)
 				);
 				renderer->onUpdateModelViewMatrix();
 				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
@@ -383,8 +383,8 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					shadowMapping->startObjectTransformations(
 						(_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
-							modelViewMatrix.set(_object3DGroup->groupTransformationsMatrix)
-						)->multiply(object->getTransformationsMatrix()));
+							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+						).multiply(object->getTransformationsMatrix()));
 				}
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				if (shadowMapping != nullptr) {
@@ -395,7 +395,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 		}
 	}
 	renderer->unbindBufferObjects();
-	renderer->getModelViewMatrix()->set(&modelViewMatrixBackup);
+	renderer->getModelViewMatrix().set(modelViewMatrixBackup);
 }
 
 void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx)
@@ -491,7 +491,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
 		renderer->renderingTexturingClientState = true;
 	}
-	renderer->getModelViewMatrix()->identity();
+	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
 	set<wstring> pseKeys;
 	for (auto i = 0; i < visiblePses.size(); i++) {
@@ -542,5 +542,5 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	renderer->unbindBufferObjects();
 	renderer->enableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
 	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
-	renderer->getModelViewMatrix()->set(&modelViewMatrix);
+	renderer->getModelViewMatrix().set(modelViewMatrix);
 }
