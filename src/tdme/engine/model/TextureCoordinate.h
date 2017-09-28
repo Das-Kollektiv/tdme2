@@ -34,7 +34,7 @@ public:
 	/** 
 	 * @return texture data as array
 	 */
-	array<float, 2>* getArray();
+	array<float, 2>& getArray() const;
 
 	/** 
 	 * Clones the texture coordinate

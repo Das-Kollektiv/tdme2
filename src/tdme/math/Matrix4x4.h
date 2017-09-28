@@ -223,7 +223,7 @@ public:
 	 * @param destination vector 3
 	 * @return vector 3
 	 */
-	inline Vector3& multiply(const Vector3& v, Vector3& dest) {
+	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
 		return *dest.set(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + data[12],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + data[13],
@@ -237,7 +237,7 @@ public:
 	 * @param destination vector 3
 	 * @return vector 3 dest
 	 */
-	inline Vector3& multiplyNoTranslation(const Vector3& v, Vector3& dest) {
+	inline Vector3& multiplyNoTranslation(const Vector3& v, Vector3& dest) const {
 		return *dest.set(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9],
@@ -251,7 +251,7 @@ public:
 	 * @param destination vector4
 	 * @return destination vector 4
 	 */
-	inline Vector4& multiply(const Vector4& v, Vector4& dest) {
+	inline Vector4& multiply(const Vector4& v, Vector4& dest) const {
 		dest.set(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + v.data[3] * data[12],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + v.data[3] * data[13],
@@ -462,7 +462,7 @@ public:
 	 * @param m
 	 * @return equals
 	 */
-	inline bool equals(const Matrix4x4& m) {
+	inline bool equals(const Matrix4x4& m) const {
 		return
 			(this == &m) ||
 			(
@@ -545,7 +545,7 @@ public:
 	 * Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 	 * @param euler
 	 */
-	inline void computeEulerAngles(Vector3& euler) {
+	inline void computeEulerAngles(Vector3& euler) const {
 		auto eulerXYZ = euler.getArray();
 		auto axis0 = 0;
 		auto axis1 = 1;

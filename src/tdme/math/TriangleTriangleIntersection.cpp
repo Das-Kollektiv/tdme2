@@ -110,16 +110,16 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 	compute_intervals_isectline(U0, U1, U2, up0, up1, up2, du0, du1, du2, du0du1, du0du2, &isect2_, 0, &isect2_, 1, &isectpointB1, &isectpointB2);
 	smallest1 = SORT2(isect1.getArray());
 	smallest2 = SORT2(isect2_.getArray());
-	if ((*isect1.getArray())[1] < (*isect2_.getArray())[0] || (*isect2_.getArray())[1] < (*isect1.getArray())[0])
+	if (isect1.getArray()[1] < isect2_.getArray()[0] || isect2_.getArray()[1] < isect1.getArray()[0])
 		return NOINTERSECTION;
 
-	if ((*isect2_.getArray())[0] < (*isect1.getArray())[0]) {
+	if (isect2_.getArray()[0] < isect1.getArray()[0]) {
 		if (smallest1 == 0) {
 			isectpt1->set(&isectpointA1);
 		} else {
 			isectpt1->set(&isectpointA2);
 		}
-		if ((*isect2_.getArray())[1] < (*isect1.getArray())[1]) {
+		if (isect2_.getArray()[1] < isect1.getArray()[1]) {
 			if (smallest2 == 0) {
 				isectpt2->set(&isectpointB2);
 			} else {
@@ -138,7 +138,7 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 		} else {
 			isectpt1->set(&isectpointB2);
 		}
-		if ((*isect2_.getArray())[1] > (*isect1.getArray())[1]) {
+		if (isect2_.getArray()[1] > isect1.getArray()[1]) {
 			if (smallest1 == 0) {
 				isectpt2->set(&isectpointA2);
 			} else {

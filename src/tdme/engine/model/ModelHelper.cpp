@@ -82,14 +82,14 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 {
 	vector<Vector3> tangentsArrayList;
 	vector<Vector3> bitangentsArrayList;
-	auto uv0 = new Vector2();
-	auto uv1 = new Vector2();
-	auto uv2 = new Vector2();
-	auto deltaPos1 = new Vector3();
-	auto deltaPos2 = new Vector3();
-	auto deltaUV1 = new Vector2();
-	auto deltaUV2 = new Vector2();
-	auto tmpVector3 = new Vector3();
+	Vector2 uv0;
+	Vector2 uv1;
+	Vector2 uv2;
+	Vector3 deltaPos1;
+	Vector3 deltaPos2;
+	Vector2 deltaUV1;
+	Vector2 deltaUV2;
+	Vector3 tmpVector3;
 	auto vertices = group->getVertices();
 	auto normals = group->getNormals();
 	auto textureCoordinates = group->getTextureCoordinates();
@@ -101,19 +101,19 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 				auto v1 = &(*vertices)[(*verticesIndexes)[1]];
 				auto v2 = &(*vertices)[(*verticesIndexes)[2]];
 				auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
-				uv0->set((*textureCoordinates)[(*textureCoordinatesIndexes)[0]].getArray());
-				uv0->setY(1.0f - uv0->getY());
-				uv1->set((*textureCoordinates)[(*textureCoordinatesIndexes)[1]].getArray());
-				uv1->setY(1.0f - uv1->getY());
-				uv2->set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
-				uv2->setY(1.0f - uv2->getY());
-				deltaPos1->set(v1)->sub(v0);
-				deltaPos2->set(v2)->sub(v0);
-				deltaUV1->set(uv1)->sub(uv0);
-				deltaUV2->set(uv2)->sub(uv0);
-				auto r = 1.0f / (deltaUV1->getX() * deltaUV2->getY() - deltaUV1->getY() * deltaUV2->getX());
-				auto tangent = (new Vector3(deltaPos1))->scale(deltaUV2->getY())->sub(tmpVector3->set(deltaPos2)->scale(deltaUV1->getY()))->scale(r);
-				auto bitangent = (new Vector3(deltaPos2))->scale(deltaUV1->getX())->sub(tmpVector3->set(deltaPos1)->scale(deltaUV2->getX()))->scale(r);
+				uv0.set((*textureCoordinates)[(*textureCoordinatesIndexes)[0]].getArray());
+				uv0.setY(1.0f - uv0.getY());
+				uv1.set((*textureCoordinates)[(*textureCoordinatesIndexes)[1]].getArray());
+				uv1.setY(1.0f - uv1.getY());
+				uv2.set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
+				uv2.setY(1.0f - uv2.getY());
+				deltaPos1.set(v1)->sub(v0);
+				deltaPos2.set(v2)->sub(v0);
+				deltaUV1.set(uv1).sub(uv0);
+				deltaUV2.set(uv2).sub(uv0);
+				auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
+				auto tangent = deltaPos1.clone2().scale(deltaUV2.getY())->sub(tmpVector3.set(&deltaPos2)->scale(deltaUV1.getY()))->scale(r);
+				auto bitangent = deltaPos2.clone2().scale(deltaUV1.getX())->sub(tmpVector3.set(&deltaPos1)->scale(deltaUV2.getX()))->scale(r);
 				face.setTangentIndices(tangentsArrayList.size() + 0, tangentsArrayList.size() + 1, tangentsArrayList.size() + 2);
 				face.setBitangentIndices(bitangentsArrayList.size() + 0, bitangentsArrayList.size() + 1, bitangentsArrayList.size() + 2);
 				tangentsArrayList.push_back(tangent);
@@ -137,8 +137,8 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 				auto normal = &(*normals)[(*face.getNormalIndices())[i]];
 				auto tangent = &(*tangents)[(*face.getTangentIndices())[i]];
 				auto bitangent = &(*bitangents)[(*face.getBitangentIndices())[i]];
-				tangent->sub(tmpVector3->set(normal)->scale(Vector3::computeDotProduct(normal, tangent)))->normalize();
-				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, tmpVector3), bitangent) < 0.0f) {
+				tangent->sub(tmpVector3.set(normal)->scale(Vector3::computeDotProduct(normal, tangent)))->normalize();
+				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, &tmpVector3), bitangent) < 0.0f) {
 					tangent->scale(-1.0f);
 				}
 				bitangent->normalize();

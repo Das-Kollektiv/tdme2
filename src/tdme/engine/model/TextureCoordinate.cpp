@@ -42,9 +42,9 @@ float TextureCoordinate::getV()
 	return data[1];
 }
 
-array<float, 2>* TextureCoordinate::getArray()
+array<float, 2>& TextureCoordinate::getArray() const
 {
-	return &data;
+	return (array<float, 2>&)data;
 }
 
 TextureCoordinate* TextureCoordinate::clone()

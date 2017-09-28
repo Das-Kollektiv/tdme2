@@ -69,6 +69,17 @@ public:
 	 * Put float values into float buffer
 	 * @param values
 	 */
+	inline FloatBuffer* put(array<float, 2>& values) {
+		for (int i = 0; i < values.size(); i++) {
+			put(values[i]);
+		}
+		return this;
+	}
+
+	/**
+	 * Put float values into float buffer
+	 * @param values
+	 */
 	inline FloatBuffer* put(array<float, 3>* values) {
 		for (int i = 0; i < values->size(); i++) {
 			put((*values)[i]);

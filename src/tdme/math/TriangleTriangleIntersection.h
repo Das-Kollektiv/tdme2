@@ -205,12 +205,12 @@ private:
 	static void isect2(Vector3* VTX0, Vector3* VTX1, Vector3* VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1) {
 		Vector3 diff;
 		auto tmp = D0 / (D0 - D1);
-		(*isect0->getArray())[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
+		isect0->getArray()[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
 		diff.set(VTX1)->sub(VTX0);
 		diff.scale(tmp);
 		isectpoint0->set(&diff)->add(VTX0);
 		tmp = D0 / (D0 - D2);
-		(*isect1->getArray())[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
+		isect1->getArray()[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
 		diff.set(VTX2)->sub(VTX0);
 		diff.scale(tmp);
 		isectpoint1->set(VTX0)->add(&diff);
@@ -258,12 +258,12 @@ private:
 	 * @param values
 	 * @return smallest value index
 	 */
-	static int32_t SORT2(array<float, 2>* values) {
-		if ((*values)[0] > (*values)[1]) {
+	static int32_t SORT2(array<float, 2>& values) {
+		if (values[0] > values[1]) {
 			float tmp;
-			tmp = (*values)[0];
-			(*values)[0] = (*values)[1];
-			(*values)[1] = tmp;
+			tmp = values[0];
+			values[0] = values[1];
+			values[1] = tmp;
 			return 1;
 		} else {
 			return 0;
