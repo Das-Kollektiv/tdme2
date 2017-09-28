@@ -594,7 +594,7 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	Vector4 tmpVector4b;
 	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix).invert();
 	tmpMatrix4x4.multiply(
-		*tmpVector4a.set(
+		tmpVector4a.set(
 			(2.0f * mouseX / width) - 1.0f,
 			1.0f - (2.0f * mouseY / height),
 			2.0f * z - 1.0f, 1.0f
@@ -698,11 +698,11 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 	Vector4 tmpVector4a;
 	Vector4 tmpVector4b;
 	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix);
-	tmpMatrix4x4.multiply(*tmpVector4b.set(worldCoordinate, 1.0f), tmpVector4a);
+	tmpMatrix4x4.multiply(tmpVector4b.set(worldCoordinate, 1.0f), tmpVector4a);
 	tmpVector4a.scale(1.0f / tmpVector4a.getW());
 	auto screenCoordinateXYZW = tmpVector4a.getArray();
-	screenCoordinate->setX(((*screenCoordinateXYZW)[0] + 1.0f) * width / 2.0f);
-	screenCoordinate->setY(height - (((*screenCoordinateXYZW)[1] + 1.0f) * height / 2.0f));
+	screenCoordinate->setX((screenCoordinateXYZW[0] + 1.0f) * width / 2.0f);
+	screenCoordinate->setY(height - ((screenCoordinateXYZW[1] + 1.0f) * height / 2.0f));
 }
 
 void Engine::dispose()

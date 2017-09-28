@@ -78,6 +78,13 @@ public:
 	 */
 	static void convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */;
 
+	/**
+	 * Convert string to array
+	 * @param text
+	 * @param array
+	 */
+	static void convertToArray(String* text, array<float, 4>& array) /* throws(NumberFormatException) */;
+
 	/** 
 	 * Convert to vector 3
 	 * @param text

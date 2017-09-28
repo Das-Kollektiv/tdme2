@@ -146,6 +146,16 @@ void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(Numbe
 	}
 }
 
+void Tools::convertToArray(String* text, array<float, 4>& array) /* throws(NumberFormatException) */
+{
+	auto i = 0;
+	StringTokenizer t;
+	t.tokenize(text->getCPPWString(), L",");
+	while (t.hasMoreTokens() && i < array.size()) {
+		array[i++] = Float::parseFloat(t.nextToken());
+	}
+}
+
 Vector3* Tools::convertToVector3(String* text) /* throws(NumberFormatException) */
 {
 	auto v = new Vector3();

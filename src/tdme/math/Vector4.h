@@ -34,12 +34,12 @@ public:
 	 * @param w
 	 * @return this vector
 	 */
-	inline Vector4* set(float x, float y, float z, float w) {
+	inline Vector4& set(float x, float y, float z, float w) {
 		data[0] = x;
 		data[1] = y;
 		data[2] = z;
 		data[3] = w;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -47,9 +47,9 @@ public:
 	 * @param float array containing x,y,z,w values
 	 * @return this vector
 	 */
-	inline Vector4* set(array<float, 4>* v) {
-		data = *v;
-		return this;
+	inline Vector4& set(const array<float, 4>& v) {
+		data = v;
+		return *this;
 	}
 
 	/**
@@ -57,12 +57,12 @@ public:
 	 * @param v
 	 * @return this vector
 	 */
-	inline Vector4* set(Vector4* v) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
-		data[3] = v->data[3];
-		return this;
+	inline Vector4& set(const Vector4& v) {
+		data[1] = v.data[1];
+		data[0] = v.data[0];
+		data[2] = v.data[2];
+		data[3] = v.data[3];
+		return *this;
 	}
 
 	/** 
@@ -71,72 +71,80 @@ public:
 	 * @param w 
 	 * @return this vector
 	 */
-	inline Vector4* set(Vector3* v, float w) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
+	inline Vector4& set(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
 		data[3] = w;
-		return this;
+		return *this;
 	}
 
 	/** 
 	 * @return x
 	 */
-	inline float getX() {
+	inline float getX() const {
 		return data[0];
 	}
 
 	/** 
 	 * set X
 	 * @param x
+	 * @return this vector
 	 */
-	inline void setX(float x) {
+	inline Vector4& setX(float x) {
 		data[0] = x;
+		return *this;
 	}
 
 	/** 
 	 * @return y
 	 */
-	inline float getY() {
+	inline float getY() const {
 		return data[1];
 	}
 
 	/** 
 	 * set Y
 	 * @param y
+	 * @return this vector
 	 */
-	inline void setY(float y) {
+	inline Vector4& setY(float y) {
 		data[1] = y;
+		return *this;
 	}
 
 	/** 
 	 * @return z
 	 */
-	inline float getZ() {
+	inline float getZ() const {
 		return data[2];
 	}
 
 	/** 
 	 * Set Z
 	 * @param z
+	 * @return this vector
 	 */
-	inline void setZ(float z) {
+	inline Vector4& setZ(float z) {
 		data[2] = z;
+		return *this;
 	}
 
 	/** 
 	 * @return w
 	 */
-	inline float getW() {
+	inline float getW() const {
 		return data[3];
 	}
 
 	/** 
 	 * Set W
 	 * @param w
+	 * @return this vector
 	 */
-	inline void setW(float w) {
+	inline Vector4& setW(float w) {
 		data[3] = w;
+		return *this;
 	}
 
 	/** 
@@ -144,12 +152,12 @@ public:
 	 * @param scale
 	 * @return this vector 
 	 */
-	inline Vector4* scale(float scale) {
+	inline Vector4& scale(float scale) {
 		data[0] *= scale;
 		data[1] *= scale;
 		data[2] *= scale;
 		data[3] *= scale;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -157,27 +165,27 @@ public:
 	 * @param scale
 	 * @return this vector 
 	 */
-	inline Vector4* scale(Vector4* scale) {
+	inline Vector4& scale(Vector4* scale) {
 		data[0] *= scale->data[0];
 		data[1] *= scale->data[1];
 		data[2] *= scale->data[2];
 		data[3] *= scale->data[3];
-		return this;
+		return *this;
 	}
 
 	/** 
 	 * @return vector as array
 	 */
-	inline array<float, 4>* getArray() {
-		return &data;
+	inline array<float, 4>& getArray() const {
+		return (array<float, 4>&)data;
 	}
 
 	/** 
 	 * Clones the vector
 	 * @return new cloned vector
 	 */
-	inline Vector4* clone() {
-		return new Vector4(this);
+	inline Vector4 clone() const {
+		return Vector4(*this);
 	}
 
 	/**
@@ -191,8 +199,8 @@ public:
 	 * Public constructor
 	 * @param vector
 	 */
-	inline Vector4(Vector4* v) {
-		data = v->data;
+	inline Vector4(const Vector4& v) {
+		data = v.data;
 	}
 
 	/**
@@ -200,10 +208,10 @@ public:
 	 * @param vector
 	 * @param w
 	 */
-	inline Vector4(Vector3* v, float w) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
+	inline Vector4(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
 		data[3] = w;
 	}
 
@@ -225,8 +233,8 @@ public:
 	 * Public constructor
 	 * @param v
 	 */
-	inline Vector4(array<float, 4>* v) {
-		data = *v;
+	inline Vector4(const array<float, 4>& v) {
+		data = v;
 	}
 
 };
