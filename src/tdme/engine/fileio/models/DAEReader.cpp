@@ -313,7 +313,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 					for (auto i = 0; i < nodeTransformationsMatrixArray.size(); i++) {
 						nodeTransformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 					}
-					nodeTransformationsMatrix.set(&nodeTransformationsMatrixArray).transpose();
+					nodeTransformationsMatrix.set(nodeTransformationsMatrixArray).transpose();
 				} else {
 					throw ModelFileIOException(
 						"missing node transformations matrix for node '" +
@@ -513,7 +513,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring
 		for (auto i = 0; i < transformationsMatrixArray.size(); i++) {
 			transformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 		}
-		transformationsMatrix.set(&transformationsMatrixArray).transpose();
+		transformationsMatrix.set(transformationsMatrixArray).transpose();
 		group->getTransformationsMatrix().multiply(transformationsMatrix);
 	}
 
@@ -582,7 +582,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring
 								for (auto i = 0; i < keyFrameMatricesArray.size() ;i++) {
 									keyFrameMatricesArray[i] = Float::parseFloat(t.nextToken());
 								}
-								keyFrameMatrices[keyFrameIdx].set(&keyFrameMatricesArray);
+								keyFrameMatrices[keyFrameIdx].set(keyFrameMatricesArray);
 								keyFrameMatrices[keyFrameIdx].transpose();
 								keyFrameIdx++;
 							}
@@ -719,7 +719,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 		bindShapeMatrixArray[i] = Float::parseFloat(t.nextToken());
 	}
 	Matrix4x4 bindShapeMatrix;
-	bindShapeMatrix.set(&bindShapeMatrixArray).transpose();
+	bindShapeMatrix.set(bindShapeMatrixArray).transpose();
 
 	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
 	auto skinning = group->createSkinning();

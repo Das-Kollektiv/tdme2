@@ -75,8 +75,8 @@ public:
 	 * @param m
 	 * @return this matrix
 	 */
-	inline Matrix4x4& set(const array<float, 16>* m) {
-		data = *m;
+	inline Matrix4x4& set(const array<float, 16>& m) {
+		data = m;
 		return *this;
 	}
 

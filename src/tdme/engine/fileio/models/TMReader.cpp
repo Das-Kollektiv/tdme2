@@ -103,7 +103,7 @@ Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_
 	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
 	is.readFloatArray(&importTransformationsMatrixArray);
-	model->getImportTransformationsMatrix().set(&importTransformationsMatrixArray);
+	model->getImportTransformationsMatrix().set(importTransformationsMatrixArray);
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(&is);
@@ -203,7 +203,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 		g->createAnimation(is->readInt());
 		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
 			is->readFloatArray(&matrixArray);
-			(*g->getAnimation()->getTransformationsMatrices())[i].set(&matrixArray);
+			(*g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
 		}
 		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->size());
 		return g->getAnimation();
@@ -264,7 +264,7 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOExc
 	array<float, 16> matrixArray;
 	Joint joint(is->readWString());
 	is->readFloatArray(&matrixArray);
-	joint.getBindMatrix().set(&matrixArray);
+	joint.getBindMatrix().set(matrixArray);
 	return joint;
 }
 
@@ -312,7 +312,7 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(&matrixArray);
-	group->getTransformationsMatrix().set(&matrixArray);
+	group->getTransformationsMatrix().set(matrixArray);
 	vector<Vector3> vertices = readVertices(is);
 	group->setVertices(&vertices);
 	vector<Vector3> normals = readVertices(is);
