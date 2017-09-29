@@ -81,7 +81,7 @@ void Transformations::update()
 	rotationsMatrix.identity();
 	rotationsPivot.set(pivot).scale(-1.0f);
 	rotationsMatrix.translate(rotationsPivot);
-	rotations.quaternion.computeMatrix(&rotationsQuaternionMatrix);
+	rotations.quaternion.computeMatrix(rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);
 	rotationsTranslationsMatrix.identity().translate(pivot);
 	rotationsMatrix.multiply(rotationsTranslationsMatrix);

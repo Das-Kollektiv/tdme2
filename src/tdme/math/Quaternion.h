@@ -35,12 +35,12 @@ public:
 	 * @param z
 	 * @param w
 	 */
-	inline Quaternion* set(float x, float y, float z, float w) {
+	inline Quaternion& set(float x, float y, float z, float w) {
 		data[0] = x;
 		data[1] = y;
 		data[2] = z;
 		data[3] = w;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -48,9 +48,9 @@ public:
 	 * @param q
 	 * @return
 	 */
-	inline Quaternion* set(Quaternion* q) {
-		data = q->data;
-		return this;
+	inline Quaternion& set(const Quaternion& q) {
+		data = q.data;
+		return *this;
 	}
 
 	/** 
@@ -60,35 +60,35 @@ public:
 	 * @param z
 	 * @param w
 	 */
-	inline Quaternion* set(Vector3* v, float w) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
+	inline Quaternion& set(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
 		data[3] = w;
-		return this;
+		return *this;
 	}
 
 	/** 
 	 * Set up quaternion identity
 	 * @return this quaternion
 	 */
-	inline Quaternion* identity() {
+	inline Quaternion& identity() {
 		data[0] = 0.0f;
 		data[1] = 0.0f;
 		data[2] = 0.0f;
 		data[3] = 1.0f;
-		return this;
+		return *this;
 	}
 
 	/** 
 	 * Inverts this quaternion
 	 * @return this quaternion
 	 */
-	inline Quaternion* invert() {
+	inline Quaternion& invert() {
 		data[0] *= -1.0f;
 		data[1] *= -1.0f;
 		data[2] *= -1.0f;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -97,28 +97,27 @@ public:
 	 * @param axis
 	 * @return this quaternion
 	 */
-	inline Quaternion* rotate(float angle, Vector3* v) {
+	inline Quaternion& rotate(float angle, const Vector3& v) {
 		auto radians = angle * 3.1415927f / 180.0f;
 		auto sin = Math::sin(radians * 0.5);
 		auto cos = Math::cos(radians * 0.5);
-		auto& axisXYZ = v->getArray();
-		data[0] = axisXYZ[0] * sin;
-		data[1] = axisXYZ[1] * sin;
-		data[2] = axisXYZ[2] * sin;
+		data[0] = v.data[0] * sin;
+		data[1] = v.data[1] * sin;
+		data[2] = v.data[2] * sin;
 		data[3] = cos;
-		return this;
+		return *this;
 	}
 
 	/** 
 	 * Normalize quaternion
 	 */
-	inline Quaternion* normalize() {
-		auto magnitude = static_cast< float >(Math::sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2] + data[3] * data[3]));
+	inline Quaternion& normalize() {
+		auto magnitude = Math::sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2] + data[3] * data[3]);
 		data[0] = data[0] / magnitude;
 		data[1] = data[1] / magnitude;
 		data[2] = data[2] / magnitude;
 		data[3] = data[3] / magnitude;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -126,14 +125,14 @@ public:
 	 * @param quaterion q
 	 * @return this quaternion
 	 */
-	inline Quaternion* multiply(Quaternion* q) {
+	inline Quaternion& multiply(Quaternion* q) {
 		array<float, 4> _data;
 		_data[0] = data[3] * q->data[0] + data[0] * q->data[3] + data[1] * q->data[2] - data[2] * q->data[1];
 		_data[1] = data[3] * q->data[1] - data[0] * q->data[2] + data[1] * q->data[3] + data[2] * q->data[0];
 		_data[2] = data[3] * q->data[2] + data[0] * q->data[1] - data[1] * q->data[0] + data[2] * q->data[3];
 		_data[3] = data[3] * q->data[3] - data[0] * q->data[0] - data[1] * q->data[1] - data[2] * q->data[2];
 		data = _data;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -141,12 +140,12 @@ public:
 	 * @param quaterion q
 	 * @return this quaternion
 	 */
-	inline Quaternion* add(Quaternion* q) {
-		data[0] += q->data[0];
-		data[1] += q->data[1];
-		data[2] += q->data[2];
-		data[3] += q->data[3];
-		return this;
+	inline Quaternion& add(const Quaternion& q) {
+		data[0] += q.data[0];
+		data[1] += q.data[1];
+		data[2] += q.data[2];
+		data[3] += q.data[3];
+		return *this;
 	}
 
 	/** 
@@ -154,12 +153,12 @@ public:
 	 * @param value
 	 * @return this quaternion
 	 */
-	inline Quaternion* scale(float value) {
+	inline Quaternion& scale(float value) {
 		data[0] *= value;
 		data[1] *= value;
 		data[2] *= value;
 		data[3] *= value;
-		return this;
+		return *this;
 	}
 
 	/** 
@@ -168,16 +167,16 @@ public:
 	 * @param dest
 	 * @return dest
 	 */
-	inline Vector3* multiply(Vector3* v, Vector3* dest) {
+	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
 		Vector3 q;
 		Vector3 t;
 		Vector3 qxt;
 		q.set(data[0], data[1], data[2]);
-		Vector3::computeCrossProduct(q, *v, t).scale(2.0f);
+		Vector3::computeCrossProduct(q, v, t).scale(2.0f);
 		Vector3::computeCrossProduct(q, t, qxt);
-		dest->set(*v);
-		dest->add(qxt);
-		dest->add(t.scale(data[3]));
+		dest.set(v);
+		dest.add(qxt);
+		dest.add(t.scale(data[3]));
 		return dest;
 	}
 
@@ -186,8 +185,8 @@ public:
 	 * @param destination matrix
 	 * @return destination matrix  
 	 */
-	inline Matrix4x4* computeMatrix(Matrix4x4* matrix) {
-		matrix->set(
+	inline Matrix4x4& computeMatrix(Matrix4x4& matrix) const {
+		matrix.set(
 			1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]),
 			2.0f * (data[0] * data[1] + data[2] * data[3]),
 			2.0f * (data[0] * data[2] - data[1] * data[3]),
@@ -212,8 +211,8 @@ public:
 	 * Returns array data
 	 * @return array data
 	 */
-	inline array<float, 4>* getArray() {
-		return &data;
+	inline array<float, 4>& getArray() const {
+		return (array<float, 4>&)data;
 	}
 
 	/**
@@ -227,8 +226,8 @@ public:
 	 * Public constructor
 	 * @param quaternion
 	 */
-	inline Quaternion(Quaternion* q) {
-		data = q->data;
+	inline Quaternion(const Quaternion& q) {
+		data = q.data;
 	}
 
 	/**
@@ -250,10 +249,10 @@ public:
 	 * @param vector
 	 * @param w
 	 */
-	inline Quaternion(Vector3* v, float w) {
-		data[0] = v->data[0];
-		data[1] = v->data[1];
-		data[2] = v->data[2];
+	inline Quaternion(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
 		data[3] = w;
 	}
 };

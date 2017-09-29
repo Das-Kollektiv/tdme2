@@ -238,8 +238,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	auto radius = capsule->getRadius();
 	auto a = capsule->getA();
 	auto b = capsule->getB();
-	auto rotationQuaternion = new Quaternion();
-	rotationQuaternion->identity();
+	Quaternion rotationQuaternion;
+	rotationQuaternion.identity();
 	Vector3 yAxis(0.0f, -1.0f, 0.0f);
 	Vector3 abNormalized = a->clone().sub(*b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
@@ -250,7 +250,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
-	rotationQuaternion->rotate(angle, &rotationAxis);
+	rotationQuaternion.rotate(angle, rotationAxis);
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -264,13 +264,14 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	for (auto ySegment = segmentsY / 2; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
 			auto vertex = Vector3();
-			rotationQuaternion->multiply(
-				new Vector3(
+			rotationQuaternion.multiply(
+				Vector3(
 					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
 					((Math::cos(Math::PI * ySegment / segmentsY))),
-					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
-					&vertex
-				);
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+				),
+				vertex
+			);
 			vertex.scale(radius);
 			vertex.add(*a);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
@@ -278,13 +279,14 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
 			auto vertex = Vector3();
-			rotationQuaternion->multiply(
-				new Vector3(
+			rotationQuaternion.multiply(
+				Vector3(
 					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
 					((Math::cos(Math::PI * ySegment / segmentsY))),
-					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))),
-					&vertex
-				);
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+				),
+				vertex
+			);
 			vertex.scale(radius);
 			vertex.add(*b);
 			vertices[ySegment * segmentsX + xSegment] = vertex;

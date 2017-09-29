@@ -550,12 +550,12 @@ void LevelEditorView::display()
 
 		camLookRotationX->update();
 	}
-	camLookRotationX->getQuaternion()->multiply(FORWARD_VECTOR, tmpVector3);
-	camLookRotationY->getQuaternion()->multiply(tmpVector3, tmpVector3);
+	camLookRotationX->getQuaternion()->multiply(*FORWARD_VECTOR, *tmpVector3);
+	camLookRotationY->getQuaternion()->multiply(*tmpVector3, *tmpVector3);
 	camLookAtToFromVector->set(*tmpVector3).scale(camScale * 10.0f);
 	auto timing = engine->getTiming();
-	camLookRotationY->getQuaternion()->multiply(FORWARD_VECTOR, camForwardVector)->scale(timing->getDeltaTime() / 1000.0f * 60.0f);
-	camLookRotationY->getQuaternion()->multiply(SIDE_VECTOR, camSideVector)->scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion()->multiply(*FORWARD_VECTOR, *camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion()->multiply(*SIDE_VECTOR, *camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	if (keyUp)
 		cam->getLookAt()->sub(tmpVector3->set(*camForwardVector).scale(0.1f));
 

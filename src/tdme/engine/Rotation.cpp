@@ -53,25 +53,25 @@ void Rotation::fromRotation(Rotation* rotation)
 {
 	angle = rotation->angle;
 	axis.set(rotation->axis);
-	quaternion.set(&rotation->quaternion);
+	quaternion.set(rotation->quaternion);
 }
 
 void Rotation::fromQuaternion(Quaternion* q)
 {
-	quaternion.set(q);
+	quaternion.set(*q);
 	quaternion.normalize();
-	auto quaterionXYZ = quaternion.getArray();
-	this->angle = 2.0f * static_cast< float >(Math::acos((*quaterionXYZ)[3])) / 3.1415927f * 180.0f;
-	auto s = static_cast< float >(Math::sqrt(1.0f - (*quaterionXYZ)[3] * (*quaterionXYZ)[3]));
+	auto& quaterionXYZ = quaternion.getArray();
+	this->angle = 2.0f * Math::acos(quaterionXYZ[3]) / 3.1415927f * 180.0f;
+	auto s = Math::sqrt(1.0f - quaterionXYZ[3] * quaterionXYZ[3]);
 	if (s < 0.0010f) {
-		this->axis.set((*quaterionXYZ)[0], (*quaterionXYZ)[1], (*quaterionXYZ)[2]);
+		this->axis.set(quaterionXYZ[0], quaterionXYZ[1], quaterionXYZ[2]);
 	} else {
-		this->axis.set((*quaterionXYZ)[0] / s, (*quaterionXYZ)[1] / s, (*quaterionXYZ)[2] / s);
+		this->axis.set(quaterionXYZ[0] / s, quaterionXYZ[1] / s, quaterionXYZ[2] / s);
 	}
 }
 
 void Rotation::update()
 {
 	quaternion.identity();
-	quaternion.rotate(angle, &axis);
+	quaternion.rotate(angle, axis);
 }

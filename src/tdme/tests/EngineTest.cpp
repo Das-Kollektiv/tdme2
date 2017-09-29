@@ -206,7 +206,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (keyUp) {
-		r->getQuaternion()->multiply(new Vector3(0.0f, 0.0f, 1.0f), &movement);
+		r->getQuaternion()->multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
 		movement.scale(1.5f / fps);
 		player->getTranslation()->add(movement);
 		player->update();

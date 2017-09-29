@@ -11,14 +11,6 @@ using tdme::engine::Rotations;
 using tdme::engine::Rotation;
 using tdme::math::Quaternion;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 Rotations::Rotations() 
 {
 }
@@ -70,7 +62,7 @@ void Rotations::fromRotations(Rotations* transformations)
 	while (rotationIdx < rotations.size()) {
 		rotations.erase(rotations.begin() + rotations.size() - 1);
 	}
-	this->quaternion.set(&transformations->quaternion);
+	this->quaternion.set(transformations->quaternion);
 }
 
 void Rotations::update()

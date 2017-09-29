@@ -482,7 +482,7 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->inverseMass = rigidBody->inverseMass;
 	clonedRigidBody->force.set(rigidBody->force);
 	clonedRigidBody->torque.set(rigidBody->torque);
-	clonedRigidBody->orientation.set(&rigidBody->orientation);
+	clonedRigidBody->orientation.set(rigidBody->orientation);
 	clonedRigidBody->angularVelocity.set(rigidBody->angularVelocity);
 	clonedRigidBody->linearVelocity.set(rigidBody->linearVelocity);
 	clonedRigidBody->angularVelocityLast.set(rigidBody->angularVelocityLast);

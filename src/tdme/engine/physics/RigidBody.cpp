@@ -237,7 +237,7 @@ void RigidBody::sleep()
 
 void RigidBody::computeWorldInverseInertiaMatrix()
 {
-	orientation.computeMatrix(&orientationMatrix);
+	orientation.computeMatrix(orientationMatrix);
 	worldInverseInertia.set(orientationMatrix).transpose().multiply(inverseInertia).multiply(orientationMatrix);
 }
 
@@ -253,7 +253,7 @@ void RigidBody::synch(Transformations* transformations)
 		auto r = this->transformations->getRotations()->get(i);
 		this->orientation.multiply(r->getQuaternion());
 	}
-	(*this->orientation.getArray())[1] *= -1.0f;
+	this->orientation.getArray()[1] *= -1.0f;
 	this->orientation.normalize();
 	this->awake(true);
 }
@@ -308,10 +308,10 @@ void RigidBody::update(float deltaTime)
 	movement.sub(position);
 	movement.scale(-1.0f);
 	auto& angularVelocityXYZ = angularVelocity.getArray();
-	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f)->scale(0.5f * deltaTime);
-	tmpQuaternion1.set(&orientation);
+	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f).scale(0.5f * deltaTime);
+	tmpQuaternion1.set(orientation);
 	tmpQuaternion1.multiply(&tmpQuaternion2);
-	orientation.add(&tmpQuaternion1);
+	orientation.add(tmpQuaternion1);
 	orientation.normalize();
 	force.set(0.0f, 0.0f, 0.0f);
 	torque.set(0.0f, 0.0f, 0.0f);
