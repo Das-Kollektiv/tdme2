@@ -13,6 +13,7 @@ namespace utils {
 		class Key;
 		class MutableString;
 		class FilenameFilter;
+		class Time;
 		class ShortBuffer;
 		class StringConverter;
 		class StringTokenizer;
