@@ -89,30 +89,31 @@ void EntityBoundingVolumeView::resetBoundingVolume(LevelEditorEntity* entity, in
 		auto b = new Vector3();
 		auto radius = 0.0f;
 		auto halfExtensionXYZ = obb->getHalfExtension()->getArray();
-		if ((*halfExtensionXYZ)[0] > (*halfExtensionXYZ)[1] && (*halfExtensionXYZ)[0] > (*halfExtensionXYZ)[2]) {
-			radius = static_cast< float >(Math::sqrt((*halfExtensionXYZ)[1] * (*halfExtensionXYZ)[1] + (*halfExtensionXYZ)[2] * (*halfExtensionXYZ)[2]));
-			a->set(&(*obb->getAxes())[0]);
-			a->scale(-((*halfExtensionXYZ)[0] - radius));
-			a->add(obb->getCenter());
-			b->set(&(*obb->getAxes())[0]);
-			b->scale(+((*halfExtensionXYZ)[0] - radius));
-			b->add(obb->getCenter());
-		} else if ((*halfExtensionXYZ)[1] > (*halfExtensionXYZ)[0] && (*halfExtensionXYZ)[1] > (*halfExtensionXYZ)[2]) {
-			radius = static_cast< float >(Math::sqrt((*halfExtensionXYZ)[0] * (*halfExtensionXYZ)[0] + (*halfExtensionXYZ)[2] * (*halfExtensionXYZ)[2]));
-			a->set(&(*obb->getAxes())[1]);
-			a->scale(-((*halfExtensionXYZ)[1] - radius));
-			a->add(obb->getCenter());
-			b->set(&(*obb->getAxes())[1]);
-			b->scale(+((*halfExtensionXYZ)[1] - radius));
-			b->add(obb->getCenter());
+		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
+			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+			a->set((*obb->getAxes())[0]);
+			a->scale(-(halfExtensionXYZ[0] - radius));
+			a->add(*obb->getCenter());
+			b->set((*obb->getAxes())[0]);
+			b->scale(+(halfExtensionXYZ[0] - radius));
+			b->add(*obb->getCenter());
+		} else
+		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
+			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+			a->set((*obb->getAxes())[1]);
+			a->scale(-(halfExtensionXYZ[1] - radius));
+			a->add(*obb->getCenter());
+			b->set((*obb->getAxes())[1]);
+			b->scale(+(halfExtensionXYZ[1] - radius));
+			b->add(*obb->getCenter());
 		} else {
-			radius = static_cast< float >(Math::sqrt((*halfExtensionXYZ)[0] * (*halfExtensionXYZ)[0] + (*halfExtensionXYZ)[1] * (*halfExtensionXYZ)[1]));
-			a->set(&(*obb->getAxes())[2]);
-			a->scale(-((*halfExtensionXYZ)[2] - radius));
-			a->add(obb->getCenter());
-			b->set(&(*obb->getAxes())[2]);
-			b->scale(+((*halfExtensionXYZ)[2] - radius));
-			b->add(obb->getCenter());
+			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
+			a->set((*obb->getAxes())[2]);
+			a->scale(-(halfExtensionXYZ[2] - radius));
+			a->add(*obb->getCenter());
+			b->set((*obb->getAxes())[2]);
+			b->scale(+(halfExtensionXYZ[2] - radius));
+			b->add(*obb->getCenter());
 		}
 		modelViewerScreenController->setupCapsule(idx, a, b, radius);
 	}

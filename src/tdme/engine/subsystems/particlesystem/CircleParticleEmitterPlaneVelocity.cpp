@@ -22,9 +22,9 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->count = count;
 	this->lifeTime = lifeTime;
 	this->lifeTimeRnd = lifeTimeRnd;
-	this->axis0.set(axis0)->normalize();
-	this->axis1.set(axis1)->normalize();
-	this->center.set(center);
+	this->axis0.set(*axis0).normalize();
+	this->axis1.set(*axis1).normalize();
+	this->center.set(*center);
 	this->radius = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
@@ -32,10 +32,10 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->velocityRnd = velocityRnd;
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->centerTransformed.set(center);
+	this->centerTransformed.set(*center);
 	this->radiusTransformed = radius;
-	this->axis0Transformed.set(axis0)->normalize();
-	this->axis1Transformed.set(axis1)->normalize();
+	this->axis0Transformed.set(*axis0).normalize();
+	this->axis1Transformed.set(*axis1).normalize();
 }
 
 int32_t CircleParticleEmitterPlaneVelocity::getCount()
@@ -69,14 +69,14 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	Vector3 sinOnAxis1;
 	Vector3 side;
 	particle->active = true;
-	auto rnd = static_cast< float >(Math::random());
-	cosOnAxis0.set(&axis0Transformed)->scale(static_cast< float >(Math::cos(Math::PI * 2 * rnd)));
-	sinOnAxis1.set(&axis1Transformed)->scale(static_cast< float >(Math::sin(Math::PI * 2 * rnd)));
-	particle->position.set(&cosOnAxis0);
-	particle->position.add(&sinOnAxis1);
+	auto rnd = Math::random();
+	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));
+	sinOnAxis1.set(axis1Transformed).scale(Math::sin(Math::PI * 2 * rnd));
+	particle->position.set(cosOnAxis0);
+	particle->position.add(sinOnAxis1);
 	particle->position.scale(radiusTransformed);
-	particle->position.add(&centerTransformed);
-	particle->velocity.set(&particle->position)->sub(&centerTransformed)->normalize()->scale(velocity + static_cast< float >((Math::random() * velocityRnd)));
+	particle->position.add(centerTransformed);
+	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd));
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
@@ -95,7 +95,7 @@ void CircleParticleEmitterPlaneVelocity::fromTransformations(Transformations* tr
 	transformationsMatrix.multiply(center, centerTransformed);
 	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
 	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
-	side.set(&axis0)->scale(radius)->add(&center);
+	side.set(axis0).scale(radius).add(center);
 	transformationsMatrix.multiply(side, side);
-	radius = side.sub(&center)->computeLength();
+	radius = side.sub(center).computeLength();
 }

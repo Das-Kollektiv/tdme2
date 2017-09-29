@@ -194,7 +194,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	auto rotations = player->getRotations();
 	auto r = rotations->get(0);
 	player->update();
-	auto movement = new Vector3();
+	Vector3 movement;
 	if (keyRight)
 		r->setAngle(r->getAngle() - (135.0f / fps));
 
@@ -206,8 +206,8 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (keyUp) {
-		r->getQuaternion()->multiply(new Vector3(0.0f, 0.0f, 1.0f), movement);
-		movement->scale(1.5f / fps);
+		r->getQuaternion()->multiply(new Vector3(0.0f, 0.0f, 1.0f), &movement);
+		movement.scale(1.5f / fps);
 		player->getTranslation()->add(movement);
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
@@ -219,13 +219,13 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			player->setAnimation(L"still");
 		}
 	}
-	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
+	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, &movement, collision) == true && collision->hasPenetration() == true) {
+		player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
-	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
+	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), &movement, collision) == true && collision->hasPenetration() == true) {
+		player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
@@ -233,8 +233,8 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		if (idx == i)
 			continue;
 
-		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
-			player->getTranslation()->sub(collision->getNormal()->clone2().scale(collision->getPenetration()));
+		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), &movement, collision) == true && collision->hasPenetration()) {
+			player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 			player->update();
 			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 		}
@@ -255,7 +255,7 @@ void EngineTest::initialize()
 		osLight0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 		osLight0->getDiffuse()->set(1.0f, 1.0f, 1.0f, 1.0f);
 		osLight0->getPosition()->set(0.0f, -4.0f, -4.0f, 1.0f);
-		osLight0->getSpotDirection()->set(new Vector3(osLight0->getPosition()->getX(), osLight0->getPosition()->getY(), osLight0->getPosition()->getZ()))->sub(new Vector3(0.0f, 0.0f, 0.0f));
+		osLight0->getSpotDirection()->set(Vector3(osLight0->getPosition()->getX(), osLight0->getPosition()->getY(), osLight0->getPosition()->getZ())).sub(Vector3(0.0f, 0.0f, 0.0f));
 		osLight0->setEnabled(true);
 		auto osCam = osEngine->getCamera();
 		osCam->setZNear(0.1f);
@@ -276,7 +276,7 @@ void EngineTest::initialize()
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()->getX(), light0->getPosition()->getY(), light0->getPosition()->getZ()));
+	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition()->getX(), light0->getPosition()->getY(), light0->getPosition()->getZ()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
@@ -286,12 +286,12 @@ void EngineTest::initialize()
 	auto light1 = engine->getLightAt(1);
 	light1->getDiffuse()->set(1.0f, 0.0f, 0.0f, 1.0f);
 	light1->getPosition()->set(-4.0f, 5.0f, -5.0f, 1.0f);
-	light1->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light1->getPosition()->getX(), light1->getPosition()->getY(), light1->getPosition()->getZ()));
+	light1->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light1->getPosition()->getX(), light1->getPosition()->getY(), light1->getPosition()->getZ()));
 	light1->setEnabled(true);
 	auto light2 = engine->getLightAt(2);
 	light2->getDiffuse()->set(0.0f, 1.0f, 0.0f, 1.0f);
 	light2->getPosition()->set(+4.0f, 5.0f, 0.0f, 1.0f);
-	light2->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light2->getPosition()->getX(), light2->getPosition()->getY(), light2->getPosition()->getZ()));
+	light2->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition()->getX(), light2->getPosition()->getY(), light2->getPosition()->getZ()));
 	light2->setEnabled(true);
 	try {
 		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
@@ -320,7 +320,7 @@ void EngineTest::initialize()
 		playerBoundingVolume = new Capsule(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
 		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, L"player_bv");
 		auto player1 = new Object3D(L"player1", _player);
-		player1->getTranslation()->add(new Vector3(-1.5f, 0.0f, 0.0f));
+		player1->getTranslation()->add(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation(L"still");
 		player1->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player1->update();
@@ -337,7 +337,7 @@ void EngineTest::initialize()
 		player1BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player1BoundingVolume);
 		auto player2 = new Object3D(L"player2", _player);
-		player2->getTranslation()->add(new Vector3(1.5f, 0.0f, 0.0f));
+		player2->getTranslation()->add(Vector3(1.5f, 0.0f, 0.0f));
 		player2->setAnimation(L"still");
 		player2->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player2->update();
@@ -355,7 +355,7 @@ void EngineTest::initialize()
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
 		auto _cube = DAEReader::read(L"resources/tests/models/test", L"cube.dae");
 		cube = new Object3D(L"cube", _cube);
-		cube->getTranslation()->add(new Vector3(0.0f, 0.0f, 0.0f));
+		cube->getTranslation()->add(Vector3(0.0f, 0.0f, 0.0f));
 		cube->getScale()->set(2.0f, 2.0f, 2.0f);
 		cube->update();
 		cube->setPickable(true);
@@ -372,19 +372,19 @@ void EngineTest::initialize()
 		engine->addEntity(cubeBoundingVolumeObject3D);
 		auto _wall = DAEReader::read(L"resources/tests/models/wall", L"wall.dae");
 		auto wall0 = new Object3D(L"wall0", _wall);
-		wall0->getTranslation()->add(new Vector3(-1.0f, 0.0f, 3.0f));
+		wall0->getTranslation()->add(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();
 		wall0->setPickable(true);
 		wall0->setEnabled(true);
 		engine->addEntity(wall0);
 		auto wall1 = new Object3D(L"wall1", _wall);
-		wall1->getTranslation()->add(new Vector3(0.0f, 0.0f, 3.0f));
+		wall1->getTranslation()->add(Vector3(0.0f, 0.0f, 3.0f));
 		wall1->update();
 		wall1->setPickable(true);
 		wall1->setEnabled(true);
 		engine->addEntity(wall1);
 		auto osCube = new Object3D(L"cube", _cube);
-		osCube->getTranslation()->add(new Vector3(0.0f, 0.0f, 0.0f));
+		osCube->getTranslation()->add(Vector3(0.0f, 0.0f, 0.0f));
 		osCube->getScale()->set(2.0f, 2.0f, 2.0f);
 		osCube->update();
 		osEngine->addEntity(osCube);

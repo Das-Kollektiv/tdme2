@@ -69,7 +69,7 @@ void ConvexMesh::createVertices()
 		for (auto j = 0; j < triangleVertices->size(); j++) {
 			auto haveVertex = false;
 			for (auto k = 0; k < vertices.size(); k++) {
-				if (vertices.at(k).equals(&(*triangleVertices)[j]) == true) {
+				if (vertices.at(k).equals((*triangleVertices)[j]) == true) {
 					haveVertex = true;
 					break;
 				}
@@ -99,7 +99,7 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 	for (auto i = 0; i < triangles.size(); i++) {
 		triangles[i].fromBoundingVolume(&mesh->triangles[i]);
 	}
-	center.set(&mesh->center);
+	center.set(mesh->center);
 	sphereRadius = mesh->sphereRadius;
 	update();
 }
@@ -127,7 +127,7 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint)
 {
 	if (containsPoint(point) == true) {
-		closestsPoint->set(point);
+		closestsPoint->set(*point);
 		return;
 	}
 	if (triangles.size() == 0) {
@@ -136,14 +136,14 @@ void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* cl
 	Vector3 closestPointOnTriangle;
 	Vector3 distanceVector;
 	triangles[0].computeClosestPointOnBoundingVolume(point, &closestPointOnTriangle);
-	auto distance = distanceVector.set(point)->sub(&closestPointOnTriangle)->computeLength();
-	closestsPoint->set(&closestPointOnTriangle);
+	auto distance = distanceVector.set(*point).sub(closestPointOnTriangle).computeLength();
+	closestsPoint->set(closestPointOnTriangle);
 	for (auto i = 1; i < triangles.size(); i++) {
 		triangles[i].computeClosestPointOnBoundingVolume(point, &closestPointOnTriangle);
-		auto _distance = distanceVector.set(point)->sub(&closestPointOnTriangle)->computeLength();
+		auto _distance = distanceVector.set(*point).sub(closestPointOnTriangle).computeLength();
 		if (_distance < distance) {
 			distance = _distance;
-			closestsPoint->set(&closestPointOnTriangle);
+			closestsPoint->set(closestPointOnTriangle);
 		}
 	}
 }
@@ -157,10 +157,10 @@ bool ConvexMesh::containsPoint(Vector3* point)
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangle = triangles[i];
 		auto triangleVertices = triangle.getVertices();
-		triangleEdge1.set(&(*triangleVertices)[1])->sub(&(*triangleVertices)[0])->normalize();
-		triangleEdge2.set(&(*triangleVertices)[2])->sub(&(*triangleVertices)[1])->normalize();
-		triangleEdge3.set(&(*triangleVertices)[0])->sub(&(*triangleVertices)[2])->normalize();
-		Vector3::computeCrossProduct(&triangleEdge1, &triangleEdge2, &triangleNormal)->normalize();
+		triangleEdge1.set((*triangleVertices)[1]).sub((*triangleVertices)[0]).normalize();
+		triangleEdge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
+		triangleEdge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
+		Vector3::computeCrossProduct(triangleEdge1, triangleEdge2, triangleNormal).normalize();
 		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, &triangleEdge1) == false)
 			return false;
 
@@ -212,21 +212,21 @@ void ConvexMesh::update()
 {
 	Vector3 tmp;
 	for (auto i = 0; i < vertexReferences.size(); i++) {
-		vertices[i].set(vertexReferences[i]);
+		vertices[i].set(*vertexReferences[i]);
 	}
 	center.set(0.0f, 0.0f, 0.0f);
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();
-		center.add(&(*triangleVertices)[0]);
-		center.add(&(*triangleVertices)[1]);
-		center.add(&(*triangleVertices)[2]);
+		center.add((*triangleVertices)[0]);
+		center.add((*triangleVertices)[1]);
+		center.add((*triangleVertices)[2]);
 	}
 	center.scale(1.0f / (triangles.size() * 3.0f));
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();
 		for (auto j = 0; j < 3; j++) {
-			auto _sphereRadius = tmp.set(&center)->sub(&(*triangleVertices)[j])->computeLength();
+			auto _sphereRadius = tmp.set(center).sub((*triangleVertices)[j]).computeLength();
 			if (_sphereRadius > sphereRadius)
 				sphereRadius = _sphereRadius;
 		}

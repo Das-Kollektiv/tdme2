@@ -36,11 +36,11 @@ public:
 	 * @return valididy
 	 */
 	inline static bool checkAxis(Vector3* axis) {
-		auto axisXYZ = axis->getArray();
-		if (Float::isNaN((*axisXYZ)[0]) || Float::isNaN((*axisXYZ)[1]) || Float::isNaN((*axisXYZ)[2])) {
+		auto& axisXYZ = axis->getArray();
+		if (Float::isNaN(axisXYZ[0]) || Float::isNaN(axisXYZ[1]) || Float::isNaN(axisXYZ[2])) {
 			return false;
 		}
-		if (Math::abs((*axisXYZ)[0]) < MathTools::EPSILON && Math::abs((*axisXYZ)[1]) < MathTools::EPSILON && Math::abs((*axisXYZ)[2]) < MathTools::EPSILON) {
+		if (Math::abs(axisXYZ[0]) < MathTools::EPSILON && Math::abs(axisXYZ[1]) < MathTools::EPSILON && Math::abs(axisXYZ[2]) < MathTools::EPSILON) {
 			return false;
 		}
 		return true;
@@ -55,7 +55,7 @@ private:
 	 * @return
 	 */
 	inline static float doCalculatePoint(Vector3* point, Vector3* axis) {
-		auto distance = Vector3::computeDotProduct(point, axis);
+		auto distance = Vector3::computeDotProduct(*point, *axis);
 		return distance;
 	}
 
@@ -67,11 +67,11 @@ private:
 	 * @return float[] containing min and max
 	 */
 	inline static void doCalculateInterval(vector<Vector3>* vertices, Vector3* axis, float& min, float& max) {
-		auto distance = Vector3::computeDotProduct(&(*vertices)[0], axis);
+		auto distance = Vector3::computeDotProduct((*vertices)[0], *axis);
 		min = distance;
 		max = distance;
 		for (auto i = 1; i < vertices->size(); i++) {
-			distance = Vector3::computeDotProduct(&(*vertices)[i], axis);
+			distance = Vector3::computeDotProduct((*vertices)[i], *axis);
 			if (distance < min) min = distance;
 			if (distance > max) max = distance;
 		}
@@ -104,9 +104,9 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	inline static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3* axisTest, float& satPenetration) {
+	inline static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3& axisTest, float& satPenetration) {
 		Vector3 axis;
-		axis.set(axisTest)->normalize();
+		axis.set(axisTest).normalize();
 		float min1;
 		float max1;
 		float min2;
@@ -122,7 +122,7 @@ public:
 			return false;
 		}
 		if (min2 < min1) {
-			axisTest->scale(-1.0f);
+			axisTest.scale(-1.0f);
 		}
 		satPenetration = len1 + len2 - len;
 		return true;

@@ -51,7 +51,7 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* ver
 		auto currentVertexXYZ = (*vertices)[i].getArray();
 		auto nextVertexXYZ = (*vertices)[(i + 1) % vertices->size()].getArray();
 		edgeSum +=
-			((*nextVertexXYZ)[0] - (*currentVertexXYZ)[0]) * ((*nextVertexXYZ)[1] - (*currentVertexXYZ)[1]) * ((*nextVertexXYZ)[2] - (*currentVertexXYZ)[0]);
+			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[0]);
 	}
 	if (edgeSum >= 0) {
 		return ModelHelper_VertexOrder::CLOCKWISE;
@@ -63,10 +63,10 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* ver
 void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3* normal)
 {
 	Vector3::computeCrossProduct(
-		(*vertices)[1].clone2().sub(&(*vertices)[0]),
-		(*vertices)[2].clone2().sub(&(*vertices)[0]),
-		normal
-	)->normalize();
+		(*vertices)[1].clone().sub((*vertices)[0]),
+		(*vertices)[2].clone().sub((*vertices)[0]),
+		*normal
+	).normalize();
 }
 
 void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* normals)
@@ -74,7 +74,7 @@ void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* n
 	Vector3 normal;
 	computeNormal(vertices, &normal);
 	for (auto i = 0; i < vertices->size(); i++) {
-		(*normals)[i].set(&normal);
+		(*normals)[i].set(normal);
 	}
 }
 
@@ -107,13 +107,13 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 				uv1.setY(1.0f - uv1.getY());
 				uv2.set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
 				uv2.setY(1.0f - uv2.getY());
-				deltaPos1.set(v1)->sub(v0);
-				deltaPos2.set(v2)->sub(v0);
+				deltaPos1.set(*v1).sub(*v0);
+				deltaPos2.set(*v2).sub(*v0);
 				deltaUV1.set(uv1).sub(uv0);
 				deltaUV2.set(uv2).sub(uv0);
 				auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
-				auto tangent = deltaPos1.clone2().scale(deltaUV2.getY())->sub(tmpVector3.set(&deltaPos2)->scale(deltaUV1.getY()))->scale(r);
-				auto bitangent = deltaPos2.clone2().scale(deltaUV1.getX())->sub(tmpVector3.set(&deltaPos1)->scale(deltaUV2.getX()))->scale(r);
+				auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(tmpVector3.set(deltaPos2).scale(deltaUV1.getY())).scale(r);
+				auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(tmpVector3.set(deltaPos1).scale(deltaUV2.getX())).scale(r);
 				face.setTangentIndices(tangentsArrayList.size() + 0, tangentsArrayList.size() + 1, tangentsArrayList.size() + 2);
 				face.setBitangentIndices(bitangentsArrayList.size() + 0, bitangentsArrayList.size() + 1, bitangentsArrayList.size() + 2);
 				tangentsArrayList.push_back(tangent);
@@ -137,8 +137,8 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 				auto normal = &(*normals)[(*face.getNormalIndices())[i]];
 				auto tangent = &(*tangents)[(*face.getTangentIndices())[i]];
 				auto bitangent = &(*bitangents)[(*face.getBitangentIndices())[i]];
-				tangent->sub(tmpVector3.set(normal)->scale(Vector3::computeDotProduct(normal, tangent)))->normalize();
-				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, &tmpVector3), bitangent) < 0.0f) {
+				tangent->sub(tmpVector3.set(*normal).scale(Vector3::computeDotProduct(*normal, *tangent))).normalize();
+				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(*normal, *tangent, tmpVector3), *bitangent) < 0.0f) {
 					tangent->scale(-1.0f);
 				}
 				bitangent->normalize();
@@ -190,21 +190,21 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 					auto bitangent = groupBitangents->size() > 0 ? &(*groupBitangents)[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
 					auto newIndex = preparedIndices;
 					for (auto i = 0; i < preparedIndices; i++)
-					if (indexedVertices[i].equals(vertex) &&
-						indexedNormals[i].equals(normal) &&
+					if (indexedVertices[i].equals(*vertex) &&
+						indexedNormals[i].equals(*normal) &&
 					    (textureCoordinate == nullptr || indexedTextureCoordinates[i].equals(textureCoordinate)) &&
-					    (tangent == nullptr || indexedTangents[i].equals(tangent)) &&
-						(bitangent == nullptr || indexedBitangents[i].equals(bitangent))) {
+					    (tangent == nullptr || indexedTangents[i].equals(*tangent)) &&
+						(bitangent == nullptr || indexedBitangents[i].equals(*bitangent))) {
 						newIndex = i;
 						break;
 					}
 					if (newIndex == preparedIndices) {
 						vertexMapping.push_back(groupVertexIndex);
-						indexedVertices.push_back(vertex);;
-						indexedNormals.push_back(normal);;
+						indexedVertices.push_back(*vertex);;
+						indexedNormals.push_back(*normal);;
 						if (textureCoordinate != nullptr) indexedTextureCoordinates.push_back(textureCoordinate);
-						if (tangent != nullptr) indexedTangents.push_back(tangent);
-						if (bitangent != nullptr) indexedBitangents.push_back(bitangent);
+						if (tangent != nullptr) indexedTangents.push_back(*tangent);
+						if (bitangent != nullptr) indexedBitangents.push_back(*bitangent);
 						preparedIndices++;
 					}
 					indexedFaceVertexIndices[idx] = newIndex;

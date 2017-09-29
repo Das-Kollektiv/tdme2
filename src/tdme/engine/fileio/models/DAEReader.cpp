@@ -328,8 +328,8 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 				yAxis.normalize();
 				zAxis.normalize();
 				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &yAxis, &tmpAxis), &zAxis) < 0.0f) ||
-					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(&xAxis, &zAxis, &tmpAxis), &yAxis) < 0.0f)) {
+				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
+					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
 					xAxis.scale(-1.0f);
 					yAxis.scale(-1.0f);
 					zAxis.scale(-1.0f);
@@ -395,11 +395,11 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 					continue;
 				}
 				auto levelEditorObjectTransformations = new Transformations();
-				levelEditorObjectTransformations->getTranslation()->set(&translation);
-				levelEditorObjectTransformations->getRotations()->add(new Rotation((*rotation.getArray())[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
-				levelEditorObjectTransformations->getRotations()->add(new Rotation((*rotation.getArray())[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
-				levelEditorObjectTransformations->getRotations()->add(new Rotation((*rotation.getArray())[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
-				levelEditorObjectTransformations->getScale()->set(&scale);
+				levelEditorObjectTransformations->getTranslation()->set(translation);
+				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
+				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
+				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
+				levelEditorObjectTransformations->getScale()->set(scale);
 				levelEditorObjectTransformations->update();
 				auto object = new LevelEditorObject(
 					nodeId,

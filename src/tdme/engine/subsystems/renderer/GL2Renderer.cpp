@@ -251,9 +251,9 @@ void GL2Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>*
 	glUniform4fv(uniformId, 1, data->data());
 }
 
-void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data)
+void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>& data)
 {
-	glUniform3fv(uniformId, 1, data->data());
+	glUniform3fv(uniformId, 1, data.data());
 }
 
 void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)

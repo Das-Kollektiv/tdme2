@@ -56,8 +56,8 @@ LevelEditorLevel::LevelEditorLevel()
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()));
-	light->getSpotTo()->set(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ())->add(light->getSpotDirection());
+	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()));
+	light->getSpotTo()->set(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()).add(*light->getSpotDirection());
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -163,10 +163,10 @@ void LevelEditorLevel::computeBoundingBox()
 		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
 		bbDimension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector));
 		bbDimension.scale(0.5f);
-		bbMin.set(cbv->getCenter());
-		bbMin.sub(&bbDimension);
-		bbMax.set(cbv->getCenter());
-		bbMax.add(&bbDimension);
+		bbMin.set(*cbv->getCenter());
+		bbMin.sub(bbDimension);
+		bbMax.set(*cbv->getCenter());
+		bbMax.add(bbDimension);
 		auto objectLeft = bbMin.getX();
 		auto objectRight = bbMax.getX();
 		auto objectNear = bbMin.getZ();
@@ -207,7 +207,7 @@ Vector3* LevelEditorLevel::computeCenter()
 		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
 			continue;
 
-		center->add(levelEditorObject->getTransformations()->getTranslation());
+		center->add(*levelEditorObject->getTransformations()->getTranslation());
 		objectCount++;
 	}
 	if (objectCount != 0)
@@ -268,7 +268,7 @@ void LevelEditorLevel::updatePivot(int32_t modelId, Vector3* pivot)
 {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations()->getPivot()->set(pivot);
+			object->getTransformations()->getPivot()->set(*pivot);
 			object->getTransformations()->update();
 		}
 	}

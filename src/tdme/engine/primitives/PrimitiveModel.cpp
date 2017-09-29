@@ -122,12 +122,12 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	}
 	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
-	normals.push_back(*(*axes)[0].clone2().scale(-1.0f));
-	normals.push_back((*axes)[0].clone2());
-	normals.push_back(*(*axes)[1].clone2().scale(-1.0f));
-	normals.push_back((*axes)[1].clone2());
-	normals.push_back(*(*axes)[2].clone2().scale(-1.0f));
-	normals.push_back((*axes)[2].clone2());
+	normals.push_back((*axes)[0].clone().scale(-1.0f));
+	normals.push_back((*axes)[0].clone());
+	normals.push_back((*axes)[1].clone().scale(-1.0f));
+	normals.push_back((*axes)[1].clone());
+	normals.push_back((*axes)[2].clone().scale(-1.0f));
+	normals.push_back((*axes)[2].clone());
 	vector<Face> faces;
 	faces.push_back(Face(group, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
 	faces.push_back(Face(group, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
@@ -172,7 +172,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const wstring& id, int3
 
 	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-			auto vertex = (new Vector3(((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), ((Math::cos(Math::PI * ySegment / segmentsY))), ((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))))->scale(radius)->add(center);
+			auto vertex = (new Vector3(((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), ((Math::cos(Math::PI * ySegment / segmentsY))), ((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))))->scale(radius).add(*center);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 
@@ -241,15 +241,15 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	auto rotationQuaternion = new Quaternion();
 	rotationQuaternion->identity();
 	Vector3 yAxis(0.0f, -1.0f, 0.0f);
-	Vector3 abNormalized = a->clone2().sub(b)->normalize();
-	auto abNormalizedVectorXYZ = abNormalized.getArray();
+	Vector3 abNormalized = a->clone().sub(*b).normalize();
+	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs((*abNormalizedVectorXYZ)[0]) < MathTools::EPSILON && Math::abs((*abNormalizedVectorXYZ)[2]) < MathTools::EPSILON) {
-		rotationAxis.set((*abNormalizedVectorXYZ)[1], 0.0f, 0.0f);
+	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
+		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
-		Vector3::computeCrossProduct(&yAxis, &abNormalized, &rotationAxis)->normalize();
+		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
 	}
-	auto angle = Vector3::computeAngle(&yAxis, &abNormalized, &yAxis);
+	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion->rotate(angle, &rotationAxis);
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
@@ -272,7 +272,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 					&vertex
 				);
 			vertex.scale(radius);
-			vertex.add(a);
+			vertex.add(*a);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++) 
@@ -286,7 +286,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 					&vertex
 				);
 			vertex.scale(radius);
-			vertex.add(b);
+			vertex.add(*b);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 

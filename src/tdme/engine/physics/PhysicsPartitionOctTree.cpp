@@ -103,11 +103,11 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	}
 	auto cbv = rigidBody->cbv;
 	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector) + 0.2f, cbv->computeDimensionOnAxis(&upVector) + 0.2f, cbv->computeDimensionOnAxis(&forwardVector) + 0.2f)->scale(0.5f);
-	boundingBox.getMin()->set(center);
-	boundingBox.getMin()->sub(&halfExtension);
-	boundingBox.getMax()->set(center);
-	boundingBox.getMax()->add(&halfExtension);
+	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector) + 0.2f, cbv->computeDimensionOnAxis(&upVector) + 0.2f, cbv->computeDimensionOnAxis(&forwardVector) + 0.2f).scale(0.5f);
+	boundingBox.getMin()->set(*center);
+	boundingBox.getMin()->sub(halfExtension);
+	boundingBox.getMax()->set(*center);
+	boundingBox.getMax()->add(halfExtension);
 	boundingBox.update();
 	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin()->getX() / PARTITION_SIZE_MAX));
 	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin()->getY() / PARTITION_SIZE_MAX));
@@ -240,11 +240,11 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector))->scale(0.5f);
-	boundingBox.getMin()->set(center);
-	boundingBox.getMin()->sub(&halfExtension);
-	boundingBox.getMax()->set(center);
-	boundingBox.getMax()->add(&halfExtension);
+	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector)).scale(0.5f);
+	boundingBox.getMin()->set(*center);
+	boundingBox.getMin()->sub(halfExtension);
+	boundingBox.getMax()->set(*center);
+	boundingBox.getMax()->add(halfExtension);
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;
@@ -256,11 +256,11 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 
 ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(Vector3* center)
 {
-	halfExtension.set(0.2f, 0.2f, 0.2f)->scale(0.5f);
-	boundingBox.getMin()->set(center);
-	boundingBox.getMin()->sub(&halfExtension);
-	boundingBox.getMax()->set(center);
-	boundingBox.getMax()->add(&halfExtension);
+	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
+	boundingBox.getMin()->set(*center);
+	boundingBox.getMin()->sub(halfExtension);
+	boundingBox.getMax()->set(*center);
+	boundingBox.getMax()->add(halfExtension);
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;

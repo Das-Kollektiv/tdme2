@@ -29,7 +29,7 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->fileName = fileName;
 	this->thumbnail = thumbnail;
 	this->model = model;
-	this->pivot.set(pivot);
+	this->pivot.set(*pivot);
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->particleSystem = new LevelEditorEntityParticleSystem();
 	}

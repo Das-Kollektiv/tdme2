@@ -19,7 +19,7 @@ Rotation::Rotation()
 Rotation::Rotation(float angle, Vector3* axis) 
 {
 	this->angle = angle;
-	this->axis.set(axis);
+	this->axis.set(*axis);
 	this->quaternion.identity();
 }
 
@@ -52,7 +52,7 @@ Quaternion* Rotation::getQuaternion()
 void Rotation::fromRotation(Rotation* rotation)
 {
 	angle = rotation->angle;
-	axis.set(&rotation->axis);
+	axis.set(rotation->axis);
 	quaternion.set(&rotation->quaternion);
 }
 

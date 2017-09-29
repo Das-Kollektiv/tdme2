@@ -58,8 +58,8 @@ BoundingBox::BoundingBox()
 
 BoundingBox::BoundingBox(BoundingBox* boundingBox) 
 {
-	this->min.set(&boundingBox->min);
-	this->max.set(&boundingBox->max);
+	this->min.set(boundingBox->min);
+	this->max.set(boundingBox->max);
 	vertices.resize(8);
 	update();
 }
@@ -67,8 +67,8 @@ BoundingBox::BoundingBox(BoundingBox* boundingBox)
 BoundingBox::BoundingBox(Vector3* min, Vector3* max)
 {
 
-	this->min.set(min);
-	this->max.set(max);
+	this->min.set(*min);
+	this->max.set(*max);
 	vertices.resize(8);
 	update();
 }
@@ -94,11 +94,11 @@ void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 		return;
 	}
 	auto boundingBox = dynamic_cast< BoundingBox* >(original);
-	min.set(&boundingBox->min);
-	max.set(&boundingBox->max);
-	center.set(&boundingBox->center);
+	min.set(boundingBox->min);
+	max.set(boundingBox->max);
+	center.set(boundingBox->center);
 	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i].set(&boundingBox->vertices[i]);
+		vertices[i].set(boundingBox->vertices[i]);
 	}
 }
 
@@ -113,18 +113,18 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 	for (auto i = 0; i < vertices.size(); i++) {
 		transformationsMatrix.multiply((*_vertices)[i], vertices[i]);
 	}
-	auto vertexXYZ = vertices[0].getArray();
-	float minX = (*vertexXYZ)[0], minY = (*vertexXYZ)[1], minZ = (*vertexXYZ)[2];
-	float maxX = (*vertexXYZ)[0], maxY = (*vertexXYZ)[1], maxZ = (*vertexXYZ)[2];
+	auto& vertexXYZ = vertices[0].getArray();
+	float minX = vertexXYZ[0], minY = vertexXYZ[1], minZ = vertexXYZ[2];
+	float maxX = vertexXYZ[0], maxY = vertexXYZ[1], maxZ = vertexXYZ[2];
 	for (auto vertexIndex = 1; vertexIndex < vertices.size(); vertexIndex++) {
 		auto& vertex = vertices[vertexIndex];
 		vertexXYZ = vertex.getArray();
-		if ((*vertexXYZ)[0] < minX) minX = (*vertexXYZ)[0];
-		if ((*vertexXYZ)[1] < minY) minY = (*vertexXYZ)[1];
-		if ((*vertexXYZ)[2] < minZ) minZ = (*vertexXYZ)[2];
-		if ((*vertexXYZ)[0] > maxX) maxX = (*vertexXYZ)[0];
-		if ((*vertexXYZ)[1] > maxY) maxY = (*vertexXYZ)[1];
-		if ((*vertexXYZ)[2] > maxZ) maxZ = (*vertexXYZ)[2];
+		if (vertexXYZ[0] < minX) minX = vertexXYZ[0];
+		if (vertexXYZ[1] < minY) minY = vertexXYZ[1];
+		if (vertexXYZ[2] < minZ) minZ = vertexXYZ[2];
+		if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
+		if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
+		if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
 
 	}
 	min.set(minX, minY, minZ);
@@ -134,23 +134,23 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 
 void BoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
 {
-	auto pointXYZ = point->getArray();
-	auto minXYZ = min.getArray();
-	auto maxXYZ = max.getArray();
-	auto closestX = (*pointXYZ)[0] < (*minXYZ)[0] ? (*minXYZ)[0] : (*pointXYZ)[0] > (*maxXYZ)[0] ? (*maxXYZ)[0] : (*pointXYZ)[0];
-	auto closestY = (*pointXYZ)[1] < (*minXYZ)[1] ? (*minXYZ)[1] : (*pointXYZ)[1] > (*maxXYZ)[1] ? (*maxXYZ)[1] : (*pointXYZ)[1];
-	auto closestZ = (*pointXYZ)[2] < (*minXYZ)[2] ? (*minXYZ)[2] : (*pointXYZ)[2] > (*maxXYZ)[2] ? (*maxXYZ)[2] : (*pointXYZ)[2];
+	auto& pointXYZ = point->getArray();
+	auto& minXYZ = min.getArray();
+	auto& maxXYZ = max.getArray();
+	auto closestX = pointXYZ[0] < minXYZ[0] ? minXYZ[0] : pointXYZ[0] > maxXYZ[0] ? maxXYZ[0] : pointXYZ[0];
+	auto closestY = pointXYZ[1] < minXYZ[1] ? minXYZ[1] : pointXYZ[1] > maxXYZ[1] ? maxXYZ[1] : pointXYZ[1];
+	auto closestZ = pointXYZ[2] < minXYZ[2] ? minXYZ[2] : pointXYZ[2] > maxXYZ[2] ? maxXYZ[2] : pointXYZ[2];
 	closestPoint->set(closestX, closestY, closestZ);
 }
 
 bool BoundingBox::containsPoint(Vector3* point)
 {
-	auto pointXYZ = point->getArray();
-	auto minXYZ = min.getArray();
-	auto maxXYZ = max.getArray();
+	auto& pointXYZ = point->getArray();
+	auto& minXYZ = min.getArray();
+	auto& maxXYZ = max.getArray();
 	for (auto i = 0; i < 3; i++) {
-		if ((*pointXYZ)[i] < (*minXYZ)[i]) return false;
-		if ((*pointXYZ)[i] > (*maxXYZ)[i]) return false;
+		if (pointXYZ[i] < minXYZ[i]) return false;
+		if (pointXYZ[i] > maxXYZ[i]) return false;
 	}
 	return true;
 }
@@ -176,11 +176,11 @@ bool BoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, Collis
 
 float BoundingBox::computeDimensionOnAxis(Vector3* axis)
 {
-	auto vertexOnAxis = Vector3::computeDotProduct(&vertices[0], axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], *axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
 	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(&vertices[i], axis);
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], *axis);
 		if (vertexOnAxis < min) min = vertexOnAxis;
 		if (vertexOnAxis > max) max = vertexOnAxis;
 	}
@@ -189,19 +189,19 @@ float BoundingBox::computeDimensionOnAxis(Vector3* axis)
 
 void BoundingBox::update()
 {
-	auto minXYZ = min.getArray();
-	auto maxXYZ = max.getArray();
-	vertices[0].set((*minXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
-	vertices[1].set((*maxXYZ)[0], (*minXYZ)[1], (*minXYZ)[2]);
-	vertices[2].set((*maxXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
-	vertices[3].set((*minXYZ)[0], (*maxXYZ)[1], (*minXYZ)[2]);
-	vertices[4].set((*minXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
-	vertices[5].set((*maxXYZ)[0], (*minXYZ)[1], (*maxXYZ)[2]);
-	vertices[6].set((*maxXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
-	vertices[7].set((*minXYZ)[0], (*maxXYZ)[1], (*maxXYZ)[2]);
-	center.set(&min)->add(&max)->scale(0.5f);
+	auto& minXYZ = min.getArray();
+	auto& maxXYZ = max.getArray();
+	vertices[0].set(minXYZ[0], minXYZ[1], minXYZ[2]);
+	vertices[1].set(maxXYZ[0], minXYZ[1], minXYZ[2]);
+	vertices[2].set(maxXYZ[0], maxXYZ[1], minXYZ[2]);
+	vertices[3].set(minXYZ[0], maxXYZ[1], minXYZ[2]);
+	vertices[4].set(minXYZ[0], minXYZ[1], maxXYZ[2]);
+	vertices[5].set(maxXYZ[0], minXYZ[1], maxXYZ[2]);
+	vertices[6].set(maxXYZ[0], maxXYZ[1], maxXYZ[2]);
+	vertices[7].set(minXYZ[0], maxXYZ[1], maxXYZ[2]);
+	center.set(min).add(max).scale(0.5f);
 	Vector3 halfExtension;
-	halfExtension.set(&max)->sub(&min)->scale(0.5f);
+	halfExtension.set(max).sub(min).scale(0.5f);
 	sphereRadius = halfExtension.computeLength();
 }
 

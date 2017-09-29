@@ -126,13 +126,13 @@ String* Tools::formatColor4(Color4* value)
 	);
 }
 
-void Tools::convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */
+void Tools::convertToArray(String* text, array<float, 3>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
 	t.tokenize(text->getCPPWString(), L",");
-	while (t.hasMoreTokens() && i < array->size()) {
-		(*array)[i++] = Float::parseFloat(t.nextToken());
+	while (t.hasMoreTokens() && i < array.size()) {
+		array[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
@@ -202,7 +202,7 @@ void Tools::setDefaultLight(Light* light)
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()));
+	light->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -333,30 +333,30 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition()->set(entityBoundingBox->getMin()->getX() + ((entityBoundingBox->getMax()->getX() - entityBoundingBox->getMin()->getX()) / 2.0f), entityBoundingBox->getMin()->getY() + ((entityBoundingBox->getMax()->getY() - entityBoundingBox->getMin()->getY()) / 2.0f), -entityBoundingBox->getMin()->getZ() * 4.0f, 1.0f);
-	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f)->sub(new Vector3(light0->getPosition()->getX(), light0->getPosition()->getY(), light0->getPosition()->getZ()));
+	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition()->getX(), light0->getPosition()->getY(), light0->getPosition()->getZ()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto dimension = entityBoundingBox->getMax()->clone2().sub(entityBoundingBox->getMin());
+	auto dimension = entityBoundingBox->getMax()->clone().sub(*entityBoundingBox->getMin());
 	auto maxAxisDimension = computeMaxAxisDimension(entityBoundingBox);
 	auto cam = engine->getCamera();
 	cam->setZNear(maxAxisDimension / 5000.0f);
 	cam->setZFar(maxAxisDimension);
-	auto lookAt = entityBoundingBox->getMin()->clone2().add(dimension->clone2().scale(0.5f));
+	auto lookAt = entityBoundingBox->getMin()->clone().add(dimension.clone().scale(0.5f));
 	cam->getLookAt()->set(lookAt);
 	auto lookAtToFromVector = new Vector3(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
 	auto lookAtToFromVectorTransformed = new Vector3();
 	auto lookAtToFromVectorScaled = new Vector3();
 	auto upVector = new Vector3();
 	lookFromRotations->getTransformationsMatrix().multiply(*lookAtToFromVector, *lookAtToFromVectorTransformed);
-	lookAtToFromVectorScaled->set(lookAtToFromVectorTransformed)->scale(scale);
+	lookAtToFromVectorScaled->set(*lookAtToFromVectorTransformed).scale(scale);
 	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(new Vector3(0.0f, 1.0f, 0.0f), upVector);
-	auto lookFrom = lookAt->clone2().add(lookAtToFromVectorScaled);
+	auto lookFrom = lookAt.clone().add(*lookAtToFromVectorScaled);
 	cam->getLookFrom()->set(lookFrom);
-	cam->getUpVector()->set(upVector);
+	cam->getUpVector()->set(*upVector);
 }
 
 const wstring Tools::getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName)

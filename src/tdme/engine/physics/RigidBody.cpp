@@ -247,7 +247,7 @@ void RigidBody::synch(Transformations* transformations)
 	if (this->cbv != nullptr)
 		this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
 
-	this->position.set(this->transformations->getTranslation());
+	this->position.set(*this->transformations->getTranslation());
 	this->orientation.identity();
 	for (auto i = 0; i < this->transformations->getRotations()->size(); i++) {
 		auto r = this->transformations->getRotations()->get(i);
@@ -267,10 +267,10 @@ void RigidBody::addForce(Vector3* forceOrigin, Vector3* force)
 		return;
 
 	awake(false);
-	this->force.add(force);
+	this->force.add(*force);
 	Vector3 distance;
 	Vector3 tmp;
-	distance.set(forceOrigin)->sub(&position);
+	distance.set(*forceOrigin).sub(position);
 	if (distance.computeLength() < MathTools::EPSILON) {
 		_Console::println(
 			wstring(L"RigidBody::addForce(): ") +
@@ -278,8 +278,8 @@ void RigidBody::addForce(Vector3* forceOrigin, Vector3* force)
 			wstring(L": Must not equals position")
 		);
 	}
-	Vector3::computeCrossProduct(force, &distance, &tmp);
-	this->torque.add(&tmp);
+	Vector3::computeCrossProduct(*force, distance, tmp);
+	this->torque.add(tmp);
 }
 
 void RigidBody::update(float deltaTime)
@@ -303,20 +303,20 @@ void RigidBody::update(float deltaTime)
 	Vector3 tmpVector3;
 	Quaternion tmpQuaternion1;
 	Quaternion tmpQuaternion2;
-	movement.set(&position);
-	position.add(tmpVector3.set(&linearVelocity)->scale(deltaTime));
-	movement.sub(&position);
+	movement.set(position);
+	position.add(tmpVector3.set(linearVelocity).scale(deltaTime));
+	movement.sub(position);
 	movement.scale(-1.0f);
-	auto angularVelocityXYZ = angularVelocity.getArray();
-	tmpQuaternion2.set((*angularVelocityXYZ)[0], -(*angularVelocityXYZ)[1], (*angularVelocityXYZ)[2], 0.0f)->scale(0.5f * deltaTime);
+	auto& angularVelocityXYZ = angularVelocity.getArray();
+	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f)->scale(0.5f * deltaTime);
 	tmpQuaternion1.set(&orientation);
 	tmpQuaternion1.multiply(&tmpQuaternion2);
 	orientation.add(&tmpQuaternion1);
 	orientation.normalize();
 	force.set(0.0f, 0.0f, 0.0f);
 	torque.set(0.0f, 0.0f, 0.0f);
-	linearVelocityLast.set(&linearVelocity);
-	angularVelocityLast.set(&angularVelocity);
+	linearVelocityLast.set(linearVelocity);
+	angularVelocityLast.set(angularVelocity);
 	computeWorldInverseInertiaMatrix();
 }
 
@@ -324,10 +324,10 @@ bool RigidBody::checkVelocityChange()
 {
 	Vector3 tmpVector3;
 
-	if (tmpVector3.set(&linearVelocity)->sub(&linearVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
+	if (tmpVector3.set(linearVelocity).sub(linearVelocityLast).computeLength() > VELOCITY_SLEEPTOLERANCE)
 		return true;
 
-	if (tmpVector3.set(&angularVelocity)->sub(&angularVelocityLast)->computeLength() > VELOCITY_SLEEPTOLERANCE)
+	if (tmpVector3.set(angularVelocity).sub(angularVelocityLast).computeLength() > VELOCITY_SLEEPTOLERANCE)
 		return true;
 
 	return false;

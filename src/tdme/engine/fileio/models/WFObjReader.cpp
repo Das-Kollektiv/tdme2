@@ -121,7 +121,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 					auto x = Float::parseFloat(t.nextToken());
 					auto y = Float::parseFloat(t.nextToken());
 					auto z = Float::parseFloat(t.nextToken());
-					vertices.push_back(new Vector3(x, y, z));
+					vertices.push_back(Vector3(x, y, z));
 				} else
 				if (command == L"vt") {
 					t.tokenize(arguments, L" ");

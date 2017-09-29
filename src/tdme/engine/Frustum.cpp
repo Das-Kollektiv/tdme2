@@ -49,7 +49,7 @@ void Frustum::updateFrustum()
 	y = data[13] - data[1];
 	z = data[14] - data[2];
 	d = data[15] - data[3];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -60,7 +60,7 @@ void Frustum::updateFrustum()
 	y = data[13] + data[1];
 	z = data[14] + data[2];
 	d = data[15] + data[3];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -71,7 +71,7 @@ void Frustum::updateFrustum()
 	y = data[13] + data[5];
 	z = data[14] + data[6];
 	d = data[15] + data[7];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -82,7 +82,7 @@ void Frustum::updateFrustum()
 	y = data[13] - data[5];
 	z = data[14] - data[6];
 	d = data[15] - data[7];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -93,7 +93,7 @@ void Frustum::updateFrustum()
 	y = data[13] - data[9];
 	z = data[14] - data[10];
 	d = data[15] - data[11];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -104,7 +104,7 @@ void Frustum::updateFrustum()
 	y = data[13] + data[9];
 	z = data[14] + data[10];
 	d = data[15] + data[11];
-	t = static_cast< float >(Math::sqrt((x * x) + (y * y) + (z * z)));
+	t = Math::sqrt((x * x) + (y * y) + (z * z));
 	x /= t;
 	y /= t;
 	z /= t;
@@ -115,10 +115,10 @@ void Frustum::updateFrustum()
 
 bool Frustum::isVisible(Vector3* v)
 {
-	auto vector = v->getArray();
+	auto& vector = v->getArray();
 	for (auto& p : planes) {
-		auto normal = p.getNormal()->getArray();
-		if (((*normal)[0] * (*vector)[0]) + ((*normal)[1] * (*vector)[1]) + ((*normal)[2] * (*vector)[2])+ p.getDistance() <= 0) {
+		auto& normal = p.getNormal()->getArray();
+		if ((normal[0] * vector[0]) + (normal[1] * vector[1]) + (normal[2] * vector[2]) + p.getDistance() <= 0) {
 			return false;
 		}
 	}
@@ -127,11 +127,11 @@ bool Frustum::isVisible(Vector3* v)
 
 bool Frustum::isVisible(Sphere* s)
 {
-	auto center = s->getCenter()->getArray();
+	auto& center = s->getCenter()->getArray();
 	auto radius = s->getRadius();
 	for (auto& p : planes) {
-		auto normal = p.getNormal()->getArray();
-		if (((*normal)[0] * (*center)[0]) + ((*normal)[1] * (*center)[1]) + ((*normal)[2] * (*center)[2])+ p.getDistance() <= -radius) {
+		auto& normal = p.getNormal()->getArray();
+		if ((normal[0] * center[0]) + (normal[1] * center[1]) + (normal[2] * center[2]) + p.getDistance() <= -radius) {
 			return false;
 		}
 	}
@@ -140,39 +140,39 @@ bool Frustum::isVisible(Sphere* s)
 
 bool Frustum::isVisible(BoundingBox* b)
 {
-	auto min = b->getMin()->getArray();
-	auto max = b->getMax()->getArray();
-	auto minX = (*min)[0];
-	auto minY = (*min)[1];
-	auto minZ = (*min)[2];
-	auto maxX = (*max)[0];
-	auto maxY = (*max)[1];
-	auto maxZ = (*max)[2];
+	auto& min = b->getMin()->getArray();
+	auto& max = b->getMax()->getArray();
+	auto minX = min[0];
+	auto minY = min[1];
+	auto minZ = min[2];
+	auto maxX = max[0];
+	auto maxY = max[1];
+	auto maxZ = max[2];
 	for (auto& p : planes) {
-		auto normal = p.getNormal()->getArray();
+		auto& normal = p.getNormal()->getArray();
 		auto distance = p.getDistance();
-		if (((*normal)[0] * minX) + ((*normal)[1] * minY) + ((*normal)[2] * minZ)+ distance > 0) {
+		if ((normal[0] * minX) + (normal[1] * minY) + (normal[2] * minZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * maxX) + ((*normal)[1] * minY) + ((*normal)[2] * minZ)+ distance > 0) {
+		if ((normal[0] * maxX) + (normal[1] * minY) + (normal[2] * minZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * minX) + ((*normal)[1] * maxY) + ((*normal)[2] * minZ)+ distance > 0) {
+		if ((normal[0] * minX) + (normal[1] * maxY) + (normal[2] * minZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * maxX) + ((*normal)[1] * maxY) + ((*normal)[2] * minZ)+ distance > 0) {
+		if ((normal[0] * maxX) + (normal[1] * maxY) + (normal[2] * minZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * minX) + ((*normal)[1] * minY) + ((*normal)[2] * maxZ)+ distance > 0) {
+		if ((normal[0] * minX) + (normal[1] * minY) + (normal[2] * maxZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * maxX) + ((*normal)[1] * minY) + ((*normal)[2] * maxZ)+ distance > 0) {
+		if ((normal[0] * maxX) + (normal[1] * minY) + (normal[2] * maxZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * minX) + ((*normal)[1] * maxY) + ((*normal)[2] * maxZ)+ distance > 0) {
+		if ((normal[0] * minX) + (normal[1] * maxY) + (normal[2] * maxZ) + distance > 0) {
 			continue;
 		}
-		if (((*normal)[0] * maxX) + ((*normal)[1] * maxY) + ((*normal)[2] * maxZ)+ distance > 0) {
+		if ((normal[0] * maxX) + (normal[1] * maxY) + (normal[2] * maxZ) + distance > 0) {
 			continue;
 		}
 		return false;

@@ -65,7 +65,7 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 			model
 		);
 		objects[i]->setEnabled(false);
-		objects[i]->getScale()->set(scale);
+		objects[i]->getScale()->set(*scale);
 		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 		objects[i]->setPickable(false);
 	}
@@ -195,7 +195,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 
 		emitter->emit(particle);
 		auto object = objects[i];
-		object->getTranslation()->set(&particle->position);
+		object->getTranslation()->set(particle->position);
 		object->update();
 		object->setEnabled(true);
 		object->getEffectColorAdd()->set(&effectColorAdd);
@@ -234,21 +234,21 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 
 		object->getEffectColorAdd()->set(&effectColorAdd);
 		object->getEffectColorMul()->set(&effectColorMul);
-		object->getTranslation()->add(velocityForTime.set(&particle->velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->getTranslation()->add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
-			boundingBoxTransformed->getMin()->set(object->getBoundingBoxTransformed()->getMin());
-			boundingBoxTransformed->getMax()->set(object->getBoundingBoxTransformed()->getMax());
+			boundingBoxTransformed->getMin()->set(*object->getBoundingBoxTransformed()->getMin());
+			boundingBoxTransformed->getMax()->set(*object->getBoundingBoxTransformed()->getMax());
 			first = false;
 		} else {
 			auto objBbMinXYZ = object->getBoundingBoxTransformed()->getMin()->getArray();
 			auto objBbMaxXYZ = object->getBoundingBoxTransformed()->getMax()->getArray();
-			if ((*objBbMinXYZ)[0] < (*bbMinXYZ)[0]) (*bbMinXYZ)[0] = (*objBbMinXYZ)[0];
-			if ((*objBbMinXYZ)[1] < (*bbMinXYZ)[1]) (*bbMinXYZ)[1] = (*objBbMinXYZ)[1];
-			if ((*objBbMinXYZ)[2] < (*bbMinXYZ)[2]) (*bbMinXYZ)[2] = (*objBbMinXYZ)[2];
-			if ((*objBbMaxXYZ)[0] > (*bbMaxXYZ)[0]) (*bbMaxXYZ)[0] = (*objBbMaxXYZ)[0];
-			if ((*objBbMaxXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*objBbMaxXYZ)[1];
-			if ((*objBbMaxXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*objBbMaxXYZ)[2];
+			if (objBbMinXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = objBbMinXYZ[0];
+			if (objBbMinXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = objBbMinXYZ[1];
+			if (objBbMinXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = objBbMinXYZ[2];
+			if (objBbMaxXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = objBbMaxXYZ[0];
+			if (objBbMaxXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = objBbMaxXYZ[1];
+			if (objBbMaxXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = objBbMaxXYZ[2];
 		}
 	}
 	boundingBoxTransformed->update();

@@ -65,22 +65,22 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		Object3DGroup::computeTransformations(&object3DModelInternal->object3dGroups);
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {
-				auto vertexXYZ = vertex.getArray();
+				auto& vertexXYZ = vertex.getArray();
 				if (firstVertex == true) {
-					minX = (*vertexXYZ)[0];
-					minY = (*vertexXYZ)[1];
-					minZ = (*vertexXYZ)[2];
-					maxX = (*vertexXYZ)[0];
-					maxY = (*vertexXYZ)[1];
-					maxZ = (*vertexXYZ)[2];
+					minX = vertexXYZ[0];
+					minY = vertexXYZ[1];
+					minZ = vertexXYZ[2];
+					maxX = vertexXYZ[0];
+					maxY = vertexXYZ[1];
+					maxZ = vertexXYZ[2];
 					firstVertex = false;
 				} else {
-					if ((*vertexXYZ)[0] < minX) minX = (*vertexXYZ)[0];
-					if ((*vertexXYZ)[1] < minY) minY = (*vertexXYZ)[1];
-					if ((*vertexXYZ)[2] < minZ) minZ = (*vertexXYZ)[2];
-					if ((*vertexXYZ)[0] > maxX) maxX = (*vertexXYZ)[0];
-					if ((*vertexXYZ)[1] > maxY) maxY = (*vertexXYZ)[1];
-					if ((*vertexXYZ)[2] > maxZ) maxZ = (*vertexXYZ)[2];
+					if (vertexXYZ[0] < minX) minX = vertexXYZ[0];
+					if (vertexXYZ[1] < minY) minY = vertexXYZ[1];
+					if (vertexXYZ[2] < minZ) minZ = vertexXYZ[2];
+					if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
+					if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
+					if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
 				}
 			}
 		}

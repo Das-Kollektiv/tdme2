@@ -143,8 +143,8 @@ void World::update(float deltaTime)
 				continue;
 			}
 			rigidBody->addForce(
-				worldPosForce.set(rigidBody->getPosition())->setY(10000.0f),
-				gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
+				&worldPosForce.set(*rigidBody->getPosition()).setY(10000.0f),
+				&gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
 			);
 		}
 	}
@@ -194,9 +194,9 @@ void World::update(float deltaTime)
 					rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
 					rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
 					collisionsTests++;
-					collisionMovement.set(&rigidBody1->movement);
+					collisionMovement.set(rigidBody1->movement);
 					if (collisionMovement.computeLength() < MathTools::EPSILON) {
-						collisionMovement.set(&rigidBody2->movement);
+						collisionMovement.set(rigidBody2->movement);
 						collisionMovement.scale(-1.0f);
 					}
 					if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, &collisionMovement, &collision) == true && collision.hasPenetration() == true) {
@@ -259,9 +259,9 @@ void World::update(float deltaTime)
 			rotations->add(new Rotation());
 		}
 		rotations->get(0)->fromQuaternion(&rigidBody->orientation);
-		(*rotations->get(0)->getAxix()->getArray())[1] *= -1.0f;
+		rotations->get(0)->getAxix()->getArray()[1] *= -1.0f;
 		auto transformations = rigidBody->transformations;
-		transformations->getTranslation()->set(&rigidBody->position);
+		transformations->getTranslation()->set(rigidBody->position);
 		transformations->update();
 		rigidBody->cbv->fromBoundingVolumeWithTransformations(rigidBody->obv, transformations);
 		partition->updateRigidBody(rigidBody);
@@ -301,16 +301,16 @@ Vector3* World::higher(Vector3* a, Vector3* b)
 
 RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* point, Vector3* dest)
 {
-	dest->set(point);
-	auto pointXYZ = point->getArray();
+	dest->set(*point);
+	auto& pointXYZ = point->getArray();
 	BoundingBox heightBoundingBox;
 	Vector3 heightOnPointCandidate;
 	Vector3 heightOnPointA;
 	Vector3 heightOnPointB;
-	heightBoundingBox.getMin()->set((*pointXYZ)[0], -10000.0f, (*pointXYZ)[2]);
-	heightBoundingBox.getMax()->set((*pointXYZ)[0], +10000.0f, (*pointXYZ)[2]);
+	heightBoundingBox.getMin()->set(pointXYZ[0], -10000.0f, pointXYZ[2]);
+	heightBoundingBox.getMax()->set(pointXYZ[0], +10000.0f, pointXYZ[2]);
 	heightBoundingBox.update();
-	heightOnPointCandidate.set((*pointXYZ)[0], 10000.0f, (*pointXYZ)[2]);
+	heightOnPointCandidate.set(pointXYZ[0], 10000.0f, pointXYZ[2]);
 	auto height = -10000.0f;
 	RigidBody* heightRigidBody = nullptr;
 	for (auto _i = partition->getObjectsNearTo(static_cast< BoundingVolume* >(&heightBoundingBox))->iterator(); _i->hasNext(); ) {
@@ -323,7 +323,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), &heightOnPointA, &heightOnPointB) == true) {
 					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
-					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
+					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
 						heightRigidBody = rigidBody;
 					}
@@ -332,7 +332,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 			if (dynamic_cast< OrientedBoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(dynamic_cast< OrientedBoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), &heightOnPointA, &heightOnPointB) == true) {
 					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
-					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
+					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
 						heightRigidBody = rigidBody;
 					}
@@ -341,7 +341,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 				cbv->computeClosestPointOnBoundingVolume(&heightOnPointCandidate, &heightOnPointA);
 				if (Math::abs(heightOnPointCandidate.getX() - heightOnPointA.getX()) < 0.1f &&
 					Math::abs(heightOnPointCandidate.getZ() - heightOnPointA.getZ()) < 0.1f &&
-					heightOnPointA.getY() >= height && heightOnPointA.getY() < (*pointXYZ)[1] + Math::max(0.1f, stepUpMax)) {
+					heightOnPointA.getY() >= height && heightOnPointA.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
 					height = heightOnPointA.getY();
 					heightRigidBody = rigidBody;
 				}
@@ -369,7 +369,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	float heightPointDestY;
 	RigidBody* heightRigidBody = nullptr;
 	RigidBody* rigidBody = nullptr;
-	heightPoint.set(boundingVolume->getCenter());
+	heightPoint.set(*boundingVolume->getCenter());
 	heightPoint.addY(-height / 2.0f);
 	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
 	if (rigidBody != nullptr) {
@@ -379,7 +379,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(boundingVolume->getCenter());
+	heightPoint.set(*boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
@@ -391,7 +391,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(boundingVolume->getCenter());
+	heightPoint.set(*boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
@@ -403,7 +403,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(boundingVolume->getCenter());
+	heightPoint.set(*boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
@@ -415,7 +415,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(boundingVolume->getCenter());
+	heightPoint.set(*boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
@@ -430,7 +430,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	if (heightRigidBody == nullptr) {
 		return nullptr;
 	} else {
-		dest->set(point);
+		dest->set(*point);
 		dest->setY(determinedHeight);
 		return heightRigidBody;
 	}
@@ -480,14 +480,14 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->isStatic_ = rigidBody->isStatic_;
 	clonedRigidBody->mass = rigidBody->mass;
 	clonedRigidBody->inverseMass = rigidBody->inverseMass;
-	clonedRigidBody->force.set(&rigidBody->force);
-	clonedRigidBody->torque.set(&rigidBody->torque);
+	clonedRigidBody->force.set(rigidBody->force);
+	clonedRigidBody->torque.set(rigidBody->torque);
 	clonedRigidBody->orientation.set(&rigidBody->orientation);
-	clonedRigidBody->angularVelocity.set(&rigidBody->angularVelocity);
-	clonedRigidBody->linearVelocity.set(&rigidBody->linearVelocity);
-	clonedRigidBody->angularVelocityLast.set(&rigidBody->angularVelocityLast);
-	clonedRigidBody->movement.set(&rigidBody->movement);
-	clonedRigidBody->position.set(&rigidBody->position);
+	clonedRigidBody->angularVelocity.set(rigidBody->angularVelocity);
+	clonedRigidBody->linearVelocity.set(rigidBody->linearVelocity);
+	clonedRigidBody->angularVelocityLast.set(rigidBody->angularVelocityLast);
+	clonedRigidBody->movement.set(rigidBody->movement);
+	clonedRigidBody->position.set(rigidBody->position);
 	clonedRigidBody->worldInverseInertia.set(rigidBody->worldInverseInertia);
 	clonedRigidBody->transformations->fromTransformations(rigidBody->transformations);
 }

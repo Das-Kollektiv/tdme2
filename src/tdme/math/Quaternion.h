@@ -99,12 +99,12 @@ public:
 	 */
 	inline Quaternion* rotate(float angle, Vector3* v) {
 		auto radians = angle * 3.1415927f / 180.0f;
-		auto sin = static_cast< float >(Math::sin(radians * 0.5));
-		auto cos = static_cast< float >(Math::cos(radians * 0.5));
-		auto axisXYZ = v->getArray();
-		data[0] = (*axisXYZ)[0] * sin;
-		data[1] = (*axisXYZ)[1] * sin;
-		data[2] = (*axisXYZ)[2] * sin;
+		auto sin = Math::sin(radians * 0.5);
+		auto cos = Math::cos(radians * 0.5);
+		auto& axisXYZ = v->getArray();
+		data[0] = axisXYZ[0] * sin;
+		data[1] = axisXYZ[1] * sin;
+		data[2] = axisXYZ[2] * sin;
 		data[3] = cos;
 		return this;
 	}
@@ -173,10 +173,10 @@ public:
 		Vector3 t;
 		Vector3 qxt;
 		q.set(data[0], data[1], data[2]);
-		Vector3::computeCrossProduct(&q, v, &t)->scale(2.0f);
-		Vector3::computeCrossProduct(&q, &t, &qxt);
-		dest->set(v);
-		dest->add(&qxt);
+		Vector3::computeCrossProduct(q, *v, t).scale(2.0f);
+		Vector3::computeCrossProduct(q, t, qxt);
+		dest->set(*v);
+		dest->add(qxt);
 		dest->add(t.scale(data[3]));
 		return dest;
 	}

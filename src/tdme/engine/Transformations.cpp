@@ -51,9 +51,9 @@ Matrix4x4& Transformations::getTransformationsMatrix()
 
 void Transformations::fromTransformations(Transformations* transformations)
 {
-	translation.set(&transformations->translation);
-	scale.set(&transformations->scale);
-	pivot.set(&transformations->pivot);
+	translation.set(transformations->translation);
+	scale.set(transformations->scale);
+	pivot.set(transformations->pivot);
 	auto rotationIdx = 0;
 	for (; rotationIdx < transformations->rotations.size(); rotationIdx++) {
 		auto rotation = transformations->rotations.get(rotationIdx);
@@ -79,7 +79,7 @@ void Transformations::update()
 	scaleMatrix.identity().scale(scale);
 	rotations.update();
 	rotationsMatrix.identity();
-	rotationsPivot.set(&pivot)->scale(-1.0f);
+	rotationsPivot.set(pivot).scale(-1.0f);
 	rotationsMatrix.translate(rotationsPivot);
 	rotations.quaternion.computeMatrix(&rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);

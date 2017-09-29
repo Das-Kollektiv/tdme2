@@ -224,7 +224,7 @@ public:
 	 * @return vector 3
 	 */
 	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
-		return *dest.set(
+		return dest.set(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + data[12],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + data[13],
 			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10] + data[14]
@@ -238,7 +238,7 @@ public:
 	 * @return vector 3 dest
 	 */
 	inline Vector3& multiplyNoTranslation(const Vector3& v, Vector3& dest) const {
-		return *dest.set(
+		return dest.set(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9],
 			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10]
@@ -350,22 +350,22 @@ public:
 	 */
 	inline Matrix4x4& rotate(float angle, const Vector3& v) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
-		auto vXYZ = v.getArray();
+		auto& vXYZ = v.getArray();
 	    float c = Math::cos(angle * MathTools::DEG2RAD);    // cosine
 	    float s = Math::sin(angle * MathTools::DEG2RAD);    // sine
 	    float c1 = 1.0f - c;                // 1 - c
 	    float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
 	          m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
 	          m2 = data[2],  m6 = data[6],  m10= data[10], m14= data[14];
-	    float r0 = (*vXYZ)[0] * (*vXYZ)[0] * c1 + c;
-	    float r1 = (*vXYZ)[0] * (*vXYZ)[1] * c1 + (*vXYZ)[2] * s;
-	    float r2 = (*vXYZ)[0] * (*vXYZ)[2] * c1 - (*vXYZ)[1] * s;
-	    float r4 = (*vXYZ)[0] * (*vXYZ)[1] * c1 - (*vXYZ)[2] * s;
-	    float r5 = (*vXYZ)[1] * (*vXYZ)[1] * c1 + c;
-	    float r6 = (*vXYZ)[1] * (*vXYZ)[2] * c1 + (*vXYZ)[0] * s;
-	    float r8 = (*vXYZ)[0] * (*vXYZ)[2] * c1 + (*vXYZ)[1] * s;
-	    float r9 = (*vXYZ)[1] * (*vXYZ)[2] * c1 - (*vXYZ)[0] * s;
-	    float r10= (*vXYZ)[2] * (*vXYZ)[2] * c1 + c;
+	    float r0 = vXYZ[0] * vXYZ[0] * c1 + c;
+	    float r1 = vXYZ[0] * vXYZ[1] * c1 + vXYZ[2] * s;
+	    float r2 = vXYZ[0] * vXYZ[2] * c1 - vXYZ[1] * s;
+	    float r4 = vXYZ[0] * vXYZ[1] * c1 - vXYZ[2] * s;
+	    float r5 = vXYZ[1] * vXYZ[1] * c1 + c;
+	    float r6 = vXYZ[1] * vXYZ[2] * c1 + vXYZ[0] * s;
+	    float r8 = vXYZ[0] * vXYZ[2] * c1 + vXYZ[1] * s;
+	    float r9 = vXYZ[1] * vXYZ[2] * c1 - vXYZ[0] * s;
+	    float r10= vXYZ[2] * vXYZ[2] * c1 + c;
 	    data[0] = r0 * m0 + r4 * m1 + r8 * m2;
 	    data[1] = r1 * m0 + r5 * m1 + r9 * m2;
 	    data[2] = r2 * m0 + r6 * m1 + r10* m2;
@@ -546,19 +546,19 @@ public:
 	 * @param euler
 	 */
 	inline void computeEulerAngles(Vector3& euler) const {
-		auto eulerXYZ = euler.getArray();
+		auto& eulerXYZ = euler.getArray();
 		auto axis0 = 0;
 		auto axis1 = 1;
 		auto axis2 = 2;
 		auto cy = static_cast< float >(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
 		if (cy > 16.0f * MathTools::EPSILON) {
-			(*eulerXYZ)[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
-			(*eulerXYZ)[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			(*eulerXYZ)[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
+			eulerXYZ[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
+			eulerXYZ[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			eulerXYZ[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
 		} else {
-			(*eulerXYZ)[0] = static_cast< float >((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
-			(*eulerXYZ)[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			(*eulerXYZ)[2] = 0.0f;
+			eulerXYZ[0] = static_cast< float >((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
+			eulerXYZ[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			eulerXYZ[2] = 0.0f;
 		}
 		euler.scale(static_cast< float >((180.0 / Math::PI)));
 	}

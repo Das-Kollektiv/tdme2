@@ -92,7 +92,7 @@ Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_
 	is.readFloatArray(&boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
 	is.readFloatArray(&boundingBoxMaxXYZ);
-	auto boundingBox = new BoundingBox(new Vector3(&boundingBoxMinXYZ), new Vector3(&boundingBoxMaxXYZ));
+	auto boundingBox = new BoundingBox(new Vector3(boundingBoxMinXYZ), new Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
 		pathName + L"/" + fileName,
 		fileName,
@@ -158,7 +158,7 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 		v.resize(is->readInt());
 		for (auto i = 0; i < v.size(); i++) {
 			is->readFloatArray(&vXYZ);
-			v[i].set(&vXYZ);
+			v[i].set(vXYZ);
 		}
 	}
 	return v;

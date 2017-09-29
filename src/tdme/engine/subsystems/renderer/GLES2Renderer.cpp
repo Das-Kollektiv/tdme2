@@ -294,9 +294,9 @@ void GLES2Renderer::setProgramUniformFloatVec4(int32_t uniformId, array<float, 4
 	gl->glUniform4fv(uniformId, 1, data->data(), 0);
 }
 
-void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data)
+void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>& data)
 {
-	gl->glUniform3fv(uniformId, 1, data->data(), 0);
+	gl->glUniform3fv(uniformId, 1, data.data(), 0);
 }
 
 void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)

@@ -46,12 +46,12 @@ private:
 	 * @param Ay
 	 * @return
 	 */
-	inline static bool EDGE_EDGE_TEST(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, int32_t i0, int32_t i1, float Ax, float Ay) {
+	inline static bool EDGE_EDGE_TEST(array<float, 3>& V0, array<float, 3>& U0, array<float, 3>& U1, int32_t i0, int32_t i1, float Ax, float Ay) {
 		float Bx, By, Cx, Cy, e, d, f;
-		Bx = (*U0)[i0] - (*U1)[i0];
-		By = (*U0)[i1] - (*U1)[i1];
-		Cx = (*V0)[i0] - (*U0)[i0];
-		Cy = (*V0)[i1] - (*U0)[i1];
+		Bx = U0[i0] - U1[i0];
+		By = U0[i1] - U1[i1];
+		Cx = V0[i0] - U0[i0];
+		Cy = V0[i1] - U0[i1];
 		f = Ay * Bx - Ax * By;
 		d = By * Cx - Bx * Cy;
 		if ((f > 0 && d >= 0 && d <= f) || (f < 0 && d <= 0 && d >= f)) {
@@ -81,10 +81,10 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool EDGE_AGAINST_TRI_EDGES(array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1) {
+	static bool EDGE_AGAINST_TRI_EDGES(array<float, 3>& V0, array<float, 3>& V1, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2, int32_t i0, int32_t i1) {
 		float Ax, Ay;
-		Ax = (*V1)[i0] - (*V0)[i0];
-		Ay = (*V1)[i1] - (*V0)[i1];
+		Ax = V1[i0] - V0[i0];
+		Ay = V1[i1] - V0[i1];
 		if (EDGE_EDGE_TEST(V0, U0, U1, i0, i1, Ax, Ay) == true)
 			return true;
 
@@ -108,20 +108,20 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool POINT_IN_TRI(array<float, 3>* V0, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2, int32_t i0, int32_t i1) {
+	static bool POINT_IN_TRI(array<float, 3>& V0, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2, int32_t i0, int32_t i1) {
 		float a, b, c, d0, d1, d2;
-		a = (*U1)[i1] - (*U0)[i1];
-		b = -((*U1)[i0] - (*U0)[i0]);
-		c = -a * (*U0)[i0] - b * (*U0)[i1];
-		d0 = a * (*V0)[i0] + b * (*V0)[i1] + c;
-		a = (*U2)[i1] - (*U1)[i1];
-		b = -((*U2)[i0] - (*U1)[i0]);
-		c = -a * (*U1)[i0] - b * (*U1)[i1];
-		d1 = a * (*V0)[i0] + b * (*V0)[i1] + c;
-		a = (*U0)[i1] - (*U2)[i1];
-		b = -((*U0)[i0] - (*U2)[i0]);
-		c = -a * (*U2)[i0] - b * (*U2)[i1];
-		d2 = a * (*V0)[i0] + b * (*V0)[i1] + c;
+		a = U1[i1] - U0[i1];
+		b = -(U1[i0] - U0[i0]);
+		c = -a * U0[i0] - b * U0[i1];
+		d0 = a * V0[i0] + b * V0[i1] + c;
+		a = U2[i1] - U1[i1];
+		b = -(U2[i0] - U1[i0]);
+		c = -a * U1[i0] - b * U1[i1];
+		d1 = a * V0[i0] + b * V0[i1] + c;
+		a = U0[i1] - U2[i1];
+		b = -(U0[i0] - U2[i0]);
+		c = -a * U2[i0] - b * U2[i1];
+		d2 = a * V0[i0] + b * V0[i1] + c;
 		if (d0 * d1 > 0.0) {
 			if (d0 * d2 > 0.0)
 				return true;
@@ -142,12 +142,12 @@ private:
 	 * @param U2
 	 * @return
 	 */
-	static bool coplanar_tri_tri(array<float, 3>* N, array<float, 3>* V0, array<float, 3>* V1, array<float, 3>* V2, array<float, 3>* U0, array<float, 3>* U1, array<float, 3>* U2) {
+	static bool coplanar_tri_tri(array<float, 3>& N, array<float, 3>& V0, array<float, 3>& V1, array<float, 3>& V2, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2) {
 		int32_t i0, i1;
 		array<float, 3> A;
-		A[0] = Math::abs((*N)[0]);
-		A[1] = Math::abs((*N)[1]);
-		A[2] = Math::abs((*N)[2]);
+		A[0] = Math::abs(N[0]);
+		A[1] = Math::abs(N[1]);
+		A[2] = Math::abs(N[2]);
 		if (A[0] > A[1]) {
 			if (A[0] > A[2]) {
 				i0 = 1;
@@ -206,14 +206,14 @@ private:
 		Vector3 diff;
 		auto tmp = D0 / (D0 - D1);
 		isect0->getArray()[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
-		diff.set(VTX1)->sub(VTX0);
+		diff.set(*VTX1).sub(*VTX0);
 		diff.scale(tmp);
-		isectpoint0->set(&diff)->add(VTX0);
+		isectpoint0->set(diff).add(*VTX0);
 		tmp = D0 / (D0 - D2);
 		isect1->getArray()[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
-		diff.set(VTX2)->sub(VTX0);
+		diff.set(*VTX2).sub(*VTX0);
 		diff.scale(tmp);
-		isectpoint1->set(VTX0)->add(&diff);
+		isectpoint1->set(*VTX0).add(diff);
 	}
 
 	/** 

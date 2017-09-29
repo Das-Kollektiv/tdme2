@@ -86,13 +86,13 @@ void Camera::computeUpVector(Vector3* lookFrom, Vector3* lookAt, Vector3* upVect
 {
 	Vector3 tmpForward;
 	Vector3 tmpSide;
-	tmpForward.set(lookAt)->sub(lookFrom)->normalize();
+	tmpForward.set(*lookAt).sub(*lookFrom).normalize();
 	if (Math::abs(tmpForward.getX()) < MathTools::EPSILON && Math::abs(tmpForward.getZ()) < MathTools::EPSILON) {
-		upVector->set(0.0f, 0.0f, tmpForward.getY())->normalize();
+		upVector->set(0.0f, 0.0f, tmpForward.getY()).normalize();
 		return;
 	}
-	Vector3::computeCrossProduct(&tmpForward, &defaultUp, &tmpSide)->normalize();
-	Vector3::computeCrossProduct(&tmpSide, &tmpForward, upVector)->normalize();
+	Vector3::computeCrossProduct(tmpForward, defaultUp, tmpSide).normalize();
+	Vector3::computeCrossProduct(tmpSide, tmpForward, *upVector).normalize();
 }
 
 Matrix4x4* Camera::computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar)
@@ -132,30 +132,30 @@ Matrix4x4* Camera::computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Ve
 	Vector3 tmpSide;
 	Vector3 tmpUp;
 	Vector3 tmpLookFromInverted;
-	tmpForward.set(lookAt)->sub(lookFrom)->normalize();
-	Vector3::computeCrossProduct(&tmpForward, upVector, &tmpSide)->normalize();
-	Vector3::computeCrossProduct(&tmpSide, &tmpForward, &tmpUp);
-	auto sideXYZ = tmpSide.getArray();
-	auto forwardXYZ = tmpForward.getArray();
-	auto upXYZ = tmpUp.getArray();
+	tmpForward.set(*lookAt).sub(*lookFrom).normalize();
+	Vector3::computeCrossProduct(tmpForward, *upVector, tmpSide).normalize();
+	Vector3::computeCrossProduct(tmpSide, tmpForward, tmpUp);
+	auto& sideXYZ = tmpSide.getArray();
+	auto& forwardXYZ = tmpForward.getArray();
+	auto& upXYZ = tmpUp.getArray();
 	modelViewMatrix.
 		identity().
 		translate(
-			*tmpLookFromInverted.set(lookFrom)->scale(-1.0f)
+			tmpLookFromInverted.set(*lookFrom).scale(-1.0f)
 		).
 		multiply(
 			tmpAxesMatrix.set(
-				(*sideXYZ)[0],
-				(*upXYZ)[0],
-				-(*forwardXYZ)[0],
+				sideXYZ[0],
+				upXYZ[0],
+				-forwardXYZ[0],
 				0.0f,
-				(*sideXYZ)[1],
-				(*upXYZ)[1],
-				-(*forwardXYZ)[1],
+				sideXYZ[1],
+				upXYZ[1],
+				-forwardXYZ[1],
 				0.0f,
-				(*sideXYZ)[2],
-				(*upXYZ)[2],
-				-(*forwardXYZ)[2],
+				sideXYZ[2],
+				upXYZ[2],
+				-forwardXYZ[2],
 				0.0f,
 				0.0f,
 				0.0f,

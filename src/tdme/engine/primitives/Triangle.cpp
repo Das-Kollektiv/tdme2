@@ -42,9 +42,9 @@ Triangle::Triangle()
 Triangle::Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2) 
 {
 	this->vertices.resize(3);
-	this->vertices[0].set(vertex0);
-	this->vertices[1].set(vertex1);
-	this->vertices[2].set(vertex2);
+	this->vertices[0].set(*vertex0);
+	this->vertices[1].set(*vertex1);
+	this->vertices[2].set(*vertex2);
 	update();
 }
 
@@ -55,9 +55,9 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 	}
 	auto triangle = dynamic_cast< Triangle* >(original);
 	for (auto i = 0; i < vertices.size(); i++)
-		vertices[i].set(&triangle->vertices[i]);
+		vertices[i].set(triangle->vertices[i]);
 
-	center.set(&triangle->center);
+	center.set(triangle->center);
 	sphereRadius = triangle->sphereRadius;
 }
 
@@ -79,14 +79,14 @@ void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* clos
 	Vector3 edge0;
 	Vector3 edge1;
 	Vector3 v0Point;
-	edge0.set(&vertices[1])->sub(&vertices[0]);
-	edge1.set(&vertices[2])->sub(&vertices[0]);
-	v0Point.set(&vertices[0])->sub(point);
-	auto a = Vector3::computeDotProduct(&edge0, &edge0);
-	auto b = Vector3::computeDotProduct(&edge0, &edge1);
-	auto c = Vector3::computeDotProduct(&edge1, &edge1);
-	auto d = Vector3::computeDotProduct(&edge0, &v0Point);
-	auto e = Vector3::computeDotProduct(&edge1, &v0Point);
+	edge0.set(vertices[1]).sub(vertices[0]);
+	edge1.set(vertices[2]).sub(vertices[0]);
+	v0Point.set(vertices[0]).sub(*point);
+	auto a = Vector3::computeDotProduct(edge0, edge0);
+	auto b = Vector3::computeDotProduct(edge0, edge1);
+	auto c = Vector3::computeDotProduct(edge1, edge1);
+	auto d = Vector3::computeDotProduct(edge0, v0Point);
+	auto e = Vector3::computeDotProduct(edge1, v0Point);
 	auto det = a * c - b * b;
 	auto s = b * e - c * d;
 	auto t = b * d - a * e;
@@ -142,14 +142,14 @@ void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* clos
 			t = 1.0f - s;
 		}
 	}
-	closestPoint->set(&vertices[0])->add(edge0.scale(s))->add(edge1.scale(t));
+	closestPoint->set(vertices[0]).add(edge0.scale(s)).add(edge1.scale(t));
 }
 
 bool Triangle::containsPoint(Vector3* point)
 {
 	Vector3 closestPoint;
 	computeClosestPointOnBoundingVolume(point, &closestPoint);
-	return closestPoint.equals(point);
+	return closestPoint.equals(*point);
 }
 
 bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
@@ -173,11 +173,11 @@ bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3* movement, Collision
 
 float Triangle::computeDimensionOnAxis(Vector3* axis)
 {
-	auto vertexOnAxis = Vector3::computeDotProduct(&vertices[0], axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], *axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
 	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(&vertices[i], axis);
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], *axis);
 		if (vertexOnAxis < min) min = vertexOnAxis;
 		if (vertexOnAxis > max) max = vertexOnAxis;
 	}
@@ -187,10 +187,10 @@ float Triangle::computeDimensionOnAxis(Vector3* axis)
 void Triangle::update()
 {
 	Vector3 distanceVector;
-	this->center.set(&vertices[0])->add(&vertices[1])->add(&vertices[2])->scale(1.0f / 3.0f);
+	this->center.set(vertices[0]).add(vertices[1]).add(vertices[2]).scale(1.0f / 3.0f);
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < vertices.size(); i++) {
-		auto _sphereRadius = distanceVector.set(&center)->sub(&vertices[i])->computeLength();
+		auto _sphereRadius = distanceVector.set(center).sub(vertices[i]).computeLength();
 		if (_sphereRadius > sphereRadius) sphereRadius = _sphereRadius;
 	}
 }

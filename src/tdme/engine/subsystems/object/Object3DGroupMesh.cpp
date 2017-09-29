@@ -71,25 +71,25 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 		mesh->transformedVertices.resize(groupVertices->size());
 		mesh->vertices = &mesh->transformedVertices;
 		for (auto j = 0; j < mesh->vertices->size(); j++) {
-			(*mesh->vertices)[j].set(&(*groupVertices)[j]);
+			(*mesh->vertices)[j].set((*groupVertices)[j]);
 		}
 		mesh->transformedNormals.resize(groupNormals->size());
 		mesh->normals = &mesh->transformedNormals;
 		for (auto j = 0; j < mesh->normals->size(); j++) {
-			(*mesh->normals)[j].set(&(*groupNormals)[j]);
+			(*mesh->normals)[j].set((*groupNormals)[j]);
 		}
 		if (groupTangents->size() > 0) {
 			mesh->transformedTangents.resize(groupTangents->size());
 			mesh->tangents = &mesh->transformedTangents;
 			for (auto j = 0; j < mesh->tangents->size(); j++) {
-				(*mesh->tangents)[j].set(&(*groupTangents)[j]);
+				(*mesh->tangents)[j].set((*groupTangents)[j]);
 			}
 		}
 		if (groupBitangents->size() > 0) {
 			mesh->transformedBitangents.resize(groupBitangents->size());
 			mesh->bitangents = &mesh->transformedBitangents;
 			for (auto j = 0; j < mesh->bitangents->size(); j++) {
-				(*mesh->bitangents)[j].set(&(*groupBitangents)[j]);
+				(*mesh->bitangents)[j].set((*groupBitangents)[j]);
 			}
 		}
 	} else {
@@ -173,13 +173,13 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 			float weightNormalized;
 			for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
 				vertex = &(*groupVertices)[vertexIndex];
-				transformedVertex = (*vertices)[vertexIndex].set(0.0f, 0.0f, 0.0f);
+				transformedVertex = &(*vertices)[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				normal = &(*groupNormals)[vertexIndex];
-				transformedNormal = (*normals)[vertexIndex].set(0.0f, 0.0f, 0.0f);
+				transformedNormal = &(*normals)[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				tangent = groupTangent->size() > 0 ? &(*groupTangent)[vertexIndex] : static_cast< Vector3* >(nullptr);
-				transformedTangent = tangents != nullptr ? (*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
+				transformedTangent = tangents != nullptr ? &(*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
 				bitangent = groupTangent->size() > 0 ? &(*groupBitangent)[vertexIndex] : static_cast< Vector3* >(nullptr);
-				transformedBitangent = bitangents != nullptr ? (*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
+				transformedBitangent = bitangents != nullptr ? &(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {
 					auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
@@ -211,7 +211,7 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 		}
 	} else if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
-			(*vertices)[vertexIndex].set(&cGroupTransformationsMatrix->multiply((*groupVertices)[vertexIndex], tmpVector3));
+			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply((*groupVertices)[vertexIndex], tmpVector3));
 		}
 		for (auto normalIndex = 0; normalIndex < groupNormals->size(); normalIndex++) {
 			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation((*groupNormals)[normalIndex], tmpVector3).normalize());

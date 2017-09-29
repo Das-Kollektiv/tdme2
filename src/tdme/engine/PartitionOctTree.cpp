@@ -285,11 +285,11 @@ int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_Par
 ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector))->scale(0.5f);
-	boundingBox.getMin()->set(center);
-	boundingBox.getMin()->sub(&halfExtension);
-	boundingBox.getMax()->set(center);
-	boundingBox.getMax()->add(&halfExtension);
+	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector)).scale(0.5f);
+	boundingBox.getMin()->set(*center);
+	boundingBox.getMin()->sub(halfExtension);
+	boundingBox.getMax()->set(*center);
+	boundingBox.getMax()->add(halfExtension);
 	boundingBox.update();
 	entityIterator.clear();
 	auto lookUps = 0;
@@ -301,11 +301,11 @@ ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingV
 
 ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(Vector3* center)
 {
-	halfExtension.set(0.2f, 0.2f, 0.2f)->scale(0.5f);
-	boundingBox.getMin()->set(center);
-	boundingBox.getMin()->sub(&halfExtension);
-	boundingBox.getMax()->set(center);
-	boundingBox.getMax()->add(&halfExtension);
+	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
+	boundingBox.getMin()->set(*center);
+	boundingBox.getMin()->sub(halfExtension);
+	boundingBox.getMax()->set(*center);
+	boundingBox.getMax()->add(halfExtension);
 	boundingBox.update();
 	entityIterator.clear();
 	auto lookUps = 0;

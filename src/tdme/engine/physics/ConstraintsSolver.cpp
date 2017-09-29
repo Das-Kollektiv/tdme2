@@ -270,7 +270,7 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 		}
 		auto normalCurrent = constraintEntity.collision.getNormal();
 		if (normalLast != nullptr) {
-			if (Math::abs(Vector3::computeDotProduct(normalLast, normalCurrent)) < 0.75f) {
+			if (Math::abs(Vector3::computeDotProduct(*normalLast, *normalCurrent)) < 0.75f) {
 				continue;
 			}
 		}
@@ -318,7 +318,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		if (isVelocityChangeRigidBody == false)
 			continue;
 
-		auto ab = Vector3::computeDotProduct(&rigidBodiesCurrentChain.at(rigidBodyAIdx)->linearVelocity, &rigidBodiesCurrentChain.at(j)->linearVelocity);
+		auto ab = Vector3::computeDotProduct(rigidBodiesCurrentChain.at(rigidBodyAIdx)->linearVelocity, rigidBodiesCurrentChain.at(j)->linearVelocity);
 		if (ab > 0.0f)
 			continue;
 
@@ -437,14 +437,14 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 		if (constrainedBodies.find(body->id) != constrainedBodies.end()) {
 			getConstrainedVelocity(body, &newLinearVelocity, &newAngularVelocity);
 		}
-		force.set(&body->force)->scale(body->inverseMass * deltaTime);
+		force.set(body->force).scale(body->inverseMass * deltaTime);
 		body->worldInverseInertia.multiply(body->torque, torque).scale(deltaTime);
-		newLinearVelocity.add(&force);
-		newAngularVelocity.add(&torque);
-		newLinearVelocity.add(&body->linearVelocity);
-		newAngularVelocity.add(&body->angularVelocity);
-		body->linearVelocity.set(&newLinearVelocity);
-		body->angularVelocity.set(&newAngularVelocity);
+		newLinearVelocity.add(force);
+		newAngularVelocity.add(torque);
+		newLinearVelocity.add(body->linearVelocity);
+		newAngularVelocity.add(body->angularVelocity);
+		body->linearVelocity.set(newLinearVelocity);
+		body->angularVelocity.set(newAngularVelocity);
 		body->update(deltaTime);
 	}
 }

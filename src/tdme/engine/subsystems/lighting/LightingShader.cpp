@@ -266,7 +266,7 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 		renderer->setProgramUniformFloatVec4(uniformLightDiffuse[lightId], &renderer->lights[lightId].diffuse);
 		renderer->setProgramUniformFloatVec4(uniformLightSpecular[lightId], &renderer->lights[lightId].specular);
 		renderer->setProgramUniformFloatVec4(uniformLightPosition[lightId], &renderer->lights[lightId].position);
-		renderer->setProgramUniformFloatVec3(uniformLightSpotDirection[lightId], &renderer->lights[lightId].spotDirection);
+		renderer->setProgramUniformFloatVec3(uniformLightSpotDirection[lightId], renderer->lights[lightId].spotDirection);
 		renderer->setProgramUniformFloat(uniformLightSpotExponent[lightId], renderer->lights[lightId].spotExponent);
 		renderer->setProgramUniformFloat(uniformLightSpotCosCutoff[lightId], renderer->lights[lightId].spotCosCutoff);
 		renderer->setProgramUniformFloat(uniformLightConstantAttenuation[lightId], renderer->lights[lightId].constantAttenuation);

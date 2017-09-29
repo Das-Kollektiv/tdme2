@@ -31,8 +31,8 @@ void printMatrix(Matrix4x4& matrix) {
 	cout << endl;
 }
 
-void printVector(Vector3* vector) {
-	for (auto value: *vector->getArray()) {
+void printVector(Vector3& vector) {
+	for (auto value: vector.getArray()) {
 		cout << value;
 		cout << " ";
 	}
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     		wcout << it.first << endl;
     		wcout << "--" << endl;
     		for (auto& vector: *group->getVertices()) {
-    			printVector(&vector);
+    			printVector(vector);
     		}
     		wcout << "--" << endl;
     		printMatrix(group->getTransformationsMatrix());

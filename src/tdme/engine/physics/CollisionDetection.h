@@ -54,16 +54,16 @@ public:
 	 * @return collision 
 	 */
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {
-		auto b1MinXYZ = b1->getMin()->getArray();
-		auto b1MaxXYZ = b1->getMax()->getArray();
-		auto b2MinXYZ = b2->getMin()->getArray();
-		auto b2MaxXYZ = b2->getMax()->getArray();
-		if ((*b2MaxXYZ)[0] - (*b1MinXYZ)[0] < 0.0f) return false;
-		if ((*b1MaxXYZ)[0] - (*b2MinXYZ)[0] < 0.0f) return false;
-		if ((*b2MaxXYZ)[1] - (*b1MinXYZ)[1] < 0.0f) return false;
-		if ((*b1MaxXYZ)[1] - (*b2MinXYZ)[1] < 0.0f) return false;
-		if ((*b2MaxXYZ)[2] - (*b1MinXYZ)[2] < 0.0f) return false;
-		if ((*b1MaxXYZ)[2] - (*b2MinXYZ)[2] < 0.0f) return false;
+		auto& b1MinXYZ = b1->getMin()->getArray();
+		auto& b1MaxXYZ = b1->getMax()->getArray();
+		auto& b2MinXYZ = b2->getMin()->getArray();
+		auto& b2MaxXYZ = b2->getMax()->getArray();
+		if (b2MaxXYZ[0] - b1MinXYZ[0] < 0.0f) return false;
+		if (b1MaxXYZ[0] - b2MinXYZ[0] < 0.0f) return false;
+		if (b2MaxXYZ[1] - b1MinXYZ[1] < 0.0f) return false;
+		if (b1MaxXYZ[1] - b2MinXYZ[1] < 0.0f) return false;
+		if (b2MaxXYZ[2] - b1MinXYZ[2] < 0.0f) return false;
+		if (b1MaxXYZ[2] - b2MinXYZ[2] < 0.0f) return false;
 		return true;
 	}
 
@@ -473,7 +473,7 @@ public:
 	 */
 	inline static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2) {
 		Vector3 axis;
-		return axis.set(bv1->getCenter())->sub(bv2->getCenter())->computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
+		return axis.set(*bv1->getCenter()).sub(*bv2->getCenter()).computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
 	}
 
 private:
@@ -494,13 +494,13 @@ private:
 			return false;
 		}
 		Vector3 zeroVector(0.0f, 0.0f, 0.0f);
-		if (normalCandidate->equals(&zeroVector) == true) {
+		if (normalCandidate->equals(zeroVector) == true) {
 			if (VERBOSE) {
 				_Console::println(wstring(L"checkMovementFallback::fallback"));
 				// TODO: print stack trace
 			}
 			collision->reset();
-			collision->addResponse(-movement->computeLength())->getNormal()->set(movement)->scale(-1.0f)->normalize();
+			collision->addResponse(-movement->computeLength())->getNormal()->set(*movement).scale(-1.0f).normalize();
 			return true;
 		}
 		return false;

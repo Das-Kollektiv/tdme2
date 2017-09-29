@@ -101,7 +101,7 @@ public: /* protected */
 			if (collision->getHitPointsCount() != contactCacheInfo->hitPoints.size()) return nullptr;
 			Vector3 tmpVector3;
 			for (auto i = 0; i < contactCacheInfo->hitPoints.size(); i++) {
-				tmpVector3.set(collision->getHitPointAt(i))->sub(&contactCacheInfo->hitPoints[i]);
+				tmpVector3.set(*collision->getHitPointAt(i)).sub(contactCacheInfo->hitPoints[i]);
 				if (tmpVector3.computeLength() > 0.1f) return nullptr;
 			}
 			return contactCacheInfo;

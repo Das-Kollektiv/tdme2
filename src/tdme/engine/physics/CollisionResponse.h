@@ -192,7 +192,7 @@ public:
 					dstEntity = &entities.at(entities.size() - 1);
 				}
 				dstEntity->distance = srcEntity.distance;
-				dstEntity->normal.set(&srcEntity.normal);
+				dstEntity->normal.set(srcEntity.normal);
 			}
 			selectedEntity = &entities.at(0);
 			for (auto j = 0; j < srcEntity.hitPoints.size(); j++) {

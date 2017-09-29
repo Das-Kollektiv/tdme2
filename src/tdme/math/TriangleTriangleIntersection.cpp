@@ -29,14 +29,14 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 	int32_t smallest1, smallest2;
 	Vector3 E1;
 	Vector3 E2;
-	E1.set(V1)->sub(V0);
-	E2.set(V2)->sub(V0);
+	E1.set(*V1).sub(*V0);
+	E2.set(*V2).sub(*V0);
 	Vector3 N1;
-	Vector3::computeCrossProduct(&E1, &E2, &N1);
-	d1 = -Vector3::computeDotProduct(&N1, V0);
-	du0 = Vector3::computeDotProduct(&N1, U0) + d1;
-	du1 = Vector3::computeDotProduct(&N1, U1) + d1;
-	du2 = Vector3::computeDotProduct(&N1, U2) + d1;
+	Vector3::computeCrossProduct(E1, E2, N1);
+	d1 = -Vector3::computeDotProduct(N1, *V0);
+	du0 = Vector3::computeDotProduct(N1, *U0) + d1;
+	du1 = Vector3::computeDotProduct(N1, *U1) + d1;
+	du2 = Vector3::computeDotProduct(N1, *U2) + d1;
 	if (Math::abs(du0) < EPSILON)
 		du0 = 0.0f;
 
@@ -51,14 +51,14 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 	if (du0du1 > 0.0f && du0du2 > 0.0f)
 		return NOINTERSECTION;
 
-	E1.set(U1)->sub(U0);
-	E2.set(U2)->sub(U0);
+	E1.set(*U1).sub(*U0);
+	E2.set(*U2).sub(*U0);
 	Vector3 N2;
-	Vector3::computeCrossProduct(&E1, &E2, &N2);
-	d2 = -Vector3::computeDotProduct(&N2, U0);
-	dv0 = Vector3::computeDotProduct(&N2, V0) + d2;
-	dv1 = Vector3::computeDotProduct(&N2, V1) + d2;
-	dv2 = Vector3::computeDotProduct(&N2, V2) + d2;
+	Vector3::computeCrossProduct(E1, E2, N2);
+	d2 = -Vector3::computeDotProduct(N2, *U0);
+	dv0 = Vector3::computeDotProduct(N2, *V0) + d2;
+	dv1 = Vector3::computeDotProduct(N2, *V1) + d2;
+	dv2 = Vector3::computeDotProduct(N2, *V2) + d2;
 	if (Math::abs(dv0) < EPSILON)
 		dv0 = 0.0f;
 
@@ -74,11 +74,11 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 		return NOINTERSECTION;
 
 	Vector3 D;
-	Vector3::computeCrossProduct(&N1, &N2, &D);
-	max = Math::abs((*D.getArray())[0]);
+	Vector3::computeCrossProduct(N1, N2, D);
+	max = Math::abs(D.getArray()[0]);
 	index = 0;
-	b = Math::abs((*D.getArray())[1]);
-	c = Math::abs((*D.getArray())[2]);
+	b = Math::abs(D.getArray()[1]);
+	c = Math::abs(D.getArray()[2]);
 	if (b > max) {
 		max = b;
 		index = 1;
@@ -87,12 +87,12 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 		max = c;
 		index = 2;
 	}
-	vp0 = (*V0->getArray())[index];
-	vp1 = (*V1->getArray())[index];
-	vp2 = (*V2->getArray())[index];
-	up0 = (*U0->getArray())[index];
-	up1 = (*U1->getArray())[index];
-	up2 = (*U2->getArray())[index];
+	vp0 = V0->getArray()[index];
+	vp1 = V1->getArray()[index];
+	vp2 = V2->getArray()[index];
+	up0 = U0->getArray()[index];
+	up1 = U1->getArray()[index];
+	up2 = U2->getArray()[index];
 	Vector2 isect1;
 	Vector3 isectpointA1;
 	Vector3 isectpointA2;
@@ -115,40 +115,40 @@ TriangleTriangleIntersection::ReturnValue TriangleTriangleIntersection::computeT
 
 	if (isect2_.getArray()[0] < isect1.getArray()[0]) {
 		if (smallest1 == 0) {
-			isectpt1->set(&isectpointA1);
+			isectpt1->set(isectpointA1);
 		} else {
-			isectpt1->set(&isectpointA2);
+			isectpt1->set(isectpointA2);
 		}
 		if (isect2_.getArray()[1] < isect1.getArray()[1]) {
 			if (smallest2 == 0) {
-				isectpt2->set(&isectpointB2);
+				isectpt2->set(isectpointB2);
 			} else {
-				isectpt2->set(&isectpointB1);
+				isectpt2->set(isectpointB1);
 			}
 		} else {
 			if (smallest1 == 0) {
-				isectpt2->set(&isectpointA2);
+				isectpt2->set(isectpointA2);
 			} else {
-				isectpt2->set(&isectpointA1);
+				isectpt2->set(isectpointA1);
 			}
 		}
 	} else {
 		if (smallest2 == 0) {
-			isectpt1->set(&isectpointB1);
+			isectpt1->set(isectpointB1);
 		} else {
-			isectpt1->set(&isectpointB2);
+			isectpt1->set(isectpointB2);
 		}
 		if (isect2_.getArray()[1] > isect1.getArray()[1]) {
 			if (smallest1 == 0) {
-				isectpt2->set(&isectpointA2);
+				isectpt2->set(isectpointA2);
 			} else {
-				isectpt2->set(&isectpointA1);
+				isectpt2->set(isectpointA1);
 			}
 		} else {
 			if (smallest2 == 0) {
-				isectpt2->set(&isectpointB2);
+				isectpt2->set(isectpointB2);
 			} else {
-				isectpt2->set(&isectpointB1);
+				isectpt2->set(isectpointB1);
 			}
 		}
 	}

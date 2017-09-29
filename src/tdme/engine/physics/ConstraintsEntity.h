@@ -87,8 +87,8 @@ public: /* protected */
 		this->rb2 = rb2;
 		muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * MathTools::g;
 		this->collision.getNormal()->scale(-1.0f);
-		this->collision.getNormal()->computeOrthogonalVector(&this->frictionVectors[0]);
-		Vector3::computeCrossProduct(this->collision.getNormal(), &this->frictionVectors[0], &this->frictionVectors[1]);
+		this->collision.getNormal()->computeOrthogonalVector(this->frictionVectors[0]);
+		Vector3::computeCrossProduct(*this->collision.getNormal(), this->frictionVectors[0], this->frictionVectors[1]);
 	}
 
 	/** 
@@ -116,31 +116,31 @@ public: /* protected */
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
 			auto point = collision.getHitPointAt(hitPointIdx);
-			r1.set(point)->sub(body1Position);
-			r2.set(point)->sub(body2Position);
-			Vector3::computeCrossProduct(&r1, n, &r1CrossN);
-			Vector3::computeCrossProduct(&r2, n, &r2CrossN);
+			r1.set(*point).sub(*body1Position);
+			r2.set(*point).sub(*body2Position);
+			Vector3::computeCrossProduct(r1, *n, r1CrossN);
+			Vector3::computeCrossProduct(r2, *n, r2CrossN);
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];
-			jacobianMatrix->setValue(0, tmpVector3.set(n)->scale(-1.0f));
-			jacobianMatrix->setValue(3, tmpVector3.set(&r1CrossN)->scale(-1.0f));
+			jacobianMatrix->setValue(0, &tmpVector3.set(*n).scale(-1.0f));
+			jacobianMatrix->setValue(3, &tmpVector3.set(r1CrossN).scale(-1.0f));
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][1];
 			jacobianMatrix->setValue(0, n);
 			jacobianMatrix->setValue(3, &r2CrossN);
 			currentConstraintIdx++;
-			Vector3::computeCrossProduct(&r1, &t1, &r1CrossU1);
-			Vector3::computeCrossProduct(&r2, &t1, &r2CrossU1);
-			Vector3::computeCrossProduct(&r1, &t2, &r1CrossU2);
-			Vector3::computeCrossProduct(&r2, &t2, &r2CrossU2);
+			Vector3::computeCrossProduct(r1, t1, r1CrossU1);
+			Vector3::computeCrossProduct(r2, t1, r2CrossU1);
+			Vector3::computeCrossProduct(r1, t2, r1CrossU2);
+			Vector3::computeCrossProduct(r2, t2, r2CrossU2);
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];
-			jacobianMatrix->setValue(0, tmpVector3.set(&t1)->scale(-1.0f));
-			jacobianMatrix->setValue(3, tmpVector3.set(&r1CrossU1)->scale(-1.0f));
+			jacobianMatrix->setValue(0, &tmpVector3.set(t1).scale(-1.0f));
+			jacobianMatrix->setValue(3, &tmpVector3.set(r1CrossU1).scale(-1.0f));
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][1];
 			jacobianMatrix->setValue(0, &t1);
 			jacobianMatrix->setValue(3, &r2CrossU1);
 			currentConstraintIdx++;
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];
-			jacobianMatrix->setValue(0, tmpVector3.set(&t2)->scale(-1.0f));
-			jacobianMatrix->setValue(3, tmpVector3.set(&r1CrossU2)->scale(-1.0f));
+			jacobianMatrix->setValue(0, &tmpVector3.set(t2).scale(-1.0f));
+			jacobianMatrix->setValue(3, &tmpVector3.set(r1CrossU2).scale(-1.0f));
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][1];
 			jacobianMatrix->setValue(0, &t2);
 			jacobianMatrix->setValue(3, &r2CrossU2);
@@ -185,7 +185,7 @@ public: /* protected */
 		auto currentConstraintIdx = constraintIdx;
 		auto restitutionCoeff = rb1->restitution + rb2->restitution;
 		auto penetration = collision.getPenetration();
-		auto errorValue = Math::abs(restitutionCoeff * (Vector3::computeDotProduct(collision.getNormal(), &rb1->angularVelocity) - Vector3::computeDotProduct(collision.getNormal(), &rb2->angularVelocity))) + (0.4f * penetration);
+		auto errorValue = Math::abs(restitutionCoeff * (Vector3::computeDotProduct(*collision.getNormal(), rb1->angularVelocity) - Vector3::computeDotProduct(*collision.getNormal(), rb2->angularVelocity))) + (0.4f * penetration);
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
 			errorValues->setValue(currentConstraintIdx++, errorValue);
 			errorValues->setValue(currentConstraintIdx++, 0.0f);

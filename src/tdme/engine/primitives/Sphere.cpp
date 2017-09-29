@@ -31,7 +31,7 @@ Sphere::Sphere()
 
 Sphere::Sphere(Vector3* center, float radius) 
 {
-	this->center.set(center);
+	this->center.set(*center);
 	this->radius = radius;
 }
 
@@ -41,7 +41,7 @@ void Sphere::fromBoundingVolume(BoundingVolume* original)
 		return;
 	}
 	auto sphere = dynamic_cast< Sphere* >(original);
-	center.set(&sphere->center);
+	center.set(sphere->center);
 	radius = sphere->radius;
 }
 
@@ -54,9 +54,9 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	auto sphere = dynamic_cast< Sphere* >(original);
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	transformationsMatrix.multiply(sphere->center, center);
-	axis.set(&sphere->center)->addX(sphere->radius);
+	axis.set(sphere->center).addX(sphere->radius);
 	transformationsMatrix.multiply(axis, axis);
-	radius = axis.sub(&center)->computeLength();
+	radius = axis.sub(center).computeLength();
 }
 
 float Sphere::getRadius()
@@ -71,7 +71,7 @@ void Sphere::setRadius(float radius)
 
 Sphere* Sphere::set(Vector3* center, float radius)
 {
-	this->center.set(center);
+	this->center.set(*center);
 	this->radius = radius;
 	this->update();
 	return this;
@@ -80,13 +80,13 @@ Sphere* Sphere::set(Vector3* center, float radius)
 void Sphere::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
 {
 	Vector3 axis;
-	axis.set(point)->sub(&center);
+	axis.set(*point).sub(center);
 	auto length = point->computeLength();
 	if (length <= radius) {
-		closestPoint->set(point);
+		closestPoint->set(*point);
 	} else {
-		closestPoint->set(&axis)->normalize()->scale(radius);
-		closestPoint->add(&center);
+		closestPoint->set(axis).normalize().scale(radius);
+		closestPoint->add(center);
 	}
 	return;
 }
@@ -94,7 +94,7 @@ void Sphere::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closes
 bool Sphere::containsPoint(Vector3* point)
 {
 	Vector3 axis;
-	auto distance = axis.set(point)->sub(&center)->computeLength();
+	auto distance = axis.set(*point).sub(center).computeLength();
 	return distance <= radius;
 }
 

@@ -55,8 +55,8 @@ public:
 	 * @param normal
 	 * @param distance
 	 */
-	inline Plane(Vector3* normal, float distance) {
-		this->normal.set(normal);
+	inline Plane(const Vector3* normal, float distance) {
+		this->normal.set(*normal);
 		this->distance = distance;
 	}
 };

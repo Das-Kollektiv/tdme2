@@ -21,8 +21,8 @@ bool LineSegment::doesLineSegmentsCollide(Vector3* p1, Vector3* q1, Vector3* p2,
 	Vector3 c1;
 	Vector3 c2;
 	computeClosestPointsOnLineSegments(p1, q1, p2, q2, &c1, &c2);
-	if (c1.sub(&c2)->computeLength() < MathTools::EPSILON) {
-		p->set(&c2);
+	if (c1.sub(c2).computeLength() < MathTools::EPSILON) {
+		p->set(c2);
 		return true;
 	} else {
 		return false;
@@ -36,12 +36,12 @@ void LineSegment::computeClosestPointsOnLineSegments(Vector3* p1, Vector3* q1, V
 	Vector3 r;
 	float s;
 	float t;
-	d1.set(q1)->sub(p1);
-	d2.set(q2)->sub(p2);
-	r.set(p1)->sub(p2);
-	auto a = Vector3::computeDotProduct(&d1, &d1);
-	auto e = Vector3::computeDotProduct(&d2, &d2);
-	auto f = Vector3::computeDotProduct(&d2, &r);
+	d1.set(*q1).sub(*p1);
+	d2.set(*q2).sub(*p2);
+	r.set(*p1).sub(*p2);
+	auto a = Vector3::computeDotProduct(d1, d1);
+	auto e = Vector3::computeDotProduct(d2, d2);
+	auto f = Vector3::computeDotProduct(d2, r);
 	if (a <= MathTools::EPSILON && e <= MathTools::EPSILON) {
 		s = 0.0f;
 		t = 0.0f;
@@ -54,12 +54,12 @@ void LineSegment::computeClosestPointsOnLineSegments(Vector3* p1, Vector3* q1, V
 		t = f / e;
 		t = MathTools::clamp(t, 0.0f, 1.0f);
 	} else {
-		auto c = Vector3::computeDotProduct(&d1, &r);
+		auto c = Vector3::computeDotProduct(d1, r);
 		if (e <= MathTools::EPSILON) {
 			t = 0.0f;
 			s = MathTools::clamp(-c / a, 0.0f, 1.0f);
 		} else {
-			auto b = Vector3::computeDotProduct(&d1, &d2);
+			auto b = Vector3::computeDotProduct(d1, d2);
 			auto denom = a * e - b * b;
 			if (denom != 0.0f) {
 				s = MathTools::clamp((b * f - c * e) / denom, 0.0f, 1.0f);
@@ -76,8 +76,8 @@ void LineSegment::computeClosestPointsOnLineSegments(Vector3* p1, Vector3* q1, V
 			}
 		}
 	}
-	c1->set(p1)->add(d1.scale(s));
-	c2->set(p2)->add(d2.scale(t));
+	c1->set(*p1).add(d1.scale(s));
+	c2->set(*p2).add(d2.scale(t));
 }
 
 bool LineSegment::doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox, Vector3* p, Vector3* q, Vector3* contactMin, Vector3* contactMax)
@@ -89,16 +89,16 @@ bool LineSegment::doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox
 	auto tmax = 1.0f;
 	auto minXYZ = boundingBox->getMin()->getArray();
 	auto maxXYZ = boundingBox->getMax()->getArray();
-	d.set(q)->sub(p);
-	auto directionXYZ = d.getArray();
-	auto pointXYZ = p->getArray();
+	d.set(*q).sub(*p);
+	auto& directionXYZ = d.getArray();
+	auto& pointXYZ = p->getArray();
 	for (auto i = 0; i < 3; i++) {
-		if (Math::abs((*directionXYZ)[i]) < MathTools::EPSILON && ((*pointXYZ)[i] <= (*minXYZ)[i] || (*pointXYZ)[i] >= (*maxXYZ)[i])) {
+		if (Math::abs(directionXYZ[i]) < MathTools::EPSILON && (pointXYZ[i] <= minXYZ[i] || pointXYZ[i] >= maxXYZ[i])) {
 			return false;
 		} else {
-			auto odd = 1.0f / (*directionXYZ)[i];
-			auto t1 = ((*minXYZ)[i] - (*pointXYZ)[i]) * odd;
-			auto t2 = ((*maxXYZ)[i] - (*pointXYZ)[i]) * odd;
+			auto odd = 1.0f / directionXYZ[i];
+			auto t1 = (minXYZ[i] - pointXYZ[i]) * odd;
+			auto t2 = (maxXYZ[i] - pointXYZ[i]) * odd;
 			if (t1 > t2) {
 				auto tmp = t1;
 				t1 = t2;
@@ -114,8 +114,8 @@ bool LineSegment::doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox
 	if (tmin > 1.0)
 		return false;
 
-	contactMin->set(p)->add(d1.set(&d)->scale(tmin));
-	contactMax->set(p)->add(d2.set(&d)->scale(tmax));
+	contactMin->set(*p).add(d1.set(d).scale(tmin));
+	contactMax->set(*p).add(d2.set(d).scale(tmax));
 	return true;
 }
 
@@ -129,13 +129,13 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 	auto obbAxes = orientedBoundingBox->getAxes();
 	auto obbCenter = orientedBoundingBox->getCenter();
 	auto obbHalfExtension = orientedBoundingBox->getHalfExtension();
-	auto obbHalfExtensionXYZ = obbHalfExtension->getArray();
-	d.set(q)->sub(p);
+	auto& obbHalfExtensionXYZ = obbHalfExtension->getArray();
+	d.set(*q).sub(*p);
 	for (auto i = 0; i < 3; i++) {
-		auto directionLengthOnAxis = Vector3::computeDotProduct(&d, &(*obbAxes)[i]);
-		auto obbExtensionLengthOnAxis = (*obbHalfExtensionXYZ)[i];
-		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, &(*obbAxes)[i]);
-		auto pointLengthOnAxis = Vector3::computeDotProduct(p, &(*obbAxes)[i]);
+		auto directionLengthOnAxis = Vector3::computeDotProduct(d, (*obbAxes)[i]);
+		auto obbExtensionLengthOnAxis = obbHalfExtensionXYZ[i];
+		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(*obbCenter, (*obbAxes)[i]);
+		auto pointLengthOnAxis = Vector3::computeDotProduct(*p, (*obbAxes)[i]);
 		if (Math::abs(directionLengthOnAxis) < MathTools::EPSILON && (pointLengthOnAxis <= obbCenterLengthOnAxis - obbExtensionLengthOnAxis || pointLengthOnAxis >= obbCenterLengthOnAxis + obbExtensionLengthOnAxis)) {
 			return false;
 		} else {
@@ -157,8 +157,8 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 	if (tmin > 1.0)
 		return false;
 
-	contactMin->set(p)->add(d1.set(&d)->scale(tmin));
-	contactMax->set(p)->add(d2.set(&d)->scale(tmax));
+	contactMin->set(*p).add(d1.set(d).scale(tmin));
+	contactMax->set(*p).add(d2.set(d).scale(tmax));
 	return true;
 }
 
@@ -168,27 +168,27 @@ bool LineSegment::doesLineSegmentCollideWithTriangle(Vector3* p1, Vector3* p2, V
 	Vector3 d2;
 	Vector3 n;
 	Vector3 t;
-	Vector3::computeCrossProduct(d1.set(p2)->sub(p1), d2.set(p3)->sub(p1), &n)->normalize();
-	auto dist1 = Vector3::computeDotProduct(d1.set(r1)->sub(p1), &n);
-	auto dist2 = Vector3::computeDotProduct(d2.set(r2)->sub(p1), &n);
+	Vector3::computeCrossProduct(d1.set(*p2).sub(*p1), d2.set(*p3).sub(*p1), n).normalize();
+	auto dist1 = Vector3::computeDotProduct(d1.set(*r1).sub(*p1), n);
+	auto dist2 = Vector3::computeDotProduct(d2.set(*r2).sub(*p1), n);
 	if (dist1 * dist2 >= 0.0f) {
 		return false;
 	}
 	if (Math::abs(dist1 - dist2) < MathTools::EPSILON) {
 		return false;
 	}
-	contact->set(r2)->sub(r1)->scale(-dist1 / (dist2 - dist1));
-	contact->add(r1);
-	Vector3::computeCrossProduct(&n, d1.set(p2)->sub(p1), &t);
-	if (Vector3::computeDotProduct(&t, d2.set(contact)->sub(p1)) < 0.0f) {
+	contact->set(*r2).sub(*r1).scale(-dist1 / (dist2 - dist1));
+	contact->add(*r1);
+	Vector3::computeCrossProduct(n, d1.set(*p2).sub(*p1), t);
+	if (Vector3::computeDotProduct(t, d2.set(*contact).sub(*p1)) < 0.0f) {
 		return false;
 	}
-	Vector3::computeCrossProduct(&n, d1.set(p3)->sub(p2), &t);
-	if (Vector3::computeDotProduct(&t, d2.set(contact)->sub(p2)) < 0.0f) {
+	Vector3::computeCrossProduct(n, d1.set(*p3).sub(*p2), t);
+	if (Vector3::computeDotProduct(t, d2.set(*contact).sub(*p2)) < 0.0f) {
 		return false;
 	}
-	Vector3::computeCrossProduct(&n, d1.set(p1)->sub(p3), &t);
-	if (Vector3::computeDotProduct(&t, d2.set(contact)->sub(p1)) < 0.0f) {
+	Vector3::computeCrossProduct(n, d1.set(*p1).sub(*p3), t);
+	if (Vector3::computeDotProduct(t, d2.set(*contact).sub(*p1)) < 0.0f) {
 		return false;
 	}
 	return true;

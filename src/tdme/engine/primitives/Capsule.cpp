@@ -27,8 +27,8 @@ using tdme::math::Vector3;
 
 Capsule::Capsule(Vector3* a, Vector3* b, float radius) 
 {
-	this->a.set(a);
-	this->b.set(b);
+	this->a.set(*a);
+	this->b.set(*b);
 	this->radius = radius;
 	update();
 }
@@ -59,9 +59,9 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 		return;
 	}
 	auto capsule = dynamic_cast< Capsule* >(original);
-	a.set(&capsule->a);
-	b.set(&capsule->b);
-	center.set(&capsule->center);
+	a.set(capsule->a);
+	b.set(capsule->b);
+	center.set(capsule->center);
 	radius = capsule->radius;
 }
 
@@ -75,18 +75,18 @@ void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tr
 	transformationsMatrix.multiply(capsule->a, a);
 	transformationsMatrix.multiply(capsule->b, b);
 	Vector3 side;
-	side.set(&capsule->a)->addX(capsule->radius);
+	side.set(capsule->a).addX(capsule->radius);
 	transformationsMatrix.multiply(side, side);
-	radius = side.sub(&a)->computeLength();
+	radius = side.sub(a).computeLength();
 	update();
 }
 
 void Capsule::update()
 {
 	Vector3 baSub;
-	baSub.set(&b)->sub(&a);
+	baSub.set(b).sub(a);
 	auto baSubLength = baSub.computeLength();
-	center.set(&a)->add(baSub.normalize()->scale(baSubLength * 0.5f));
+	center.set(a).add(baSub.normalize().scale(baSubLength * 0.5f));
 	sphereRadius = baSubLength / 2.0f + radius;
 }
 
@@ -94,21 +94,21 @@ void Capsule::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* close
 {
 	Vector3 baSub;
 	Vector3 paSub;
-	baSub.set(&b)->sub(&a);
+	baSub.set(b).sub(a);
 	auto baSubLength = baSub.computeLength();
 	if (baSubLength > 0.0f) {
 		baSub.normalize();
 		auto t = 0.0f;
-		t = Vector3::computeDotProduct(paSub.set(point)->sub(&a), &baSub) / baSubLength;
+		t = Vector3::computeDotProduct(paSub.set(*point).sub(a), baSub) / baSubLength;
 		if (t < 0.0f)
 			t = 0.0f;
 
 		if (t > 1.0f)
 			t = 1.0f;
 
-		closestPoint->set(&a)->add(baSub.scale(t * baSubLength));
+		closestPoint->set(a).add(baSub.scale(t * baSubLength));
 	} else {
-		closestPoint->set(&a);
+		closestPoint->set(a);
 	}
 }
 
@@ -116,7 +116,7 @@ bool Capsule::containsPoint(Vector3* point)
 {
 	Vector3 cpCvsP;
 	computeClosestPointOnBoundingVolume(point, &cpCvsP);
-	auto distance = cpCvsP.sub(point)->computeLength();
+	auto distance = cpCvsP.sub(*point).computeLength();
 	return distance <= radius;
 }
 
@@ -142,7 +142,7 @@ bool Capsule::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionR
 float Capsule::computeDimensionOnAxis(Vector3* axis)
 {
 	Vector3 baSub;
-	return Math::abs(Vector3::computeDotProduct(baSub.set(&b)->sub(&a), axis)) + (radius * 2.0f);
+	return Math::abs(Vector3::computeDotProduct(baSub.set(b).sub(a), *axis)) + (radius * 2.0f);
 }
 
 BoundingVolume* Capsule::clone()

@@ -149,17 +149,17 @@ void Audio::update()
 	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
 		it->second->update();
 	}
-	alListenerfv(AL_POSITION, listenerPosition.getArray()->data());
-	alListenerfv(AL_VELOCITY, listenerVelocity.getArray()->data());
-	auto listenerOrientationAtArray = listenerOrientationAt.getArray();
-	auto listenerOrientationUpArray = listenerOrientationUp.getArray();
+	alListenerfv(AL_POSITION, listenerPosition.getArray().data());
+	alListenerfv(AL_VELOCITY, listenerVelocity.getArray().data());
+	auto& listenerOrientationAtArray = listenerOrientationAt.getArray();
+	auto& listenerOrientationUpArray = listenerOrientationUp.getArray();
 	array<float, 6> listenerOrientation = {
-		(*listenerOrientationAtArray)[0],
-		(*listenerOrientationAtArray)[1],
-		(*listenerOrientationAtArray)[2],
-		(*listenerOrientationUpArray)[0],
-		(*listenerOrientationUpArray)[1],
-		(*listenerOrientationUpArray)[2]
+		listenerOrientationAtArray[0],
+		listenerOrientationAtArray[1],
+		listenerOrientationAtArray[2],
+		listenerOrientationUpArray[0],
+		listenerOrientationUpArray[1],
+		listenerOrientationUpArray[2]
 	};
 	alListenerfv(AL_ORIENTATION, listenerOrientation.data());
 }

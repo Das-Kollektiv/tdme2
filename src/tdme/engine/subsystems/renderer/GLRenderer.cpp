@@ -102,9 +102,9 @@ void GLRenderer::setLightPosition(int32_t lightId, array<float, 4>* position)
 	copy(begin(*position), end(*position), begin(lights[lightId].position));
 }
 
-void GLRenderer::setLightSpotDirection(int32_t lightId, array<float, 3>* spotDirection)
+void GLRenderer::setLightSpotDirection(int32_t lightId, const array<float, 3>& spotDirection)
 {
-	copy(begin(*spotDirection), end(*spotDirection), begin(lights[lightId].spotDirection));
+	copy(begin(spotDirection), end(spotDirection), begin(lights[lightId].spotDirection));
 }
 
 void GLRenderer::setLightSpotExponent(int32_t lightId, float spotExponent)

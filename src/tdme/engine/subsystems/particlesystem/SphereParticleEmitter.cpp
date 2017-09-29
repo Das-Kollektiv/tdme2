@@ -26,8 +26,8 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->massRnd = massRnd;
 	this->sphere = sphere;
 	this->sphereTransformed = dynamic_cast< Sphere* >(sphere->clone());
-	this->velocity.set(velocity);
-	this->velocityRnd.set(velocityRnd);
+	this->velocity.set(*velocity);
+	this->velocityRnd.set(*velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
 }
@@ -59,21 +59,21 @@ Color4* SphereParticleEmitter::getColorEnd()
 
 void SphereParticleEmitter::emit(Particle* particle)
 {
-	auto velocityXYZ = velocity.getArray();
-	auto velocityRndXYZ = velocityRnd.getArray();
+	auto& velocityXYZ = velocity.getArray();
+	auto& velocityRndXYZ = velocityRnd.getArray();
 	particle->active = true;
 	particle->position.set(
-		static_cast< float >(Math::random()) * 2.0f - 1.0f,
-		static_cast< float >(Math::random()) * 2.0f - 1.0f,
-		static_cast< float >(Math::random()) * 2.0f - 1.0f
-	)->normalize()->scale(sphereTransformed->getRadius());
-	particle->position.add(sphereTransformed->getCenter());
+		Math::random() * 2.0f - 1.0f,
+		Math::random() * 2.0f - 1.0f,
+		Math::random() * 2.0f - 1.0f
+	).normalize().scale(sphereTransformed->getRadius());
+	particle->position.add(*sphereTransformed->getCenter());
 	particle->velocity.set(
-		(*velocityXYZ)[0] + static_cast< float >((Math::random() * (*velocityRndXYZ)[0] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
-		(*velocityXYZ)[1] + static_cast< float >((Math::random() * (*velocityRndXYZ)[1] * (Math::random() > 0.5 ? +1.0f : -1.0f))),
-		(*velocityXYZ)[2] + static_cast< float >((Math::random() * (*velocityRndXYZ)[2] * (Math::random() > 0.5 ? +1.0f : -1.0f)))
+		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
-	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
+	particle->mass = mass + (Math::random() * (massRnd));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	particle->color.set(&colorStart);

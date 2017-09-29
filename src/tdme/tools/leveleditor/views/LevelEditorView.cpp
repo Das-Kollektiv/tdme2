@@ -535,7 +535,7 @@ void LevelEditorView::display()
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
 		camLookRotationY->update();
-		cam->getLookAt()->set(level->computeCenter());
+		cam->getLookAt()->set(*level->computeCenter());
 		camScale = 1.0f;
 	}
 	if (keyA || keyD)
@@ -552,33 +552,33 @@ void LevelEditorView::display()
 	}
 	camLookRotationX->getQuaternion()->multiply(FORWARD_VECTOR, tmpVector3);
 	camLookRotationY->getQuaternion()->multiply(tmpVector3, tmpVector3);
-	camLookAtToFromVector->set(tmpVector3)->scale(camScale * 10.0f);
+	camLookAtToFromVector->set(*tmpVector3).scale(camScale * 10.0f);
 	auto timing = engine->getTiming();
 	camLookRotationY->getQuaternion()->multiply(FORWARD_VECTOR, camForwardVector)->scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	camLookRotationY->getQuaternion()->multiply(SIDE_VECTOR, camSideVector)->scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	if (keyUp)
-		cam->getLookAt()->sub(tmpVector3->set(camForwardVector)->scale(0.1f));
+		cam->getLookAt()->sub(tmpVector3->set(*camForwardVector).scale(0.1f));
 
 	if (keyDown)
-		cam->getLookAt()->add(tmpVector3->set(camForwardVector)->scale(0.1f));
+		cam->getLookAt()->add(tmpVector3->set(*camForwardVector).scale(0.1f));
 
 	if (keyLeft)
-		cam->getLookAt()->sub(tmpVector3->set(camSideVector)->scale(0.1f));
+		cam->getLookAt()->sub(tmpVector3->set(*camSideVector).scale(0.1f));
 
 	if (keyRight)
-		cam->getLookAt()->add(tmpVector3->set(camSideVector)->scale(0.1f));
+		cam->getLookAt()->add(tmpVector3->set(*camSideVector).scale(0.1f));
 
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		cam->getLookAt()->sub(tmpVector3->set(camForwardVector)->scale(mousePanningForward / 30.0f * camScale));
+		cam->getLookAt()->sub(tmpVector3->set(*camForwardVector).scale(mousePanningForward / 30.0f * camScale));
 		mousePanningForward = MOUSE_PANNING_NONE;
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		cam->getLookAt()->sub(tmpVector3->set(camSideVector)->scale(mousePanningSide / 30.0f * camScale));
+		cam->getLookAt()->sub(tmpVector3->set(*camSideVector).scale(mousePanningSide / 30.0f * camScale));
 		mousePanningSide = MOUSE_PANNING_NONE;
 	}
-	cam->getLookFrom()->set(cam->getLookAt())->add(camLookAtToFromVector);
+	cam->getLookFrom()->set(*cam->getLookAt()).add(*camLookAtToFromVector);
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
-	gridCenter->set(cam->getLookAt());
+	gridCenter->set(*cam->getLookAt());
 	updateGrid();
 	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
@@ -715,9 +715,9 @@ void LevelEditorView::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(1.0f);
 	cam->setZFar(1000.0f);
-	cam->getLookAt()->set(level->computeCenter());
-	gridCenter->set(cam->getLookAt());
-	camLookAt->set(engine->getCamera()->getLookAt());
+	cam->getLookAt()->set(*level->computeCenter());
+	gridCenter->set(*cam->getLookAt());
+	camLookAt->set(*engine->getCamera()->getLookAt());
 }
 
 void LevelEditorView::activate()
@@ -729,12 +729,12 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	loadLevel();
-	engine->getCamera()->getLookAt()->set(camLookAt);
+	engine->getCamera()->getLookAt()->set(*camLookAt);
 }
 
 void LevelEditorView::deactivate()
 {
-	camLookAt->set(engine->getCamera()->getLookAt());
+	camLookAt->set(*engine->getCamera()->getLookAt());
 }
 
 void LevelEditorView::storeSettings()
@@ -861,7 +861,7 @@ void LevelEditorView::updateGrid()
 	if (gridCenterLast == nullptr)
 		gridCenterLast = new Vector3();
 
-	gridCenterLast->set(gridCenter);
+	gridCenterLast->set(*gridCenter);
 }
 
 void LevelEditorView::removeGrid()
@@ -981,10 +981,10 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 	if (selectedEntity != nullptr && selectedObject != nullptr) {
 		auto selectedLevelEditorObject = level->getObjectById(selectedObject->getId());
 		auto levelEditorObjectTransformations = new Transformations();
-		levelEditorObjectTransformations->getTranslation()->set(selectedObject->getTranslation());
-		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin()->clone2().add(selectedObject->getBoundingBox()->getMax())->scale(0.5f);
-		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter()->clone2() : Vector3(0.0f, 0.0f, 0.0f);
-		levelEditorObjectTransformations->getTranslation()->add(centerNewObject.clone2().add(centerSelectedObject));
+		levelEditorObjectTransformations->getTranslation()->set(*selectedObject->getTranslation());
+		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin()->clone().add(*selectedObject->getBoundingBox()->getMax()).scale(0.5f);
+		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter()->clone() : Vector3(0.0f, 0.0f, 0.0f);
+		levelEditorObjectTransformations->getTranslation()->add(centerNewObject.clone().add(centerSelectedObject));
 		if (selectedLevelEditorObject == nullptr || selectedLevelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM || selectedEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			levelEditorObjectTransformations->getTranslation()->setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin()->getY() : 0.0f));
 		} else {
@@ -992,15 +992,15 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			bv->fromBoundingVolumeWithTransformations(selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox(), selectedLevelEditorObject->getTransformations());
 			levelEditorObjectTransformations->getTranslation()->setY(bv->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter()->getY() + -selectedEntity->getModel()->getBoundingBox()->getMin()->getY());
 		}
-		levelEditorObjectTransformations->getScale()->set(new Vector3(1.0f, 1.0f, 1.0f));
-		levelEditorObjectTransformations->getPivot()->set(selectedEntity->getPivot());
+		levelEditorObjectTransformations->getScale()->set(Vector3(1.0f, 1.0f, 1.0f));
+		levelEditorObjectTransformations->getPivot()->set(*selectedEntity->getPivot());
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
 		levelEditorObjectTransformations->update();
 		for (auto i = 0; i < level->getObjectCount(); i++) {
 			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations()->getTranslation()->equals(levelEditorObjectTransformations->getTranslation())) {
+			if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations()->getTranslation()->equals(*levelEditorObjectTransformations->getTranslation())) {
 				return;
 			}
 		}
@@ -1098,7 +1098,7 @@ void LevelEditorView::centerObject()
 	}
 	auto center = new Vector3();
 	for (auto selectedObject: selectedObjects) {
-		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone2().add(selectedObject->getBoundingBoxTransformed()->getMax())->scale(0.5f));
+		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone().add(*selectedObject->getBoundingBoxTransformed()->getMax()).scale(0.5f));
 	}
 	engine->getCamera()->getLookAt()->set(center->scale(1.0f / selectedObjects.size()));
 }
@@ -1124,7 +1124,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 			if (currentEntity == nullptr)
 				continue;
 
-			currentEntity->getTransformations()->getTranslation()->add(new Vector3(x, y, z));
+			currentEntity->getTransformations()->getTranslation()->add(Vector3(x, y, z));
 			currentEntity->getTransformations()->update();
 			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
@@ -1155,7 +1155,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 			if (currentEntity == nullptr)
 				continue;
 
-			currentEntity->getTransformations()->getScale()->scale(new Vector3(x, y, z));
+			currentEntity->getTransformations()->getScale()->scale(Vector3(x, y, z));
 			currentEntity->getTransformations()->update();
 			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
@@ -1330,13 +1330,13 @@ void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
-		engine->getCamera()->getLookAt()->set(level->computeCenter());
+		engine->getCamera()->getLookAt()->set(*level->computeCenter());
 		camLookRotationX->setAngle(-45.0f);
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
 		camLookRotationY->update();
 		camScale = 1.0f;
-		gridCenter->set(engine->getCamera()->getLookAt());
+		gridCenter->set(*engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
 	} catch (_Exception& exception) {
@@ -1383,15 +1383,10 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
-		auto objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
-		if ((*objectBBMinXYZ)[0] < pasteObjectsMinX)
-			pasteObjectsMinX = (*objectBBMinXYZ)[0];
-
-		if ((*objectBBMinXYZ)[1] < pasteObjectsMinY)
-			pasteObjectsMinY = (*objectBBMinXYZ)[1];
-
-		if ((*objectBBMinXYZ)[2] < pasteObjectsMinZ)
-			pasteObjectsMinZ = (*objectBBMinXYZ)[2];
+		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		if (objectBBMinXYZ[0] < pasteObjectsMinX) pasteObjectsMinX = objectBBMinXYZ[0];
+		if (objectBBMinXYZ[1] < pasteObjectsMinY) pasteObjectsMinY = objectBBMinXYZ[1];
+		if (objectBBMinXYZ[2] < pasteObjectsMinZ) pasteObjectsMinZ = objectBBMinXYZ[2];
 	}
 	auto selectedObjectsMinX = Float::MAX_VALUE;
 	auto selectedObjectsMinZ = Float::MAX_VALUE;
@@ -1404,16 +1399,11 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, levelEditorObject->getTransformations());
-		auto objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
-		auto objectBBMaxXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMax()->getArray();
-		if ((*objectBBMinXYZ)[0] < selectedObjectsMinX)
-			selectedObjectsMinX = (*objectBBMinXYZ)[0];
-
-		if ((*objectBBMaxXYZ)[1] > selectedObjectsMaxY)
-			selectedObjectsMaxY = (*objectBBMaxXYZ)[1];
-
-		if ((*objectBBMinXYZ)[2] < selectedObjectsMinZ)
-			selectedObjectsMinZ = (*objectBBMinXYZ)[2];
+		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		auto& objectBBMaxXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMax()->getArray();
+		if (objectBBMinXYZ[0] < selectedObjectsMinX) selectedObjectsMinX = objectBBMinXYZ[0];
+		if (objectBBMaxXYZ[1] > selectedObjectsMaxY) selectedObjectsMaxY = objectBBMaxXYZ[1];
+		if (objectBBMinXYZ[2] < selectedObjectsMinZ) selectedObjectsMinZ = objectBBMinXYZ[2];
 	}
 	for (auto pasteObject: pasteObjects_) {
 		auto pasteModel = pasteObject->getEntity();
@@ -1428,7 +1418,7 @@ void LevelEditorView::pasteObjects()
 		levelEditorObjectTransformations->update();
 		for (auto i = 0; i < level->getObjectCount(); i++) {
 			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations()->getTranslation()->equals(levelEditorObjectTransformations->getTranslation())) {
+			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations()->getTranslation()->equals(*levelEditorObjectTransformations->getTranslation())) {
 				return;
 			}
 		}
@@ -1454,13 +1444,13 @@ void LevelEditorView::pasteObjects()
 
 void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)
 {
-	auto _from = new Vector3(position->getX(), position->getY(), position->getZ());
-	auto spotDirection = spotTo->clone2().sub(_from);
+	auto _from = Vector3(position->getX(), position->getY(), position->getZ());
+	auto spotDirection = spotTo->clone().sub(_from);
 	level->getLightAt(i)->getPosition()->set(position->getX(), position->getY(), position->getZ(), position->getW());
 	level->getLightAt(i)->getSpotTo()->set(spotTo->getX(), spotTo->getY(), spotTo->getZ());
-	level->getLightAt(i)->getSpotDirection()->set(spotDirection->getX(), spotDirection->getY(), spotDirection->getZ());
+	level->getLightAt(i)->getSpotDirection()->set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	engine->getLightAt(i)->getPosition()->set(position->getX(), position->getY(), position->getZ(), position->getW());
-	engine->getLightAt(i)->getSpotDirection()->set(spotDirection->getX(), spotDirection->getY(), spotDirection->getZ());
+	engine->getLightAt(i)->getSpotDirection()->set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
 }
 

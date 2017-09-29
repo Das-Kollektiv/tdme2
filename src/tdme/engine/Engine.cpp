@@ -649,7 +649,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 				auto vertices = _i->next();
 				{
 					if (LineSegment::doesLineSegmentCollideWithTriangle(&(*vertices)[0], &(*vertices)[1], &(*vertices)[2], &tmpVector3a, &tmpVector3b, &tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(&tmpVector3a)->computeLength();
+						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
 							selectedEntityDistance = entityDistance;
@@ -667,7 +667,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			continue;
 
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter())->sub(&tmpVector3a)->computeLength();
+			auto entityDistance = tmpVector3e.set(*entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
@@ -682,7 +682,7 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			continue;
 
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter())->sub(&tmpVector3a)->computeLength();
+			auto entityDistance = tmpVector3e.set(*entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
@@ -698,7 +698,7 @@ void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, 
 	Vector4 tmpVector4a;
 	Vector4 tmpVector4b;
 	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix);
-	tmpMatrix4x4.multiply(tmpVector4b.set(worldCoordinate, 1.0f), tmpVector4a);
+	tmpMatrix4x4.multiply(tmpVector4b.set(*worldCoordinate, 1.0f), tmpVector4a);
 	tmpVector4a.scale(1.0f / tmpVector4a.getW());
 	auto screenCoordinateXYZW = tmpVector4a.getArray();
 	screenCoordinate->setX((screenCoordinateXYZW[0] + 1.0f) * width / 2.0f);

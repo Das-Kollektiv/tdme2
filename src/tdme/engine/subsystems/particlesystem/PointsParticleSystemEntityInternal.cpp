@@ -150,8 +150,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 
 	Vector3 velocityForTime;
 	Vector3 point;
-	auto bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
-	auto bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
+	auto& bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
+	auto& bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
 	auto haveBoundingBox = false;
 	float distanceFromCamera;
 	auto modelViewMatrix = renderer->getModelViewMatrix();
@@ -171,7 +171,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		if (particle.mass > MathTools::EPSILON)
 			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
-		particle.position.add(velocityForTime.set(&particle.velocity)->scale(static_cast< float >(timeDelta) / 1000.0f));
+		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		auto color = particle.color.getArray();
 		auto colorAdd = particle.colorAdd.getArray();
 		(*color)[0] += (*colorAdd)[0] * static_cast< float >(timeDelta);
@@ -198,18 +198,18 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		}
 		activeParticles++;
 		distanceFromCamera = -point.getZ();
-		auto positionXYZ = particle.position.getArray();
+		auto& positionXYZ = particle.position.getArray();
 		if (haveBoundingBox == false) {
-			*bbMinXYZ = *positionXYZ;
-			*bbMaxXYZ = *positionXYZ;
+			bbMinXYZ = positionXYZ;
+			bbMaxXYZ = positionXYZ;
 			haveBoundingBox = true;
 		} else {
-			if ((*positionXYZ)[0] < (*bbMinXYZ)[0]) (*bbMinXYZ)[0] = (*positionXYZ)[0];
-			if ((*positionXYZ)[1] < (*bbMinXYZ)[1]) (*bbMinXYZ)[1] = (*positionXYZ)[1];
-			if ((*positionXYZ)[2] < (*bbMinXYZ)[2]) (*bbMinXYZ)[2] = (*positionXYZ)[2];
-			if ((*positionXYZ)[0] > (*bbMaxXYZ)[0]) (*bbMaxXYZ)[0] = (*positionXYZ)[0];
-			if ((*positionXYZ)[1] > (*bbMaxXYZ)[1]) (*bbMaxXYZ)[1] = (*positionXYZ)[1];
-			if ((*positionXYZ)[2] > (*bbMaxXYZ)[2]) (*bbMaxXYZ)[2] = (*positionXYZ)[2];
+			if (positionXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = positionXYZ[0];
+			if (positionXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = positionXYZ[1];
+			if (positionXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = positionXYZ[2];
+			if (positionXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = positionXYZ[0];
+			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
+			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		pointsRenderPool->addPoint(&point, &particle.color, distanceFromCamera);
 	}
@@ -260,11 +260,11 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 			continue;
 
 		emitter->emit(&particle);
-		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * static_cast< double >(timeDelta)));
+		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));
 		if (particle.mass > MathTools::EPSILON)
 			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
 
-		particle.position.add(velocityForTime.set(&particle.velocity)->scale(static_cast< float >(timeDeltaRnd) / 1000.0f));
+		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
 			break;

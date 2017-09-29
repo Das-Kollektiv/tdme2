@@ -139,10 +139,22 @@ public:
 	 * @param float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,3>* f) throw (ModelFileIOException) {
-		writeInt(f->size());
-		for (auto i = 0; i < f->size(); i++) {
-			writeFloat((*f)[i]);
+	inline void writeFloatArray(array<float,3>& f) throw (ModelFileIOException) {
+		writeInt(f.size());
+		for (auto i = 0; i < f.size(); i++) {
+			writeFloat(f[i]);
+		}
+	}
+
+	/**
+	 * Writes a float array to output stream
+	 * @param float array
+	 * @throws model file IO exception
+	 */
+	inline void writeFloatArray(array<float,4>& f) throw (ModelFileIOException) {
+		writeInt(f.size());
+		for (auto i = 0; i < f.size(); i++) {
+			writeFloat(f[i]);
 		}
 	}
 

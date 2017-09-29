@@ -69,7 +69,7 @@ public:
 	 * @param text
 	 * @param array
 	 */
-	static void convertToArray(String* text, array<float, 3>* array) /* throws(NumberFormatException) */;
+	static void convertToArray(String* text, array<float, 3>& array) /* throws(NumberFormatException) */;
 
 	/**
 	 * Convert string to array

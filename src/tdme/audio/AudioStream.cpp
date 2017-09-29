@@ -249,9 +249,9 @@ void AudioStream::updateProperties()
 {
 	alSourcef(alSourceId, AL_PITCH, pitch);
 	alSourcef(alSourceId, AL_GAIN, gain);
-	alSourcefv(alSourceId, AL_POSITION, sourcePosition.getArray()->data());
-	alSourcefv(alSourceId, AL_DIRECTION, sourceDirection.getArray()->data());
-	alSourcefv(alSourceId, AL_VELOCITY, sourceVelocity.getArray()->data());
+	alSourcefv(alSourceId, AL_POSITION, sourcePosition.getArray().data());
+	alSourcefv(alSourceId, AL_DIRECTION, sourceDirection.getArray().data());
+	alSourcefv(alSourceId, AL_VELOCITY, sourceVelocity.getArray().data());
 	if (fixed == true) {
 		alSourcef(alSourceId, AL_ROLLOFF_FACTOR, 0.0f);
 		alSourcei(alSourceId, AL_SOURCE_RELATIVE, AL_TRUE);

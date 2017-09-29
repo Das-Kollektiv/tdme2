@@ -212,7 +212,7 @@ public:
 	 * @param uniform id
 	 * @param data
 	 */
-	virtual void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>* data) = 0;
+	virtual void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>& data) = 0;
 
 	/** 
 	 * Bind attribute to a input location
@@ -614,7 +614,7 @@ public:
 	 * @param light id
 	 * @param spot direction
 	 */
-	virtual void setLightSpotDirection(int32_t lightId, array<float, 3>* spotDirection);
+	virtual void setLightSpotDirection(int32_t lightId, const array<float, 3>& spotDirection);
 
 	/** 
 	 * Set light spot exponent
