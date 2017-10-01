@@ -16,10 +16,10 @@ Rotation::Rotation()
 	this->quaternion.identity();
 }
 
-Rotation::Rotation(float angle, Vector3* axis) 
+Rotation::Rotation(float angle, const Vector3& axis)
 {
 	this->angle = angle;
-	this->axis.set(*axis);
+	this->axis.set(axis);
 	this->quaternion.identity();
 }
 
@@ -39,14 +39,14 @@ void Rotation::setAngle(float angle)
 	this->angle = angle;
 }
 
-Vector3* Rotation::getAxix()
+Vector3& Rotation::getAxix()
 {
-	return &axis;
+	return axis;
 }
 
-Quaternion* Rotation::getQuaternion()
+Quaternion& Rotation::getQuaternion()
 {
-	return &quaternion;
+	return quaternion;
 }
 
 void Rotation::fromRotation(Rotation* rotation)
@@ -56,9 +56,9 @@ void Rotation::fromRotation(Rotation* rotation)
 	quaternion.set(rotation->quaternion);
 }
 
-void Rotation::fromQuaternion(Quaternion* q)
+void Rotation::fromQuaternion(const Quaternion& q)
 {
-	quaternion.set(*q);
+	quaternion.set(q);
 	quaternion.normalize();
 	auto& quaterionXYZ = quaternion.getArray();
 	this->angle = 2.0f * Math::acos(quaterionXYZ[3]) / 3.1415927f * 180.0f;

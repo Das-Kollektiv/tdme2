@@ -303,7 +303,7 @@ void PhysicsTest1::initialize()
 		auto tireBoundingVolume = new ConvexMesh(new Object3DModel(_tire));
 		entity = new Object3D(L"tire1", _tire);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getRotations()->add(new Rotation(90.0f, new Vector3(1.0f, 0.0f, 0.0f)));
+		entity->getRotations()->add(new Rotation(90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(-4.0f);
 		entity->getTranslation().addZ(-2.0f);
@@ -313,7 +313,7 @@ void PhysicsTest1::initialize()
 		world->addRigidBody(L"tire1", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
 		entity = new Object3D(L"tire2", _tire);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getRotations()->add(new Rotation(90.0f, new Vector3(1.0f, 0.0f, 0.0f)));
+		entity->getRotations()->add(new Rotation(90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(-6.0f);
 		entity->getTranslation().addZ(-2.0f);

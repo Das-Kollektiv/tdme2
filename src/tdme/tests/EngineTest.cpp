@@ -206,7 +206,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (keyUp) {
-		r->getQuaternion()->multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
+		r->getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
 		movement.scale(1.5f / fps);
 		player->getTranslation().add(movement);
 		player->update();
@@ -322,7 +322,7 @@ void EngineTest::initialize()
 		auto player1 = new Object3D(L"player1", _player);
 		player1->getTranslation().add(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation(L"still");
-		player1->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
+		player1->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f)));
 		player1->update();
 		player1->setEnabled(true);
 		player1->setPickable(true);
@@ -339,7 +339,7 @@ void EngineTest::initialize()
 		auto player2 = new Object3D(L"player2", _player);
 		player2->getTranslation().add(Vector3(1.5f, 0.0f, 0.0f));
 		player2->setAnimation(L"still");
-		player2->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
+		player2->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f)));
 		player2->update();
 		player2->setEnabled(true);
 		player2->setPickable(true);

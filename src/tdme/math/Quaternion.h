@@ -125,12 +125,12 @@ public:
 	 * @param quaterion q
 	 * @return this quaternion
 	 */
-	inline Quaternion& multiply(Quaternion* q) {
+	inline Quaternion& multiply(const Quaternion q) {
 		array<float, 4> _data;
-		_data[0] = data[3] * q->data[0] + data[0] * q->data[3] + data[1] * q->data[2] - data[2] * q->data[1];
-		_data[1] = data[3] * q->data[1] - data[0] * q->data[2] + data[1] * q->data[3] + data[2] * q->data[0];
-		_data[2] = data[3] * q->data[2] + data[0] * q->data[1] - data[1] * q->data[0] + data[2] * q->data[3];
-		_data[3] = data[3] * q->data[3] - data[0] * q->data[0] - data[1] * q->data[1] - data[2] * q->data[2];
+		_data[0] = data[3] * q.data[0] + data[0] * q.data[3] + data[1] * q.data[2] - data[2] * q.data[1];
+		_data[1] = data[3] * q.data[1] - data[0] * q.data[2] + data[1] * q.data[3] + data[2] * q.data[0];
+		_data[2] = data[3] * q.data[2] + data[0] * q.data[1] - data[1] * q.data[0] + data[2] * q.data[3];
+		_data[3] = data[3] * q.data[3] - data[0] * q.data[0] - data[1] * q.data[1] - data[2] * q.data[2];
 		data = _data;
 		return *this;
 	}

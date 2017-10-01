@@ -310,7 +310,7 @@ void RigidBody::update(float deltaTime)
 	auto& angularVelocityXYZ = angularVelocity.getArray();
 	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f).scale(0.5f * deltaTime);
 	tmpQuaternion1.set(orientation);
-	tmpQuaternion1.multiply(&tmpQuaternion2);
+	tmpQuaternion1.multiply(tmpQuaternion2);
 	orientation.add(tmpQuaternion1);
 	orientation.normalize();
 	force.set(0.0f, 0.0f, 0.0f);

@@ -44,12 +44,12 @@ public:
 	/** 
 	 * @return axis
 	 */
-	Vector3* getAxix();
+	Vector3& getAxix();
 
 	/** 
 	 * @return quaternion
 	 */
-	Quaternion* getQuaternion();
+	Quaternion& getQuaternion();
 
 	/** 
 	 * Sets up this rotation from another rotation
@@ -61,7 +61,7 @@ public:
 	 * Sets up this rotation from quaternion, current quaternion will be lost, needs to get updated
 	 * @param q
 	 */
-	void fromQuaternion(Quaternion* q);
+	void fromQuaternion(const Quaternion& q);
 
 	/** 
 	 * Computes rotation matrix
@@ -78,5 +78,5 @@ public:
 	 * @param angle
 	 * @param axis
 	 */
-	Rotation(float angle, Vector3* axis);
+	Rotation(float angle, const Vector3& axis);
 };

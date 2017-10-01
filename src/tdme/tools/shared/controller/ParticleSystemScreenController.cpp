@@ -536,9 +536,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getObbCenter()->set(*Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toString()));
 					emitter->getObbHalfextension()->set(*Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					rotations->getTransformationsMatrix().getAxes(*emitter->getObbAxis0(), *emitter->getObbAxis1(), *emitter->getObbAxis2());
 					goto end_switch2;;
@@ -561,9 +561,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getCenter()->set(*Tools::convertToVector3(cpeCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
 					goto end_switch2;;
@@ -586,9 +586,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getCenter()->set(*Tools::convertToVector3(cpepvCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
 					goto end_switch2;;

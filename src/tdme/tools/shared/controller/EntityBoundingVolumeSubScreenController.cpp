@@ -372,9 +372,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 {
 	try {
 		auto rotations = new Transformations();
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Z));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_Y));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toString()), &OrientedBoundingBox::AABB_AXIS_X));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 		rotations->update();
 		auto xAxis = new Vector3();
 		auto yAxis = new Vector3();

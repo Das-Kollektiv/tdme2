@@ -218,9 +218,9 @@ void Tools::oseInit()
 	setDefaultLight(osEngine->getLightAt(0));
 	oseScale = 0.75f;
 	oseLookFromRotations = new Transformations();
-	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, new Vector3(0.0f, 1.0f, 0.0f)));
-	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, new Vector3(1.0f, 0.0f, 0.0f)));
-	oseLookFromRotations->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 0.0f, 1.0f)));
+	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
+	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
+	oseLookFromRotations->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
 	oseLookFromRotations->update();
 }
 
@@ -353,7 +353,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	auto upVector = new Vector3();
 	lookFromRotations->getTransformationsMatrix().multiply(*lookAtToFromVector, *lookAtToFromVectorTransformed);
 	lookAtToFromVectorScaled->set(*lookAtToFromVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(Vector3(0.0f, 1.0f, 0.0f), *upVector);
+	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), *upVector);
 	auto lookFrom = lookAt.clone().add(*lookAtToFromVectorScaled);
 	cam->getLookFrom().set(lookFrom);
 	cam->getUpVector().set(*upVector);

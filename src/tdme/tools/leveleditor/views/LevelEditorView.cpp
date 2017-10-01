@@ -169,8 +169,8 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	this->popUps = popUps;
 	GRID_DIMENSION_X = 20;
 	GRID_DIMENSION_Y = 20;
-	camLookRotationX = new Rotation(-45.0f, new Vector3(1.0f, 0.0f, 0.0f));
-	camLookRotationY = new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f));
+	camLookRotationX = new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f));
+	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
 	camScaleMax = 3.0f;
 	camScaleMin = 0.05f;
 	FORWARD_VECTOR = new Vector3(0.0f, 0.0f, 1.0f);
@@ -550,12 +550,12 @@ void LevelEditorView::display()
 
 		camLookRotationX->update();
 	}
-	camLookRotationX->getQuaternion()->multiply(*FORWARD_VECTOR, *tmpVector3);
-	camLookRotationY->getQuaternion()->multiply(*tmpVector3, *tmpVector3);
+	camLookRotationX->getQuaternion().multiply(*FORWARD_VECTOR, *tmpVector3);
+	camLookRotationY->getQuaternion().multiply(*tmpVector3, *tmpVector3);
 	camLookAtToFromVector->set(*tmpVector3).scale(camScale * 10.0f);
 	auto timing = engine->getTiming();
-	camLookRotationY->getQuaternion()->multiply(*FORWARD_VECTOR, *camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
-	camLookRotationY->getQuaternion()->multiply(*SIDE_VECTOR, *camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion().multiply(*FORWARD_VECTOR, *camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion().multiply(*SIDE_VECTOR, *camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	if (keyUp)
 		cam->getLookAt().sub(tmpVector3->set(*camForwardVector).scale(0.1f));
 

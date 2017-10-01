@@ -39,16 +39,17 @@ RotationOrder::RotationOrder(const ::default_init_tag&)
 	clinit();
 }
 
-RotationOrder::RotationOrder(const wstring& name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex)
+RotationOrder::RotationOrder(const wstring& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex)
 	: RotationOrder(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(name, ordinal, axis0,axis1,axis2,axis0VectorIndex,axis1VectorIndex,axis2VectorIndex,axisXIndex,axisYIndex,axisZIndex);
+	ctor(name, ordinal, axis0, axis1, axis2, axis0VectorIndex, axis1VectorIndex, axis2VectorIndex, axisXIndex,axisYIndex,axisZIndex);
 }
 
-RotationOrder* tdme::engine::model::RotationOrder::XYZ = new RotationOrder(L"XYZ", 0, new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), 0, 1, 2, 0, 1, 2);
-RotationOrder* tdme::engine::model::RotationOrder::YZX = new RotationOrder(L"YZX", 1, new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), 1, 2, 0, 2, 0, 1);
-RotationOrder* tdme::engine::model::RotationOrder::ZYX = new RotationOrder(L"ZYX", 2, new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f), 2, 1, 0, 2, 1, 0);
-void RotationOrder::ctor(const wstring& name, int ordinal, Vector3* axis0, Vector3* axis1, Vector3* axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex)
+RotationOrder* tdme::engine::model::RotationOrder::XYZ = new RotationOrder(L"XYZ", 0, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), 0, 1, 2, 0, 1, 2);
+RotationOrder* tdme::engine::model::RotationOrder::YZX = new RotationOrder(L"YZX", 1, Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), 1, 2, 0, 2, 0, 1);
+RotationOrder* tdme::engine::model::RotationOrder::ZYX = new RotationOrder(L"ZYX", 2, Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), 2, 1, 0, 2, 1, 0);
+
+void RotationOrder::ctor(const wstring& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex)
 {
 	super::ctor(name, ordinal);
 	this->axis0 = axis0;
@@ -62,47 +63,47 @@ void RotationOrder::ctor(const wstring& name, int ordinal, Vector3* axis0, Vecto
 	this->axisZIndex = axisZIndex;
 }
 
-Vector3* RotationOrder::getAxis0()
+const Vector3& RotationOrder::getAxis0() const
 {
 	return axis0;
 }
 
-Vector3* RotationOrder::getAxis1()
+const Vector3& RotationOrder::getAxis1() const
 {
 	return axis1;
 }
 
-Vector3* RotationOrder::getAxis2()
+const Vector3& RotationOrder::getAxis2() const
 {
 	return axis2;
 }
 
-int32_t RotationOrder::getAxis0VectorIndex()
+int32_t RotationOrder::getAxis0VectorIndex() const
 {
 	return axis0VectorIndex;
 }
 
-int32_t RotationOrder::getAxis1VectorIndex()
+int32_t RotationOrder::getAxis1VectorIndex() const
 {
 	return axis1VectorIndex;
 }
 
-int32_t RotationOrder::getAxis2VectorIndex()
+int32_t RotationOrder::getAxis2VectorIndex() const
 {
 	return axis2VectorIndex;
 }
 
-int32_t RotationOrder::getAxisXIndex()
+int32_t RotationOrder::getAxisXIndex() const
 {
 	return axisXIndex;
 }
 
-int32_t RotationOrder::getAxisYIndex()
+int32_t RotationOrder::getAxisYIndex() const
 {
 	return axisYIndex;
 }
 
-int32_t RotationOrder::getAxisZIndex()
+int32_t RotationOrder::getAxisZIndex() const
 {
 	return axisZIndex;
 }

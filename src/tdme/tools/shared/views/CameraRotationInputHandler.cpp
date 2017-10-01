@@ -45,9 +45,9 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine)
 	lookFromRotations = new Transformations();
 	maxAxisDimension = 0.0f;
 	scale = 1.0f;
-	lookFromRotations->getRotations()->add(new Rotation(-45.0f, new Vector3(0.0f, 1.0f, 0.0f)));
-	lookFromRotations->getRotations()->add(new Rotation(-45.0f, new Vector3(1.0f, 0.0f, 0.0f)));
-	lookFromRotations->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 0.0f, 1.0f)));
+	lookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
+	lookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
+	lookFromRotations->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
 	lookFromRotations->update();
 	resetRequested = false;
 	mouseLastX = 0;
@@ -200,7 +200,7 @@ void CameraRotationInputHandler::handleInputEvents()
 	auto upVector = new Vector3();
 	lookFromRotations->getTransformationsMatrix().multiply(*lookAtToFromVector, *lookAtToFromVectorTransformed);
 	lookAtToFromVectorScaled->set(*lookAtToFromVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(Vector3(0.0f, 1.0f, 0.0f), *upVector);
+	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), *upVector);
 	auto lookFrom = lookAt.clone().add(*lookAtToFromVectorScaled);
 	cam->getLookFrom().set(lookFrom);
 	cam->getUpVector().set(*upVector);
