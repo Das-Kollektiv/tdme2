@@ -42,9 +42,9 @@ Rotation* Rotations::remove(int32_t index)
 	return rotation;
 }
 
-Quaternion* Rotations::getQuaternion()
+Quaternion& Rotations::getQuaternion()
 {
-	return &quaternion;
+	return quaternion;
 }
 
 void Rotations::fromRotations(Rotations* transformations)

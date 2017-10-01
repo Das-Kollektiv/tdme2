@@ -253,14 +253,14 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 		entity->fromTransformations(object->getTransformations());
 		if (translation != nullptr) {
-			entity->getTranslation()->add(*translation);
+			entity->getTranslation().add(*translation);
 		}
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty(L"shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), L"false");
 		entity->setDynamicShadowingEnabled(omitShadowing == true ? false : dynamicShadowing);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale()->set(MathTools::sign(entity->getScale()->getX()), MathTools::sign(entity->getScale()->getY()), MathTools::sign(entity->getScale()->getZ()));
+			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
 		}
 		entity->update();
 		entity->setEnabled(enable);
@@ -292,7 +292,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 			auto transformations = new Transformations();
 			transformations->fromTransformations(object->getTransformations());
 			if (translation != nullptr) {
-				transformations->getTranslation()->add(*translation);
+				transformations->getTranslation().add(*translation);
 				transformations->update();
 			}
 			auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
@@ -331,10 +331,10 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 
 		entity->fromTransformations(object->getTransformations());
 		if (translation != nullptr) {
-			entity->getTranslation()->add(*translation);
+			entity->getTranslation().add(*translation);
 		}
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale()->set(MathTools::sign(entity->getScale()->getX()), MathTools::sign(entity->getScale()->getY()), MathTools::sign(entity->getScale()->getZ()));
+			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
 		}
 		entity->update();
 		entity->setEnabled(true);
@@ -356,7 +356,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 
 				transformations->fromTransformations(object->getTransformations());
 				if (translation != nullptr) {
-					transformations->getTranslation()->add(*translation);
+					transformations->getTranslation().add(*translation);
 					transformations->update();
 				}
 				rigidBody->synch(transformations);

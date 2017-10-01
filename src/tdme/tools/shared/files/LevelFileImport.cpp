@@ -165,13 +165,13 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		}
 
 		auto transformations = new Transformations();
-		transformations->getPivot()->set(*model->getPivot());
-		transformations->getTranslation()->set(
+		transformations->getPivot().set(*model->getPivot());
+		transformations->getTranslation().set(
 			static_cast< float >(jObject["tx"].getDouble()),
 			static_cast< float >(jObject["ty"].getDouble()),
 			static_cast< float >(jObject["tz"].getDouble())
 		);
-		transformations->getScale()->set(
+		transformations->getScale().set(
 			static_cast< float >(jObject["sx"].getDouble()),
 			static_cast< float >(jObject["sy"].getDouble()),
 			static_cast< float >(jObject["sz"].getDouble())

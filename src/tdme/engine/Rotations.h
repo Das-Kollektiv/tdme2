@@ -64,7 +64,7 @@ public:
 	/** 
 	 * @return rotation quaternion
 	 */
-	Quaternion* getQuaternion();
+	Quaternion& getQuaternion();
 
 	/** 
 	 * Set up this transformations from given transformations

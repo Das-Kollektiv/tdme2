@@ -93,7 +93,7 @@ const wstring& PointsParticleSystemEntity::getId()
 	return PointsParticleSystemEntityInternal::getId();
 }
 
-Vector3* PointsParticleSystemEntity::getPivot()
+Vector3& PointsParticleSystemEntity::getPivot()
 {
 	return Transformations::getPivot();
 }
@@ -103,7 +103,7 @@ Rotations* PointsParticleSystemEntity::getRotations()
 	return Transformations::getRotations();
 }
 
-Vector3* PointsParticleSystemEntity::getScale()
+Vector3& PointsParticleSystemEntity::getScale()
 {
 	return Transformations::getScale();
 }
@@ -113,7 +113,7 @@ Matrix4x4& PointsParticleSystemEntity::getTransformationsMatrix()
 	return Transformations::getTransformationsMatrix();
 }
 
-Vector3* PointsParticleSystemEntity::getTranslation()
+Vector3& PointsParticleSystemEntity::getTranslation()
 {
 	return Transformations::getTranslation();
 }

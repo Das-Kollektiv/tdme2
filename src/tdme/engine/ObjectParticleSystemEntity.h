@@ -72,11 +72,11 @@ public:
 	virtual Color4* getEffectColorAdd();
 	virtual Color4* getEffectColorMul();
 	virtual const wstring& getId();
-	virtual Vector3* getPivot();
+	virtual Vector3& getPivot();
 	virtual Rotations* getRotations();
-	virtual Vector3* getScale();
+	virtual Vector3& getScale();
 	virtual Matrix4x4& getTransformationsMatrix();
-	virtual Vector3* getTranslation();
+	virtual Vector3& getTranslation();
 	virtual bool isDynamicShadowingEnabled();
 	virtual bool isEnabled();
 	virtual bool isPickable();

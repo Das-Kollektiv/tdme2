@@ -24,19 +24,19 @@ Transformations::Transformations()
 	rotationsTranslationsMatrix.identity();
 }
 
-Vector3* Transformations::getTranslation()
+Vector3& Transformations::getTranslation()
 {
-	return &translation;
+	return translation;
 }
 
-Vector3* Transformations::getScale()
+Vector3& Transformations::getScale()
 {
-	return &scale;
+	return scale;
 }
 
-Vector3* Transformations::getPivot()
+Vector3& Transformations::getPivot()
 {
-	return &pivot;
+	return pivot;
 }
 
 Rotations* Transformations::getRotations()

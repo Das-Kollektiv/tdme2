@@ -154,11 +154,11 @@ Model* EngineTest::createWallModel()
 
 void EngineTest::display()
 {
-	circleTransformations->getTranslation()->setX(players.at(0)->getTranslation()->getX());
-	circleTransformations->getTranslation()->setZ(players.at(0)->getTranslation()->getZ());
-	circleTransformations->getTranslation()->addY(0.1f);
-	if (circleTransformations->getTranslation()->getY() > 1.5f) {
-		circleTransformations->getTranslation()->setY(0.0f);
+	circleTransformations->getTranslation().setX(players.at(0)->getTranslation().getX());
+	circleTransformations->getTranslation().setZ(players.at(0)->getTranslation().getZ());
+	circleTransformations->getTranslation().addY(0.1f);
+	if (circleTransformations->getTranslation().getY() > 1.5f) {
+		circleTransformations->getTranslation().setY(0.0f);
 	}
 	circleTransformations->update();
 	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
@@ -208,7 +208,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	if (keyUp) {
 		r->getQuaternion()->multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
 		movement.scale(1.5f / fps);
-		player->getTranslation()->add(movement);
+		player->getTranslation().add(movement);
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 		if (player->getAnimation() != L"walk") {
@@ -220,12 +220,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		}
 	}
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, &movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
+		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
 	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), &movement, collision) == true && collision->hasPenetration() == true) {
-		player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
+		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 	}
@@ -234,7 +234,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			continue;
 
 		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), &movement, collision) == true && collision->hasPenetration()) {
-			player->getTranslation()->sub(collision->getNormal()->clone().scale(collision->getPenetration()));
+			player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 			player->update();
 			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
 		}
@@ -297,7 +297,7 @@ void EngineTest::initialize()
 		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
 		auto barrel = new Object3D(L"barrel", _barrel);
 		barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
-		barrel->getTranslation()->set(1.5f, 0.35f, -2.0f);
+		barrel->getTranslation().set(1.5f, 0.35f, -2.0f);
 		barrel->setDynamicShadowingEnabled(true);
 		barrel->setEnabled(true);
 		barrel->update();
@@ -311,7 +311,7 @@ void EngineTest::initialize()
 		auto _grass = DAEReader::read(L"resources/tests/models/grass", L"grass.dae");
 		auto grass = new Object3D(L"ground", _grass);
 		grass->setEnabled(true);
-		grass->getScale()->set(8.0f, 1.0f, 8.0f);
+		grass->getScale().set(8.0f, 1.0f, 8.0f);
 		grass->update();
 		engine->addEntity(grass);
 		auto _player = DAEReader::read(L"resources/tests/models/dummy", L"testDummy_textured.DAE");
@@ -320,7 +320,7 @@ void EngineTest::initialize()
 		playerBoundingVolume = new Capsule(new Vector3(0, 30.0f / 130.0f, 0), new Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
 		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, L"player_bv");
 		auto player1 = new Object3D(L"player1", _player);
-		player1->getTranslation()->add(Vector3(-1.5f, 0.0f, 0.0f));
+		player1->getTranslation().add(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation(L"still");
 		player1->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player1->update();
@@ -337,7 +337,7 @@ void EngineTest::initialize()
 		player1BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player1BoundingVolume);
 		auto player2 = new Object3D(L"player2", _player);
-		player2->getTranslation()->add(Vector3(1.5f, 0.0f, 0.0f));
+		player2->getTranslation().add(Vector3(1.5f, 0.0f, 0.0f));
 		player2->setAnimation(L"still");
 		player2->getRotations()->add(new Rotation(0.0f, new Vector3(0.0f, 1.0f, 0.0f)));
 		player2->update();
@@ -355,8 +355,8 @@ void EngineTest::initialize()
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
 		auto _cube = DAEReader::read(L"resources/tests/models/test", L"cube.dae");
 		cube = new Object3D(L"cube", _cube);
-		cube->getTranslation()->add(Vector3(0.0f, 0.0f, 0.0f));
-		cube->getScale()->set(2.0f, 2.0f, 2.0f);
+		cube->getTranslation().add(Vector3(0.0f, 0.0f, 0.0f));
+		cube->getScale().set(2.0f, 2.0f, 2.0f);
 		cube->update();
 		cube->setPickable(true);
 		cube->setDynamicShadowingEnabled(true);
@@ -372,20 +372,20 @@ void EngineTest::initialize()
 		engine->addEntity(cubeBoundingVolumeObject3D);
 		auto _wall = DAEReader::read(L"resources/tests/models/wall", L"wall.dae");
 		auto wall0 = new Object3D(L"wall0", _wall);
-		wall0->getTranslation()->add(Vector3(-1.0f, 0.0f, 3.0f));
+		wall0->getTranslation().add(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();
 		wall0->setPickable(true);
 		wall0->setEnabled(true);
 		engine->addEntity(wall0);
 		auto wall1 = new Object3D(L"wall1", _wall);
-		wall1->getTranslation()->add(Vector3(0.0f, 0.0f, 3.0f));
+		wall1->getTranslation().add(Vector3(0.0f, 0.0f, 3.0f));
 		wall1->update();
 		wall1->setPickable(true);
 		wall1->setEnabled(true);
 		engine->addEntity(wall1);
 		auto osCube = new Object3D(L"cube", _cube);
-		osCube->getTranslation()->add(Vector3(0.0f, 0.0f, 0.0f));
-		osCube->getScale()->set(2.0f, 2.0f, 2.0f);
+		osCube->getTranslation().add(Vector3(0.0f, 0.0f, 0.0f));
+		osCube->getScale().set(2.0f, 2.0f, 2.0f);
 		osCube->update();
 		osEngine->addEntity(osCube);
 		circleTransformations = new Transformations();

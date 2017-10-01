@@ -247,7 +247,7 @@ void RigidBody::synch(Transformations* transformations)
 	if (this->cbv != nullptr)
 		this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
 
-	this->position.set(*this->transformations->getTranslation());
+	this->position.set(this->transformations->getTranslation());
 	this->orientation.identity();
 	for (auto i = 0; i < this->transformations->getRotations()->size(); i++) {
 		auto r = this->transformations->getRotations()->get(i);

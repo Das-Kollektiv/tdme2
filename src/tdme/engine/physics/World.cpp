@@ -261,7 +261,7 @@ void World::update(float deltaTime)
 		rotations->get(0)->fromQuaternion(&rigidBody->orientation);
 		rotations->get(0)->getAxix()->getArray()[1] *= -1.0f;
 		auto transformations = rigidBody->transformations;
-		transformations->getTranslation()->set(rigidBody->position);
+		transformations->getTranslation().set(rigidBody->position);
 		transformations->update();
 		rigidBody->cbv->fromBoundingVolumeWithTransformations(rigidBody->obv, transformations);
 		partition->updateRigidBody(rigidBody);

@@ -35,17 +35,17 @@ public:
 	/** 
 	 * @return object translation
 	 */
-	virtual Vector3* getTranslation();
+	virtual Vector3& getTranslation();
 
 	/** 
 	 * @return object scale
 	 */
-	virtual Vector3* getScale();
+	virtual Vector3& getScale();
 
 	/** 
 	 * @return pivot or center of rotations
 	 */
-	virtual Vector3* getPivot();
+	virtual Vector3& getPivot();
 
 	/** 
 	 * @return object rotations

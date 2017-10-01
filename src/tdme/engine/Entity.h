@@ -115,17 +115,17 @@ struct tdme::engine::Entity
 	/** 
 	 * @return object translation
 	 */
-	virtual Vector3* getTranslation() = 0;
+	virtual Vector3& getTranslation() = 0;
 
 	/** 
 	 * @return object scale
 	 */
-	virtual Vector3* getScale() = 0;
+	virtual Vector3& getScale() = 0;
 
 	/** 
 	 * @return pivot or center of rotations
 	 */
-	virtual Vector3* getPivot() = 0;
+	virtual Vector3& getPivot() = 0;
 
 	/** 
 	 * @return object rotations

@@ -65,7 +65,7 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 			model
 		);
 		objects[i]->setEnabled(false);
-		objects[i]->getScale()->set(*scale);
+		objects[i]->getScale().set(*scale);
 		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 		objects[i]->setPickable(false);
 	}
@@ -195,7 +195,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 
 		emitter->emit(particle);
 		auto object = objects[i];
-		object->getTranslation()->set(particle->position);
+		object->getTranslation().set(particle->position);
 		object->update();
 		object->setEnabled(true);
 		object->getEffectColorAdd()->set(&effectColorAdd);
@@ -234,7 +234,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 
 		object->getEffectColorAdd()->set(&effectColorAdd);
 		object->getEffectColorMul()->set(&effectColorMul);
-		object->getTranslation()->add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->getTranslation().add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed->getMin()->set(*object->getBoundingBoxTransformed()->getMin());

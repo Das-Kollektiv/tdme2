@@ -100,7 +100,7 @@ const wstring& ObjectParticleSystemEntity::getId()
 	return ObjectParticleSystemEntityInternal::getId();
 }
 
-Vector3* ObjectParticleSystemEntity::getPivot()
+Vector3& ObjectParticleSystemEntity::getPivot()
 {
 	return Transformations::getPivot();
 }
@@ -110,7 +110,7 @@ Rotations* ObjectParticleSystemEntity::getRotations()
 	return Transformations::getRotations();
 }
 
-Vector3* ObjectParticleSystemEntity::getScale()
+Vector3& ObjectParticleSystemEntity::getScale()
 {
 	return Transformations::getScale();
 }
@@ -120,7 +120,7 @@ Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix()
 	return Transformations::getTransformationsMatrix();
 }
 
-Vector3* ObjectParticleSystemEntity::getTranslation()
+Vector3& ObjectParticleSystemEntity::getTranslation()
 {
 	return Transformations::getTranslation();
 }

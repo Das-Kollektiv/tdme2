@@ -88,7 +88,7 @@ const wstring& Object3D::getId()
 	return Object3DInternal::getId();
 }
 
-Vector3* Object3D::getPivot()
+Vector3& Object3D::getPivot()
 {
 	return Transformations::getPivot();
 }
@@ -98,7 +98,7 @@ Rotations* Object3D::getRotations()
 	return Transformations::getRotations();
 }
 
-Vector3* Object3D::getScale()
+Vector3& Object3D::getScale()
 {
 	return Transformations::getScale();
 }
@@ -108,7 +108,7 @@ Matrix4x4& Object3D::getTransformationsMatrix()
 	return Transformations::getTransformationsMatrix();
 }
 
-Vector3* Object3D::getTranslation()
+Vector3& Object3D::getTranslation()
 {
 	return Transformations::getTranslation();
 }
