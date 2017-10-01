@@ -74,12 +74,12 @@ public:
 	/** 
 	 * @return position of light
 	 */
-	Vector4* getPosition();
+	Vector4& getPosition();
 
 	/** 
 	 * @return spot direction
 	 */
-	Vector3* getSpotDirection();
+	Vector3& getSpotDirection();
 
 	/** 
 	 * @return spot exponent

@@ -86,7 +86,7 @@ void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
 	Vector3 lightLookAt;
 	Vector3 lightLookFrom;
 	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * shadowMapping->lightEyeDistanceScale;
-	lightDirection.set(*light->getSpotDirection()).normalize();
+	lightDirection.set(light->getSpotDirection()).normalize();
 	lightLookAt.set(camera->getLookAt());
 	lightLookFrom.set(lightLookAt).sub(lightDirection.scale(lightEyeDistance));
 	auto lightCameraZFar = lightEyeDistance * 2.0f;

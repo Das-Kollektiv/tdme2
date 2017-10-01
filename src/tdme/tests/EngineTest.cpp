@@ -254,8 +254,8 @@ void EngineTest::initialize()
 		auto osLight0 = osEngine->getLightAt(0);
 		osLight0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 		osLight0->getDiffuse()->set(1.0f, 1.0f, 1.0f, 1.0f);
-		osLight0->getPosition()->set(0.0f, -4.0f, -4.0f, 1.0f);
-		osLight0->getSpotDirection()->set(Vector3(osLight0->getPosition()->getX(), osLight0->getPosition()->getY(), osLight0->getPosition()->getZ())).sub(Vector3(0.0f, 0.0f, 0.0f));
+		osLight0->getPosition().set(0.0f, -4.0f, -4.0f, 1.0f);
+		osLight0->getSpotDirection().set(Vector3(osLight0->getPosition().getX(), osLight0->getPosition().getY(), osLight0->getPosition().getZ())).sub(Vector3(0.0f, 0.0f, 0.0f));
 		osLight0->setEnabled(true);
 		auto osCam = osEngine->getCamera();
 		osCam->setZNear(0.1f);
@@ -275,8 +275,8 @@ void EngineTest::initialize()
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light0->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition()->getX(), light0->getPosition()->getY(), light0->getPosition()->getZ()));
+	light0->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
+	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
@@ -285,13 +285,13 @@ void EngineTest::initialize()
 	light0->setEnabled(true);
 	auto light1 = engine->getLightAt(1);
 	light1->getDiffuse()->set(1.0f, 0.0f, 0.0f, 1.0f);
-	light1->getPosition()->set(-4.0f, 5.0f, -5.0f, 1.0f);
-	light1->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light1->getPosition()->getX(), light1->getPosition()->getY(), light1->getPosition()->getZ()));
+	light1->getPosition().set(-4.0f, 5.0f, -5.0f, 1.0f);
+	light1->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light1->getPosition().getX(), light1->getPosition().getY(), light1->getPosition().getZ()));
 	light1->setEnabled(true);
 	auto light2 = engine->getLightAt(2);
 	light2->getDiffuse()->set(0.0f, 1.0f, 0.0f, 1.0f);
-	light2->getPosition()->set(+4.0f, 5.0f, 0.0f, 1.0f);
-	light2->getSpotDirection()->set(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition()->getX(), light2->getPosition()->getY(), light2->getPosition()->getZ()));
+	light2->getPosition().set(+4.0f, 5.0f, 0.0f, 1.0f);
+	light2->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition().getX(), light2->getPosition().getY(), light2->getPosition().getZ()));
 	light2->setEnabled(true);
 	try {
 		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");

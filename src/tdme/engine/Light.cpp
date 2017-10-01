@@ -77,14 +77,14 @@ Color4* Light::getSpecular()
 	return &specular;
 }
 
-Vector4* Light::getPosition()
+Vector4& Light::getPosition()
 {
-	return &position;
+	return position;
 }
 
-Vector3* Light::getSpotDirection()
+Vector3& Light::getSpotDirection()
 {
-	return &spotDirection;
+	return spotDirection;
 }
 
 float Light::getSpotExponent()

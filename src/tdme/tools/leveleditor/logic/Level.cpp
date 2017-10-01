@@ -116,8 +116,8 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translati
 		engine->getLightAt(i)->getAmbient()->set(static_cast< Color4Base* >(level->getLightAt(i)->getAmbient()));
 		engine->getLightAt(i)->getDiffuse()->set(static_cast< Color4Base* >(level->getLightAt(i)->getDiffuse()));
 		engine->getLightAt(i)->getSpecular()->set(static_cast< Color4Base* >(level->getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->getPosition()->set(*level->getLightAt(i)->getPosition());
-		engine->getLightAt(i)->getSpotDirection()->set(*level->getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->getPosition().set(*level->getLightAt(i)->getPosition());
+		engine->getLightAt(i)->getSpotDirection().set(*level->getLightAt(i)->getSpotDirection());
 		engine->getLightAt(i)->setSpotExponent(level->getLightAt(i)->getSpotExponent());
 		engine->getLightAt(i)->setSpotCutOff(level->getLightAt(i)->getSpotCutOff());
 		engine->getLightAt(i)->setConstantAttenuation(level->getLightAt(i)->getConstantAttenuation());
@@ -125,9 +125,9 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translati
 		engine->getLightAt(i)->setQuadraticAttenuation(level->getLightAt(i)->getQuadraticAttenuation());
 		engine->getLightAt(i)->setEnabled(level->getLightAt(i)->isEnabled());
 		if (translation != nullptr) {
-			engine->getLightAt(i)->getPosition()->setX(engine->getLightAt(i)->getPosition()->getX() + translation->getX());
-			engine->getLightAt(i)->getPosition()->setY(engine->getLightAt(i)->getPosition()->getY() + translation->getY());
-			engine->getLightAt(i)->getPosition()->setZ(engine->getLightAt(i)->getPosition()->getZ() + translation->getZ());
+			engine->getLightAt(i)->getPosition().setX(engine->getLightAt(i)->getPosition().getX() + translation->getX());
+			engine->getLightAt(i)->getPosition().setY(engine->getLightAt(i)->getPosition().getY() + translation->getY());
+			engine->getLightAt(i)->getPosition().setZ(engine->getLightAt(i)->getPosition().getZ() + translation->getZ());
 		}
 	}
 }
