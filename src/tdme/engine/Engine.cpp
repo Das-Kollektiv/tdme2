@@ -587,7 +587,7 @@ void Engine::display()
 
 }
 
-void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3* worldCoordinate)
+void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
 {
 	Matrix4x4 tmpMatrix4x4;
 	Vector4 tmpVector4a;
@@ -602,14 +602,14 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 		tmpVector4b
 	);
 	tmpVector4b.scale(1.0f / tmpVector4b.getW());
-	worldCoordinate->set(
+	worldCoordinate.set(
 		tmpVector4b.getX(),
 		tmpVector4b.getY(),
 		tmpVector4b.getZ()
 	);
 }
 
-void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3* worldCoordinate)
+void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate)
 {
 	if (frameBuffer != nullptr)
 		frameBuffer->enableFrameBuffer();
@@ -633,8 +633,8 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	Vector3 tmpVector3c;
 	Vector3 tmpVector3d;
 	Vector3 tmpVector3e;
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, &tmpVector3a);
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, &tmpVector3b);
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, tmpVector3a);
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
 	for (auto entity: visibleObjects) {
@@ -692,17 +692,17 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	return selectedEntity;
 }
 
-void Engine::computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, Vector2* screenCoordinate)
+void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
 {
 	Matrix4x4 tmpMatrix4x4;
 	Vector4 tmpVector4a;
 	Vector4 tmpVector4b;
 	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix);
-	tmpMatrix4x4.multiply(tmpVector4b.set(*worldCoordinate, 1.0f), tmpVector4a);
+	tmpMatrix4x4.multiply(tmpVector4b.set(worldCoordinate, 1.0f), tmpVector4a);
 	tmpVector4a.scale(1.0f / tmpVector4a.getW());
 	auto screenCoordinateXYZW = tmpVector4a.getArray();
-	screenCoordinate->setX((screenCoordinateXYZW[0] + 1.0f) * width / 2.0f);
-	screenCoordinate->setY(height - ((screenCoordinateXYZW[1] + 1.0f) * height / 2.0f));
+	screenCoordinate.setX((screenCoordinateXYZW[0] + 1.0f) * width / 2.0f);
+	screenCoordinate.setY(height - ((screenCoordinateXYZW[1] + 1.0f) * height / 2.0f));
 }
 
 void Engine::dispose()

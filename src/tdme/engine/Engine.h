@@ -53,7 +53,6 @@ using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::math::Vector4;
 
 /** 
  * Engine main class
@@ -346,7 +345,7 @@ public:
 	 * @param z
 	 * @param world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3* worldCoordinate);
+	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate);
 
 	/** 
 	 * Compute world coordinate from mouse position
@@ -356,7 +355,7 @@ public:
 	 * @param mouse y
 	 * @param world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3* worldCoordinate);
+	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
 
 	/** 
 	 * Retrieves object by mouse position
@@ -380,7 +379,7 @@ public:
 	 * @param world woordinate
 	 * @param screen coordinate
 	 */
-	void computeScreenCoordinateByWorldCoordinate(Vector3* worldCoordinate, Vector2* screenCoordinate);
+	void computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
 
 	/** 
 	 * Shutdown the engine
