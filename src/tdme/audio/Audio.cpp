@@ -64,24 +64,24 @@ Audio* Audio::getInstance()
 	return Audio::instance;
 }
 
-Vector3* Audio::getListenerPosition()
+Vector3& Audio::getListenerPosition()
 {
-	return &listenerPosition;
+	return listenerPosition;
 }
 
-Vector3* Audio::getListenerVelocity()
+Vector3& Audio::getListenerVelocity()
 {
-	return &listenerVelocity;
+	return listenerVelocity;
 }
 
-Vector3* Audio::getListenerOrientationAt()
+Vector3& Audio::getListenerOrientationAt()
 {
-	return &listenerOrientationAt;
+	return listenerOrientationAt;
 }
 
-Vector3* Audio::getListenerOrientationUp()
+Vector3& Audio::getListenerOrientationUp()
 {
-	return &listenerOrientationUp;
+	return listenerOrientationUp;
 }
 
 AudioEntity* Audio::getEntity(const wstring& id)

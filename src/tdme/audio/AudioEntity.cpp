@@ -67,17 +67,17 @@ void AudioEntity::setGain(float gain)
 	this->gain = gain;
 }
 
-Vector3* AudioEntity::getSourcePosition()
+Vector3& AudioEntity::getSourcePosition()
 {
-	return &sourcePosition;
+	return sourcePosition;
 }
 
-Vector3* AudioEntity::getSourceDirection()
+Vector3& AudioEntity::getSourceDirection()
 {
-	return &sourceDirection;
+	return sourceDirection;
 }
 
-Vector3* AudioEntity::getSourceVelocity()
+Vector3& AudioEntity::getSourceVelocity()
 {
-	return &sourceVelocity;
+	return sourceVelocity;
 }

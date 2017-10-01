@@ -51,22 +51,22 @@ public:
 	/** 
 	 * @return listener position
 	 */
-	Vector3* getListenerPosition();
+	Vector3& getListenerPosition();
 
 	/** 
 	 * @return listener velocity
 	 */
-	Vector3* getListenerVelocity();
+	Vector3& getListenerVelocity();
 
 	/** 
 	 * @return listener orientation at
 	 */
-	Vector3* getListenerOrientationAt();
+	Vector3& getListenerOrientationAt();
 
 	/** 
 	 * @return listener orientation up
 	 */
-	Vector3* getListenerOrientationUp();
+	Vector3& getListenerOrientationUp();
 
 	/** 
 	 * Returns an audio entity identified by given id

@@ -83,17 +83,17 @@ public:
 	/** 
 	 * @return source position
 	 */
-	virtual Vector3* getSourcePosition();
+	virtual Vector3& getSourcePosition();
 
 	/** 
 	 * @return source direction
 	 */
-	virtual Vector3* getSourceDirection();
+	virtual Vector3& getSourceDirection();
 
 	/** 
 	 * @return source velocity
 	 */
-	virtual Vector3* getSourceVelocity();
+	virtual Vector3& getSourceVelocity();
 
 	/** 
 	 * @return if stream is playing
