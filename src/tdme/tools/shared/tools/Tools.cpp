@@ -346,7 +346,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	cam->setZNear(maxAxisDimension / 5000.0f);
 	cam->setZFar(maxAxisDimension);
 	auto lookAt = entityBoundingBox->getMin()->clone().add(dimension.clone().scale(0.5f));
-	cam->getLookAt()->set(lookAt);
+	cam->getLookAt().set(lookAt);
 	auto lookAtToFromVector = new Vector3(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
 	auto lookAtToFromVectorTransformed = new Vector3();
 	auto lookAtToFromVectorScaled = new Vector3();
@@ -355,8 +355,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	lookAtToFromVectorScaled->set(*lookAtToFromVectorTransformed).scale(scale);
 	lookFromRotations->getRotations()->get(2)->getQuaternion()->multiply(Vector3(0.0f, 1.0f, 0.0f), *upVector);
 	auto lookFrom = lookAt.clone().add(*lookAtToFromVectorScaled);
-	cam->getLookFrom()->set(lookFrom);
-	cam->getUpVector()->set(*upVector);
+	cam->getLookFrom().set(lookFrom);
+	cam->getUpVector().set(*upVector);
 }
 
 const wstring Tools::getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName)

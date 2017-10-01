@@ -62,19 +62,19 @@ void Camera::setZFar(float zFar)
 	this->zFar = zFar;
 }
 
-Vector3* Camera::getUpVector()
+Vector3& Camera::getUpVector()
 {
-	return &upVector;
+	return upVector;
 }
 
-Vector3* Camera::getLookFrom()
+Vector3& Camera::getLookFrom()
 {
-	return &lookFrom;
+	return lookFrom;
 }
 
-Vector3* Camera::getLookAt()
+Vector3& Camera::getLookAt()
 {
-	return &lookAt;
+	return lookAt;
 }
 
 Frustum* Camera::getFrustum()
@@ -82,20 +82,20 @@ Frustum* Camera::getFrustum()
 	return frustum;
 }
 
-void Camera::computeUpVector(Vector3* lookFrom, Vector3* lookAt, Vector3* upVector)
+void Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt, Vector3& upVector)
 {
 	Vector3 tmpForward;
 	Vector3 tmpSide;
-	tmpForward.set(*lookAt).sub(*lookFrom).normalize();
+	tmpForward.set(lookAt).sub(lookFrom).normalize();
 	if (Math::abs(tmpForward.getX()) < MathTools::EPSILON && Math::abs(tmpForward.getZ()) < MathTools::EPSILON) {
-		upVector->set(0.0f, 0.0f, tmpForward.getY()).normalize();
+		upVector.set(0.0f, 0.0f, tmpForward.getY()).normalize();
 		return;
 	}
 	Vector3::computeCrossProduct(tmpForward, defaultUp, tmpSide).normalize();
-	Vector3::computeCrossProduct(tmpSide, tmpForward, *upVector).normalize();
+	Vector3::computeCrossProduct(tmpSide, tmpForward, upVector).normalize();
 }
 
-Matrix4x4* Camera::computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar)
+Matrix4x4& Camera::computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar)
 {
 	auto tangent = static_cast< float >(Math::tan(yfieldOfView / 2.0f * 3.1415927f / 180.0f));
 	auto height = zNear * tangent;
@@ -103,9 +103,9 @@ Matrix4x4* Camera::computeProjectionMatrix(float yfieldOfView, float aspect, flo
 	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);
 }
 
-Matrix4x4* Camera::computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far)
+Matrix4x4& Camera::computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far)
 {
-	return &projectionMatrix.set(
+	return projectionMatrix.set(
 		2.0f * near / (right - left),
 		0.0f,
 		0.0f,
@@ -125,15 +125,15 @@ Matrix4x4* Camera::computeFrustumMatrix(float left, float right, float bottom, f
 	);
 }
 
-Matrix4x4* Camera::computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Vector3* upVector)
+Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3& lookAt, const Vector3& upVector)
 {
 	Matrix4x4 tmpAxesMatrix;
 	Vector3 tmpForward;
 	Vector3 tmpSide;
 	Vector3 tmpUp;
 	Vector3 tmpLookFromInverted;
-	tmpForward.set(*lookAt).sub(*lookFrom).normalize();
-	Vector3::computeCrossProduct(tmpForward, *upVector, tmpSide).normalize();
+	tmpForward.set(lookAt).sub(lookFrom).normalize();
+	Vector3::computeCrossProduct(tmpForward, upVector, tmpSide).normalize();
 	Vector3::computeCrossProduct(tmpSide, tmpForward, tmpUp);
 	auto& sideXYZ = tmpSide.getArray();
 	auto& forwardXYZ = tmpForward.getArray();
@@ -141,7 +141,7 @@ Matrix4x4* Camera::computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Ve
 	modelViewMatrix.
 		identity().
 		translate(
-			tmpLookFromInverted.set(*lookFrom).scale(-1.0f)
+			tmpLookFromInverted.set(lookFrom).scale(-1.0f)
 		).
 		multiply(
 			tmpAxesMatrix.set(
@@ -163,7 +163,7 @@ Matrix4x4* Camera::computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Ve
 				1.0f
 			)
 		);
-	return &modelViewMatrix;
+	return modelViewMatrix;
 }
 
 void Camera::update(int32_t width, int32_t height)
@@ -179,9 +179,9 @@ void Camera::update(int32_t width, int32_t height)
 	} else {
 		aspect = static_cast< float >(width) / static_cast< float >(height);
 	}
-	renderer->getProjectionMatrix().set(*computeProjectionMatrix(fovY, aspect, zNear, zFar));
+	renderer->getProjectionMatrix().set(computeProjectionMatrix(fovY, aspect, zNear, zFar));
 	renderer->onUpdateProjectionMatrix();
-	renderer->getModelViewMatrix().set(*computeModelViewMatrix(&lookFrom, &lookAt, &upVector));
+	renderer->getModelViewMatrix().set(computeModelViewMatrix(lookFrom, lookAt, upVector));
 	renderer->onUpdateModelViewMatrix();
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
 	renderer->onUpdateCameraMatrix();

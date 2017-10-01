@@ -85,9 +85,9 @@ void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
 	Vector3 lightDirection;
 	Vector3 lightLookAt;
 	Vector3 lightLookFrom;
-	auto lightEyeDistance = lightDirection.set(*camera->getLookAt()).sub(*camera->getLookFrom()).computeLength() * shadowMapping->lightEyeDistanceScale;
+	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * shadowMapping->lightEyeDistanceScale;
 	lightDirection.set(*light->getSpotDirection()).normalize();
-	lightLookAt.set(*camera->getLookAt());
+	lightLookAt.set(camera->getLookAt());
 	lightLookFrom.set(lightLookAt).sub(lightDirection.scale(lightEyeDistance));
 	auto lightCameraZFar = lightEyeDistance * 2.0f;
 	if (camera->getZFar() > lightCameraZFar)
@@ -95,8 +95,8 @@ void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
 
 	lightCamera->setZNear(camera->getZNear());
 	lightCamera->setZFar(lightCameraZFar);
-	lightCamera->getLookFrom()->set(lightLookFrom);
-	lightCamera->getLookAt()->set(lightLookAt);
+	lightCamera->getLookFrom().set(lightLookFrom);
+	lightCamera->getLookAt().set(lightLookAt);
 	lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt(), lightCamera->getUpVector());
 	lightCamera->update(frameBuffer->getWidth(), frameBuffer->getHeight());
 	frameBuffer->enableFrameBuffer();

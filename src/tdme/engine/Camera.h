@@ -73,17 +73,17 @@ public:
 	/** 
 	 * @return up vector
 	 */
-	Vector3* getUpVector();
+	Vector3& getUpVector();
 
 	/** 
 	 * @return look from vector
 	 */
-	Vector3* getLookFrom();
+	Vector3& getLookFrom();
 
 	/** 
 	 * @return look at vector
 	 */
-	Vector3* getLookAt();
+	Vector3& getLookAt();
 
 	/** 
 	 * @return frustum
@@ -96,7 +96,7 @@ public:
 	 * @param look at
 	 * @param up vector
 	 */
-	void computeUpVector(Vector3* lookFrom, Vector3* lookAt, Vector3* upVector);
+	void computeUpVector(const Vector3& lookFrom, const Vector3& lookAt, Vector3& upVector);
 
 private:
 
@@ -109,7 +109,7 @@ private:
 	 * @param z far
 	 * @return projection matrix
 	 */
-	Matrix4x4* computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar);
+	Matrix4x4& computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar);
 
 	/** 
 	 * Computes frustum matrix
@@ -122,7 +122,7 @@ private:
 	 * @param far
 	 * @return frustum matrix
 	 */
-	Matrix4x4* computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
+	Matrix4x4& computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
 
 	/** 
 	 * Computes projection matrix for given look from, look at and up vector
@@ -131,7 +131,7 @@ private:
 	 * @param up vector
 	 * @return model view matrix
 	 */
-	Matrix4x4* computeModelViewMatrix(Vector3* lookFrom, Vector3* lookAt, Vector3* upVector);
+	Matrix4x4& computeModelViewMatrix(const Vector3& lookFrom, const Vector3& lookAt, const Vector3& upVector);
 
 public:
 

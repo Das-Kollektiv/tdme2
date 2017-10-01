@@ -260,16 +260,16 @@ void EngineTest::initialize()
 		auto osCam = osEngine->getCamera();
 		osCam->setZNear(0.1f);
 		osCam->setZFar(50.0f);
-		osCam->getLookFrom()->set(0.0f, 4.0f, -4.0f);
-		osCam->getLookAt()->set(0.0f, 0.5f, 0.0f);
+		osCam->getLookFrom().set(0.0f, 4.0f, -4.0f);
+		osCam->getLookAt().set(0.0f, 0.5f, 0.0f);
 		osCam->computeUpVector(osCam->getLookFrom(), osCam->getLookAt(), osCam->getUpVector());
 		osEngine->getSceneColor()->set(0.5f, 0.0f, 0.0f, 1.0f);
 	}
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
-	cam->getLookFrom()->set(0.0f, 3.0f, -8.0f);
-	cam->getLookAt()->set(0.0f, 0.5f, 0.0f);
+	cam->getLookFrom().set(0.0f, 3.0f, -8.0f);
+	cam->getLookAt().set(0.0f, 0.5f, 0.0f);
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);

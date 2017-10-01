@@ -142,8 +142,8 @@ void PhysicsTest1::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
-	cam->getLookFrom()->set(0.0f, 4.0f * 2.5f, -6.0f * 2.5f);
-	cam->getLookAt()->set(0.0f, 0.0f, 0.0f);
+	cam->getLookFrom().set(0.0f, 4.0f * 2.5f, -6.0f * 2.5f);
+	cam->getLookAt().set(0.0f, 0.0f, 0.0f);
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
