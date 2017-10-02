@@ -63,14 +63,14 @@ Vector4* LevelEditorLight::getPosition()
 	return &position;
 }
 
-Vector3* LevelEditorLight::getSpotTo()
+Vector3& LevelEditorLight::getSpotTo()
 {
-	return &spotTo;
+	return spotTo;
 }
 
-Vector3* LevelEditorLight::getSpotDirection()
+Vector3& LevelEditorLight::getSpotDirection()
 {
-	return &spotDirection;
+	return spotDirection;
 }
 
 float LevelEditorLight::getSpotExponent()

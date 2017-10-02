@@ -216,7 +216,7 @@ void EntityBoundingVolumeView::applyBoundingVolumeNone(LevelEditorEntity* entity
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, Vector3* center, float radius)
+void EntityBoundingVolumeView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius)
 {
 	if (entity == nullptr)
 		return;
@@ -226,7 +226,7 @@ void EntityBoundingVolumeView::applyBoundingVolumeSphere(LevelEditorEntity* enti
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, Vector3* a, Vector3* b, float radius)
+void EntityBoundingVolumeView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius)
 {
 	if (entity == nullptr)
 		return;
@@ -236,7 +236,7 @@ void EntityBoundingVolumeView::applyBoundingVolumeCapsule(LevelEditorEntity* ent
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, Vector3* min, Vector3* max)
+void EntityBoundingVolumeView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max)
 {
 	if (entity == nullptr)
 		return;
@@ -246,7 +246,7 @@ void EntityBoundingVolumeView::applyBoundingVolumeAabb(LevelEditorEntity* entity
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
+void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
 	if (entity == nullptr)
 		return;

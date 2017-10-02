@@ -376,10 +376,10 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
 		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 		rotations->update();
-		auto xAxis = new Vector3();
-		auto yAxis = new Vector3();
-		auto zAxis = new Vector3();
-		rotations->getTransformationsMatrix().getAxes(*xAxis, *yAxis, *zAxis);
+		Vector3 xAxis;
+		Vector3 yAxis;
+		Vector3 zAxis;
+		rotations->getTransformationsMatrix().getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,

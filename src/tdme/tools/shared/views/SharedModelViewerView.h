@@ -188,7 +188,7 @@ public: /* protected */
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	virtual LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */;
 
 public:
 

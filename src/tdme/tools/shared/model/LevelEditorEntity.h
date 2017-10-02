@@ -115,7 +115,7 @@ public:
 	/** 
 	 * @return pivot
 	 */
-	Vector3* getPivot();
+	Vector3& getPivot();
 
 	/** 
 	 * @return bounding volume count
@@ -159,5 +159,5 @@ public:
 	 * @param model
 	 * @param pivot
 	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, Vector3* pivot);
+	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, const Vector3& pivot);
 };

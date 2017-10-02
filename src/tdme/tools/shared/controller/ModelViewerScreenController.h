@@ -126,7 +126,7 @@ public:
 	 * Set pivot tab
 	 * @param pivot
 	 */
-	void setPivot(Vector3* pivot);
+	void setPivot(const Vector3& pivot);
 
 	/** 
 	 * Unset pivot tab

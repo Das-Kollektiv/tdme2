@@ -63,7 +63,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */;
+	LevelEditorEntity* addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */;
 
 	/** 
 	 * Add a trigger

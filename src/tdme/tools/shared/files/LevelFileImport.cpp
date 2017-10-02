@@ -114,12 +114,12 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			light->setConstantAttenuation(static_cast< float >(jLight["ca"].getDouble()));
 			light->setLinearAttenuation(static_cast< float >(jLight["la"].getDouble()));
 			light->setQuadraticAttenuation(static_cast< float >(jLight["qa"].getDouble()));
-			light->getSpotTo()->set(
+			light->getSpotTo().set(
 				static_cast< float >(jLight["stx"].getDouble()),
 				static_cast< float >(jLight["sty"].getDouble()),
 				static_cast< float >(jLight["stz"].getDouble())
 			);
-			light->getSpotDirection()->set(
+			light->getSpotDirection().set(
 				static_cast< float >(jLight["sdx"].getDouble()),
 				static_cast< float >(jLight["sdy"].getDouble()),
 				static_cast< float >(jLight["sdz"].getDouble())
@@ -165,7 +165,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		}
 
 		auto transformations = new Transformations();
-		transformations->getPivot().set(*model->getPivot());
+		transformations->getPivot().set(model->getPivot());
 		transformations->getTranslation().set(
 			static_cast< float >(jObject["tx"].getDouble()),
 			static_cast< float >(jObject["ty"].getDouble()),

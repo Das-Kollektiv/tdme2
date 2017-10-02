@@ -45,7 +45,7 @@ void ModelViewerView::onInitAdditionalScreens()
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 }
 
-LevelEditorEntity* ModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */
+LevelEditorEntity* ModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(
 		LevelEditorEntityLibrary::ID_ALLOCATE,

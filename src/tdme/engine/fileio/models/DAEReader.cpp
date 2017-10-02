@@ -381,7 +381,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 							modelName,
 							modelPathName,
 							modelFileName,
-							new Vector3()
+							Vector3()
 						);
 					}
 				} else

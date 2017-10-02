@@ -71,7 +71,7 @@ public:
 	 * @param center
 	 * @param radius
 	 */
-	virtual void setupSphere(Vector3* center, float radius);
+	virtual void setupSphere(const Vector3& center, float radius);
 
 	/** 
 	 * Setup bounding volume capsule
@@ -79,7 +79,7 @@ public:
 	 * @param b
 	 * @param radius
 	 */
-	virtual void setupCapsule(Vector3* a, Vector3* b, float radius);
+	virtual void setupCapsule(const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * Setup bounding volume oriented bounding box
@@ -89,14 +89,14 @@ public:
 	 * @param axis 2
 	 * @param half extension
 	 */
-	virtual void setupObb(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
+	virtual void setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * Setup bounding volume bounding box
 	 * @param min
 	 * @param max
 	 */
-	virtual void setupAabb(Vector3* min, Vector3* max);
+	virtual void setupAabb(const Vector3& min, const Vector3& max);
 
 	/** 
 	 * Setup bounding volume sphere

@@ -993,7 +993,7 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			levelEditorObjectTransformations->getTranslation().setY(bv->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
 		}
 		levelEditorObjectTransformations->getScale().set(Vector3(1.0f, 1.0f, 1.0f));
-		levelEditorObjectTransformations->getPivot().set(*selectedEntity->getPivot());
+		levelEditorObjectTransformations->getPivot().set(selectedEntity->getPivot());
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
 		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
@@ -1442,19 +1442,19 @@ void LevelEditorView::pasteObjects()
 	levelEditorScreenController->setObjectListbox(level);
 }
 
-void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo)
+void LevelEditorView::computeSpotDirection(int32_t i, Vector4* position, const Vector3& spotTo)
 {
 	auto _from = Vector3(position->getX(), position->getY(), position->getZ());
-	auto spotDirection = spotTo->clone().sub(_from);
+	auto spotDirection = spotTo.clone().sub(_from);
 	level->getLightAt(i)->getPosition()->set(position->getX(), position->getY(), position->getZ(), position->getW());
-	level->getLightAt(i)->getSpotTo()->set(spotTo->getX(), spotTo->getY(), spotTo->getZ());
-	level->getLightAt(i)->getSpotDirection()->set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
+	level->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
+	level->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	engine->getLightAt(i)->getPosition().set(position->getX(), position->getY(), position->getZ(), position->getW());
 	engine->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
 }
 
-void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, Vector3* spotTo, Vector3* spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
 	level->getLightAt(i)->getAmbient()->set(ambient->getRed(), ambient->getGreen(), ambient->getBlue(), ambient->getAlpha());
 	level->getLightAt(i)->getDiffuse()->set(diffuse->getRed(), diffuse->getGreen(), diffuse->getBlue(), diffuse->getAlpha());
@@ -1463,8 +1463,8 @@ void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Co
 	level->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	level->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	level->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
-	level->getLightAt(i)->getSpotTo()->set(spotTo->getX(), spotTo->getY(), spotTo->getZ());
-	level->getLightAt(i)->getSpotDirection()->set(spotDirection->getX(), spotDirection->getY(), spotDirection->getZ());
+	level->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
+	level->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	level->getLightAt(i)->setSpotExponent(spotExponent);
 	level->getLightAt(i)->setSpotCutOff(spotCutoff);
 	level->getLightAt(i)->setEnabled(enabled);
@@ -1475,7 +1475,7 @@ void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Co
 	engine->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	engine->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	engine->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
-	engine->getLightAt(i)->getSpotDirection().set(spotDirection->getX(), spotDirection->getY(), spotDirection->getZ());
+	engine->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	engine->getLightAt(i)->setSpotExponent(spotExponent);
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);

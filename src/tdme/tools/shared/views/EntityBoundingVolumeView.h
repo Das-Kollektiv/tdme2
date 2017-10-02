@@ -93,7 +93,7 @@ public:
 	 * @param sphere center
 	 * @param radius
 	 */
-	virtual void applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, Vector3* center, float radius);
+	virtual void applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius);
 
 	/** 
 	 * On bounding volume capsule apply
@@ -103,7 +103,7 @@ public:
 	 * @param point b
 	 * @param radius
 	 */
-	virtual void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, Vector3* a, Vector3* b, float radius);
+	virtual void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * On bounding volume AABB apply
@@ -112,7 +112,7 @@ public:
 	 * @param AABB min vector
 	 * @param AABB max vector
 	 */
-	virtual void applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, Vector3* min, Vector3* max);
+	virtual void applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max);
 
 	/** 
 	 * On bounding volume OBB apply
@@ -124,7 +124,7 @@ public:
 	 * @param OBB axis 2
 	 * @param OBB half extension
 	 */
-	virtual void applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
+	virtual void applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * On bounding volume convex mesh apply

@@ -127,9 +127,9 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	jEntityRoot["type"] = StringConverter::toString(entity->getType()->toWString());
 	jEntityRoot["name"] = StringConverter::toString(entity->getName());
 	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription());
-	jEntityRoot["px"] = static_cast< double >(entity->getPivot()->getX());
-	jEntityRoot["py"] = static_cast< double >(entity->getPivot()->getY());
-	jEntityRoot["pz"] = static_cast< double >(entity->getPivot()->getZ());
+	jEntityRoot["px"] = static_cast< double >(entity->getPivot().getX());
+	jEntityRoot["py"] = static_cast< double >(entity->getPivot().getY());
+	jEntityRoot["pz"] = static_cast< double >(entity->getPivot().getZ());
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = entity->getParticleSystem();
 		ext::jsonbox::Object jParticleSystem;

@@ -92,7 +92,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 		L"",
 		L"",
 		nullptr,
-		new Vector3()
+		Vector3()
 	);
 	entity->setDefaultBoundingVolumes();
 }

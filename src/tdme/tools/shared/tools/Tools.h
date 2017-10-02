@@ -90,7 +90,7 @@ public:
 	 * @param text
 	 * @return vector3
 	 */
-	static Vector3* convertToVector3(String* text) /* throws(NumberFormatException) */;
+	static Vector3 convertToVector3(String* text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to vector 4

@@ -46,7 +46,7 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 			L"",
 			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
 			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
-			new Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.0f, 0.0f, 0.0f)
 		);
 		entity->setDefaultBoundingVolumes();
 		levelEditorEntityLibraryScreenController->setEntityLibrary();

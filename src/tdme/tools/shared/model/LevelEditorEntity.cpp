@@ -19,7 +19,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, Vector3* pivot)
+LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, const Vector3& pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -29,7 +29,7 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->fileName = fileName;
 	this->thumbnail = thumbnail;
 	this->model = model;
-	this->pivot.set(*pivot);
+	this->pivot.set(pivot);
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->particleSystem = new LevelEditorEntityParticleSystem();
 	}
@@ -90,9 +90,9 @@ Model* LevelEditorEntity::getModel()
 	return model;
 }
 
-Vector3* LevelEditorEntity::getPivot()
+Vector3& LevelEditorEntity::getPivot()
 {
-	return &pivot;
+	return pivot;
 }
 
 int32_t LevelEditorEntity::getBoundingVolumeCount()

@@ -64,7 +64,7 @@ int32_t LevelEditorEntityLibrary::allocateEntityId()
 	return entityIdx++;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
@@ -81,7 +81,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 			pathName + L"/" + fileName,
 			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
 			model,
-			new Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	} else
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tm") == true) {
@@ -98,7 +98,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 			pathName + L"/" + fileName,
 			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
 			model,
-			new Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	} else
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == true) {
@@ -130,10 +130,10 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const wstrin
 		cacheId,
 		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
 		model,
-		new Vector3()
+		Vector3()
 	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(&boundingBox->getMin(), &boundingBox->getMax());
+	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
 	id = levelEditorEntity->getId();
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
@@ -153,7 +153,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const wstring&
 		cacheId,
 		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
 		model,
-		new Vector3()
+		Vector3()
 	);
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
@@ -170,7 +170,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, const
 		L"",
 		L"",
 		nullptr,
-		new Vector3()
+		Vector3()
 	);
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;

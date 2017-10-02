@@ -80,12 +80,12 @@ public:
 	/** 
 	 * @return spot to
 	 */
-	Vector3* getSpotTo();
+	Vector3& getSpotTo();
 
 	/** 
 	 * @return spot direction
 	 */
-	Vector3* getSpotDirection();
+	Vector3& getSpotDirection();
 
 	/** 
 	 * @return spot exponent

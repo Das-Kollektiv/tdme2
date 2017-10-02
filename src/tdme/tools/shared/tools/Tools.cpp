@@ -156,10 +156,10 @@ void Tools::convertToArray(String* text, array<float, 4>& array) /* throws(Numbe
 	}
 }
 
-Vector3* Tools::convertToVector3(String* text) /* throws(NumberFormatException) */
+Vector3 Tools::convertToVector3(String* text) /* throws(NumberFormatException) */
 {
-	auto v = new Vector3();
-	convertToArray(text, v->getArray());
+	Vector3 v;
+	convertToArray(text, v.getArray());
 	return v;
 }
 

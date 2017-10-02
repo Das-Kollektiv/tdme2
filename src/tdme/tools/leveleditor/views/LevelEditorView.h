@@ -420,7 +420,7 @@ public:
 	 * Compute spot direction
 	 * @param i
 	 */
-	void computeSpotDirection(int32_t i, Vector4* position, Vector3* spotTo);
+	void computeSpotDirection(int32_t i, Vector4* position, const Vector3& spotTo);
 
 	/** 
 	 * Apply light with index i
@@ -437,7 +437,7 @@ public:
 	 * @param spot cutoff
 	 * @param enabled
 	 */
-	void applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, Vector3* spotTo, Vector3* spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/**
 	 * Public constructor

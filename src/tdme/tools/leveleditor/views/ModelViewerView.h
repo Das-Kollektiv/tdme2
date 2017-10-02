@@ -31,7 +31,7 @@ public:
 	void onInitAdditionalScreens() override;
 
 public: /* protected */
-	LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */ override;
+	LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */ override;
 
 public:
 	/**

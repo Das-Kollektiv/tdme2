@@ -91,7 +91,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 {
 	LevelEditorEntity* levelEditorEntity;
 	auto version = Float::parseFloat(StringConverter::toWideString(jEntityRoot["version"].getString()));
-	auto pivot = new Vector3(
+	auto pivot = Vector3(
 		static_cast< float >(jEntityRoot["px"].getDouble()),
 		static_cast< float >(jEntityRoot["py"].getDouble()),
 		static_cast< float >(jEntityRoot["pz"].getDouble())
@@ -433,7 +433,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, L"sphere") == true) {
 		entityBoundingVolume->setupSphere(
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["cx"].getDouble()),
 				static_cast< float >(jBv["cy"].getDouble()),
 				static_cast< float >(jBv["cz"].getDouble())
@@ -443,12 +443,12 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, L"capsule") == true) {
 		entityBoundingVolume->setupCapsule(
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["ax"].getDouble()),
 				static_cast< float >(jBv["ay"].getDouble()),
 				static_cast< float >(jBv["az"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["bx"].getDouble()),
 				static_cast< float >(jBv["by"].getDouble()),
 				static_cast< float >(jBv["bz"].getDouble())
@@ -458,12 +458,12 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, L"aabb") == true) {
 		entityBoundingVolume->setupAabb(
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["mix"].getDouble()),
 				static_cast< float >(jBv["miy"].getDouble()),
 				static_cast< float >(jBv["miz"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["max"].getDouble()),
 				static_cast< float >(jBv["may"].getDouble()),
 				static_cast< float >(jBv["maz"].getDouble())
@@ -472,27 +472,27 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, L"obb") == true) {
 		entityBoundingVolume->setupObb(
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["cx"].getDouble()),
 				static_cast< float >(jBv["cy"].getDouble()),
 				static_cast< float >(jBv["cz"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["a0x"].getDouble()),
 				static_cast< float >(jBv["a0y"].getDouble()),
 				static_cast< float >(jBv["a0z"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["a1x"].getDouble()),
 				static_cast< float >(jBv["a1y"].getDouble()),
 				static_cast< float >(jBv["a1z"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["a2x"].getDouble()),
 				static_cast< float >(jBv["a2y"].getDouble()),
 				static_cast< float >(jBv["a2z"].getDouble())
 			),
-			new Vector3(
+			Vector3(
 				static_cast< float >(jBv["hex"].getDouble()),
 				static_cast< float >(jBv["hey"].getDouble()),
 				static_cast< float >(jBv["hez"].getDouble())

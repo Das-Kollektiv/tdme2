@@ -167,14 +167,14 @@ void ModelViewerScreenController::unsetEntityProperties()
 	entityBaseSubScreenController->unsetEntityProperties();
 }
 
-void ModelViewerScreenController::setPivot(Vector3* pivot)
+void ModelViewerScreenController::setPivot(const Vector3& pivot)
 {
 	pivotX->getController()->setDisabled(false);
-	pivotX->getController()->getValue()->set(Tools::formatFloat(pivot->getX()));
+	pivotX->getController()->getValue()->set(Tools::formatFloat(pivot.getX()));
 	pivotY->getController()->setDisabled(false);
-	pivotY->getController()->getValue()->set(Tools::formatFloat(pivot->getY()));
+	pivotY->getController()->getValue()->set(Tools::formatFloat(pivot.getY()));
 	pivotZ->getController()->setDisabled(false);
-	pivotZ->getController()->getValue()->set(Tools::formatFloat(pivot->getZ()));
+	pivotZ->getController()->getValue()->set(Tools::formatFloat(pivot.getZ()));
 	pivotApply->getController()->setDisabled(false);
 }
 

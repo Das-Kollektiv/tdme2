@@ -150,7 +150,7 @@ void SharedModelViewerView::pivotApply(float x, float y, float z)
 	if (entity == nullptr)
 		return;
 
-	entity->getPivot()->set(x, y, z);
+	entity->getPivot().set(x, y, z);
 }
 
 void SharedModelViewerView::handleInputEvents()
@@ -283,14 +283,14 @@ void SharedModelViewerView::loadModel()
 			L"",
 			_FileSystem::getInstance()->getPathName(modelFile),
 			_FileSystem::getInstance()->getFileName(modelFile),
-			new Vector3());
+			Vector3());
 		onLoadModel(oldModel, entity);
 	} catch (_Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }
 
-LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, Vector3* pivot) /* throws(Exception) */
+LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
 		auto model = DAEReader::read(
