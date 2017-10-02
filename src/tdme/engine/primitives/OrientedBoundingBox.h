@@ -51,11 +51,11 @@ public:
 	static Vector3 AABB_AXIS_Z;
 
 public:
-	inline Vector3* getCenter() override {
-		return &center;
+	inline Vector3& getCenter() override {
+		return center;
 	}
 
-	inline float getSphereRadius() override {
+	inline float getSphereRadius() const override {
 		return sphereRadius;
 	}
 
@@ -67,7 +67,7 @@ public:
 	/** 
 	 * @return half extension
 	 */
-	Vector3* getHalfExtension();
+	Vector3& getHalfExtension();
 
 	/** 
 	 * Set up oriented bounding box from bounding box
@@ -98,14 +98,14 @@ public:
 		return &facesVerticesIndexes;
 	}
 
-	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
+	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
 
 	/** 
 	 * Computes nearest point on obb face from point in obb
 	 * @param point in obb
 	 * @param point on face
 	 */
-	void computeNearestPointOnFaceBoundingVolume(Vector3* pointInObb, Vector3* pointOnFace);
+	void computeNearestPointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const;
 
 	/** 
 	 * Computes nearest point on obb face from point in obb on given axis
@@ -113,14 +113,14 @@ public:
 	 * @param point in obb
 	 * @param point on face
 	 */
-	void computeNearestPointOnFaceBoundingVolumeAxis(int32_t axisIdx, Vector3* pointInObb, Vector3* pointOnFace);
+	void computeNearestPointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const;
 
 	/** 
 	 * Computes nearest point on obb face from point in obb
 	 * @param point in obb
 	 * @param point on face
 	 */
-	void computeOppositePointOnFaceBoundingVolume(Vector3* pointInObb, Vector3* pointOnFace);
+	void computeOppositePointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const;
 
 	/** 
 	 * Computes nearest point on obb face from point in obb on given axis
@@ -128,11 +128,11 @@ public:
 	 * @param point in obb
 	 * @param point on face
 	 */
-	void computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, Vector3* pointInObb, Vector3* pointOnFace);
-	bool containsPoint(Vector3* point) override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
-	float computeDimensionOnAxis(Vector3* axis) override;
-	BoundingVolume* clone() override;
+	void computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const;
+	bool containsPoint(const Vector3& point) const override;
+	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
+	float computeDimensionOnAxis(const Vector3& axis) const override;
+	BoundingVolume* clone() const override;
 
 	/**
 	 * Public constructor
@@ -142,7 +142,7 @@ public:
 	 * @param axis2
 	 * @param half extension
 	 */
-	OrientedBoundingBox(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension);
+	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
 	 * Public constructor

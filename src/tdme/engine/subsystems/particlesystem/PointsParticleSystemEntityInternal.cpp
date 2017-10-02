@@ -150,8 +150,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 
 	Vector3 velocityForTime;
 	Vector3 point;
-	auto& bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
-	auto& bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
+	auto& bbMinXYZ = boundingBoxTransformed->getMin().getArray();
+	auto& bbMaxXYZ = boundingBoxTransformed->getMax().getArray();
 	auto haveBoundingBox = false;
 	float distanceFromCamera;
 	auto modelViewMatrix = renderer->getModelViewMatrix();
@@ -189,7 +189,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 					if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr)
 						continue;
 
-					if (entity->getBoundingBoxTransformed()->containsPoint(&particle.position)) {
+					if (entity->getBoundingBoxTransformed()->containsPoint(particle.position)) {
 						particle.active = false;
 						continue;
 					}
@@ -217,8 +217,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		active = false;
 		return;
 	}
-	boundingBoxTransformed->getMin()->sub(0.05f);
-	boundingBoxTransformed->getMax()->add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f);
+	boundingBoxTransformed->getMax().add(0.05f);
 	boundingBoxTransformed->update();
 	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
 }

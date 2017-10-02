@@ -90,7 +90,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	if (firstVertex == true)
 		return nullptr;
 
-	return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX, maxY, maxZ));
+	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
 }
 
 void ModelUtilitiesInternal::invertNormals(Model* model)

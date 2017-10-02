@@ -92,7 +92,7 @@ void LevelEditorEntityBoundingVolume::setupNone()
 
 void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 {
-	boundingVolume = new Sphere(center, radius);
+	boundingVolume = new Sphere(*center, radius);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
@@ -109,7 +109,7 @@ void LevelEditorEntityBoundingVolume::setupSphere(Vector3* center, float radius)
 
 void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float radius)
 {
-	boundingVolume = new Capsule(a, b, radius);
+	boundingVolume = new Capsule(*a, *b, radius);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
@@ -126,7 +126,7 @@ void LevelEditorEntityBoundingVolume::setupCapsule(Vector3* a, Vector3* b, float
 
 void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
 {
-	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
+	boundingVolume = new OrientedBoundingBox(*center, *axis0, *axis1, *axis2, *halfExtension);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +
@@ -143,7 +143,7 @@ void LevelEditorEntityBoundingVolume::setupObb(Vector3* center, Vector3* axis0, 
 
 void LevelEditorEntityBoundingVolume::setupAabb(Vector3* min, Vector3* max)
 {
-	boundingVolume = new BoundingBox(min, max);
+	boundingVolume = new BoundingBox(*min, *max);
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		wstring(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : L"none") +

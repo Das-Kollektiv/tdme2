@@ -38,14 +38,14 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @param point
 	 * @param clostest point
 	 */
-	virtual void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint) = 0;
+	virtual void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestsPoint) const = 0;
 
 	/** 
 	 * Checks if point is in bounding volume
 	 * @param point
 	 * @return bool if point is in bounding volume
 	 */
-	virtual bool containsPoint(Vector3* point) = 0;
+	virtual bool containsPoint(const Vector3& point) const = 0;
 
 	/** 
 	 * Check if this bounding volume collides with bounding volume 2
@@ -54,24 +54,24 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @param collision
 	 * @return collision
 	 */
-	virtual bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) = 0;
+	virtual bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) = 0;
 
 	/** 
 	 * @return center of bounding volume
 	 */
-	virtual Vector3* getCenter() = 0;
+	virtual Vector3& getCenter() = 0;
 
 	/** 
 	 * @return radius of bounding volume if regarded as sphere
 	 */
-	virtual float getSphereRadius() = 0;
+	virtual float getSphereRadius() const = 0;
 
 	/** 
 	 * Computes dimension on axis
 	 * @param axis
 	 * @return dimension on axis
 	 */
-	virtual float computeDimensionOnAxis(Vector3* axis) = 0;
+	virtual float computeDimensionOnAxis(const Vector3& axis) const = 0;
 
 	/** 
 	 * Updates the bounding volume
@@ -82,5 +82,5 @@ struct tdme::engine::primitives::BoundingVolume
 	 * Clones this bounding volume
 	 * @return cloned bounding volume
 	 */
-	virtual BoundingVolume* clone() = 0;
+	virtual BoundingVolume* clone() const = 0;
 };

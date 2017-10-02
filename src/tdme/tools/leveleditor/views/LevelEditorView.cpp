@@ -635,7 +635,7 @@ void LevelEditorView::updateGUIElements()
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
 				auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox()->clone();
 				bv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
-				objectCenter = bv->getCenter();
+				objectCenter = &bv->getCenter();
 			} else {
 				objectCenter = &levelEditorObject->getTransformations()->getTranslation();
 			}
@@ -891,7 +891,7 @@ void LevelEditorView::removeGrid()
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(new Vector3(0.0f, -0.01f, 0.0f), new Vector3(1.0f, +0.01f, 1.0f)));
+	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
 	auto groundPlateMaterial = new Material(L"ground");
 	groundPlateMaterial->getDiffuseColor()->setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseTexture(L"resources/tools/leveleditor/textures", L"groundplate.png");
@@ -982,15 +982,15 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 		auto selectedLevelEditorObject = level->getObjectById(selectedObject->getId());
 		auto levelEditorObjectTransformations = new Transformations();
 		levelEditorObjectTransformations->getTranslation().set(selectedObject->getTranslation());
-		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin()->clone().add(*selectedObject->getBoundingBox()->getMax()).scale(0.5f);
-		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter()->clone() : Vector3(0.0f, 0.0f, 0.0f);
+		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin().clone().add(selectedObject->getBoundingBox()->getMax()).scale(0.5f);
+		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter().clone() : Vector3(0.0f, 0.0f, 0.0f);
 		levelEditorObjectTransformations->getTranslation().add(centerNewObject.clone().add(centerSelectedObject));
 		if (selectedLevelEditorObject == nullptr || selectedLevelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM || selectedEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			levelEditorObjectTransformations->getTranslation().setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin()->getY() : 0.0f));
+			levelEditorObjectTransformations->getTranslation().setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin().getY() : 0.0f));
 		} else {
 			auto bv = selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox()->clone();
 			bv->fromBoundingVolumeWithTransformations(selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox(), selectedLevelEditorObject->getTransformations());
-			levelEditorObjectTransformations->getTranslation().setY(bv->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter()->getY() + -selectedEntity->getModel()->getBoundingBox()->getMin()->getY());
+			levelEditorObjectTransformations->getTranslation().setY(bv->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
 		}
 		levelEditorObjectTransformations->getScale().set(Vector3(1.0f, 1.0f, 1.0f));
 		levelEditorObjectTransformations->getPivot().set(*selectedEntity->getPivot());
@@ -1098,7 +1098,7 @@ void LevelEditorView::centerObject()
 	}
 	auto center = new Vector3();
 	for (auto selectedObject: selectedObjects) {
-		center->add(selectedObject->getBoundingBoxTransformed()->getMin()->clone().add(*selectedObject->getBoundingBoxTransformed()->getMax()).scale(0.5f));
+		center->add(selectedObject->getBoundingBoxTransformed()->getMin().clone().add(selectedObject->getBoundingBoxTransformed()->getMax()).scale(0.5f));
 	}
 	engine->getCamera()->getLookAt().set(center->scale(1.0f / selectedObjects.size()));
 }
@@ -1383,7 +1383,7 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
-		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
+		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin().getArray();
 		if (objectBBMinXYZ[0] < pasteObjectsMinX) pasteObjectsMinX = objectBBMinXYZ[0];
 		if (objectBBMinXYZ[1] < pasteObjectsMinY) pasteObjectsMinY = objectBBMinXYZ[1];
 		if (objectBBMinXYZ[2] < pasteObjectsMinZ) pasteObjectsMinZ = objectBBMinXYZ[2];
@@ -1399,8 +1399,8 @@ void LevelEditorView::pasteObjects()
 		BoundingVolume* obv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, levelEditorObject->getTransformations());
-		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin()->getArray();
-		auto& objectBBMaxXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMax()->getArray();
+		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin().getArray();
+		auto& objectBBMaxXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMax().getArray();
 		if (objectBBMinXYZ[0] < selectedObjectsMinX) selectedObjectsMinX = objectBBMinXYZ[0];
 		if (objectBBMaxXYZ[1] > selectedObjectsMaxY) selectedObjectsMaxY = objectBBMaxXYZ[1];
 		if (objectBBMinXYZ[2] < selectedObjectsMinZ) selectedObjectsMinZ = objectBBMinXYZ[2];

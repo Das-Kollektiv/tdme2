@@ -27,7 +27,7 @@ public:
 	/** 
 	 * @return radius
 	 */
-	float getRadius();
+	float getRadius() const;
 
 	/** 
 	 * Set up radius
@@ -38,29 +38,29 @@ public:
 	/** 
 	 * @return line segment point a
 	 */
-	Vector3* getA();
+	Vector3& getA();
 
 	/** 
 	 * @return line segment point b
 	 */
-	Vector3* getB();
+	Vector3& getB();
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void update() override;
 
-	inline Vector3* getCenter() override {
-		return &center;
+	inline Vector3& getCenter() override {
+		return center;
 	}
 
-	inline float getSphereRadius() override {
+	inline float getSphereRadius() const override {
 		return sphereRadius;
 	}
 
-	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
-	bool containsPoint(Vector3* point) override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
-	float computeDimensionOnAxis(Vector3* axis) override;
-	BoundingVolume* clone() override;
+	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
+	bool containsPoint(const Vector3& point) const override;
+	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
+	float computeDimensionOnAxis(const Vector3& axis) const override;
+	BoundingVolume* clone() const override;
 
 	/**
 	 * Public constructor
@@ -68,7 +68,7 @@ public:
 	 * @param b
 	 * @param radius
 	 */
-	Capsule(Vector3* a, Vector3* b, float radius);
+	Capsule(const Vector3& a, const Vector3& b, float radius);
 
 private:
 	Vector3 a {  };

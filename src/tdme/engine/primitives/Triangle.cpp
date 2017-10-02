@@ -39,12 +39,12 @@ Triangle::Triangle()
 	update();
 }
 
-Triangle::Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2) 
+Triangle::Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3& vertex2)
 {
 	this->vertices.resize(3);
-	this->vertices[0].set(*vertex0);
-	this->vertices[1].set(*vertex1);
-	this->vertices[2].set(*vertex2);
+	this->vertices[0].set(vertex0);
+	this->vertices[1].set(vertex1);
+	this->vertices[2].set(vertex2);
 	update();
 }
 
@@ -74,14 +74,14 @@ void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, T
 	update();
 }
 
-void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
+void Triangle::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
 	Vector3 edge0;
 	Vector3 edge1;
 	Vector3 v0Point;
 	edge0.set(vertices[1]).sub(vertices[0]);
 	edge1.set(vertices[2]).sub(vertices[0]);
-	v0Point.set(vertices[0]).sub(*point);
+	v0Point.set(vertices[0]).sub(point);
 	auto a = Vector3::computeDotProduct(edge0, edge0);
 	auto b = Vector3::computeDotProduct(edge0, edge1);
 	auto c = Vector3::computeDotProduct(edge1, edge1);
@@ -142,42 +142,42 @@ void Triangle::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* clos
 			t = 1.0f - s;
 		}
 	}
-	closestPoint->set(vertices[0]).add(edge0.scale(s)).add(edge1.scale(t));
+	closestPoint.set(vertices[0]).add(edge0.scale(s)).add(edge1.scale(t));
 }
 
-bool Triangle::containsPoint(Vector3* point)
+bool Triangle::containsPoint(const Vector3& point) const
 {
 	Vector3 closestPoint;
-	computeClosestPointOnBoundingVolume(point, &closestPoint);
-	return closestPoint.equals(*point);
+	computeClosestPointOnBoundingVolume(point, closestPoint);
+	return closestPoint.equals(point);
 }
 
-bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float Triangle::computeDimensionOnAxis(Vector3* axis)
+float Triangle::computeDimensionOnAxis(const Vector3& axis) const
 {
-	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], *axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
 	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(vertices[i], *axis);
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min) min = vertexOnAxis;
 		if (vertexOnAxis > max) max = vertexOnAxis;
 	}
@@ -195,11 +195,11 @@ void Triangle::update()
 	}
 }
 
-BoundingVolume* Triangle::clone()
+BoundingVolume* Triangle::clone() const
 {
 	return new Triangle(
-		&vertices[0],
-		&vertices[1],
-		&vertices[2]
+		vertices[0],
+		vertices[1],
+		vertices[2]
 	);
 }

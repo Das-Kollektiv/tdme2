@@ -31,16 +31,16 @@ public:
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 
-	inline Vector3* getCenter() override {
-		return &center;
+	inline Vector3& getCenter() override {
+		return center;
 	}
 
 	/** 
 	 * @return float radius
 	 */
-	float getRadius();
+	float getRadius() const;
 
-	inline float getSphereRadius() override {
+	inline float getSphereRadius() const override {
 		return radius;
 	}
 
@@ -56,13 +56,13 @@ public:
 	 * @param radius
 	 * @return this sphere
 	 */
-	Sphere* set(Vector3* center, float radius);
-	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
-	bool containsPoint(Vector3* point) override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
-	float computeDimensionOnAxis(Vector3* axis) override;
+	Sphere* set(const Vector3& center, float radius);
+	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
+	bool containsPoint(const Vector3& point) const override;
+	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
+	float computeDimensionOnAxis(const Vector3& axis) const override;
 	void update() override;
-	BoundingVolume* clone() override;
+	BoundingVolume* clone() const override;
 
 	/**
 	 * Public constructor
@@ -74,5 +74,5 @@ public:
 	 * @param center
 	 * @param radius
 	 */
-	Sphere(Vector3* center, float radius);
+	Sphere(const Vector3& center, float radius);
 };

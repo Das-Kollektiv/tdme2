@@ -64,23 +64,23 @@ BoundingBox::BoundingBox(BoundingBox* boundingBox)
 	update();
 }
 
-BoundingBox::BoundingBox(Vector3* min, Vector3* max)
+BoundingBox::BoundingBox(const Vector3& min, const Vector3& max)
 {
 
-	this->min.set(*min);
-	this->max.set(*max);
+	this->min.set(min);
+	this->max.set(max);
 	vertices.resize(8);
 	update();
 }
 
-Vector3* BoundingBox::getMin()
+Vector3& BoundingBox::getMin()
 {
-	return &min;
+	return min;
 }
 
-Vector3* BoundingBox::getMax()
+Vector3& BoundingBox::getMax()
 {
-	return &max;
+	return max;
 }
 
 vector<Vector3>* BoundingBox::getVertices()
@@ -132,20 +132,20 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 	update();
 }
 
-void BoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
+void BoundingBox::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
-	auto& pointXYZ = point->getArray();
+	auto& pointXYZ = point.getArray();
 	auto& minXYZ = min.getArray();
 	auto& maxXYZ = max.getArray();
 	auto closestX = pointXYZ[0] < minXYZ[0] ? minXYZ[0] : pointXYZ[0] > maxXYZ[0] ? maxXYZ[0] : pointXYZ[0];
 	auto closestY = pointXYZ[1] < minXYZ[1] ? minXYZ[1] : pointXYZ[1] > maxXYZ[1] ? maxXYZ[1] : pointXYZ[1];
 	auto closestZ = pointXYZ[2] < minXYZ[2] ? minXYZ[2] : pointXYZ[2] > maxXYZ[2] ? maxXYZ[2] : pointXYZ[2];
-	closestPoint->set(closestX, closestY, closestZ);
+	closestPoint.set(closestX, closestY, closestZ);
 }
 
-bool BoundingBox::containsPoint(Vector3* point)
+bool BoundingBox::containsPoint(const Vector3& point) const
 {
-	auto& pointXYZ = point->getArray();
+	auto& pointXYZ = point.getArray();
 	auto& minXYZ = min.getArray();
 	auto& maxXYZ = max.getArray();
 	for (auto i = 0; i < 3; i++) {
@@ -155,32 +155,32 @@ bool BoundingBox::containsPoint(Vector3* point)
 	return true;
 }
 
-bool BoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool BoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float BoundingBox::computeDimensionOnAxis(Vector3* axis)
+float BoundingBox::computeDimensionOnAxis(const Vector3& axis) const
 {
-	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], *axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
 	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(vertices[i], *axis);
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min) min = vertexOnAxis;
 		if (vertexOnAxis > max) max = vertexOnAxis;
 	}
@@ -205,9 +205,9 @@ void BoundingBox::update()
 	sphereRadius = halfExtension.computeLength();
 }
 
-BoundingVolume* BoundingBox::clone()
+BoundingVolume* BoundingBox::clone() const
 {
-	return new BoundingBox(&min, &max);
+	return new BoundingBox(min, max);
 }
 
 

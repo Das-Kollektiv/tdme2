@@ -644,11 +644,11 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
 			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
 				auto vertices = _i->next();
 				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle(&(*vertices)[0], &(*vertices)[1], &(*vertices)[2], &tmpVector3a, &tmpVector3b, &tmpVector3e) == true) {
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
 						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
@@ -666,8 +666,8 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(*entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
@@ -681,8 +681,8 @@ Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false)
 			continue;
 
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), &tmpVector3a, &tmpVector3b, &tmpVector3c, &tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(*entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;

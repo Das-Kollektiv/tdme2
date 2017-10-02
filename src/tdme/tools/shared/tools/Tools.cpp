@@ -244,7 +244,7 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
 {
 	auto maxAxisDimension = 0.0f;
-	auto dimension = new Vector3(modelBoundingVolume->computeDimensionOnAxis(new Vector3(1.0f, 0.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(new Vector3(0.0f, 1.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(new Vector3(0.0f, 0.0f, 1.0f)));
+	auto dimension = new Vector3(modelBoundingVolume->computeDimensionOnAxis(Vector3(1.0f, 0.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(Vector3(0.0f, 0.0f, 1.0f)));
 	if (dimension->getX() > maxAxisDimension)
 		maxAxisDimension = dimension->getX();
 
@@ -301,7 +301,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 
 	BoundingBox* entityBoundingBox = nullptr;
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		entityBoundingBox = new BoundingBox(new Vector3(-0.5f, 0.0f, -0.5f), new Vector3(0.5f, 3.0f, 0.5f));
+		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), L"model", true);
 		if (particleSystemObject != nullptr) {
 			engine->addEntity(particleSystemObject);
@@ -312,7 +312,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		modelObject->setDynamicShadowingEnabled(true);
 		engine->addEntity(modelObject);
 	}
-	auto ground = createGroundModel((entityBoundingBox->getMax()->getX() - entityBoundingBox->getMin()->getX()) * 1.0f, (entityBoundingBox->getMax()->getZ() - entityBoundingBox->getMin()->getZ()) * 1.0f, entityBoundingBox->getMin()->getY() - MathTools::EPSILON);
+	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - MathTools::EPSILON);
 	auto groundObject = new Object3D(L"ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
@@ -332,7 +332,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getPosition().set(entityBoundingBox->getMin()->getX() + ((entityBoundingBox->getMax()->getX() - entityBoundingBox->getMin()->getX()) / 2.0f), entityBoundingBox->getMin()->getY() + ((entityBoundingBox->getMax()->getY() - entityBoundingBox->getMin()->getY()) / 2.0f), -entityBoundingBox->getMin()->getZ() * 4.0f, 1.0f);
+	light0->getPosition().set(entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f), entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f), -entityBoundingBox->getMin().getZ() * 4.0f, 1.0f);
 	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
@@ -340,12 +340,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto dimension = entityBoundingBox->getMax()->clone().sub(*entityBoundingBox->getMin());
+	auto dimension = entityBoundingBox->getMax().clone().sub(entityBoundingBox->getMin());
 	auto maxAxisDimension = computeMaxAxisDimension(entityBoundingBox);
 	auto cam = engine->getCamera();
 	cam->setZNear(maxAxisDimension / 5000.0f);
 	cam->setZFar(maxAxisDimension);
-	auto lookAt = entityBoundingBox->getMin()->clone().add(dimension.clone().scale(0.5f));
+	auto lookAt = entityBoundingBox->getMin().clone().add(dimension.clone().scale(0.5f));
 	cam->getLookAt().set(lookAt);
 	auto lookAtToFromVector = new Vector3(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
 	auto lookAtToFromVectorTransformed = new Vector3();

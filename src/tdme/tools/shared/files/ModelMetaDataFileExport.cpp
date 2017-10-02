@@ -407,41 +407,41 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		if (dynamic_cast< Sphere* >(bv) != nullptr) {
 			auto sphere = dynamic_cast< Sphere* >(bv);
 			jBoundingVolume["type"] = "sphere";
-			jBoundingVolume["cx"] = static_cast< double >(sphere->getCenter()->getX());
-			jBoundingVolume["cy"] = static_cast< double >(sphere->getCenter()->getY());
-			jBoundingVolume["cz"] = static_cast< double >(sphere->getCenter()->getZ());
+			jBoundingVolume["cx"] = static_cast< double >(sphere->getCenter().getX());
+			jBoundingVolume["cy"] = static_cast< double >(sphere->getCenter().getY());
+			jBoundingVolume["cz"] = static_cast< double >(sphere->getCenter().getZ());
 			jBoundingVolume["r"] = static_cast< double >(sphere->getRadius());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< Capsule* >(bv) != nullptr) {
 			auto capsule = dynamic_cast< Capsule* >(bv);
 			jBoundingVolume["type"] = "capsule";
-			jBoundingVolume["ax"] = static_cast< double >(capsule->getA()->getX());
-			jBoundingVolume["ay"] = static_cast< double >(capsule->getA()->getY());
-			jBoundingVolume["az"] = static_cast< double >(capsule->getA()->getZ());
-			jBoundingVolume["bx"] = static_cast< double >(capsule->getB()->getX());
-			jBoundingVolume["by"] = static_cast< double >(capsule->getB()->getY());
-			jBoundingVolume["bz"] = static_cast< double >(capsule->getB()->getZ());
+			jBoundingVolume["ax"] = static_cast< double >(capsule->getA().getX());
+			jBoundingVolume["ay"] = static_cast< double >(capsule->getA().getY());
+			jBoundingVolume["az"] = static_cast< double >(capsule->getA().getZ());
+			jBoundingVolume["bx"] = static_cast< double >(capsule->getB().getX());
+			jBoundingVolume["by"] = static_cast< double >(capsule->getB().getY());
+			jBoundingVolume["bz"] = static_cast< double >(capsule->getB().getZ());
 			jBoundingVolume["r"] = static_cast< double >(capsule->getRadius());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
 			auto aabb = dynamic_cast< BoundingBox* >(bv);
 			jBoundingVolume["type"] = "aabb";
-			jBoundingVolume["mix"] = static_cast< double >(aabb->getMin()->getX());
-			jBoundingVolume["miy"] = static_cast< double >(aabb->getMin()->getY());
-			jBoundingVolume["miz"] = static_cast< double >(aabb->getMin()->getZ());
-			jBoundingVolume["max"] = static_cast< double >(aabb->getMax()->getX());
-			jBoundingVolume["may"] = static_cast< double >(aabb->getMax()->getY());
-			jBoundingVolume["maz"] = static_cast< double >(aabb->getMax()->getZ());
+			jBoundingVolume["mix"] = static_cast< double >(aabb->getMin().getX());
+			jBoundingVolume["miy"] = static_cast< double >(aabb->getMin().getY());
+			jBoundingVolume["miz"] = static_cast< double >(aabb->getMin().getZ());
+			jBoundingVolume["max"] = static_cast< double >(aabb->getMax().getX());
+			jBoundingVolume["may"] = static_cast< double >(aabb->getMax().getY());
+			jBoundingVolume["maz"] = static_cast< double >(aabb->getMax().getZ());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
 			auto obb = dynamic_cast< OrientedBoundingBox* >(bv);
 			jBoundingVolume["type"] = "obb";
-			jBoundingVolume["cx"] = static_cast< double >(obb->getCenter()->getX());
-			jBoundingVolume["cy"] = static_cast< double >(obb->getCenter()->getY());
-			jBoundingVolume["cz"] = static_cast< double >(obb->getCenter()->getZ());
+			jBoundingVolume["cx"] = static_cast< double >(obb->getCenter().getX());
+			jBoundingVolume["cy"] = static_cast< double >(obb->getCenter().getY());
+			jBoundingVolume["cz"] = static_cast< double >(obb->getCenter().getZ());
 			jBoundingVolume["a0x"] = static_cast< double >((*obb->getAxes())[0].getX());
 			jBoundingVolume["a0y"] = static_cast< double >((*obb->getAxes())[0].getY());
 			jBoundingVolume["a0z"] = static_cast< double >((*obb->getAxes())[0].getZ());
@@ -451,9 +451,9 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolume["a2x"] = static_cast< double >((*obb->getAxes())[2].getX());
 			jBoundingVolume["a2y"] = static_cast< double >((*obb->getAxes())[2].getY());
 			jBoundingVolume["a2z"] = static_cast< double >((*obb->getAxes())[2].getZ());
-			jBoundingVolume["hex"] = static_cast< double >(obb->getHalfExtension()->getX());
-			jBoundingVolume["hey"] = static_cast< double >(obb->getHalfExtension()->getY());
-			jBoundingVolume["hez"] = static_cast< double >(obb->getHalfExtension()->getZ());
+			jBoundingVolume["hex"] = static_cast< double >(obb->getHalfExtension().getX());
+			jBoundingVolume["hey"] = static_cast< double >(obb->getHalfExtension().getY());
+			jBoundingVolume["hez"] = static_cast< double >(obb->getHalfExtension().getZ());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {

@@ -35,8 +35,8 @@ public:
 	 * @param axis
 	 * @return valididy
 	 */
-	inline static bool checkAxis(Vector3* axis) {
-		auto& axisXYZ = axis->getArray();
+	inline static bool checkAxis(const Vector3& axis) {
+		auto& axisXYZ = axis.getArray();
 		if (Float::isNaN(axisXYZ[0]) || Float::isNaN(axisXYZ[1]) || Float::isNaN(axisXYZ[2])) {
 			return false;
 		}
@@ -54,8 +54,8 @@ private:
 	 * @param axis
 	 * @return
 	 */
-	inline static float doCalculatePoint(Vector3* point, Vector3* axis) {
-		auto distance = Vector3::computeDotProduct(*point, *axis);
+	inline static float doCalculatePoint(const Vector3& point, const Vector3& axis) {
+		auto distance = Vector3::computeDotProduct(point, axis);
 		return distance;
 	}
 
@@ -66,12 +66,12 @@ private:
 	 * @param axis
 	 * @return float[] containing min and max
 	 */
-	inline static void doCalculateInterval(vector<Vector3>* vertices, Vector3* axis, float& min, float& max) {
-		auto distance = Vector3::computeDotProduct((*vertices)[0], *axis);
+	inline static void doCalculateInterval(const vector<Vector3>* vertices, const Vector3& axis, float& min, float& max) {
+		auto distance = Vector3::computeDotProduct((*vertices)[0], axis);
 		min = distance;
 		max = distance;
 		for (auto i = 1; i < vertices->size(); i++) {
-			distance = Vector3::computeDotProduct((*vertices)[i], *axis);
+			distance = Vector3::computeDotProduct((*vertices)[i], axis);
 			if (distance < min) min = distance;
 			if (distance > max) max = distance;
 		}
@@ -86,7 +86,7 @@ public:
 	 * @param axis
 	 * @return point in vertices
 	 */
-	inline static bool checkPointInVerticesOnAxis(vector<Vector3>* vertices, Vector3* point, Vector3* axis) {
+	inline static bool checkPointInVerticesOnAxis(const vector<Vector3>* vertices, const Vector3& point, const Vector3& axis) {
 		if (checkAxis(axis) == false) return true;
 		float min;
 		float max;
@@ -104,15 +104,15 @@ public:
 	 * @param axis penetration
 	 * @return penetration or negative / -1 if none
 	 */
-	inline static bool doSpanIntersect(vector<Vector3>* vertices1, vector<Vector3>* vertices2, Vector3& axisTest, float& satPenetration) {
+	inline static bool doSpanIntersect(const vector<Vector3>* vertices1, const vector<Vector3>* vertices2, Vector3& axisTest, float& satPenetration) {
 		Vector3 axis;
 		axis.set(axisTest).normalize();
 		float min1;
 		float max1;
 		float min2;
 		float max2;
-		doCalculateInterval(vertices1, &axis, min1, max1);
-		doCalculateInterval(vertices2, &axis, min2, max2);
+		doCalculateInterval(vertices1, axis, min1, max1);
+		doCalculateInterval(vertices2, axis, min2, max2);
 		auto len1 = max1 - min1;
 		auto len2 = max2 - min2;
 		auto min = Math::min(min1, min2);

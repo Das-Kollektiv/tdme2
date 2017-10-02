@@ -119,7 +119,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const wstrin
 {
 	auto cacheId = L"leveleditor.trigger." + to_wstring(width) + L"mx" + to_wstring(height) + L"mx" + to_wstring(depth) + L"m";
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	auto boundingBox = new BoundingBox(new Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), new Vector3(+width / 2.0f, height, +depth / 2.0f));
+	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto model = PrimitiveModel::createModel(boundingBox, cacheId + L"_bv");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
@@ -133,7 +133,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const wstrin
 		new Vector3()
 	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(&boundingBox->getMin(), &boundingBox->getMax());
 	id = levelEditorEntity->getId();
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;

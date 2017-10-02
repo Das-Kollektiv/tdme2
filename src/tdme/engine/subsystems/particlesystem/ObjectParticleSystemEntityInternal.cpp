@@ -213,8 +213,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 {
 	Vector3 velocityForTime;
 	auto first = true;
-	auto bbMinXYZ = boundingBoxTransformed->getMin()->getArray();
-	auto bbMaxXYZ = boundingBoxTransformed->getMax()->getArray();
+	auto& bbMinXYZ = boundingBoxTransformed->getMin().getArray();
+	auto& bbMaxXYZ = boundingBoxTransformed->getMax().getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	for (auto i = 0; i < particles.size(); i++) {
 		auto particle = particles[i];
@@ -237,12 +237,12 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		object->getTranslation().add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
-			boundingBoxTransformed->getMin()->set(*object->getBoundingBoxTransformed()->getMin());
-			boundingBoxTransformed->getMax()->set(*object->getBoundingBoxTransformed()->getMax());
+			boundingBoxTransformed->getMin().set(object->getBoundingBoxTransformed()->getMin());
+			boundingBoxTransformed->getMax().set(object->getBoundingBoxTransformed()->getMax());
 			first = false;
 		} else {
-			auto objBbMinXYZ = object->getBoundingBoxTransformed()->getMin()->getArray();
-			auto objBbMaxXYZ = object->getBoundingBoxTransformed()->getMax()->getArray();
+			auto& objBbMinXYZ = object->getBoundingBoxTransformed()->getMin().getArray();
+			auto& objBbMaxXYZ = object->getBoundingBoxTransformed()->getMax().getArray();
 			if (objBbMinXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = objBbMinXYZ[0];
 			if (objBbMinXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = objBbMinXYZ[1];
 			if (objBbMinXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = objBbMinXYZ[2];

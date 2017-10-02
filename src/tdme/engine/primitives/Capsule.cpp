@@ -25,15 +25,15 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Capsule::Capsule(Vector3* a, Vector3* b, float radius) 
+Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 {
-	this->a.set(*a);
-	this->b.set(*b);
+	this->a.set(a);
+	this->b.set(b);
 	this->radius = radius;
 	update();
 }
 
-float Capsule::getRadius()
+float Capsule::getRadius() const
 {
 	return radius;
 }
@@ -43,14 +43,14 @@ void Capsule::setRadius(float radius)
 	this->radius = radius;
 }
 
-Vector3* Capsule::getA()
+Vector3& Capsule::getA()
 {
-	return &a;
+	return a;
 }
 
-Vector3* Capsule::getB()
+Vector3& Capsule::getB()
 {
-	return &b;
+	return b;
 }
 
 void Capsule::fromBoundingVolume(BoundingVolume* original)
@@ -90,7 +90,7 @@ void Capsule::update()
 	sphereRadius = baSubLength / 2.0f + radius;
 }
 
-void Capsule::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
+void Capsule::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
 	Vector3 baSub;
 	Vector3 paSub;
@@ -99,53 +99,53 @@ void Capsule::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* close
 	if (baSubLength > 0.0f) {
 		baSub.normalize();
 		auto t = 0.0f;
-		t = Vector3::computeDotProduct(paSub.set(*point).sub(a), baSub) / baSubLength;
+		t = Vector3::computeDotProduct(paSub.set(point).sub(a), baSub) / baSubLength;
 		if (t < 0.0f)
 			t = 0.0f;
 
 		if (t > 1.0f)
 			t = 1.0f;
 
-		closestPoint->set(a).add(baSub.scale(t * baSubLength));
+		closestPoint.set(a).add(baSub.scale(t * baSubLength));
 	} else {
-		closestPoint->set(a);
+		closestPoint.set(a);
 	}
 }
 
-bool Capsule::containsPoint(Vector3* point)
+bool Capsule::containsPoint(const Vector3& point) const
 {
 	Vector3 cpCvsP;
-	computeClosestPointOnBoundingVolume(point, &cpCvsP);
-	auto distance = cpCvsP.sub(*point).computeLength();
+	computeClosestPointOnBoundingVolume(point, cpCvsP);
+	auto distance = cpCvsP.sub(point).computeLength();
 	return distance <= radius;
 }
 
-bool Capsule::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool Capsule::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float Capsule::computeDimensionOnAxis(Vector3* axis)
+float Capsule::computeDimensionOnAxis(const Vector3& axis) const
 {
 	Vector3 baSub;
-	return Math::abs(Vector3::computeDotProduct(baSub.set(b).sub(a), *axis)) + (radius * 2.0f);
+	return Math::abs(Vector3::computeDotProduct(baSub.set(b).sub(a), axis)) + (radius * 2.0f);
 }
 
-BoundingVolume* Capsule::clone()
+BoundingVolume* Capsule::clone() const
 {
-	return new Capsule(&a, &b, radius);
+	return new Capsule(a, b, radius);
 }

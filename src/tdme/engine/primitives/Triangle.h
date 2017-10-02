@@ -37,21 +37,21 @@ public:
 
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
-	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
-	bool containsPoint(Vector3* point) override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
+	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
+	bool containsPoint(const Vector3& point) const override;
+	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
 
-	inline Vector3* getCenter() override {
-		return &center;
+	inline Vector3& getCenter() override {
+		return center;
 	}
 
-	float getSphereRadius() override {
+	float getSphereRadius() const override {
 		return sphereRadius;
 	}
 
-	float computeDimensionOnAxis(Vector3* axis) override;
+	float computeDimensionOnAxis(const Vector3& axis) const override;
 	void update() override;
-	BoundingVolume* clone() override;
+	BoundingVolume* clone() const override;
 
 	/**
 	 * Public constructor
@@ -64,7 +64,7 @@ public:
 	 * @param vertex 1
 	 * @param vertex 2
 	 */
-	Triangle(Vector3* vertex0, Vector3* vertex1, Vector3* vertex2);
+	Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3& vertex2);
 
 private:
 	vector<Vector3> vertices {  };

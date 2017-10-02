@@ -172,11 +172,11 @@ void PhysicsTest3::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto side = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(1.0f, 16.0f, 8.0f));
+	auto side = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f));
 	auto sideModel = PrimitiveModel::createModel(side, L"side_model");
 	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	auto nearFar = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(8.0f, 16.0f, 1.0f));
+	auto nearFar = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 16.0f, 1.0f));
 	auto nearFarModel = PrimitiveModel::createModel(nearFar, L"far_model");
 	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -201,7 +201,7 @@ void PhysicsTest3::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody(L"sideleft", true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
-	auto box = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(0.6f, 0.6f, 0.6f));
+	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f));
 	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
@@ -224,7 +224,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody(L"box" + to_wstring(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto sphere = new Sphere(new Vector3(0.0f, 0.0f, 0.0f), 0.4f);
+	auto sphere = new Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.4f);
 	auto sphereModel = PrimitiveModel::createModel(sphere, L"sphere_model");
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.5f, 0.8f, 0.8f, 1.0f);
 	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(0.0f, 1.0f, 1.0f, 1.0f);
@@ -238,7 +238,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody(L"sphere" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto capsule = new Capsule(new Vector3(0.0f, 0.5f, 0.0f), new Vector3(0.0f, -0.5f, 0.0f), 0.25f);
+	auto capsule = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, -0.5f, 0.0f), 0.25f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, L"capsule_model");
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.0f, 0.8f, 1.0f);
 	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 1.0f, 1.0f);
@@ -251,7 +251,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody(L"capsule" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto capsuleBig = new OrientedBoundingBox(new Vector3(0.0f, 0.0f, 0.0f), &OrientedBoundingBox::AABB_AXIS_X, &OrientedBoundingBox::AABB_AXIS_Y, &OrientedBoundingBox::AABB_AXIS_Z, new Vector3(0.5f, 1.0f, 0.5f));
+	auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, L"capsulebig_model");
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(1.0f, 0.8f, 0.8f, 1.0f);
 	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);

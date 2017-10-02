@@ -92,7 +92,7 @@ Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_
 	is.readFloatArray(&boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
 	is.readFloatArray(&boundingBoxMaxXYZ);
-	auto boundingBox = new BoundingBox(new Vector3(boundingBoxMinXYZ), new Vector3(boundingBoxMaxXYZ));
+	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
 		pathName + L"/" + fileName,
 		fileName,

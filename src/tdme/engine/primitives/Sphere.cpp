@@ -29,9 +29,9 @@ Sphere::Sphere()
 	this->radius = 0.0f;
 }
 
-Sphere::Sphere(Vector3* center, float radius) 
+Sphere::Sphere(const Vector3& center, float radius)
 {
-	this->center.set(*center);
+	this->center.set(center);
 	this->radius = radius;
 }
 
@@ -59,7 +59,7 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	radius = axis.sub(center).computeLength();
 }
 
-float Sphere::getRadius()
+float Sphere::getRadius() const
 {
 	return radius;
 }
@@ -69,55 +69,55 @@ void Sphere::setRadius(float radius)
 	this->radius = radius;
 }
 
-Sphere* Sphere::set(Vector3* center, float radius)
+Sphere* Sphere::set(const Vector3& center, float radius)
 {
-	this->center.set(*center);
+	this->center.set(center);
 	this->radius = radius;
 	this->update();
 	return this;
 }
 
-void Sphere::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
+void Sphere::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
 	Vector3 axis;
-	axis.set(*point).sub(center);
-	auto length = point->computeLength();
+	axis.set(point).sub(center);
+	auto length = point.computeLength();
 	if (length <= radius) {
-		closestPoint->set(*point);
+		closestPoint.set(point);
 	} else {
-		closestPoint->set(axis).normalize().scale(radius);
-		closestPoint->add(center);
+		closestPoint.set(axis).normalize().scale(radius);
+		closestPoint.add(center);
 	}
 	return;
 }
 
-bool Sphere::containsPoint(Vector3* point)
+bool Sphere::containsPoint(const Vector3& point) const
 {
 	Vector3 axis;
-	auto distance = axis.set(*point).sub(center).computeLength();
+	auto distance = axis.set(point).sub(center).computeLength();
 	return distance <= radius;
 }
 
-bool Sphere::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool Sphere::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float Sphere::computeDimensionOnAxis(Vector3* axis)
+float Sphere::computeDimensionOnAxis(const Vector3& axis) const
 {
 	return radius * 2.0f;
 }
@@ -126,8 +126,8 @@ void Sphere::update()
 {
 }
 
-BoundingVolume* Sphere::clone()
+BoundingVolume* Sphere::clone() const
 {
-	return new Sphere(&center, radius);
+	return new Sphere(center, radius);
 }
 

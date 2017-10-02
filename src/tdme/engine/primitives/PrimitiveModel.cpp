@@ -159,7 +159,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 Model* PrimitiveModel::createSphereModel(Sphere* sphere, const wstring& id, int32_t segmentsX, int32_t segmentsY)
 {
 	auto radius = sphere->getRadius();
-	auto center = sphere->getCenter();
+	auto& center = sphere->getCenter();
 	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material(L"tdme.primitive.material");
 	material->getAmbientColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -172,7 +172,12 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const wstring& id, int3
 
 	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++) 
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-			auto vertex = (new Vector3(((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))), ((Math::cos(Math::PI * ySegment / segmentsY))), ((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))))->scale(radius).add(*center);
+			auto vertex = (
+				Vector3(
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					((Math::cos(Math::PI * ySegment / segmentsY))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX))))
+				).scale(radius).add(center);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 
@@ -241,7 +246,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 	Quaternion rotationQuaternion;
 	rotationQuaternion.identity();
 	Vector3 yAxis(0.0f, -1.0f, 0.0f);
-	Vector3 abNormalized = a->clone().sub(*b).normalize();
+	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
 	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
@@ -273,7 +278,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 				vertex
 			);
 			vertex.scale(radius);
-			vertex.add(*a);
+			vertex.add(a);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++) 
@@ -288,7 +293,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const wstring& id, i
 				vertex
 			);
 			vertex.scale(radius);
-			vertex.add(*b);
+			vertex.add(b);
 			vertices[ySegment * segmentsX + xSegment] = vertex;
 		}
 

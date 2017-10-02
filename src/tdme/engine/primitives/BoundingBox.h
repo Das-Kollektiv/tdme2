@@ -54,12 +54,12 @@ public:
 	/** 
 	 * @return min x,y,z vertex
 	 */
-	Vector3* getMin();
+	Vector3& getMin();
 
 	/** 
 	 * @return max x,y,z vertex
 	 */
-	Vector3* getMax();
+	Vector3& getMax();
 
 	/** 
 	 * Returns bounding box vertices
@@ -77,21 +77,21 @@ public:
 
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
-	void computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint) override;
-	bool containsPoint(Vector3* point) override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision) override;
+	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
+	bool containsPoint(const Vector3& point) const override;
+	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
 
-	inline Vector3* getCenter() override {
-		return &center;
+	inline Vector3& getCenter() override {
+		return center;
 	}
 
-	inline float getSphereRadius() override {
+	inline float getSphereRadius() const override {
 		return sphereRadius;
 	}
 
-	float computeDimensionOnAxis(Vector3* axis) override;
+	float computeDimensionOnAxis(const Vector3& axis) const override;
 	void update() override;
-	BoundingVolume* clone() override;
+	BoundingVolume* clone() const override;
 
 	/**
 	 * Public constructor
@@ -109,5 +109,5 @@ public:
 	 * @param min
 	 * @param max
 	 */
-	BoundingBox(Vector3* min, Vector3* max);
+	BoundingBox(const Vector3& min, const Vector3& max);
 };

@@ -324,9 +324,9 @@ void Object3DBase::getFaceTriangles(vector<Triangle>* faceTriangles)
 			auto faceVertexIndices = face.getVertexIndices();
 			faceTriangles->push_back(
 				Triangle(
-					&(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
-					&(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
-					&(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
+					(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
+					(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
+					(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
 				)
 			);
 		}

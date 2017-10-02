@@ -38,8 +38,8 @@ public:
 	/** 
 	 * @return normal
 	 */
-	inline Vector3* getNormal() {
-		return &normal;
+	inline Vector3& getNormal() {
+		return normal;
 	}
 
 	/**
@@ -55,8 +55,8 @@ public:
 	 * @param normal
 	 * @param distance
 	 */
-	inline Plane(const Vector3* normal, float distance) {
-		this->normal.set(*normal);
+	inline Plane(const Vector3& normal, float distance) {
+		this->normal.set(normal);
 		this->distance = distance;
 	}
 };

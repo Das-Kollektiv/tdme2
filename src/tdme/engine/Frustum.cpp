@@ -54,7 +54,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[0].getNormal()->set(x, y, z);
+	planes[0].getNormal().set(x, y, z);
 	planes[0].setDistance(d);
 	x = data[12] + data[0];
 	y = data[13] + data[1];
@@ -65,7 +65,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[1].getNormal()->set(x, y, z);
+	planes[1].getNormal().set(x, y, z);
 	planes[1].setDistance(d);
 	x = data[12] + data[4];
 	y = data[13] + data[5];
@@ -76,7 +76,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[2].getNormal()->set(x, y, z);
+	planes[2].getNormal().set(x, y, z);
 	planes[2].setDistance(d);
 	x = data[12] - data[4];
 	y = data[13] - data[5];
@@ -87,7 +87,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[3].getNormal()->set(x, y, z);
+	planes[3].getNormal().set(x, y, z);
 	planes[3].setDistance(d);
 	x = data[12] - data[8];
 	y = data[13] - data[9];
@@ -98,7 +98,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[4].getNormal()->set(x, y, z);
+	planes[4].getNormal().set(x, y, z);
 	planes[4].setDistance(d);
 	x = data[12] + data[8];
 	y = data[13] + data[9];
@@ -109,7 +109,7 @@ void Frustum::updateFrustum()
 	y /= t;
 	z /= t;
 	d /= t;
-	planes[5].getNormal()->set(x, y, z);
+	planes[5].getNormal().set(x, y, z);
 	planes[5].setDistance(d);
 }
 
@@ -117,7 +117,7 @@ bool Frustum::isVisible(Vector3* v)
 {
 	auto& vector = v->getArray();
 	for (auto& p : planes) {
-		auto& normal = p.getNormal()->getArray();
+		auto& normal = p.getNormal().getArray();
 		if ((normal[0] * vector[0]) + (normal[1] * vector[1]) + (normal[2] * vector[2]) + p.getDistance() <= 0) {
 			return false;
 		}
@@ -127,10 +127,10 @@ bool Frustum::isVisible(Vector3* v)
 
 bool Frustum::isVisible(Sphere* s)
 {
-	auto& center = s->getCenter()->getArray();
+	auto& center = s->getCenter().getArray();
 	auto radius = s->getRadius();
 	for (auto& p : planes) {
-		auto& normal = p.getNormal()->getArray();
+		auto& normal = p.getNormal().getArray();
 		if ((normal[0] * center[0]) + (normal[1] * center[1]) + (normal[2] * center[2]) + p.getDistance() <= -radius) {
 			return false;
 		}
@@ -140,8 +140,8 @@ bool Frustum::isVisible(Sphere* s)
 
 bool Frustum::isVisible(BoundingBox* b)
 {
-	auto& min = b->getMin()->getArray();
-	auto& max = b->getMax()->getArray();
+	auto& min = b->getMin().getArray();
+	auto& max = b->getMax().getArray();
 	auto minX = min[0];
 	auto minY = min[1];
 	auto minZ = min[2];
@@ -149,7 +149,7 @@ bool Frustum::isVisible(BoundingBox* b)
 	auto maxY = max[1];
 	auto maxZ = max[2];
 	for (auto& p : planes) {
-		auto& normal = p.getNormal()->getArray();
+		auto& normal = p.getNormal().getArray();
 		auto distance = p.getDistance();
 		if ((normal[0] * minX) + (normal[1] * minY) + (normal[2] * minZ) + distance > 0) {
 			continue;

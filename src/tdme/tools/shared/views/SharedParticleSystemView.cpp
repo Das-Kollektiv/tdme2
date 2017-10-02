@@ -128,7 +128,7 @@ void SharedParticleSystemView::initParticleSystem()
 	Tools::oseThumbnail(entity);
 	BoundingBox* boundingBox = nullptr;
 	if (entity->getModel() == nullptr) {
-		boundingBox = new BoundingBox(new Vector3(-0.5f, 0.0f, -0.5f), new Vector3(0.5f, 3.0f, 0.5f));
+		boundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 	} else {
 		boundingBox = entity->getModel()->getBoundingBox();
 	}

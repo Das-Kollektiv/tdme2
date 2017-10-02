@@ -67,7 +67,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 		Math::random() * 2.0f - 1.0f,
 		Math::random() * 2.0f - 1.0f
 	).normalize().scale(sphereTransformed->getRadius());
-	particle->position.add(*sphereTransformed->getCenter());
+	particle->position.add(sphereTransformed->getCenter());
 	particle->velocity.set(
 		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
 		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),

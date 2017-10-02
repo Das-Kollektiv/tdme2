@@ -56,21 +56,21 @@ Vector3 OrientedBoundingBox::AABB_AXIS_X(1.0f, 0.0f, 0.0f);
 Vector3 OrientedBoundingBox::AABB_AXIS_Y(0.0f, 1.0f, 0.0f);
 Vector3 OrientedBoundingBox::AABB_AXIS_Z(0.0f, 0.0f, 1.0f);
 
-OrientedBoundingBox::OrientedBoundingBox(Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension) 
+OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
-	this->center.set(*center);
-	this->axes[0].set(*axis0);
-	this->axes[1].set(*axis1);
-	this->axes[2].set(*axis2);
-	this->halfExtension.set(*halfExtension);
+	this->center.set(center);
+	this->axes[0].set(axis0);
+	this->axes[1].set(axis1);
+	this->axes[2].set(axis2);
+	this->halfExtension.set(halfExtension);
 	this->vertices.resize(8);
 	update();
 }
 
 OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 {
-	this->halfExtension.set(*bb->getMax()).sub(*bb->getMin()).scale(0.5f);
-	this->center.set(*bb->getMin()).add(halfExtension);
+	this->halfExtension.set(bb->getMax()).sub(bb->getMin()).scale(0.5f);
+	this->center.set(bb->getMin()).add(halfExtension);
 	this->axes[0].set(AABB_AXIS_X);
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
@@ -94,15 +94,15 @@ array<Vector3, 3>* OrientedBoundingBox::getAxes()
 	return &axes;
 }
 
-Vector3* OrientedBoundingBox::getHalfExtension()
+Vector3& OrientedBoundingBox::getHalfExtension()
 {
-	return &halfExtension;
+	return halfExtension;
 }
 
 void OrientedBoundingBox::fromBoundingBox(BoundingBox* bb)
 {
-	this->halfExtension.set(*bb->getMax()).sub(*bb->getMin()).scale(0.5f);
-	this->center.set(*bb->getMin()).add(halfExtension);
+	this->halfExtension.set(bb->getMax()).sub(bb->getMin()).scale(0.5f);
+	this->center.set(bb->getMin()).add(halfExtension);
 	this->axes[0].set(AABB_AXIS_X);
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
@@ -201,25 +201,25 @@ void OrientedBoundingBox::update()
 	sphereRadius = halfExtension.computeLength();
 }
 
-void OrientedBoundingBox::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestPoint)
+void OrientedBoundingBox::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
 	Vector3 direction;
 	Vector3 tmp;
-	direction.set(*point).sub(center);
-	closestPoint->set(center);
+	direction.set(point).sub(center);
+	closestPoint.set(center);
 	auto& halfExtensionXYZ = halfExtension.getArray();
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > halfExtensionXYZ[i]) distance = halfExtensionXYZ[i];
 		if (distance < -halfExtensionXYZ[i]) distance = -halfExtensionXYZ[i];
-		closestPoint->add(tmp.set(axes[i]).scale(distance));
+		closestPoint.add(tmp.set(axes[i]).scale(distance));
 	}
 }
 
-void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(Vector3* pointInObb, Vector3* pointOnFace)
+void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const
 {
 	Vector3 direction;
-	direction.set(*pointInObb).sub(center);
+	direction.set(pointInObb).sub(center);
 	auto& halfExtensionXYZ = halfExtension.getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
@@ -242,33 +242,33 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(Vector3* point
 	computeNearestPointOnFaceBoundingVolumeAxis(axisIdxLeastPenetration, pointInObb, pointOnFace);
 }
 
-void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolumeAxis(int32_t axisIdx, Vector3* pointInObb, Vector3* pointOnFace)
+void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const
 {
 	Vector3 direction;
 	Vector3 tmp;
-	direction.set(*pointInObb).sub(center);
+	direction.set(pointInObb).sub(center);
 	auto halfExtensionXYZ = halfExtension.getArray();
-	pointOnFace->set(center);
+	pointOnFace.set(center);
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > halfExtensionXYZ[i]) distance = halfExtensionXYZ[i];
 		if (distance < -halfExtensionXYZ[i]) distance = -halfExtensionXYZ[i];
 		if (i == axisIdx) {
 			if (distance >= 0.0f) {
-				pointOnFace->add(tmp.set(axes[i]).scale(+halfExtensionXYZ[i]));
+				pointOnFace.add(tmp.set(axes[i]).scale(+halfExtensionXYZ[i]));
 			} else {
-				pointOnFace->add(tmp.set(axes[i]).scale(-halfExtensionXYZ[i]));
+				pointOnFace.add(tmp.set(axes[i]).scale(-halfExtensionXYZ[i]));
 			}
 		} else {
-			pointOnFace->add(tmp.set(axes[i]).scale(distance));
+			pointOnFace.add(tmp.set(axes[i]).scale(distance));
 		}
 	}
 }
 
-void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(Vector3* pointInObb, Vector3* pointOnFace)
+void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const
 {
 	Vector3 direction;
-	direction.set(*pointInObb).sub(center);
+	direction.set(pointInObb).sub(center);
 	auto halfExtensionXYZ = halfExtension.getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
@@ -290,33 +290,33 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(Vector3* poin
 	computeOppositePointOnFaceBoundingVolumeAxis(axisIdxLeastPenetration, pointInObb, pointOnFace);
 }
 
-void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, Vector3* pointInObb, Vector3* pointOnFace)
+void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const
 {
 	Vector3 direction;
 	Vector3 tmp;
-	direction.set(*pointInObb).sub(center);
+	direction.set(pointInObb).sub(center);
 	auto& halfExtensionXYZ = halfExtension.getArray();
-	pointOnFace->set(center);
+	pointOnFace.set(center);
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > halfExtensionXYZ[i]) distance = halfExtensionXYZ[i];
 		if (distance < -halfExtensionXYZ[i]) distance = -halfExtensionXYZ[i];
 		if (i == axisIdx) {
 			if (distance >= 0.0f) {
-				pointOnFace->add(tmp.set(axes[i]).scale(-halfExtensionXYZ[i]));
+				pointOnFace.add(tmp.set(axes[i]).scale(-halfExtensionXYZ[i]));
 			} else {
-				pointOnFace->add(tmp.set(axes[i]).scale(+halfExtensionXYZ[i]));
+				pointOnFace.add(tmp.set(axes[i]).scale(+halfExtensionXYZ[i]));
 			}
 		} else {
-			pointOnFace->add(tmp.set(axes[i]).scale(distance));
+			pointOnFace.add(tmp.set(axes[i]).scale(distance));
 		}
 	}
 }
 
-bool OrientedBoundingBox::containsPoint(Vector3* point)
+bool OrientedBoundingBox::containsPoint(const Vector3& point) const
 {
 	Vector3 direction;
-	direction.set(*point).sub(center);
+	direction.set(point).sub(center);
 	auto halfExtensionXYZ = halfExtension.getArray();
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
@@ -328,50 +328,50 @@ bool OrientedBoundingBox::containsPoint(Vector3* point)
 	return true;
 }
 
-bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool OrientedBoundingBox::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else
 	if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else
 	if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else
 	if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else
 	if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else
 	if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float OrientedBoundingBox::computeDimensionOnAxis(Vector3* axis)
+float OrientedBoundingBox::computeDimensionOnAxis(const Vector3& axis) const
 {
-	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], *axis);
+	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
 	auto min = vertexOnAxis;
 	auto max = vertexOnAxis;
 	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(vertices[i], *axis);
+		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
 		if (vertexOnAxis < min) min = vertexOnAxis;
 		if (vertexOnAxis > max) max = vertexOnAxis;
 	}
 	return Math::abs(max - min);
 }
 
-BoundingVolume* OrientedBoundingBox::clone()
+BoundingVolume* OrientedBoundingBox::clone() const
 {
 	return new OrientedBoundingBox(
-		&center,
-		&axes[0],
-		&axes[1],
-		&axes[2],
-		&halfExtension
+		center,
+		axes[0],
+		axes[1],
+		axes[2],
+		halfExtension
 	);
 }

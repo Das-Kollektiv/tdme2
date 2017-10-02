@@ -67,8 +67,8 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	node.y = y;
 	node.z = z;
 	node.parent = parent;
-	node.bv.getMin()->set(x * partitionSize, y * partitionSize, z * partitionSize);
-	node.bv.getMax()->set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
+	node.bv.getMin().set(x * partitionSize, y * partitionSize, z * partitionSize);
+	node.bv.getMax().set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node.bv.update();
 	parent->subNodes.push_back(node);
 	PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
@@ -102,19 +102,19 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 		removeRigidBody(rigidBody);
 	}
 	auto cbv = rigidBody->cbv;
-	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector) + 0.2f, cbv->computeDimensionOnAxis(&upVector) + 0.2f, cbv->computeDimensionOnAxis(&forwardVector) + 0.2f).scale(0.5f);
-	boundingBox.getMin()->set(*center);
-	boundingBox.getMin()->sub(halfExtension);
-	boundingBox.getMax()->set(*center);
-	boundingBox.getMax()->add(halfExtension);
+	auto& center = cbv->getCenter();
+	halfExtension.set(cbv->computeDimensionOnAxis(sideVector) + 0.2f, cbv->computeDimensionOnAxis(upVector) + 0.2f, cbv->computeDimensionOnAxis(forwardVector) + 0.2f).scale(0.5f);
+	boundingBox.getMin().set(center);
+	boundingBox.getMin().sub(halfExtension);
+	boundingBox.getMax().set(center);
+	boundingBox.getMax().add(halfExtension);
 	boundingBox.update();
-	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin()->getX() / PARTITION_SIZE_MAX));
-	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin()->getY() / PARTITION_SIZE_MAX));
-	auto minZPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin()->getZ() / PARTITION_SIZE_MAX));
-	auto maxXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax()->getX() / PARTITION_SIZE_MAX));
-	auto maxYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax()->getY() / PARTITION_SIZE_MAX));
-	auto maxZPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax()->getZ() / PARTITION_SIZE_MAX));
+	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getX() / PARTITION_SIZE_MAX));
+	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getY() / PARTITION_SIZE_MAX));
+	auto minZPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getZ() / PARTITION_SIZE_MAX));
+	auto maxXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax().getX() / PARTITION_SIZE_MAX));
+	auto maxYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax().getY() / PARTITION_SIZE_MAX));
+	auto maxZPartition = static_cast< int32_t >(Math::floor(boundingBox.getMax().getZ() / PARTITION_SIZE_MAX));
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
@@ -239,12 +239,12 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 
 ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
-	auto center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector)).scale(0.5f);
-	boundingBox.getMin()->set(*center);
-	boundingBox.getMin()->sub(halfExtension);
-	boundingBox.getMax()->set(*center);
-	boundingBox.getMax()->add(halfExtension);
+	auto& center = cbv->getCenter();
+	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
+	boundingBox.getMin().set(center);
+	boundingBox.getMin().sub(halfExtension);
+	boundingBox.getMax().set(center);
+	boundingBox.getMax().add(halfExtension);
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;
@@ -257,10 +257,10 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(Vector3* center)
 {
 	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
-	boundingBox.getMin()->set(*center);
-	boundingBox.getMin()->sub(halfExtension);
-	boundingBox.getMax()->set(*center);
-	boundingBox.getMax()->add(halfExtension);
+	boundingBox.getMin().set(*center);
+	boundingBox.getMin().sub(halfExtension);
+	boundingBox.getMax().set(*center);
+	boundingBox.getMax().add(halfExtension);
 	boundingBox.update();
 	rigidBodyIterator.clear();
 	auto lookUps = 0;

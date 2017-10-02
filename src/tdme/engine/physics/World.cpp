@@ -199,7 +199,7 @@ void World::update(float deltaTime)
 						collisionMovement.set(rigidBody2->movement);
 						collisionMovement.scale(-1.0f);
 					}
-					if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, &collisionMovement, &collision) == true && collision.hasPenetration() == true) {
+					if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true) {
 						if (collision.getHitPointsCount() == 0)
 							continue;
 
@@ -307,8 +307,8 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 	Vector3 heightOnPointCandidate;
 	Vector3 heightOnPointA;
 	Vector3 heightOnPointB;
-	heightBoundingBox.getMin()->set(pointXYZ[0], -10000.0f, pointXYZ[2]);
-	heightBoundingBox.getMax()->set(pointXYZ[0], +10000.0f, pointXYZ[2]);
+	heightBoundingBox.getMin().set(pointXYZ[0], -10000.0f, pointXYZ[2]);
+	heightBoundingBox.getMax().set(pointXYZ[0], +10000.0f, pointXYZ[2]);
 	heightBoundingBox.update();
 	heightOnPointCandidate.set(pointXYZ[0], 10000.0f, pointXYZ[2]);
 	auto height = -10000.0f;
@@ -321,7 +321,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 
 			auto cbv = rigidBody->cbv;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
-				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), &heightOnPointA, &heightOnPointB) == true) {
+				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
@@ -330,7 +330,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 				}
 			} else
 			if (dynamic_cast< OrientedBoundingBox* >(cbv) != nullptr) {
-				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(dynamic_cast< OrientedBoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), &heightOnPointA, &heightOnPointB) == true) {
+				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(dynamic_cast< OrientedBoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
 					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
 						height = heightOnPoint->getY();
@@ -338,7 +338,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 					}
 				}
 			} else {
-				cbv->computeClosestPointOnBoundingVolume(&heightOnPointCandidate, &heightOnPointA);
+				cbv->computeClosestPointOnBoundingVolume(heightOnPointCandidate, heightOnPointA);
 				if (Math::abs(heightOnPointCandidate.getX() - heightOnPointA.getX()) < 0.1f &&
 					Math::abs(heightOnPointCandidate.getZ() - heightOnPointA.getZ()) < 0.1f &&
 					heightOnPointA.getY() >= height && heightOnPointA.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
@@ -363,13 +363,13 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 heightPoint;
 	Vector3 heightPointDest;
-	auto width = boundingVolume->computeDimensionOnAxis(&sideVector);
-	auto height = boundingVolume->computeDimensionOnAxis(&upVector);
-	auto depth = boundingVolume->computeDimensionOnAxis(&forwardVector);
+	auto width = boundingVolume->computeDimensionOnAxis(sideVector);
+	auto height = boundingVolume->computeDimensionOnAxis(upVector);
+	auto depth = boundingVolume->computeDimensionOnAxis(forwardVector);
 	float heightPointDestY;
 	RigidBody* heightRigidBody = nullptr;
 	RigidBody* rigidBody = nullptr;
-	heightPoint.set(*boundingVolume->getCenter());
+	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addY(-height / 2.0f);
 	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
 	if (rigidBody != nullptr) {
@@ -379,7 +379,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(*boundingVolume->getCenter());
+	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
@@ -391,7 +391,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(*boundingVolume->getCenter());
+	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
@@ -403,7 +403,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(*boundingVolume->getCenter());
+	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
@@ -415,7 +415,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
-	heightPoint.set(*boundingVolume->getCenter());
+	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
@@ -438,6 +438,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 
 const vector<RigidBody*> World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume)
 {
+	Vector3 nullMovement;
 	CollisionResponse collision;
 	vector<RigidBody*> collidedRigidBodies;
 	for (auto _i = partition->getObjectsNearTo(boundingVolume)->iterator(); _i->hasNext(); ) {
@@ -446,7 +447,7 @@ const vector<RigidBody*> World::doesCollideWith(int32_t typeIds, BoundingVolume*
 			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false)
 				continue;
 
-			if (rigidBody->cbv->doesCollideWith(boundingVolume, nullptr, &collision) == true && collision.hasPenetration() == true) {
+			if (rigidBody->cbv->doesCollideWith(boundingVolume, nullMovement, &collision) == true && collision.hasPenetration() == true) {
 				collidedRigidBodies.push_back(rigidBody);
 			}
 		}

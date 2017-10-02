@@ -54,10 +54,10 @@ public:
 	 * @return collision 
 	 */
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {
-		auto& b1MinXYZ = b1->getMin()->getArray();
-		auto& b1MaxXYZ = b1->getMax()->getArray();
-		auto& b2MinXYZ = b2->getMin()->getArray();
-		auto& b2MaxXYZ = b2->getMax()->getArray();
+		auto& b1MinXYZ = b1->getMin().getArray();
+		auto& b1MaxXYZ = b1->getMax().getArray();
+		auto& b2MinXYZ = b2->getMin().getArray();
+		auto& b2MaxXYZ = b2->getMax().getArray();
 		if (b2MaxXYZ[0] - b1MinXYZ[0] < 0.0f) return false;
 		if (b1MaxXYZ[0] - b2MinXYZ[0] < 0.0f) return false;
 		if (b2MaxXYZ[1] - b1MinXYZ[1] < 0.0f) return false;
@@ -473,7 +473,7 @@ public:
 	 */
 	inline static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2) {
 		Vector3 axis;
-		return axis.set(*bv1->getCenter()).sub(*bv2->getCenter()).computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
+		return axis.set(bv1->getCenter()).sub(bv2->getCenter()).computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
 	}
 
 private:

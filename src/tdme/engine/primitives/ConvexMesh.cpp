@@ -33,7 +33,7 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::Vector3;
 using tdme::utils::_Console;
 
-ConvexMesh::ConvexMesh(vector<Triangle>* triangles)
+ConvexMesh::ConvexMesh(const vector<Triangle>* triangles)
 {
 	this->triangles = *triangles;
 	update();
@@ -124,10 +124,10 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 	update();
 }
 
-void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* closestsPoint)
+void ConvexMesh::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestsPoint) const
 {
 	if (containsPoint(point) == true) {
-		closestsPoint->set(*point);
+		closestsPoint.set(point);
 		return;
 	}
 	if (triangles.size() == 0) {
@@ -135,20 +135,20 @@ void ConvexMesh::computeClosestPointOnBoundingVolume(Vector3* point, Vector3* cl
 	}
 	Vector3 closestPointOnTriangle;
 	Vector3 distanceVector;
-	triangles[0].computeClosestPointOnBoundingVolume(point, &closestPointOnTriangle);
-	auto distance = distanceVector.set(*point).sub(closestPointOnTriangle).computeLength();
-	closestsPoint->set(closestPointOnTriangle);
+	triangles[0].computeClosestPointOnBoundingVolume(point, closestPointOnTriangle);
+	auto distance = distanceVector.set(point).sub(closestPointOnTriangle).computeLength();
+	closestsPoint.set(closestPointOnTriangle);
 	for (auto i = 1; i < triangles.size(); i++) {
-		triangles[i].computeClosestPointOnBoundingVolume(point, &closestPointOnTriangle);
-		auto _distance = distanceVector.set(*point).sub(closestPointOnTriangle).computeLength();
+		triangles[i].computeClosestPointOnBoundingVolume(point, closestPointOnTriangle);
+		auto _distance = distanceVector.set(point).sub(closestPointOnTriangle).computeLength();
 		if (_distance < distance) {
 			distance = _distance;
-			closestsPoint->set(closestPointOnTriangle);
+			closestsPoint.set(closestPointOnTriangle);
 		}
 	}
 }
 
-bool ConvexMesh::containsPoint(Vector3* point)
+bool ConvexMesh::containsPoint(const Vector3& point) const
 {
 	Vector3 triangleEdge1;
 	Vector3 triangleEdge2;
@@ -161,42 +161,42 @@ bool ConvexMesh::containsPoint(Vector3* point)
 		triangleEdge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
 		triangleEdge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
 		Vector3::computeCrossProduct(triangleEdge1, triangleEdge2, triangleNormal).normalize();
-		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, &triangleEdge1) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge1) == false)
 			return false;
 
-		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, &triangleEdge2) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge2) == false)
 			return false;
 
-		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, &triangleEdge3) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge3) == false)
 			return false;
 
-		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, &triangleNormal) == false)
+		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleNormal) == false)
 			return false;
 
 	}
 	return true;
 }
 
-bool ConvexMesh::doesCollideWith(BoundingVolume* bv2, Vector3* movement, CollisionResponse* collision)
+bool ConvexMesh::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
 	} else {
 		return false;
 	}
 }
 
-float ConvexMesh::computeDimensionOnAxis(Vector3* axis)
+float ConvexMesh::computeDimensionOnAxis(const Vector3& axis) const
 {
 	auto dimensionOnAxis = 0.0f;
 	for (auto i = 0; i < triangles.size(); i++) {
@@ -233,7 +233,7 @@ void ConvexMesh::update()
 	}
 }
 
-BoundingVolume* ConvexMesh::clone()
+BoundingVolume* ConvexMesh::clone() const
 {
 	return new ConvexMesh(&triangles);
 }

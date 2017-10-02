@@ -161,11 +161,11 @@ void LevelEditorLevel::computeBoundingBox()
 		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = bv->clone();
 		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
-		bbDimension.set(cbv->computeDimensionOnAxis(&sideVector), cbv->computeDimensionOnAxis(&upVector), cbv->computeDimensionOnAxis(&forwardVector));
+		bbDimension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector));
 		bbDimension.scale(0.5f);
-		bbMin.set(*cbv->getCenter());
+		bbMin.set(cbv->getCenter());
 		bbMin.sub(bbDimension);
-		bbMax.set(*cbv->getCenter());
+		bbMax.set(cbv->getCenter());
 		bbMax.add(bbDimension);
 		auto objectLeft = bbMin.getX();
 		auto objectRight = bbMax.getX();
@@ -191,8 +191,8 @@ void LevelEditorLevel::computeBoundingBox()
 		}
 	}
 
-	boundingBox->getMin()->set(left, bottom, near);
-	boundingBox->getMax()->set(right, top, far);
+	boundingBox->getMin().set(left, bottom, near);
+	boundingBox->getMax().set(right, top, far);
 	boundingBox->update();
 	dimension.setX(right - left);
 	dimension.setZ(far - near);

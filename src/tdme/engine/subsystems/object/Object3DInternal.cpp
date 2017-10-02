@@ -43,8 +43,8 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed = dynamic_cast< BoundingBox* >(boundingBox->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin()->sub(0.05f);
-	boundingBoxTransformed->getMax()->add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f);
+	boundingBoxTransformed->getMax().add(0.05f);
 	boundingBoxTransformed->update();
 }
 
@@ -170,8 +170,8 @@ void Object3DInternal::fromTransformations(Transformations* transformations)
 {
 	Object3DBase::fromTransformations(transformations);
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin()->sub(0.05f);
-	boundingBoxTransformed->getMax()->add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f);
+	boundingBoxTransformed->getMax().add(0.05f);
 	boundingBoxTransformed->update();
 }
 
@@ -179,8 +179,8 @@ void Object3DInternal::update()
 {
 	Object3DBase::update();
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin()->sub(0.05f);
-	boundingBoxTransformed->getMax()->add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f);
+	boundingBoxTransformed->getMax().add(0.05f);
 	boundingBoxTransformed->update();
 }
 
