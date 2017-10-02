@@ -66,12 +66,14 @@ public:
 	 * @param bounding box
 	 * @return vertices
 	 */
-	vector<Vector3>* getVertices();
+	const vector<Vector3>* getVertices() const {
+		return &vertices;
+	}
 
 	/** 
 	 * @return faces vertices indexes
 	 */
-	inline static array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
+	inline static const array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
 		return &facesVerticesIndexes;
 	}
 

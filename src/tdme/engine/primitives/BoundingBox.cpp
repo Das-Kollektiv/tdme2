@@ -83,11 +83,6 @@ Vector3& BoundingBox::getMax()
 	return max;
 }
 
-vector<Vector3>* BoundingBox::getVertices()
-{
-	return &vertices;
-}
-
 void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {

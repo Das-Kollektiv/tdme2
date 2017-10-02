@@ -89,7 +89,7 @@ OrientedBoundingBox::OrientedBoundingBox()
 	update();
 }
 
-array<Vector3, 3>* OrientedBoundingBox::getAxes()
+const array<Vector3, 3>* OrientedBoundingBox::getAxes() const
 {
 	return &axes;
 }

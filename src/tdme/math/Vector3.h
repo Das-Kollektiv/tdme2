@@ -358,7 +358,7 @@ public:
 	 * Clones the vector
 	 * @return new cloned vector
 	 */
-	inline Vector3 clone() {
+	inline Vector3 clone() const {
 		return Vector3(data);
 	}
 

@@ -967,14 +967,14 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 	for (auto triangleObb1Idx = 0; triangleObb1Idx < obb1FacesVerticesIndexes->size(); triangleObb1Idx++)
 		for (auto triangleObb2Idx = 0; triangleObb2Idx < obb2FacesVerticesIndexes->size(); triangleObb2Idx++) {
 			auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
-				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]],
-				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]],
-				&(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]],
-				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][0]],
-				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][1]],
-				&(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][2]],
-				&hitPointTriangle1,
-				&hitPointTriangle2
+				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][0]],
+				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][1]],
+				(*obb1Vertices)[(*obb1FacesVerticesIndexes)[triangleObb1Idx][2]],
+				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][0]],
+				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][1]],
+				(*obb2Vertices)[(*obb2FacesVerticesIndexes)[triangleObb2Idx][2]],
+				hitPointTriangle1,
+				hitPointTriangle2
 			);
 			{
 				{
@@ -1020,14 +1020,14 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 	auto obbFacesVerticesIndexes = OrientedBoundingBox::getFacesVerticesIndexes();
 	for (auto triangleObbIdx = 0; triangleObbIdx < obbFacesVerticesIndexes->size(); triangleObbIdx++) {
 		auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
-			&(*triangleVertices)[0],
-			&(*triangleVertices)[1],
-			&(*triangleVertices)[2],
-			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]],
-			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]],
-			&(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]],
-			&hitPointTriangle1,
-			&hitPointTriangle2
+			(*triangleVertices)[0],
+			(*triangleVertices)[1],
+			(*triangleVertices)[2],
+			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][0]],
+			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][1]],
+			(*obbVertices)[(*obbFacesVerticesIndexes)[triangleObbIdx][2]],
+			hitPointTriangle1,
+			hitPointTriangle2
 		);
 		{
 			{
@@ -1070,14 +1070,14 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 	auto triangle1Vertices = triangle1->getVertices();
 	auto triangle2Vertices = triangle2->getVertices();
 	auto tritriReturn = TriangleTriangleIntersection::computeTriangleTriangleIntersection(
-		&(*triangle1Vertices)[0],
-		&(*triangle1Vertices)[1],
-		&(*triangle1Vertices)[2],
-		&(*triangle2Vertices)[0],
-		&(*triangle2Vertices)[1],
-		&(*triangle2Vertices)[2],
-		&hitPointTriangle1,
-		&hitPointTriangle2
+		(*triangle1Vertices)[0],
+		(*triangle1Vertices)[1],
+		(*triangle1Vertices)[2],
+		(*triangle2Vertices)[0],
+		(*triangle2Vertices)[1],
+		(*triangle2Vertices)[2],
+		hitPointTriangle1,
+		hitPointTriangle2
 	);
 	{
 		{

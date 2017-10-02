@@ -202,18 +202,18 @@ private:
 	 * @param isectpoint0
 	 * @param isectpoint1
 	 */
-	static void isect2(Vector3* VTX0, Vector3* VTX1, Vector3* VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1) {
+	static void isect2(const Vector3& VTX0, const Vector3& VTX1, const Vector3& VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2& isect0, int32_t isect0Idx, Vector2& isect1, int32_t isect1Idx, Vector3& isectpoint0, Vector3& isectpoint1) {
 		Vector3 diff;
 		auto tmp = D0 / (D0 - D1);
-		isect0->getArray()[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
-		diff.set(*VTX1).sub(*VTX0);
+		isect0.getArray()[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
+		diff.set(VTX1).sub(VTX0);
 		diff.scale(tmp);
-		isectpoint0->set(diff).add(*VTX0);
+		isectpoint0.set(diff).add(VTX0);
 		tmp = D0 / (D0 - D2);
-		isect1->getArray()[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
-		diff.set(*VTX2).sub(*VTX0);
+		isect1.getArray()[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
+		diff.set(VTX2).sub(VTX0);
 		diff.scale(tmp);
-		isectpoint1->set(*VTX0).add(diff);
+		isectpoint1.set(VTX0).add(diff);
 	}
 
 	/** 
@@ -236,7 +236,7 @@ private:
 	 * @param isectpoint1
 	 * @return
 	 */
-	static bool compute_intervals_isectline(Vector3* VERT0, Vector3* VERT1, Vector3* VERT2, float VV0, float VV1, float VV2, float D0, float D1, float D2, float D0D1, float D0D2, Vector2* isect0, int32_t isect0Idx, Vector2* isect1, int32_t isect1Idx, Vector3* isectpoint0, Vector3* isectpoint1) {
+	static bool compute_intervals_isectline(const Vector3& VERT0, const Vector3& VERT1, const Vector3& VERT2, float VV0, float VV1, float VV2, float D0, float D1, float D2, float D0D1, float D0D2, Vector2& isect0, int32_t isect0Idx, Vector2& isect1, int32_t isect1Idx, Vector3& isectpoint0, Vector3& isectpoint1) {
 		if (D0D1 > 0.0f) {
 			isect2(VERT2, VERT0, VERT1, VV2, VV0, VV1, D2, D0, D1, isect0, isect0Idx, isect1, isect1Idx, isectpoint0, isectpoint1);
 		} else if (D0D2 > 0.0f) {
@@ -284,6 +284,6 @@ public:
 	 * @param isectpt2 intersection point 2 if not coplanar
 	 * @return
 	 */
-	static ReturnValue computeTriangleTriangleIntersection(Vector3* V0, Vector3* V1, Vector3* V2, Vector3* U0, Vector3* U1, Vector3* U2, Vector3* isectpt1, Vector3* isectpt2);
+	static ReturnValue computeTriangleTriangleIntersection(const Vector3& V0, const Vector3& V1, const Vector3& V2, const Vector3& U0, const Vector3& U1, const Vector3& U2, Vector3& isectpt1, Vector3& isectpt2);
 
 };

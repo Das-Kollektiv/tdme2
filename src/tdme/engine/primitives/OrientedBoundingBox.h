@@ -62,7 +62,7 @@ public:
 	/** 
 	 * @return 3 axes
 	 */
-	array<Vector3, 3>* getAxes();
+	const array<Vector3, 3>* getAxes() const;
 
 	/** 
 	 * @return half extension
@@ -87,14 +87,14 @@ public:
 	/** 
 	 * @return oriented bounding box vertices
 	 */
-	inline vector<Vector3>* getVertices() {
+	inline const vector<Vector3>* getVertices() const {
 		return &vertices;
 	}
 
 	/** 
 	 * @return faces vertices indexes
 	 */
-	inline static array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
+	inline static const array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
 		return &facesVerticesIndexes;
 	}
 

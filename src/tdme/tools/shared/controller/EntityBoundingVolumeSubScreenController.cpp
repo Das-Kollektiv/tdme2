@@ -272,7 +272,7 @@ void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, Vect
 	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(max->getX()))->append(u", "_j)->append(Tools::formatFloat(max->getY()))->append(u", "_j)->append(Tools::formatFloat(max->getZ())));
 }
 
-void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, Vector3* center, Vector3* axis0, Vector3* axis1, Vector3* axis2, Vector3* halfExtension)
+void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, Vector3* center, const Vector3* axis0, const Vector3* axis1, const Vector3* axis2, Vector3* halfExtension)
 {
 	Vector3 rotation;
 	Matrix4x4 rotationMatrix;
