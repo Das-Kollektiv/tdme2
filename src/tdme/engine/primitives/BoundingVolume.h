@@ -54,7 +54,7 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @param collision
 	 * @return collision
 	 */
-	virtual bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) = 0;
+	virtual bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) = 0;
 
 	/** 
 	 * @return center of bounding volume

@@ -152,20 +152,20 @@ bool Triangle::containsPoint(const Vector3& point) const
 	return closestPoint.equals(point);
 }
 
-bool Triangle::doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision)
+bool Triangle::doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision)
 {
 	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
 	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
 	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
 	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
 	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), &movement, collision);
+		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
 	} else {
 		return false;
 	}

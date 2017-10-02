@@ -130,7 +130,7 @@ public:
 	 */
 	void computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const;
 	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
+	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
 	float computeDimensionOnAxis(const Vector3& axis) const override;
 	BoundingVolume* clone() const override;
 

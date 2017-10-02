@@ -39,7 +39,7 @@ public:
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
 	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
 	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, Vector3& movement, CollisionResponse* collision) override;
+	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
 
 	inline Vector3& getCenter() override {
 		return center;
