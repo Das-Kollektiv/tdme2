@@ -134,32 +134,32 @@ void ShadowMappingShaderRender::setProgramTexturePixelDimensions(float width, fl
 	renderer->setProgramUniformFloat(renderUniformTexturePixelHeight, height);
 }
 
-void ShadowMappingShaderRender::setProgramMVMatrix(Matrix4x4* mvMatrix)
+void ShadowMappingShaderRender::setProgramMVMatrix(const Matrix4x4& mvMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVMatrix, mvMatrix->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVMatrix, mvMatrix.getArray());
 }
 
-void ShadowMappingShaderRender::setProgramMVPMatrix(Matrix4x4* mvpMatrix)
+void ShadowMappingShaderRender::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVPMatrix, mvpMatrix->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVPMatrix, mvpMatrix.getArray());
 }
 
-void ShadowMappingShaderRender::setProgramNormalMatrix(Matrix4x4* normalMatrix)
+void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
-void ShadowMappingShaderRender::setProgramLightPosition(Vector3* lightPosition)
+void ShadowMappingShaderRender::setProgramLightPosition(const Vector3& lightPosition)
 {
-	renderer->setProgramUniformFloatVec3(renderUniformLightPosition, lightPosition->getArray());
+	renderer->setProgramUniformFloatVec3(renderUniformLightPosition, lightPosition.getArray());
 }
 
-void ShadowMappingShaderRender::setProgramLightDirection(Vector3* lightDirection)
+void ShadowMappingShaderRender::setProgramLightDirection(const Vector3& lightDirection)
 {
-	renderer->setProgramUniformFloatVec3(renderUniformLightDirection, lightDirection->getArray());
+	renderer->setProgramUniformFloatVec3(renderUniformLightDirection, lightDirection.getArray());
 }
 
-void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)
+void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix)
 {
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
 }
@@ -171,7 +171,7 @@ void ShadowMappingShaderRender::setProgramLightSpotExponent(float spotExponent)
 
 void ShadowMappingShaderRender::setProgramLightSpotCosCutOff(float spotCosCutOff)
 {
-	renderer->setProgramUniformFloat(renderUniformLightSpotCosCutoff, static_cast< float >(Math::cos(Math::PI / 180.0f * spotCosCutOff)));
+	renderer->setProgramUniformFloat(renderUniformLightSpotCosCutoff, Math::cos(Math::PI / 180.0f * spotCosCutOff));
 }
 
 void ShadowMappingShaderRender::setProgramLightConstantAttenuation(float constantAttenuation)

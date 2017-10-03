@@ -6,6 +6,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
@@ -76,37 +78,37 @@ public:
 	 * Set up program model view matrix
 	 * @param model view matrix
 	 */
-	void setProgramMVMatrix(Matrix4x4* mvMatrix);
+	void setProgramMVMatrix(const Matrix4x4& mvMatrix);
 
 	/** 
 	 * Set up program mvp matrix
 	 * @param mvp matrix
 	 */
-	void setProgramMVPMatrix(Matrix4x4* mvpMatrix);
+	void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
 
 	/** 
 	 * Set up program normal matrix
 	 * @param normal matrix
 	 */
-	void setProgramNormalMatrix(Matrix4x4* normalMatrix);
+	void setProgramNormalMatrix(const Matrix4x4& normalMatrix);
 
 	/** 
 	 * Set up program light position
 	 * @param light position
 	 */
-	void setProgramLightPosition(Vector3* lightPosition);
+	void setProgramLightPosition(const Vector3& lightPosition);
 
 	/** 
 	 * Set up program light position
 	 * @param light position
 	 */
-	void setProgramLightDirection(Vector3* lightDirection);
+	void setProgramLightDirection(const Vector3& lightDirection);
 
 	/** 
 	 * Set up program depth bias mvp matrix
 	 * @param depth bias mvp matrix
 	 */
-	void setProgramDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix);
+	void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix);
 
 	/** 
 	 * Set up light spot exponent
