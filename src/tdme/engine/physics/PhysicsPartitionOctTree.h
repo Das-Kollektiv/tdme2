@@ -145,7 +145,7 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor

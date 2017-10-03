@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
@@ -83,7 +84,7 @@ public: /* protected */
 	 * @param normal
 	 * @param texture coordinate
 	 */
-	void addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate);
+	void addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate);
 
 	/** 
 	 * Render this transparent render faces group

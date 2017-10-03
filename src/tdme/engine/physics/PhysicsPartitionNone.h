@@ -7,6 +7,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -70,7 +71,7 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
 
 	// Generated
 

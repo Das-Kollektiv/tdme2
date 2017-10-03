@@ -299,12 +299,12 @@ ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingV
 	return &entityIterator;
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center)
 {
 	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
-	boundingBox.getMin().set(*center);
+	boundingBox.getMin().set(center);
 	boundingBox.getMin().sub(halfExtension);
-	boundingBox.getMax().set(*center);
+	boundingBox.getMax().set(center);
 	boundingBox.getMax().add(halfExtension);
 	boundingBox.update();
 	entityIterator.clear();

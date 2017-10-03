@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 
 using std::array;
 using std::vector;
@@ -87,7 +88,7 @@ public: /* protected */
 	 * @param texture coordinate
 	 * @return success
 	 */
-	bool addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate);
+	bool addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate);
 
 public:
 	/**

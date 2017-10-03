@@ -44,7 +44,7 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(Bo
 	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(const Vector3& center)
 {
 	return &arrayListIteratorMultiple;
 }

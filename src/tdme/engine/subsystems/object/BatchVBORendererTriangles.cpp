@@ -96,13 +96,13 @@ void BatchVBORendererTriangles::clear()
 	fbTextureCoordinates->clear();
 }
 
-bool BatchVBORendererTriangles::addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate)
+bool BatchVBORendererTriangles::addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate)
 {
 	if (vertices == VERTEX_COUNT)
 		return false;
 
-	fbVertices->put(vertex->getArray());
-	fbNormals->put(normal->getArray());
+	fbVertices->put(vertex.getArray());
+	fbNormals->put(normal.getArray());
 	if (textureCoordinate != nullptr) {
 		fbTextureCoordinates->put(textureCoordinate->getArray());
 	} else {

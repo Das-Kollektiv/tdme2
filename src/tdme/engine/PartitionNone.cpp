@@ -53,7 +53,7 @@ ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolu
 	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(Vector3* center)
+ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center)
 {
 	return &arrayListIteratorMultiple;
 }

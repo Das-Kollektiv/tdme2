@@ -5,6 +5,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/utils/ArrayListIteratorMultiple.h>
@@ -68,5 +69,5 @@ public:
 	 * @param center
 	 * @return objects near to given world position
 	 */
-	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) = 0;
+	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) = 0;
 };

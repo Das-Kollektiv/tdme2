@@ -86,7 +86,7 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 	return key;
 }
 
-void TransparentRenderFacesGroup::addVertex(Vector3* vertex, Vector3* normal, TextureCoordinate* textureCoordinate)
+void TransparentRenderFacesGroup::addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate)
 {
 	if (batchVBORenderers.size() == 0) {
 		auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();

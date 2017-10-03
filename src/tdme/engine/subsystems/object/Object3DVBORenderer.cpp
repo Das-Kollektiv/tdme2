@@ -233,8 +233,8 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(
-				&modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
-				&modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
+				modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
+				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
 				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
 					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
 					static_cast< TextureCoordinate* >(nullptr)

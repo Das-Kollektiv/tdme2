@@ -180,7 +180,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		(*color)[3] += (*colorAdd)[3] * static_cast< float >(timeDelta);
 		modelViewMatrix.multiply(particle.position, point);
 		if (doCollisionTests == true) {
-			for (auto _i = engine->getPartition()->getObjectsNearTo(&particle.position)->iterator(); _i->hasNext(); ) {
+			for (auto _i = engine->getPartition()->getObjectsNearTo(particle.position)->iterator(); _i->hasNext(); ) {
 				Entity* entity = dynamic_cast< Entity* >(_i->next());
 				{
 					if (static_cast< void* >(entity) == static_cast< void* >(this))

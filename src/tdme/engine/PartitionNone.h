@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
@@ -42,7 +43,7 @@ public: /* protected */
 public:
 	const vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor

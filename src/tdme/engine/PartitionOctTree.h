@@ -132,7 +132,7 @@ private:
 
 public:
 	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(Vector3* center) override;
+	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor
