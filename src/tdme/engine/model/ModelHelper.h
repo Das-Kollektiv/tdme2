@@ -44,7 +44,7 @@ public:
 	 * @param face normal
 	 * @return computed face normal
 	 */
-	static void computeNormal(array<Vector3,3>* vertices, Vector3* normal);
+	static void computeNormal(array<Vector3,3>* vertices, Vector3& normal);
 
 	/** 
 	 * Computes face normals for given face vertices

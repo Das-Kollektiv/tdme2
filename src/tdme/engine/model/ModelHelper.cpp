@@ -60,19 +60,19 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* ver
 	}
 }
 
-void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3* normal)
+void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3& normal)
 {
 	Vector3::computeCrossProduct(
 		(*vertices)[1].clone().sub((*vertices)[0]),
 		(*vertices)[2].clone().sub((*vertices)[0]),
-		*normal
+		normal
 	).normalize();
 }
 
 void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* normals)
 {
 	Vector3 normal;
-	computeNormal(vertices, &normal);
+	computeNormal(vertices, normal);
 	for (auto i = 0; i < vertices->size(); i++) {
 		(*normals)[i].set(normal);
 	}
