@@ -11,6 +11,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -76,12 +77,6 @@ private:
 	float camScale {  };
 	float camScaleMax {  };
 	float camScaleMin {  };
-	Vector3* FORWARD_VECTOR {  };
-	Vector3* SIDE_VECTOR {  };
-	Vector3* camForwardVector {  };
-	Vector3* camSideVector {  };
-	Vector3* camLookAtToFromVector {  };
-	Vector3* camLookAt {  };
 	int32_t mouseDownLastX {  };
 	int32_t mouseDownLastY {  };
 	bool mouseDragging {  };
@@ -90,8 +85,10 @@ private:
 	int32_t mousePanningForward {  };
 	int32_t mouseRotationX {  };
 	int32_t mouseRotationY {  };
-	Vector3* gridCenter {  };
-	Vector3* gridCenterLast {  };
+	bool haveGridCenterLast { false };
+	Vector3 camLookAt {  };
+	Vector3 gridCenter {  };
+	Vector3 gridCenterLast {  };
 	bool gridEnabled {  };
 	float gridY {  };
 	bool keyLeft {  };
@@ -124,7 +121,6 @@ private:
 	vector<LevelEditorObject*> pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
-	Vector3* tmpVector3 {  };
 
 public:
 

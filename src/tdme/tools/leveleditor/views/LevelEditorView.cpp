@@ -173,12 +173,6 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
 	camScaleMax = 3.0f;
 	camScaleMin = 0.05f;
-	FORWARD_VECTOR = new Vector3(0.0f, 0.0f, 1.0f);
-	SIDE_VECTOR = new Vector3(1.0f, 0.0f, 0.0f);
-	camForwardVector = new Vector3();
-	camSideVector = new Vector3();
-	camLookAtToFromVector = new Vector3();
-	camLookAt = new Vector3();
 	mouseDownLastX = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
 	mousePanningSide = LevelEditorView::MOUSE_PANNING_NONE;
@@ -203,8 +197,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDragging = false;
 	mouseDraggingLastObject = nullptr;
-	gridCenter = new Vector3();
-	gridCenterLast = nullptr;
+	haveGridCenterLast = false;
 	gridEnabled = true;
 	gridY = 0.0f;
 	objectColors[L"red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
@@ -220,7 +213,6 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	levelEditorGround = createLevelEditorGroundPlateModel();
 	engine = Engine::getInstance();
 	entityPickingFilterNoGrid = new LevelEditorView_LevelEditorView_1(this);
-	tmpVector3 = new Vector3();
 }
 
 PopUps* LevelEditorView::getPopUps()
@@ -550,35 +542,41 @@ void LevelEditorView::display()
 
 		camLookRotationX->update();
 	}
-	camLookRotationX->getQuaternion().multiply(*FORWARD_VECTOR, *tmpVector3);
-	camLookRotationY->getQuaternion().multiply(*tmpVector3, *tmpVector3);
-	camLookAtToFromVector->set(*tmpVector3).scale(camScale * 10.0f);
+	Vector3 tmpVector3;
+	Vector3 FORWARD_VECTOR(0.0f, 0.0f, 1.0f);
+	Vector3 SIDE_VECTOR(1.0f, 0.0f, 0.0f);
+	Vector3 camLookAtToFromVector;
+	Vector3 camForwardVector;
+	Vector3 camSideVector;
+	camLookRotationX->getQuaternion().multiply(FORWARD_VECTOR, tmpVector3);
+	camLookRotationY->getQuaternion().multiply(tmpVector3, tmpVector3);
+	camLookAtToFromVector.set(tmpVector3).scale(camScale * 10.0f);
 	auto timing = engine->getTiming();
-	camLookRotationY->getQuaternion().multiply(*FORWARD_VECTOR, *camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
-	camLookRotationY->getQuaternion().multiply(*SIDE_VECTOR, *camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion().multiply(FORWARD_VECTOR, camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+	camLookRotationY->getQuaternion().multiply(SIDE_VECTOR, camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	if (keyUp)
-		cam->getLookAt().sub(tmpVector3->set(*camForwardVector).scale(0.1f));
+		cam->getLookAt().sub(tmpVector3.set(camForwardVector).scale(0.1f));
 
 	if (keyDown)
-		cam->getLookAt().add(tmpVector3->set(*camForwardVector).scale(0.1f));
+		cam->getLookAt().add(tmpVector3.set(camForwardVector).scale(0.1f));
 
 	if (keyLeft)
-		cam->getLookAt().sub(tmpVector3->set(*camSideVector).scale(0.1f));
+		cam->getLookAt().sub(tmpVector3.set(camSideVector).scale(0.1f));
 
 	if (keyRight)
-		cam->getLookAt().add(tmpVector3->set(*camSideVector).scale(0.1f));
+		cam->getLookAt().add(tmpVector3.set(camSideVector).scale(0.1f));
 
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		cam->getLookAt().sub(tmpVector3->set(*camForwardVector).scale(mousePanningForward / 30.0f * camScale));
+		cam->getLookAt().sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
 		mousePanningForward = MOUSE_PANNING_NONE;
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		cam->getLookAt().sub(tmpVector3->set(*camSideVector).scale(mousePanningSide / 30.0f * camScale));
+		cam->getLookAt().sub(tmpVector3.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
 		mousePanningSide = MOUSE_PANNING_NONE;
 	}
-	cam->getLookFrom().set(cam->getLookAt()).add(*camLookAtToFromVector);
+	cam->getLookFrom().set(cam->getLookAt()).add(camLookAtToFromVector);
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
-	gridCenter->set(cam->getLookAt());
+	gridCenter.set(cam->getLookAt());
 	updateGrid();
 	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
@@ -716,8 +714,8 @@ void LevelEditorView::initialize()
 	cam->setZNear(1.0f);
 	cam->setZFar(1000.0f);
 	cam->getLookAt().set(*level->computeCenter());
-	gridCenter->set(cam->getLookAt());
-	camLookAt->set(engine->getCamera()->getLookAt());
+	gridCenter.set(cam->getLookAt());
+	camLookAt.set(engine->getCamera()->getLookAt());
 }
 
 void LevelEditorView::activate()
@@ -729,12 +727,12 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	loadLevel();
-	engine->getCamera()->getLookAt().set(*camLookAt);
+	engine->getCamera()->getLookAt().set(camLookAt);
 }
 
 void LevelEditorView::deactivate()
 {
-	camLookAt->set(engine->getCamera()->getLookAt());
+	camLookAt.set(engine->getCamera()->getLookAt());
 }
 
 void LevelEditorView::storeSettings()
@@ -806,11 +804,11 @@ void LevelEditorView::updateGrid()
 	if (gridEnabled == false)
 		return;
 
-	auto centerX = static_cast< int32_t >(gridCenter->getX());
-	auto centerZ = static_cast< int32_t >(gridCenter->getZ());
-	auto centerLastX = gridCenterLast == nullptr ? centerX : static_cast< int32_t >(gridCenterLast->getX());
-	auto centerLastZ = gridCenterLast == nullptr ? centerZ : static_cast< int32_t >(gridCenterLast->getZ());
-	if (gridCenterLast != nullptr && (centerLastX != centerX || centerLastZ != centerZ) == false) {
+	auto centerX = static_cast< int32_t >(gridCenter.getX());
+	auto centerZ = static_cast< int32_t >(gridCenter.getZ());
+	auto centerLastX = haveGridCenterLast == false ? centerX : static_cast< int32_t >(gridCenterLast.getX());
+	auto centerLastZ = haveGridCenterLast == false ? centerZ : static_cast< int32_t >(gridCenterLast.getZ());
+	if (haveGridCenterLast == true && (centerLastX != centerX || centerLastZ != centerZ) == false) {
 		return;
 	}
 	auto gridDimensionLeft = GRID_DIMENSION_X + (centerLastX < centerX ? centerX - centerLastX : 0);
@@ -858,35 +856,30 @@ void LevelEditorView::updateGrid()
 		}
 	}
 
-	if (gridCenterLast == nullptr)
-		gridCenterLast = new Vector3();
-
-	gridCenterLast->set(*gridCenter);
+	haveGridCenterLast = true;
+	gridCenterLast.set(gridCenter);
 }
 
 void LevelEditorView::removeGrid()
 {
-	if (gridCenterLast == nullptr)
-		return;
-
+	if (haveGridCenterLast == false) return;
 	auto removedCells = 0;
-	auto centerX = static_cast< int32_t >(gridCenterLast->getX());
-	auto centerZ = static_cast< int32_t >(gridCenterLast->getZ());
+	auto centerX = static_cast< int32_t >(gridCenterLast.getX());
+	auto centerZ = static_cast< int32_t >(gridCenterLast.getZ());
 	for (auto gridZ = -GRID_DIMENSION_Y; gridZ < GRID_DIMENSION_Y; gridZ++) 
-				for (auto gridX = -GRID_DIMENSION_X; gridX < GRID_DIMENSION_X; gridX++) {
-			wstring objectId =
-				L"leveleditor.ground@" +
-				to_wstring(centerX + gridX) +
-				L"," +
-				to_wstring(centerZ + gridZ);
-			auto _object = engine->getEntity(objectId);
-			if (_object != nullptr) {
-				removedCells++;
-				engine->removeEntity(objectId);
-			}
+	for (auto gridX = -GRID_DIMENSION_X; gridX < GRID_DIMENSION_X; gridX++) {
+		wstring objectId =
+			L"leveleditor.ground@" +
+			to_wstring(centerX + gridX) +
+			L"," +
+			to_wstring(centerZ + gridZ);
+		auto _object = engine->getEntity(objectId);
+		if (_object != nullptr) {
+			removedCells++;
+			engine->removeEntity(objectId);
 		}
-
-	gridCenterLast = nullptr;
+	}
+	haveGridCenterLast = false;
 }
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
@@ -1336,7 +1329,7 @@ void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 		camLookRotationY->setAngle(0.0f);
 		camLookRotationY->update();
 		camScale = 1.0f;
-		gridCenter->set(engine->getCamera()->getLookAt());
+		gridCenter.set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
 	} catch (_Exception& exception) {
