@@ -66,7 +66,6 @@ LevelEditorLevel::LevelEditorLevel()
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
 	objectIdx = 0;
-	boundingBox = new BoundingBox();
 }
 
 const wstring& LevelEditorLevel::getGameRoot()
@@ -124,23 +123,19 @@ LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
 	return entityLibrary;
 }
 
-Vector3* LevelEditorLevel::getDimension()
+const Vector3& LevelEditorLevel::getDimension()
 {
-	return &dimension;
-}
-
-void LevelEditorLevel::computeDimension()
-{
-	computeBoundingBox();
+	return dimension;
 }
 
 BoundingBox* LevelEditorLevel::getBoundingBox()
 {
-	return boundingBox;
+	return &boundingBox;
 }
 
 void LevelEditorLevel::computeBoundingBox()
 {
+	dimension.set(0.0f, 0.0f, 0.0f);
 	auto haveDimension = false;
 	auto left = 0.0f;
 	auto right = 0.0f;
@@ -191,28 +186,30 @@ void LevelEditorLevel::computeBoundingBox()
 		}
 	}
 
-	boundingBox->getMin().set(left, bottom, near);
-	boundingBox->getMax().set(right, top, far);
-	boundingBox->update();
+	boundingBox.getMin().set(left, bottom, near);
+	boundingBox.getMax().set(right, top, far);
+	boundingBox.update();
 	dimension.setX(right - left);
 	dimension.setZ(far - near);
 	dimension.setY(top - bottom);
 }
 
-Vector3* LevelEditorLevel::computeCenter()
+void LevelEditorLevel::computeCenter()
 {
-	auto center = new Vector3();
+	center.set(0.0f, 0.0f, 0.0f);
 	auto objectCount = 0;
 	for (auto levelEditorObject: objects) {
 		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
 			continue;
 
-		center->add(levelEditorObject->getTransformations()->getTranslation());
+		center.add(levelEditorObject->getTransformations()->getTranslation());
 		objectCount++;
 	}
 	if (objectCount != 0)
-		center->scale(1.0f / objectCount);
+		center.scale(1.0f / objectCount);
+}
 
+const Vector3& LevelEditorLevel::getCenter() {
 	return center;
 }
 
@@ -317,3 +314,7 @@ LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
 	return objects.at(idx);
 }
 
+void LevelEditorLevel::update() {
+	computeBoundingBox();
+	computeCenter();
+}

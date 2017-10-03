@@ -9,6 +9,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -45,8 +46,20 @@ private:
 	map<wstring, LevelEditorObject*> objectsById {  };
 	vector<LevelEditorObject*> objects {  };
 	int32_t objectIdx {  };
-	BoundingBox* boundingBox {  };
-	Vector3 dimension {  };
+	BoundingBox boundingBox {  };
+	Vector3 dimension;
+	Vector3 center;
+
+	/**
+	 * Computes level bounding box
+	 * @return dimension
+	 */
+	void computeBoundingBox();
+
+	/**
+	 * @return level center
+	 */
+	void computeCenter();
 
 public:
 
@@ -114,12 +127,7 @@ public:
 	/** 
 	 * @return dimension
 	 */
-	Vector3* getDimension();
-
-	/** 
-	 * Compute level dimension
-	 */
-	void computeDimension();
+	const Vector3& getDimension();
 
 	/** 
 	 * @return level bounding box
@@ -127,16 +135,11 @@ public:
 	BoundingBox* getBoundingBox();
 
 	/** 
-	 * Computes level bounding box
-	 */
-	void computeBoundingBox();
-
-	/** 
 	 * @return level center
 	 */
-	Vector3* computeCenter();
+	const Vector3& getCenter();
 
-	/** 
+	/**
 	 * @return new object idx
 	 */
 	int32_t allocateObjectId();
@@ -206,6 +209,11 @@ public:
 	 * @return level object
 	 */
 	LevelEditorObject* getObjectAt(int32_t idx);
+
+	/**
+	 * Update level dimension, bounding box, center
+	 */
+	void update();
 
 	/**
 	 * Public constructor

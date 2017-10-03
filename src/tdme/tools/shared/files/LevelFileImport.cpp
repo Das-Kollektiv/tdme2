@@ -209,5 +209,5 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 	level->setObjectIdx(jRoot["objects_eidx"].getInt());
 	level->setPathName(pathName);
 	level->setFileName(fileName);
-	level->computeDimension();
+	level->update();
 }

@@ -527,7 +527,7 @@ void LevelEditorView::display()
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
 		camLookRotationY->update();
-		cam->getLookAt().set(*level->computeCenter());
+		cam->getLookAt().set(level->getCenter());
 		camScale = 1.0f;
 	}
 	if (keyA || keyD)
@@ -621,7 +621,7 @@ void LevelEditorView::unselectObjects()
 void LevelEditorView::updateGUIElements()
 {
 	levelEditorScreenController->setScreenCaption(L"Level Editor - " + level->getFileName());
-	levelEditorScreenController->setLevelSize(level->getDimension()->getX(), level->getDimension()->getZ(), level->getDimension()->getY());
+	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedObjects.size() == 1) {
 		auto selectedObject = selectedObjects.at(0);
 		if (selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false) {
@@ -713,7 +713,7 @@ void LevelEditorView::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(1.0f);
 	cam->setZFar(1000.0f);
-	cam->getLookAt().set(*level->computeCenter());
+	cam->getLookAt().set(level->getCenter());
 	gridCenter.set(cam->getLookAt());
 	camLookAt.set(engine->getCamera()->getLookAt());
 }
@@ -965,7 +965,7 @@ void LevelEditorView::placeObject()
 	for (auto selectedObject: selectedObjects) {
 		placeObject(selectedObject);
 	}
-	level->computeDimension();
+	level->update();
 	updateGUIElements();
 }
 
@@ -1033,7 +1033,7 @@ void LevelEditorView::removeObject()
 	for (auto objectToRemove: objectsToRemove) {
 		selectedObjects.erase(remove(selectedObjects.begin(), selectedObjects.end(), objectToRemove), selectedObjects.end());
 	}
-	level->computeDimension();
+	level->update();
 	levelEditorScreenController->setObjectListbox(level);
 	updateGUIElements();
 }
@@ -1123,7 +1123,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
-	level->computeDimension();
+	level->update();
 	updateGUIElements();
 }
 
@@ -1154,7 +1154,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
-	level->computeDimension();
+	level->update();
 	updateGUIElements();
 }
 
@@ -1189,7 +1189,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		}
 		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
-	level->computeDimension();
+	level->update();
 	updateGUIElements();
 }
 
@@ -1323,7 +1323,7 @@ void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
-		engine->getCamera()->getLookAt().set(*level->computeCenter());
+		engine->getCamera()->getLookAt().set(level->getCenter());
 		camLookRotationX->setAngle(-45.0f);
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
