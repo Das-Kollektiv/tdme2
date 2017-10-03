@@ -86,12 +86,6 @@ public:
 	Matrix4x4& getTransformationsMatrix();
 
 	/** 
-	 * Set up vertices
-	 * @param vertices
-	 */
-	void setVertices(vector<Vector3*>* vertices);
-
-	/** 
 	 * @return vertices
 	 */
 	vector<Vector3>* getVertices();
