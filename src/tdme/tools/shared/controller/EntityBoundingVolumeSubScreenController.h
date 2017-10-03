@@ -117,7 +117,7 @@ public:
 	 * @param center
 	 * @param radius
 	 */
-	virtual void setupSphere(int32_t idx, Vector3* center, float radius);
+	virtual void setupSphere(int32_t idx, const Vector3& center, float radius);
 
 	/** 
 	 * Setup capsule bounding volume
@@ -125,7 +125,7 @@ public:
 	 * @param center
 	 * @param radius
 	 */
-	virtual void setupCapsule(int32_t idx, Vector3* a, Vector3* b, float radius);
+	virtual void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * Setup AABB bounding volume
@@ -133,7 +133,7 @@ public:
 	 * @param min
 	 * @param max
 	 */
-	virtual void setupBoundingBox(int32_t idx, Vector3* min, Vector3* max);
+	virtual void setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max);
 
 	/** 
 	 * Setup oriented bounding box
@@ -144,7 +144,7 @@ public:
 	 * @param axis 2
 	 * @param half extension
 	 */
-	virtual void setupOrientedBoundingBox(int32_t idx, Vector3* center, const Vector3* axis0, const Vector3* axis1, const Vector3* axis2, Vector3* halfExtension);
+	virtual void setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * Setup convex mesh bounding volume

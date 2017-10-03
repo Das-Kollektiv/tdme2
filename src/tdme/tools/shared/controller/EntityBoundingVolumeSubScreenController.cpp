@@ -250,38 +250,38 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 
 }
 
-void EntityBoundingVolumeSubScreenController::setupSphere(int32_t idx, Vector3* center, float radius)
+void EntityBoundingVolumeSubScreenController::setupSphere(int32_t idx, const Vector3& center, float radius)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
-	boundingvolumeSphereCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center->getX()))->append(u", "_j)->append(Tools::formatFloat(center->getY()))->append(u", "_j)->append(Tools::formatFloat(center->getZ())));
+	boundingvolumeSphereCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center.getX()))->append(L", ")->append(Tools::formatFloat(center.getY()))->append(L", ")->append(Tools::formatFloat(center.getZ())));
 	boundingvolumeSphereRadius[idx]->getController()->setValue(value->set(Tools::formatFloat(radius)));
 }
 
-void EntityBoundingVolumeSubScreenController::setupCapsule(int32_t idx, Vector3* a, Vector3* b, float radius)
+void EntityBoundingVolumeSubScreenController::setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
-	boundingvolumeCapsuleA[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(a->getX()))->append(u", "_j)->append(Tools::formatFloat(a->getY()))->append(u", "_j)->append(Tools::formatFloat(a->getZ())));
-	boundingvolumeCapsuleB[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(b->getX()))->append(u", "_j)->append(Tools::formatFloat(b->getY()))->append(u", "_j)->append(Tools::formatFloat(b->getZ())));
+	boundingvolumeCapsuleA[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(a.getX()))->append(L", ")->append(Tools::formatFloat(a.getY()))->append(L", ")->append(Tools::formatFloat(a.getZ())));
+	boundingvolumeCapsuleB[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(b.getX()))->append(L", ")->append(Tools::formatFloat(b.getY()))->append(L", ")->append(Tools::formatFloat(b.getZ())));
 	boundingvolumeCapsuleRadius[idx]->getController()->setValue(value->set(Tools::formatFloat(radius)));
 }
 
-void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, Vector3* min, Vector3* max)
+void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
-	boundingvolumeBoundingBoxMin[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(min->getX()))->append(u", "_j)->append(Tools::formatFloat(min->getY()))->append(u", "_j)->append(Tools::formatFloat(min->getZ())));
-	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(max->getX()))->append(u", "_j)->append(Tools::formatFloat(max->getY()))->append(u", "_j)->append(Tools::formatFloat(max->getZ())));
+	boundingvolumeBoundingBoxMin[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(min.getX()))->append(L", ")->append(Tools::formatFloat(min.getY()))->append(L", ")->append(Tools::formatFloat(min.getZ())));
+	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(max.getX()))->append(L", ")->append(Tools::formatFloat(max.getY()))->append(L", ")->append(Tools::formatFloat(max.getZ())));
 }
 
-void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, Vector3* center, const Vector3* axis0, const Vector3* axis1, const Vector3* axis2, Vector3* halfExtension)
+void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
 	Vector3 rotation;
 	Matrix4x4 rotationMatrix;
 	rotationMatrix.identity();
-	rotationMatrix.setAxes(*axis0, *axis1, *axis2);
+	rotationMatrix.setAxes(axis0, axis1, axis2);
 	rotationMatrix.computeEulerAngles(rotation);
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
-	boundingvolumeObbCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center->getX()))->append(u", "_j)->append(Tools::formatFloat(center->getY()))->append(u", "_j)->append(Tools::formatFloat(center->getZ())));
-	boundingvolumeObbHalfextension[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(halfExtension->getX()))->append(u", "_j)->append(Tools::formatFloat(halfExtension->getY()))->append(u", "_j)->append(Tools::formatFloat(halfExtension->getZ())));
+	boundingvolumeObbCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center.getX()))->append(L", ")->append(Tools::formatFloat(center.getY()))->append(L", ")->append(Tools::formatFloat(center.getZ())));
+	boundingvolumeObbHalfextension[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(halfExtension.getX()))->append(L", ")->append(Tools::formatFloat(halfExtension.getY()))->append(L", ")->append(Tools::formatFloat(halfExtension.getZ())));
 	boundingvolumeObbRotationX[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
 	boundingvolumeObbRotationY[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
 	boundingvolumeObbRotationZ[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));

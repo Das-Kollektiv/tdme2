@@ -83,43 +83,43 @@ void EntityBoundingVolumeView::resetBoundingVolume(LevelEditorEntity* entity, in
 		aabb = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 	}
 	auto obb = new OrientedBoundingBox(aabb);
-	modelViewerScreenController->setupSphere(idx, &obb->getCenter(), obb->getHalfExtension().computeLength());
+	modelViewerScreenController->setupSphere(idx, obb->getCenter(), obb->getHalfExtension().computeLength());
 {
-		auto a = new Vector3();
-		auto b = new Vector3();
+		Vector3 a;
+		Vector3 b;
 		auto radius = 0.0f;
 		auto& halfExtensionXYZ = obb->getHalfExtension().getArray();
 		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a->set((*obb->getAxes())[0]);
-			a->scale(-(halfExtensionXYZ[0] - radius));
-			a->add(obb->getCenter());
-			b->set((*obb->getAxes())[0]);
-			b->scale(+(halfExtensionXYZ[0] - radius));
-			b->add(obb->getCenter());
+			a.set((*obb->getAxes())[0]);
+			a.scale(-(halfExtensionXYZ[0] - radius));
+			a.add(obb->getCenter());
+			b.set((*obb->getAxes())[0]);
+			b.scale(+(halfExtensionXYZ[0] - radius));
+			b.add(obb->getCenter());
 		} else
 		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a->set((*obb->getAxes())[1]);
-			a->scale(-(halfExtensionXYZ[1] - radius));
-			a->add(obb->getCenter());
-			b->set((*obb->getAxes())[1]);
-			b->scale(+(halfExtensionXYZ[1] - radius));
-			b->add(obb->getCenter());
+			a.set((*obb->getAxes())[1]);
+			a.scale(-(halfExtensionXYZ[1] - radius));
+			a.add(obb->getCenter());
+			b.set((*obb->getAxes())[1]);
+			b.scale(+(halfExtensionXYZ[1] - radius));
+			b.add(obb->getCenter());
 		} else {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
-			a->set((*obb->getAxes())[2]);
-			a->scale(-(halfExtensionXYZ[2] - radius));
-			a->add(obb->getCenter());
-			b->set((*obb->getAxes())[2]);
-			b->scale(+(halfExtensionXYZ[2] - radius));
-			b->add(obb->getCenter());
+			a.set((*obb->getAxes())[2]);
+			a.scale(-(halfExtensionXYZ[2] - radius));
+			a.add(obb->getCenter());
+			b.set((*obb->getAxes())[2]);
+			b.scale(+(halfExtensionXYZ[2] - radius));
+			b.add(obb->getCenter());
 		}
 		modelViewerScreenController->setupCapsule(idx, a, b, radius);
 	}
 
-	modelViewerScreenController->setupBoundingBox(idx, &aabb->getMin(), &aabb->getMax());
-	modelViewerScreenController->setupOrientedBoundingBox(idx, &obb->getCenter(), &(*obb->getAxes())[0], &(*obb->getAxes())[1], &(*obb->getAxes())[2], &obb->getHalfExtension());
+	modelViewerScreenController->setupBoundingBox(idx, aabb->getMin(), aabb->getMax());
+	modelViewerScreenController->setupOrientedBoundingBox(idx, obb->getCenter(), (*obb->getAxes())[0], (*obb->getAxes())[1], (*obb->getAxes())[2], obb->getHalfExtension());
 	modelViewerScreenController->selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE);
 }
 
@@ -135,19 +135,19 @@ void EntityBoundingVolumeView::setBoundingVolumes(LevelEditorEntity* entity)
 			continue;
 		} else if (dynamic_cast< Sphere* >(bv->getBoundingVolume()) != nullptr) {
 			auto sphere = dynamic_cast< Sphere* >(bv->getBoundingVolume());
-			modelViewerScreenController->setupSphere(i, &sphere->getCenter(), sphere->getRadius());
+			modelViewerScreenController->setupSphere(i, sphere->getCenter(), sphere->getRadius());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
 		} else if (dynamic_cast< Capsule* >(bv->getBoundingVolume()) != nullptr) {
 			auto capsule = dynamic_cast< Capsule* >(bv->getBoundingVolume());
-			modelViewerScreenController->setupCapsule(i, &capsule->getA(), &capsule->getB(), capsule->getRadius());
+			modelViewerScreenController->setupCapsule(i, capsule->getA(), capsule->getB(), capsule->getRadius());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
 		} else if (dynamic_cast< BoundingBox* >(bv->getBoundingVolume()) != nullptr) {
 			auto aabb = dynamic_cast< BoundingBox* >(bv->getBoundingVolume());
-			modelViewerScreenController->setupBoundingBox(i, &aabb->getMin(), &aabb->getMax());
+			modelViewerScreenController->setupBoundingBox(i, aabb->getMin(), aabb->getMax());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
 		} else if (dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume()) != nullptr) {
 			auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
-			modelViewerScreenController->setupOrientedBoundingBox(i, &obb->getCenter(), &(*obb->getAxes())[0], &(*obb->getAxes())[1], &(*obb->getAxes())[2], &obb->getHalfExtension());
+			modelViewerScreenController->setupOrientedBoundingBox(i, obb->getCenter(), (*obb->getAxes())[0], (*obb->getAxes())[1], (*obb->getAxes())[2], obb->getHalfExtension());
 			modelViewerScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 		} else if (dynamic_cast< ConvexMesh* >(bv->getBoundingVolume()) != nullptr) {
 			modelViewerScreenController->setupConvexMesh(i, bv->getModelMeshFile());
