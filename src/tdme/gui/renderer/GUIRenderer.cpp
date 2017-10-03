@@ -154,33 +154,33 @@ void GUIRenderer::initScreen(GUIScreenNode* screenNode)
 void GUIRenderer::doneScreen()
 {
 	this->screenNode = nullptr;
-	guiEffectColorMul = *GUIColor::WHITE->getArray();
-	guiEffectColorAdd = *GUIColor::BLACK->getArray();
+	guiEffectColorMul = GUIColor::WHITE.getArray();
+	guiEffectColorAdd = GUIColor::BLACK.getArray();
 }
 
 void GUIRenderer::setFontColor(GUIColor* color)
 {
-	fontColor = *color->getArray();
+	fontColor = color->getArray();
 }
 
 void GUIRenderer::setEffectColorMul(GUIColor* color)
 {
-	effectColorMul = *color->getArray();
+	effectColorMul = color->getArray();
 }
 
 void GUIRenderer::setEffectColorAdd(GUIColor* color)
 {
-	effectColorAdd = *color->getArray();
+	effectColorAdd = color->getArray();
 }
 
 void GUIRenderer::setGUIEffectColorMul(GUIColor* color)
 {
-	guiEffectColorMul = *color->getArray();
+	guiEffectColorMul = color->getArray();
 }
 
 void GUIRenderer::setGUIEffectColorAdd(GUIColor* color)
 {
-	guiEffectColorAdd = *color->getArray();
+	guiEffectColorAdd = color->getArray();
 }
 
 float GUIRenderer::getGuiEffectOffsetX()
@@ -402,9 +402,9 @@ void GUIRenderer::bindTexture(int32_t textureId)
 void GUIRenderer::render()
 {
 	if (quadCount == 0) {
-		fontColor = *GUIColor::WHITE->getArray();
-		effectColorMul = *GUIColor::WHITE->getArray();
-		effectColorAdd = *GUIColor::BLACK->getArray();
+		fontColor = GUIColor::WHITE.getArray();
+		effectColorMul = GUIColor::WHITE.getArray();
+		effectColorAdd = GUIColor::BLACK.getArray();
 		return;
 	}
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices->getPosition() * sizeof(float), fbVertices);
@@ -418,17 +418,17 @@ void GUIRenderer::render()
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
-	renderer->setEffectColorMul(&effectColorMulFinal);
-	renderer->setEffectColorAdd(&effectColorAddFinal);
+	renderer->setEffectColorMul(effectColorMulFinal);
+	renderer->setEffectColorAdd(effectColorAddFinal);
 	renderer->onUpdateEffect();
 	renderer->drawIndexedTrianglesFromBufferObjects(quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices->clear();
 	fbColors->clear();
 	fbTextureCoordinates->clear();
-	fontColor = *GUIColor::WHITE->getArray();
-	effectColorMul = *GUIColor::WHITE->getArray();
-	effectColorAdd = *GUIColor::BLACK->getArray();
+	fontColor = GUIColor::WHITE.getArray();
+	effectColorMul = GUIColor::WHITE.getArray();
+	effectColorAdd = GUIColor::BLACK.getArray();
 	effectColorAdd[3] = 0.0f;
 	guiEffectColorAdd[3] = 0.0f;
 }

@@ -30,8 +30,8 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->massRnd = massRnd;
 	this->velocity = velocity;
 	this->velocityRnd = velocityRnd;
-	this->colorStart.set(colorStart);
-	this->colorEnd.set(colorEnd);
+	this->colorStart.set(*colorStart);
+	this->colorEnd.set(*colorEnd);
 	this->centerTransformed.set(center);
 	this->radiusTransformed = radius;
 	this->axis0Transformed.set(axis0).normalize();
@@ -70,7 +70,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
-	particle->color.set(&colorStart);
+	particle->color.set(colorStart);
 	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,

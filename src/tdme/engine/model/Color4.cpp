@@ -14,7 +14,7 @@ Color4::Color4() : Color4Base()
 	Color4Base();
 }
 
-Color4::Color4(Color4* color) : Color4Base(static_cast<Color4Base*>(color))
+Color4::Color4(const Color4& color) : Color4Base(color)
 {
 }
 
@@ -22,7 +22,7 @@ Color4::Color4(float r, float g, float b, float a) : Color4Base(r,g,b,a)
 {
 }
 
-Color4::Color4(array<float, 4>* color) : Color4Base(color)
+Color4::Color4(const array<float, 4>& color) : Color4Base(color)
 {
 }
 

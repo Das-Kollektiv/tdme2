@@ -47,7 +47,7 @@ class tdme::engine::fileio::models::DAEReader final
 	friend class DAEReader_determineDisplacementFilename_1;
 
 private:
-	static Color4* BLENDER_AMBIENT_NONE;
+	static const Color4 BLENDER_AMBIENT_NONE;
 	static float BLENDER_AMBIENT_FROM_DIFFUSE_SCALE;
 	static float BLENDER_DIFFUSE_SCALE;
 

@@ -38,8 +38,8 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	enabled = true;
 	pickable = false;
 	dynamicShadowing = false;
-	effectColorMul = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	effectColorAdd = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
+	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed = dynamic_cast< BoundingBox* >(boundingBox->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);

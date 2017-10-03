@@ -34,8 +34,8 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->massRnd = massRnd;
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(colorStart);
-	this->colorEnd.set(colorEnd);
+	this->colorStart.set(*colorStart);
+	this->colorEnd.set(*colorEnd);
 }
 
 int32_t CircleParticleEmitter::getCount()
@@ -85,7 +85,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
-	particle->color.set(&colorStart);
+	particle->color.set(colorStart);
 	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,

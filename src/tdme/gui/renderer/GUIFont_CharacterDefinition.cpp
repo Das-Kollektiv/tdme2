@@ -56,7 +56,7 @@ void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int32_t x, int3
 	float textureCharTop = this->y;
 	float textureCharWidth = this->width;
 	float textureCharHeight = this->height;
-	auto fontColor = GUIColor::WHITE->getArray();
+	auto fontColor = &GUIColor::WHITE.getArray();
 	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3], (textureCharLeft) / textureWidth, (textureCharTop) / textureHeight, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3], (textureCharLeft + textureCharWidth) / textureWidth, (textureCharTop) / textureHeight, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3], (textureCharLeft + textureCharWidth) / textureWidth, (textureCharTop + textureCharHeight) / textureHeight, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3], (textureCharLeft) / textureWidth, (textureCharTop + textureCharHeight) / textureHeight);
 }
 

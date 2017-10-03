@@ -35,14 +35,14 @@ class tdme::gui::nodes::GUIColor final
 {
 
 public:
-	static GUIColor* WHITE;
-	static GUIColor* BLACK;
-	static GUIColor* RED;
-	static GUIColor* GREEN;
-	static GUIColor* BLUE;
-	static GUIColor* TRANSPARENT;
-	static GUIColor* EFFECT_COLOR_MUL;
-	static GUIColor* EFFECT_COLOR_ADD;
+	static GUIColor WHITE;
+	static GUIColor BLACK;
+	static GUIColor RED;
+	static GUIColor GREEN;
+	static GUIColor BLUE;
+	static GUIColor TRANSPARENT;
+	static GUIColor EFFECT_COLOR_MUL;
+	static GUIColor EFFECT_COLOR_ADD;
 
 private:
 	static vector<GUIColor*> COLOR_INSTANCES;
@@ -63,7 +63,7 @@ public:
 	 * Public constructor
 	 * @param color
 	 */
-	GUIColor(Color4* color);
+	GUIColor(const Color4& color);
 
 	/**
 	 * Public constructor
@@ -78,7 +78,7 @@ public:
 	 * Public constructor
 	 * @param color as float array
 	 */
-	GUIColor(array<float, 4>* color);
+	GUIColor(const array<float, 4>& color);
 
 	/**
 	 * Public constructor

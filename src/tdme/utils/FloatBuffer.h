@@ -91,9 +91,9 @@ public:
 	 * Put float values into float buffer
 	 * @param values
 	 */
-	inline FloatBuffer* put(array<float, 4>* values) {
-		for (int i = 0; i < values->size(); i++) {
-			put((*values)[i]);
+	inline FloatBuffer* put(array<float, 4>& values) {
+		for (int i = 0; i < values.size(); i++) {
+			put(values[i]);
 		}
 		return this;
 	}

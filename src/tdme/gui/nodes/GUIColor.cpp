@@ -34,7 +34,7 @@ GUIColor::GUIColor() : Color4Base()
 {
 }
 
-GUIColor::GUIColor(Color4* color) : Color4Base(color)
+GUIColor::GUIColor(const Color4& color) : Color4Base(color)
 {
 }
 
@@ -42,7 +42,7 @@ GUIColor::GUIColor(float r, float g, float b, float a) : Color4Base(r,g,b,a)
 {
 }
 
-GUIColor::GUIColor(array<float, 4>* color): Color4Base(color)
+GUIColor::GUIColor(const array<float, 4>& color): Color4Base(color)
 {
 }
 
@@ -81,21 +81,14 @@ GUIColor::GUIColor(const wstring& colorString) throw (GUIParserException) : Colo
 	}
 }
 
-GUIColor* GUIColor::WHITE;
-
-GUIColor* GUIColor::BLACK;
-
-GUIColor* GUIColor::RED;
-
-GUIColor* GUIColor::GREEN;
-
-GUIColor* GUIColor::BLUE;
-
-GUIColor* GUIColor::TRANSPARENT;
-
-GUIColor* GUIColor::EFFECT_COLOR_MUL;
-
-GUIColor* GUIColor::EFFECT_COLOR_ADD;
+GUIColor GUIColor::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+GUIColor GUIColor::BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+GUIColor GUIColor::RED(1.0f, 0.0f, 0.0f, 1.0f);
+GUIColor GUIColor::GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+GUIColor GUIColor::BLUE(0.0f, 0.0f, 1.0f, 1.0f);
+GUIColor GUIColor::TRANSPARENT(0.0f, 0.0f, 0.0f, 0.0f);
+GUIColor GUIColor::EFFECT_COLOR_MUL(1.0f, 1.0f, 1.0f, 1.0f);
+GUIColor GUIColor::EFFECT_COLOR_ADD(0.0f, 0.0f, 0.0f, 0.0f);
 
 vector<GUIColor*> GUIColor::COLOR_INSTANCES;
 
@@ -107,60 +100,12 @@ void GUIColor::clinit()
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
-			WHITE = new GUIColor(
-				1.0f,
-				1.0f,
-				1.0f,
-				1.0f
-			);
-			BLACK = new GUIColor(
-				0.0f,
-				0.0f,
-				0.0f,
-				1.0f
-			);
-			RED = new GUIColor(
-				1.0f,
-				0.0f,
-				0.0f,
-				1.0f
-			);
-			GREEN = new GUIColor(
-				0.0f,
-				1.0f,
-				0.0f,
-				1.0f
-			);
-			BLUE = new GUIColor(
-				0.0f,
-				0.0f,
-				1.0f,
-				1.0f
-			);
-			TRANSPARENT = new GUIColor(
-				0.0f,
-				0.0f,
-				0.0f,
-				0.0f
-			);
-			EFFECT_COLOR_MUL = new GUIColor(
-				1.0f,
-				1.0f,
-				1.0f,
-				1.0f
-			);
-			EFFECT_COLOR_ADD = new GUIColor(
-				0.0f,
-				0.0f,
-				0.0f,
-				0.0f
-			);
-			COLOR_INSTANCES.push_back(WHITE),
-			COLOR_INSTANCES.push_back(BLACK),
-			COLOR_INSTANCES.push_back(RED),
-			COLOR_INSTANCES.push_back(GREEN),
-			COLOR_INSTANCES.push_back(BLUE),
-			COLOR_INSTANCES.push_back(TRANSPARENT);
+			COLOR_INSTANCES.push_back(&WHITE),
+			COLOR_INSTANCES.push_back(&BLACK),
+			COLOR_INSTANCES.push_back(&RED),
+			COLOR_INSTANCES.push_back(&GREEN),
+			COLOR_INSTANCES.push_back(&BLUE),
+			COLOR_INSTANCES.push_back(&TRANSPARENT);
 			COLOR_NAMES.push_back(L"WHITE");
 			COLOR_NAMES.push_back(L"BLACK");
 			COLOR_NAMES.push_back(L"RED");

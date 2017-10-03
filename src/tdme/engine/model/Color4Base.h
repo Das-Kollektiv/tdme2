@@ -25,7 +25,7 @@ public:
 	 * Set up color
 	 * @param color float array
 	 */
-	virtual void set(array<float, 4>* color);
+	virtual void set(const array<float, 4>& color);
 
 	/** 
 	 * Set up color
@@ -40,7 +40,7 @@ public:
 	 * Sets up this color with given color
 	 * @param color
 	 */
-	virtual void set(Color4Base* color);
+	virtual void set(const Color4Base& color);
 
 	/** 
 	 * Add to color
@@ -94,13 +94,13 @@ public:
 	/** 
 	 * @return rgba as float array 
 	 */
-	virtual array<float, 4>* getArray();
+	virtual array<float, 4>& getArray() const;
 
 	/** 
 	 * Compares this color with given color
 	 * @return equality
 	 */
-	virtual bool equals(Color4Base* c);
+	virtual bool equals(const Color4Base& c);
 
 	/**
 	 * Public constructor
@@ -111,13 +111,13 @@ public:
 	 * Public constructor
 	 * @param color
 	 */
-	Color4Base(Color4Base* color);
+	Color4Base(const Color4Base& color);
 
 	/**
 	 * Public constructor
 	 * @param color
 	 */
-	Color4Base(array<float, 4>* color);
+	Color4Base(const array<float, 4>& color);
 
 	/**
 	 * Public constructor

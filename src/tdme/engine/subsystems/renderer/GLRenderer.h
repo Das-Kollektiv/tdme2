@@ -190,7 +190,7 @@ public:
 	 * @param uniform id
 	 * @param value
 	 */
-	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, array<float, 16>& value) = 0;
+	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& value) = 0;
 
 	/** 
 	 * Set up a float matrices 4x4 uniform values
@@ -205,14 +205,14 @@ public:
 	 * @param uniform id
 	 * @param data
 	 */
-	virtual void setProgramUniformFloatVec4(int32_t uniformId, array<float, 4>* data) = 0;
+	virtual void setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data) = 0;
 
 	/** 
 	 * Set up a float vec3 uniform value
 	 * @param uniform id
 	 * @param data
 	 */
-	virtual void setProgramUniformFloatVec3(int32_t uniformId, array<float, 3>& data) = 0;
+	virtual void setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data) = 0;
 
 	/** 
 	 * Bind attribute to a input location
@@ -593,21 +593,21 @@ public:
 	 * @param light id
 	 * @param ambient
 	 */
-	virtual void setLightAmbient(int32_t lightId, array<float, 4>* ambient);
+	virtual void setLightAmbient(int32_t lightId, const array<float, 4>& ambient);
 
 	/** 
 	 * Set light diffuse color
 	 * @param light id
 	 * @param diffuse
 	 */
-	virtual void setLightDiffuse(int32_t lightId, array<float, 4>* diffuse);
+	virtual void setLightDiffuse(int32_t lightId, const array<float, 4>& diffuse);
 
 	/** 
 	 * Set light position
 	 * @param light id
 	 * @param position
 	 */
-	virtual void setLightPosition(int32_t lightId, array<float, 4>* position);
+	virtual void setLightPosition(int32_t lightId, const array<float, 4>& position);
 
 	/** 
 	 * Set light spot direction
@@ -661,13 +661,13 @@ public:
 	 * Set up effect color multiplication
 	 * @param effect color for multiplication
 	 */
-	virtual void setEffectColorMul(array<float, 4>* effectColorMul);
+	virtual void setEffectColorMul(const array<float, 4>& effectColorMul);
 
 	/** 
 	 * Set up effect color addition
 	 * @param effect color for addition
 	 */
-	virtual void setEffectColorAdd(array<float, 4>* effectColorAdd);
+	virtual void setEffectColorAdd(const array<float, 4>& effectColorAdd);
 
 	/** 
 	 * Update material
@@ -688,25 +688,25 @@ public:
 	 * Set material ambient color
 	 * @param ambient
 	 */
-	virtual void setMaterialAmbient(array<float, 4>* ambient);
+	virtual void setMaterialAmbient(const array<float, 4>& ambient);
 
 	/** 
 	 * Set material diffuse color
 	 * @param diffuse
 	 */
-	virtual void setMaterialDiffuse(array<float, 4>* diffuse);
+	virtual void setMaterialDiffuse(const array<float, 4>& diffuse);
 
 	/** 
 	 * Set material specular color
 	 * @param specular
 	 */
-	virtual void setMaterialSpecular(array<float, 4>* specular);
+	virtual void setMaterialSpecular(const array<float, 4>& specular);
 
 	/** 
 	 * Set material emission color
 	 * @param emission
 	 */
-	virtual void setMaterialEmission(array<float, 4>* emission);
+	virtual void setMaterialEmission(const array<float, 4>& emission);
 
 	/** 
 	 * Set material shininess

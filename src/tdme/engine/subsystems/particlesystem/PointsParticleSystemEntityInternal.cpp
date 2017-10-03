@@ -172,12 +172,12 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
 		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
-		auto color = particle.color.getArray();
-		auto colorAdd = particle.colorAdd.getArray();
-		(*color)[0] += (*colorAdd)[0] * static_cast< float >(timeDelta);
-		(*color)[1] += (*colorAdd)[1] * static_cast< float >(timeDelta);
-		(*color)[2] += (*colorAdd)[2] * static_cast< float >(timeDelta);
-		(*color)[3] += (*colorAdd)[3] * static_cast< float >(timeDelta);
+		auto& color = particle.color.getArray();
+		auto& colorAdd = particle.colorAdd.getArray();
+		color[0] += colorAdd[0] * static_cast< float >(timeDelta);
+		color[1] += colorAdd[1] * static_cast< float >(timeDelta);
+		color[2] += colorAdd[2] * static_cast< float >(timeDelta);
+		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
 		modelViewMatrix.multiply(particle.position, point);
 		if (doCollisionTests == true) {
 			for (auto _i = engine->getPartition()->getObjectsNearTo(particle.position)->iterator(); _i->hasNext(); ) {

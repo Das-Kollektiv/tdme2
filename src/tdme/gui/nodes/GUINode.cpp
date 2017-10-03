@@ -327,10 +327,10 @@ GUINode_Border* GUINode::createBorder(const wstring& allBorder, const wstring& l
 	border->top = getRequestedPixelValue(top, border->top);
 	border->right = getRequestedPixelValue(right, border->right);
 	border->bottom = getRequestedPixelValue(bottom, border->bottom);
-	border->leftColor = getRequestedColor(allBorderColor, GUIColor::BLACK);
-	border->topColor = getRequestedColor(allBorderColor, GUIColor::BLACK);
-	border->rightColor = getRequestedColor(allBorderColor, GUIColor::BLACK);
-	border->bottomColor = getRequestedColor(allBorderColor, GUIColor::BLACK);
+	border->leftColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
+	border->topColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
+	border->rightColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
+	border->bottomColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
 	border->leftColor = getRequestedColor(leftColor, border->leftColor);
 	border->topColor = getRequestedColor(topColor, border->topColor);
 	border->rightColor = getRequestedColor(rightColor, border->rightColor);
@@ -424,12 +424,12 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	if (backgroundColor != GUIColor::TRANSPARENT) {
+	if (backgroundColor != &GUIColor::TRANSPARENT) {
 		float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left;
 		float top = computedConstraints->top + computedConstraints->alignmentTop + border->top;
 		float width = computedConstraints->width - border->left - border->right;
 		float height = computedConstraints->height - border->top - border->bottom;
-		auto bgColorData = backgroundColor->getArray();
+		auto bgColorData = &backgroundColor->getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 0.0f);
 		guiRenderer->render();
@@ -441,7 +441,7 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 			float top = computedConstraints->top + computedConstraints->alignmentTop;
 			float width = computedConstraints->width;
 			float height = border->top;
-			auto borderColorData = border->topColor->getArray();
+			auto borderColorData = &border->topColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->bottom > 0) {
@@ -449,7 +449,7 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 			float top = computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->height - border->bottom;
 			float width = computedConstraints->width;
 			float height = border->bottom;
-			auto borderColorData = border->bottomColor->getArray();
+			auto borderColorData = &border->bottomColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->left > 0) {
@@ -457,7 +457,7 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 			float top = computedConstraints->top + computedConstraints->alignmentTop;
 			float width = border->left;
 			float height = computedConstraints->height;
-			auto borderColorData = border->leftColor->getArray();
+			auto borderColorData = &border->leftColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->right > 0) {
@@ -465,7 +465,7 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 			float top = computedConstraints->top + computedConstraints->alignmentTop;
 			float width = border->right;
 			float height = computedConstraints->height;
-			auto borderColorData = border->rightColor->getArray();
+			auto borderColorData = &border->rightColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		guiRenderer->render();

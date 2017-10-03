@@ -95,15 +95,15 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	{
 		auto v = controller->getState();
 		if ((v == GUIVerticalScrollbarInternalController_State::NONE)) {
-			barColorArray = barColorNone->getArray();
+			barColorArray = &barColorNone->getArray();
 			goto end_switch0;;
 		}
 		if ((v == GUIVerticalScrollbarInternalController_State::MOUSEOVER)) {
-			barColorArray = barColorMouseOver->getArray();
+			barColorArray = &barColorMouseOver->getArray();
 			goto end_switch0;;
 		}
 		if ((v == GUIVerticalScrollbarInternalController_State::DRAGGING)) {
-			barColorArray = barColorDragging->getArray();
+			barColorArray = &barColorDragging->getArray();
 			goto end_switch0;;
 		}
 		end_switch0:;

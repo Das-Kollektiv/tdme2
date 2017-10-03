@@ -27,8 +27,8 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->obb = obb;
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(colorStart);
-	this->colorEnd.set(colorEnd);
+	this->colorStart.set(*colorStart);
+	this->colorEnd.set(*colorEnd);
 	this->obbTransformed = dynamic_cast< OrientedBoundingBox* >(obb->clone());
 }
 
@@ -78,7 +78,7 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->mass = mass + (Math::random() * (massRnd));
 	particle->lifeTimeMax = lifeTime + (Math::random() * lifeTimeRnd);
 	particle->lifeTimeCurrent = 0LL;
-	particle->color.set(&colorStart);
+	particle->color.set(colorStart);
 	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
 		(colorEnd.getGreen() - colorStart.getGreen()) / particle->lifeTimeMax,

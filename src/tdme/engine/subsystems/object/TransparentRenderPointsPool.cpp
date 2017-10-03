@@ -39,7 +39,7 @@ void TransparentRenderPointsPool::addPoint(const Vector3& point, Color4* color, 
 	auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
 	transparentRenderPoint.acquired = true;
 	transparentRenderPoint.point.set(point);
-	transparentRenderPoint.color.set(color);
+	transparentRenderPoint.color.set(*color);
 	transparentRenderPoint.distanceFromCamera = distanceFromCamera;
 }
 
@@ -56,7 +56,7 @@ void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
 		transparentRenderPoint.acquired = true;
 		transparentRenderPoint.point.set(point.point);
-		transparentRenderPoint.color.set(&point.color);
+		transparentRenderPoint.color.set(point.color);
 		transparentRenderPoint.distanceFromCamera = point.distanceFromCamera;
 	}
 }

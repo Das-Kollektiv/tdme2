@@ -22,7 +22,7 @@ class tdme::engine::model::Color4 final
 {
 public:
 	Color4();
-	Color4(Color4* color);
+	Color4(const Color4& color);
 	Color4(float r, float g, float b, float a);
-	Color4(array<float, 4>* color);
+	Color4(const array<float, 4>& color);
 };

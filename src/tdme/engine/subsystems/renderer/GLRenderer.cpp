@@ -87,19 +87,19 @@ void GLRenderer::setLightDisabled(int32_t lightId)
 	lights[lightId].enabled = 0;
 }
 
-void GLRenderer::setLightAmbient(int32_t lightId, array<float, 4>* ambient)
+void GLRenderer::setLightAmbient(int32_t lightId, const array<float, 4>& ambient)
 {
-	copy(begin(*ambient), end(*ambient), begin(lights[lightId].ambient));
+	copy(begin(ambient), end(ambient), begin(lights[lightId].ambient));
 }
 
-void GLRenderer::setLightDiffuse(int32_t lightId, array<float, 4>* diffuse)
+void GLRenderer::setLightDiffuse(int32_t lightId, const array<float, 4>& diffuse)
 {
-	copy(begin(*diffuse), end(*diffuse), begin(lights[lightId].diffuse));
+	copy(begin(diffuse), end(diffuse), begin(lights[lightId].diffuse));
 }
 
-void GLRenderer::setLightPosition(int32_t lightId, array<float, 4>* position)
+void GLRenderer::setLightPosition(int32_t lightId, const array<float, 4>& position)
 {
-	copy(begin(*position), end(*position), begin(lights[lightId].position));
+	copy(begin(position), end(position), begin(lights[lightId].position));
 }
 
 void GLRenderer::setLightSpotDirection(int32_t lightId, const array<float, 3>& spotDirection)
@@ -132,14 +132,14 @@ void GLRenderer::setLightQuadraticAttenuation(int32_t lightId, float QuadraticAt
 	lights[lightId].quadraticAttenuation = QuadraticAttenuation;
 }
 
-void GLRenderer::setEffectColorMul(array<float, 4>* effectColorMul)
+void GLRenderer::setEffectColorMul(const array<float, 4>& effectColorMul)
 {
-	copy(begin(*effectColorMul), end(*effectColorMul), begin(this->effectColorMul));
+	copy(begin(effectColorMul), end(effectColorMul), begin(this->effectColorMul));
 }
 
-void GLRenderer::setEffectColorAdd(array<float, 4>* effectColorAdd)
+void GLRenderer::setEffectColorAdd(const array<float, 4>& effectColorAdd)
 {
-	copy(begin(*effectColorAdd), end(*effectColorAdd), begin(this->effectColorAdd));
+	copy(begin(effectColorAdd), end(effectColorAdd), begin(this->effectColorAdd));
 }
 
 void GLRenderer::setMaterialEnabled()
@@ -150,24 +150,24 @@ void GLRenderer::setMaterialDisabled()
 {
 }
 
-void GLRenderer::setMaterialAmbient(array<float, 4>* ambient)
+void GLRenderer::setMaterialAmbient(const array<float, 4>& ambient)
 {
-	copy(begin(*ambient), end(*ambient), begin(material.ambient));
+	copy(begin(ambient), end(ambient), begin(material.ambient));
 }
 
-void GLRenderer::setMaterialDiffuse(array<float, 4>* diffuse)
+void GLRenderer::setMaterialDiffuse(const array<float, 4>& diffuse)
 {
-	copy(begin(*diffuse), end(*diffuse), begin(material.diffuse));
+	copy(begin(diffuse), end(diffuse), begin(material.diffuse));
 }
 
-void GLRenderer::setMaterialSpecular(array<float, 4>* specular)
+void GLRenderer::setMaterialSpecular(const array<float, 4>& specular)
 {
-	copy(begin(*specular), end(*specular), begin(material.specular));
+	copy(begin(specular), end(specular), begin(material.specular));
 }
 
-void GLRenderer::setMaterialEmission(array<float, 4>* emission)
+void GLRenderer::setMaterialEmission(const array<float, 4>& emission)
 {
-	copy(begin(*emission), end(*emission), begin(material.emission));
+	copy(begin(emission), end(emission), begin(material.emission));
 }
 
 void GLRenderer::setMaterialShininess(float shininess)

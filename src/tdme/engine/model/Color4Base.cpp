@@ -23,14 +23,14 @@ Color4Base::Color4Base()
 	data[3] = 1.0f;
 }
 
-Color4Base::Color4Base(Color4Base* color) 
+Color4Base::Color4Base(const Color4Base& color)
 {
-	data = color->data;
+	data = color.data;
 }
 
-Color4Base::Color4Base(array<float, 4>* color)
+Color4Base::Color4Base(const array<float, 4>& color)
 {
-	this->data = *color;
+	this->data = color;
 }
 
 Color4Base::Color4Base(float r, float g, float b, float a) 
@@ -41,9 +41,9 @@ Color4Base::Color4Base(float r, float g, float b, float a)
 	data[3] = a;
 }
 
-void Color4Base::set(array<float, 4>* color)
+void Color4Base::set(const array<float, 4>& color)
 {
-	this->data = *color;
+	this->data = color;
 }
 
 void Color4Base::set(float r, float g, float b, float a)
@@ -54,9 +54,9 @@ void Color4Base::set(float r, float g, float b, float a)
 	data[3] = a;
 }
 
-void Color4Base::set(Color4Base* color)
+void Color4Base::set(const Color4Base& color)
 {
-	data = color->data;
+	data = color.data;
 }
 
 void Color4Base::add(float r, float g, float b, float a)
@@ -107,17 +107,17 @@ void Color4Base::setAlpha(float alpha)
 	data[3] = alpha;
 }
 
-array<float, 4>* Color4Base::getArray()
+array<float, 4>& Color4Base::getArray() const
 {
-	return &data;
+	return (array<float, 4>&)data;
 }
 
-bool Color4Base::equals(Color4Base* c)
+bool Color4Base::equals(const Color4Base& c)
 {
-	return (this == c) || (
-		Math::abs(data[0] - c->data[0]) < MathTools::EPSILON &&
-		Math::abs(data[1] - c->data[1]) < MathTools::EPSILON &&
-		Math::abs(data[2] - c->data[2]) < MathTools::EPSILON &&
-		Math::abs(data[3] - c->data[3]) < MathTools::EPSILON
+	return (this == &c) || (
+		Math::abs(data[0] - c.data[0]) < MathTools::EPSILON &&
+		Math::abs(data[1] - c.data[1]) < MathTools::EPSILON &&
+		Math::abs(data[2] - c.data[2]) < MathTools::EPSILON &&
+		Math::abs(data[3] - c.data[3]) < MathTools::EPSILON
 	);
 }

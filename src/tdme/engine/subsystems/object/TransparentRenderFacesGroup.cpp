@@ -47,16 +47,16 @@ void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, 
 	this->model = model;
 	this->object3DGroup = object3DGroup;
 	this->facesEntityIdx = facesEntityIdx;
-	this->effectColorAdd.set(effectColorAdd);
-	this->effectColorMul.set(effectColorMul);
+	this->effectColorAdd.set(*effectColorAdd);
+	this->effectColorMul.set(*effectColorMul);
 	this->material = material;
 	this->textureCoordinates = textureCoordinates;
 }
 
 const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
 {
-	auto efcmData = effectColorMul->getArray();
-	auto efcaData = effectColorAdd->getArray();
+	auto& efcmData = effectColorMul->getArray();
+	auto& efcaData = effectColorAdd->getArray();
 	wstring key =
 		model->getId() +
 		L"," +
@@ -64,21 +64,21 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 		L"," +
 		to_wstring(facesEntityIdx) +
 		L"," +
-		to_wstring((*efcmData)[0]) +
+		to_wstring(efcmData[0]) +
 		L"," +
-		to_wstring((*efcmData)[1]) +
+		to_wstring(efcmData[1]) +
 		L"," +
-		to_wstring((*efcmData)[2]) +
+		to_wstring(efcmData[2]) +
 		L"," +
-		to_wstring((*efcmData)[3]) +
+		to_wstring(efcmData[3]) +
 		L"," +
-		to_wstring((*efcaData)[0]) +
+		to_wstring(efcaData[0]) +
 		L"," +
-		to_wstring((*efcaData)[1]) +
+		to_wstring(efcaData[1]) +
 		L"," +
-		to_wstring((*efcaData)[2]) +
+		to_wstring(efcaData[2]) +
 		L"," +
-		to_wstring((*efcaData)[3]) +
+		to_wstring(efcaData[3]) +
 		L"," +
 		(material == nullptr ? L"tdme.material.none" : material->getId()) +
 		L"," +

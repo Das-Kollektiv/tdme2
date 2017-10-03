@@ -116,7 +116,7 @@ using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
 using tdme::ext::tinyxml::TiXmlAttribute;
 
-Color4* DAEReader::BLENDER_AMBIENT_NONE = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
 float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
 
@@ -1150,7 +1150,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getDiffuseColor()->set(&colorArray);
+							material->getDiffuseColor()->set(colorArray);
 						}
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
 							xmlDiffuseTextureId = StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture")));
@@ -1180,7 +1180,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getAmbientColor()->set(&colorArray);
+							material->getAmbientColor()->set(colorArray);
 						}
 					}
 					for (auto xmlEmission: getChildrenByTagName(xmlTechniqueNode, "emission")) {
@@ -1191,7 +1191,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getEmissionColor()->set(&colorArray);
+							material->getEmissionColor()->set(colorArray);
 						}
 					}
 					auto hasSpecularMap = false;
@@ -1225,7 +1225,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getSpecularColor()->set(&colorArray);
+							material->getSpecularColor()->set(colorArray);
 							hasSpecularColor = true;
 						}
 					}
