@@ -171,7 +171,7 @@ public:
 	 * @param model name
 	 * @param center
 	 */
-	void setObjectData(const wstring& name, const wstring& description, const wstring& modelName, Vector3* center);
+	void setObjectData(const wstring& name, const wstring& description, const wstring& modelName, const Vector3& center);
 
 	/** 
 	 * Unset model data
@@ -223,7 +223,7 @@ public:
 	 * @param rotation y
 	 * @param rotation z
 	 */
-	void setObject(Vector3* translation, Vector3* scale, float rotationX, float rotationY, float rotationZ);
+	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ);
 
 	/** 
 	 * Unset current object

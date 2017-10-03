@@ -226,14 +226,14 @@ const wstring LevelEditorScreenController::getObjectPropertyPresetSelection()
 	return L"";
 }
 
-void LevelEditorScreenController::setObjectData(const wstring& name, const wstring& description, const wstring& modelName, Vector3* center)
+void LevelEditorScreenController::setObjectData(const wstring& name, const wstring& description, const wstring& modelName, const Vector3& center)
 {
 	objectName->getController()->setDisabled(false);
 	objectName->getController()->setValue(value->set(name));
 	objectDescription->getController()->setDisabled(false);
 	objectDescription->getController()->setValue(value->set(description));
 	objectModel->getController()->setValue(value->set(modelName));
-	objectCenter->getController()->setValue(value->reset()->append(Tools::formatFloat(center->getX()))->append(u", "_j)->append(Tools::formatFloat(center->getY()))->append(u", "_j)->append(Tools::formatFloat(center->getZ())));
+	objectCenter->getController()->setValue(value->reset()->append(Tools::formatFloat(center.getX()))->append(L", ")->append(Tools::formatFloat(center.getY()))->append(L", ")->append(Tools::formatFloat(center.getZ())));
 	btnObjectDataApply->getController()->setDisabled(false);
 }
 
@@ -336,7 +336,7 @@ void LevelEditorScreenController::onObjectsUnselect()
 	view->unselectObjects();
 }
 
-void LevelEditorScreenController::setObject(Vector3* translation, Vector3* scale, float rotationX, float rotationY, float rotationZ)
+void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ)
 {
 	btnObjectTranslationApply->getController()->setDisabled(false);
 	btnObjectScaleApply->getController()->setDisabled(false);
@@ -353,12 +353,12 @@ void LevelEditorScreenController::setObject(Vector3* translation, Vector3* scale
 	objectRotationX->getController()->setDisabled(false);
 	objectRotationY->getController()->setDisabled(false);
 	objectRotationZ->getController()->setDisabled(false);
-	objectTranslationX->getController()->setValue(value->set(Tools::formatFloat(translation->getX())));
-	objectTranslationY->getController()->setValue(value->set(Tools::formatFloat(translation->getY())));
-	objectTranslationZ->getController()->setValue(value->set(Tools::formatFloat(translation->getZ())));
-	objectScaleX->getController()->setValue(value->set(Tools::formatFloat(scale->getX())));
-	objectScaleY->getController()->setValue(value->set(Tools::formatFloat(scale->getY())));
-	objectScaleZ->getController()->setValue(value->set(Tools::formatFloat(scale->getZ())));
+	objectTranslationX->getController()->setValue(value->set(Tools::formatFloat(translation.getX())));
+	objectTranslationY->getController()->setValue(value->set(Tools::formatFloat(translation.getY())));
+	objectTranslationZ->getController()->setValue(value->set(Tools::formatFloat(translation.getZ())));
+	objectScaleX->getController()->setValue(value->set(Tools::formatFloat(scale.getX())));
+	objectScaleY->getController()->setValue(value->set(Tools::formatFloat(scale.getY())));
+	objectScaleZ->getController()->setValue(value->set(Tools::formatFloat(scale.getZ())));
 	objectRotationX->getController()->setValue(value->set(Tools::formatFloat(rotationX)));
 	objectRotationY->getController()->setValue(value->set(Tools::formatFloat(rotationY)));
 	objectRotationZ->getController()->setValue(value->set(Tools::formatFloat(rotationZ)));

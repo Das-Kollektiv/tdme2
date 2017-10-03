@@ -261,11 +261,11 @@ void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEnti
 	}
 }
 
-void LevelEditorLevel::updatePivot(int32_t modelId, Vector3* pivot)
+void LevelEditorLevel::updatePivot(int32_t modelId, const Vector3& pivot)
 {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations()->getPivot().set(*pivot);
+			object->getTransformations()->getPivot().set(pivot);
 			object->getTransformations()->update();
 		}
 	}

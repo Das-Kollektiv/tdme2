@@ -628,7 +628,7 @@ void LevelEditorView::updateGUIElements()
 			auto levelEditorObject = level->getObjectById(selectedObject->getId());
 			auto preset = levelEditorObject->getProperty(L"preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, L"");
-			levelEditorScreenController->setObject(&selectedObject->getTranslation(), &selectedObject->getScale(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle());
+			levelEditorScreenController->setObject(selectedObject->getTranslation(), selectedObject->getScale(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle(), selectedObject->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle());
 			Vector3* objectCenter = nullptr;
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
 				auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox()->clone();
@@ -637,7 +637,7 @@ void LevelEditorView::updateGUIElements()
 			} else {
 				objectCenter = &levelEditorObject->getTransformations()->getTranslation();
 			}
-			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getEntity()->getName(), objectCenter);
+			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getEntity()->getName(), *objectCenter);
 		} else {
 			levelEditorScreenController->unsetObjectData();
 			levelEditorScreenController->unsetObject();
@@ -646,7 +646,7 @@ void LevelEditorView::updateGUIElements()
 	} else
 	if (selectedObjects.size() > 1) {
 		levelEditorScreenController->unsetObjectData();
-		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 		levelEditorScreenController->unsetObjectProperties();
 	} else
 	if (selectedObjects.size() == 0) {
@@ -1121,7 +1121,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 			currentEntity->getTransformations()->update();
 			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
 	updateGUIElements();
@@ -1152,7 +1152,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 			currentEntity->getTransformations()->update();
 			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
 	updateGUIElements();
@@ -1187,7 +1187,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 			currentEntity->getTransformations()->update();
 			selectedObject->fromTransformations(currentEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
 	updateGUIElements();

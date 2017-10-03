@@ -177,7 +177,7 @@ public:
 	 * Updates pivot
 	 * @param model id
 	 */
-	void updatePivot(int32_t modelId, Vector3* pivot);
+	void updatePivot(int32_t modelId, const Vector3& pivot);
 
 	/** 
 	 * Adds an object to level
