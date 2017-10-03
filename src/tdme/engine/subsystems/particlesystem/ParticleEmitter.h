@@ -27,16 +27,6 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	virtual int32_t getCount() = 0;
 
 	/** 
-	 * @return particle velocity
-	 */
-	virtual Vector3* getVelocity() = 0;
-
-	/** 
-	 * @return particle velocity rnd
-	 */
-	virtual Vector3* getVelocityRnd() = 0;
-
-	/** 
 	 * @return color start
 	 */
 	virtual Color4* getColorStart() = 0;

@@ -71,19 +71,19 @@ void LevelEditorEntityParticleSystem_PointParticleEmitter::setMassRnd(float mass
 	this->massRnd = massRnd;
 }
 
-Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getPosition()
+Vector3& LevelEditorEntityParticleSystem_PointParticleEmitter::getPosition()
 {
-	return &position;
+	return position;
 }
 
-Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocity()
+Vector3& LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocity()
 {
-	return &velocity;
+	return velocity;
 }
 
-Vector3* LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocityRnd()
+Vector3& LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocityRnd()
 {
-	return &velocityRnd;
+	return velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorStart()

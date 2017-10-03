@@ -41,8 +41,8 @@ private:
 
 public:
 	int32_t getCount() override;
-	Vector3* getVelocity() override;
-	Vector3* getVelocityRnd() override;
+	Vector3& getVelocity();
+	Vector3& getVelocityRnd();
 	Color4* getColorStart() override;
 	Color4* getColorEnd() override;
 	void emit(Particle* particle) override;
@@ -57,5 +57,5 @@ public:
 	 * @param velocity in meter / seconds
 	 * @param velocity rnd in meter / seconds
 	 */
-	PointParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Vector3* position, Vector3* velocity, Vector3* velocityRnd, Color4* colorStart, Color4* colorEnd);
+	PointParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, const Vector3& position, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd);
 };

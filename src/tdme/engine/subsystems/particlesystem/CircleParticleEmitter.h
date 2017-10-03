@@ -45,8 +45,8 @@ private:
 	Color4 colorEnd {  };
 public:
 	int32_t getCount() override;
-	Vector3* getVelocity() override;
-	Vector3* getVelocityRnd() override;
+	Vector3& getVelocity();
+	Vector3& getVelocityRnd();
 	Color4* getColorStart() override;
 	Color4* getColorEnd() override;
 	void emit(Particle* particle) override;
@@ -68,5 +68,5 @@ public:
 	 * @param color start
 	 * @param color end
 	 */
-	CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, Vector3* axis0, Vector3* axis1, Vector3* center, float radius, float mass, float massRnd, Vector3* velocity, Vector3* velocityRnd, Color4* colorStart, Color4* colorEnd);
+	CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd);
 };

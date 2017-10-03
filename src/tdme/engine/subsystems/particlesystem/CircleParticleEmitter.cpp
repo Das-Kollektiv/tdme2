@@ -17,23 +17,23 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, Vector3* axis0, Vector3* axis1, Vector3* center, float radius, float mass, float massRnd, Vector3* velocity, Vector3* velocityRnd, Color4* colorStart, Color4* colorEnd) 
+CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
 	this->lifeTimeRnd = lifeTimeRnd;
-	this->axis0.set(*axis0).normalize();
-	this->axis1.set(*axis1).normalize();
-	this->center.set(*center);
+	this->axis0.set(axis0).normalize();
+	this->axis1.set(axis1).normalize();
+	this->center.set(center);
 	this->radius = radius;
-	this->axis0Transformed.set(*axis0).normalize();
-	this->axis1Transformed.set(*axis1).normalize();
-	this->centerTransformed.set(*center);
+	this->axis0Transformed.set(axis0).normalize();
+	this->axis1Transformed.set(axis1).normalize();
+	this->centerTransformed.set(center);
 	this->radiusTransformed = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
-	this->velocity.set(*velocity);
-	this->velocityRnd.set(*velocityRnd);
+	this->velocity.set(velocity);
+	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
 }
@@ -43,14 +43,14 @@ int32_t CircleParticleEmitter::getCount()
 	return count;
 }
 
-Vector3* CircleParticleEmitter::getVelocity()
+Vector3& CircleParticleEmitter::getVelocity()
 {
-	return &velocity;
+	return velocity;
 }
 
-Vector3* CircleParticleEmitter::getVelocityRnd()
+Vector3& CircleParticleEmitter::getVelocityRnd()
 {
-	return &velocityRnd;
+	return velocityRnd;
 }
 
 Color4* CircleParticleEmitter::getColorStart()

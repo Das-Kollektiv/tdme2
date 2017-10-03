@@ -401,7 +401,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
 				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue()->toString()));
-				particleSystem->getObjectParticleSystem()->getScale()->set(Tools::convertToVector3(opsScale->getController()->getValue()->toString()));
+				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue()->toString()));
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->equals(u"1"_j));
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString()->getCPPWString());
@@ -511,9 +511,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setLifeTimeRnd(Tools::convertToInt(ppeLifeTimeRnd->getController()->getValue()->toString()));
 					emitter->setMass(Tools::convertToFloat(ppeMass->getController()->getValue()->toString()));
 					emitter->setMassRnd(Tools::convertToFloat(ppeMassRnd->getController()->getValue()->toString()));
-					emitter->getPosition()->set(Tools::convertToVector3(ppePosition->getController()->getValue()->toString()));
-					emitter->getVelocity()->set(Tools::convertToVector3(ppeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd()->set(Tools::convertToVector3(ppeVelocityRnd->getController()->getValue()->toString()));
+					emitter->getPosition().set(Tools::convertToVector3(ppePosition->getController()->getValue()->toString()));
+					emitter->getVelocity().set(Tools::convertToVector3(ppeVelocity->getController()->getValue()->toString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(ppeVelocityRnd->getController()->getValue()->toString()));
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(ppeColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toString())));
 					goto end_switch2;;
@@ -529,18 +529,18 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setLifeTimeRnd(Tools::convertToInt(bbpeLifeTimeRnd->getController()->getValue()->toString()));
 					emitter->setMass(Tools::convertToFloat(bbpeMass->getController()->getValue()->toString()));
 					emitter->setMassRnd(Tools::convertToFloat(bbpeMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity()->set(Tools::convertToVector3(bbpeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd()->set(Tools::convertToVector3(bbpeVelocityRnd->getController()->getValue()->toString()));
+					emitter->getVelocity().set(Tools::convertToVector3(bbpeVelocity->getController()->getValue()->toString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(bbpeVelocityRnd->getController()->getValue()->toString()));
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(bbpeColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toString())));
-					emitter->getObbCenter()->set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toString()));
-					emitter->getObbHalfextension()->set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toString()));
+					emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toString()));
+					emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix().getAxes(*emitter->getObbAxis0(), *emitter->getObbAxis1(), *emitter->getObbAxis2());
+					rotations->getTransformationsMatrix().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 					goto end_switch2;;
 				}
 			}
@@ -554,18 +554,19 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setLifeTimeRnd(Tools::convertToInt(cpeLifeTimeRnd->getController()->getValue()->toString()));
 					emitter->setMass(Tools::convertToFloat(cpeMass->getController()->getValue()->toString()));
 					emitter->setMassRnd(Tools::convertToFloat(cpeMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity()->set(Tools::convertToVector3(cpeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd()->set(Tools::convertToVector3(cpeVelocityRnd->getController()->getValue()->toString()));
+					emitter->getVelocity().set(Tools::convertToVector3(cpeVelocity->getController()->getValue()->toString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(cpeVelocityRnd->getController()->getValue()->toString()));
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(cpeColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toString())));
-					emitter->getCenter()->set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toString()));
+					emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
+					Vector3 tmpVector3;
+					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}
@@ -583,14 +584,15 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setVelocityRnd(Tools::convertToFloat(cpepvVelocityRnd->getController()->getValue()->toString()));
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(cpepvColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toString())));
-					emitter->getCenter()->set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toString()));
+					emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
 					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
-					rotations->getTransformationsMatrix().getAxes(*emitter->getAxis0(), *new Vector3(), *emitter->getAxis1());
+					Vector3 tmpVector3;
+					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}
@@ -604,11 +606,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setLifeTimeRnd(Tools::convertToInt(speLifeTimeRnd->getController()->getValue()->toString()));
 					emitter->setMass(Tools::convertToFloat(speMass->getController()->getValue()->toString()));
 					emitter->setMassRnd(Tools::convertToFloat(speMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity()->set(Tools::convertToVector3(speVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd()->set(Tools::convertToVector3(speVelocityRnd->getController()->getValue()->toString()));
+					emitter->getVelocity().set(Tools::convertToVector3(speVelocity->getController()->getValue()->toString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(speVelocityRnd->getController()->getValue()->toString()));
 					emitter->getColorStart()->set(static_cast< Color4Base* >(Tools::convertToColor4(speColorStart->getController()->getValue()->toString())));
 					emitter->getColorEnd()->set(static_cast< Color4Base* >(Tools::convertToColor4(speColorEnd->getController()->getValue()->toString())));
-					emitter->getCenter()->set(Tools::convertToVector3(speCenter->getController()->getValue()->toString()));
+					emitter->getCenter().set(Tools::convertToVector3(speCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(speRadius->getController()->getValue()->toString()));
 					goto end_switch2;;
 				}
@@ -682,7 +684,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				Vector3 rotation;
 				Matrix4x4 rotationMatrix;
 				rotationMatrix.identity();
-				rotationMatrix.setAxes(*emitter->getObbAxis0(), *emitter->getObbAxis1(), *emitter->getObbAxis2());
+				rotationMatrix.setAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 				rotationMatrix.computeEulerAngles(rotation);
 				bbpeObbRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
 				bbpeObbRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
@@ -710,7 +712,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				Vector3 rotation;
 				Matrix4x4 rotationMatrix;
 				rotationMatrix.identity();
-				rotationMatrix.setAxes(*emitter->getAxis0(), Vector3::computeCrossProduct(*emitter->getAxis0(), *emitter->getAxis1(), tmpAxis), *emitter->getAxis1());
+				rotationMatrix.setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), tmpAxis), emitter->getAxis1());
 				rotationMatrix.computeEulerAngles(rotation);
 				cpeRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
 				cpeRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
@@ -738,7 +740,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 				Vector3 rotation;
 				Matrix4x4 rotationMatrix;
 				rotationMatrix.identity();
-				rotationMatrix.setAxes(*emitter->getAxis0(), Vector3::computeCrossProduct(*emitter->getAxis0(), *emitter->getAxis1(), tmpAxis), *emitter->getAxis1());
+				rotationMatrix.setAxes(emitter->getAxis0(), Vector3::computeCrossProduct(emitter->getAxis0(), emitter->getAxis1(), tmpAxis), emitter->getAxis1());
 				rotationMatrix.computeEulerAngles(rotation);
 				cpepvRotationX->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
 				cpepvRotationY->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));

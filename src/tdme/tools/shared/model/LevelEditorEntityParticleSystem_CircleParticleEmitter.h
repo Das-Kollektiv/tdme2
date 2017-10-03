@@ -115,12 +115,12 @@ public:
 	/** 
 	 * @return velocity
 	 */
-	virtual Vector3* getVelocity();
+	virtual Vector3& getVelocity();
 
 	/** 
 	 * @return velocity rnd
 	 */
-	virtual Vector3* getVelocityRnd();
+	virtual Vector3& getVelocityRnd();
 
 	/** 
 	 * @return color start
@@ -135,7 +135,7 @@ public:
 	/** 
 	 * @return center
 	 */
-	virtual Vector3* getCenter();
+	virtual Vector3& getCenter();
 
 	/** 
 	 * @return radius
@@ -151,12 +151,12 @@ public:
 	/** 
 	 * @return axis 0
 	 */
-	virtual Vector3* getAxis0();
+	virtual Vector3& getAxis0();
 
 	/** 
 	 * @return axis 1
 	 */
-	virtual Vector3* getAxis1();
+	virtual Vector3& getAxis1();
 
 	/**
 	 * Public constructor

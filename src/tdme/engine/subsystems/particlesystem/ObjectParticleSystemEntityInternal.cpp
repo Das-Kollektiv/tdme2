@@ -44,7 +44,7 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
+ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
 {
 	this->id = id;
 	this->enabled = true;
@@ -65,7 +65,7 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 			model
 		);
 		objects[i]->setEnabled(false);
-		objects[i]->getScale().set(*scale);
+		objects[i]->getScale().set(scale);
 		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 		objects[i]->setPickable(false);
 	}

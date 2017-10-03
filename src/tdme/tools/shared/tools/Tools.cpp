@@ -102,14 +102,14 @@ String* Tools::formatFloat(float value)
 	return new String(floatString);
 }
 
-String* Tools::formatVector3(Vector3* value)
+String* Tools::formatVector3(const Vector3& value)
 {
 	return new String(
-		formatFloat(value->getX())->getCPPWString() +
+		formatFloat(value.getX())->getCPPWString() +
 		L", " +
-		formatFloat(value->getY())->getCPPWString() +
+		formatFloat(value.getY())->getCPPWString() +
 		L", " +
-		formatFloat(value->getZ())->getCPPWString()
+		formatFloat(value.getZ())->getCPPWString()
 	);
 }
 

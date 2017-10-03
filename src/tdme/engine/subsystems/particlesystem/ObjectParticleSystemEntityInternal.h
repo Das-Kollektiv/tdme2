@@ -108,5 +108,5 @@ public:
 	 * @param maxCount
 	 * @param emitter
 	 */
-	ObjectParticleSystemEntityInternal(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystemEntityInternal(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 };

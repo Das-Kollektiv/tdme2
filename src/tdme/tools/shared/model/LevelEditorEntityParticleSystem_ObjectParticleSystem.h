@@ -53,7 +53,7 @@ public:
 	/** 
 	 * @return scale
 	 */
-	virtual Vector3* getScale();
+	virtual Vector3& getScale();
 
 	/** 
 	 * @return max count

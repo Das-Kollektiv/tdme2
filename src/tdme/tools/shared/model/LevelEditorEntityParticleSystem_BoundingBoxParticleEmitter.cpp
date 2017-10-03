@@ -75,14 +75,14 @@ void LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::setMassRnd(floa
 	this->massRnd = massRnd;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getVelocity()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getVelocity()
 {
-	return &velocity;
+	return velocity;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getVelocityRnd()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getVelocityRnd()
 {
-	return &velocityRnd;
+	return velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorStart()
@@ -95,27 +95,27 @@ Color4* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorEnd(
 	return &colorEnd;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbCenter()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbCenter()
 {
-	return &obbCenter;
+	return obbCenter;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbHalfextension()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbHalfextension()
 {
-	return &obbHalfextension;
+	return obbHalfextension;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis0()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis0()
 {
-	return &obbAxis0;
+	return obbAxis0;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis1()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis1()
 {
-	return &obbAxis1;
+	return obbAxis1;
 }
 
-Vector3* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis2()
+Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbAxis2()
 {
-	return &obbAxis2;
+	return obbAxis2;
 }

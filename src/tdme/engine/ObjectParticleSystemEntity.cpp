@@ -15,7 +15,7 @@ using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
 
-ObjectParticleSystemEntity::ObjectParticleSystemEntity(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
+ObjectParticleSystemEntity::ObjectParticleSystemEntity(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
 	ObjectParticleSystemEntityInternal(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter)
 {
 }

@@ -41,8 +41,8 @@ private:
 	Color4 colorEnd {  };
 public:
 	int32_t getCount() override;
-	Vector3* getVelocity() override;
-	Vector3* getVelocityRnd() override;
+	Vector3& getVelocity();
+	Vector3& getVelocityRnd();
 	Color4* getColorStart() override;
 	Color4* getColorEnd() override;
 	void emit(Particle* particle) override;
@@ -61,5 +61,5 @@ public:
 	 * @param color start
 	 * @param color end 
 	 */
-	BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, Vector3* velocity, Vector3* velocityRnd, Color4* colorStart, Color4* colorEnd);
+	BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd);
 };

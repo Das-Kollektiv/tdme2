@@ -55,7 +55,7 @@ public:
 	 * @param value
 	 * @return value as string
 	 */
-	static String* formatVector3(Vector3* value);
+	static String* formatVector3(const Vector3& value);
 
 	/** 
 	 * Formats a color4 to a human readable format

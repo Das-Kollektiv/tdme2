@@ -65,7 +65,7 @@ public:
 	 * @param max count
 	 * @param emitter
 	 */
-	ObjectParticleSystemEntity(const wstring& id, Model* model, Vector3* scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystemEntity(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
 	virtual void dispose();

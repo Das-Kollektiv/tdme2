@@ -112,17 +112,17 @@ public:
 	/** 
 	 * @return position
 	 */
-	virtual Vector3* getPosition();
+	virtual Vector3& getPosition();
 
 	/** 
 	 * @return velocity
 	 */
-	virtual Vector3* getVelocity();
+	virtual Vector3& getVelocity();
 
 	/** 
 	 * @return velocity rnd
 	 */
-	virtual Vector3* getVelocityRnd();
+	virtual Vector3& getVelocityRnd();
 
 	/** 
 	 * @return color start

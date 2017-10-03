@@ -32,9 +32,9 @@ LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleS
 	modelFileName = L"";
 }
 
-Vector3* LevelEditorEntityParticleSystem_ObjectParticleSystem::getScale()
+Vector3& LevelEditorEntityParticleSystem_ObjectParticleSystem::getScale()
 {
-	return &scale;
+	return scale;
 }
 
 int32_t LevelEditorEntityParticleSystem_ObjectParticleSystem::getMaxCount()

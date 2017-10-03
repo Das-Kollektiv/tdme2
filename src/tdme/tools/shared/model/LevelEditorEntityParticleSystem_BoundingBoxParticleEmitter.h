@@ -116,12 +116,12 @@ public:
 	/** 
 	 * @return velocity
 	 */
-	virtual Vector3* getVelocity();
+	virtual Vector3& getVelocity();
 
 	/** 
 	 * @return velocity rnd
 	 */
-	virtual Vector3* getVelocityRnd();
+	virtual Vector3& getVelocityRnd();
 
 	/** 
 	 * @return color start
@@ -136,27 +136,27 @@ public:
 	/** 
 	 * @return obb center
 	 */
-	virtual Vector3* getObbCenter();
+	virtual Vector3& getObbCenter();
 
 	/** 
 	 * @return obb half extension
 	 */
-	virtual Vector3* getObbHalfextension();
+	virtual Vector3& getObbHalfextension();
 
 	/** 
 	 * @return obb axis 0
 	 */
-	virtual Vector3* getObbAxis0();
+	virtual Vector3& getObbAxis0();
 
 	/** 
 	 * @return obb axis 1
 	 */
-	virtual Vector3* getObbAxis1();
+	virtual Vector3& getObbAxis1();
 
 	/** 
 	 * @return obb axis 2
 	 */
-	virtual Vector3* getObbAxis2();
+	virtual Vector3& getObbAxis2();
 
 	/**
 	 * Public constructor

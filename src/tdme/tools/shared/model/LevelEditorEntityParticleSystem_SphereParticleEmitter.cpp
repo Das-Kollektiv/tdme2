@@ -72,14 +72,14 @@ void LevelEditorEntityParticleSystem_SphereParticleEmitter::setMassRnd(float mas
 	this->massRnd = massRnd;
 }
 
-Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocity()
+Vector3& LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocity()
 {
-	return &velocity;
+	return velocity;
 }
 
-Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocityRnd()
+Vector3& LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocityRnd()
 {
-	return &velocityRnd;
+	return velocityRnd;
 }
 
 Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorStart()
@@ -92,9 +92,9 @@ Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorEnd()
 	return &colorEnd;
 }
 
-Vector3* LevelEditorEntityParticleSystem_SphereParticleEmitter::getCenter()
+Vector3& LevelEditorEntityParticleSystem_SphereParticleEmitter::getCenter()
 {
-	return &center;
+	return center;
 }
 
 float LevelEditorEntityParticleSystem_SphereParticleEmitter::getRadius()
