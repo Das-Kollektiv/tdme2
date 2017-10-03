@@ -35,7 +35,7 @@ public:
 	 * @param point
 	 * @param color
 	 */
-	void addPoint(Vector3* point, Color4* color, float distanceFromCamera);
+	void addPoint(const Vector3& point, Color4* color, float distanceFromCamera);
 
 	/** 
 	 * Merge another pool into this pool

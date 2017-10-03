@@ -196,7 +196,7 @@ private:
 	 * @param body
 	 * @param dest
 	 */
-	void getConstrainedVelocity(RigidBody* body, Vector3* linearVelocity, Vector3* angularVelocity);
+	void getConstrainedVelocity(RigidBody* body, Vector3& linearVelocity, Vector3& angularVelocity);
 
 public: /* protected */
 

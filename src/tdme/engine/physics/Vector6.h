@@ -87,8 +87,8 @@ public: /* protected */
 	 * @param this matrix start idx
 	 * @param vector 3
 	 */
-	inline void setValue(int32_t startIdx, Vector3* vector3) {
-		auto& vector3XYZ = vector3->getArray();
+	inline void setValue(int32_t startIdx, const Vector3& vector3) {
+		auto& vector3XYZ = vector3.getArray();
 		data[startIdx + 0] = vector3XYZ[0];
 		data[startIdx + 1] = vector3XYZ[1];
 		data[startIdx + 2] = vector3XYZ[2];

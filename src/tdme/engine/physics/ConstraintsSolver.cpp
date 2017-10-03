@@ -118,13 +118,13 @@ void ConstraintsSolver::fillMatrices()
 		RigidBody* rb = it.second;
 		auto bodyIdx = rb->idx;
 		auto& velocityVector = velocityVectors[bodyIdx];
-		velocityVector.setValue(0, &rb->linearVelocity);
-		velocityVector.setValue(3, &rb->angularVelocity);
+		velocityVector.setValue(0, rb->linearVelocity);
+		velocityVector.setValue(3, rb->angularVelocity);
 		auto& constainedVelocityVector = constrainedVelocityVectors[bodyIdx];
 		constainedVelocityVector.fill(0.0f);
 		auto& forcesVector = forcesVectors[bodyIdx];
-		forcesVector.setValue(0, &rb->force);
-		forcesVector.setValue(3, &rb->torque);
+		forcesVector.setValue(0, rb->force);
+		forcesVector.setValue(3, rb->torque);
 		auto& invInertiaMatrix = invInertiaMatrices[bodyIdx];
 		invInertiaMatrix.fill(0.0f);
 		auto worldInverseInertiaArray = rb->worldInverseInertia.getArray();
@@ -413,11 +413,11 @@ void ConstraintsSolver::compute(float dt)
 	updateContactCache();
 }
 
-void ConstraintsSolver::getConstrainedVelocity(RigidBody* body, Vector3* linearVelocity, Vector3* angularVelocity)
+void ConstraintsSolver::getConstrainedVelocity(RigidBody* body, Vector3& linearVelocity, Vector3& angularVelocity)
 {
 	auto vector6Array = constrainedVelocityVectors[body->idx].data;
-	linearVelocity->set(vector6Array[0], vector6Array[1], vector6Array[2]);
-	angularVelocity->set(vector6Array[3], vector6Array[4], vector6Array[5]);
+	linearVelocity.set(vector6Array[0], vector6Array[1], vector6Array[2]);
+	angularVelocity.set(vector6Array[3], vector6Array[4], vector6Array[5]);
 }
 
 void ConstraintsSolver::updateAllBodies(float deltaTime)
@@ -435,7 +435,7 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 		newAngularVelocity.set(0.0f, 0.0f, 0.0f);
 
 		if (constrainedBodies.find(body->id) != constrainedBodies.end()) {
-			getConstrainedVelocity(body, &newLinearVelocity, &newAngularVelocity);
+			getConstrainedVelocity(body, newLinearVelocity, newAngularVelocity);
 		}
 		force.set(body->force).scale(body->inverseMass * deltaTime);
 		body->worldInverseInertia.multiply(body->torque, torque).scale(deltaTime);
