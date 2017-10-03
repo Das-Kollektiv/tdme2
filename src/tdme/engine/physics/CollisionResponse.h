@@ -154,7 +154,7 @@ public: /* protected */
 	 */
 	inline void invertNormals() {
 		for (auto i = 0; i < entities.size(); i++) {
-			entities.at(i).getNormal()->scale(-1.0f);
+			entities.at(i).getNormal().scale(-1.0f);
 		}
 	}
 
@@ -196,7 +196,7 @@ public:
 			}
 			selectedEntity = &entities.at(0);
 			for (auto j = 0; j < srcEntity.hitPoints.size(); j++) {
-				dstEntity->addHitPoint(&srcEntity.hitPoints.at(j));
+				dstEntity->addHitPoint(srcEntity.hitPoints.at(j));
 			}
 		}
 		return this;

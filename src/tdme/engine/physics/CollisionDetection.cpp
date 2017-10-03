@@ -92,17 +92,17 @@ bool CollisionDetection::doCollide(Sphere* s1, Sphere* s2, const Vector3& moveme
 	axis.set(s2->getCenter()).sub(s1->getCenter());
 	if (checkMovementFallback(axis, movement, collision) == true) {
 		auto collisionEntity = collision->getEntityAt(0);
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(s1->getRadius()).add(s1->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(-s2->getRadius()).add(s2->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(s1->getRadius()).add(s1->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(-s2->getRadius()).add(s2->getCenter()));
 		return true;
 	}
 	auto distance = axis.computeLength();
 	auto _distance = distance - (s1->getRadius() + s2->getRadius());
 	if (_distance < 0.0f) {
 		auto collisionEntity = collision->addResponse(_distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(s1->getRadius()).add(s1->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(-s2->getRadius()).add(s2->getCenter()));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(s1->getRadius()).add(s1->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(-s2->getRadius()).add(s2->getCenter()));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -134,17 +134,17 @@ bool CollisionDetection::doCollide(Capsule* c, Sphere* s, const Vector3& movemen
 	axis.set(sphereCenter).sub(closestPoint);
 	if (checkMovementFallback(axis, movement, collision) == true) {
 		auto collisionEntity = collision->getEntityAt(0);
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(-s->getRadius()).add(s->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(c->getRadius()).add(closestPoint));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(-s->getRadius()).add(s->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(c->getRadius()).add(closestPoint));
 		return true;
 	}
 	auto distance = axis.computeLength();
 	auto _distance = distance - (c->getRadius() + s->getRadius());
 	if (_distance < 0.0f) {
 		auto collisionEntity = collision->addResponse(_distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(-s->getRadius()).add(s->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(c->getRadius()).add(closestPoint));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(-s->getRadius()).add(s->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(c->getRadius()).add(closestPoint));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -166,17 +166,17 @@ bool CollisionDetection::doCollide(Sphere* s, Capsule* c, const Vector3& movemen
 	axis.set(closestPoint).sub(sphereCenter);
 	if (checkMovementFallback(axis, movement, collision) == true) {
 		auto collisionEntity = collision->getEntityAt(0);
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(s->getRadius()).add(s->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(movement).normalize().scale(-c->getRadius()).add(closestPoint));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(s->getRadius()).add(s->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(movement).normalize().scale(-c->getRadius()).add(closestPoint));
 		return true;
 	}
 	auto distance = axis.computeLength();
 	auto _distance = distance - (c->getRadius() + s->getRadius());
 	if (_distance < 0.0f) {
 		auto collisionEntity = collision->addResponse(_distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(s->getRadius()).add(s->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(-c->getRadius()).add(closestPoint));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(s->getRadius()).add(s->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(-c->getRadius()).add(closestPoint));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -244,7 +244,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBo
 	if (satHaveBestFit == false) return false;
 
 	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal()->set(satAxisBestFit);
+	entity->getNormal().set(satAxisBestFit);
 	computeHitPoints(obb1, obb2, entity);
 
 	return true;
@@ -291,9 +291,9 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Sphere* sphere, con
 	if (distance < 0.0f) {
 		Vector3 hitPoint;
 		auto collisionEntity = collision->addResponse(distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&closestPoint);
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(-sphere->getRadius()).add(sphereCenter));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(closestPoint);
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(-sphere->getRadius()).add(sphereCenter));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -328,9 +328,9 @@ bool CollisionDetection::doCollide(Sphere* sphere, OrientedBoundingBox* obb, con
 	if (distance < 0.0f) {
 		Vector3 hitPoint;
 		auto collisionEntity = collision->addResponse(distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(sphere->getRadius()).add(sphereCenter));
-		collisionEntity->addHitPoint(&closestPoint);
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(sphere->getRadius()).add(sphereCenter));
+		collisionEntity->addHitPoint(closestPoint);
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -405,9 +405,9 @@ bool CollisionDetection::doCollide(Triangle* triangle, Sphere* sphere, const Vec
 	if (distance < 0.0f) {
 		Vector3 hitPoint;
 		auto collisionEntity = collision->addResponse(distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(-sphere->getRadius()).add(sphere->getCenter()));
-		collisionEntity->addHitPoint(&hitPoint.set(closestPoint));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(-sphere->getRadius()).add(sphere->getCenter()));
+		collisionEntity->addHitPoint(hitPoint.set(closestPoint));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -432,9 +432,9 @@ bool CollisionDetection::doCollide(Sphere* sphere, Triangle* triangle, const Vec
 	if (distance < 0.0f) {
 		Vector3 hitPoint;
 		auto collisionEntity = collision->addResponse(distance);
-		collisionEntity->getNormal()->set(axis).normalize();
-		collisionEntity->addHitPoint(&hitPoint.set(axis).normalize().scale(sphere->getRadius()).add(sphereCenter));
-		collisionEntity->addHitPoint(&hitPoint.set(closestPoint));
+		collisionEntity->getNormal().set(axis).normalize();
+		collisionEntity->addHitPoint(hitPoint.set(axis).normalize().scale(sphere->getRadius()).add(sphereCenter));
+		collisionEntity->addHitPoint(hitPoint.set(closestPoint));
 		if (CHECK_COLLISIONRESPONSE) checkCollision(collision);
 		return true;
 	} else {
@@ -551,7 +551,7 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 	if (satHaveBestFit == false) return false;
 
 	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal()->set(satAxisBestFit);
+	entity->getNormal().set(satAxisBestFit);
 	computeHitPoints(triangle, obb, entity);
 
 	return true;
@@ -663,7 +663,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, c
 	if (satHaveBestFit == false) return false;
 
 	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal()->set(satAxisBestFit);
+	entity->getNormal().set(satAxisBestFit);
 	for (auto i = 0; i < testTriangles.size(); i++) {
 		computeHitPoints(testTriangles[i], obb, entity);
 	}
@@ -751,7 +751,7 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, con
 	if (satHaveBestFit == false) return false;
 
 	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal()->set(satAxisBestFit);
+	entity->getNormal().set(satAxisBestFit);
 	computeHitPoints(triangle1, triangle2, entity);
 
 	return true;
@@ -840,7 +840,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 	if (satHaveBestFit == false) return false;
 
 	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal()->set(satAxisBestFit);
+	entity->getNormal().set(satAxisBestFit);
 	for (auto i = 0; i < testTriangles.size() / 2; i++) {
 		computeHitPoints(testTriangles[i * 2 + 0], testTriangles[i * 2 + 1], entity);
 	}
@@ -983,8 +983,8 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 						goto end_switch0;;
 					}
 					if ((v == TriangleTriangleIntersection::INTERSECTION)) {
-						collisionEntity->addHitPoint(&hitPointTriangle1);
-						collisionEntity->addHitPoint(&hitPointTriangle2);
+						collisionEntity->addHitPoint(hitPointTriangle1);
+						collisionEntity->addHitPoint(hitPointTriangle2);
 						goto end_switch0;;
 					}
 					if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
@@ -1036,8 +1036,8 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 					goto end_switch1;;
 				}
 				if ((v == TriangleTriangleIntersection::INTERSECTION)) {
-					collisionEntity->addHitPoint(&hitPointTriangle1);
-					collisionEntity->addHitPoint(&hitPointTriangle2);
+					collisionEntity->addHitPoint(hitPointTriangle1);
+					collisionEntity->addHitPoint(hitPointTriangle2);
 					goto end_switch1;;
 				}
 				if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
@@ -1086,8 +1086,8 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 				goto end_switch2;;
 			}
 			if ((v == TriangleTriangleIntersection::INTERSECTION)) {
-				collisionEntity->addHitPoint(&hitPointTriangle1);
-				collisionEntity->addHitPoint(&hitPointTriangle2);
+				collisionEntity->addHitPoint(hitPointTriangle1);
+				collisionEntity->addHitPoint(hitPointTriangle2);
 				goto end_switch2;;
 			}
 			if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
@@ -1126,19 +1126,19 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 					hitPoint
 				) == true) {
 				lineSegmentsIntersections++;
-				collisionEntity->addHitPoint(&hitPoint);
+				collisionEntity->addHitPoint(hitPoint);
 			}
 		}
 
 	if (lineSegmentsIntersections == 0) {
 		for (auto i = 0; i < triangle1Vertices->size(); i++) {
 			if (triangle2->containsPoint((*triangle1Vertices)[i]) == true) {
-				collisionEntity->addHitPoint(&(*triangle1Vertices)[i]);
+				collisionEntity->addHitPoint((*triangle1Vertices)[i]);
 			}
 		}
 		for (auto i = 0; i < triangle2Vertices->size(); i++) {
 			if (triangle1->containsPoint((*triangle2Vertices)[i]) == true) {
-				collisionEntity->addHitPoint(&(*triangle2Vertices)[i]);
+				collisionEntity->addHitPoint((*triangle2Vertices)[i]);
 			}
 		}
 	}

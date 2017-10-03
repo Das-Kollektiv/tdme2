@@ -57,20 +57,20 @@ public:
 	/** 
 	 * @return normal
 	 */
-	inline Vector3* getNormal() {
-		return &normal;
+	inline Vector3& getNormal() {
+		return normal;
 	}
 
 	/** 
 	 * Adds a hit point
 	 * @param hit point
 	 */
-	inline void addHitPoint(Vector3* hitPoint) {
+	inline void addHitPoint(const Vector3& hitPoint) {
 		for (auto i = 0; i < hitPoints.size(); i++) {
-			if (hitPoints.at(i).equals(*hitPoint, 0.1f))
+			if (hitPoints.at(i).equals(hitPoint, 0.1f))
 				return;
 		}
-		hitPoints.push_back(*hitPoint);
+		hitPoints.push_back(hitPoint);
 	}
 
 	/** 
@@ -85,8 +85,8 @@ public:
 	 * @param i
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3* getHitPointAt(int32_t i) {
-		return &hitPoints.at(i);
+	inline Vector3& getHitPointAt(int32_t i) {
+		return hitPoints.at(i);
 	}
 
 	/**

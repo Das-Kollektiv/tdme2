@@ -500,7 +500,7 @@ private:
 				// TODO: print stack trace
 			}
 			collision->reset();
-			collision->addResponse(-movement.computeLength())->getNormal()->set(movement).scale(-1.0f).normalize();
+			collision->addResponse(-movement.computeLength())->getNormal().set(movement).scale(-1.0f).normalize();
 			return true;
 		}
 		return false;
