@@ -110,7 +110,7 @@ MutableString* Level::compareMutableString = new MutableString();
 
 Transformations* Level::transformations = new Transformations();
 
-void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translation)
+void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		engine->getLightAt(i)->getAmbient()->set(static_cast< Color4Base* >(level->getLightAt(i)->getAmbient()));
@@ -124,11 +124,9 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, Vector3* translati
 		engine->getLightAt(i)->setLinearAttenuation(level->getLightAt(i)->getLinearAttenuation());
 		engine->getLightAt(i)->setQuadraticAttenuation(level->getLightAt(i)->getQuadraticAttenuation());
 		engine->getLightAt(i)->setEnabled(level->getLightAt(i)->isEnabled());
-		if (translation != nullptr) {
-			engine->getLightAt(i)->getPosition().setX(engine->getLightAt(i)->getPosition().getX() + translation->getX());
-			engine->getLightAt(i)->getPosition().setY(engine->getLightAt(i)->getPosition().getY() + translation->getY());
-			engine->getLightAt(i)->getPosition().setZ(engine->getLightAt(i)->getPosition().getZ() + translation->getZ());
-		}
+		engine->getLightAt(i)->getPosition().setX(engine->getLightAt(i)->getPosition().getX() + translation.getX());
+		engine->getLightAt(i)->getPosition().setY(engine->getLightAt(i)->getPosition().getY() + translation.getY());
+		engine->getLightAt(i)->getPosition().setZ(engine->getLightAt(i)->getPosition().getZ() + translation.getZ());
 	}
 }
 
@@ -225,12 +223,12 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation)
 {
 	addLevel(engine, level, addEmpties, addTrigger, dynamicShadowing, pickable, translation, true);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, Vector3* translation, bool enable)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation, bool enable)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -252,9 +250,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		if (translation != nullptr) {
-			entity->getTranslation().add(*translation);
-		}
+		entity->getTranslation().add(translation);
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty(L"shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), L"false");
@@ -268,12 +264,12 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
+void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
 {
 	addLevel(world, level, rigidBodies, translation, true);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation, bool enable)
+void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation, bool enable)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -291,10 +287,8 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 			wstring worldId = object->getId() + L".bv." + to_wstring(j);
 			auto transformations = new Transformations();
 			transformations->fromTransformations(object->getTransformations());
-			if (translation != nullptr) {
-				transformations->getTranslation().add(*translation);
-				transformations->update();
-			}
+			transformations->getTranslation().add(translation);
+			transformations->update();
 			auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 			rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
 			rigidBodies.push_back(rigidBody);
@@ -321,7 +315,7 @@ void Level::disableLevel(World* world, vector<RigidBody*>& rigidBodies)
 	}
 }
 
-void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* translation)
+void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -330,9 +324,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		if (translation != nullptr) {
-			entity->getTranslation().add(*translation);
-		}
+		entity->getTranslation().add(translation);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
 		}
@@ -341,7 +333,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, Vector3* transl
 	}
 }
 
-void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, Vector3* translation)
+void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -355,10 +347,8 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 					continue;
 
 				transformations->fromTransformations(object->getTransformations());
-				if (translation != nullptr) {
-					transformations->getTranslation().add(*translation);
-					transformations->update();
-				}
+				transformations->getTranslation().add(translation);
+				transformations->update();
 				rigidBody->synch(transformations);
 				rigidBody->setEnabled(true);
 			}
