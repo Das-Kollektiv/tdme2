@@ -117,9 +117,9 @@ void EmptyView::updateGUIElements()
 		auto preset = entity->getProperty(L"preset");
 		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
 		emptyScreenController->setEntityData(entity->getName(), entity->getDescription());
-		auto dimension = new Vector3();
-		dimension->set(entity->getModel()->getBoundingBox()->getMax());
-		dimension->sub(entity->getModel()->getBoundingBox()->getMin());
+		Vector3 dimension;
+		dimension.set(entity->getModel()->getBoundingBox()->getMax());
+		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
 	} else {
 		emptyScreenController->setScreenCaption(L"Empty - no trigger loaded");
 		emptyScreenController->unsetEntityProperties();

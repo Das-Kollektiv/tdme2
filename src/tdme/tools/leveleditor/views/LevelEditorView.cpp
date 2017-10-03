@@ -1089,11 +1089,11 @@ void LevelEditorView::centerObject()
 	if (selectedObjects.size() == 0) {
 		return;
 	}
-	auto center = new Vector3();
+	Vector3 center;
 	for (auto selectedObject: selectedObjects) {
-		center->add(selectedObject->getBoundingBoxTransformed()->getMin().clone().add(selectedObject->getBoundingBoxTransformed()->getMax()).scale(0.5f));
+		center.add(selectedObject->getBoundingBoxTransformed()->getMin().clone().add(selectedObject->getBoundingBoxTransformed()->getMax()).scale(0.5f));
 	}
-	engine->getCamera()->getLookAt().set(center->scale(1.0f / selectedObjects.size()));
+	engine->getCamera()->getLookAt().set(center.scale(1.0f / selectedObjects.size()));
 }
 
 void LevelEditorView::objectTranslationApply(float x, float y, float z)

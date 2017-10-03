@@ -176,14 +176,14 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			static_cast< float >(jObject["sy"].getDouble()),
 			static_cast< float >(jObject["sz"].getDouble())
 		);
-		auto rotation = new Vector3(
+		Vector3 rotation(
 			static_cast< float >(jObject["rx"].getDouble()),
 			static_cast< float >(jObject["ry"].getDouble()),
 			static_cast< float >(jObject["rz"].getDouble())
 		);
-		transformations->getRotations()->add(new Rotation(rotation->getArray()[level->getRotationOrder()->getAxis0VectorIndex()], level->getRotationOrder()->getAxis0()));
-		transformations->getRotations()->add(new Rotation(rotation->getArray()[level->getRotationOrder()->getAxis1VectorIndex()], level->getRotationOrder()->getAxis1()));
-		transformations->getRotations()->add(new Rotation(rotation->getArray()[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
+		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()], level->getRotationOrder()->getAxis0()));
+		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()], level->getRotationOrder()->getAxis1()));
+		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
 		transformations->update();
 		auto levelEditorObject = new LevelEditorObject(
 			objectIdPrefix != L"" ?

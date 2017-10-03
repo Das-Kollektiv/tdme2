@@ -119,10 +119,10 @@ void TriggerView::updateGUIElements()
 		auto preset = entity->getProperty(L"preset");
 		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
-		auto dimension = new Vector3();
-		dimension->set(entity->getModel()->getBoundingBox()->getMax());
-		dimension->sub(entity->getModel()->getBoundingBox()->getMin());
-		triggerScreenController->setTrigger(dimension->getX(), dimension->getY(), dimension->getZ());
+		Vector3 dimension;
+		dimension.set(entity->getModel()->getBoundingBox()->getMax());
+		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
+		triggerScreenController->setTrigger(dimension.getX(), dimension.getY(), dimension.getZ());
 	} else {
 		triggerScreenController->setScreenCaption(L"Trigger - no trigger loaded");
 		triggerScreenController->unsetEntityProperties();
