@@ -105,7 +105,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 				static_cast< float >(jLight["sb"].getDouble()),
 				static_cast< float >(jLight["sa"].getDouble())
 			);
-			light->getPosition()->set(
+			light->getPosition().set(
 				static_cast< float >(jLight["px"].getDouble()),
 				static_cast< float >(jLight["py"].getDouble()),
 				static_cast< float >(jLight["pz"].getDouble()),

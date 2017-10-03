@@ -165,11 +165,11 @@ public:
 	 * @param scale
 	 * @return this vector 
 	 */
-	inline Vector4& scale(Vector4* scale) {
-		data[0] *= scale->data[0];
-		data[1] *= scale->data[1];
-		data[2] *= scale->data[2];
-		data[3] *= scale->data[3];
+	inline Vector4& scale(const Vector4& scale) {
+		data[0] *= scale.data[0];
+		data[1] *= scale.data[1];
+		data[2] *= scale.data[2];
+		data[3] *= scale.data[3];
 		return *this;
 	}
 

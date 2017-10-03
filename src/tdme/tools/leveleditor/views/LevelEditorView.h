@@ -12,6 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -416,7 +417,7 @@ public:
 	 * Compute spot direction
 	 * @param i
 	 */
-	void computeSpotDirection(int32_t i, Vector4* position, const Vector3& spotTo);
+	void computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo);
 
 	/** 
 	 * Apply light with index i
@@ -433,7 +434,7 @@ public:
 	 * @param spot cutoff
 	 * @param enabled
 	 */
-	void applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, Vector4* position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/**
 	 * Public constructor

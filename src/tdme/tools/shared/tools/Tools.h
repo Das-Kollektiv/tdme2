@@ -97,7 +97,7 @@ public:
 	 * @param text
 	 * @return vector4
 	 */
-	static Vector4* convertToVector4(String* text) /* throws(NumberFormatException) */;
+	static Vector4 convertToVector4(String* text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to color 4

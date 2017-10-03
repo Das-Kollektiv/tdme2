@@ -75,7 +75,7 @@ public:
 	/** 
 	 * @return position of light
 	 */
-	Vector4* getPosition();
+	Vector4& getPosition();
 
 	/** 
 	 * @return spot to

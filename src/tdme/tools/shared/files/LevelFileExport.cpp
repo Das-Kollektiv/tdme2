@@ -78,10 +78,10 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		jLight["sg"] = static_cast< double >(light->getSpecular()->getGreen());
 		jLight["sb"] = static_cast< double >(light->getSpecular()->getBlue());
 		jLight["sa"] = static_cast< double >(light->getSpecular()->getAlpha());
-		jLight["px"] = static_cast< double >(light->getPosition()->getX());
-		jLight["py"] = static_cast< double >(light->getPosition()->getY());
-		jLight["pz"] = static_cast< double >(light->getPosition()->getZ());
-		jLight["pw"] = static_cast< double >(light->getPosition()->getW());
+		jLight["px"] = static_cast< double >(light->getPosition().getX());
+		jLight["py"] = static_cast< double >(light->getPosition().getY());
+		jLight["pz"] = static_cast< double >(light->getPosition().getZ());
+		jLight["pw"] = static_cast< double >(light->getPosition().getW());
 		jLight["stx"] = static_cast< double >(light->getSpotTo().getX());
 		jLight["sty"] = static_cast< double >(light->getSpotTo().getY());
 		jLight["stz"] = static_cast< double >(light->getSpotTo().getZ());

@@ -58,9 +58,9 @@ Color4* LevelEditorLight::getSpecular()
 	return &specular;
 }
 
-Vector4* LevelEditorLight::getPosition()
+Vector4& LevelEditorLight::getPosition()
 {
-	return &position;
+	return position;
 }
 
 Vector3& LevelEditorLight::getSpotTo()

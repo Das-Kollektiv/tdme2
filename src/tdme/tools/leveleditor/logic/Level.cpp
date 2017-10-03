@@ -116,7 +116,7 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& tra
 		engine->getLightAt(i)->getAmbient()->set(static_cast< Color4Base* >(level->getLightAt(i)->getAmbient()));
 		engine->getLightAt(i)->getDiffuse()->set(static_cast< Color4Base* >(level->getLightAt(i)->getDiffuse()));
 		engine->getLightAt(i)->getSpecular()->set(static_cast< Color4Base* >(level->getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->getPosition().set(*level->getLightAt(i)->getPosition());
+		engine->getLightAt(i)->getPosition().set(level->getLightAt(i)->getPosition());
 		engine->getLightAt(i)->getSpotDirection().set(level->getLightAt(i)->getSpotDirection());
 		engine->getLightAt(i)->setSpotExponent(level->getLightAt(i)->getSpotExponent());
 		engine->getLightAt(i)->setSpotCutOff(level->getLightAt(i)->getSpotCutOff());

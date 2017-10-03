@@ -163,10 +163,10 @@ Vector3 Tools::convertToVector3(String* text) /* throws(NumberFormatException) *
 	return v;
 }
 
-Vector4* Tools::convertToVector4(String* text) /* throws(NumberFormatException) */
+Vector4 Tools::convertToVector4(String* text) /* throws(NumberFormatException) */
 {
-	auto v = new Vector4();
-	convertToArray(text, v->getArray());
+	Vector4 v;
+	convertToArray(text, v.getArray());
 	return v;
 }
 

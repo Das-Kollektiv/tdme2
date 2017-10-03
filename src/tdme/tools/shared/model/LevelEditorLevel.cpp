@@ -55,9 +55,9 @@ LevelEditorLevel::LevelEditorLevel()
 	light->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getPosition()->set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()));
-	light->getSpotTo().set(light->getPosition()->getX(), light->getPosition()->getY(), light->getPosition()->getZ()).add(light->getSpotDirection());
+	light->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
+	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()));
+	light->getSpotTo().set(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()).add(light->getSpotDirection());
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
