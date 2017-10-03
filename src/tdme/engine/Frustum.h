@@ -60,7 +60,7 @@ public:
 	 * @param v
 	 * @return visibility
 	 */
-	bool isVisible(Vector3* v);
+	bool isVisible(const Vector3& v);
 
 	/** 
 	 * Checks if sphere is in frustum

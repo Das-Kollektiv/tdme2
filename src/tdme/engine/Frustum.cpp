@@ -113,9 +113,9 @@ void Frustum::updateFrustum()
 	planes[5].setDistance(d);
 }
 
-bool Frustum::isVisible(Vector3* v)
+bool Frustum::isVisible(const Vector3& v)
 {
-	auto& vector = v->getArray();
+	auto& vector = v.getArray();
 	for (auto& p : planes) {
 		auto& normal = p.getNormal().getArray();
 		if ((normal[0] * vector[0]) + (normal[1] * vector[1]) + (normal[2] * vector[2]) + p.getDistance() <= 0) {
