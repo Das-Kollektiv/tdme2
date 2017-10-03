@@ -161,14 +161,14 @@ BoundingVolume* RigidBody::getBoundingVolumeTransformed()
 	return cbv;
 }
 
-Vector3* RigidBody::getPosition()
+Vector3& RigidBody::getPosition()
 {
-	return &position;
+	return position;
 }
 
-Vector3* RigidBody::getMovement()
+Vector3& RigidBody::getMovement()
 {
-	return &movement;
+	return movement;
 }
 
 float RigidBody::getFriction()
@@ -208,19 +208,19 @@ void RigidBody::setMass(float mass)
 	}
 }
 
-Vector3* RigidBody::getLinearVelocity()
+Vector3& RigidBody::getLinearVelocity()
 {
-	return &linearVelocity;
+	return linearVelocity;
 }
 
-Vector3* RigidBody::getAngularVelocity()
+Vector3& RigidBody::getAngularVelocity()
 {
-	return &angularVelocity;
+	return angularVelocity;
 }
 
-Vector3* RigidBody::getForce()
+Vector3& RigidBody::getForce()
 {
-	return &force;
+	return force;
 }
 
 void RigidBody::awake(bool resetFrameCount)
@@ -258,19 +258,19 @@ void RigidBody::synch(Transformations* transformations)
 	this->awake(true);
 }
 
-void RigidBody::addForce(Vector3* forceOrigin, Vector3* force)
+void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 {
 	if (isStatic_ == true)
 		return;
 
-	if (force->computeLength() < MathTools::EPSILON)
+	if (force.computeLength() < MathTools::EPSILON)
 		return;
 
 	awake(false);
-	this->force.add(*force);
+	this->force.add(force);
 	Vector3 distance;
 	Vector3 tmp;
-	distance.set(*forceOrigin).sub(position);
+	distance.set(forceOrigin).sub(position);
 	if (distance.computeLength() < MathTools::EPSILON) {
 		_Console::println(
 			wstring(L"RigidBody::addForce(): ") +
@@ -278,7 +278,7 @@ void RigidBody::addForce(Vector3* forceOrigin, Vector3* force)
 			wstring(L": Must not equals position")
 		);
 	}
-	Vector3::computeCrossProduct(*force, distance, tmp);
+	Vector3::computeCrossProduct(force, distance, tmp);
 	this->torque.add(tmp);
 }
 

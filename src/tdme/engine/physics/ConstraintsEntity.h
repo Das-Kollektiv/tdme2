@@ -107,8 +107,8 @@ public: /* protected */
 		Vector3 r2CrossU2;
 		Vector3 tmpVector3;
 
-		auto body1Position = rb1->getPosition();
-		auto body2Position = rb2->getPosition();
+		auto& body1Position = rb1->getPosition();
+		auto& body2Position = rb2->getPosition();
 		auto n = collision.getNormal();
 		auto t1 = frictionVectors[0];
 		auto t2 = frictionVectors[1];
@@ -116,8 +116,8 @@ public: /* protected */
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
 			auto point = collision.getHitPointAt(hitPointIdx);
-			r1.set(*point).sub(*body1Position);
-			r2.set(*point).sub(*body2Position);
+			r1.set(*point).sub(body1Position);
+			r2.set(*point).sub(body2Position);
 			Vector3::computeCrossProduct(r1, *n, r1CrossN);
 			Vector3::computeCrossProduct(r2, *n, r2CrossN);
 			jacobianMatrix = &(*jacobianMatrices)[currentConstraintIdx][0];

@@ -143,8 +143,8 @@ void World::update(float deltaTime)
 				continue;
 			}
 			rigidBody->addForce(
-				&worldPosForce.set(*rigidBody->getPosition()).setY(10000.0f),
-				&gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
+				worldPosForce.set(rigidBody->getPosition()).setY(10000.0f),
+				gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
 			);
 		}
 	}
@@ -294,15 +294,15 @@ void World::synch(Engine* engine)
 	}
 }
 
-Vector3* World::higher(Vector3* a, Vector3* b)
+const Vector3& World::higher(const Vector3& a, const Vector3& b)
 {
-	return a->getY() > b->getY() ? a : b;
+	return a.getY() > b.getY() ? a : b;
 }
 
-RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* point, Vector3* dest)
+RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector3& point, Vector3& dest)
 {
-	dest->set(*point);
-	auto& pointXYZ = point->getArray();
+	dest.set(point);
+	auto& pointXYZ = point.getArray();
 	BoundingBox heightBoundingBox;
 	Vector3 heightOnPointCandidate;
 	Vector3 heightOnPointA;
@@ -322,18 +322,18 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 			auto cbv = rigidBody->cbv;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
-					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
-					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
-						height = heightOnPoint->getY();
+					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
+					if (heightOnPoint.getY() >= height && heightOnPoint.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
+						height = heightOnPoint.getY();
 						heightRigidBody = rigidBody;
 					}
 				}
 			} else
 			if (dynamic_cast< OrientedBoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(dynamic_cast< OrientedBoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
-					auto heightOnPoint = higher(&heightOnPointA, &heightOnPointB);
-					if (heightOnPoint->getY() >= height && heightOnPoint->getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
-						height = heightOnPoint->getY();
+					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
+					if (heightOnPoint.getY() >= height && heightOnPoint.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
+						height = heightOnPoint.getY();
 						heightRigidBody = rigidBody;
 					}
 				}
@@ -351,11 +351,11 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, Vector3* poi
 	if (heightRigidBody == nullptr) {
 		return nullptr;
 	}
-	dest->setY(height);
+	dest.setY(height);
 	return heightRigidBody;
 }
 
-RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, Vector3* point, Vector3* dest)
+RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest)
 {
 	auto determinedHeight = -10000.0f;
 	Vector3 sideVector(1.0f, 0.0f, 0.0f);
@@ -371,7 +371,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	RigidBody* rigidBody = nullptr;
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addY(-height / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
+	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -383,7 +383,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
+	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -395,7 +395,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
+	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -407,7 +407,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
+	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -419,7 +419,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, &heightPoint, &heightPointDest);
+	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -430,8 +430,8 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	if (heightRigidBody == nullptr) {
 		return nullptr;
 	} else {
-		dest->set(*point);
-		dest->setY(determinedHeight);
+		dest.set(point);
+		dest.setY(determinedHeight);
 		return heightRigidBody;
 	}
 }

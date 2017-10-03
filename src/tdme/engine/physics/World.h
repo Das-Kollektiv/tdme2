@@ -144,7 +144,7 @@ private:
 	 * @param b
 	 * @return higher vector
 	 */
-	static Vector3* higher(Vector3* a, Vector3* b);
+	static const Vector3& higher(const Vector3& a, const Vector3& b);
 
 public:
 
@@ -156,7 +156,7 @@ public:
 	 * @param point where height has been determined
 	 * @return rigid body from which height was determined or null
 	 */
-	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, Vector3* point, Vector3* dest);
+	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, const Vector3& point, Vector3& dest);
 
 	/** 
 	 * Determine height of bounding volume
@@ -167,7 +167,7 @@ public:
 	 * @param dest
 	 * @return rigid body from which height was determined or null
 	 */
-	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, Vector3* point, Vector3* dest);
+	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest);
 
 	/** 
 	 * Check if world collides with given bounding volume

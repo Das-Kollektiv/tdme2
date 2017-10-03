@@ -207,12 +207,12 @@ public:
 	/** 
 	 * @return position
 	 */
-	Vector3* getPosition();
+	Vector3& getPosition();
 
 	/** 
 	 * @return last frame movement
 	 */
-	Vector3* getMovement();
+	Vector3& getMovement();
 
 	/** 
 	 * @return friction
@@ -250,17 +250,17 @@ public:
 	/** 
 	 * @return linear velocity
 	 */
-	Vector3* getLinearVelocity();
+	Vector3& getLinearVelocity();
 
 	/** 
 	 * @return angular velocity
 	 */
-	Vector3* getAngularVelocity();
+	Vector3& getAngularVelocity();
 
 	/** 
 	 * @return force
 	 */
-	Vector3* getForce();
+	Vector3& getForce();
 
 public: /* protected */
 
@@ -296,7 +296,7 @@ public:
 	 * @param position of world force
 	 * @param direction magnitude
 	 */
-	void addForce(Vector3* forceOrigin, Vector3* force);
+	void addForce(const Vector3& forceOrigin, const Vector3& force);
 
 public: /* protected */
 

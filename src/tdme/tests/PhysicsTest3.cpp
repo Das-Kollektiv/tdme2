@@ -102,40 +102,40 @@ void PhysicsTest3::display()
 {
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		auto body = world->getRigidBody(L"box" + to_wstring(i));
-		body->getLinearVelocity()->setX(body->getLinearVelocity()->getX() * (1.0f - 1.0f / 10.0f));
-		body->getLinearVelocity()->setZ(body->getLinearVelocity()->getZ() * (1.0f - 1.0f / 10.0f));
+		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
+		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
 		auto body = world->getRigidBody(L"box" + to_wstring(BOX_COUNT + i));
-		body->getLinearVelocity()->setX(body->getLinearVelocity()->getX() * (1.0f - 1.0f / 10.0f));
-		body->getLinearVelocity()->setZ(body->getLinearVelocity()->getZ() * (1.0f - 1.0f / 10.0f));
+		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
+		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
 	}
 	auto capsuleBig1 = world->getRigidBody(L"capsulebig1");
 	if (keyLeft)
-		capsuleBig1->getLinearVelocity()->setX(8.0f);
+		capsuleBig1->getLinearVelocity().setX(8.0f);
 	else if (keyRight)
-		capsuleBig1->getLinearVelocity()->setX(-8.0f);
+		capsuleBig1->getLinearVelocity().setX(-8.0f);
 	else
-		capsuleBig1->getLinearVelocity()->setX(0.0f);
+		capsuleBig1->getLinearVelocity().setX(0.0f);
 	if (keyUp)
-		capsuleBig1->getLinearVelocity()->setZ(8.0f);
+		capsuleBig1->getLinearVelocity().setZ(8.0f);
 	else if (keyDown)
-		capsuleBig1->getLinearVelocity()->setZ(-8.0f);
+		capsuleBig1->getLinearVelocity().setZ(-8.0f);
 	else
-		capsuleBig1->getLinearVelocity()->setZ(0.0f);
+		capsuleBig1->getLinearVelocity().setZ(0.0f);
 	auto capsuleBig2 = world->getRigidBody(L"capsulebig2");
 	if (keyA)
-		capsuleBig2->getLinearVelocity()->setX(6.0f);
+		capsuleBig2->getLinearVelocity().setX(6.0f);
 	else if (keyD)
-		capsuleBig2->getLinearVelocity()->setX(-6.0f);
+		capsuleBig2->getLinearVelocity().setX(-6.0f);
 	else
-		capsuleBig2->getLinearVelocity()->setX(0.0f);
+		capsuleBig2->getLinearVelocity().setX(0.0f);
 	if (keyW)
-		capsuleBig2->getLinearVelocity()->setZ(6.0f);
+		capsuleBig2->getLinearVelocity().setZ(6.0f);
 	else if (keyS)
-		capsuleBig2->getLinearVelocity()->setZ(-6.0f);
+		capsuleBig2->getLinearVelocity().setZ(-6.0f);
 	else
-		capsuleBig2->getLinearVelocity()->setZ(0.0f);
+		capsuleBig2->getLinearVelocity().setZ(0.0f);
 	auto start = System::currentTimeMillis();
 	auto fps = 60.0f;
 	world->update(1.0f / fps);
