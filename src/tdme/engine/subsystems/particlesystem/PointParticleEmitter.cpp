@@ -17,7 +17,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, const Vector3& position, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd)
+PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, const Vector3& position, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
@@ -28,8 +28,8 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 	this->positionTransformed.set(position);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(*colorStart);
-	this->colorEnd.set(*colorEnd);
+	this->colorStart.set(colorStart);
+	this->colorEnd.set(colorEnd);
 }
 
 int32_t PointParticleEmitter::getCount()
@@ -47,14 +47,14 @@ Vector3& PointParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* PointParticleEmitter::getColorStart()
+Color4& PointParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* PointParticleEmitter::getColorEnd()
+Color4& PointParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 void PointParticleEmitter::emit(Particle* particle)

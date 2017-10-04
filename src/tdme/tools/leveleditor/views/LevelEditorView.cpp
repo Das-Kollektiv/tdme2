@@ -1447,28 +1447,28 @@ void LevelEditorView::computeSpotDirection(int32_t i, const Vector4& position, c
 	levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
 }
 
-void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorView::applyLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
-	level->getLightAt(i)->getAmbient()->set(ambient->getRed(), ambient->getGreen(), ambient->getBlue(), ambient->getAlpha());
-	level->getLightAt(i)->getDiffuse()->set(diffuse->getRed(), diffuse->getGreen(), diffuse->getBlue(), diffuse->getAlpha());
-	level->getLightAt(i)->getSpecular()->set(specular->getRed(), specular->getGreen(), specular->getBlue(), specular->getAlpha());
-	level->getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
+	level->getLightAt(i)->getAmbient().set(ambient);
+	level->getLightAt(i)->getDiffuse().set(diffuse);
+	level->getLightAt(i)->getSpecular().set(specular);
+	level->getLightAt(i)->getPosition().set(position);
 	level->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	level->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	level->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
 	level->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
-	level->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
+	level->getLightAt(i)->getSpotDirection().set(spotDirection);
 	level->getLightAt(i)->setSpotExponent(spotExponent);
 	level->getLightAt(i)->setSpotCutOff(spotCutoff);
 	level->getLightAt(i)->setEnabled(enabled);
-	engine->getLightAt(i)->getAmbient().set(ambient->getRed(), ambient->getGreen(), ambient->getBlue(), ambient->getAlpha());
-	engine->getLightAt(i)->getDiffuse().set(diffuse->getRed(), diffuse->getGreen(), diffuse->getBlue(), diffuse->getAlpha());
-	engine->getLightAt(i)->getSpecular().set(specular->getRed(), specular->getGreen(), specular->getBlue(), specular->getAlpha());
-	engine->getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
+	engine->getLightAt(i)->getAmbient().set(ambient);
+	engine->getLightAt(i)->getDiffuse().set(diffuse);
+	engine->getLightAt(i)->getSpecular().set(specular);
+	engine->getLightAt(i)->getPosition().set(position);
 	engine->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	engine->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	engine->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
-	engine->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
+	engine->getLightAt(i)->getSpotDirection().set(spotDirection);
 	engine->getLightAt(i)->setSpotExponent(spotExponent);
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);

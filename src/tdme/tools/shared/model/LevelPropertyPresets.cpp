@@ -98,9 +98,9 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 			{
 				auto typeId = StringConverter::toWideString((xmlType->Attribute("id")));
 				auto light = new LevelEditorLight(lightId++);
-				light->getAmbient()->set(*Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText()))));
-				light->getDiffuse()->set(*Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText()))));
-				light->getSpecular()->set(*Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText()))));
+				light->getAmbient().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText()))));
+				light->getDiffuse().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText()))));
+				light->getSpecular().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText()))));
 				light->getPosition().set(Tools::convertToVector4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "position").at(0)->GetText()))));
 				light->setConstantAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText()))));
 				light->setLinearAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText()))));

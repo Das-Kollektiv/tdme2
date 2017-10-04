@@ -44,8 +44,8 @@ public:
 	int32_t getCount() override;
 	Vector3& getVelocity();
 	Vector3& getVelocityRnd();
-	Color4* getColorStart() override;
-	Color4* getColorEnd() override;
+	Color4& getColorStart() override;
+	Color4& getColorEnd() override;
 	void emit(Particle* particle) override;
 	void fromTransformations(Transformations* transformations) override;
 
@@ -61,5 +61,5 @@ public:
 	 * @param color start
 	 * @param color end
 	 */
-	SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd);
+	SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
 };

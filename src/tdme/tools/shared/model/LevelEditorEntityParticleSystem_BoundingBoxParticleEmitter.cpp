@@ -85,14 +85,14 @@ Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getVelocity
 	return velocityRnd;
 }
 
-Color4* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorStart()
+Color4& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorEnd()
+Color4& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 Vector3& LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::getObbCenter()

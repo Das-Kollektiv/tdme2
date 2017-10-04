@@ -43,19 +43,19 @@ void LevelEditorLight::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4* LevelEditorLight::getAmbient()
+Color4& LevelEditorLight::getAmbient()
 {
-	return &ambient;
+	return ambient;
 }
 
-Color4* LevelEditorLight::getDiffuse()
+Color4& LevelEditorLight::getDiffuse()
 {
-	return &diffuse;
+	return diffuse;
 }
 
-Color4* LevelEditorLight::getSpecular()
+Color4& LevelEditorLight::getSpecular()
 {
-	return &specular;
+	return specular;
 }
 
 Vector4& LevelEditorLight::getPosition()

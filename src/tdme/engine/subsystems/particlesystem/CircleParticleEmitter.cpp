@@ -17,7 +17,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd)
+CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
@@ -34,8 +34,8 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->massRnd = massRnd;
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(*colorStart);
-	this->colorEnd.set(*colorEnd);
+	this->colorStart.set(colorStart);
+	this->colorEnd.set(colorEnd);
 }
 
 int32_t CircleParticleEmitter::getCount()
@@ -53,14 +53,14 @@ Vector3& CircleParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* CircleParticleEmitter::getColorStart()
+Color4& CircleParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* CircleParticleEmitter::getColorEnd()
+Color4& CircleParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 void CircleParticleEmitter::emit(Particle* particle)

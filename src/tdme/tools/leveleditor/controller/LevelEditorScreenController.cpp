@@ -762,11 +762,11 @@ void LevelEditorScreenController::unselectLightPresets()
 {
 }
 
-void LevelEditorScreenController::setLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorScreenController::setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
-	lightsAmbient[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(ambient->getRed()))->append(L", ")->append(Tools::formatFloat(ambient->getGreen()))->append(L", ")->append(Tools::formatFloat(ambient->getBlue()))->append(L", ")->append(Tools::formatFloat(ambient->getAlpha())));
-	lightsDiffuse[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(diffuse->getRed()))->append(L", ")->append(Tools::formatFloat(diffuse->getGreen()))->append(L", ")->append(Tools::formatFloat(diffuse->getBlue()))->append(L", ")->append(Tools::formatFloat(diffuse->getAlpha())));
-	lightsSpecular[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(specular->getRed()))->append(L", ")->append(Tools::formatFloat(specular->getGreen()))->append(L", ")->append(Tools::formatFloat(specular->getBlue()))->append(L", ")->append(Tools::formatFloat(specular->getAlpha())));
+	lightsAmbient[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(ambient.getRed()))->append(L", ")->append(Tools::formatFloat(ambient.getGreen()))->append(L", ")->append(Tools::formatFloat(ambient.getBlue()))->append(L", ")->append(Tools::formatFloat(ambient.getAlpha())));
+	lightsDiffuse[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(diffuse.getRed()))->append(L", ")->append(Tools::formatFloat(diffuse.getGreen()))->append(L", ")->append(Tools::formatFloat(diffuse.getBlue()))->append(L", ")->append(Tools::formatFloat(diffuse.getAlpha())));
+	lightsSpecular[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(specular.getRed()))->append(L", ")->append(Tools::formatFloat(specular.getGreen()))->append(L", ")->append(Tools::formatFloat(specular.getBlue()))->append(L", ")->append(Tools::formatFloat(specular.getAlpha())));
 	lightsPosition[i]->getController()->setValue(value->reset()->append(Tools::formatFloat(position.getX()))->append(L", ")->append(Tools::formatFloat(position.getY()))->append(L", ")->append(Tools::formatFloat(position.getZ()))->append(L", ")->append(Tools::formatFloat(position.getW())));
 	lightsConstAttenuation[i]->getController()->setValue(value->set(Tools::formatFloat(constAttenuation)));
 	lightsLinAttenuation[i]->getController()->setValue(value->set(Tools::formatFloat(linearAttenuation)));

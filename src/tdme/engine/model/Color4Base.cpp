@@ -67,7 +67,7 @@ void Color4Base::add(float r, float g, float b, float a)
 	data[3] += a;
 }
 
-float Color4Base::getRed()
+float Color4Base::getRed() const
 {
 	return data[0];
 }
@@ -77,7 +77,7 @@ void Color4Base::setRed(float red)
 	data[0] = red;
 }
 
-float Color4Base::getGreen()
+float Color4Base::getGreen() const
 {
 	return data[1];
 }
@@ -87,7 +87,7 @@ void Color4Base::setGreen(float green)
 	data[1] = green;
 }
 
-float Color4Base::getBlue()
+float Color4Base::getBlue() const
 {
 	return data[2];
 }
@@ -97,7 +97,7 @@ void Color4Base::setBlue(float blue)
 	data[2] = blue;
 }
 
-float Color4Base::getAlpha()
+float Color4Base::getAlpha() const
 {
 	return data[3];
 }
@@ -112,7 +112,7 @@ array<float, 4>& Color4Base::getArray() const
 	return (array<float, 4>&)data;
 }
 
-bool Color4Base::equals(const Color4Base& c)
+bool Color4Base::equals(const Color4Base& c) const
 {
 	return (this == &c) || (
 		Math::abs(data[0] - c.data[0]) < MathTools::EPSILON &&

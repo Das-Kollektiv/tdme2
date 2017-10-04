@@ -94,14 +94,14 @@ void LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::setVelo
 	this->velocityRnd = velocityRnd;
 }
 
-Color4* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getColorStart()
+Color4& LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getColorEnd()
+Color4& LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 Vector3& LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity::getCenter()

@@ -82,14 +82,14 @@ Vector3& LevelEditorEntityParticleSystem_SphereParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorStart()
+Color4& LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorEnd()
+Color4& LevelEditorEntityParticleSystem_SphereParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 Vector3& LevelEditorEntityParticleSystem_SphereParticleEmitter::getCenter()

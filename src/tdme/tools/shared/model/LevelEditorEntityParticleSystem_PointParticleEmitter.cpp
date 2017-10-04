@@ -86,13 +86,13 @@ Vector3& LevelEditorEntityParticleSystem_PointParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorStart()
+Color4& LevelEditorEntityParticleSystem_PointParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* LevelEditorEntityParticleSystem_PointParticleEmitter::getColorEnd()
+Color4& LevelEditorEntityParticleSystem_PointParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 

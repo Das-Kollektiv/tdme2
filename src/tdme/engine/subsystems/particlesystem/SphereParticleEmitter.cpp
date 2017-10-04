@@ -17,7 +17,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd)
+SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
@@ -28,8 +28,8 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->sphereTransformed = dynamic_cast< Sphere* >(sphere->clone());
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(*colorStart);
-	this->colorEnd.set(*colorEnd);
+	this->colorStart.set(colorStart);
+	this->colorEnd.set(colorEnd);
 }
 
 int32_t SphereParticleEmitter::getCount()
@@ -47,14 +47,14 @@ Vector3& SphereParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* SphereParticleEmitter::getColorStart()
+Color4& SphereParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* SphereParticleEmitter::getColorEnd()
+Color4& SphereParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 void SphereParticleEmitter::emit(Particle* particle)

@@ -17,7 +17,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, float velocity, float velocityRnd, Color4* colorStart, Color4* colorEnd)
+CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, float velocity, float velocityRnd, const Color4& colorStart, const Color4& colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
@@ -30,8 +30,8 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->massRnd = massRnd;
 	this->velocity = velocity;
 	this->velocityRnd = velocityRnd;
-	this->colorStart.set(*colorStart);
-	this->colorEnd.set(*colorEnd);
+	this->colorStart.set(colorStart);
+	this->colorEnd.set(colorEnd);
 	this->centerTransformed.set(center);
 	this->radiusTransformed = radius;
 	this->axis0Transformed.set(axis0).normalize();
@@ -43,14 +43,14 @@ int32_t CircleParticleEmitterPlaneVelocity::getCount()
 	return count;
 }
 
-Color4* CircleParticleEmitterPlaneVelocity::getColorStart()
+Color4& CircleParticleEmitterPlaneVelocity::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* CircleParticleEmitterPlaneVelocity::getColorEnd()
+Color4& CircleParticleEmitterPlaneVelocity::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)

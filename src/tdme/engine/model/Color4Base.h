@@ -54,7 +54,7 @@ public:
 	/** 
 	 * @return red component
 	 */
-	virtual float getRed();
+	virtual float getRed() const;
 
 	/** 
 	 * @param red component
@@ -64,7 +64,7 @@ public:
 	/** 
 	 * @return green component
 	 */
-	virtual float getGreen();
+	virtual float getGreen() const;
 
 	/** 
 	 * @param green component
@@ -74,7 +74,7 @@ public:
 	/** 
 	 * @return blue component
 	 */
-	virtual float getBlue();
+	virtual float getBlue() const;
 
 	/** 
 	 * @param blue component
@@ -84,7 +84,7 @@ public:
 	/** 
 	 * @return alpha component
 	 */
-	virtual float getAlpha();
+	virtual float getAlpha() const;
 
 	/** 
 	 * @param alpha component
@@ -100,7 +100,7 @@ public:
 	 * Compares this color with given color
 	 * @return equality
 	 */
-	virtual bool equals(const Color4Base& c);
+	virtual bool equals(const Color4Base& c) const;
 
 	/**
 	 * Public constructor

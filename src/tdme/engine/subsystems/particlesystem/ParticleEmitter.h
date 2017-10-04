@@ -5,6 +5,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
@@ -29,12 +30,12 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	/** 
 	 * @return color start
 	 */
-	virtual Color4* getColorStart() = 0;
+	virtual Color4& getColorStart() = 0;
 
 	/** 
 	 * @return color end
 	 */
-	virtual Color4* getColorEnd() = 0;
+	virtual Color4& getColorEnd() = 0;
 
 	/** 
 	 * Emits particles

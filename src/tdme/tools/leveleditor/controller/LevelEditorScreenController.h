@@ -9,6 +9,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -377,7 +378,7 @@ public:
 	 * @param spot cutoff
 	 * @param enabled
 	 */
-	void setLight(int32_t i, Color4* ambient, Color4* diffuse, Color4* specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/** 
 	 * On light 0 apply

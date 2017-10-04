@@ -113,16 +113,16 @@ String* Tools::formatVector3(const Vector3& value)
 	);
 }
 
-String* Tools::formatColor4(Color4* value)
+String* Tools::formatColor4(const Color4& value)
 {
 	return new String(
-		formatFloat(value->getRed())->getCPPWString() +
+		formatFloat(value.getRed())->getCPPWString() +
 		L", " +
-		formatFloat(value->getGreen())->getCPPWString() +
+		formatFloat(value.getGreen())->getCPPWString() +
 		L", " +
-		formatFloat(value->getBlue())->getCPPWString() +
+		formatFloat(value.getBlue())->getCPPWString() +
 		L", " +
-		formatFloat(value->getAlpha())->getCPPWString()
+		formatFloat(value.getAlpha())->getCPPWString()
 	);
 }
 
@@ -170,10 +170,10 @@ Vector4 Tools::convertToVector4(String* text) /* throws(NumberFormatException) *
 	return v;
 }
 
-Color4* Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
+Color4 Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
 {
-	auto color = new Color4();
-	convertToArray(text, color->getArray());
+	Color4 color;
+	convertToArray(text, color.getArray());
 	return color;
 }
 

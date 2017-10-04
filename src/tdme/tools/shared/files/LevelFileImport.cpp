@@ -87,19 +87,19 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		for (auto i = 0; i < jLights.size(); i++) {
 			auto jLight = jLights[i];
 			auto light = level->getLightAt(jLight["id"].isNull() == false? jLight["id"].getInt() : i);
-			light->getAmbient()->set(
+			light->getAmbient().set(
 				static_cast< float >(jLight["ar"].getDouble()),
 				static_cast< float >(jLight["ag"].getDouble()),
 				static_cast< float >(jLight["ab"].getDouble()),
 				static_cast< float >(jLight["aa"].getDouble())
 			);
-			light->getDiffuse()->set(
+			light->getDiffuse().set(
 				static_cast< float >(jLight["dr"].getDouble()),
 				static_cast< float >(jLight["dg"].getDouble()),
 				static_cast< float >(jLight["db"].getDouble()),
 				static_cast< float >(jLight["da"].getDouble())
 			);
-			light->getSpecular()->set(
+			light->getSpecular().set(
 				static_cast< float >(jLight["sr"].getDouble()),
 				static_cast< float >(jLight["sg"].getDouble()),
 				static_cast< float >(jLight["sb"].getDouble()),

@@ -514,8 +514,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getPosition().set(Tools::convertToVector3(ppePosition->getController()->getValue()->toString()));
 					emitter->getVelocity().set(Tools::convertToVector3(ppeVelocity->getController()->getValue()->toString()));
 					emitter->getVelocityRnd().set(Tools::convertToVector3(ppeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart()->set(*Tools::convertToColor4(ppeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd()->set(*Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toString()));
+					emitter->getColorStart().set(Tools::convertToColor4(ppeColorStart->getController()->getValue()->toString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toString()));
 					goto end_switch2;;
 				}
 			}
@@ -531,8 +531,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setMassRnd(Tools::convertToFloat(bbpeMassRnd->getController()->getValue()->toString()));
 					emitter->getVelocity().set(Tools::convertToVector3(bbpeVelocity->getController()->getValue()->toString()));
 					emitter->getVelocityRnd().set(Tools::convertToVector3(bbpeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart()->set(*Tools::convertToColor4(bbpeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd()->set(*Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toString()));
+					emitter->getColorStart().set(Tools::convertToColor4(bbpeColorStart->getController()->getValue()->toString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toString()));
 					emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toString()));
 					emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
@@ -556,8 +556,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setMassRnd(Tools::convertToFloat(cpeMassRnd->getController()->getValue()->toString()));
 					emitter->getVelocity().set(Tools::convertToVector3(cpeVelocity->getController()->getValue()->toString()));
 					emitter->getVelocityRnd().set(Tools::convertToVector3(cpeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart()->set(*Tools::convertToColor4(cpeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd()->set(*Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toString()));
+					emitter->getColorStart().set(Tools::convertToColor4(cpeColorStart->getController()->getValue()->toString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toString()));
 					emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
@@ -582,8 +582,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setMassRnd(Tools::convertToFloat(cpepvMassRnd->getController()->getValue()->toString()));
 					emitter->setVelocity(Tools::convertToFloat(cpepvVelocity->getController()->getValue()->toString()));
 					emitter->setVelocityRnd(Tools::convertToFloat(cpepvVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart()->set(*Tools::convertToColor4(cpepvColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd()->set(*Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toString()));
+					emitter->getColorStart().set(Tools::convertToColor4(cpepvColorStart->getController()->getValue()->toString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toString()));
 					emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toString()));
 					auto rotations = new Transformations();
@@ -608,8 +608,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->setMassRnd(Tools::convertToFloat(speMassRnd->getController()->getValue()->toString()));
 					emitter->getVelocity().set(Tools::convertToVector3(speVelocity->getController()->getValue()->toString()));
 					emitter->getVelocityRnd().set(Tools::convertToVector3(speVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart()->set(*Tools::convertToColor4(speColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd()->set(*Tools::convertToColor4(speColorEnd->getController()->getValue()->toString()));
+					emitter->getColorStart().set(Tools::convertToColor4(speColorStart->getController()->getValue()->toString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(speColorEnd->getController()->getValue()->toString()));
 					emitter->getCenter().set(Tools::convertToVector3(speCenter->getController()->getValue()->toString()));
 					emitter->setRadius(Tools::convertToFloat(speRadius->getController()->getValue()->toString()));
 					goto end_switch2;;

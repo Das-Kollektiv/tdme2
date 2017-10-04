@@ -84,14 +84,14 @@ Vector3& LevelEditorEntityParticleSystem_CircleParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorStart()
+Color4& LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorEnd()
+Color4& LevelEditorEntityParticleSystem_CircleParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 Vector3& LevelEditorEntityParticleSystem_CircleParticleEmitter::getCenter()

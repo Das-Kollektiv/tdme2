@@ -17,7 +17,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, const Vector3& velocity, const Vector3& velocityRnd, Color4* colorStart, Color4* colorEnd)
+BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd)
 {
 	this->count = count;
 	this->lifeTime = lifeTime;
@@ -27,8 +27,8 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->obb = obb;
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
-	this->colorStart.set(*colorStart);
-	this->colorEnd.set(*colorEnd);
+	this->colorStart.set(colorStart);
+	this->colorEnd.set(colorEnd);
 	this->obbTransformed = dynamic_cast< OrientedBoundingBox* >(obb->clone());
 }
 
@@ -47,14 +47,14 @@ Vector3& BoundingBoxParticleEmitter::getVelocityRnd()
 	return velocityRnd;
 }
 
-Color4* BoundingBoxParticleEmitter::getColorStart()
+Color4& BoundingBoxParticleEmitter::getColorStart()
 {
-	return &colorStart;
+	return colorStart;
 }
 
-Color4* BoundingBoxParticleEmitter::getColorEnd()
+Color4& BoundingBoxParticleEmitter::getColorEnd()
 {
-	return &colorEnd;
+	return colorEnd;
 }
 
 void BoundingBoxParticleEmitter::emit(Particle* particle)

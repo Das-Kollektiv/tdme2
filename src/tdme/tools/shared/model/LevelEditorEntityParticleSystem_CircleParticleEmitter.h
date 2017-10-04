@@ -125,12 +125,12 @@ public:
 	/** 
 	 * @return color start
 	 */
-	virtual Color4* getColorStart();
+	virtual Color4& getColorStart();
 
 	/** 
 	 * @return color end
 	 */
-	virtual Color4* getColorEnd();
+	virtual Color4& getColorEnd();
 
 	/** 
 	 * @return center

@@ -62,7 +62,7 @@ public:
 	 * @param value
 	 * @return value as string
 	 */
-	static String* formatColor4(Color4* value);
+	static String* formatColor4(const Color4& value);
 
 	/** 
 	 * Convert string to array
@@ -104,7 +104,7 @@ public:
 	 * @param text
 	 * @return color4
 	 */
-	static Color4* convertToColor4(String* text) /* throws(NumberFormatException) */;
+	static Color4 convertToColor4(String* text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert string to float
