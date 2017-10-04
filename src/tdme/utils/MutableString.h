@@ -254,6 +254,7 @@ public:
 	 */
 	bool equals(MutableString* s2);
 	String* toString() override;
+	wstring toWString();
 
 	// Generated
 	MutableString();

@@ -6,6 +6,7 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 #include <tdme/math/fwd-tdme.h>
@@ -35,7 +36,7 @@ public:
 	 * @param point
 	 * @param color
 	 */
-	void addPoint(const Vector3& point, Color4* color, float distanceFromCamera);
+	void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera);
 
 	/** 
 	 * Merge another pool into this pool

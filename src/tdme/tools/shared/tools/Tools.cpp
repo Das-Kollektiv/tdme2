@@ -96,101 +96,99 @@ Transformations* Tools::oseLookFromRotations = nullptr;
 
 float Tools::oseScale = 0.75f;
 
-String* Tools::formatFloat(float value)
+wstring Tools::formatFloat(float value)
 {
 	wstring floatString = to_wstring(value);
-	return new String(floatString);
+	return floatString;
 }
 
-String* Tools::formatVector3(const Vector3& value)
+wstring Tools::formatVector3(const Vector3& value)
 {
-	return new String(
-		formatFloat(value.getX())->getCPPWString() +
+	return
+		formatFloat(value.getX()) +
 		L", " +
-		formatFloat(value.getY())->getCPPWString() +
+		formatFloat(value.getY()) +
 		L", " +
-		formatFloat(value.getZ())->getCPPWString()
-	);
+		formatFloat(value.getZ());
 }
 
-String* Tools::formatColor4(const Color4& value)
+wstring Tools::formatColor4(const Color4& value)
 {
-	return new String(
-		formatFloat(value.getRed())->getCPPWString() +
+	return
+		formatFloat(value.getRed()) +
 		L", " +
-		formatFloat(value.getGreen())->getCPPWString() +
+		formatFloat(value.getGreen()) +
 		L", " +
-		formatFloat(value.getBlue())->getCPPWString() +
+		formatFloat(value.getBlue()) +
 		L", " +
-		formatFloat(value.getAlpha())->getCPPWString()
-	);
+		formatFloat(value.getAlpha());
 }
 
-void Tools::convertToArray(String* text, array<float, 3>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const wstring& text, array<float, 3>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text->getCPPWString(), L",");
+	t.tokenize(text, L",");
 	while (t.hasMoreTokens() && i < array.size()) {
 		array[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-void Tools::convertToArray(String* text, array<float, 4>* array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const wstring& text, array<float, 4>* array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text->getCPPWString(), L",");
+	t.tokenize(text, L",");
 	while (t.hasMoreTokens() && i < array->size()) {
 		(*array)[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-void Tools::convertToArray(String* text, array<float, 4>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const wstring& text, array<float, 4>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text->getCPPWString(), L",");
+	t.tokenize(text, L",");
 	while (t.hasMoreTokens() && i < array.size()) {
 		array[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-Vector3 Tools::convertToVector3(String* text) /* throws(NumberFormatException) */
+Vector3 Tools::convertToVector3(const wstring& text) /* throws(NumberFormatException) */
 {
 	Vector3 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Vector4 Tools::convertToVector4(String* text) /* throws(NumberFormatException) */
+Vector4 Tools::convertToVector4(const wstring& text) /* throws(NumberFormatException) */
 {
 	Vector4 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Color4 Tools::convertToColor4(String* text) /* throws(NumberFormatException) */
+Color4 Tools::convertToColor4(const wstring& text) /* throws(NumberFormatException) */
 {
 	Color4 color;
 	convertToArray(text, color.getArray());
 	return color;
 }
 
-float Tools::convertToFloat(String* text) /* throws(NumberFormatException) */
+float Tools::convertToFloat(const wstring& text) /* throws(NumberFormatException) */
 {
-	return Float::parseFloat(text->getCPPWString());
+	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(String* text) /* throws(NumberFormatException) */
+int32_t Tools::convertToInt(const wstring& text) /* throws(NumberFormatException) */
 {
-	return Integer::parseInt(text->getCPPWString());
+	return Integer::parseInt(text);
 }
 
-int32_t Tools::convertToIntSilent(String* text)
+int32_t Tools::convertToIntSilent(const wstring& text)
 {
 	try {
-		return Integer::parseInt(text->getCPPWString());
+		return Integer::parseInt(text);
 	} catch (_Exception& exception) {
 		return -1;
 	}

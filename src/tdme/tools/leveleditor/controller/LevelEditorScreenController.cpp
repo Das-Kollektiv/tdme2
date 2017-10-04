@@ -252,7 +252,7 @@ void LevelEditorScreenController::unsetObjectData()
 
 void LevelEditorScreenController::onObjectDataApply()
 {
-	if (view->objectDataApply(objectName->getController()->getValue()->toString()->getCPPWString(), objectDescription->getController()->getValue()->toString()->getCPPWString()) == false) {
+	if (view->objectDataApply(objectName->getController()->getValue()->toWString(), objectDescription->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Changing object data failed");
 	}
 }
@@ -322,7 +322,7 @@ void LevelEditorScreenController::onObjectsSelect()
 {
 	vector<wstring> selectedObjectList;
 	StringTokenizer t;
-	t.tokenize(objectsListBox->getController()->getValue()->toString()->getCPPWString(), L"|");
+	t.tokenize(objectsListBox->getController()->getValue()->toWString(), L"|");
 	while (t.hasMoreTokens()) {
 		selectedObjectList.push_back(t.nextToken());
 	}
@@ -400,7 +400,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	mapPropertyValue->getController()->setValue(TEXT_EMPTY);
 	mapPropertySave->getController()->setDisabled(true);
 	mapPropertyRemove->getController()->setDisabled(true);
-	auto mapProperty = view->getLevel()->getProperty(mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString());
+	auto mapProperty = view->getLevel()->getProperty(mapPropertiesListBox->getController()->getValue()->toWString());
 	if (mapProperty != nullptr) {
 		mapPropertyName->getController()->setValue(value->set(mapProperty->getName()));
 		mapPropertyValue->getController()->setValue(value->set(mapProperty->getValue()));
@@ -453,9 +453,9 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 void LevelEditorScreenController::onMapPropertySave()
 {
 	if (view->mapPropertySave(
-		mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString(),
-		mapPropertyName->getController()->getValue()->toString()->getCPPWString(),
-		mapPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
+		mapPropertiesListBox->getController()->getValue()->toWString(),
+		mapPropertyName->getController()->getValue()->toWString(),
+		mapPropertyValue->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Saving map property failed");
 	}
 }
@@ -469,7 +469,7 @@ void LevelEditorScreenController::onMapPropertyAdd()
 
 void LevelEditorScreenController::onMapPropertyRemove()
 {
-	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue()->toString()->getCPPWString()) == false) {
+	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Removing map property failed");
 	}
 }
@@ -520,7 +520,7 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	if (levelEditorObject == nullptr)
 		return;
 
-	auto modelProperty = levelEditorObject->getProperty(objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString());
+	auto modelProperty = levelEditorObject->getProperty(objectPropertiesListBox->getController()->getValue()->toWString());
 	if (modelProperty != nullptr) {
 		objectPropertyName->getController()->setValue(value->set(modelProperty->getName()));
 		objectPropertyValue->getController()->setValue(value->set(modelProperty->getValue()));
@@ -579,9 +579,9 @@ void LevelEditorScreenController::setObjectProperties(const wstring& presetId, L
 void LevelEditorScreenController::onObjectPropertySave()
 {
 	if (view->objectPropertySave(
-		objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString(),
-		objectPropertyName->getController()->getValue()->toString()->getCPPWString(),
-		objectPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
+		objectPropertiesListBox->getController()->getValue()->toWString(),
+		objectPropertyName->getController()->getValue()->toWString(),
+		objectPropertyValue->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Saving object property failed");
 	}
 }
@@ -595,7 +595,7 @@ void LevelEditorScreenController::onObjectPropertyAdd()
 
 void LevelEditorScreenController::onObjectPropertyRemove()
 {
-	if (view->objectPropertyRemove(objectPropertiesListBox->getController()->getValue()->toString()->getCPPWString()) == false) {
+	if (view->objectPropertyRemove(objectPropertiesListBox->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Removing object property failed");
 	}
 }
@@ -608,9 +608,9 @@ void LevelEditorScreenController::onQuit()
 void LevelEditorScreenController::onObjectTranslationApply()
 {
 	try {
-		auto x = Float::parseFloat(objectTranslationX->getController()->getValue()->toString()->getCPPWString());
-		auto y = Float::parseFloat(objectTranslationY->getController()->getValue()->toString()->getCPPWString());
-		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toString()->getCPPWString());
+		auto x = Float::parseFloat(objectTranslationX->getController()->getValue()->toWString());
+		auto y = Float::parseFloat(objectTranslationY->getController()->getValue()->toWString());
+		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue()->toWString());
 		view->objectTranslationApply(x, y, z);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
@@ -620,9 +620,9 @@ void LevelEditorScreenController::onObjectTranslationApply()
 void LevelEditorScreenController::onObjectScaleApply()
 {
 	try {
-		auto x = Float::parseFloat(objectScaleX->getController()->getValue()->toString()->getCPPWString());
-		auto y = Float::parseFloat(objectScaleY->getController()->getValue()->toString()->getCPPWString());
-		auto z = Float::parseFloat(objectScaleZ->getController()->getValue()->toString()->getCPPWString());
+		auto x = Float::parseFloat(objectScaleX->getController()->getValue()->toWString());
+		auto y = Float::parseFloat(objectScaleY->getController()->getValue()->toWString());
+		auto z = Float::parseFloat(objectScaleZ->getController()->getValue()->toWString());
 		if (x < -10.0f || x > 10.0f)
 			throw _ExceptionBase("x scale must be within -10 .. +10");
 
@@ -641,9 +641,9 @@ void LevelEditorScreenController::onObjectScaleApply()
 void LevelEditorScreenController::onObjectRotationsApply()
 {
 	try {
-		auto x = Float::parseFloat(objectRotationX->getController()->getValue()->toString()->getCPPWString());
-		auto y = Float::parseFloat(objectRotationY->getController()->getValue()->toString()->getCPPWString());
-		auto z = Float::parseFloat(objectRotationZ->getController()->getValue()->toString()->getCPPWString());
+		auto x = Float::parseFloat(objectRotationX->getController()->getValue()->toWString());
+		auto y = Float::parseFloat(objectRotationY->getController()->getValue()->toWString());
+		auto z = Float::parseFloat(objectRotationZ->getController()->getValue()->toWString());
 		if (x < -360.0f || x > 360.0f)
 			throw _ExceptionBase("x axis rotation must be within -360 .. +360");
 
@@ -706,7 +706,7 @@ void LevelEditorScreenController::onMapSave()
 void LevelEditorScreenController::onGridApply()
 {
 	try {
-		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue()->toString()->getCPPWString());
+		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue()->toWString());
 		if (gridY < -5.0f || gridY > 5.0f)
 			throw _ExceptionBase("grid y position must be within -5 .. +5");
 
@@ -719,7 +719,7 @@ void LevelEditorScreenController::onGridApply()
 
 void LevelEditorScreenController::onObjectPropertyPresetApply()
 {
-	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toString()->getCPPWString());
+	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue()->toWString());
 }
 
 void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds)
@@ -816,17 +816,17 @@ void LevelEditorScreenController::onLightApply(int32_t lightIdx)
 		auto enabled = lightsEnabled[lightIdx]->getController()->getValue()->equals(CHECKBOX_CHECKED);
 		view->applyLight(
 			lightIdx,
-			Tools::convertToColor4(lightsAmbient[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToColor4(lightsDiffuse[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToColor4(lightsSpecular[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(lightsConstAttenuation[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(lightsLinAttenuation[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(lightsQuadAttenuation[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToVector3(lightsSpotDirection[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(lightsSpotExponent[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(lightsSpotCutoff[lightIdx]->getController()->getValue()->toString()),
+			Tools::convertToColor4(lightsAmbient[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToColor4(lightsDiffuse[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToColor4(lightsSpecular[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(lightsConstAttenuation[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(lightsLinAttenuation[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(lightsQuadAttenuation[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(lightsSpotDirection[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(lightsSpotExponent[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(lightsSpotCutoff[lightIdx]->getController()->getValue()->toWString()),
 			enabled
 		);
 		lightsAmbient[lightIdx]->getController()->setDisabled(enabled == false);
@@ -870,7 +870,7 @@ void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
-	auto lightPresetIt = lightPresets->find(lightsPresets[lightIdx]->getController()->getValue()->toString()->getCPPWString());
+	auto lightPresetIt = lightPresets->find(lightsPresets[lightIdx]->getController()->getValue()->toWString());
 	if (lightPresetIt != lightPresets->end()) lightPreset = lightPresetIt->second;
 	if (lightPreset == nullptr) return;
 
@@ -902,8 +902,8 @@ void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
 	try {
 		view->computeSpotDirection(
 			lightIdx,
-			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toString()),
-			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toString())
+			Tools::convertToVector4(lightsPosition[lightIdx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(lightsSpotTo[lightIdx]->getController()->getValue()->toWString())
 		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));

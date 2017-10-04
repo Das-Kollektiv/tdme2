@@ -98,17 +98,17 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 			{
 				auto typeId = StringConverter::toWideString((xmlType->Attribute("id")));
 				auto light = new LevelEditorLight(lightId++);
-				light->getAmbient().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText()))));
-				light->getDiffuse().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText()))));
-				light->getSpecular().set(Tools::convertToColor4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText()))));
-				light->getPosition().set(Tools::convertToVector4(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "position").at(0)->GetText()))));
-				light->setConstantAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText()))));
-				light->setLinearAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText()))));
-				light->setQuadraticAttenuation(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText()))));
-				light->getSpotTo().set(Tools::convertToVector3(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_to").at(0)->GetText()))));
-				light->getSpotDirection().set(Tools::convertToVector3(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText()))));
-				light->setSpotExponent(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText()))));
-				light->setSpotCutOff(Tools::convertToFloat(new String(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText()))));
+				light->getAmbient().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText())));
+				light->getDiffuse().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())));
+				light->getSpecular().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText())));
+				light->getPosition().set(Tools::convertToVector4(StringConverter::toWideString(getChildrenByTagName(xmlType, "position").at(0)->GetText())));
+				light->setConstantAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText())));
+				light->setLinearAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText())));
+				light->setQuadraticAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText())));
+				light->getSpotTo().set(Tools::convertToVector3(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_to").at(0)->GetText())));
+				light->getSpotDirection().set(Tools::convertToVector3(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText())));
+				light->setSpotExponent(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText())));
+				light->setSpotCutOff(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText())));
 				light->setEnabled(true);
 				lightPresets[typeId] = light;
 			}

@@ -295,7 +295,7 @@ void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const
 
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx)
 {
-	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue()->toString());
+	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue()->toWString());
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
 	switch (boundingVolumeTypeId) {
 	case (0):
@@ -331,8 +331,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 		view->applyBoundingVolumeSphere(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->toString())
+			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->toWString())
 		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
@@ -345,9 +345,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 		view->applyBoundingVolumeCapsule(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue()->toString()),
-			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->toString()),
-			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->toString())
+			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->toWString()),
+			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->toWString())
 		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
@@ -360,8 +360,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 		view->applyBoundingVolumeAabb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->toString()),
-			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->toString())
+			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->toWString())
 		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
@@ -372,9 +372,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 {
 	try {
 		auto rotations = new Transformations();
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
 		rotations->update();
 		Vector3 xAxis;
 		Vector3 yAxis;
@@ -383,11 +383,11 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue()->toString()),
+			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue()->toWString()),
 			xAxis,
 			yAxis,
 			zAxis,
-			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->toString())
+			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->toWString())
 		);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
@@ -399,7 +399,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(Le
 	view->applyBoundingVolumeConvexMesh(
 		entity,
 		idx,
-		boundingvolumeConvexMeshFile[idx]->getController()->getValue()->toString()->getCPPWString()
+		boundingvolumeConvexMeshFile[idx]->getController()->getValue()->toWString()
 	);
 }
 
@@ -432,20 +432,20 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
 				if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_apply_")) {
-					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_sphere_apply_")) {
-					onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_capsule_apply_")) {
-					onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_obb_apply_")) {
-					onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_aabb_apply_")) {
-					onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_convexmesh_apply_")) {
-					onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				}
 				if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_convexmesh_file_")) {
-					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(new String(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1))));
+					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else {
 					_Console::println(
 						wstring(

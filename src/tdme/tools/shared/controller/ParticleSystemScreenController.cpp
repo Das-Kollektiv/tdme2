@@ -400,18 +400,18 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				goto end_switch1;;
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
-				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue()->toString()));
-				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue()->toString()));
+				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue()->toWString()));
+				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue()->toWString()));
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->equals(u"1"_j));
 				try {
-					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toString()->getCPPWString());
+					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toWString());
 				} catch (_Exception& exception) {
 					view->getPopUpsViews()->getInfoDialogScreenController()->show(L"Error", L"An error occurred: " + StringConverter::toWideString(string(exception.what())));
 				}
 				goto end_switch1;;
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
-				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue()->toString()));
+				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue()->toWString()));
 				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue()->equals(u"1"_j));
 				goto end_switch1;;
 			}
@@ -436,20 +436,22 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 
 void ParticleSystemScreenController::onParticleSystemTypeApply()
 {
-	auto particleSystemTypeString = particleSystemTypes->getController()->getValue()->toString();
+	auto particleSystemTypeString = particleSystemTypes->getController()->getValue()->toWString();
 	particleSystemType->getActiveConditions()->removeAll();
-	particleSystemType->getActiveConditions()->add(particleSystemTypeString->getCPPWString());
-	if (particleSystemTypeString->equals(TYPE_NONE) == true) {
+	particleSystemType->getActiveConditions()->add(particleSystemTypeString);
+	if (particleSystemTypeString == TYPE_NONE) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::NONE);
-	} else if (particleSystemTypeString->equals(TYPE_OBJECTPARTICLESYSTEM) == true) {
+	} else
+	if (particleSystemTypeString == TYPE_OBJECTPARTICLESYSTEM) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM);
-	} else if (particleSystemTypeString->equals(TYPE_POINTSPARTICLESYSTEM) == true) {
+	} else
+	if (particleSystemTypeString == TYPE_POINTSPARTICLESYSTEM) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM);
 	} else {
 		_Console::println(
 			wstring(
 				L"ParticleSystemScreenController::onParticleSystemTypeApply(): unknown particle system type '" +
-				particleSystemTypeString->getCPPWString() +
+				particleSystemTypeString +
 				L"'"
 			)
 		);
@@ -461,26 +463,31 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 void ParticleSystemScreenController::onParticleSystemEmitterApply()
 {
 	auto particleSystem = view->getEntity()->getParticleSystem();
-	auto particleSystemEmitterString = particleSystemEmitters->getController()->getValue()->toString();
+	auto particleSystemEmitterString = particleSystemEmitters->getController()->getValue()->toWString();
 	particleSystemEmitter->getActiveConditions()->removeAll();
-	particleSystemEmitter->getActiveConditions()->add(particleSystemEmitterString->getCPPWString());
-	if (particleSystemEmitterString->equals(EMITTER_NONE) == true) {
+	particleSystemEmitter->getActiveConditions()->add(particleSystemEmitterString);
+	if (particleSystemEmitterString == EMITTER_NONE) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::NONE);
-	} else if (particleSystemEmitterString->equals(EMITTER_POINTPARTICLEEMITTER) == true) {
+	} else
+	if (particleSystemEmitterString == EMITTER_POINTPARTICLEEMITTER) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER);
-	} else if (particleSystemEmitterString->equals(EMITTER_BOUNDINGBOXPARTICLEEMITTER) == true) {
+	} else
+	if (particleSystemEmitterString == EMITTER_BOUNDINGBOXPARTICLEEMITTER) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER);
-	} else if (particleSystemEmitterString->equals(EMITTER_CIRCLEPARTICLEEMITTER) == true) {
+	} else
+	if (particleSystemEmitterString == EMITTER_CIRCLEPARTICLEEMITTER) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER);
-	} else if (particleSystemEmitterString->equals(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY) == true) {
+	} else
+	if (particleSystemEmitterString == EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY);
-	} else if (particleSystemEmitterString->equals(EMITTER_SPHEREPARTICLEEMITTER) == true) {
+	} else
+	if (particleSystemEmitterString == EMITTER_SPHEREPARTICLEEMITTER) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER);
 	} else {
 		_Console::println(
 			wstring(
 				L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
-				particleSystemEmitterString->getCPPWString() +
+				particleSystemEmitterString +
 				L"'"
 			)
 		);
@@ -506,16 +513,16 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_POINTPARTICLEEMITTER));
 					auto emitter = particleSystem->getPointParticleEmitter();
-					emitter->setCount(Tools::convertToInt(ppeCount->getController()->getValue()->toString()));
-					emitter->setLifeTime(Tools::convertToInt(ppeLifeTime->getController()->getValue()->toString()));
-					emitter->setLifeTimeRnd(Tools::convertToInt(ppeLifeTimeRnd->getController()->getValue()->toString()));
-					emitter->setMass(Tools::convertToFloat(ppeMass->getController()->getValue()->toString()));
-					emitter->setMassRnd(Tools::convertToFloat(ppeMassRnd->getController()->getValue()->toString()));
-					emitter->getPosition().set(Tools::convertToVector3(ppePosition->getController()->getValue()->toString()));
-					emitter->getVelocity().set(Tools::convertToVector3(ppeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd().set(Tools::convertToVector3(ppeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart().set(Tools::convertToColor4(ppeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd().set(Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toString()));
+					emitter->setCount(Tools::convertToInt(ppeCount->getController()->getValue()->toWString()));
+					emitter->setLifeTime(Tools::convertToInt(ppeLifeTime->getController()->getValue()->toWString()));
+					emitter->setLifeTimeRnd(Tools::convertToInt(ppeLifeTimeRnd->getController()->getValue()->toWString()));
+					emitter->setMass(Tools::convertToFloat(ppeMass->getController()->getValue()->toWString()));
+					emitter->setMassRnd(Tools::convertToFloat(ppeMassRnd->getController()->getValue()->toWString()));
+					emitter->getPosition().set(Tools::convertToVector3(ppePosition->getController()->getValue()->toWString()));
+					emitter->getVelocity().set(Tools::convertToVector3(ppeVelocity->getController()->getValue()->toWString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(ppeVelocityRnd->getController()->getValue()->toWString()));
+					emitter->getColorStart().set(Tools::convertToColor4(ppeColorStart->getController()->getValue()->toWString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(ppeColorEnd->getController()->getValue()->toWString()));
 					goto end_switch2;;
 				}
 			}
@@ -524,21 +531,21 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
 					auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-					emitter->setCount(Tools::convertToInt(bbpeCount->getController()->getValue()->toString()));
-					emitter->setLifeTime(Tools::convertToInt(bbpeLifeTime->getController()->getValue()->toString()));
-					emitter->setLifeTimeRnd(Tools::convertToInt(bbpeLifeTimeRnd->getController()->getValue()->toString()));
-					emitter->setMass(Tools::convertToFloat(bbpeMass->getController()->getValue()->toString()));
-					emitter->setMassRnd(Tools::convertToFloat(bbpeMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity().set(Tools::convertToVector3(bbpeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd().set(Tools::convertToVector3(bbpeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart().set(Tools::convertToColor4(bbpeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd().set(Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toString()));
-					emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toString()));
-					emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toString()));
+					emitter->setCount(Tools::convertToInt(bbpeCount->getController()->getValue()->toWString()));
+					emitter->setLifeTime(Tools::convertToInt(bbpeLifeTime->getController()->getValue()->toWString()));
+					emitter->setLifeTimeRnd(Tools::convertToInt(bbpeLifeTimeRnd->getController()->getValue()->toWString()));
+					emitter->setMass(Tools::convertToFloat(bbpeMass->getController()->getValue()->toWString()));
+					emitter->setMassRnd(Tools::convertToFloat(bbpeMassRnd->getController()->getValue()->toWString()));
+					emitter->getVelocity().set(Tools::convertToVector3(bbpeVelocity->getController()->getValue()->toWString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(bbpeVelocityRnd->getController()->getValue()->toWString()));
+					emitter->getColorStart().set(Tools::convertToColor4(bbpeColorStart->getController()->getValue()->toWString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toWString()));
+					emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toWString()));
+					emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toWString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					rotations->getTransformationsMatrix().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 					goto end_switch2;;
@@ -549,21 +556,21 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTER));
 					auto emitter = particleSystem->getCircleParticleEmitter();
-					emitter->setCount(Tools::convertToInt(cpeCount->getController()->getValue()->toString()));
-					emitter->setLifeTime(Tools::convertToInt(cpeLifeTime->getController()->getValue()->toString()));
-					emitter->setLifeTimeRnd(Tools::convertToInt(cpeLifeTimeRnd->getController()->getValue()->toString()));
-					emitter->setMass(Tools::convertToFloat(cpeMass->getController()->getValue()->toString()));
-					emitter->setMassRnd(Tools::convertToFloat(cpeMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity().set(Tools::convertToVector3(cpeVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd().set(Tools::convertToVector3(cpeVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart().set(Tools::convertToColor4(cpeColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd().set(Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toString()));
-					emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toString()));
-					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toString()));
+					emitter->setCount(Tools::convertToInt(cpeCount->getController()->getValue()->toWString()));
+					emitter->setLifeTime(Tools::convertToInt(cpeLifeTime->getController()->getValue()->toWString()));
+					emitter->setLifeTimeRnd(Tools::convertToInt(cpeLifeTimeRnd->getController()->getValue()->toWString()));
+					emitter->setMass(Tools::convertToFloat(cpeMass->getController()->getValue()->toWString()));
+					emitter->setMassRnd(Tools::convertToFloat(cpeMassRnd->getController()->getValue()->toWString()));
+					emitter->getVelocity().set(Tools::convertToVector3(cpeVelocity->getController()->getValue()->toWString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(cpeVelocityRnd->getController()->getValue()->toWString()));
+					emitter->getColorStart().set(Tools::convertToColor4(cpeColorStart->getController()->getValue()->toWString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toWString()));
+					emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toWString()));
+					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toWString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					Vector3 tmpVector3;
 					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
@@ -575,21 +582,21 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
 					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-					emitter->setCount(Tools::convertToInt(cpepvCount->getController()->getValue()->toString()));
-					emitter->setLifeTime(Tools::convertToInt(cpepvLifeTime->getController()->getValue()->toString()));
-					emitter->setLifeTimeRnd(Tools::convertToInt(cpepvLifeTimeRnd->getController()->getValue()->toString()));
-					emitter->setMass(Tools::convertToFloat(cpepvMass->getController()->getValue()->toString()));
-					emitter->setMassRnd(Tools::convertToFloat(cpepvMassRnd->getController()->getValue()->toString()));
-					emitter->setVelocity(Tools::convertToFloat(cpepvVelocity->getController()->getValue()->toString()));
-					emitter->setVelocityRnd(Tools::convertToFloat(cpepvVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart().set(Tools::convertToColor4(cpepvColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd().set(Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toString()));
-					emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toString()));
-					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toString()));
+					emitter->setCount(Tools::convertToInt(cpepvCount->getController()->getValue()->toWString()));
+					emitter->setLifeTime(Tools::convertToInt(cpepvLifeTime->getController()->getValue()->toWString()));
+					emitter->setLifeTimeRnd(Tools::convertToInt(cpepvLifeTimeRnd->getController()->getValue()->toWString()));
+					emitter->setMass(Tools::convertToFloat(cpepvMass->getController()->getValue()->toWString()));
+					emitter->setMassRnd(Tools::convertToFloat(cpepvMassRnd->getController()->getValue()->toWString()));
+					emitter->setVelocity(Tools::convertToFloat(cpepvVelocity->getController()->getValue()->toWString()));
+					emitter->setVelocityRnd(Tools::convertToFloat(cpepvVelocityRnd->getController()->getValue()->toWString()));
+					emitter->getColorStart().set(Tools::convertToColor4(cpepvColorStart->getController()->getValue()->toWString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toWString()));
+					emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toWString()));
+					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toWString()));
 					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toString()), OrientedBoundingBox::AABB_AXIS_X));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
 					rotations->update();
 					Vector3 tmpVector3;
 					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
@@ -601,17 +608,17 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				{
 					particleSystemEmitters->getController()->setValue(value->set(EMITTER_SPHEREPARTICLEEMITTER));
 					auto emitter = particleSystem->getSphereParticleEmitter();
-					emitter->setCount(Tools::convertToInt(speCount->getController()->getValue()->toString()));
-					emitter->setLifeTime(Tools::convertToInt(speLifeTime->getController()->getValue()->toString()));
-					emitter->setLifeTimeRnd(Tools::convertToInt(speLifeTimeRnd->getController()->getValue()->toString()));
-					emitter->setMass(Tools::convertToFloat(speMass->getController()->getValue()->toString()));
-					emitter->setMassRnd(Tools::convertToFloat(speMassRnd->getController()->getValue()->toString()));
-					emitter->getVelocity().set(Tools::convertToVector3(speVelocity->getController()->getValue()->toString()));
-					emitter->getVelocityRnd().set(Tools::convertToVector3(speVelocityRnd->getController()->getValue()->toString()));
-					emitter->getColorStart().set(Tools::convertToColor4(speColorStart->getController()->getValue()->toString()));
-					emitter->getColorEnd().set(Tools::convertToColor4(speColorEnd->getController()->getValue()->toString()));
-					emitter->getCenter().set(Tools::convertToVector3(speCenter->getController()->getValue()->toString()));
-					emitter->setRadius(Tools::convertToFloat(speRadius->getController()->getValue()->toString()));
+					emitter->setCount(Tools::convertToInt(speCount->getController()->getValue()->toWString()));
+					emitter->setLifeTime(Tools::convertToInt(speLifeTime->getController()->getValue()->toWString()));
+					emitter->setLifeTimeRnd(Tools::convertToInt(speLifeTimeRnd->getController()->getValue()->toWString()));
+					emitter->setMass(Tools::convertToFloat(speMass->getController()->getValue()->toWString()));
+					emitter->setMassRnd(Tools::convertToFloat(speMassRnd->getController()->getValue()->toWString()));
+					emitter->getVelocity().set(Tools::convertToVector3(speVelocity->getController()->getValue()->toWString()));
+					emitter->getVelocityRnd().set(Tools::convertToVector3(speVelocityRnd->getController()->getValue()->toWString()));
+					emitter->getColorStart().set(Tools::convertToColor4(speColorStart->getController()->getValue()->toWString()));
+					emitter->getColorEnd().set(Tools::convertToColor4(speColorEnd->getController()->getValue()->toWString()));
+					emitter->getCenter().set(Tools::convertToVector3(speCenter->getController()->getValue()->toWString()));
+					emitter->setRadius(Tools::convertToFloat(speRadius->getController()->getValue()->toWString()));
 					goto end_switch2;;
 				}
 			}

@@ -342,6 +342,15 @@ String* MutableString::toString()
 	return new String(data, 0, length_);
 }
 
+wstring MutableString::toWString()
+{
+	wstring string;
+	for(auto i = 0; i < length_; i++) {
+		string+= (*data)[i];
+	}
+	return string;
+}
+
 extern java::lang::Class* class_(const char16_t* c, int n);
 
 java::lang::Class* MutableString::class_()

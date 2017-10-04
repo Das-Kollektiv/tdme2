@@ -159,7 +159,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toString()));
+		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
 		if (entity != nullptr) {
 			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
 		}
@@ -168,7 +168,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 
 void LevelEditorEntityLibraryScreenController::onEditEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
 	if (entity == nullptr)
 		return;
 
@@ -218,7 +218,7 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
 	if (entity == nullptr)
 		return;
 
@@ -230,7 +230,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
 	if (entity == nullptr)
 		return;
 
@@ -313,7 +313,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else {
-			_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->toString()->getCPPWString());
+			_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->toWString());
 		}
 		node->getController()->setValue(dropdownEntityActionReset);
 	} else {
