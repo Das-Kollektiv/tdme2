@@ -406,10 +406,10 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 		material = Material::getDefaultMaterial();
 
 	Object3DGroup::setupTextures(renderer, object3DGroup, facesEntityIdx);
-	renderer->setMaterialAmbient(material->getAmbientColor()->getArray());
-	renderer->setMaterialDiffuse(material->getDiffuseColor()->getArray());
-	renderer->setMaterialSpecular(material->getSpecularColor()->getArray());
-	renderer->setMaterialEmission(material->getEmissionColor()->getArray());
+	renderer->setMaterialAmbient(material->getAmbientColor().getArray());
+	renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
+	renderer->setMaterialSpecular(material->getSpecularColor().getArray());
+	renderer->setMaterialEmission(material->getEmissionColor().getArray());
 	renderer->setMaterialShininess(material->getShininess());
 	renderer->onUpdateMaterial();
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);

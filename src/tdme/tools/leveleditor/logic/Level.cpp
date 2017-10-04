@@ -113,9 +113,9 @@ Transformations* Level::transformations = new Transformations();
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getLightCount(); i++) {
-		engine->getLightAt(i)->getAmbient()->set(*level->getLightAt(i)->getAmbient());
-		engine->getLightAt(i)->getDiffuse()->set(*level->getLightAt(i)->getDiffuse());
-		engine->getLightAt(i)->getSpecular()->set(*level->getLightAt(i)->getSpecular());
+		engine->getLightAt(i)->getAmbient().set(*level->getLightAt(i)->getAmbient());
+		engine->getLightAt(i)->getDiffuse().set(*level->getLightAt(i)->getDiffuse());
+		engine->getLightAt(i)->getSpecular().set(*level->getLightAt(i)->getSpecular());
 		engine->getLightAt(i)->getPosition().set(level->getLightAt(i)->getPosition());
 		engine->getLightAt(i)->getSpotDirection().set(level->getLightAt(i)->getSpotDirection());
 		engine->getLightAt(i)->setSpotExponent(level->getLightAt(i)->getSpotExponent());

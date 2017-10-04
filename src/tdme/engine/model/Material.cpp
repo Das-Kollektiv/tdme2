@@ -42,24 +42,24 @@ const wstring& Material::getId()
 	return id;
 }
 
-Color4* Material::getAmbientColor()
+Color4& Material::getAmbientColor()
 {
-	return &ambientColor;
+	return ambientColor;
 }
 
-Color4* Material::getDiffuseColor()
+Color4& Material::getDiffuseColor()
 {
-	return &diffuseColor;
+	return diffuseColor;
 }
 
-Color4* Material::getSpecularColor()
+Color4& Material::getSpecularColor()
 {
-	return &specularColor;
+	return specularColor;
 }
 
-Color4* Material::getEmissionColor()
+Color4& Material::getEmissionColor()
 {
-	return &emissionColor;
+	return emissionColor;
 }
 
 float Material::getShininess()

@@ -58,18 +58,18 @@ public:
 	/** 
 	 * @return ambient light
 	 */
-	Color4* getAmbient();
+	Color4& getAmbient();
 
 	/** 
 	 * Diffuse light 
 	 * @return diffuse light
 	 */
-	Color4* getDiffuse();
+	Color4& getDiffuse();
 
 	/** 
 	 * @return specular light
 	 */
-	Color4* getSpecular();
+	Color4& getSpecular();
 
 	/** 
 	 * @return position of light

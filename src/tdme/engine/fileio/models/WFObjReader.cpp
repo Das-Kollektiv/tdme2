@@ -334,29 +334,29 @@ void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
-				current->getAmbientColor()->set(r, g, b, alpha);
+				current->getAmbientColor().set(r, g, b, alpha);
 			} else
 			if (command == L"kd") {
 				t.tokenize(arguments, L" ");
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
-				current->getDiffuseColor()->set(r, g, b, alpha);
+				current->getDiffuseColor().set(r, g, b, alpha);
 			} else
 			if (command == L"ks") {
 				t.tokenize(arguments, L" ");
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
-				current->getSpecularColor()->set(r, g, b, alpha);
+				current->getSpecularColor().set(r, g, b, alpha);
 			} else
 			if (command == L"tr") {
 				alpha = Float::parseFloat(arguments);
-				current->getDiffuseColor()->setAlpha(alpha);
+				current->getDiffuseColor().setAlpha(alpha);
 			} else
 			if (command == L"d") {
 				alpha = Float::parseFloat(arguments);
-				current->getDiffuseColor()->setAlpha(alpha);
+				current->getDiffuseColor().setAlpha(alpha);
 			}
 		}
 	}

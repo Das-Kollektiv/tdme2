@@ -62,19 +62,19 @@ void Light::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4* Light::getAmbient()
+Color4& Light::getAmbient()
 {
-	return &ambient;
+	return ambient;
 }
 
-Color4* Light::getDiffuse()
+Color4& Light::getDiffuse()
 {
-	return &diffuse;
+	return diffuse;
 }
 
-Color4* Light::getSpecular()
+Color4& Light::getSpecular()
 {
-	return &specular;
+	return specular;
 }
 
 Vector4& Light::getPosition()

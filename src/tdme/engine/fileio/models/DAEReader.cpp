@@ -1150,7 +1150,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getDiffuseColor()->set(colorArray);
+							material->getDiffuseColor().set(colorArray);
 						}
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
 							xmlDiffuseTextureId = StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture")));
@@ -1180,7 +1180,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getAmbientColor()->set(colorArray);
+							material->getAmbientColor().set(colorArray);
 						}
 					}
 					for (auto xmlEmission: getChildrenByTagName(xmlTechniqueNode, "emission")) {
@@ -1191,7 +1191,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getEmissionColor()->set(colorArray);
+							material->getEmissionColor().set(colorArray);
 						}
 					}
 					auto hasSpecularMap = false;
@@ -1225,12 +1225,12 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getSpecularColor()->set(colorArray);
+							material->getSpecularColor().set(colorArray);
 							hasSpecularColor = true;
 						}
 					}
 					if (hasSpecularMap == true && hasSpecularColor == false) {
-						material->getSpecularColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+						material->getSpecularColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 					}
 					for (auto xmlShininess: getChildrenByTagName(xmlTechniqueNode, "shininess"))
 					for (auto xmlFloat: getChildrenByTagName(xmlShininess, "float")) {
@@ -1300,18 +1300,18 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 		material->setDisplacementTexture(pathName, xmlDisplacementFilename);
 	}
 
-	if (authoringTool == DAEReader_AuthoringTool::BLENDER && material->getAmbientColor()->equals(BLENDER_AMBIENT_NONE)) {
-		material->getAmbientColor()->set(
-			material->getDiffuseColor()->getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-			material->getDiffuseColor()->getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-			material->getDiffuseColor()->getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+	if (authoringTool == DAEReader_AuthoringTool::BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
+		material->getAmbientColor().set(
+			material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+			material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+			material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
 			1.0f
 		);
-		material->getDiffuseColor()->set(
-			material->getDiffuseColor()->getRed() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor()->getGreen() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor()->getBlue() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor()->getAlpha()
+		material->getDiffuseColor().set(
+			material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
+			material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
+			material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
+			material->getDiffuseColor().getAlpha()
 		);
 	}
 

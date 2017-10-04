@@ -706,8 +706,8 @@ void LevelEditorView::initialize()
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
 	auto light0 = engine->getLightAt(0);
-	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getDiffuse()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getDiffuse().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition().set(0.0f, 20.0f, 0.0f, 1.0f);
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
@@ -886,9 +886,9 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
 	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
 	auto groundPlateMaterial = new Material(L"ground");
-	groundPlateMaterial->getDiffuseColor()->setAlpha(0.75f);
+	groundPlateMaterial->getDiffuseColor().setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseTexture(L"resources/tools/leveleditor/textures", L"groundplate.png");
-	groundPlateMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
+	groundPlateMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*groundPlate->getMaterials())[L"ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, L"ground", L"ground");
 	vector<Vector3> groundVertices;
@@ -1461,9 +1461,9 @@ void LevelEditorView::applyLight(int32_t i, Color4* ambient, Color4* diffuse, Co
 	level->getLightAt(i)->setSpotExponent(spotExponent);
 	level->getLightAt(i)->setSpotCutOff(spotCutoff);
 	level->getLightAt(i)->setEnabled(enabled);
-	engine->getLightAt(i)->getAmbient()->set(ambient->getRed(), ambient->getGreen(), ambient->getBlue(), ambient->getAlpha());
-	engine->getLightAt(i)->getDiffuse()->set(diffuse->getRed(), diffuse->getGreen(), diffuse->getBlue(), diffuse->getAlpha());
-	engine->getLightAt(i)->getSpecular()->set(specular->getRed(), specular->getGreen(), specular->getBlue(), specular->getAlpha());
+	engine->getLightAt(i)->getAmbient().set(ambient->getRed(), ambient->getGreen(), ambient->getBlue(), ambient->getAlpha());
+	engine->getLightAt(i)->getDiffuse().set(diffuse->getRed(), diffuse->getGreen(), diffuse->getBlue(), diffuse->getAlpha());
+	engine->getLightAt(i)->getSpecular().set(specular->getRed(), specular->getGreen(), specular->getBlue(), specular->getAlpha());
 	engine->getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
 	engine->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	engine->getLightAt(i)->setLinearAttenuation(linearAttenuation);

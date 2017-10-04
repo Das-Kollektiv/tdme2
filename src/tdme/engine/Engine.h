@@ -11,6 +11,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
@@ -97,7 +98,7 @@ public: /* protected */
 
 private:
 	array<Light, 8> lights {  };
-	Color4* sceneColor {  };
+	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
 	map<wstring, Entity*> entitiesById {  };
@@ -267,7 +268,7 @@ public:
 	/** 
 	 * @return scene / background color
 	 */
-	Color4* getSceneColor();
+	Color4& getSceneColor();
 
 	/** 
 	 * @return entity count

@@ -77,10 +77,10 @@ void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileN
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)
 {
 	os->writeString(m->getId());
-	os->writeFloatArray(m->getAmbientColor()->getArray());
-	os->writeFloatArray(m->getDiffuseColor()->getArray());
-	os->writeFloatArray(m->getSpecularColor()->getArray());
-	os->writeFloatArray(m->getEmissionColor()->getArray());
+	os->writeFloatArray(m->getAmbientColor().getArray());
+	os->writeFloatArray(m->getDiffuseColor().getArray());
+	os->writeFloatArray(m->getSpecularColor().getArray());
+	os->writeFloatArray(m->getEmissionColor().getArray());
 	os->writeFloat(m->getShininess());
 	os->writeString(m->getDiffuseTexturePathName());
 	os->writeString(m->getDiffuseTextureFileName());

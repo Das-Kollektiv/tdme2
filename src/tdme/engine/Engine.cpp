@@ -116,7 +116,7 @@ Engine::Engine()
 	height = 0;
 	timing = new Timing();
 	camera = nullptr;
-	sceneColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
@@ -293,7 +293,7 @@ Object3DVBORenderer* Engine::getObject3DVBORenderer()
 	return object3DVBORenderer;
 }
 
-Color4* Engine::getSceneColor()
+Color4& Engine::getSceneColor()
 {
 	return sceneColor;
 }
@@ -550,7 +550,7 @@ void Engine::display()
 		FrameBuffer::disableFrameBuffer();
 	}
 	camera->update(width, height);
-	Engine::renderer->setClearColor(sceneColor->getRed(), sceneColor->getGreen(), sceneColor->getBlue(), sceneColor->getAlpha());
+	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 	renderer->setMaterialEnabled();
 	if (lightingShader != nullptr) {

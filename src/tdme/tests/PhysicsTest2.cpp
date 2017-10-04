@@ -81,9 +81,9 @@ void PhysicsTest2::initialize()
 	cam->getLookFrom().set(0.0f, 30.0f, 30.0f);
 	cam->getLookAt().set(0.0f, 0.0f, 0.0f);
 	auto light0 = engine->getLightAt(0);
-	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
-	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
+	light0->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
 	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
 	light0->setConstantAttenuation(0.5f);
@@ -94,8 +94,8 @@ void PhysicsTest2::initialize()
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(30.0f, 1.0f, 30.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, L"ground_model");
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D(L"ground", groundModel);
 	entity->getTranslation().setY(-1.0f);
 	entity->update();
@@ -103,8 +103,8 @@ void PhysicsTest2::initialize()
 	world->addStaticRigidBody(L"ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
 	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor()->set(0.8f, 0.5f, 0.5f, 1.0f);
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor()->set(1.0f, 0.0f, 0.0f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
+	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D(L"box" + to_wstring(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);

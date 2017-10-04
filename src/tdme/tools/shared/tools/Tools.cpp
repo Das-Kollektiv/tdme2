@@ -198,9 +198,9 @@ int32_t Tools::convertToIntSilent(String* text)
 
 void Tools::setDefaultLight(Light* light)
 {
-	light->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
-	light->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	light->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
+	light->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
+	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
 	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()));
 	light->setConstantAttenuation(0.5f);
@@ -232,10 +232,10 @@ void Tools::oseDispose()
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
-	osEngine->getSceneColor()->set(0.5f, 0.5f, 0.5f, 1.0f);
+	osEngine->getSceneColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	osEngine->display();
 	// osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
-	osEngine->getSceneColor()->set(0.8f, 0.0f, 0.0f, 1.0f);
+	osEngine->getSceneColor().set(0.8f, 0.0f, 0.0f, 1.0f);
 	osEngine->display();
 	// osEngine->makeScreenshot(u"tmp"_j, L"selected_" + model->getThumbnail());
 	osEngine->reset();
@@ -255,7 +255,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	auto ground = new Model(L"ground", L"ground", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material(L"ground");
-	groundMaterial->getSpecularColor()->set(0.0f, 0.0f, 0.0f, 1.0f);
+	groundMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
 	(*ground->getMaterials())[L"ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, L"ground", L"ground");
 	vector<Vector3> groundVertices;
@@ -323,9 +323,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	}
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
-	light0->getAmbient()->set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getDiffuse()->set(0.5f, 0.5f, 0.5f, 1.0f);
-	light0->getSpecular()->set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
+	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
+	light0->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getPosition().set(entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f), entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f), -entityBoundingBox->getMin().getZ() * 4.0f, 1.0f);
 	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
 	light0->setConstantAttenuation(0.5f);

@@ -63,22 +63,22 @@ public:
 	/** 
 	 * @return ambient color
 	 */
-	Color4* getAmbientColor();
+	Color4& getAmbientColor();
 
 	/** 
 	 * @return diffuse color
 	 */
-	Color4* getDiffuseColor();
+	Color4& getDiffuseColor();
 
 	/** 
 	 * @return specular color
 	 */
-	Color4* getSpecularColor();
+	Color4& getSpecularColor();
 
 	/** 
 	 * @return emission color
 	 */
-	Color4* getEmissionColor();
+	Color4& getEmissionColor();
 
 	/** 
 	 * @return shininess
