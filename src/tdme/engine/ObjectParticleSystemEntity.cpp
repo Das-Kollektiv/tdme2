@@ -85,12 +85,12 @@ void ObjectParticleSystemEntity::dispose()
 	ObjectParticleSystemEntityInternal::dispose();
 }
 
-Color4* ObjectParticleSystemEntity::getEffectColorAdd()
+Color4& ObjectParticleSystemEntity::getEffectColorAdd()
 {
 	return ObjectParticleSystemEntityInternal::getEffectColorAdd();
 }
 
-Color4* ObjectParticleSystemEntity::getEffectColorMul()
+Color4& ObjectParticleSystemEntity::getEffectColorMul()
 {
 	return ObjectParticleSystemEntityInternal::getEffectColorMul();
 }

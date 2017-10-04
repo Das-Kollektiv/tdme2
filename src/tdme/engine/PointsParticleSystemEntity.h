@@ -7,6 +7,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -57,8 +58,8 @@ public:
 	PointsParticleSystemEntity(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 public:
 	virtual void dispose();
-	virtual Color4* getEffectColorAdd();
-	virtual Color4* getEffectColorMul();
+	virtual Color4& getEffectColorAdd();
+	virtual Color4& getEffectColorMul();
 	virtual const wstring& getId();
 	virtual Vector3& getPivot();
 	virtual Rotations* getRotations();

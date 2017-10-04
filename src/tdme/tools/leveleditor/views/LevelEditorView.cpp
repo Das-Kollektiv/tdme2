@@ -759,15 +759,15 @@ void LevelEditorView::dispose()
 void LevelEditorView::setHighlightObjectColorEffect(Entity* object)
 {
 	auto red = objectColors[L"red"];
-	object->getEffectColorAdd()->set(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f);
-	object->getEffectColorMul()->set(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f);
+	object->getEffectColorAdd().set(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f);
+	object->getEffectColorMul().set(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f);
 }
 
 void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 {
 	auto color = objectColors[L"none"];
-	object->getEffectColorAdd()->set(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f);
-	object->getEffectColorMul()->set(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f);
+	object->getEffectColorAdd().set(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f);
+	object->getEffectColorMul().set(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f);
 	auto levelEditorObject = level->getObjectById(object->getId());
 	if (levelEditorObject == nullptr)
 		return;
@@ -780,8 +780,8 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 		auto objectColorIt = objectColors.find(colorProperty->getValue());
 		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
 		if (objectColor != nullptr) {
-			object->getEffectColorAdd()->set(object->getEffectColorAdd()->getRed() + objectColor->colorAddR, object->getEffectColorAdd()->getGreen() + objectColor->colorAddG, object->getEffectColorAdd()->getBlue() + objectColor->colorAddB, 0.0f);
-			object->getEffectColorMul()->set(object->getEffectColorMul()->getRed() * objectColor->colorMulR, object->getEffectColorMul()->getGreen() * objectColor->colorMulG, object->getEffectColorMul()->getBlue() * objectColor->colorMulB, 1.0f);
+			object->getEffectColorAdd().set(object->getEffectColorAdd().getRed() + objectColor->colorAddR, object->getEffectColorAdd().getGreen() + objectColor->colorAddG, object->getEffectColorAdd().getBlue() + objectColor->colorAddB, 0.0f);
+			object->getEffectColorMul().set(object->getEffectColorMul().getRed() * objectColor->colorMulR, object->getEffectColorMul().getGreen() * objectColor->colorMulG, object->getEffectColorMul().getBlue() * objectColor->colorMulB, 1.0f);
 		}
 	}
 }

@@ -70,8 +70,8 @@ public:
 	bool isEnabled() override;
 	bool isActive() override;
 	void setEnabled(bool enabled) override;
-	Color4* getEffectColorMul() override;
-	Color4* getEffectColorAdd() override;
+	Color4& getEffectColorMul() override;
+	Color4& getEffectColorAdd() override;
 	bool isPickable() override;
 	void setPickable(bool pickable) override;
 	bool isAutoEmit() override;

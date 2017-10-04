@@ -40,23 +40,23 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
+void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates)
 {
 	this->object3DVBORenderer = object3DVBORenderer;
 	this->batchVBORenderers.clear();
 	this->model = model;
 	this->object3DGroup = object3DGroup;
 	this->facesEntityIdx = facesEntityIdx;
-	this->effectColorAdd.set(*effectColorAdd);
-	this->effectColorMul.set(*effectColorMul);
+	this->effectColorAdd.set(effectColorAdd);
+	this->effectColorMul.set(effectColorMul);
 	this->material = material;
 	this->textureCoordinates = textureCoordinates;
 }
 
-const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4* effectColorAdd, Color4* effectColorMul, Material* material, bool textureCoordinates)
+const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates)
 {
-	auto& efcmData = effectColorMul->getArray();
-	auto& efcaData = effectColorAdd->getArray();
+	auto& efcmData = effectColorMul.getArray();
+	auto& efcaData = effectColorAdd.getArray();
 	wstring key =
 		model->getId() +
 		L"," +

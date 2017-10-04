@@ -90,14 +90,14 @@ void PointsParticleSystemEntityInternal::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4* PointsParticleSystemEntityInternal::getEffectColorMul()
+Color4& PointsParticleSystemEntityInternal::getEffectColorMul()
 {
-	return &effectColorMul;
+	return effectColorMul;
 }
 
-Color4* PointsParticleSystemEntityInternal::getEffectColorAdd()
+Color4& PointsParticleSystemEntityInternal::getEffectColorAdd()
 {
-	return &effectColorAdd;
+	return effectColorAdd;
 }
 
 bool PointsParticleSystemEntityInternal::isPickable()

@@ -107,14 +107,14 @@ void ObjectParticleSystemEntityInternal::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4* ObjectParticleSystemEntityInternal::getEffectColorMul()
+Color4& ObjectParticleSystemEntityInternal::getEffectColorMul()
 {
-	return &effectColorMul;
+	return effectColorMul;
 }
 
-Color4* ObjectParticleSystemEntityInternal::getEffectColorAdd()
+Color4& ObjectParticleSystemEntityInternal::getEffectColorAdd()
 {
-	return &effectColorAdd;
+	return effectColorAdd;
 }
 
 bool ObjectParticleSystemEntityInternal::isPickable()
@@ -198,8 +198,8 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		object->getTranslation().set(particle->position);
 		object->update();
 		object->setEnabled(true);
-		object->getEffectColorAdd()->set(effectColorAdd);
-		object->getEffectColorMul()->set(effectColorMul);
+		object->getEffectColorAdd().set(effectColorAdd);
+		object->getEffectColorMul().set(effectColorMul);
 		enabledObjects.push_back(object);
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
@@ -232,8 +232,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		if (particle->mass > MathTools::EPSILON)
 			particle->velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
-		object->getEffectColorAdd()->set(effectColorAdd);
-		object->getEffectColorMul()->set(effectColorMul);
+		object->getEffectColorAdd().set(effectColorAdd);
+		object->getEffectColorMul().set(effectColorMul);
 		object->getTranslation().add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {

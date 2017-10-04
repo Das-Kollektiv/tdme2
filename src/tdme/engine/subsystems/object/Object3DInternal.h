@@ -7,6 +7,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/Object3DBase.h>
@@ -81,13 +82,13 @@ public:
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	virtual Color4* getEffectColorMul();
+	virtual Color4& getEffectColorMul();
 
 	/** 
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	virtual Color4* getEffectColorAdd();
+	virtual Color4& getEffectColorAdd();
 
 	/** 
 	 * @return bounding box

@@ -73,12 +73,12 @@ BoundingBox* Object3D::getBoundingBoxTransformed()
 	return Object3DInternal::getBoundingBoxTransformed();
 }
 
-Color4* Object3D::getEffectColorAdd()
+Color4& Object3D::getEffectColorAdd()
 {
 	return Object3DInternal::getEffectColorAdd();
 }
 
-Color4* Object3D::getEffectColorMul()
+Color4& Object3D::getEffectColorMul()
 {
 	return Object3DInternal::getEffectColorMul();
 }

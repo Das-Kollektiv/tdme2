@@ -83,14 +83,14 @@ void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 	this->dynamicShadowing = dynamicShadowing;
 }
 
-Color4* Object3DInternal::getEffectColorMul()
+Color4& Object3DInternal::getEffectColorMul()
 {
-	return &effectColorMul;
+	return effectColorMul;
 }
 
-Color4* Object3DInternal::getEffectColorAdd()
+Color4& Object3DInternal::getEffectColorAdd()
 {
-	return &effectColorAdd;
+	return effectColorAdd;
 }
 
 BoundingBox* Object3DInternal::getBoundingBox()

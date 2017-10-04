@@ -205,8 +205,8 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	FacesEntity* facesEntity = nullptr;
 	auto depthBuffer = false;
-	auto effectColorAdd = object3D->getEffectColorAdd();
-	auto effectColorMul = object3D->getEffectColorMul();
+	auto& effectColorAdd = object3D->getEffectColorAdd();
+	auto& effectColorMul = object3D->getEffectColorMul();
 	Material* material = nullptr;
 	auto textureCoordinates = false;
 	Vector3 transformedVector;
@@ -448,10 +448,10 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
 
-const wstring Object3DVBORenderer::createPseKey(Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort)
+const wstring Object3DVBORenderer::createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort)
 {
-	auto& efcaData = effectColorAdd->getArray();
-	auto& efcmData = effectColorMul->getArray();
+	auto& efcaData = effectColorAdd.getArray();
+	auto& efcmData = effectColorMul.getArray();
 	wstring key =
 		to_wstring(efcmData[0]) +
 		L"," +
@@ -522,8 +522,8 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 
 			psePointBatchVBORenderer->addPoint(&point);
 		}
-		renderer->setEffectColorAdd(currentPse->getEffectColorAdd()->getArray());
-		renderer->setEffectColorMul(currentPse->getEffectColorMul()->getArray());
+		renderer->setEffectColorAdd(currentPse->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(currentPse->getEffectColorMul().getArray());
 		renderer->onUpdateEffect();
 		depthBuffer = currentPse->isPickable();
 		if (depthBuffer) {

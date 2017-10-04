@@ -70,13 +70,13 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	virtual Color4* getEffectColorMul() = 0;
+	virtual Color4& getEffectColorMul() = 0;
 
 	/** 
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	virtual Color4* getEffectColorAdd() = 0;
+	virtual Color4& getEffectColorAdd() = 0;
 
 	/** 
 	 * @return particle emitter

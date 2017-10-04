@@ -9,6 +9,7 @@
 #include <fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -139,7 +140,7 @@ private:
 	 * @param depthBuffer
 	 * @param sort
 	 */
-	static const wstring createPseKey(Color4* effectColorAdd, Color4* effectColorMul, bool depthBuffer, bool sort);
+	static const wstring createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort);
 
 public:
 

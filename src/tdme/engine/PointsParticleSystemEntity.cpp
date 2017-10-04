@@ -78,12 +78,12 @@ void PointsParticleSystemEntity::dispose()
 	PointsParticleSystemEntityInternal::dispose();
 }
 
-Color4* PointsParticleSystemEntity::getEffectColorAdd()
+Color4& PointsParticleSystemEntity::getEffectColorAdd()
 {
 	return PointsParticleSystemEntityInternal::getEffectColorAdd();
 }
 
-Color4* PointsParticleSystemEntity::getEffectColorMul()
+Color4& PointsParticleSystemEntity::getEffectColorMul()
 {
 	return PointsParticleSystemEntityInternal::getEffectColorMul();
 }

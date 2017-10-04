@@ -180,7 +180,7 @@ void PhysicsTest1::initialize()
 	world->addStaticRigidBody(L"far", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
 	entity = new Object3D(L"near", nearFarModel);
 	entity->getTranslation().addZ(-9.0f);
-	entity->getEffectColorMul()->set(1.0f, 1.0f, 1.0f, 0.0f);
+	entity->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 0.0f);
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody(L"near", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
