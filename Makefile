@@ -361,6 +361,7 @@ SRCS = \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
+	src/tdme/utils/Properties.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \

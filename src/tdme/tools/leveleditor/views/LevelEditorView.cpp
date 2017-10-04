@@ -5,8 +5,6 @@
 #include <vector>
 
 #include <java/lang/Character.h>
-#include <java/lang/String.h>
-#include <java/util/Properties.h>
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
@@ -63,6 +61,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Float.h>
+#include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_ArrayList.h>
@@ -75,12 +74,10 @@ using std::vector;
 using std::to_wstring;
 using std::wstring;
 
+using java::lang::Character;
+
 using tdme::tools::leveleditor::views::LevelEditorView;
 
-using java::lang::Character;
-using java::lang::String;
-
-using java::util::Properties;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -136,6 +133,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Float;
+using tdme::utils::Properties;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_ArrayList;
@@ -672,14 +670,12 @@ void LevelEditorView::unselectLightPresets()
 void LevelEditorView::loadSettings()
 {
 	try {
-		Object* tmp;
-		auto settings = new Properties();
-		vector<wstring> lines;
-		settings->load(L"settings", L"leveleditor.properties");
-		gridEnabled = (tmp = dynamic_cast< Object* >(settings->get(u"grid.enabled"_j))) != nullptr ? tmp->equals(u"true"_j) == true : true;
-		gridY = (tmp = dynamic_cast< Object* >(settings->get(u"grid.y"_j))) != nullptr ? Float::parseFloat(tmp->toString()->getCPPWString()) : 0.0f;
-		levelEditorScreenController->getMapPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"map.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString()->getCPPWString() : L".");
+		Properties settings;
+		settings.load(L"settings", L"leveleditor.properties");
+		gridEnabled = settings.get(L"grid.enabled", L"true") == L"true";
+		gridY = Float::parseFloat(settings.get(L"grid.y", L"0.0"));
+		levelEditorScreenController->getMapPath()->setPath(settings.get(L"map.path", L"."));
+		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -738,12 +734,12 @@ void LevelEditorView::deactivate()
 void LevelEditorView::storeSettings()
 {
 	try {
-		auto settings = new Properties();
-		settings->put(u"grid.enabled"_j, gridEnabled == true ? u"true"_j : u"false"_j);
-		settings->put(u"grid.y"_j, String::valueOf(gridY));
-		settings->put(u"map.path"_j, new String(levelEditorScreenController->getMapPath()->getPath()));
-		settings->put(u"model.path"_j, new String(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath()));
-		settings->store(L"settings", L"leveleditor.properties");
+		Properties settings;
+		settings.put(L"grid.enabled", gridEnabled == true ? L"true" : L"false");
+		settings.put(L"grid.y", to_wstring(gridY));
+		settings.put(L"map.path", levelEditorScreenController->getMapPath()->getPath());
+		settings.put(L"model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+		settings.store(L"settings", L"leveleditor.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));

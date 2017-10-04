@@ -2,9 +2,6 @@
 
 #include <string>
 
-#include <java/lang/CharSequence.h>
-#include <java/lang/String.h>
-#include <java/util/Properties.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/PartitionNone.h>
@@ -37,15 +34,12 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
+#include <tdme/utils/Properties.h>
 #include "../../../engine/subsystems/object/ModelStatistics.h"
 
 using std::wstring;
 
 using tdme::tools::shared::views::SharedModelViewerView;
-using java::lang::CharSequence;
-using java::lang::Object;
-using java::lang::String;
-using java::util::Properties;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
 using tdme::engine::PartitionNone;
@@ -75,6 +69,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
@@ -201,13 +196,12 @@ void SharedModelViewerView::onInitAdditionalScreens()
 void SharedModelViewerView::loadSettings()
 {
 	try {
-		Object* tmp;
-		auto settings = new Properties();
-		settings->load(L"settings", L"modelviewer.properties");
-		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		modelViewerScreenController->getModelPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
+		Properties settings;
+		settings.load(L"settings", L"modelviewer.properties");
+		entityDisplayView->setDisplayBoundingVolume(settings.get(L"display.boundingvolumes", L"false") == L"true");
+		entityDisplayView->setDisplayGroundPlate(settings.get(L"display.groundplate", L"false") == L"true");
+		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
+		modelViewerScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -247,12 +241,12 @@ void SharedModelViewerView::activate()
 void SharedModelViewerView::storeSettings()
 {
 	try {
-		auto settings = new Properties();
-		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-		settings->put(u"model.path"_j, new String(modelViewerScreenController->getModelPath()->getPath()));
-		settings->store(L"settings", L"modelviewer.properties");
+		Properties settings;
+		settings.put(L"display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? L"true" : L"false");
+		settings.put(L"display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? L"true" : L"false");
+		settings.put(L"display.shadowing", entityDisplayView->isDisplayShadowing() == true ? L"true" : L"false");
+		settings.put(L"model.path", modelViewerScreenController->getModelPath()->getPath());
+		settings.store(L"settings", L"modelviewer.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));

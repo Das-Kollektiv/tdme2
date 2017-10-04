@@ -3,7 +3,7 @@
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/util/Properties.h>
+
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -31,6 +31,7 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Exception.h>
@@ -39,8 +40,6 @@
 using std::wstring;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
-using java::lang::String;
-using java::util::Properties;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;
@@ -68,6 +67,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Properties;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
@@ -211,14 +211,13 @@ void SharedParticleSystemView::onInitAdditionalScreens()
 void SharedParticleSystemView::loadSettings()
 {
 	try {
-		Object* tmp = nullptr;
-		auto settings = new Properties();
-		settings->load(L"settings", L"particlesystem.properties");
-		entityDisplayView->setDisplayBoundingVolume((tmp = dynamic_cast< Object* >(settings->get(u"display.boundingvolumes"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayGroundPlate((tmp = dynamic_cast< Object* >(settings->get(u"display.groundplate"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		entityDisplayView->setDisplayShadowing((tmp = dynamic_cast< Object* >(settings->get(u"display.shadowing"_j))) != nullptr ? tmp->equals(u"true"_j) == true : false);
-		particleSystemScreenController->getParticleSystemPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"particlesystem.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
-		particleSystemScreenController->getModelPath()->setPath(((tmp = dynamic_cast< Object* >(settings->get(u"model.path"_j))) != nullptr ? tmp->toString() : u"."_j)->getCPPWString());
+		Properties settings;
+		settings.load(L"settings", L"particlesystem.properties");
+		entityDisplayView->setDisplayBoundingVolume(settings.get(L"display.boundingvolumes", L"false") == L"true");
+		entityDisplayView->setDisplayGroundPlate(settings.get(L"display.groundplate", L"false") == L"true");
+		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
+		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get(L"particlesystem.path", L"."));
+		particleSystemScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
 		_Console::println(string(exception.what()));
@@ -273,13 +272,13 @@ void SharedParticleSystemView::activate()
 void SharedParticleSystemView::storeSettings()
 {
 	try {
-		auto settings = new Properties();
-		settings->put(u"display.boundingvolumes"_j, entityDisplayView->isDisplayBoundingVolume() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.groundplate"_j, entityDisplayView->isDisplayGroundPlate() == true ? u"true"_j : u"false"_j);
-		settings->put(u"display.shadowing"_j, entityDisplayView->isDisplayShadowing() == true ? u"true"_j : u"false"_j);
-		settings->put(u"particlesystem.path"_j, new String(particleSystemScreenController->getParticleSystemPath()->getPath()));
-		settings->put(u"model.path"_j, new String(particleSystemScreenController->getModelPath()->getPath()));
-		settings->store(L"settings", L"particlesystem.properties");
+		Properties settings;
+		settings.put(L"display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? L"true" : L"false");
+		settings.put(L"display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? L"true" : L"false");
+		settings.put(L"display.shadowing", entityDisplayView->isDisplayShadowing() == true ? L"true" : L"false");
+		settings.put(L"particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());
+		settings.put(L"model.path", particleSystemScreenController->getModelPath()->getPath());
+		settings.store(L"settings", L"particlesystem.properties");
 	} catch (_Exception& exception) {
 		_Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
 		_Console::println(string(exception.what()));
