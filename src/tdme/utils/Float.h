@@ -11,7 +11,7 @@ using std::numeric_limits;
 using std::wstring;
 
 /**
- * Key
+ * Float
  * @author Andreas Drewke
  * @version $Id$
  */

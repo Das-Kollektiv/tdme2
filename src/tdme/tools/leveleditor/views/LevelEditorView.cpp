@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/Character.h>
-
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -60,6 +58,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/utils/Character.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
@@ -73,8 +72,6 @@ using std::remove;
 using std::vector;
 using std::to_wstring;
 using std::wstring;
-
-using java::lang::Character;
 
 using tdme::tools::leveleditor::views::LevelEditorView;
 
@@ -132,6 +129,7 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Character;
 using tdme::utils::Float;
 using tdme::utils::Properties;
 using tdme::utils::StringConverter;

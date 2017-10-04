@@ -6,6 +6,7 @@ namespace tdme {
 namespace utils {
 		class Buffer;
 		class ByteBuffer;
+		class Character;
 		class Float;
 		class FloatBuffer;
 		class IntBuffer;

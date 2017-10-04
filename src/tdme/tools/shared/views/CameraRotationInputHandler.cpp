@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
-#include <java/lang/Character.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
@@ -14,9 +13,9 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_ArrayList.h>
+#include <tdme/utils/Character.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using java::lang::Character;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
@@ -30,6 +29,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::_ArrayList;
+using tdme::utils::Character;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine) 
 {
