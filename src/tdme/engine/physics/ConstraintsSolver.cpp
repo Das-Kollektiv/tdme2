@@ -149,12 +149,12 @@ void ConstraintsSolver::computeVectorB(float dt)
 {
 	Matrix1x6 tmpMatrix1x6;
 	auto oneOverDT = 1.0f / dt;
-	errorValues.scale(oneOverDT, &b);
+	errorValues.scale(oneOverDT, b);
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = constraintsBodyIdxMap[i][0];
 		auto body2Idx = constraintsBodyIdxMap[i][1];
-		auto t1 = jacobianMatrices[i][0].multiply(&velocityVectors[body1Idx]) + jacobianMatrices[i][1].multiply(&velocityVectors[body2Idx]) * oneOverDT;
-		auto t2 = jacobianMatrices[i][0].multiply(&invInertiaMatrices[body1Idx], &tmpMatrix1x6)->multiply(&forcesVectors[body1Idx]) + jacobianMatrices[i][1].multiply(&invInertiaMatrices[body2Idx], &tmpMatrix1x6)->multiply(&forcesVectors[body2Idx]);
+		auto t1 = jacobianMatrices[i][0].multiply(velocityVectors[body1Idx]) + jacobianMatrices[i][1].multiply(velocityVectors[body2Idx]) * oneOverDT;
+		auto t2 = jacobianMatrices[i][0].multiply(invInertiaMatrices[body1Idx], tmpMatrix1x6).multiply(forcesVectors[body1Idx]) + jacobianMatrices[i][1].multiply(invInertiaMatrices[body2Idx], tmpMatrix1x6).multiply(forcesVectors[body2Idx]);
 		auto result = b.getValue(i) + t1 + t2;
 		b.setValue(i, result);
 	}
@@ -166,8 +166,8 @@ void ConstraintsSolver::computeMatrixB()
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = constraintsBodyIdxMap[i][0];
 		auto body2Idx = constraintsBodyIdxMap[i][1];
-		invInertiaMatrices[body1Idx].multiply(jacobianMatrices[i][0].getTranspose(&tmpVector6), &bVectors[i][0]);
-		invInertiaMatrices[body2Idx].multiply(jacobianMatrices[i][1].getTranspose(&tmpVector6), &bVectors[i][1]);
+		invInertiaMatrices[body1Idx].multiply(jacobianMatrices[i][0].getTranspose(tmpVector6), bVectors[i][0]);
+		invInertiaMatrices[body2Idx].multiply(jacobianMatrices[i][1].getTranspose(tmpVector6), bVectors[i][1]);
 	}
 }
 
@@ -181,8 +181,8 @@ void ConstraintsSolver::computeVectorA()
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = constraintsBodyIdxMap[i][0];
 		auto body2Idx = constraintsBodyIdxMap[i][1];
-		a[body1Idx].add(tmpVector6.set(&bVectors[i][0])->scale(lambda.getValue(i)));
-		a[body2Idx].add(tmpVector6.set(&bVectors[i][1])->scale(lambda.getValue(i)));
+		a[body1Idx].add(tmpVector6.set(bVectors[i][0]).scale(lambda.getValue(i)));
+		a[body2Idx].add(tmpVector6.set(bVectors[i][1]).scale(lambda.getValue(i)));
 	}
 }
 
@@ -194,20 +194,20 @@ void ConstraintsSolver::PGLCP()
 	}
 	computeVectorA();
 	for (auto i = 0; i < constraintsCount; i++) {
-		d[i] = jacobianMatrices[i][0].multiply(&bVectors[i][0]) + jacobianMatrices[i][1].multiply(&bVectors[i][1]);
+		d[i] = jacobianMatrices[i][0].multiply(bVectors[i][0]) + jacobianMatrices[i][1].multiply(bVectors[i][1]);
 	}
 	for (auto iteration = 0; iteration < 20; iteration++) {
 		for (auto i = 0; i < constraintsCount; i++) {
 			auto body1Idx = constraintsBodyIdxMap[i][0];
 			auto body2Idx = constraintsBodyIdxMap[i][1];
-			auto xDelta = (b.getValue(i) - jacobianMatrices[i][0].multiply(&a[body1Idx]) - jacobianMatrices[i][1].multiply(&a[body2Idx])) / d[i];
+			auto xDelta = (b.getValue(i) - jacobianMatrices[i][0].multiply(a[body1Idx]) - jacobianMatrices[i][1].multiply(a[body2Idx])) / d[i];
 			auto xTemp = lambda.getValue(i);
 			auto min = Math::min(xTemp + xDelta, upperBounds.getValue(i));
 			auto max = Math::max(lowerBounds.getValue(i), min);
 			lambda.setValue(i, max);
 			xDelta = lambda.getValue(i) - xTemp;
-			a[body1Idx].add(tmpVector6.set(&bVectors[i][0])->scale(xDelta));
-			a[body2Idx].add(tmpVector6.set(&bVectors[i][1])->scale(xDelta));
+			a[body1Idx].add(tmpVector6.set(bVectors[i][0]).scale(xDelta));
+			a[body2Idx].add(tmpVector6.set(bVectors[i][1]).scale(xDelta));
 		}
 	}
 }
@@ -218,8 +218,8 @@ void ConstraintsSolver::computeVectorVelocityConstraints(float dt)
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = constraintsBodyIdxMap[i][0];
 		auto body2Idx = constraintsBodyIdxMap[i][1];
-		constrainedVelocityVectors[body1Idx].sub(tmpVector6.set(&bVectors[i][0])->scale(lambda.getValue(i) * dt));
-		constrainedVelocityVectors[body2Idx].sub(tmpVector6.set(&bVectors[i][1])->scale(lambda.getValue(i) * dt));
+		constrainedVelocityVectors[body1Idx].sub(tmpVector6.set(bVectors[i][0]).scale(lambda.getValue(i) * dt));
+		constrainedVelocityVectors[body2Idx].sub(tmpVector6.set(bVectors[i][1]).scale(lambda.getValue(i) * dt));
 	}
 }
 

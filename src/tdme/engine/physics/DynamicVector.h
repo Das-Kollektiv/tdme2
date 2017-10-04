@@ -49,8 +49,9 @@ public: /* protected */
 	 * Change size
 	 * @param size
 	 */
-	inline void setSize(int32_t size) {
+	inline DynamicVector& setSize(int32_t size) {
 		data.resize(size);
+		return *this;
 	}
 
 	/** 
@@ -58,8 +59,9 @@ public: /* protected */
 	 * @param idx
 	 * @param value
 	 */
-	inline void setValue(int32_t idx, float value) {
+	inline DynamicVector& setValue(int32_t idx, float value) {
 		data[idx] = value;
+		return *this;
 	}
 
 	/** 
@@ -67,7 +69,7 @@ public: /* protected */
 	 * @param idx
 	 * @return value
 	 */
-	inline float getValue(int32_t idx) {
+	inline float getValue(int32_t idx) const {
 		return data[idx];
 	}
 
@@ -76,13 +78,14 @@ public: /* protected */
 	 * @param value
 	 * @param dest
 	 */
-	inline void scale(float value, DynamicVector* dest) {
-		if (data.size() != dest->data.size()) {
-			dest->setSize(data.size());
+	inline DynamicVector& scale(float value, DynamicVector& dest) {
+		if (data.size() != dest.data.size()) {
+			dest.setSize(data.size());
 		}
 		for (auto i = 0; i < data.size(); i++) {
-			dest->data[i] = data[i] * value;
+			dest.data[i] = data[i] * value;
 		}
+		return *this;
 	}
 
 	/**

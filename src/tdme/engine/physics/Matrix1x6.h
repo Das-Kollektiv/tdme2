@@ -67,13 +67,14 @@ public: /* protected */
 	 * @param value4
 	 * @param value5
 	 */
-	inline void setValue(float value0, float value1, float value2, float value3, float value4, float value5) {
+	inline Matrix1x6& setValue(float value0, float value1, float value2, float value3, float value4, float value5) {
 		data[0] = value0;
 		data[1] = value1;
 		data[2] = value2;
 		data[3] = value3;
 		data[4] = value4;
 		data[5] = value5;
+		return *this;
 	}
 
 	/** 
@@ -81,8 +82,9 @@ public: /* protected */
 	 * @param idx
 	 * @param value
 	 */
-	inline void setValue(int32_t idx, float value) {
+	inline Matrix1x6& setValue(int32_t idx, float value) {
 		data[idx] = value;
+		return *this;
 	}
 
 	/** 
@@ -90,11 +92,12 @@ public: /* protected */
 	 * @param this matrix start idx
 	 * @param vector 3
 	 */
-	inline void setValue(int32_t startIdx, const Vector3& vector3) {
+	inline Matrix1x6& setValue(int32_t startIdx, const Vector3& vector3) {
 		auto& vector3XYZ = vector3.getArray();
 		data[startIdx + 0] = vector3XYZ[0];
 		data[startIdx + 1] = vector3XYZ[1];
 		data[startIdx + 2] = vector3XYZ[2];
+		return *this;
 	}
 
 	/** 
@@ -102,9 +105,9 @@ public: /* protected */
 	 * @param vector
 	 * @return scalar product
 	 */
-	inline float multiply(Vector6* vector) {
-		auto vector6Array = vector->getArray();
-		return data[0] * (*vector6Array)[0] + data[1] * (*vector6Array)[1] + data[2] * (*vector6Array)[2] + data[3] * (*vector6Array)[3] + data[4] * (*vector6Array)[4] + data[5] * (*vector6Array)[5];
+	inline float multiply(const Vector6& vector) const {
+		auto& vector6Array = vector.getArray();
+		return data[0] * vector6Array[0] + data[1] * vector6Array[1] + data[2] * vector6Array[2] + data[3] * vector6Array[3] + data[4] * vector6Array[4] + data[5] * vector6Array[5];
 	}
 
 	/** 
@@ -113,14 +116,14 @@ public: /* protected */
 	 * @param destination
 	 * @return destination matrix 1x6
 	 */
-	inline Matrix1x6* multiply(Matrix6x6* matrix6x6, Matrix1x6* dest) {
-		auto matrix6x6Data = matrix6x6->getArray();
-		dest->data[0] = data[0] * (*matrix6x6Data)[0 * 6 + 0] + data[1] * (*matrix6x6Data)[1 * 6 + 0] + data[2] * (*matrix6x6Data)[2 * 6 + 0] + data[3] * (*matrix6x6Data)[3 * 6 + 0] + data[4] * (*matrix6x6Data)[4 * 6 + 0] + data[5] * (*matrix6x6Data)[5 * 6 + 0];
-		dest->data[1] = data[0] * (*matrix6x6Data)[0 * 6 + 1] + data[1] * (*matrix6x6Data)[1 * 6 + 1] + data[2] * (*matrix6x6Data)[2 * 6 + 1] + data[3] * (*matrix6x6Data)[3 * 6 + 1] + data[4] * (*matrix6x6Data)[4 * 6 + 1] + data[5] * (*matrix6x6Data)[5 * 6 + 1];
-		dest->data[2] = data[0] * (*matrix6x6Data)[0 * 6 + 2] + data[1] * (*matrix6x6Data)[1 * 6 + 2] + data[2] * (*matrix6x6Data)[2 * 6 + 2] + data[3] * (*matrix6x6Data)[3 * 6 + 2] + data[4] * (*matrix6x6Data)[4 * 6 + 2] + data[5] * (*matrix6x6Data)[5 * 6 + 2];
-		dest->data[3] = data[0] * (*matrix6x6Data)[0 * 6 + 3] + data[1] * (*matrix6x6Data)[1 * 6 + 3] + data[2] * (*matrix6x6Data)[2 * 6 + 3] + data[3] * (*matrix6x6Data)[3 * 6 + 3] + data[4] * (*matrix6x6Data)[4 * 6 + 3] + data[5] * (*matrix6x6Data)[5 * 6 + 3];
-		dest->data[4] = data[0] * (*matrix6x6Data)[0 * 6 + 4] + data[1] * (*matrix6x6Data)[1 * 6 + 4] + data[2] * (*matrix6x6Data)[2 * 6 + 4] + data[3] * (*matrix6x6Data)[3 * 6 + 4] + data[4] * (*matrix6x6Data)[4 * 6 + 4] + data[5] * (*matrix6x6Data)[5 * 6 + 4];
-		dest->data[5] = data[0] * (*matrix6x6Data)[0 * 6 + 5] + data[1] * (*matrix6x6Data)[1 * 6 + 5] + data[2] * (*matrix6x6Data)[2 * 6 + 5] + data[3] * (*matrix6x6Data)[3 * 6 + 5] + data[4] * (*matrix6x6Data)[4 * 6 + 5] + data[5] * (*matrix6x6Data)[5 * 6 + 5];
+	inline Matrix1x6& multiply(const Matrix6x6& matrix6x6, Matrix1x6& dest) const {
+		auto& matrix6x6Data = matrix6x6.getArray();
+		dest.data[0] = data[0] * matrix6x6Data[0 * 6 + 0] + data[1] * matrix6x6Data[1 * 6 + 0] + data[2] * matrix6x6Data[2 * 6 + 0] + data[3] * matrix6x6Data[3 * 6 + 0] + data[4] * matrix6x6Data[4 * 6 + 0] + data[5] * matrix6x6Data[5 * 6 + 0];
+		dest.data[1] = data[0] * matrix6x6Data[0 * 6 + 1] + data[1] * matrix6x6Data[1 * 6 + 1] + data[2] * matrix6x6Data[2 * 6 + 1] + data[3] * matrix6x6Data[3 * 6 + 1] + data[4] * matrix6x6Data[4 * 6 + 1] + data[5] * matrix6x6Data[5 * 6 + 1];
+		dest.data[2] = data[0] * matrix6x6Data[0 * 6 + 2] + data[1] * matrix6x6Data[1 * 6 + 2] + data[2] * matrix6x6Data[2 * 6 + 2] + data[3] * matrix6x6Data[3 * 6 + 2] + data[4] * matrix6x6Data[4 * 6 + 2] + data[5] * matrix6x6Data[5 * 6 + 2];
+		dest.data[3] = data[0] * matrix6x6Data[0 * 6 + 3] + data[1] * matrix6x6Data[1 * 6 + 3] + data[2] * matrix6x6Data[2 * 6 + 3] + data[3] * matrix6x6Data[3 * 6 + 3] + data[4] * matrix6x6Data[4 * 6 + 3] + data[5] * matrix6x6Data[5 * 6 + 3];
+		dest.data[4] = data[0] * matrix6x6Data[0 * 6 + 4] + data[1] * matrix6x6Data[1 * 6 + 4] + data[2] * matrix6x6Data[2 * 6 + 4] + data[3] * matrix6x6Data[3 * 6 + 4] + data[4] * matrix6x6Data[4 * 6 + 4] + data[5] * matrix6x6Data[5 * 6 + 4];
+		dest.data[5] = data[0] * matrix6x6Data[0 * 6 + 5] + data[1] * matrix6x6Data[1 * 6 + 5] + data[2] * matrix6x6Data[2 * 6 + 5] + data[3] * matrix6x6Data[3 * 6 + 5] + data[4] * matrix6x6Data[4 * 6 + 5] + data[5] * matrix6x6Data[5 * 6 + 5];
 		return dest;
 	}
 
@@ -129,8 +132,8 @@ public: /* protected */
 	 * @param destination vector 6
 	 * @return destination vector 6
 	 */
-	inline Vector6* getTranspose(Vector6* dest) {
-		copy(begin(data), end(data), begin(dest->data));
+	inline Vector6& getTranspose(Vector6& dest) const {
+		copy(begin(data), end(data), begin(dest.data));
 		return dest;
 	}
 public:
