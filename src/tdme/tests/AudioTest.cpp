@@ -1,6 +1,5 @@
 #include <tdme/tests/AudioTest.h>
 
-#include <java/lang/String.h>
 #include <java/lang/Thread.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
