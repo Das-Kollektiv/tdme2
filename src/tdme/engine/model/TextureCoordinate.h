@@ -5,7 +5,6 @@
 #include <array>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 
 using std::array;
@@ -24,12 +23,12 @@ public:
 	/** 
 	 * @return U
 	 */
-	float getU();
+	float getU() const;
 
 	/** 
 	 * @return V
 	 */
-	float getV();
+	float getV() const;
 
 	/** 
 	 * @return texture data as array
@@ -40,13 +39,13 @@ public:
 	 * Clones the texture coordinate
 	 * @return new texture coordinate
 	 */
-	TextureCoordinate* clone();
+	TextureCoordinate clone();
 
 	/** 
 	 * Compares this texture coordinate with given texture coordinate
 	 * @return equality
 	 */
-	bool equals(TextureCoordinate* textureCoordinate);
+	bool equals(const TextureCoordinate& textureCoordinate) const;
 
 	/**
 	 * Public constructor
@@ -57,13 +56,13 @@ public:
 	 * Public constructor
 	 * @param texture coordinate
 	 */
-	TextureCoordinate(TextureCoordinate* textureCoordinate);
+	TextureCoordinate(const TextureCoordinate& textureCoordinate);
 
 	/**
 	 * Public constructor
 	 * @param texture coordinate
 	 */
-	TextureCoordinate(array<float, 2>* uv);
+	TextureCoordinate(const array<float, 2>& uv);
 
 	/**
 	 * Public constructor

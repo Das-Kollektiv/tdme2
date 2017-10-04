@@ -172,7 +172,7 @@ const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputSt
 		tc.resize(is->readInt());
 		for (auto i = 0; i < tc.size(); i++) {
 			is->readFloatArray(&tcUV);
-			tc[i] = TextureCoordinate(&tcUV);
+			tc[i] = TextureCoordinate(tcUV);
 		}
 	}
 	return tc;

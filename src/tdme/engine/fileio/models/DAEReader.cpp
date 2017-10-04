@@ -6,7 +6,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Rotation.h>

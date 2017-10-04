@@ -192,7 +192,7 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 					for (auto i = 0; i < preparedIndices; i++)
 					if (indexedVertices[i].equals(*vertex) &&
 						indexedNormals[i].equals(*normal) &&
-					    (textureCoordinate == nullptr || indexedTextureCoordinates[i].equals(textureCoordinate)) &&
+					    (textureCoordinate == nullptr || indexedTextureCoordinates[i].equals(*textureCoordinate)) &&
 					    (tangent == nullptr || indexedTangents[i].equals(*tangent)) &&
 						(bitangent == nullptr || indexedBitangents[i].equals(*bitangent))) {
 						newIndex = i;
@@ -202,7 +202,7 @@ void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
 						vertexMapping.push_back(groupVertexIndex);
 						indexedVertices.push_back(*vertex);;
 						indexedNormals.push_back(*normal);;
-						if (textureCoordinate != nullptr) indexedTextureCoordinates.push_back(textureCoordinate);
+						if (textureCoordinate != nullptr) indexedTextureCoordinates.push_back(*textureCoordinate);
 						if (tangent != nullptr) indexedTangents.push_back(*tangent);
 						if (bitangent != nullptr) indexedBitangents.push_back(*bitangent);
 						preparedIndices++;

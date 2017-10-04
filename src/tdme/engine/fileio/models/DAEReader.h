@@ -7,7 +7,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/os/fwd-tdme.h>
@@ -23,7 +22,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::String;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;

@@ -16,14 +16,14 @@ TextureCoordinate::TextureCoordinate()
 	data.fill(0.0f);
 }
 
-TextureCoordinate::TextureCoordinate(TextureCoordinate* textureCoordinate) 
+TextureCoordinate::TextureCoordinate(const TextureCoordinate& textureCoordinate)
 {
-	data = textureCoordinate->data;
+	data = textureCoordinate.data;
 }
 
-TextureCoordinate::TextureCoordinate(array<float, 2>* uv)
+TextureCoordinate::TextureCoordinate(const array<float, 2>& uv)
 {
-	data = *uv;
+	data = uv;
 }
 
 TextureCoordinate::TextureCoordinate(float u, float v) 
@@ -32,12 +32,12 @@ TextureCoordinate::TextureCoordinate(float u, float v)
 	data[1] = 1.0f - v;
 }
 
-float TextureCoordinate::getU()
+float TextureCoordinate::getU() const
 {
 	return data[0];
 }
 
-float TextureCoordinate::getV()
+float TextureCoordinate::getV() const
 {
 	return data[1];
 }
@@ -47,18 +47,18 @@ array<float, 2>& TextureCoordinate::getArray() const
 	return (array<float, 2>&)data;
 }
 
-TextureCoordinate* TextureCoordinate::clone()
+TextureCoordinate TextureCoordinate::clone()
 {
-	return new TextureCoordinate(data[0], 1.0f - data[1]);
+	return TextureCoordinate(data[0], 1.0f - data[1]);
 }
 
-bool TextureCoordinate::equals(TextureCoordinate* textureCoordinate)
+bool TextureCoordinate::equals(const TextureCoordinate& textureCoordinate) const
 {
 	return
-		this == textureCoordinate ||
+		this == &textureCoordinate ||
 		(
-			Math::abs(data[0] - textureCoordinate->data[0]) < MathTools::EPSILON &&
-			Math::abs(data[1] - textureCoordinate->data[1]) < MathTools::EPSILON
+			Math::abs(data[0] - textureCoordinate.data[0]) < MathTools::EPSILON &&
+			Math::abs(data[1] - textureCoordinate.data[1]) < MathTools::EPSILON
 		);
 }
 
