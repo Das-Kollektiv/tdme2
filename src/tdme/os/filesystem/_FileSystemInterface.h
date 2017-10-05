@@ -5,24 +5,24 @@
 #include <vector>
 #include <string>
 
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::vector;
 using std::wstring;
 
 using tdme::utils::FilenameFilter;
 
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 
 /** 
  * Interface to file system
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::os::_FileSystemInterface
+struct tdme::os::filesystem::_FileSystemInterface
 {
 	/**
 	 * Get file name

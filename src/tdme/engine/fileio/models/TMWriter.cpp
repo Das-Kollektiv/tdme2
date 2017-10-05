@@ -21,8 +21,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/_Exception.h>
 
 using std::array;
@@ -47,8 +47,8 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::_Exception;
 
 void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)

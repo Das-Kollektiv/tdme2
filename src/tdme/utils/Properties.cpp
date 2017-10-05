@@ -5,8 +5,8 @@
 #include <vector>
 #include <string>
 
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::map;
@@ -15,8 +15,8 @@ using std::wstring;
 
 using tdme::utils::Properties;
 
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringUtils;
 
 

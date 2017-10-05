@@ -2,16 +2,16 @@
 
 #pragma once
 
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystemInterface;
 
 /** 
  * File system 
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::os::_FileSystem
+class tdme::os::filesystem::_FileSystem
 {
 private:
 	static _FileSystemInterface* fileSystem;

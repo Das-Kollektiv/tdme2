@@ -6,9 +6,9 @@
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 #include <ext/libpng/png.h>
 
@@ -16,7 +16,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 using tdme::utils::_Console;
 
 namespace tdme {

@@ -7,15 +7,15 @@
 
 #include <fwd-tdme.h>
 
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemException;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::_FileSystemInterface;
 
 /**
  * This helps out with storeing or loading key value pairs from/to property files

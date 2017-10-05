@@ -10,8 +10,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
@@ -40,8 +40,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;

@@ -8,8 +8,8 @@
 #include <tdme/utils/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
@@ -24,8 +24,8 @@ using tdme::utils::ByteBuffer;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGInputStream;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_Console;

@@ -14,8 +14,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
@@ -37,8 +37,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;

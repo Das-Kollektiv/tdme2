@@ -272,10 +272,10 @@ SRCS = \
 	src/tdme/math/Vector2.cpp \
 	src/tdme/math/Vector3.cpp \
 	src/tdme/math/Vector4.cpp \
-	src/tdme/os/_FileSystem.cpp \
-	src/tdme/os/_FileSystemException.cpp \
-	src/tdme/os/_FileSystemInterface.cpp \
-	src/tdme/os/_StandardFileSystem.cpp \
+	src/tdme/os/filesystem/_FileSystem.cpp \
+	src/tdme/os/filesystem/_FileSystemException.cpp \
+	src/tdme/os/filesystem/_FileSystemInterface.cpp \
+	src/tdme/os/filesystem/_StandardFileSystem.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/EngineTest.cpp \

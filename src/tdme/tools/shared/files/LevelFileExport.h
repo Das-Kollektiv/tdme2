@@ -7,14 +7,14 @@
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <ext/jsonbox/JsonException.h>
 
 using std::wstring;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
 
 using tdme::ext::jsonbox::JsonException;

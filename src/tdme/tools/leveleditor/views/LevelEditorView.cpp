@@ -35,8 +35,8 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
@@ -106,8 +106,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;

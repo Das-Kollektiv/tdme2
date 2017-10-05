@@ -12,8 +12,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -51,8 +51,8 @@ using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;

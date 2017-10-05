@@ -15,9 +15,9 @@
 #include <java/util/fwd-tdme.h>
 #include <java/util/Hashtable.h>
 
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemException.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/_HashMap.h>
 
 using std::vector;
@@ -40,9 +40,9 @@ using java::util::Enumeration;
 using java::util::Properties_LineReader;
 using java::util::Set;
 
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemException;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::_HashMap;
 
 template<typename ComponentType, typename... Bases> struct SubArray;

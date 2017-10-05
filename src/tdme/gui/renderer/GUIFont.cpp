@@ -12,8 +12,8 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringTokenizer.h>
@@ -33,8 +33,8 @@ using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;

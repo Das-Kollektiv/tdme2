@@ -16,7 +16,7 @@
 #include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
@@ -33,7 +33,7 @@ using tdme::audio::Audio;
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::math::Vector3;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 

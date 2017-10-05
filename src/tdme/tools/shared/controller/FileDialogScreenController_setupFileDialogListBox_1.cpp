@@ -1,14 +1,14 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/utils/StringUtils.h>
 
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::tools::shared::controller::FileDialogScreenController;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringUtils;
 
 

@@ -1,11 +1,11 @@
-#include <tdme/os/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystem.h>
 
-#include <tdme/os/_FileSystemInterface.h>
-#include <tdme/os/_StandardFileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_StandardFileSystem.h>
 
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
-using tdme::os::_StandardFileSystem;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::_StandardFileSystem;
 
  _FileSystemInterface* _FileSystem::fileSystem = nullptr;
 

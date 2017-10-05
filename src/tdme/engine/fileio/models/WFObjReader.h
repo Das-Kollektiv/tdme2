@@ -7,11 +7,11 @@
 
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
 using std::wstring;
@@ -19,7 +19,7 @@ using std::wstring;
 using tdme::engine::model::Model;
 using tdme::engine::model::Material;
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 
 
 /** 

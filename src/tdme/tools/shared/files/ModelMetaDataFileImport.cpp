@@ -10,8 +10,8 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
@@ -26,7 +26,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
@@ -48,9 +48,9 @@ using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemException;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;

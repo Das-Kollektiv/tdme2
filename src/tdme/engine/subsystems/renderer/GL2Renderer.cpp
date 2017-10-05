@@ -22,8 +22,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
 
@@ -42,8 +42,8 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
 

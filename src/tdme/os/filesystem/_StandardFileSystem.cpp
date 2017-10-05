@@ -1,4 +1,4 @@
-#include <tdme/os/_StandardFileSystem.h>
+#include <tdme/os/filesystem/_StandardFileSystem.h>
 
 #include <limits.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@ using std::stringstream;
 using std::vector;
 using std::to_string;
 
-using tdme::os::_StandardFileSystem;
+using tdme::os::filesystem::_StandardFileSystem;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::StringTokenizer;

@@ -42,8 +42,8 @@
 #include <tdme/gui/nodes/GUISpaceNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
@@ -94,8 +94,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;

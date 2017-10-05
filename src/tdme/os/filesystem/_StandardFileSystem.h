@@ -5,17 +5,17 @@
 #include <string>
 #include <vector>
 
-#include <tdme/os/fwd-tdme.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::wstring;
 using std::vector;
 
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::FilenameFilter;
 
-class tdme::os::_StandardFileSystem final
+class tdme::os::filesystem::_StandardFileSystem final
 	: public _FileSystemInterface
 {
 

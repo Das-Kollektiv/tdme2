@@ -7,14 +7,14 @@
 #include <fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
-#include <tdme/os/fwd-tdme.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::wstring;
 
 using tdme::audio::decoder::AudioDecoderException;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 using tdme::utils::ByteBuffer;
 
 /** 

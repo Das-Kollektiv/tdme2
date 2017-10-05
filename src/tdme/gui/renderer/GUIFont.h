@@ -10,11 +10,11 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 #include <java/lang/Object.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
 using std::wstring;
@@ -24,7 +24,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 using tdme::utils::MutableString;
 
 

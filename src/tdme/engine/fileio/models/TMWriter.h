@@ -11,11 +11,11 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/os/fwd-tdme.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::array;
 using std::map;
@@ -33,7 +33,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 
 namespace tdme {
 namespace engine {

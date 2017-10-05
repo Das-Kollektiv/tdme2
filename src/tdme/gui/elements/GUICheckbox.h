@@ -11,7 +11,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/elements/GUIElement.h>
 
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
 using std::wstring;
@@ -20,7 +20,7 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 
 
 struct default_init_tag;

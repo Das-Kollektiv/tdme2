@@ -6,9 +6,9 @@
 
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/_FileSystem.h>
-#include <tdme/os/_FileSystemException.h>
-#include <tdme/os/_FileSystemInterface.h>
+#include <tdme/os/filesystem/_FileSystem.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemInterface.h>
 
 using std::map;
 using std::wstring;
@@ -16,9 +16,9 @@ using std::wstring;
 using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::_FileSystem;
-using tdme::os::_FileSystemException;
-using tdme::os::_FileSystemInterface;
+using tdme::os::filesystem::_FileSystem;
+using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::_FileSystemInterface;
 
 GUITabContent::GUITabContent(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))

@@ -8,7 +8,7 @@
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/_FileSystemException.h>
+#include <tdme/os/filesystem/_FileSystemException.h>
 #include <ext/jsonbox/JsonException.h>
 
 using std::wstring;
@@ -16,7 +16,7 @@ using std::wstring;
 using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::os::_FileSystemException;
+using tdme::os::filesystem::_FileSystemException;
 
 using tdme::ext::jsonbox::JsonException;
 
