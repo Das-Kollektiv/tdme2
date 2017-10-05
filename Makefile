@@ -290,6 +290,9 @@ SRCS = \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
+	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
+	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
+	src/tdme/tests/ThreadingTest_TestThread.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
@@ -603,6 +606,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/DAETests-main.cpp \
+	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/viewer/TDMEViewer-main.cpp \

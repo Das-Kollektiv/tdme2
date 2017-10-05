@@ -8,7 +8,6 @@ namespace threading {
 		class Barrier;
 		class Condition;
 		class Mutex;
-		class Queue;
 		class ReadWriteLock;
 		class Thread;
 }  // namespace filesystem

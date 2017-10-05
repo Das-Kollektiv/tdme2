@@ -11,21 +11,25 @@ using std::queue;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Condition;
 
+namespace tdme {
+namespace os {
+namespace threading {
+
 /**
  * Consumer/producer queue.
  * @author Andreas Drewke
  * @version $Id: 160da968398d80de667bab6b825cdeca9dc1dd50 $
  */
 template <typename T>
-class tdme::os::threading::Queue {
+class Queue {
 public:
 	/**
 	 * @brief Public constructor
 	 */
 	Queue(const unsigned int maxElements) :
 		maxElements(maxElements),
-		m("queue"),
-		c("queue"),
+		m(L"queue"),
+		c(L"queue"),
 		stopRequested(false) {
 		//
 	}
@@ -97,4 +101,8 @@ private:
 	Condition c;
 	volatile bool stopRequested;
 
+};
+
+};
+};
 };
