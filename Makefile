@@ -3,9 +3,9 @@ INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
-	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -L/usr/lib -lz
+	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -L/usr/lib -lz -pthread
 else ifeq ($(OS), Linux)
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lglut -lopenal
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lglut -lopenal -pthread
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
@@ -276,6 +276,11 @@ SRCS = \
 	src/tdme/os/filesystem/_FileSystemException.cpp \
 	src/tdme/os/filesystem/_FileSystemInterface.cpp \
 	src/tdme/os/filesystem/_StandardFileSystem.cpp \
+	src/tdme/os/threading/Barrier.cpp \
+	src/tdme/os/threading/Condition.cpp \
+	src/tdme/os/threading/Mutex.cpp \
+	src/tdme/os/threading/ReadWriteLock.cpp \
+	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
