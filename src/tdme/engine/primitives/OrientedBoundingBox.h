@@ -31,24 +31,24 @@ class tdme::engine::primitives::OrientedBoundingBox final
 	: public BoundingVolume
 {
 private:
-	static array<int32_t, 3> FACE0_INDICES;
-	static array<int32_t, 3> FACE1_INDICES;
-	static array<int32_t, 3> FACE2_INDICES;
-	static array<int32_t, 3> FACE3_INDICES;
-	static array<int32_t, 3> FACE4_INDICES;
-	static array<int32_t, 3> FACE5_INDICES;
-	static array<int32_t, 3> FACE6_INDICES;
-	static array<int32_t, 3> FACE7_INDICES;
-	static array<int32_t, 3> FACE8_INDICES;
-	static array<int32_t, 3> FACE9_INDICES;
-	static array<int32_t, 3> FACE10_INDICES;
-	static array<int32_t, 3> FACE11_INDICES;
-	static array<array<int32_t,3>,12> facesVerticesIndexes;
+	static const array<int32_t, 3> FACE0_INDICES;
+	static const array<int32_t, 3> FACE1_INDICES;
+	static const array<int32_t, 3> FACE2_INDICES;
+	static const array<int32_t, 3> FACE3_INDICES;
+	static const array<int32_t, 3> FACE4_INDICES;
+	static const array<int32_t, 3> FACE5_INDICES;
+	static const array<int32_t, 3> FACE6_INDICES;
+	static const array<int32_t, 3> FACE7_INDICES;
+	static const array<int32_t, 3> FACE8_INDICES;
+	static const array<int32_t, 3> FACE9_INDICES;
+	static const array<int32_t, 3> FACE10_INDICES;
+	static const array<int32_t, 3> FACE11_INDICES;
+	static const array<array<int32_t,3>,12> facesVerticesIndexes;
 
 public:
-	static Vector3 AABB_AXIS_X;
-	static Vector3 AABB_AXIS_Y;
-	static Vector3 AABB_AXIS_Z;
+	static const Vector3 AABB_AXIS_X;
+	static const Vector3 AABB_AXIS_Y;
+	static const Vector3 AABB_AXIS_Z;
 
 public:
 	inline Vector3& getCenter() override {

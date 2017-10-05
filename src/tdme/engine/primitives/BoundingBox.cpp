@@ -29,19 +29,19 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-array<int32_t, 3> BoundingBox::FACE0_INDICES = {{ 0, 4, 7 }};
-array<int32_t, 3> BoundingBox::FACE1_INDICES = {{ 7, 3, 0 }};
-array<int32_t, 3> BoundingBox::FACE2_INDICES = {{ 6, 5, 1 }};
-array<int32_t, 3> BoundingBox::FACE3_INDICES = {{ 1, 2, 6 }};
-array<int32_t, 3> BoundingBox::FACE4_INDICES = {{ 5, 4, 0 }};
-array<int32_t, 3> BoundingBox::FACE5_INDICES = {{ 0, 1, 5 }};
-array<int32_t, 3> BoundingBox::FACE6_INDICES = {{ 3, 7, 6 }};
-array<int32_t, 3> BoundingBox::FACE7_INDICES = {{ 6, 2, 3 }};
-array<int32_t, 3> BoundingBox::FACE8_INDICES = {{ 2, 1, 0 }};
-array<int32_t, 3> BoundingBox::FACE9_INDICES = {{ 0, 3, 2 }};
-array<int32_t, 3> BoundingBox::FACE10_INDICES = {{ 4, 5, 6 }};
-array<int32_t, 3> BoundingBox::FACE11_INDICES = {{ 6, 7, 4 }};
-array<array<int32_t,3>,12> BoundingBox::facesVerticesIndexes =
+const array<int32_t, 3> BoundingBox::FACE0_INDICES = {{ 0, 4, 7 }};
+const array<int32_t, 3> BoundingBox::FACE1_INDICES = {{ 7, 3, 0 }};
+const array<int32_t, 3> BoundingBox::FACE2_INDICES = {{ 6, 5, 1 }};
+const array<int32_t, 3> BoundingBox::FACE3_INDICES = {{ 1, 2, 6 }};
+const array<int32_t, 3> BoundingBox::FACE4_INDICES = {{ 5, 4, 0 }};
+const array<int32_t, 3> BoundingBox::FACE5_INDICES = {{ 0, 1, 5 }};
+const array<int32_t, 3> BoundingBox::FACE6_INDICES = {{ 3, 7, 6 }};
+const array<int32_t, 3> BoundingBox::FACE7_INDICES = {{ 6, 2, 3 }};
+const array<int32_t, 3> BoundingBox::FACE8_INDICES = {{ 2, 1, 0 }};
+const array<int32_t, 3> BoundingBox::FACE9_INDICES = {{ 0, 3, 2 }};
+const array<int32_t, 3> BoundingBox::FACE10_INDICES = {{ 4, 5, 6 }};
+const array<int32_t, 3> BoundingBox::FACE11_INDICES = {{ 6, 7, 4 }};
+const array<array<int32_t,3>,12> BoundingBox::facesVerticesIndexes =
 {{
 	FACE0_INDICES, FACE1_INDICES, FACE2_INDICES, FACE3_INDICES,
 	FACE4_INDICES, FACE5_INDICES, FACE6_INDICES, FACE7_INDICES,

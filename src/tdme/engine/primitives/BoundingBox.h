@@ -30,19 +30,19 @@ class tdme::engine::primitives::BoundingBox final :
 	public BoundingVolume
 {
 private:
-	static array<int32_t, 3> FACE0_INDICES;
-	static array<int32_t, 3> FACE1_INDICES;
-	static array<int32_t, 3> FACE2_INDICES;
-	static array<int32_t, 3> FACE3_INDICES;
-	static array<int32_t, 3> FACE4_INDICES;
-	static array<int32_t, 3> FACE5_INDICES;
-	static array<int32_t, 3> FACE6_INDICES;
-	static array<int32_t, 3> FACE7_INDICES;
-	static array<int32_t, 3> FACE8_INDICES;
-	static array<int32_t, 3> FACE9_INDICES;
-	static array<int32_t, 3> FACE10_INDICES;
-	static array<int32_t, 3> FACE11_INDICES;
-	static array<array<int32_t,3>,12> facesVerticesIndexes;
+	static const array<int32_t, 3> FACE0_INDICES;
+	static const array<int32_t, 3> FACE1_INDICES;
+	static const array<int32_t, 3> FACE2_INDICES;
+	static const array<int32_t, 3> FACE3_INDICES;
+	static const array<int32_t, 3> FACE4_INDICES;
+	static const array<int32_t, 3> FACE5_INDICES;
+	static const array<int32_t, 3> FACE6_INDICES;
+	static const array<int32_t, 3> FACE7_INDICES;
+	static const array<int32_t, 3> FACE8_INDICES;
+	static const array<int32_t, 3> FACE9_INDICES;
+	static const array<int32_t, 3> FACE10_INDICES;
+	static const array<int32_t, 3> FACE11_INDICES;
+	static const array<array<int32_t,3>,12> facesVerticesIndexes;
 	Vector3 min {  };
 	Vector3 max {  };
 	Vector3 center {  };
