@@ -8,7 +8,6 @@
 
 #include <fwd-tdme.h>
 #include <java/lang/fwd-tdme.h>
-#include <java/util/concurrent/locks/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/ApplicationInputEventsHandler.h>
@@ -25,7 +24,6 @@ using std::vector;
 using std::wstring;
 
 using java::lang::Object;
-using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::fileio::textures::Texture;
@@ -72,7 +70,6 @@ private:
 	vector<GUIMouseEvent*> mouseEvents {  };
 	Pool<GUIKeyboardEvent*>* keyboardEventsPool {  };
 	vector<GUIKeyboardEvent*> keyboardEvents {  };
-	ReentrantLock* eventsMutex {  };
 	vector<GUIScreenNode*> renderScreens {  };
 	int32_t width {  };
 	int32_t height {  };

@@ -1,15 +1,14 @@
 #include <tdme/tests/AudioTest.h>
 
-#include <java/lang/Thread.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/utils/_Console.h>
 
 using tdme::tests::AudioTest;
-using java::lang::String;
-using java::lang::Thread;
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
+using tdme::os::threading::Thread;
 using tdme::tests::AudioTest_main_1;
 using tdme::utils::_Console;
 

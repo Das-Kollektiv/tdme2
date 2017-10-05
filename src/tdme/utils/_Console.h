@@ -5,17 +5,12 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::string;
 using std::wstring;
-
-using java::lang::Object;
-
-
-struct default_init_tag;
 
 /** 
  * Console 
@@ -23,12 +18,8 @@ struct default_init_tag;
  * @versio $Id$
  */
 class tdme::utils::_Console
-	: public virtual Object
 {
-
 public:
-	typedef Object super;
-
 	/** 
 	 * Print given string and trailing newline to console
 	 * @param wstring
@@ -40,12 +31,6 @@ public:
 	 * @param string
 	 */
 	static void println(const string& string);
-
-	/**
-	 * Print object and trailing newline to console
-	 * @param object
-	 */
-	static void println(Object* object);
 
 	/**
 	 * Print byte and trailing newline to console
@@ -107,12 +92,6 @@ public:
 	 */
 	static void print(const string& string);
 
-	/**
-	 * Print object to console
-	 * @param text
-	 */
-	static void print(Object* object);
-
 	/** 
 	 * Print byte to console
 	 * @param value
@@ -167,15 +146,6 @@ public:
 	 */
 	static void println();
 
-	// Generated
-	_Console();
-protected:
-	_Console(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	virtual ::java::lang::Class* getClass0();
+	static Mutex mutex;
 };

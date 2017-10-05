@@ -1,25 +1,27 @@
-/**
- * @version $Id: 92052ab3ac232a8ca84ce8f59c9982199a735ca8 $
- */
-
-#include <stdio.h>
+#include <string>
 
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
+#include <tdme/utils/_Console.h>
+
 #include "ThreadingTest_ConsumerThread.h"
 #include "ThreadingTest_ProducerThread.h"
 #include "ThreadingTest_SharedData.h"
 #include "ThreadingTest_TestThread.h"
 
+using std::wstring;
+using std::to_wstring;
+
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
+using tdme::utils::_Console;
 
 #define TESTTHREAD_THREADS_COUNT	4
 
 void testthread_test() {
 	// basic thread test
 	SharedData data;
-	printf("Hallo World!\n");
+	_Console::println(L"Hallo World!");
 	TestThread* tt[TESTTHREAD_THREADS_COUNT];
 	// start threads
 	for(int i = 0; i < TESTTHREAD_THREADS_COUNT; i++) {
@@ -39,23 +41,23 @@ void pc_test() {
 	ConsumerThread c0(0, &queue);
 	ConsumerThread c1(1, &queue);
 
-	printf("starting consumer threads\n");
+	_Console::println(L"starting consumer threads");
 	c0.start();
 	c1.start();
 	Thread::sleep(500);
 
-	printf("starting producer thread\n");
+	_Console::println(L"starting producer thread");
 	p.start();
 
-	printf("waiting 10 seconds\n");
+	_Console::println(L"waiting 10 seconds");
 	Thread::sleep(2000);
 
-	printf("stopping producer\n");
+	_Console::println(L"stopping producer");
 	p.stop();
 	p.join();
 
 	Thread::sleep(500);
-	printf("stopping consumer and queue\n");
+	_Console::println(L"stopping consumer and queue");
 	c0.stop();
 	c1.stop();
 	queue.stop();
@@ -68,11 +70,11 @@ void atomic_test() {
 	int intValue = 0;
 	// 5 atomic adds
 	for(int i = 0; i < 5; i++) {
-		printf("atomic add, result %i\n", __sync_add_and_fetch(&intValue,1));
+		_Console::println(L"atomic add, result " + to_wstring(__sync_add_and_fetch(&intValue,1)));
 	}
 	// 5 atomic subs
 	for(int i = 0; i < 5; i++) {
-		printf("atomic sub, result %i\n", __sync_sub_and_fetch(&intValue,1));
+		_Console::println(L"atomic sub, result " + to_wstring(__sync_sub_and_fetch(&intValue,1)));
 	}
 }
 

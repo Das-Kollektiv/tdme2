@@ -12,7 +12,6 @@
 #include <java/lang/Object.h>
 #include <tdme/utils/Time.h>
 #include <java/util/Iterator.h>
-#include <java/util/concurrent/locks/ReentrantLock.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
@@ -52,7 +51,6 @@ using tdme::gui::GUI;
 using java::lang::Object;
 using tdme::utils::Time;
 using java::util::Iterator;
-using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
@@ -112,7 +110,6 @@ void GUI::init()
 	unfocussedNodeBorderBottomColor = nullptr;
 	mouseEventsPool = new GUI_1(this);
 	keyboardEventsPool = new GUI_2(this);
-	eventsMutex = new ReentrantLock();
 	mouseButtonLast = 0;
 }
 
@@ -159,12 +156,10 @@ void GUI::dispose()
 
 void GUI::lockEvents()
 {
-	eventsMutex->lock();
 }
 
 void GUI::unlockEvents()
 {
-	eventsMutex->unlock();
 }
 
 vector<GUIMouseEvent*>* GUI::getMouseEvents()

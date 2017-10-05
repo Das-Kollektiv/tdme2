@@ -33,7 +33,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using java::lang::Byte;
 using tdme::utils::Buffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
