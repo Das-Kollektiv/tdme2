@@ -10,7 +10,6 @@
 #include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
-using std::vector;
 using std::wstring;
 
 using tdme::os::filesystem::_FileSystem;
