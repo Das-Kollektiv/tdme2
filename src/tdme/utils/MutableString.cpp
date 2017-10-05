@@ -5,6 +5,7 @@
 #include <tdme/math/Math.h>
 #include <java/lang/String.h>
 #include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <java/util/Arrays.h>
 #include <Array.h>
 
@@ -14,6 +15,7 @@ using tdme::utils::MutableString;
 using tdme::math::Math;
 using java::lang::String;
 using java::lang::System;
+using tdme::utils::Time;
 using java::util::Arrays;
 
 MutableString::MutableString(const ::default_init_tag&)

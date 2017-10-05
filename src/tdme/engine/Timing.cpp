@@ -1,14 +1,14 @@
 #include <tdme/engine/Timing.h>
 
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 
 using tdme::engine::Timing;
-using java::lang::System;
+using tdme::utils::Time;
 
 Timing::Timing() 
 {
 	frame = 0;
-	startTime = System::currentTimeMillis();
+	startTime = Time::getCurrentMillis();
 	lastFrameAtTime = UNDEFINED;
 	currentFrameAtTime = UNDEFINED;
 	currentFPS = 60.0f;
@@ -22,7 +22,7 @@ constexpr int64_t Timing::UNDEFINED;
 void Timing::updateTiming()
 {
 	lastFrameAtTime = currentFrameAtTime;
-	currentFrameAtTime = System::currentTimeMillis();
+	currentFrameAtTime = Time::getCurrentMillis();
 	currentFPS = 0;
 	if (lastFrameAtTime != UNDEFINED) {
 		currentFPS = 1000.0f / ((currentFrameAtTime - lastFrameAtTime));
@@ -65,6 +65,6 @@ float Timing::getCurrentFPS()
 
 float Timing::getAverageFPS()
 {
-	auto seconds = (System::currentTimeMillis() - startTime) / 1000LL;
+	auto seconds = (Time::getCurrentMillis() - startTime) / 1000LL;
 	return frame / seconds;
 }

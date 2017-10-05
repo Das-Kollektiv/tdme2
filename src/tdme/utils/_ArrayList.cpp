@@ -4,6 +4,7 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <ObjectArray.h>
 
 using tdme::utils::_ArrayList;
@@ -11,6 +12,7 @@ using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
+using tdme::utils::Time;
 
 template<typename T, typename U>
 static T java_cast(U* u)

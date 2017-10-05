@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <java/lang/System.h>
-
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -25,6 +23,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utils/Time.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 
@@ -32,8 +31,6 @@ using std::string;
 using std::to_wstring;
 
 using tdme::tests::PhysicsTest3;
-
-using java::lang::System;
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -56,21 +53,9 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utils::Time;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
-
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace java {
-namespace io {
-typedef ::SubArray< ::java::io::Serializable, ::java::lang::ObjectArray > SerializableArray;
-}  // namespace io
-
-namespace lang {
-typedef ::SubArray< ::java::lang::CharSequence, ObjectArray > CharSequenceArray;
-typedef ::SubArray< ::java::lang::Comparable, ObjectArray > ComparableArray;
-typedef ::SubArray< ::java::lang::String, ObjectArray, ::java::io::SerializableArray, ComparableArray, CharSequenceArray > StringArray;
-}  // namespace lang
-}  // namespace java
 
 constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
 
@@ -136,12 +121,12 @@ void PhysicsTest3::display()
 		capsuleBig2->getLinearVelocity().setZ(-6.0f);
 	else
 		capsuleBig2->getLinearVelocity().setZ(0.0f);
-	auto start = System::currentTimeMillis();
+	auto start = Time::getCurrentMillis();
 	auto fps = 60.0f;
 	world->update(1.0f / fps);
 	world->synch(engine);
 	engine->display();
-	auto end = System::currentTimeMillis();
+	auto end = Time::getCurrentMillis();
 	_Console::println(wstring(L"PhysicsTest::display::" + to_wstring(end - start) + L"ms"));
 }
 

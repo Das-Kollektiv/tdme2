@@ -4,7 +4,7 @@
 #include <tdme/math/Math.h>
 #include <java/lang/Object.h>
 #include <java/lang/Short.h>
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
@@ -22,7 +22,7 @@
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
 using java::lang::Object;
-using java::lang::System;
+using tdme::utils::Time;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;

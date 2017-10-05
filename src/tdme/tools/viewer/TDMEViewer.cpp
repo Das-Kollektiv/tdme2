@@ -1,8 +1,9 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 
+#include <cstdlib>
 #include <string>
 
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
@@ -16,7 +17,7 @@ using std::wstring;
 
 using tdme::tools::viewer::TDMEViewer;
 
-using java::lang::System;
+using tdme::utils::Time;
 
 using tdme::engine::Engine;
 using tdme::gui::GUI;
@@ -98,7 +99,7 @@ void TDMEViewer::display()
 			view->deactivate();
 			view->dispose();
 		}
-		System::exit(0);
+		exit(0);
 	}
 }
 

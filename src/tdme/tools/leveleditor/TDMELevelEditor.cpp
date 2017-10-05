@@ -1,9 +1,10 @@
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 
+#include <cstdlib>
 #include <string>
 
 #include <java/lang/String.h>
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
@@ -26,7 +27,7 @@ using std::wstring;
 
 using tdme::tools::leveleditor::TDMELevelEditor;
 using java::lang::String;
-using java::lang::System;
+using tdme::utils::Time;
 
 using tdme::engine::Engine;
 using tdme::gui::GUI;
@@ -122,7 +123,7 @@ void TDMELevelEditor::display()
 	Engine::getInstance()->doneGUIMode();
 	if (quitRequested == true) {
 		dispose();
-		System::exit(0);
+		exit(0);
 	}
 }
 

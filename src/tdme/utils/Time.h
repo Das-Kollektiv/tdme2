@@ -22,6 +22,6 @@ public:
 	 * @return int64_t
 	 */
 	inline static int64_t getCurrentMillis() {
-		return duration_cast<milliseconds>(high_resolution_clock::now() - high_resolution_clock::from_time_t(0)).count();
+		return high_resolution_clock::now().time_since_epoch() / milliseconds(1);
 	}
 };

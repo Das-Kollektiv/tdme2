@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
@@ -23,7 +23,7 @@ using std::to_wstring;
 
 using tdme::tests::PhysicsTest2;
 
-using java::lang::System;
+using tdme::utils::Time;
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -59,10 +59,10 @@ void PhysicsTest2::main(int argc, char** argv)
 void PhysicsTest2::display()
 {
 	auto fps = 60.0f;
-	auto start = System::currentTimeMillis();
+	auto start = Time::getCurrentMillis();
 	world->update(1.0f / fps);
 	world->synch(engine);
-	auto end = System::currentTimeMillis();
+	auto end = Time::getCurrentMillis();
 	engine->display();
 }
 

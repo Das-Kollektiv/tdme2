@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <java/lang/Object.h>
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <java/util/Iterator.h>
 #include <java/util/concurrent/locks/ReentrantLock.h>
 #include <tdme/engine/Engine.h>
@@ -50,7 +50,7 @@ using std::to_wstring;
 
 using tdme::gui::GUI;
 using java::lang::Object;
-using java::lang::System;
+using tdme::utils::Time;
 using java::util::Iterator;
 using java::util::concurrent::locks::ReentrantLock;
 using tdme::engine::Engine;
@@ -543,7 +543,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	fakeMouseMovedEvent();
 	lockEvents();
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setTime(Time::getCurrentMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
@@ -560,7 +560,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	fakeMouseMovedEvent();
 	lockEvents();
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setTime(Time::getCurrentMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
@@ -577,7 +577,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	fakeMouseMovedEvent();
 	lockEvents();
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setTime(Time::getCurrentMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
@@ -594,7 +594,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	fakeMouseMovedEvent();
 	lockEvents();
 	auto guiKeyboardEvent = java_cast< GUIKeyboardEvent* >(keyboardEventsPool->allocate());
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setTime(Time::getCurrentMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
@@ -612,7 +612,7 @@ void GUI::onMouseDragged(int x, int y) {
 
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
+	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_DRAGGED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
@@ -632,7 +632,7 @@ void GUI::onMouseMoved(int x, int y) {
 
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
+	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
@@ -653,7 +653,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	lockEvents();
 	mouseButtonLast = button + 1;
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
+	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSE_PRESSED:GUIMouseEvent_Type::MOUSE_RELEASED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
@@ -673,7 +673,7 @@ void GUI::mouseWheelMoved(MouseEvent* event)
 {
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
+	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_WHEEL_MOVED);
 	guiMouseEvent->setX(event->getX());
 	guiMouseEvent->setY(event->getY());
@@ -691,7 +691,7 @@ void GUI::fakeMouseMovedEvent()
 {
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
-	guiMouseEvent->setTime(System::currentTimeMillis());
+	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
 	guiMouseEvent->setX(-10000);
 	guiMouseEvent->setY(-10000);
@@ -735,7 +735,7 @@ void GUI::fakeKeyboardModifierEvent() {
 
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
-	guiKeyboardEvent->setTime(System::currentTimeMillis());
+	guiKeyboardEvent->setTime(Time::getCurrentMillis());
 	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(-1);
 	guiKeyboardEvent->setKeyChar(-1);

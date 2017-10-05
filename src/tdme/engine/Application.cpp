@@ -6,7 +6,7 @@
 
 #include <fwd-tdme.h>
 
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <java/lang/Thread.h>
 
 #include <tdme/engine/Application.h>
@@ -16,7 +16,7 @@
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::utils::StringConverter;
-using java::lang::System;
+using tdme::utils::Time;
 
 constexpr int32_t Application::FPS;
 Application* Application::application = nullptr;
@@ -68,7 +68,7 @@ void Application::glutDisplay() {
 		Application::application->initialize();
 		Application::application->initialized = true;
 	}
-	int64_t timeNow = System::currentTimeMillis();
+	int64_t timeNow = Time::getCurrentMillis();
 	int64_t timeFrame = 1000/Application::FPS;
 	if (Application::timeLast != -1L) {
 		int64_t timePassed = timeNow - timeLast;

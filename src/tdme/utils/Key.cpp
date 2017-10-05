@@ -5,6 +5,7 @@
 #include <java/lang/String.h>
 #include <java/lang/StringBuilder.h>
 #include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <tdme/utils/_Console.h>
 #include <Array.h>
 
@@ -13,6 +14,7 @@ using java::lang::Object;
 using java::lang::String;
 using java::lang::StringBuilder;
 using java::lang::System;
+using tdme::utils::Time;
 using tdme::utils::_Console;
 
 template<typename T, typename U>

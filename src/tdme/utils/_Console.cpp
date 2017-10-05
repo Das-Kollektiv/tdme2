@@ -4,7 +4,7 @@
 #include <tdme/utils/_Console.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <java/lang/String.h>
 
 using namespace std;
@@ -12,7 +12,7 @@ using namespace std;
 using tdme::utils::_Console;
 using java::io::PrintStream;
 using java::lang::Object;
-using java::lang::System;
+using tdme::utils::Time;
 
 _Console::_Console(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))

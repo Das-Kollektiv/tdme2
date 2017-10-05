@@ -1,7 +1,7 @@
 // Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalController.java
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
-#include <java/lang/System.h>
+#include <tdme/utils/Time.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -22,7 +22,7 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
-using java::lang::System;
+using tdme::utils::Time;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -119,7 +119,7 @@ int32_t GUIInputInternalController::getOffset()
 
 void GUIInputInternalController::resetCursorMode()
 {
-	cursorModeStarted = System::currentTimeMillis();
+	cursorModeStarted = Time::getCurrentMillis();
 	cursorMode = GUIInputInternalController_CursorMode::SHOW;
 }
 
@@ -129,9 +129,9 @@ GUIInputInternalController_CursorMode* GUIInputInternalController::getCursorMode
 		resetCursorMode();
 		return cursorMode;
 	}
-	if (System::currentTimeMillis() - cursorModeStarted > CURSOR_MODE_DURATION) {
+	if (Time::getCurrentMillis() - cursorModeStarted > CURSOR_MODE_DURATION) {
 		cursorMode = cursorMode == GUIInputInternalController_CursorMode::SHOW ? GUIInputInternalController_CursorMode::HIDE : GUIInputInternalController_CursorMode::SHOW;
-		cursorModeStarted = System::currentTimeMillis();
+		cursorModeStarted = Time::getCurrentMillis();
 	}
 	return cursorMode;
 }
@@ -256,7 +256,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 void GUIInputInternalController::tick()
 {
 	if (isDragging == true) {
-		auto now = System::currentTimeMillis();
+		auto now = Time::getCurrentMillis();
 		if (draggingTickLast != -1LL && now - draggingTickLast < DRAGGING_CALMDOWN) {
 			return;
 		}
