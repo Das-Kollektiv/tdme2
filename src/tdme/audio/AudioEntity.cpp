@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/AudioEntity.java
 #include <tdme/audio/AudioEntity.h>
 
 #include <string>

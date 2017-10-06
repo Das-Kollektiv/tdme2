@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/Audio.java
 #include <tdme/audio/Audio.h>
 
 #if defined(__APPLE__)

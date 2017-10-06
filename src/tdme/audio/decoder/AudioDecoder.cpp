@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/decoder/AudioDecoder.java
 #include <tdme/audio/decoder/AudioDecoder.h>
 
 using tdme::audio::decoder::AudioDecoder;
