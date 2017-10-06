@@ -171,7 +171,7 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 					_Console::println(
 						wstring(
 							L"TriggerScreenController::onActionPerformed()::unknown, type='" +
-							type->toWString() +
+							type->getName() +
 							L"', id = '" +
 							node->getId() +
 							L"'" +

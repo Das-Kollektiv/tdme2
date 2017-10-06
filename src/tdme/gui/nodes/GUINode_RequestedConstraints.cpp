@@ -25,19 +25,19 @@ GUINode_RequestedConstraints::GUINode_RequestedConstraints()
 String* GUINode_RequestedConstraints::toString()
 {
 	return ::java::lang::StringBuilder().append(left)->append(u" "_j)
-		->append(leftType->toString()->toLowerCase())
+		->append(leftType->getName())
 		->append(u", "_j)
 		->append(top)
 		->append(u" "_j)
-		->append(topType->toString()->toLowerCase())
+		->append(topType->getName())
 		->append(u", "_j)
 		->append(width)
 		->append(u" "_j)
-		->append(widthType->toString()->toLowerCase())
+		->append(widthType->getName())
 		->append(u", "_j)
 		->append(height)
 		->append(u" "_j)
-		->append(heightType->toString()->toLowerCase())->toString();
+		->append(heightType->getName())->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

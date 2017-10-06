@@ -302,7 +302,7 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 					_Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
-							type->toWString() +
+							type->getName() +
 							L"', id = '" +
 							node->getId() +
 							L"'" +

@@ -26,8 +26,8 @@ GUINode_Alignments::GUINode_Alignments()
 
 String* GUINode_Alignments::toString()
 {
-	return ::java::lang::StringBuilder().append(horizontal->toString()->toLowerCase())->append(u", "_j)
-		->append(vertical->toString()->toLowerCase())->toString();
+	return ::java::lang::StringBuilder().append(horizontal->getName())->append(u", "_j)
+		->append(vertical->getName())->toString();
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);

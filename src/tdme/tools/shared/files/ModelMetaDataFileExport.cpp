@@ -124,7 +124,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		*/
 	}
 	jEntityRoot["version"] = "0.99";
-	jEntityRoot["type"] = StringConverter::toString(entity->getType()->toWString());
+	jEntityRoot["type"] = StringConverter::toString(entity->getType()->getName());
 	jEntityRoot["name"] = StringConverter::toString(entity->getName());
 	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription());
 	jEntityRoot["px"] = static_cast< double >(entity->getPivot().getX());
@@ -133,7 +133,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = entity->getParticleSystem();
 		ext::jsonbox::Object jParticleSystem;
-		jParticleSystem["t"] = StringConverter::toString(particleSystem->getType()->toWString());
+		jParticleSystem["t"] = StringConverter::toString(particleSystem->getType()->getName());
 		{
 			auto v = particleSystem->getType();
 			if ((v == LevelEditorEntityParticleSystem_Type::NONE))
@@ -182,7 +182,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					_Console::println(
 						wstring(
 							L"ModelMetaDataFileExport::export(): unknown particle system type '" +
-							particleSystem->getType()->toWString() +
+							particleSystem->getType()->getName() +
 							L"'"
 						)
 					);
@@ -192,7 +192,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			end_switch0:;
 		}
 
-		jParticleSystem["e"] = StringConverter::toString(particleSystem->getEmitter()->toWString());
+		jParticleSystem["e"] = StringConverter::toString(particleSystem->getEmitter()->getName());
 		{
 			auto v = particleSystem->getEmitter();
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE))
@@ -383,7 +383,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				_Console::println(
 					wstring(
 						L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
-						particleSystem->getEmitter()->toWString() +
+						particleSystem->getEmitter()->getName() +
 						L"'"
 					 )
 				 );

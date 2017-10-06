@@ -164,7 +164,7 @@ String* GUIKeyboardEvent::toString()
 {
 	return ::java::lang::StringBuilder().append(u"GUIKeyboardEvent [time="_j)->append(time)
 		->append(u", type="_j)
-		->append(static_cast< Object* >(type))
+		->append(type->getName())
 		->append(u", keyCode="_j)
 		->append(keyCode)
 		->append(u", keyChar="_j)

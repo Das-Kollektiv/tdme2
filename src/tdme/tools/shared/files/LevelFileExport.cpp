@@ -60,7 +60,7 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
 	jRoot["version"] = "0.99";
-	jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->toWString());
+	jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->getName());
 	tdme::ext::jsonbox::Array jLights;
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		auto light = level->getLightAt(i);
@@ -102,7 +102,7 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		auto entity = entityLibrary->getEntityAt(i);
 		tdme::ext::jsonbox::Object jModel;
 		jModel["id"] = entity->getId();
-		jModel["type"] = StringConverter::toString(entity->getType()->toWString());
+		jModel["type"] = StringConverter::toString(entity->getType()->getName());
 		jModel["name"] = StringConverter::toString(entity->getName());
 		jModel["descr"] = StringConverter::toString(entity->getDescription());
 		jModel["entity"] = ModelMetaDataFileExport::exportToJSON(entity);

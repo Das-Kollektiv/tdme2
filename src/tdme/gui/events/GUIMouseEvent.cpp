@@ -132,7 +132,7 @@ String* GUIMouseEvent::toString()
 {
 	return ::java::lang::StringBuilder().append(u"GUIMouseEvent [time="_j)->append(time)
 		->append(u", type="_j)
-		->append(static_cast< Object* >(type))
+		->append(type->getName())
 		->append(u", x="_j)
 		->append(x)
 		->append(u", y="_j)

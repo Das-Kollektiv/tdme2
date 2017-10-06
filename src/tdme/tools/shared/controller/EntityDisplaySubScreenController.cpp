@@ -90,7 +90,7 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 					_Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
-							type->toWString() +
+							type->getName() +
 							L"', id = '" +
 							node->getId() +
 							L"'" +

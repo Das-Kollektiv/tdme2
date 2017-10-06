@@ -59,8 +59,8 @@ void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileN
 	os.writeByte(static_cast< uint8_t >(0));
 	os.writeByte(static_cast< uint8_t >(0));
 	os.writeString(model->getName());
-	os.writeString(model->getUpVector()->toWString());
-	os.writeString(model->getRotationOrder()->toWString());
+	os.writeString(model->getUpVector()->getName());
+	os.writeString(model->getRotationOrder()->getName());
 	os.writeFloatArray(model->getBoundingBox()->getMin().getArray());
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());

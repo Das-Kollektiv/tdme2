@@ -378,7 +378,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			_Console::println(
 				wstring(
 					L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
-					particleSystem->getType()->toWString() +
+					particleSystem->getType()->getName() +
 					L"'"
 				)
 			);
@@ -419,7 +419,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				_Console::println(
 					wstring(
 						L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
-						particleSystem->getType()->toWString() +
+						particleSystem->getType()->getName() +
 						L"'"
 					)
 				);
@@ -627,7 +627,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				_Console::println(
 					wstring(
 						L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
-						particleSystem->getEmitter()->toWString() +
+						particleSystem->getEmitter()->getName() +
 						L"'"
 					)
 				);
@@ -778,7 +778,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			_Console::println(
 				wstring(
 					L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
-					particleSystem->getEmitter()->toWString() +
+					particleSystem->getEmitter()->getName() +
 					L"'"
 				)
 			);
@@ -893,7 +893,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					_Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
-							type->toWString() +
+							type->getName() +
 							L"', id = '" +
 							node->getId() +
 							L"'" +

@@ -179,7 +179,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			_Console::println(
 				wstring(
 					L"Level::createParticleSystem(): unknown particle system emitter '" +
-					particleSystem->getEmitter()->toWString() +
+					particleSystem->getEmitter()->getName() +
 					L"'"
 				)
 			);
@@ -211,7 +211,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				_Console::println(
 					wstring(
 						L"Level::createParticleSystem(): unknown particle system type '" +
-						particleSystem->getType()->toWString() +
+						particleSystem->getType()->getName() +
 						L"'"
 					)
 				);
