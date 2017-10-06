@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -20,7 +19,6 @@
 using std::wstring;
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
-using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;

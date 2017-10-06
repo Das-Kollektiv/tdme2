@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -16,7 +15,6 @@
 
 using std::vector;
 
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;

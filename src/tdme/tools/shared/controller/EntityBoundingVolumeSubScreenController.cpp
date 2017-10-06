@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -39,10 +38,9 @@
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
-
-using java::lang::String;
 
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
@@ -217,31 +215,31 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 	{
 		auto v = bvType;
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"0"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"0"));
 			goto end_switch0;;
 		}
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"1"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"1"));
 			boundingVolume[idx]->getActiveConditions()->add(L"sphere");
 			goto end_switch0;;
 		}
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"2"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"2"));
 			boundingVolume[idx]->getActiveConditions()->add(L"capsule");
 			goto end_switch0;;
 		}
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"3"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"3"));
 			boundingVolume[idx]->getActiveConditions()->add(L"aabb");
 			goto end_switch0;;
 		}
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"4"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"4"));
 			boundingVolume[idx]->getActiveConditions()->add(L"obb");
 			goto end_switch0;;
 		}
 		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(u"5"_j));
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set(L"5"));
 			boundingVolume[idx]->getActiveConditions()->add(L"convexmesh");
 			goto end_switch0;;
 		}

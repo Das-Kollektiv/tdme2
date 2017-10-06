@@ -4,7 +4,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/tools/leveleditor/fwd-tdme.h>
@@ -14,8 +13,6 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::wstring;
-
-using java::lang::String;
 
 using tdme::engine::Application;
 using tdme::engine::Engine;

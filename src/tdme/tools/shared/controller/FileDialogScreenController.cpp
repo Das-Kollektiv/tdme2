@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
@@ -25,7 +24,6 @@
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::gui::GUIParser;
@@ -62,9 +60,9 @@ const wstring& FileDialogScreenController::getPathName()
 	return cwd;
 }
 
-const wstring& FileDialogScreenController::getFileName()
+const wstring FileDialogScreenController::getFileName()
 {
-	return fileName->getController()->getValue()->toString()->getCPPWString();
+	return fileName->getController()->getValue()->toWString();
 }
 
 void FileDialogScreenController::initialize()
@@ -155,10 +153,10 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
-			auto selectedFile = node->getController()->getValue()->toString();
-			if (_FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile->getCPPWString()) == true) {
+			auto selectedFile = node->getController()->getValue()->toWString();
+			if (_FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile) == true) {
 				try {
-					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile->getCPPWString());
+					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
 				} catch (_Exception& exception) {
 					_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					_Console::println(string(exception.what()));

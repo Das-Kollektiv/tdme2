@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -28,7 +27,6 @@ using std::map;
 using std::string;
 using std::vector;
 
-using java::lang::String;
 
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::engine::model::Color4;

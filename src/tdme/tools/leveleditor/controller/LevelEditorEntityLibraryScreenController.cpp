@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
-
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -34,8 +32,6 @@
 
 using std::wstring;
 using std::to_wstring;
-
-using java::lang::String;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::gui::GUIParser;
@@ -251,13 +247,13 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		onEntitySelectionChanged();
 	} else
 		if (node->getId().compare(L"dropdown_entity_action") == 0) {
-		if (node->getController()->getValue()->equals(u"edit"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"edit") {
 			onEditEntity();
 		} else
-		if (node->getController()->getValue()->equals(u"delete"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"delete") {
 			onDeleteEntity();
 		} else
-		if (node->getController()->getValue()->equals(u"create_model"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"create_model") {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 			vector<wstring> extensions = {
 				L"tmm",
@@ -272,7 +268,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
 			);
 		} else
-		if (node->getController()->getValue()->equals(u"create_trigger"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"create_trigger") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, L"New trigger", L"", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
@@ -285,7 +281,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				);
 			}
 		} else
-		if (node->getController()->getValue()->equals(u"create_empty"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"create_empty") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, L"New empty", L"");
 				setEntityLibrary();
@@ -298,9 +294,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else
-		if (node->getController()->getValue()->equals(u"create_light"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"create_light") {
 		} else
-		if (node->getController()->getValue()->equals(u"create_particlesystem"_j) == true) {
+		if (node->getController()->getValue()->toWString() == L"create_particlesystem") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, L"New particle system", L"");
 				setEntityLibrary();

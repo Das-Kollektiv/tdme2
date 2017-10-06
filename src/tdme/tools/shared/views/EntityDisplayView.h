@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -14,7 +13,6 @@
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;

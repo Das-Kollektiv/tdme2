@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using std::wstring;

@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -11,7 +10,6 @@
 #include <tdme/utils/MutableString.h>
 
 using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_4;
-using java::lang::String;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::tools::shared::controller::FileDialogPath;

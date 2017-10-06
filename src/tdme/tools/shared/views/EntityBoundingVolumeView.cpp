@@ -1,7 +1,6 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 
 #include <tdme/math/Math.h>
-#include <java/lang/String.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -25,7 +24,6 @@
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 
 using tdme::math::Math;
-using java::lang::String;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;

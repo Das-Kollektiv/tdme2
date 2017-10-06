@@ -59,7 +59,7 @@ public:
 	/** 
 	 * @return file name
 	 */
-	virtual const wstring& getFileName();
+	virtual const wstring getFileName();
 
 	void initialize() override;
 	void dispose() override;

@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
@@ -56,7 +55,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -276,7 +274,7 @@ void ParticleSystemScreenController::unsetEntityProperties()
 	entityBaseSubScreenController->unsetEntityProperties();
 }
 
-void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection)
+void ParticleSystemScreenController::setParticleSystemTypes(const vector<wstring>* particleSystemTypesCollection)
 {
 	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(particleSystemTypes->getId() + L"_inner"));
 	auto idx = 0;
@@ -290,9 +288,9 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 		particleSystemTypesInnerNodeSubNodesXML =
 			particleSystemTypesInnerNodeSubNodesXML +
 			L"<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(particleSystem->getCPPWString()) +
+			GUIParser::escapeQuotes(particleSystem) +
 			L"\" value=\"" +
-			GUIParser::escapeQuotes(particleSystem->getCPPWString()) +
+			GUIParser::escapeQuotes(particleSystem) +
 			L"\" " +
 			(idx == 0 ? L"selected=\"true\" " : L"") +
 			L" />\n";
@@ -309,7 +307,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<String*
 	}
 }
 
-void ParticleSystemScreenController::setParticleSystemEmitters(const vector<String*>* emittersCollection)
+void ParticleSystemScreenController::setParticleSystemEmitters(const vector<wstring>* emittersCollection)
 {
 	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(particleSystemEmitters->getId() + L"_inner")));
 	auto idx = 0;
@@ -323,9 +321,9 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<Stri
 		particleSystemEmittersInnerNodeSubNodesXML =
 			particleSystemEmittersInnerNodeSubNodesXML +
 			L"<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(particleSystemEmitter->getCPPWString()) +
+			GUIParser::escapeQuotes(particleSystemEmitter) +
 			L"\" value=\"" +
-			GUIParser::escapeQuotes(particleSystemEmitter->getCPPWString()) +
+			GUIParser::escapeQuotes(particleSystemEmitter) +
 			L"\" " +
 			(idx == 0 ? L"selected=\"true\" " : L"") +
 			L" />\n";
@@ -364,14 +362,14 @@ void ParticleSystemScreenController::setParticleSystemType()
 			opsMaxCount->getController()->setValue(value->set(particleSystem->getObjectParticleSystem()->getMaxCount()));
 			opsScale->getController()->setValue(value->set(Tools::formatVector3(particleSystem->getObjectParticleSystem()->getScale())));
 			opsModel->getController()->setValue(value->set(particleSystem->getObjectParticleSystem()->getModelFile()));
-			opsAutoEmit->getController()->setValue(value->set(particleSystem->getObjectParticleSystem()->isAutoEmit() == true ? u"1"_j : u""_j));
+			opsAutoEmit->getController()->setValue(value->set(particleSystem->getObjectParticleSystem()->isAutoEmit() == true ? L"1" : L""));
 			goto end_switch0;;
 		}
 		if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
 			particleSystemTypes->getController()->setValue(value->set(TYPE_POINTSPARTICLESYSTEM));
 			particleSystemType->getActiveConditions()->add(TYPE_POINTSPARTICLESYSTEM);
 			ppsMaxPoints->getController()->setValue(value->set(particleSystem->getPointParticleSystem()->getMaxPoints()));
-			ppsAutoEmit->getController()->setValue(value->set(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? u"1"_j : u""_j));
+			ppsAutoEmit->getController()->setValue(value->set(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? L"1" : L""));
 			goto end_switch0;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
@@ -402,7 +400,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
 				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue()->toWString()));
 				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue()->toWString()));
-				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->equals(u"1"_j));
+				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->toWString() == L"1");
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toWString());
 				} catch (_Exception& exception) {
@@ -412,7 +410,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			}
 			if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
 				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue()->toWString()));
-				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue()->equals(u"1"_j));
+				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue()->toWString() == L"1");
 				goto end_switch1;;
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {

@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -12,7 +11,6 @@
 
 using std::wstring;
 
-using java::lang::String;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::os::filesystem::_FileSystemException;

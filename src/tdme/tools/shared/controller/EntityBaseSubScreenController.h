@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -18,9 +16,6 @@ using std::map;
 using std::wstring;
 using std::vector;
 
-using java::lang::Iterable;
-using java::lang::String;
-using java::util::Collection;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;

@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
@@ -11,7 +10,6 @@
 using std::wstring;
 
 using tdme::tools::shared::model::LevelEditorObject;
-using java::lang::String;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::ModelProperties;

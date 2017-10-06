@@ -1,9 +1,7 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 
-#include <java/lang/String.h>
 
 using tdme::tools::shared::controller::FileDialogPath;
-using java::lang::String;
 
 FileDialogPath::FileDialogPath(const wstring& path)
 {

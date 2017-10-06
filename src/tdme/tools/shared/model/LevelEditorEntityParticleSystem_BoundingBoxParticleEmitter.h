@@ -2,14 +2,12 @@
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using java::lang::String;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;

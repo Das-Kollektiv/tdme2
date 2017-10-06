@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 
-#include <java/lang/String.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -13,7 +12,6 @@
 #include <tdme/utils/_Console.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using java::lang::String;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;

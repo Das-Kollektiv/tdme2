@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 
-#include <java/lang/String.h>
-
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -46,8 +44,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
-
-using java::lang::String;
 
 using tdme::engine::model::Color4;
 using tdme::gui::GUIParser;
@@ -194,7 +190,7 @@ void LevelEditorScreenController::setScreenCaption(const wstring& text)
 void LevelEditorScreenController::setGrid(bool enabled, float gridY)
 {
 	gridEnabled->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
-	gridYPosition->getController()->setValue(value->set(String::valueOf(gridY)));
+	gridYPosition->getController()->setValue(value->set(Tools::formatFloat(gridY)));
 }
 
 void LevelEditorScreenController::setLevelSize(float width, float depth, float height)
@@ -206,7 +202,7 @@ void LevelEditorScreenController::setLevelSize(float width, float depth, float h
 
 void LevelEditorScreenController::unsetObjectProperties()
 {
-	objectPropertiesPresets->getController()->setValue(value->set(u"none"_j));
+	objectPropertiesPresets->getController()->setValue(value->set(L"none"));
 	objectPropertiesPresets->getController()->setDisabled(true);
 	btnObjectPropertyPresetApply->getController()->setDisabled(true);
 	objectPropertiesListBox->getController()->setDisabled(true);

@@ -1,12 +1,10 @@
 #include <tdme/tools/leveleditor/views/LevelEditorView_LevelEditorView_1.h>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/utils/StringUtils.h>
 
 using tdme::tools::leveleditor::views::LevelEditorView_LevelEditorView_1;
-using java::lang::String;
 using tdme::engine::Entity;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::utils::StringUtils;

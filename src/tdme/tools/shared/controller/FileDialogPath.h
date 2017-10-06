@@ -3,12 +3,10 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 
 using std::wstring;
 
-using java::lang::String;
 
 /** 
  * File dialog path

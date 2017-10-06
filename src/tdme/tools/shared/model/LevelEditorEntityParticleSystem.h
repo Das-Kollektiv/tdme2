@@ -1,10 +1,8 @@
 
 #pragma once
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using java::lang::String;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;

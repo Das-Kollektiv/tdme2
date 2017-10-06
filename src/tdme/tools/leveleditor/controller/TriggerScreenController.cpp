@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include <java/lang/Float.h>
-#include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -18,6 +16,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
@@ -26,8 +25,6 @@
 using std::wstring;
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
-using java::lang::Float;
-using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -42,6 +39,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::viewer::TDMEViewer;
+using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Console;
@@ -139,9 +137,9 @@ void TriggerScreenController::onQuit()
 void TriggerScreenController::onTriggerApply()
 {
 	try {
-		auto width = Float::parseFloat(triggerWidth->getController()->getValue()->toString());
-		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->toString());
-		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toString());
+		auto width = Float::parseFloat(triggerWidth->getController()->getValue()->toWString());
+		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->toWString());
+		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toWString());
 		view->triggerApply(width, height, depth);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));

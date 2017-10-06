@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -12,7 +11,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using java::lang::String;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

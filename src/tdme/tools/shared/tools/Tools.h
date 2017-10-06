@@ -5,19 +5,16 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/tools/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::array;
 using std::wstring;
 
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Transformations;

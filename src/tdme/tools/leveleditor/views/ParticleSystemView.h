@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
@@ -12,7 +11,6 @@
 using std::wstring;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
-using java::lang::String;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 

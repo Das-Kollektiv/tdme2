@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
@@ -39,7 +38,6 @@
 
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;

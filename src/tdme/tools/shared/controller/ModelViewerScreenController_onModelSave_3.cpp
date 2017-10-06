@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/controller/ModelViewerScreenController_onModelSave_3.h>
 
-#include <java/lang/String.h>
 
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -10,10 +9,8 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Exception.h>
 
-using java::lang::String;
 
 using tdme::tools::shared::controller::ModelViewerScreenController_onModelSave_3;
-using java::lang::String;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::ModelViewerScreenController;

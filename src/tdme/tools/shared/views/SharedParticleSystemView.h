@@ -4,8 +4,6 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/io/fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -17,8 +15,6 @@ using std::wstring;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
-using java::io::File;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;

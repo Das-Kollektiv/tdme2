@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
@@ -27,8 +26,6 @@ using std::vector;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
-
-using java::lang::String;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;

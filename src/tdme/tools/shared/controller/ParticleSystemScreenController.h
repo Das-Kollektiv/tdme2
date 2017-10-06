@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -21,7 +20,6 @@ using std::wstring;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using java::lang::Iterable;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -204,13 +202,13 @@ public:
 	 * Set up particle system types
 	 * @param particle system types
 	 */
-	void setParticleSystemTypes(const vector<String*>* particleSystemTypesCollection);
+	void setParticleSystemTypes(const vector<wstring>* particleSystemTypesCollection);
 
 	/** 
 	 * Set up emitters
 	 * @param emitters
 	 */
-	void setParticleSystemEmitters(const vector<String*>* emittersCollection);
+	void setParticleSystemEmitters(const vector<wstring>* emittersCollection);
 
 	/** 
 	 * On quit

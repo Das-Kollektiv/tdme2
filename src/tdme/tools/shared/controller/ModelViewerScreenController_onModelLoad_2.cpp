@@ -1,6 +1,5 @@
 #include <tdme/tools/shared/controller/ModelViewerScreenController_onModelLoad_2.h>
 
-#include <java/lang/String.h>
 
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -8,7 +7,6 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
-using java::lang::String;
 
 using tdme::tools::shared::controller::ModelViewerScreenController_onModelLoad_2;
 using tdme::tools::shared::controller::FileDialogPath;

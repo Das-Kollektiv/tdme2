@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -28,11 +27,9 @@
 #include <ext/jsonbox/Array.h>
 
 using std::wstring;
+using std::to_wstring;
 
 using tdme::tools::shared::files::LevelFileImport;
-using java::io::File;
-using java::io::InputStream;
-using java::lang::String;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;

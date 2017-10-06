@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -19,7 +18,6 @@
 using std::wstring;
 
 using tdme::tools::leveleditor::views::ParticleSystemView;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;

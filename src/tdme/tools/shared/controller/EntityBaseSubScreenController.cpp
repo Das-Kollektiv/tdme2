@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -28,7 +27,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using java::lang::String;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -101,7 +99,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	if (model == nullptr)
 		return;
 
-	view->setEntityData(model, entityName->getController()->getValue()->toString()->getCPPWString(), entityDescription->getController()->getValue()->toString()->getCPPWString());
+	view->setEntityData(model, entityName->getController()->getValue()->toWString(), entityDescription->getController()->getValue()->toWString());
 	onSetEntityDataAction->performAction();
 }
 
@@ -183,7 +181,7 @@ void EntityBaseSubScreenController::unsetEntityProperties()
 {
 	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + L"_inner")));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
-	entityPropertiesPresets->getController()->setValue(value->set(u"none"_j));
+	entityPropertiesPresets->getController()->setValue(value->set(L"none"));
 	entityPropertiesPresets->getController()->setDisabled(true);
 	entityPropertyPresetApply->getController()->setDisabled(true);
 	entityPropertiesList->getController()->setDisabled(true);
@@ -200,9 +198,9 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 {
 	if (view->entityPropertySave(
 		entity,
-		entityPropertiesList->getController()->getValue()->toString()->getCPPWString(),
-		entityPropertyName->getController()->getValue()->toString()->getCPPWString(),
-		entityPropertyValue->getController()->getValue()->toString()->getCPPWString()) == false) {
+		entityPropertiesList->getController()->getValue()->toWString(),
+		entityPropertyName->getController()->getValue()->toWString(),
+		entityPropertyValue->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Saving entity property failed");
 	}
 }
@@ -216,7 +214,7 @@ void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
-	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toString()->getCPPWString()) == false) {
+	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toWString()) == false) {
 		showErrorPopUp(L"Warning", L"Removing entity property failed");
 	}
 }
@@ -228,7 +226,7 @@ void EntityBaseSubScreenController::showErrorPopUp(const wstring& caption, const
 
 void EntityBaseSubScreenController::onEntityPropertyPresetApply(LevelEditorEntity* model)
 {
-	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->toString()->getCPPWString());
+	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->toWString());
 }
 
 void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEditorEntity* entity)
@@ -239,7 +237,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyRemove->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->toString()->getCPPWString());
+	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->toWString());
 	if (entityProperty != nullptr) {
 		entityPropertyName->getController()->setValue(value->set(entityProperty->getName()));
 		entityPropertyValue->getController()->setValue(value->set(entityProperty->getValue()));

@@ -3,7 +3,6 @@
 #include <array>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -50,8 +49,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::shared::tools::Tools;
-using java::lang::String;
-using java::util::Locale;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;

@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -41,7 +40,6 @@ using std::wstring;
 
 using tdme::tools::shared::controller::ModelViewerScreenController;
 
-using java::lang::String;
 
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
@@ -252,9 +250,9 @@ void ModelViewerScreenController::onModelReload()
 void ModelViewerScreenController::onPivotApply()
 {
 	try {
-		auto x = Float::parseFloat(pivotX->getController()->getValue()->toString()->getCPPWString());
-		auto y = Float::parseFloat(pivotY->getController()->getValue()->toString()->getCPPWString());
-		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toString()->getCPPWString());
+		auto x = Float::parseFloat(pivotX->getController()->getValue()->toWString());
+		auto y = Float::parseFloat(pivotY->getController()->getValue()->toWString());
+		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toWString());
 		view->pivotApply(x, y, z);
 	} catch (_Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));

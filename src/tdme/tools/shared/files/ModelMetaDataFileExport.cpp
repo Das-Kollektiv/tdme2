@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
@@ -46,7 +45,6 @@
 using std::ostringstream;
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::engine::fileio::models::TMWriter;

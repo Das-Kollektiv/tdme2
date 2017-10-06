@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -240,18 +239,18 @@ void SharedParticleSystemView::initialize()
 
 	loadSettings();
 	entityBoundingVolumeView->initialize();
-	vector<String*> particleSystemTypes;
-	particleSystemTypes.push_back(u"None"_j);
-	particleSystemTypes.push_back(u"Object Particle System"_j);
-	particleSystemTypes.push_back(u"Points Particle System"_j);
+	vector<wstring> particleSystemTypes;
+	particleSystemTypes.push_back(L"None");
+	particleSystemTypes.push_back(L"Object Particle System");
+	particleSystemTypes.push_back(L"Points Particle System");
 	particleSystemScreenController->setParticleSystemTypes(&particleSystemTypes);
-	vector<String*> particleSystemEmitters;
-	particleSystemEmitters.push_back(u"None"_j);
-	particleSystemEmitters.push_back(u"Point Particle Emitter"_j);
-	particleSystemEmitters.push_back(u"BoundingBox Particle Emitter"_j);
-	particleSystemEmitters.push_back(u"Circle Particle Emitter"_j);
-	particleSystemEmitters.push_back(u"Circle Particle Emitter Plane Velocity"_j);
-	particleSystemEmitters.push_back(u"Sphere Particle Emitter"_j);
+	vector<wstring> particleSystemEmitters;
+	particleSystemEmitters.push_back(L"None");
+	particleSystemEmitters.push_back(L"Point Particle Emitter");
+	particleSystemEmitters.push_back(L"BoundingBox Particle Emitter");
+	particleSystemEmitters.push_back(L"Circle Particle Emitter");
+	particleSystemEmitters.push_back(L"Circle Particle Emitter Plane Velocity");
+	particleSystemEmitters.push_back(L"Sphere Particle Emitter");
 	particleSystemScreenController->setParticleSystemEmitters(&particleSystemEmitters);
 	particleSystemScreenController->getEntityDisplaySubScreenController()->setupDisplay();
 	updateGUIElements();

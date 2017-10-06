@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Light.h>
@@ -53,7 +52,6 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::tools::leveleditor::logic::Level;
-using java::lang::String;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Light;
@@ -341,7 +339,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 			for (auto k = 0; k < rigidBodies.size(); k++) {
 				auto rigidBody = rigidBodies.at(k);
 				compareMutableString->set(object->getId());
-				compareMutableString->append(u".bv."_j);
+				compareMutableString->append(L".bv.");
 				compareMutableString->append(j);
 				if (compareMutableString->equals(rigidBody->getId()) == false)
 					continue;

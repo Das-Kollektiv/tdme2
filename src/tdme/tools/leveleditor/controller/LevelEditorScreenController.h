@@ -45,7 +45,6 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
-using java::lang::Object;
 
 /** 
  * Level Editor Screen Controller

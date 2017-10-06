@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -15,7 +14,6 @@ using tdme::tools::shared::views::EntityDisplayView;
 using std::vector;
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;

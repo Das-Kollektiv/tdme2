@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 
-#include <java/lang/String.h>
 
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
@@ -32,7 +31,6 @@
 using std::ostringstream;
 using std::wstring;
 
-using java::lang::String;
 
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::engine::Rotation;

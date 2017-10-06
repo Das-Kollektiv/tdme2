@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <string>
 
-#include <java/lang/String.h>
 #include <tdme/utils/Time.h>
 
 #include <tdme/engine/Engine.h>
@@ -26,7 +25,6 @@
 using std::wstring;
 
 using tdme::tools::leveleditor::TDMELevelEditor;
-using java::lang::String;
 using tdme::utils::Time;
 
 using tdme::engine::Engine;
