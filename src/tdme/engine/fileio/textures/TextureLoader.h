@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/textures/TextureLoader.java
 
 #pragma once
 

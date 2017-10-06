@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/model/LevelPropertyPresets.java
 
 #pragma once
 

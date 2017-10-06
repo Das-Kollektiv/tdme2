@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/model/Animation.java
 
 #pragma once
 

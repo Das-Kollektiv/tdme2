@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/viewer/TDMEViewer.java
 
 #pragma once
 

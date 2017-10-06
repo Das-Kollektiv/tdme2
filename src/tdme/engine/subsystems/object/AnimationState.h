@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/AnimationState.java
 
 #pragma once
 

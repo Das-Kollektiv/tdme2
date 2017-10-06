@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/decoder/AudioDecoder.java
 
 #pragma once
 

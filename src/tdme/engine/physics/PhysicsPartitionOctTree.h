@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/physics/PhysicsPartitionOctTree.java
 
 #pragma once
 

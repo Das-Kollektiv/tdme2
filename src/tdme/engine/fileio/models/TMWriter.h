@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/TMWriter.java
 
 #pragma once
 

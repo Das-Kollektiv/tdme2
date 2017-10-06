@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/leveleditor/TDMELevelEditor.java
 
 #pragma once
 

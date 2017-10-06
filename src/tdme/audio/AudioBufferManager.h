@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/AudioBufferManager.java
 
 #pragma once
 

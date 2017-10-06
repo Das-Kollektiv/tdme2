@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/views/SharedModelViewerView.java
 
 #pragma once
 

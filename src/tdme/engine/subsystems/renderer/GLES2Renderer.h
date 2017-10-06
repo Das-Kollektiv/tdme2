@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/renderer/GLES2Renderer.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/FrameBuffer.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/fileio/models/TMReader.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/PhysicsTest2.java
 
 #pragma once
 

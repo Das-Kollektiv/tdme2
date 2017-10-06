@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.java
 
 #pragma once
 

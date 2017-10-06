@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/_HashMap.java
 
 #pragma once
 

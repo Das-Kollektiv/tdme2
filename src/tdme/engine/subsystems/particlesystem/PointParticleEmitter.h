@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.java
 
 #pragma once
 

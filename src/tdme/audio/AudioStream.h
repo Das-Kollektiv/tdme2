@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/audio/AudioStream.java
 
 #pragma once
 

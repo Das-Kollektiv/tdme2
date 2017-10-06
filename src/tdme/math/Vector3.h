@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/math/Vector3.java
 
 #pragma once
 

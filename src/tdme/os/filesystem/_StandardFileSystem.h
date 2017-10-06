@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/os/_StandardFileSystem.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/particlesystem/TDMEParticleSystem.java
 
 #pragma once
 

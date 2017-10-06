@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/files/ModelMetaDataFileExport.java
 
 #pragma once
 

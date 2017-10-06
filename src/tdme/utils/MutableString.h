@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/utils/MutableString.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/EntityPickingFilter.java
 
 #pragma once
 

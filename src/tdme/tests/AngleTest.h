@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tests/AngleTest.java
 
 #pragma once
 

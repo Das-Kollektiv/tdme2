@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Triangle.java
 
 #pragma once
 

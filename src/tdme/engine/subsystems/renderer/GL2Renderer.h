@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/renderer/GL2Renderer.java
 
 #pragma once
 

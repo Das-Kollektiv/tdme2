@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/object/ModelUtilitiesInternal.java
 
 #pragma once
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/controller/FileDialogScreenController.java
 
 #pragma once
 

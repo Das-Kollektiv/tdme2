@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Capsule.java
 
 #pragma once
 

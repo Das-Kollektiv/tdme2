@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/tools/shared/tools/Tools.java
 
 #pragma once
 

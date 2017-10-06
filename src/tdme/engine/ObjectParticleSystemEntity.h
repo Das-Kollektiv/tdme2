@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/ObjectParticleSystemEntity.java
 
 #pragma once
 

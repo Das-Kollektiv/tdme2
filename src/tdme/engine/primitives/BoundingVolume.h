@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/BoundingVolume.java
 
 #pragma once
 

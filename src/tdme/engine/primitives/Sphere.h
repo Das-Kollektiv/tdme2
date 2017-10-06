@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/primitives/Sphere.java
 
 #pragma once
 

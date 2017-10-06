@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/engine/subsystems/manager/VBOManager.java
 
 #pragma once
 
