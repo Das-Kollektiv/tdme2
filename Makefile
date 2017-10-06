@@ -366,6 +366,7 @@ SRCS = \
 	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/Character.cpp \
+	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/Key.cpp \

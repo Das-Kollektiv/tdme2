@@ -7,6 +7,7 @@ namespace utils {
 		class Buffer;
 		class ByteBuffer;
 		class Character;
+		class Enum;
 		class Float;
 		class FloatBuffer;
 		class IntBuffer;
