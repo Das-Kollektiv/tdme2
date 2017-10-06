@@ -7,7 +7,7 @@
 #include <fwd-tdme.h>
 
 #include <tdme/utils/Time.h>
-#include <java/lang/Thread.h>
+#include <tdme/os/threading/Thread.h>
 
 #include <tdme/engine/Application.h>
 #include <tdme/utils/StringConverter.h>
@@ -17,6 +17,7 @@ using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::utils::StringConverter;
 using tdme::utils::Time;
+using tdme::os::threading::Thread;
 
 constexpr int32_t Application::FPS;
 Application* Application::application = nullptr;

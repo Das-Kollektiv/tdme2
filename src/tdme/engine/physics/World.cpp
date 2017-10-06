@@ -32,9 +32,7 @@ using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::physics::World;
-using java::lang::Class;
 using tdme::math::Math;
-using java::util::Iterator;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Rotation;

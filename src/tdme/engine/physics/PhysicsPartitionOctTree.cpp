@@ -27,7 +27,6 @@ using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::math::Math;
-using java::util::Iterator;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::RigidBody;

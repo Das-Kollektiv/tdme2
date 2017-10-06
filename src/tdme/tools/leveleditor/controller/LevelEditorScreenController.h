@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -49,7 +48,7 @@ using tdme::utils::MutableString;
 /** 
  * Level Editor Screen Controller
  * @author Andreas Drewke
- * @version $Id: ModelLibraryController.java 82 2013-12-26 13:56:48Z drewke.net $
+ * @version $Id$
  */
 class tdme::tools::leveleditor::controller::LevelEditorScreenController final
 	: public ScreenController

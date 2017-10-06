@@ -11,7 +11,6 @@ using std::vector;
 using std::remove;
 
 using tdme::engine::physics::PhysicsPartitionNone;
-using java::lang::Object;
 using tdme::engine::physics::RigidBody;
 using tdme::utils::ArrayListIteratorMultiple;
 
