@@ -56,7 +56,7 @@ void Key::reset()
 void Key::append(String* string)
 {
 	if (length + string->length() > LENGTH_MAX) {
-		_Console::println(static_cast< Object* >(u"Key.append: key too long"_j));
+		_Console::println(L"Key.append: key too long");
 	}
 	for (int i = 0; i < string->length(); i++) {
 		(*data)[length++] = string->charAt(i);
@@ -67,7 +67,7 @@ void Key::append(String* string)
 void Key::append(float value)
 {
 	if (length + 4 > LENGTH_MAX) {
-		_Console::println(static_cast< Object* >(u"Key.append: key too long"_j));
+		_Console::println(L"Key.append: key too long");
 	}
 	auto intValue = java::lang::Float::floatToIntBits(value);
 	(*data)[length++] = static_cast< char16_t >(((intValue) & 255));
@@ -80,7 +80,7 @@ void Key::append(float value)
 void Key::append(int32_t value)
 {
 	if (length + 4 > LENGTH_MAX) {
-		_Console::println(static_cast< Object* >(u"Key.append: key too long"_j));
+		_Console::println(L"Key.append: key too long");
 	}
 	(*data)[length++] = static_cast< char16_t >(((value) & 255));
 	(*data)[length++] = static_cast< char16_t >(((value >> 8) & 255));

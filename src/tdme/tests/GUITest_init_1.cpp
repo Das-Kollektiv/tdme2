@@ -6,8 +6,6 @@
 #include <string>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -58,7 +56,7 @@ GUITest_init_1::GUITest_init_1(GUITest *GUITest_this)
 void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button") == 0) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(node->getId())->append(u".actionPerformed()"_j)->toString()));
+		_Console::println(node->getId() + L".actionPerformed()");
 		map<wstring, MutableString*> values;
 		node->getScreenNode()->getValues(&values);
 		values.clear();

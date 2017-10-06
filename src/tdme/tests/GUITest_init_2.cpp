@@ -1,8 +1,6 @@
 #include <tdme/tests/GUITest_init_2.h>
 
 #include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/tests/GUITest.h>
@@ -11,8 +9,6 @@
 
 using tdme::tests::GUITest_init_2;
 using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::tests::GUITest;
@@ -29,8 +25,7 @@ GUITest_init_2::GUITest_init_2(GUITest *GUITest_this)
 
 void GUITest_init_2::onValueChanged(GUIElementNode* node)
 {
-	_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(node->getName())->append(u":onValueChanged: "_j)
-		->append(static_cast< Object* >(node->getController()->getValue()))->toString()));
+	_Console::println(node->getName() + L":onValueChanged: " + node->getController()->getValue()->toWString());
 }
 
 extern java::lang::Class* class_(const char16_t* c, int n);
