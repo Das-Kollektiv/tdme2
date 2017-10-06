@@ -5,7 +5,6 @@
 #include <map>
 #include <string>
 
-#include <java/lang/Object.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -22,9 +21,6 @@ using std::map;
 using std::wstring;
 
 using tdme::tests::GUITest_init_1;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::elements::GUITabController;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -37,20 +33,9 @@ using tdme::utils::MutableString;
 using tdme::utils::_Console;
 using tdme::utils::_Exception;
 
-template<typename T, typename U>
-static T java_cast(U* u)
+GUITest_init_1::GUITest_init_1(GUITest* guiTest)
+	: guiTest(guiTest)
 {
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
-GUITest_init_1::GUITest_init_1(GUITest *GUITest_this)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, GUITest_this(GUITest_this)
-{
-	clinit();
-	ctor();
 }
 
 void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
@@ -69,11 +54,12 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 		values.emplace(L"radio", new MutableString(L"3"));
 		values.emplace(L"selectmultiple", new MutableString(L"|1|2|3|15|16|17|"));
 		node->getScreenNode()->setValues(&values);
-		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab1")->getController()))->selectTab();
-	} else if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button2") == 0) {
+		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab1")->getController()))->selectTab();
+	} else
+	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button2") == 0) {
 		try {
 			{
-				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sadd_inner")));
+				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sadd_inner")));
 				parentNode->replaceSubNodes(wstring(L"<dropdown-option text=\"Option 1\" value=\"1\" />") +
 					L"<dropdown-option text=\"Option 2\" value=\"2\" />" +
 					L"<dropdown-option text=\"Option 3\" value=\"3\" />" +
@@ -86,7 +72,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					L"<dropdown-option text=\"Option 10\" value=\"10\" />", true);
 			}
 			{
-				auto parentNode = java_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sasb_inner")));
+				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sasb_inner")));
 				parentNode->replaceSubNodes(wstring(L"<selectbox-option text=\"Option 1\" value=\"1\" />") +
 					L"<selectbox-option text=\"Option 2\" value=\"2\" />" +
 					L"<selectbox-option text=\"Option 3\" value=\"3\" />" +
@@ -103,20 +89,6 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 			_Console::println(string(exception.what()));
 			exit(0);
 		}
-		(java_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab2")->getController()))->selectTab();
+		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab2")->getController()))->selectTab();
 	}
 }
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITest_init_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* GUITest_init_1::getClass0()
-{
-	return class_();
-}
-

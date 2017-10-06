@@ -1,7 +1,5 @@
 #include <tdme/tests/GUITest.h>
 
-#include <java/lang/String.h>
-
 #include <tdme/engine/Application.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
@@ -16,8 +14,6 @@
 #include <tdme/utils/_Exception.h>
 
 using tdme::tests::GUITest;
-
-using java::lang::String;
 
 using tdme::engine::Application;
 using tdme::engine::Engine;
