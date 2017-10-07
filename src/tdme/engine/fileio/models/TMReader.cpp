@@ -23,8 +23,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 
 using std::array;
@@ -54,14 +54,14 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringConverter;
 
-Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
+Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	vector<uint8_t> content;
-	_FileSystem::getInstance()->getContent(pathName, fileName, &content);
+	FileSystem::getInstance()->getContent(pathName, fileName, &content);
 	TMReaderInputStream is(&content);
 	auto fileId = is.readWString();
 	if (fileId.length() == 0 || fileId != L"TDME Model") {

@@ -29,8 +29,8 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -72,8 +72,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -385,10 +385,10 @@ const wstring Tools::getGameRootPath(const wstring& fileName)
 
 const wstring Tools::getPath(const wstring& fileName)
 {
-	return _FileSystem::getInstance()->getPathName(fileName);
+	return FileSystem::getInstance()->getPathName(fileName);
 }
 
 const wstring Tools::getFileName(const wstring& fileName)
 {
-	return _FileSystem::getInstance()->getFileName(fileName);
+	return FileSystem::getInstance()->getFileName(fileName);
 }

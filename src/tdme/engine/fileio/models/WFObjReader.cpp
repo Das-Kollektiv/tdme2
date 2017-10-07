@@ -17,9 +17,9 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Integer.h>
@@ -45,9 +45,9 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Integer;
 using tdme::utils::Float;
 using tdme::utils::StringUtils;
@@ -70,7 +70,7 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
+Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	auto model = new Model(
 		pathName + L"/" + fileName,
@@ -101,7 +101,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 			StringTokenizer t;
 			StringTokenizer t2;
 			vector<wstring> lines;
-			_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+			FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 			wstring line;
 			for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 				line = StringUtils::trim(lines[lineIdx]);
@@ -298,7 +298,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 	return model;
 }
 
-void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (_FileSystemException, ModelFileIOException)
+void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (FileSystemException, ModelFileIOException)
 {
 	Material* current = nullptr;
 	auto alpha = 1.0f;
@@ -308,7 +308,7 @@ void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName
 		});
 		StringTokenizer t;
 		vector<wstring> lines;
-		_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 		for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 			auto line = StringUtils::trim(lines[lineIdx]);
 			if (StringUtils::startsWith(line, L"#") == true) {

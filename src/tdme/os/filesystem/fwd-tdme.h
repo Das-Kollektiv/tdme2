@@ -5,10 +5,10 @@
 namespace tdme {
 namespace os {
 namespace filesystem {
-		class _FileSystem;
-		class _FileSystemException;
-		struct _FileSystemInterface;
-		class _StandardFileSystem;
+		class FileSystem;
+		class FileSystemException;
+		struct FileSystemInterface;
+		class StandardFileSystem;
 }  // namespace filesystem
 }  // namespace os
 }  // namespace tdme

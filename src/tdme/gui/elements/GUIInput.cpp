@@ -2,21 +2,21 @@
 
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUIInput;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUIInput::GUIInput(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUIInput::GUIInput() throw (_FileSystemException)
+GUIInput::GUIInput() throw (FileSystemException)
 	: GUIInput(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -24,9 +24,9 @@ GUIInput::GUIInput() throw (_FileSystemException)
 
 wstring GUIInput::NAME = L"input";
 
-void GUIInput::ctor() throw (_FileSystemException)
+void GUIInput::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
 }
 
 const wstring& GUIInput::getName()

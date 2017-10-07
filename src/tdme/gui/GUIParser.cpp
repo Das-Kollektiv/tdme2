@@ -37,8 +37,8 @@
 #include <tdme/gui/nodes/GUISpaceNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
@@ -85,8 +85,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
@@ -114,7 +114,7 @@ map<wstring, GUIElement*> GUIParser::elements;
 GUIScreenNode* GUIParser::parse(const wstring& pathName, const wstring& fileName) throw (GUIParserException)
 {
 	clinit();
-	return parse(_FileSystem::getInstance()->getContentAsString(pathName, fileName));
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName));
 }
 
 GUIScreenNode* GUIParser::parse(const wstring& xml) throw (GUIParserException)
@@ -180,7 +180,7 @@ GUIScreenNode* GUIParser::parse(const wstring& xml) throw (GUIParserException)
 
 void GUIParser::parse(GUIParentNode* parentNode, const wstring& pathName, const wstring& fileName) throw (GUIParserException)
 {
-	wstring xml = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	wstring xml = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	parse(parentNode, xml);
 }
 

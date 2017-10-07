@@ -13,7 +13,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -28,7 +28,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::Model;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
 
 using tdme::ext::tinyxml::TiXmlElement;
@@ -58,7 +58,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException);
 
 	/** 
 	 * Reads Collada DAE file level
@@ -68,7 +68,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static LevelEditorLevel* readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException);
+	static LevelEditorLevel* readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException);
 
 private:
 

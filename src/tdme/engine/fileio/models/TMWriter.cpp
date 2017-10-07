@@ -21,8 +21,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Exception.h>
 
 using std::array;
@@ -47,11 +47,11 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Exception;
 
-void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
+void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	TMWriterOutputStream os;
 	os.writeString(L"TDME Model");
@@ -71,7 +71,7 @@ void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileN
 		writeMaterial(&os, material);
 	}
 	writeSubGroups(&os, model->getSubGroups());
-	_FileSystem::getInstance()->setContent(pathName, fileName, os.getData());
+	FileSystem::getInstance()->setContent(pathName, fileName, os.getData());
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)

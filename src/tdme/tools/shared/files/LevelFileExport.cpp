@@ -13,8 +13,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -40,8 +40,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -52,7 +52,7 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::StringConverter;
 
-void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (_FileSystemException, JsonException, ModelFileIOException)
+void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	level->setFileName(pathName + L'/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();
@@ -155,5 +155,5 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 	ostringstream json;
 	json << jRoot;
 
-	_FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
 }

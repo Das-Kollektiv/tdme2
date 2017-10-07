@@ -17,7 +17,7 @@
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 
@@ -33,7 +33,7 @@ using tdme::audio::AudioBufferManager;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
@@ -151,7 +151,7 @@ bool Sound::initialize()
 					L" bytes)"
 				)
 			);
-		} catch (_FileSystemException& fse) {
+		} catch (FileSystemException& fse) {
 			Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + fse.what()));
 			decoder.close();
 			dispose();

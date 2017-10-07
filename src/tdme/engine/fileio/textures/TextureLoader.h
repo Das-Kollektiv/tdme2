@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 #include <ext/libpng/png.h>
 
@@ -15,7 +15,7 @@ using std::vector;
 using std::wstring;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::Console;
 
 namespace tdme {
@@ -79,10 +79,10 @@ public:
 	 * Loads a texture
 	 * @param path
 	 * @param fileName
-	 * @throws _FileSystemException
+	 * @throws FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException);
+	static Texture* loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException);
 
 private:
 	/**
@@ -98,5 +98,5 @@ private:
 	 * @param path name
 	 * @param file name
 	 */
-	static Texture* loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException);
+	static Texture* loadPNG(const wstring& path, const wstring& fileName) throw (FileSystemException);
 };

@@ -2,23 +2,23 @@
 
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUIScrollAreaHorizontal;
 using tdme::gui::elements::GUIScrollAreaHorizontalController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (_FileSystemException)
+GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (FileSystemException)
 	: GUIScrollAreaHorizontal(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -26,9 +26,9 @@ GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (_FileSystemException)
 
 wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
 
-void GUIScrollAreaHorizontal::ctor() throw (_FileSystemException)
+void GUIScrollAreaHorizontal::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
 }
 
 const wstring& GUIScrollAreaHorizontal::getName()

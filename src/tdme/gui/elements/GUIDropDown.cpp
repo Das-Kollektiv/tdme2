@@ -2,23 +2,23 @@
 
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUIDropDown;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUIDropDown::GUIDropDown(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUIDropDown::GUIDropDown() throw (_FileSystemException)
+GUIDropDown::GUIDropDown() throw (FileSystemException)
 	: GUIDropDown(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -26,9 +26,9 @@ GUIDropDown::GUIDropDown() throw (_FileSystemException)
 
 wstring GUIDropDown::NAME = L"dropdown";
 
-void GUIDropDown::ctor() throw (_FileSystemException)
+void GUIDropDown::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml");
 }
 
 const wstring& GUIDropDown::getName()

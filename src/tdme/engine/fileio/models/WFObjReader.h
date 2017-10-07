@@ -10,7 +10,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
 using std::wstring;
@@ -18,7 +18,7 @@ using std::wstring;
 using tdme::engine::model::Model;
 using tdme::engine::model::Material;
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 
 
 /** 
@@ -34,10 +34,10 @@ public:
 	 * @param path name
 	 * @param file name
 	 * @return model
-	 * @throws _FileSystemException
+	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
 
@@ -46,8 +46,8 @@ private:
 	 * @param path name
 	 * @param file name
 	 * @param materials
-	 * @throws _FileSystemException
+	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static void readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (_FileSystemException, ModelFileIOException);
+	static void readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (FileSystemException, ModelFileIOException);
 };

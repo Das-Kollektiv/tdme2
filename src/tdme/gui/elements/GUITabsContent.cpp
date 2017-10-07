@@ -4,25 +4,25 @@
 #include <string>
 
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
 using std::wstring;
 
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUITabsContent::GUITabsContent(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUITabsContent::GUITabsContent() throw (_FileSystemException)
+GUITabsContent::GUITabsContent() throw (FileSystemException)
 	: GUITabsContent(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -30,9 +30,9 @@ GUITabsContent::GUITabsContent() throw (_FileSystemException)
 
 wstring GUITabsContent::NAME = L"tabs-content";
 
-void GUITabsContent::ctor() throw (_FileSystemException)
+void GUITabsContent::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-content.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-content.xml");
 }
 
 const wstring& GUITabsContent::getName()

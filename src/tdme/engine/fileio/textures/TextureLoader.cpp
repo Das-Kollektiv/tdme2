@@ -8,8 +8,8 @@
 #include <tdme/utils/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -24,13 +24,13 @@ using tdme::utils::ByteBuffer;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGInputStream;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
-Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException)
+Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException)
 {
 	// Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
@@ -48,15 +48,15 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) throw (_FileSystemException) {
+Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) throw (FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id
-	auto canonicalFileName = _FileSystem::getInstance()->getCanonicalPath(path, fileName);
+	auto canonicalFileName = FileSystem::getInstance()->getCanonicalPath(path, fileName);
 
 	// create PNG input stream
 	vector<uint8_t> content;
-	_FileSystem::getInstance()->getContent(path, fileName, &content);
+	FileSystem::getInstance()->getContent(path, fileName, &content);
 	PNGInputStream* pngInputStream = new PNGInputStream(&content);
 
 	// check that the PNG signature is in the file header

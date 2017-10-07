@@ -3,17 +3,17 @@
 
 #include <tdme/os/filesystem/fwd-tdme.h>
 
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystemInterface;
 
 /** 
  * File system 
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::os::filesystem::_FileSystem
+class tdme::os::filesystem::FileSystem
 {
 private:
-	static _FileSystemInterface* fileSystem;
+	static FileSystemInterface* fileSystem;
 
 public:
 
@@ -22,12 +22,12 @@ public:
 	 * will use standard file system by default if not set up different explicitly
 	 * @return
 	 */
-	static _FileSystemInterface* getInstance();
+	static FileSystemInterface* getInstance();
 
 	/** 
 	 * Set up file system
 	 * @param file system
 	 */
-	static void setupFileSystem(_FileSystemInterface* fileSystem);
+	static void setupFileSystem(FileSystemInterface* fileSystem);
 
 };

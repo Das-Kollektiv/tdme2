@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::map;
@@ -14,8 +14,8 @@ using std::wstring;
 
 using tdme::utils::Properties;
 
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
 
@@ -35,11 +35,11 @@ void Properties::put(const wstring& key, const wstring& value)
 	properties[key] = value;
 }
 
-void Properties::load(const wstring& pathName, const wstring& fileName) throw (_FileSystemException)
+void Properties::load(const wstring& pathName, const wstring& fileName) throw (FileSystemException)
 {
 	properties.clear();
 	vector<wstring> lines;
-	_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	for (int i = 0; i < lines.size(); i++) {
 		wstring line = StringUtils::trim(lines.at(i));
 		if (line.length() == 0 || StringUtils::startsWith(line, L"#")) continue;
@@ -51,7 +51,7 @@ void Properties::load(const wstring& pathName, const wstring& fileName) throw (_
 	}
 }
 
-void Properties::store(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
+void Properties::store(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
 	vector<wstring> result;
 	int32_t idx = 0;
 	for (auto it = properties.begin(); it != properties.end(); ++it) {
@@ -59,5 +59,5 @@ void Properties::store(const wstring& pathName, const wstring& fileName) throw (
 		wstring value = it->second;
 		result.push_back(key + L"=" + value);
 	}
-	_FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, &result);
+	FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, &result);
 }

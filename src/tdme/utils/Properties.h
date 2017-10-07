@@ -6,14 +6,14 @@
 
 #include <fwd-tdme.h>
 
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
 using std::wstring;
 
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 /**
  * This helps out with storeing or loading key value pairs from/to property files
@@ -46,7 +46,7 @@ public:
 	 * @param file name
 	 * @throws file system exception
 	 */
-	void load(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
+	void load(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
 
 	/**
 	 * Store property file
@@ -54,7 +54,7 @@ public:
 	 * @param file name
 	 * @throws file system exception
 	 */
-	void store(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
+	void store(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
 
 	/**
 	 * Public constructor

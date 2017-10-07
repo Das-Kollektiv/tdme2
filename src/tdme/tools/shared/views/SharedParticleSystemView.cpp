@@ -12,8 +12,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -48,8 +48,8 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -138,7 +138,7 @@ void SharedParticleSystemView::initParticleSystem()
 const wstring SharedParticleSystemView::getFileName()
 {
 	if (particleSystemFile.length() == 0) return particleSystemFile;
-	return _FileSystem::getInstance()->getFileName(particleSystemFile);
+	return FileSystem::getInstance()->getFileName(particleSystemFile);
 }
 
 void SharedParticleSystemView::loadFile(const wstring& pathName, const wstring& fileName)
@@ -190,7 +190,7 @@ void SharedParticleSystemView::display()
 void SharedParticleSystemView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		particleSystemScreenController->setScreenCaption(L"Particle System - " + (entity->getEntityFileName().length() > 0 ? _FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()));
+		particleSystemScreenController->setScreenCaption(L"Particle System - " + (entity->getEntityFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()));
 		auto preset = entity->getProperty(L"preset");
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", entity, L"");
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -306,8 +306,8 @@ void SharedParticleSystemView::loadParticleSystem()
 		entity = loadParticleSystem(
 			particleSystemFile,
 			L"",
-			_FileSystem::getInstance()->getPathName(particleSystemFile),
-			_FileSystem::getInstance()->getFileName(particleSystemFile)
+			FileSystem::getInstance()->getPathName(particleSystemFile),
+			FileSystem::getInstance()->getFileName(particleSystemFile)
 		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (Exception& exception) {

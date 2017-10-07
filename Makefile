@@ -270,10 +270,10 @@ SRCS = \
 	src/tdme/math/Vector2.cpp \
 	src/tdme/math/Vector3.cpp \
 	src/tdme/math/Vector4.cpp \
-	src/tdme/os/filesystem/_FileSystem.cpp \
-	src/tdme/os/filesystem/_FileSystemException.cpp \
-	src/tdme/os/filesystem/_FileSystemInterface.cpp \
-	src/tdme/os/filesystem/_StandardFileSystem.cpp \
+	src/tdme/os/filesystem/FileSystem.cpp \
+	src/tdme/os/filesystem/FileSystemException.cpp \
+	src/tdme/os/filesystem/FileSystemInterface.cpp \
+	src/tdme/os/filesystem/StandardFileSystem.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \

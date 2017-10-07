@@ -11,8 +11,8 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
@@ -33,8 +33,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
@@ -49,7 +49,7 @@ LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
 LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstring& fileName)  /* throws(Exception) */
 {
-	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {

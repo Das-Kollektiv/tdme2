@@ -32,9 +32,9 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -90,9 +90,9 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::object::ModelStatistics;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -118,9 +118,9 @@ float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
 
 float DAEReader::BLENDER_DIFFUSE_SCALE = 0.8f;
 
-Model* DAEReader::read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException)
+Model* DAEReader::read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException)
 {
-	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
@@ -143,7 +143,7 @@ Model* DAEReader::read(const wstring& pathName, const wstring& fileName) throw (
 	}
 
 	auto model = new Model(
-		_FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
+		FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
 		fileName,
 		upVector,
 		rotationOrder,
@@ -188,16 +188,16 @@ Model* DAEReader::read(const wstring& pathName, const wstring& fileName) throw (
 	return model;
 }
 
-LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, _FileSystemException)
+LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException)
 {
 	wstring modelPathName = pathName + L"/" + fileName + L"-models";
-	if (_FileSystem::getInstance()->fileExists(modelPathName)) {
-		_FileSystem::getInstance()->removePath(modelPathName);
+	if (FileSystem::getInstance()->fileExists(modelPathName)) {
+		FileSystem::getInstance()->removePath(modelPathName);
 	}
-	_FileSystem::getInstance()->createPath(modelPathName);
+	FileSystem::getInstance()->createPath(modelPathName);
 
 	auto levelEditorLevel = new LevelEditorLevel();
-	auto xmlContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
@@ -1326,7 +1326,7 @@ const wstring DAEReader::determineDisplacementFilename(const wstring& path, cons
 	tmpFileNameCandidate = tmpFileNameCandidate + L"displacement";
 	try {
 		vector<wstring> fileNameCandidates;
-		_FileSystem::getInstance()->list(path, &fileNameCandidates, new DAEReader_determineDisplacementFilename_1(tmpFileNameCandidate));
+		FileSystem::getInstance()->list(path, &fileNameCandidates, new DAEReader_determineDisplacementFilename_1(tmpFileNameCandidate));
 		if (fileNameCandidates.size() > 0) {
 			return fileNameCandidates[0];
 		}

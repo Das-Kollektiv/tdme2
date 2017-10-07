@@ -1,4 +1,4 @@
-#include <tdme/os/filesystem/_StandardFileSystem.h>
+#include <tdme/os/filesystem/StandardFileSystem.h>
 
 #include <limits.h>
 #include <stdlib.h>
@@ -28,26 +28,26 @@ using std::stringstream;
 using std::vector;
 using std::to_string;
 
-using tdme::os::filesystem::_StandardFileSystem;
+using tdme::os::filesystem::StandardFileSystem;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::StringTokenizer;
 using tdme::utils::Console;
 
-_StandardFileSystem::_StandardFileSystem()
+StandardFileSystem::StandardFileSystem()
 {
 }
 
-const wstring _StandardFileSystem::getFileName(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
+const wstring StandardFileSystem::getFileName(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
 	return pathName + L"/" + fileName;
 }
 
-void _StandardFileSystem::list(const wstring& pathName, vector<wstring>* files, FilenameFilter* filter) throw (_FileSystemException)
+void StandardFileSystem::list(const wstring& pathName, vector<wstring>* files, FilenameFilter* filter) throw (FileSystemException)
 {
 	DIR *dir;
 	struct dirent *dirent;
 	if ((dir = opendir(StringConverter::toString(pathName).c_str())) == NULL) {
-		throw _FileSystemException("Unable to list path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to list path(" + to_string(errno) + ")");
 	}
 	while ((dirent = readdir(dir)) != NULL) {
 		wstring fileName = StringConverter::toWideString(dirent->d_name);
@@ -57,24 +57,24 @@ void _StandardFileSystem::list(const wstring& pathName, vector<wstring>* files, 
 	closedir(dir);
 }
 
-bool _StandardFileSystem::isPath(const wstring& pathName) throw (_FileSystemException) {
+bool StandardFileSystem::isPath(const wstring& pathName) throw (FileSystemException) {
 	struct stat s;
 	if (stat(StringConverter::toString(pathName).c_str(), &s) == 0) {
 		return (s.st_mode & S_IFDIR) == S_IFDIR;
 	} else {
-		throw _FileSystemException("Unable to check if path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to check if path(" + to_string(errno) + ")");
 	}
 }
 
-bool _StandardFileSystem::fileExists(const wstring& fileName) throw (_FileSystemException) {
+bool StandardFileSystem::fileExists(const wstring& fileName) throw (FileSystemException) {
 	struct stat s;
 	return stat(StringConverter::toString(fileName).c_str(), &s) == 0;
 }
 
-const wstring _StandardFileSystem::getContentAsString(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
+const wstring StandardFileSystem::getContentAsString(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (ifs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 	stringstream stringStream;
 	stringStream << ifs.rdbuf();
@@ -82,21 +82,21 @@ const wstring _StandardFileSystem::getContentAsString(const wstring& pathName, c
 	return StringConverter::toWideString(stringStream.str());
 }
 
-void _StandardFileSystem::setContentFromString(const wstring& pathName, const wstring& fileName, const wstring& content) throw (_FileSystemException) {
+void StandardFileSystem::setContentFromString(const wstring& pathName, const wstring& fileName, const wstring& content) throw (FileSystemException) {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (ofs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 	ofs << StringConverter::toString(content);
 	ofs.close();
 	return;
 }
 
-void _StandardFileSystem::getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (_FileSystemException)
+void StandardFileSystem::getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException)
 {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (ifs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 	ifs.seekg( 0, ios::end );
 	size_t size = ifs.tellg();
@@ -106,20 +106,20 @@ void _StandardFileSystem::getContent(const wstring& pathName, const wstring& fil
 	ifs.close();
 }
 
-void _StandardFileSystem::setContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (_FileSystemException) {
+void StandardFileSystem::setContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException) {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (ofs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 	ofs.write((char*)content->data(), content->size());
 	ofs.close();
 }
 
-void _StandardFileSystem::getContentAsStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (_FileSystemException)
+void StandardFileSystem::getContentAsStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (FileSystemException)
 {
 	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if(ifs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
 
 	string line;
@@ -130,11 +130,11 @@ void _StandardFileSystem::getContentAsStringArray(const wstring& pathName, const
 	ifs.close();
 }
 
-void _StandardFileSystem::setContentFromStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (_FileSystemException)
+void StandardFileSystem::setContentFromStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (FileSystemException)
 {
 	ofstream ofs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if(ofs.is_open() == false) {
-		throw _FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
 	}
 
 	for (int i = 0; i < content->size(); i++) {
@@ -145,7 +145,7 @@ void _StandardFileSystem::setContentFromStringArray(const wstring& pathName, con
 	return;
 }
 
-const wstring _StandardFileSystem::getCanonicalPath(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
+const wstring StandardFileSystem::getCanonicalPath(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
 	wstring unixPathName = StringUtils::replace(pathName, L"\\", L"/");
 	wstring unixFileName = StringUtils::replace(fileName, L"\\", L"/");
 
@@ -202,38 +202,38 @@ const wstring _StandardFileSystem::getCanonicalPath(const wstring& pathName, con
 	return canonicalPathString;
 }
 
-const wstring _StandardFileSystem::getCurrentWorkingPathName() throw (_FileSystemException) {
+const wstring StandardFileSystem::getCurrentWorkingPathName() throw (FileSystemException) {
 	// cwd
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
 	if (cwdPtr == nullptr) {
-		throw _FileSystemException("Unable to get current working path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to get current working path(" + to_string(errno) + ")");
 	}
 	return StringConverter::toWideString(cwdPtr);
 }
 
-const wstring _StandardFileSystem::getPathName(const wstring& fileName) throw (_FileSystemException) {
+const wstring StandardFileSystem::getPathName(const wstring& fileName) throw (FileSystemException) {
 	wstring unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return L".";
 	return StringUtils::substring(unixFileName, 0, lastPathSeparator);
 }
 
-const wstring _StandardFileSystem::getFileName(const wstring& fileName) throw (_FileSystemException) {
+const wstring StandardFileSystem::getFileName(const wstring& fileName) throw (FileSystemException) {
 	wstring unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringUtils::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
 
-void _StandardFileSystem::createPath(const wstring& pathName) throw (_FileSystemException) {
+void StandardFileSystem::createPath(const wstring& pathName) throw (FileSystemException) {
 	int32_t status = mkdir(StringConverter::toString(pathName).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	if (status == -1) {
-		throw _FileSystemException("Unable to create path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to create path(" + to_string(errno) + ")");
 	}
 }
 
-void _StandardFileSystem::removePath(const wstring& pathName) throw (_FileSystemException) {
+void StandardFileSystem::removePath(const wstring& pathName) throw (FileSystemException) {
 	vector<wstring> files;
 	list(pathName, &files, nullptr);
 	for (int i = 0; i < files.size(); i++) {
@@ -248,17 +248,17 @@ void _StandardFileSystem::removePath(const wstring& pathName) throw (_FileSystem
 			removeFile(pathName, file);
 		}
 	}
-	Console::println(wstring(L"_StandardFileSystem::removePath(): Removing ") + pathName);
+	Console::println(wstring(L"StandardFileSystem::removePath(): Removing ") + pathName);
 	int32_t status = rmdir(StringConverter::toString(pathName).c_str());
 	if (status == -1) {
-		throw _FileSystemException("Unable to delete folder(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to delete folder(" + to_string(errno) + ")");
 	}
 }
 
-void _StandardFileSystem::removeFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
-	Console::println(wstring(L"_StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
+void StandardFileSystem::removeFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
+	Console::println(wstring(L"StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
 	int32_t status = unlink(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (status == -1) {
-		throw _FileSystemException("Unable to delete file(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to delete file(" + to_string(errno) + ")");
 	}
 }

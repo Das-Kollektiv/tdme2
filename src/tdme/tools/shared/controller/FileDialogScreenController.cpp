@@ -13,8 +13,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -35,8 +35,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
@@ -45,7 +45,7 @@ using tdme::utils::Exception;
 
 FileDialogScreenController::FileDialogScreenController() 
 {
-	this->cwd = _FileSystem::getInstance()->getCurrentWorkingPathName();
+	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
 }
@@ -97,7 +97,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	vector<wstring> fileList;
 	try {
 		auto directory = cwd;
-		_FileSystem::getInstance()->list(directory, &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
+		FileSystem::getInstance()->list(directory, &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -131,7 +131,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 void FileDialogScreenController::show(const wstring& cwd, const wstring& captionText, vector<wstring>* extensions, const wstring& fileName, Action* applyAction)
 {
 	try {
-		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, L"");
+		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, L"");
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::show(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -154,9 +154,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
 			auto selectedFile = node->getController()->getValue()->toWString();
-			if (_FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile) == true) {
+			if (FileSystem::getInstance()->isPath(cwd + L"/" + selectedFile) == true) {
 				try {
-					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
+					cwd = FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
 				} catch (Exception& exception) {
 					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					Console::println(string(exception.what()));

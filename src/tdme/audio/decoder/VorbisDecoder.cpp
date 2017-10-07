@@ -22,7 +22,7 @@
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/StringConverter.h>
@@ -31,7 +31,7 @@ using std::wstring;
 
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::ByteBuffer;
 using tdme::utils::StringConverter;
 
@@ -39,7 +39,7 @@ VorbisDecoder::VorbisDecoder() : AudioDecoder()
 {
 }
 
-void VorbisDecoder::openFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, AudioDecoderException) {
+void VorbisDecoder::openFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException, AudioDecoderException) {
 	this->pathName = pathName;
 	this->fileName = fileName;
 	if (ov_open_callbacks(fopen(StringConverter::toString(pathName + L"/" + fileName).c_str(), "r"), &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
@@ -61,12 +61,12 @@ void VorbisDecoder::openFile(const wstring& pathName, const wstring& fileName) t
 	section = 0;
 }
 
-void VorbisDecoder::reset() throw (_FileSystemException, AudioDecoderException) {
+void VorbisDecoder::reset() throw (FileSystemException, AudioDecoderException) {
 	close();
 	openFile(pathName, fileName);
 }
 
-int32_t VorbisDecoder::readFromStream(ByteBuffer* data) throw (_FileSystemException, AudioDecoderException) {
+int32_t VorbisDecoder::readFromStream(ByteBuffer* data) throw (FileSystemException, AudioDecoderException) {
 	int32_t read = 0;
 	while (read < data->getCapacity()) {
 		long len = ov_read(
@@ -88,6 +88,6 @@ int32_t VorbisDecoder::readFromStream(ByteBuffer* data) throw (_FileSystemExcept
 /**
  * Closes the audio file
  */
-void VorbisDecoder::close() throw (_FileSystemException, AudioDecoderException) {
+void VorbisDecoder::close() throw (FileSystemException, AudioDecoderException) {
 	ov_clear(&vf);
 }

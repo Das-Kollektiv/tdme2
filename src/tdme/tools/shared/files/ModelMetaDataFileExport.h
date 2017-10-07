@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 #include <ext/jsonbox/Object.h>
 #include <ext/jsonbox/JsonException.h>
@@ -15,7 +15,7 @@
 using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorEntity;
 
 using tdme::ext::jsonbox::JsonException;
@@ -35,7 +35,7 @@ private:
 	 * @param dest
 	 * @throws file system exception
 	 */
-	static void copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException);
+	static void copyFile(const wstring& source, const wstring& dest) throw (FileSystemException);
 
 public:
 
@@ -47,7 +47,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Export model meta data file to JSON node
@@ -56,6 +56,6 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
 
 };

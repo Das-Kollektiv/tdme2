@@ -7,13 +7,13 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/elements/GUIElement.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 
 
 struct default_init_tag;
@@ -40,7 +40,7 @@ protected:
 	 * Constructor
 	 * @throws file system exception
 	 */
-	void ctor() throw (_FileSystemException);
+	void ctor() throw (FileSystemException);
 
 public:
 	const wstring& getName() override;
@@ -49,7 +49,7 @@ public:
 	GUINodeController* createController(GUINode* node) override;
 
 	// Generated
-	GUIScrollAreaHorizontal() throw (_FileSystemException);
+	GUIScrollAreaHorizontal() throw (FileSystemException);
 protected:
 	GUIScrollAreaHorizontal(const ::default_init_tag&);
 };

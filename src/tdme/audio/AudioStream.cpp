@@ -15,7 +15,7 @@
 #include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 
@@ -31,7 +31,7 @@ using tdme::audio::Audio;
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
@@ -64,7 +64,7 @@ void AudioStream::rewind()
 
 	try {
 		decoder.reset();
-	} catch (_FileSystemException &fse) {
+	} catch (FileSystemException &fse) {
 		Console::println(string("Audio stream: '"+ StringConverter::toString(id) + "': " + fse.what()));
 	} catch (AudioDecoderException &ade) {
 		Console::println(string("Audio stream: '" + StringConverter::toString(id) + "': " + ade.what()));
@@ -86,7 +86,7 @@ void AudioStream::play()
 		try {
 			auto bytesDecoded = decoder.readFromStream(data);
 			if (bytesDecoded == 0) break;
-		} catch (_FileSystemException &fse) {
+		} catch (FileSystemException &fse) {
 			Console::println(string("Audio stream: '" + StringConverter::toString(id) + "': " + fse.what()));
 		} catch (AudioDecoderException& ade) {
 			Console::println(string("Audio stream: '" + StringConverter::toString(id) + "': " + ade.what()));
@@ -168,7 +168,7 @@ bool AudioStream::initialize()
 			default:
 				Console::println(wstring(L"Audio sound: '" + id + L"': Unsupported number of channels"));
 		}
-	} catch (_FileSystemException& fse) {
+	} catch (FileSystemException& fse) {
 		Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + fse.what()));
 		decoder.close();
 		dispose();
@@ -222,7 +222,7 @@ void AudioStream::update()
 					decoder.reset();
 					bytesDecoded += decoder.readFromStream(data);
 				}
-			} catch (_FileSystemException& fse) {
+			} catch (FileSystemException& fse) {
 				Console::println(string("Audio stream: '" + StringConverter::toString(id) + "': " + fse.what()));
 			} catch (AudioDecoderException& ade) {
 				Console::println(string("Audio stream: '" + StringConverter::toString(id) + "': " + ade.what()));

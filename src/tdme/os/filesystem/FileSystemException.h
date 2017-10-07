@@ -11,7 +11,7 @@ using tdme::utils::ExceptionBase;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::os::filesystem::_FileSystemException: public ExceptionBase
+class tdme::os::filesystem::FileSystemException: public ExceptionBase
 {
 public:
 
@@ -19,6 +19,6 @@ public:
 	 * @brief Public constructor
 	 * @param message Exception message
 	 */
-	_FileSystemException(const string& message) throw();
+	FileSystemException(const string& message) throw();
 
 };

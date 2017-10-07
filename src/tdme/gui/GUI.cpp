@@ -28,8 +28,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
@@ -64,8 +64,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Pool;
 using tdme::utils::StringConverter;
 using tdme::utils::Time;
@@ -164,9 +164,9 @@ GUIFont* GUI::getFont(const wstring& fileName)
 	wstring file;
 	GUIFont* font;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName);
-		path = _FileSystem::getInstance()->getPathName(canonicalFile);
-		file = _FileSystem::getInstance()->getFileName(canonicalFile);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(L".", fileName);
+		path = FileSystem::getInstance()->getPathName(canonicalFile);
+		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
 		Console::print(string("GUI::getFont(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -199,9 +199,9 @@ Texture* GUI::getImage(const wstring& fileName)
 	wstring path;
 	wstring file;
 	try {
-		canonicalFile = _FileSystem::getInstance()->getCanonicalPath(L".", fileName);
-		path = _FileSystem::getInstance()->getPathName(canonicalFile);
-		file = _FileSystem::getInstance()->getFileName(canonicalFile);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(L".", fileName);
+		path = FileSystem::getInstance()->getPathName(canonicalFile);
+		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
 		Console::print(string("GUI::getImage(): An error occurred: "));
 		Console::println(string(exception.what()));

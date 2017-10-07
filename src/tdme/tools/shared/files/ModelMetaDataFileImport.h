@@ -8,7 +8,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/JsonException.h>
 
@@ -17,7 +17,7 @@ using std::wstring;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::JsonException;
 
@@ -39,7 +39,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Imports a model meta data file from JSON object
@@ -51,7 +51,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException);
 
 private:
 
@@ -66,5 +66,5 @@ private:
 	 * @throws model file io exception
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv)  throw (_FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv)  throw (FileSystemException, JsonException, ModelFileIOException);
 };

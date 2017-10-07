@@ -13,8 +13,8 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -36,8 +36,8 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -261,8 +261,8 @@ void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* 
 
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupConvexMesh(
-		_FileSystem::getInstance()->getPathName(fileName),
-		_FileSystem::getInstance()->getFileName(fileName)
+		FileSystem::getInstance()->getPathName(fileName),
+		FileSystem::getInstance()->getFileName(fileName)
 	);
 	updateModelBoundingVolume(entity, idx);
 }

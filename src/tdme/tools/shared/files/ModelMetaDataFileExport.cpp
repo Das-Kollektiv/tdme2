@@ -16,8 +16,8 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
@@ -57,8 +57,8 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
@@ -79,22 +79,22 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException)
+void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (FileSystemException)
 {
 }
 
-void ModelMetaDataFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
+void ModelMetaDataFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	entity->setEntityFileName(_FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	auto jEntityRoot = exportToJSON(entity);
 
 	ostringstream json;
 	json << jEntityRoot;
 
-	_FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (_FileSystemException, JsonException, ModelFileIOException)
+tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	ext::jsonbox::Object jEntityRoot;;
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {

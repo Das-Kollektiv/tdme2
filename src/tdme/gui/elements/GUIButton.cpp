@@ -5,9 +5,9 @@
 
 #include <tdme/gui/elements/GUIButtonController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
 using std::wstring;
@@ -15,9 +15,9 @@ using std::wstring;
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUIButtonController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 wstring GUIButton::NAME = L"button";
 
@@ -26,15 +26,15 @@ GUIButton::GUIButton(const ::default_init_tag&)
 {
 }
 
-GUIButton::GUIButton() throw (_FileSystemException)
+GUIButton::GUIButton() throw (FileSystemException)
 	: GUIButton(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
 }
 
-void GUIButton::ctor() throw (_FileSystemException)
+void GUIButton::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"button.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"button.xml");
 }
 
 const wstring& GUIButton::getName()

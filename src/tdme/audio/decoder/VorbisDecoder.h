@@ -9,14 +9,14 @@
 #include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::wstring;
 
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::ByteBuffer;
 
 class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
@@ -33,24 +33,24 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, AudioDecoderException);
+	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException, AudioDecoderException);
 
 	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
 	 */
-	virtual void reset() throw (_FileSystemException, AudioDecoderException);
+	virtual void reset() throw (FileSystemException, AudioDecoderException);
 
 	/**
 	 * Read raw PCM data from stream
 	 * @param byte buffer
 	 * @return number of bytes read
 	 */
-	virtual int32_t readFromStream(ByteBuffer* data) throw (_FileSystemException, AudioDecoderException);
+	virtual int32_t readFromStream(ByteBuffer* data) throw (FileSystemException, AudioDecoderException);
 
 	/**
 	 * Closes the audio file
 	 */
-	virtual void close() throw (_FileSystemException, AudioDecoderException);
+	virtual void close() throw (FileSystemException, AudioDecoderException);
 
 	/**
 	 * Constructor

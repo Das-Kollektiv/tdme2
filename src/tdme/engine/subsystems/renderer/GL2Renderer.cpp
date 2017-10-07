@@ -22,8 +22,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 
@@ -41,8 +41,8 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
@@ -141,7 +141,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 	int32_t handle = glCreateShader(type);
 	if (handle == 0) return 0;
 
-	auto shaderSource = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	string sourceString = StringConverter::toString(shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];

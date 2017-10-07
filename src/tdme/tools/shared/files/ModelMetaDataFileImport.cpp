@@ -9,8 +9,8 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
@@ -25,7 +25,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
@@ -46,9 +46,9 @@ using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
@@ -71,9 +71,9 @@ using tdme::utils::Exception;
 
 using tdme::ext::jsonbox::JsonException;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	auto jsonContent = _FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Value jEntityRoot;
 	jEntityRoot.loadFromString(
@@ -85,7 +85,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const wstring& 
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (_FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	LevelEditorEntity* levelEditorEntity;
 	auto version = Float::parseFloat(StringConverter::toWideString(jEntityRoot["version"].getString()));
@@ -98,13 +98,13 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	wstring modelFile = L"";
 	if (jEntityRoot["file"].isNull() == false) {
 		auto modelFileString = StringConverter::toWideString(jEntityRoot["file"].getString());
-		modelFile = _FileSystem::getInstance()->getCanonicalPath(
+		modelFile = FileSystem::getInstance()->getCanonicalPath(
 			(
-				StringUtils::startsWith(_FileSystem::getInstance()->getPathName(modelFileString), L"/") == true?
-					_FileSystem::getInstance()->getPathName(modelFileString):
-					pathName + L"/" +  _FileSystem::getInstance()->getPathName(modelFileString)
+				StringUtils::startsWith(FileSystem::getInstance()->getPathName(modelFileString), L"/") == true?
+					FileSystem::getInstance()->getPathName(modelFileString):
+					pathName + L"/" +  FileSystem::getInstance()->getPathName(modelFileString)
 			 ),
-			_FileSystem::getInstance()->getFileName(modelFileString)
+			FileSystem::getInstance()->getFileName(modelFileString)
 		);
 	}
 	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? StringConverter::toWideString(jEntityRoot["thumbnail"].getString()) : L"";
@@ -146,7 +146,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 		name,
 		description,
 		L"",
-		modelFile.length() > 0 ? _FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : L"",
+		modelFile.length() > 0 ? FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : L"",
 		modelThumbnail,
 		model,
 		pivot
@@ -421,7 +421,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	return levelEditorEntity;
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv) throw (_FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;

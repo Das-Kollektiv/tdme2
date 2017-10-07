@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
 using std::wstring;
@@ -19,7 +19,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::MutableString;
 
 
@@ -75,9 +75,9 @@ public:
 	/** 
 	 * Parse the font definition file
 	 * @param font file
-	 * @throws _FileSystemException
+	 * @throws FileSystemException
 	 */
-	static GUIFont* parse(const wstring& pathName, const wstring& fileName) throw (_FileSystemException);
+	static GUIFont* parse(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
 
 private:
 

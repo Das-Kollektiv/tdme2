@@ -2,23 +2,23 @@
 
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUIScrollArea;
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUIScrollArea::GUIScrollArea(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUIScrollArea::GUIScrollArea() throw (_FileSystemException)
+GUIScrollArea::GUIScrollArea() throw (FileSystemException)
 	: GUIScrollArea(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -26,9 +26,9 @@ GUIScrollArea::GUIScrollArea() throw (_FileSystemException)
 
 wstring GUIScrollArea::NAME = L"scrollarea";
 
-void GUIScrollArea::ctor() throw (_FileSystemException)
+void GUIScrollArea::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml");
 }
 
 const wstring& GUIScrollArea::getName()

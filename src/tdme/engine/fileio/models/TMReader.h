@@ -14,7 +14,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::array;
 using std::map;
@@ -30,7 +30,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
-using tdme::os::filesystem::_FileSystemException;
+using tdme::os::filesystem::FileSystemException;
 
 namespace tdme {
 namespace engine {
@@ -223,7 +223,7 @@ public:
 	 * @throws model file IO exception
 	 * @return model
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException);
+	static Model* read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
 

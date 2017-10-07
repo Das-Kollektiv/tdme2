@@ -11,8 +11,8 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringTokenizer.h>
@@ -30,8 +30,8 @@ using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
@@ -69,13 +69,13 @@ MutableString* GUIFont::LINEHEIGHT_STRING;
 
 constexpr int32_t GUIFont::CHARACTERS_MAX;
 
-GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw (_FileSystemException)
+GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw (FileSystemException)
 {
 	clinit();
 	int lineIdx = 0;
 	auto font = new GUIFont();
 	vector<wstring> lines;
-	_FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	auto info = lines[lineIdx++];
 	auto common = lines[lineIdx++];
 	auto page = lines[lineIdx++];

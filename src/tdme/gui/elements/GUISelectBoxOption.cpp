@@ -2,23 +2,23 @@
 
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/os/filesystem/_FileSystem.h>
-#include <tdme/os/filesystem/_FileSystemException.h>
-#include <tdme/os/filesystem/_FileSystemInterface.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUISelectBoxOption;
 using tdme::gui::elements::GUISelectBoxOptionController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::os::filesystem::_FileSystem;
-using tdme::os::filesystem::_FileSystemException;
-using tdme::os::filesystem::_FileSystemInterface;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxOption::GUISelectBoxOption(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
 }
 
-GUISelectBoxOption::GUISelectBoxOption() throw (_FileSystemException)
+GUISelectBoxOption::GUISelectBoxOption() throw (FileSystemException)
 	: GUISelectBoxOption(*static_cast< ::default_init_tag* >(0))
 {
 	ctor();
@@ -26,9 +26,9 @@ GUISelectBoxOption::GUISelectBoxOption() throw (_FileSystemException)
 
 wstring GUISelectBoxOption::NAME = L"selectbox-option";
 
-void GUISelectBoxOption::ctor() throw (_FileSystemException)
+void GUISelectBoxOption::ctor() throw (FileSystemException)
 {
-	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-option.xml");
 }
 
 const wstring& GUISelectBoxOption::getName()
