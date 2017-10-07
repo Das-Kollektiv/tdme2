@@ -49,7 +49,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::vector;
 using std::wstring;
@@ -99,7 +99,7 @@ using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Console;
 
 wstring ParticleSystemScreenController::TYPE_NONE = L"None";
@@ -231,7 +231,7 @@ void ParticleSystemScreenController::initialize()
 		speColorEnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_colorend"));
 		speCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_center"));
 		speRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_radius"));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -301,7 +301,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<wstring
 		L"</scrollarea-vertical>";
 	try {
 		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -334,7 +334,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<wstr
 		L"</scrollarea-vertical>";
 	try {
 		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -403,7 +403,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue()->toWString() == L"1");
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue()->toWString());
-				} catch (_Exception& exception) {
+				} catch (Exception& exception) {
 					view->getPopUpsViews()->getInfoDialogScreenController()->show(L"Error", L"An error occurred: " + StringConverter::toWideString(string(exception.what())));
 				}
 				goto end_switch1;;
@@ -426,7 +426,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			end_switch1:;
 		}
 
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 	view->initParticleSystemRequest();
@@ -633,7 +633,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 			end_switch2:;
 		}
 
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 	view->initParticleSystemRequest();

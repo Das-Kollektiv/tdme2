@@ -11,7 +11,7 @@
 namespace tdme {
 namespace utils {
 
-typedef std::exception _Exception;
+typedef std::exception Exception;
 
 };
 };

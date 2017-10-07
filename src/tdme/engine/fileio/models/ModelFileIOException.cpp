@@ -1,10 +1,10 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using tdme::engine::fileio::models::ModelFileIOException;
 
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
-ModelFileIOException::ModelFileIOException(const string& message) throw() : _ExceptionBase(message) {
+ModelFileIOException::ModelFileIOException(const string& message) throw() : ExceptionBase(message) {
 }

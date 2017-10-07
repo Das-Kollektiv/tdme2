@@ -17,7 +17,7 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringConverter.h>
 
@@ -40,7 +40,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Console;
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
@@ -119,7 +119,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 	if (instance == nullptr) {
 		try {
 			instance = new LevelPropertyPresets(L"resources/tools/leveleditor/gd", L"presets.xml");
-		} catch (_Exception& exception) {
+		} catch (Exception& exception) {
 			Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));
 			exit(0);

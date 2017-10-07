@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::wstring;
 
@@ -29,7 +29,7 @@ using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibraryScreenController_onValueChanged_1(LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController, LevelEditorEntityLibrary* entityLibrary)
 	: levelEditorEntityLibraryScreenController(levelEditorEntityLibraryScreenController)
@@ -52,7 +52,7 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		levelEditorEntityLibraryScreenController->setEntityLibrary();
 		levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(levelEditorEntityLibraryScreenController->entityLibraryListBoxSelection->set(entity->getId()));
 		levelEditorEntityLibraryScreenController->onEditEntity();
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
 			L"Error",
 			L"An error occurred: " + StringConverter::toWideString(exception.what())

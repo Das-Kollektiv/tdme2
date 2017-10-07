@@ -4,11 +4,11 @@
 
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using std::wstring;
 
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
 /** 
  * GUI parser exception
@@ -16,7 +16,7 @@ using tdme::utils::_ExceptionBase;
  * @version $Id$
  */
 class tdme::gui::GUIParserException final
-	: public _ExceptionBase
+	: public ExceptionBase
 {
 public:
 	GUIParserException(const string& message);

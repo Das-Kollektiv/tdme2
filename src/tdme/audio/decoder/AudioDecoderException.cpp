@@ -1,10 +1,10 @@
 #include <tdme/audio/decoder/AudioDecoderException.h>
 
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using tdme::audio::decoder::AudioDecoderException;
 
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
-AudioDecoderException::AudioDecoderException(const string& message) throw() : _ExceptionBase(message) {
+AudioDecoderException::AudioDecoderException(const string& message) throw() : ExceptionBase(message) {
 }

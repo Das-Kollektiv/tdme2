@@ -25,7 +25,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -55,7 +55,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 constexpr int32_t PhysicsTest1::RIGID_TYPEID_STANDARD;
 
@@ -321,7 +321,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody(L"tire2", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest1::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 		exit(0);

@@ -11,7 +11,7 @@
 #include <tdme/tests/GUITest_init_1.h>
 #include <tdme/tests/GUITest_init_2.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using tdme::tests::GUITest;
 
@@ -26,7 +26,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tests::GUITest_init_1;
 using tdme::tests::GUITest_init_2;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 
 GUITest::GUITest()
@@ -56,7 +56,7 @@ void GUITest::initialize()
 		effectScrollIn->start();
 		engine->getGUI()->getScreen(L"test")->addEffect(L"scrollin", effectScrollIn);
 		engine->getGUI()->addRenderScreen(L"test");
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("GUITest::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 		exit(0);

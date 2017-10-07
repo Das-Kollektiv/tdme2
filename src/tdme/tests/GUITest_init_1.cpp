@@ -15,7 +15,7 @@
 #include <tdme/tests/GUITest.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::map;
 using std::wstring;
@@ -31,7 +31,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tests::GUITest;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 GUITest_init_1::GUITest_init_1(GUITest* guiTest)
 	: guiTest(guiTest)
@@ -84,7 +84,7 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					L"<selectbox-option text=\"Option 9\" value=\"9\" />" +
 					L"<selectbox-option text=\"Option 10\" value=\"10\" />", true);
 			}
-		} catch (_Exception& exception) {
+		} catch (Exception& exception) {
 			Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
 			Console::println(string(exception.what()));
 			exit(0);

@@ -36,7 +36,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/JsonException.h>
@@ -77,7 +77,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException)
 {
@@ -113,7 +113,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			auto thumbnail = modelFileName + L".png";
 			jEntityRoot["thumbnail] = StringConverter::toString(thumbnail));
 			copyFile(L"./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
-		} catch (_Exception& exception) {
+		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
 			Console::print(entity->getFileName());
 			Console::print(string(": "));

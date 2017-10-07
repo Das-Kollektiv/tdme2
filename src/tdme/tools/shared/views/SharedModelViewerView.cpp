@@ -33,7 +33,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Properties.h>
 #include "../../../engine/subsystems/object/ModelStatistics.h"
 
@@ -73,7 +73,7 @@ using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 SharedModelViewerView::SharedModelViewerView(PopUps* popUps) 
 {
@@ -202,7 +202,7 @@ void SharedModelViewerView::loadSettings()
 		entityDisplayView->setDisplayGroundPlate(settings.get(L"display.groundplate", L"false") == L"true");
 		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
 		modelViewerScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -217,7 +217,7 @@ void SharedModelViewerView::initialize()
 		entityBoundingVolumeView = modelViewerScreenController->getEntityBoundingVolumeSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelViewerScreenController->getScreenNode()->getId(), modelViewerScreenController->getScreenNode());
 		modelViewerScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedModelViewerView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -247,7 +247,7 @@ void SharedModelViewerView::storeSettings()
 		settings.put(L"display.shadowing", entityDisplayView->isDisplayShadowing() == true ? L"true" : L"false");
 		settings.put(L"model.path", modelViewerScreenController->getModelPath()->getPath());
 		settings.store(L"settings", L"modelviewer.properties");
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -279,7 +279,7 @@ void SharedModelViewerView::loadModel()
 			_FileSystem::getInstance()->getFileName(modelFile),
 			Vector3());
 		onLoadModel(oldModel, entity);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }

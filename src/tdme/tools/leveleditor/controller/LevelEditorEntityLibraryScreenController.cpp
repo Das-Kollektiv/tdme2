@@ -28,7 +28,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -60,7 +60,7 @@ using tdme::tools::shared::views::View;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
 {
@@ -93,7 +93,7 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_library_listbox"));
 		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_place"));
 		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_level_edit"));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -140,7 +140,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	entityLibraryListBoxSubNodesXML = entityLibraryListBoxSubNodesXML + L"</scrollarea-vertical>\n";
 	try {
 		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -274,7 +274,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (_Exception& exception) {
+			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					L"Error",
 					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
@@ -287,7 +287,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (_Exception& exception) {
+			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					L"Error",
 					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
@@ -302,7 +302,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
 				onEditEntity();
-			} catch (_Exception& exception) {
+			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					L"Error",
 					L"An error occurred: " + StringConverter::toWideString(string(exception.what()))

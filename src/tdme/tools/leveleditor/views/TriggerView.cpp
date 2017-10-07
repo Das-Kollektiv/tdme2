@@ -22,7 +22,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::engine::Engine;
@@ -47,7 +47,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 TriggerView::TriggerView(PopUps* popUps) 
 {
@@ -146,7 +146,7 @@ void TriggerView::triggerApply(float width, float height, float depth)
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		initModelRequested = true;
 		updateGUIElements();
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(
 			L"Error",
 			L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
@@ -161,7 +161,7 @@ void TriggerView::initialize()
 		triggerScreenController->initialize();
 		engine->getGUI()->addScreen(triggerScreenController->getScreenNode()->getId(), triggerScreenController->getScreenNode());
 		triggerScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("TriggerView::initialize(): An error occurred: "));
 		Console::println(exception.what());
 	}

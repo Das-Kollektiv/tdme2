@@ -17,12 +17,12 @@ using std::string;
  * Exception base class
  * @author Andreas Drewke
  */
-class tdme::utils::_ExceptionBase: public runtime_error {
+class tdme::utils::ExceptionBase: public runtime_error {
 	public:
 		/**
 		 * @brief Public constructor
 		 * @param message Exception message
 		 */
-		_ExceptionBase(const string& message) throw();
-		~_ExceptionBase() throw();
+		ExceptionBase(const string& message) throw();
+		~ExceptionBase() throw();
 };

@@ -30,7 +30,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
@@ -67,7 +67,7 @@ using tdme::utils::Float;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 using tdme::ext::jsonbox::JsonException;
 
@@ -203,7 +203,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 						auto particleModelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, particleModelFile);
 						auto particleModelPath = (gameRoot.length() > 0 ? gameRoot + L"/" : L"") + Tools::getPath(particleModelRelativeFileName);
 						objectParticleSystem->setModelFile(particleModelPath + L"/" + Tools::getFileName(particleModelRelativeFileName));
-					} catch (_Exception& exception) {
+					} catch (Exception& exception) {
 						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
 						Console::println(string(exception.what()));
 					}
@@ -500,7 +500,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	if (StringUtils::equalsIgnoreCase(bvTypeString, L"convexmesh") == true) {
 		try {
 			entityBoundingVolume->setupConvexMesh(pathName, StringConverter::toWideString(jBv["file"].getString()));
-		} catch (_Exception& exception) {
+		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}

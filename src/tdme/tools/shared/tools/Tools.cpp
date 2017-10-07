@@ -39,7 +39,7 @@
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::array;
 using std::wstring;
@@ -78,7 +78,7 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Float;
 using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
@@ -183,7 +183,7 @@ int32_t Tools::convertToIntSilent(const wstring& text)
 {
 	try {
 		return Integer::parseInt(text);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		return -1;
 	}
 }

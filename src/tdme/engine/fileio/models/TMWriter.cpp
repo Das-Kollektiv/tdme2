@@ -23,7 +23,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/_FileSystem.h>
 #include <tdme/os/filesystem/_FileSystemInterface.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::array;
 using std::map;
@@ -49,7 +49,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemInterface;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (_FileSystemException, ModelFileIOException)
 {

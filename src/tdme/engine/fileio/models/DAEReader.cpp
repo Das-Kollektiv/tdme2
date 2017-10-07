@@ -48,7 +48,7 @@
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
 #include "../../subsystems/object/ModelStatistics.h"
@@ -106,7 +106,7 @@ using tdme::utils::StringConverter;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
@@ -1330,7 +1330,7 @@ const wstring DAEReader::determineDisplacementFilename(const wstring& path, cons
 		if (fileNameCandidates.size() > 0) {
 			return fileNameCandidates[0];
 		}
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(wstring(L"DAEReader::determineDisplacementFilename(): An exception occurred: "));
 		Console::println(string(exception.what()));
 	}

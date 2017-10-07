@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 
 using tdme::tools::shared::controller::ModelViewerScreenController_onModelSave_3;
@@ -17,7 +17,7 @@ using tdme::tools::shared::controller::ModelViewerScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 ModelViewerScreenController_onModelSave_3::ModelViewerScreenController_onModelSave_3(ModelViewerScreenController* modelViewerScreenController)
 	: modelViewerScreenController(modelViewerScreenController)
@@ -35,7 +35,7 @@ void ModelViewerScreenController_onModelSave_3::performAction()
 			modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
 		);
 		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		modelViewerScreenController->showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }

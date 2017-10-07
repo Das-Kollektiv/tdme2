@@ -18,7 +18,7 @@
 #include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -42,7 +42,7 @@ using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
@@ -179,7 +179,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const wstring& pathName, c
 		convexMeshModel->getImportTransformationsMatrix().scale(1.01f);
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}

@@ -6,7 +6,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using tdme::tools::shared::controller::ParticleSystemScreenController_onEntitySave_3;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -15,7 +15,7 @@ using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::utils::StringConverter;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 ParticleSystemScreenController_onEntitySave_3::ParticleSystemScreenController_onEntitySave_3(ParticleSystemScreenController* particleSystemScreenController)
 	: particleSystemScreenController(particleSystemScreenController)
@@ -28,7 +28,7 @@ void ParticleSystemScreenController_onEntitySave_3::performAction()
 		particleSystemScreenController->view->saveFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
 		particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 		particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		particleSystemScreenController->showErrorPopUp(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }

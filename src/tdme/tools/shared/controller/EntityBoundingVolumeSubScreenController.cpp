@@ -35,7 +35,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -75,7 +75,7 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 constexpr int32_t EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT;
 
@@ -124,7 +124,7 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			boundingvolumeObbRotationZ[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"boundingvolume_obb_rotation_z_" + to_wstring(i)));
 			boundingvolumeConvexMeshFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"boundingvolume_convexmesh_file_" + to_wstring(i)));
 		}
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -199,7 +199,7 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 		L"</scrollarea-vertical>";
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -332,7 +332,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->toWString()),
 			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->toWString())
 		);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
@@ -347,7 +347,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->toWString()),
 			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->toWString())
 		);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
@@ -361,7 +361,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->toWString()),
 			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->toWString())
 		);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }
@@ -387,7 +387,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 			zAxis,
 			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->toWString())
 		);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }

@@ -31,7 +31,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::vector;
 using std::wstring;
@@ -66,7 +66,7 @@ using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(L"");
 
@@ -119,7 +119,7 @@ void ModelViewerScreenController::initialize()
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -252,7 +252,7 @@ void ModelViewerScreenController::onPivotApply()
 		auto y = Float::parseFloat(pivotY->getController()->getValue()->toWString());
 		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toWString());
 		view->pivotApply(x, y, z);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }

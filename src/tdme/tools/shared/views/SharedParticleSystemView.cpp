@@ -33,7 +33,7 @@
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
 
 using std::wstring;
@@ -69,7 +69,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Console;
 
 SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps) 
@@ -217,7 +217,7 @@ void SharedParticleSystemView::loadSettings()
 		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get(L"particlesystem.path", L"."));
 		particleSystemScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -232,7 +232,7 @@ void SharedParticleSystemView::initialize()
 		entityBoundingVolumeView = particleSystemScreenController->getEntityBoundingVolumeSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedParticleSystemView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -278,7 +278,7 @@ void SharedParticleSystemView::storeSettings()
 		settings.put(L"particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());
 		settings.put(L"model.path", particleSystemScreenController->getModelPath()->getPath());
 		settings.store(L"settings", L"particlesystem.properties");
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
 		Console::println(string(exception.what()));
 	}
@@ -310,7 +310,7 @@ void SharedParticleSystemView::loadParticleSystem()
 			_FileSystem::getInstance()->getFileName(particleSystemFile)
 		);
 		onLoadParticleSystem(oldEntity, entity);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}
 }

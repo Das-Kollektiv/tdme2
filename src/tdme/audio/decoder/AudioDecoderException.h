@@ -2,16 +2,16 @@
 
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
 /**
  * Audio decoder exception
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::audio::decoder::AudioDecoderException: public _ExceptionBase
+class tdme::audio::decoder::AudioDecoderException: public ExceptionBase
 {
 public:
 

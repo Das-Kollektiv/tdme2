@@ -4,12 +4,12 @@
 
 #include "JsonException.h"
 
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using tdme::ext::jsonbox::JsonException;
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
 using std::wstring;
 
-JsonException::JsonException(const string& message) throw() : _ExceptionBase(message) {
+JsonException::JsonException(const string& message) throw() : ExceptionBase(message) {
 }

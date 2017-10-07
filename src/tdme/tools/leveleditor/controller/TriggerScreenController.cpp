@@ -20,7 +20,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 
 using std::wstring;
 
@@ -43,7 +43,7 @@ using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(L"");
 
@@ -70,7 +70,7 @@ void TriggerScreenController::initialize()
 		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_height"));
 		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_depth"));
 		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_trigger_apply"));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -141,7 +141,7 @@ void TriggerScreenController::onTriggerApply()
 		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->toWString());
 		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toWString());
 		view->triggerApply(width, height, depth);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
 	}
 }

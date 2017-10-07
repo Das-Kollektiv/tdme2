@@ -23,7 +23,7 @@ namespace utils {
 		class StringUtils;
 		class _ArrayList;
 		class Console;
-		class _ExceptionBase;
+		class ExceptionBase;
 		class _HashMap;
 		class _HashMap_1;
 		class _HashMap_KeysIterator;

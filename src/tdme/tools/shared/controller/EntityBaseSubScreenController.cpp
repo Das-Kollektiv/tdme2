@@ -19,7 +19,7 @@
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
 
 using std::map;
@@ -43,7 +43,7 @@ using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString(L"");
 
@@ -69,7 +69,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 		entityPropertiesList = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_properties_listbox"));
 		entityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_properties_presetapply"));
 		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_properties_presets"));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -128,7 +128,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector
 	entityPropertiesPresetsInnerNodeSubNodesXML = entityPropertiesPresetsInnerNodeSubNodesXML + L"</scrollarea-vertical>";
 	try {
 		entityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("EntityBaseSubScreenController::setEntityPresetIds(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -170,7 +170,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertiesListBoxSubNodesXML = entityPropertiesListBoxSubNodesXML + L"</scrollarea-vertical>\n";
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("EntityBaseSubScreenController::setEntityProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}

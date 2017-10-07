@@ -372,7 +372,7 @@ SRCS = \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \
-	src/tdme/utils/_ExceptionBase.cpp \
+	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
 
 #	src/tdme/engine/EngineGLES2Renderer.cpp \

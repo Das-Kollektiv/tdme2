@@ -1,11 +1,11 @@
 #include <tdme/gui/GUIParserException.h>
 
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using tdme::gui::GUIParserException;
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
-GUIParserException::GUIParserException(const string& message) : _ExceptionBase(message)
+GUIParserException::GUIParserException(const string& message) : ExceptionBase(message)
 {
 }
 

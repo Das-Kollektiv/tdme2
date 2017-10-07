@@ -2,16 +2,16 @@
 
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 
 /** 
  * File system exception
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::os::filesystem::_FileSystemException: public _ExceptionBase
+class tdme::os::filesystem::_FileSystemException: public ExceptionBase
 {
 public:
 

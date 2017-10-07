@@ -24,7 +24,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Time.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
 
 using std::string;
@@ -55,7 +55,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Time;
 using tdme::utils::Console;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 
 constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
 
@@ -327,7 +327,7 @@ void PhysicsTest3::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody(L"tire2", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 		exit(0);

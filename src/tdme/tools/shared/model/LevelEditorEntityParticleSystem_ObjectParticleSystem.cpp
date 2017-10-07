@@ -8,7 +8,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::wstring;
@@ -20,7 +20,7 @@ using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 using tdme::utils::StringUtils;
 
 LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem() 
@@ -87,7 +87,7 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const ws
 			Tools::getFileName(modelFileName)
 		);
 	} else {
-		throw new _ExceptionBase(
+		throw new ExceptionBase(
 			string("LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '") +
 			StringConverter::toString(modelFileName)
 		);

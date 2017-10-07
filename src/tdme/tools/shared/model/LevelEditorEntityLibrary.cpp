@@ -18,7 +18,7 @@
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/_ExceptionBase.h>
+#include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::map;
@@ -41,7 +41,7 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::_ExceptionBase;
+using tdme::utils::ExceptionBase;
 using tdme::utils::StringUtils;
 
 constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
@@ -104,7 +104,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == true) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
-		throw _ExceptionBase(
+		throw ExceptionBase(
 			StringConverter::toString(pathName) +
 			"/" +
 			StringConverter::toString(pathName) +
@@ -181,7 +181,7 @@ void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /
 
 	auto entityByIdIt = entitiesById.find(levelEditorEntity->getId());
 	if (entityByIdIt != entitiesById.end()) {
-		throw _ExceptionBase("Entity id already in use");
+		throw ExceptionBase("Entity id already in use");
 	}
 	entities.push_back(levelEditorEntity);
 	entitiesById[levelEditorEntity->getId()] = levelEditorEntity;

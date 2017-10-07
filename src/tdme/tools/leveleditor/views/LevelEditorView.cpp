@@ -63,7 +63,7 @@
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Exception.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
 
 using std::find;
@@ -134,7 +134,7 @@ using tdme::utils::Properties;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_ArrayList;
-using tdme::utils::_Exception;
+using tdme::utils::Exception;
 using tdme::utils::Console;
 
 vector<wstring> LevelEditorView::OBJECTCOLOR_NAMES = {
@@ -673,7 +673,7 @@ void LevelEditorView::loadSettings()
 		gridY = Float::parseFloat(settings.get(L"grid.y", L"0.0"));
 		levelEditorScreenController->getMapPath()->setPath(settings.get(L"map.path", L"."));
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get(L"model.path", L"."));
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -688,7 +688,7 @@ void LevelEditorView::initialize()
 		levelEditorScreenController->initialize();
 		levelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 		engine->getGUI()->addScreen(levelEditorScreenController->getScreenNode()->getId(), levelEditorScreenController->getScreenNode());
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -737,7 +737,7 @@ void LevelEditorView::storeSettings()
 		settings.put(L"map.path", levelEditorScreenController->getMapPath()->getPath());
 		settings.put(L"model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
 		settings.store(L"settings", L"leveleditor.properties");
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
@@ -1325,7 +1325,7 @@ void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 		gridCenter.set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			L"Warning: Could not load level file",
 			StringConverter::toWideString(string(exception.what()))
@@ -1337,7 +1337,7 @@ void LevelEditorView::saveMap(const wstring& pathName, const wstring& fileName)
 {
 	try {
 		LevelFileExport::export_(pathName, fileName, level);
-	} catch (_Exception& exception) {
+	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			L"Warning: Could not save level file",
 			StringConverter::toWideString(string(exception.what()))
