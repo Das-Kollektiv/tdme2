@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUISelectBoxMultipleOptionController.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -114,8 +111,6 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUISelectBoxMultipleOptionController(GUINode* node);
 protected:
@@ -123,9 +118,5 @@ protected:
 
 
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

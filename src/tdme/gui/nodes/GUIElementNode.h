@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIElementNode.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
@@ -152,10 +149,8 @@ protected:
 
 
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaHorizontal.java
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
 
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
@@ -17,7 +16,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (_FileSystemException)
@@ -30,7 +28,6 @@ wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
 
 void GUIScrollAreaHorizontal::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
 }
 
@@ -65,18 +62,5 @@ map<wstring, wstring>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* scr
 GUINodeController* GUIScrollAreaHorizontal::createController(GUINode* node)
 {
 	return new GUIScrollAreaHorizontalController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIScrollAreaHorizontal::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIScrollAreaHorizontal", 41);
-    return c;
-}
-
-java::lang::Class* GUIScrollAreaHorizontal::getClass0()
-{
-	return class_();
 }
 

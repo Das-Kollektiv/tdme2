@@ -1,12 +1,7 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode.h>
 
 #include <string>
 
-#include <java/lang/Integer.h>
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -26,6 +21,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 #include <Array.h>
@@ -33,10 +29,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUINode;
-using java::lang::Integer;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -56,21 +48,12 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUINode::GUINode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
@@ -81,7 +64,6 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wst
 
 void GUINode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 {
-	super::ctor();
 	this->screenNode = screenNode;
 	this->parentNode = parentNode;
 	this->id = id;
@@ -235,7 +217,6 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 
 GUINode_Alignments* GUINode::createAlignments(const wstring& horizontal, const wstring& vertical)
 {
-	clinit();
 	auto alignments = new GUINode_Alignments();
 	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : L"LEFT");
 	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : L"TOP");
@@ -244,7 +225,6 @@ GUINode_Alignments* GUINode::createAlignments(const wstring& horizontal, const w
 
 GUINode_RequestedConstraints* GUINode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
 {
-	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
 	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
 	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
@@ -259,7 +239,6 @@ GUINode_RequestedConstraints* GUINode::createRequestedConstraints(const wstring&
 
 GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedConstraintsType(const wstring& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType)
 {
-	clinit();
 	if (constraint.empty() == true || constraint.length() == 0) {
 		return defaultConstraintsType;
 	} else if (constraint.compare(L"auto") == 0) {
@@ -275,7 +254,6 @@ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedCons
 
 int32_t GUINode::getRequestedConstraintsValue(const wstring& constraint, int32_t defaultConstraintsValue)
 {
-	clinit();
 	if (constraint.empty() == true || constraint.length() == 0) {
 		return defaultConstraintsValue;
 	} else if (constraint.compare(L"auto") == 0) {
@@ -283,25 +261,23 @@ int32_t GUINode::getRequestedConstraintsValue(const wstring& constraint, int32_t
 	} else if (constraint.compare(L"*") == 0) {
 		return -1;
 	} else if (StringUtils::endsWith(constraint, L"%")) {
-		return (Integer::valueOf(new String(constraint.substr(0, constraint.length() - 1))))->intValue();
+		return (Integer::parseInt(constraint.substr(0, constraint.length() - 1)));
 	} else {
-		return (Integer::valueOf(new String(constraint)))->intValue();
+		return (Integer::parseInt(constraint));
 	}
 }
 
 int32_t GUINode::getRequestedPixelValue(const wstring& value, int32_t defaultValue)
 {
-	clinit();
 	if (value.empty() == true || value.length() == 0) {
 		return defaultValue;
 	} else {
-		return (Integer::valueOf(new String(value)))->intValue();
+		return (Integer::parseInt(value));
 	}
 }
 
 GUIColor* GUINode::getRequestedColor(const wstring& color, GUIColor* defaultColor) /* throws(GUIParserException) */
 {
-	clinit();
 	if (color.empty() == true || color.length() == 0) {
 		return defaultColor;
 	} else {
@@ -311,13 +287,11 @@ GUIColor* GUINode::getRequestedColor(const wstring& color, GUIColor* defaultColo
 
 GUINode_Flow* GUINode::createFlow(const wstring& flow)
 {
-	clinit();
 	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringUtils::toUpperCase(flow) : L"INTEGRATED");
 }
 
 GUINode_Border* GUINode::createBorder(const wstring& allBorder, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom, const wstring& allBorderColor, const wstring& leftColor, const wstring& topColor, const wstring& rightColor, const wstring& bottomColor) /* throws(GUIParserException) */
 {
-	clinit();
 	auto border = new GUINode_Border();
 	border->left = getRequestedPixelValue(allBorder, 0);
 	border->top = getRequestedPixelValue(allBorder, 0);
@@ -340,7 +314,6 @@ GUINode_Border* GUINode::createBorder(const wstring& allBorder, const wstring& l
 
 GUINode_Padding* GUINode::createPadding(const wstring& allPadding, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom) /* throws(GUIParserException) */
 {
-	clinit();
 	auto padding = new GUINode_Padding();
 	padding->left = getRequestedPixelValue(allPadding, 0);
 	padding->top = getRequestedPixelValue(allPadding, 0);
@@ -355,7 +328,6 @@ GUINode_Padding* GUINode::createPadding(const wstring& allPadding, const wstring
 
 GUINodeConditions* GUINode::createConditions(const wstring& conditions)
 {
-	clinit();
 	auto guiNodeConditions = new GUINodeConditions();
 	StringTokenizer strTokenizer;
 	strTokenizer.tokenize(conditions, L",");
@@ -387,7 +359,7 @@ bool GUINode::checkConditions()
 	if (node == nullptr) {
 		return true;
 	}
-	auto elementNode = java_cast< GUIElementNode* >(node);
+	auto elementNode = dynamic_cast< GUIElementNode* >(node);
 	for (auto i = 0; i < hideOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
 			if (hideOn.at(i) == elementNode->activeConditions->conditions.at(j))
@@ -675,51 +647,5 @@ const wstring GUINode::indent(int32_t indent)
 				tmp += L"\t";
 
 	return tmp;
-}
-
-String* GUINode::toString()
-{
-	return ::java::lang::StringBuilder().append(u"GUINode [id="_j)->append(id)
-		->append(u", alignments="_j)
-		->append(static_cast< Object* >(alignments))
-		->append(u", requestedConstraints="_j)
-		->append(static_cast< Object* >(requestedConstraints))
-		->append(u", computedConstraints="_j)
-		->append(static_cast< Object* >(computedConstraints))
-		->append(u"]"_j)->toString();
-}
-
-String* GUINode::toString(int32_t indent)
-{
-	return ::java::lang::StringBuilder().append(this->indent(indent))->append(u"GUINode [type="_j)
-		->append(getNodeType())
-		->append(u", id="_j)
-		->append(id)
-		->append(u", alignments="_j)
-		->append(static_cast< Object* >(alignments))
-		->append(u", requestedConstraints="_j)
-		->append(static_cast< Object* >(requestedConstraints))
-		->append(u", computedConstraints="_j)
-		->append(static_cast< Object* >(computedConstraints))
-		->append(u", border="_j)
-		->append(static_cast< Object* >(border))
-		->append(u", padding="_j)
-		->append(static_cast< Object* >(padding))
-		->append(u", controller="_j)
-		->append((this->controller != nullptr ? u"yes"_j : u"no"_j))
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUINode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUINode", 22);
-    return c;
-}
-
-java::lang::Class* GUINode::getClass0()
-{
-	return class_();
 }
 

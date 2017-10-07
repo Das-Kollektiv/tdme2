@@ -1,9 +1,7 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIDropDownOptionController.java
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 
 #include <string>
 
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -19,7 +17,6 @@
 using std::wstring;
 
 using tdme::gui::elements::GUIDropDownOptionController;
-using java::lang::StringBuilder;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
@@ -31,14 +28,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 GUIDropDownOptionController::GUIDropDownOptionController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -59,7 +48,7 @@ wstring GUIDropDownOptionController::CONDITION_UNSELECTED;
 void GUIDropDownOptionController::ctor(GUINode* node)
 {
 	super::ctor(node);
-	this->selected = (java_cast< GUIElementNode* >(node))->isSelected();
+	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
 
 bool GUIDropDownOptionController::isSelected()
@@ -78,22 +67,22 @@ void GUIDropDownOptionController::setDisabled(bool disabled)
 
 void GUIDropDownOptionController::select()
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto dropDownOptionTextNode = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_unselected"));
-	auto dropDownTextNodeEnabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_enabled"));
+	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_unselected"));
+	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_enabled"));
 	dropDownTextNodeEnabled->getText()->reset();
 	dropDownTextNodeEnabled->getText()->append(dropDownOptionTextNode->getText());
-	auto dropDownTextNodeDisabled = java_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_disabled"));
+	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_disabled"));
 	dropDownTextNodeDisabled->getText()->reset();
 	dropDownTextNodeDisabled->getText()->append(dropDownOptionTextNode->getText());
 }
 
 void GUIDropDownOptionController::unselect()
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = false;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
@@ -132,10 +121,10 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
-			(java_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
+			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
 			select();
-			(java_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();
-			node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(dropDownNode));
+			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();
+			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(dropDownNode));
 			node->scrollToNodeX(dropDownNode);
 			node->scrollToNodeY(dropDownNode);
 		}
@@ -172,14 +161,6 @@ void GUIDropDownOptionController::setValue(MutableString* value)
 {
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIDropDownOptionController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDownOptionController", 45);
-    return c;
-}
-
 void GUIDropDownOptionController::clinit()
 {
 struct string_init_ {
@@ -190,12 +171,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUIDropDownOptionController::getClass0()
-{
-	return class_();
 }
 

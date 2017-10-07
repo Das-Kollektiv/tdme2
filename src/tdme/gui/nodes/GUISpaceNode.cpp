@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUISpaceNode.java
 #include <tdme/gui/nodes/GUISpaceNode.h>
 
 #include <string>
@@ -19,7 +18,6 @@ using tdme::utils::StringUtils;
 GUISpaceNode::GUISpaceNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
@@ -55,7 +53,6 @@ int32_t GUISpaceNode::getContentHeight()
 
 GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
 {
-	clinit();
 	auto constraints = new GUINode_RequestedConstraints();
 	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
 	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
@@ -79,18 +76,5 @@ void GUISpaceNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNo
 		return;
 
 	super::render(guiRenderer, floatingNodes);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUISpaceNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUISpaceNode", 27);
-    return c;
-}
-
-java::lang::Class* GUISpaceNode::getClass0()
-{
-	return class_();
 }
 

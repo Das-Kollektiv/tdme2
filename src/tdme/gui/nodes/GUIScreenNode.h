@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIScreenNode.java
-
 #pragma once
 
 #include <map>
@@ -7,7 +5,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -351,16 +348,9 @@ public:
 protected:
 	GUIScreenNode(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
 
 public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

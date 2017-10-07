@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIRadioButton.java
 #include <tdme/gui/elements/GUIRadioButton.h>
 
 #include <map>
@@ -23,7 +22,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIRadioButton::GUIRadioButton(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIRadioButton::GUIRadioButton() throw (_FileSystemException)
@@ -36,7 +34,6 @@ wstring GUIRadioButton::NAME = L"radiobutton";
 
 void GUIRadioButton::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"radiobutton.xml");
 }
 
@@ -61,18 +58,5 @@ map<wstring, wstring>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUIRadioButton::createController(GUINode* node)
 {
 	return new GUIRadioButtonController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIRadioButton::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIRadioButton", 32);
-    return c;
-}
-
-java::lang::Class* GUIRadioButton::getClass0()
-{
-	return class_();
 }
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIParentNode.java
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 
 #include <string>

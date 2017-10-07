@@ -1,9 +1,6 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIRenderer.java
 #include <tdme/gui/renderer/GUIRenderer.h>
 
 #include <tdme/math/Math.h>
-#include <java/lang/Object.h>
-#include <java/lang/Short.h>
 #include <tdme/utils/Time.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -21,7 +18,6 @@
 
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
-using java::lang::Object;
 using tdme::utils::Time;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -37,9 +33,7 @@ using tdme::gui::renderer::GUIShader;
 using tdme::utils::_Console;
 
 GUIRenderer::GUIRenderer(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIRenderer::GUIRenderer(GLRenderer* renderer) 
@@ -76,7 +70,6 @@ constexpr float GUIRenderer::SCREEN_BOTTOM;
 
 void GUIRenderer::ctor(GLRenderer* renderer)
 {
-	super::ctor();
 	init();
 	this->renderer = renderer;
 }
@@ -431,18 +424,5 @@ void GUIRenderer::render()
 	effectColorAdd = GUIColor::BLACK.getArray();
 	effectColorAdd[3] = 0.0f;
 	guiEffectColorAdd[3] = 0.0f;
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIRenderer::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.renderer.GUIRenderer", 29);
-    return c;
-}
-
-java::lang::Class* GUIRenderer::getClass0()
-{
-	return class_();
 }
 

@@ -1,7 +1,5 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUILayoutNode.java
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
-#include <java/lang/Object.h>
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -17,7 +15,6 @@
 #include <tdme/utils/StringUtils.h>
 
 using tdme::gui::nodes::GUILayoutNode;
-using java::lang::Object;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
@@ -32,18 +29,9 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::StringUtils;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUILayoutNode::GUILayoutNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUILayoutNode::GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment)  /* throws(GUIParserException) */
@@ -73,7 +61,7 @@ int32_t GUILayoutNode::getContentWidth()
 	auto width = 0;
 	if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+			auto guiSubNode = subNodes.at(i);
 			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 				continue;
 			}
@@ -81,7 +69,7 @@ int32_t GUILayoutNode::getContentWidth()
 		}
 	} else {
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+			auto guiSubNode = subNodes.at(i);
 			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 				continue;
 			}
@@ -101,7 +89,7 @@ int32_t GUILayoutNode::getContentHeight()
 	auto height = 0;
 	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+			auto guiSubNode = subNodes.at(i);
 			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 				continue;
 			}
@@ -109,7 +97,7 @@ int32_t GUILayoutNode::getContentHeight()
 		}
 	} else {
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+			auto guiSubNode = subNodes.at(i);
 			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 				continue;
 			}
@@ -137,7 +125,7 @@ void GUILayoutNode::layoutSubNodes()
 				auto nodesHeight = 0;
 				auto finalNodesHeight = 0;
 				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+					auto guiSubNode = subNodes.at(i);
 					if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 						continue;
 					}
@@ -150,7 +138,7 @@ void GUILayoutNode::layoutSubNodes()
 				}
 				auto verticalStarPixelRest = 0.0f;
 				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+					auto guiSubNode = subNodes.at(i);
 					if (guiSubNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 						auto nodeStarHeight = (static_cast< float >(height) - static_cast< float >(nodesHeight)) / static_cast< float >(starCount);
 						auto nodeStarHeightInt = static_cast< int32_t >(nodeStarHeight);
@@ -165,7 +153,7 @@ void GUILayoutNode::layoutSubNodes()
 						}
 						finalNodesHeight += guiSubNode->computedConstraints->height;
 						if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-							(java_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+							(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
 						}
 					}
 				}
@@ -173,21 +161,21 @@ void GUILayoutNode::layoutSubNodes()
 					auto v_ = alignments->vertical;
 					if ((v_ == GUINode_AlignmentVertical::TOP)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentTop = border->top + padding->top;
 						}
 						goto end_switch1;;
 					}
 					if ((v_ == GUINode_AlignmentVertical::CENTER)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentTop = border->top + padding->top + ((height - finalNodesHeight) / 2);
 						}
 						goto end_switch1;;
 					}
 					if ((v_ == GUINode_AlignmentVertical::BOTTOM)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentTop = (height - finalNodesHeight);
 						}
 						goto end_switch1;;
@@ -205,7 +193,7 @@ end_switch1:;
 				auto nodesWidth = 0;
 				auto finalNodesWidth = 0;
 				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+					auto guiSubNode = subNodes.at(i);
 					if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 						continue;
 					}
@@ -218,7 +206,7 @@ end_switch1:;
 				}
 				auto horizontalStarPixelRest = 0.0f;
 				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+					auto guiSubNode = subNodes.at(i);
 					if (guiSubNode->requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 						auto nodeStarWidth = (static_cast< float >(width) - static_cast< float >(nodesWidth)) / static_cast< float >(starCount);
 						auto nodeStarWidthInt = static_cast< int32_t >(nodeStarWidth);
@@ -233,7 +221,7 @@ end_switch1:;
 						}
 						finalNodesWidth += guiSubNode->computedConstraints->width;
 						if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-							(java_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+							(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
 						}
 					}
 				}
@@ -241,21 +229,21 @@ end_switch1:;
 					auto v_ = alignments->horizontal;
 					if ((v_ == GUINode_AlignmentHorizontal::LEFT)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentLeft = border->left + padding->left;
 						}
 						goto end_switch2;;
 					}
 					if ((v_ == GUINode_AlignmentHorizontal::CENTER)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentLeft = border->left + padding->left + ((width - finalNodesWidth) / 2);
 						}
 						goto end_switch2;;
 					}
 					if ((v_ == GUINode_AlignmentHorizontal::RIGHT)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
-							auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+							auto guiSubNode = subNodes.at(i);
 							guiSubNode->computedConstraints->alignmentLeft = (width - finalNodesWidth);
 						}
 						goto end_switch2;;
@@ -276,7 +264,7 @@ end_switch0:;
 	}
 
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+		auto guiSubNode = subNodes.at(i);
 		guiSubNode->computeContentAlignment();
 	}
 	setTop(computedConstraints->top);
@@ -288,7 +276,7 @@ void GUILayoutNode::setTop(int32_t top)
 	super::setTop(top);
 	top += computedConstraints->alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+		auto guiSubNode = subNodes.at(i);
 		guiSubNode->setTop(top);
 		if (alignment != GUILayoutNode_Alignment::VERTICAL || guiSubNode->flow == GUINode_Flow::FLOATING) {
 			continue;
@@ -302,7 +290,7 @@ void GUILayoutNode::setLeft(int32_t left)
 	super::setLeft(left);
 	left += computedConstraints->alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+		auto guiSubNode = subNodes.at(i);
 		guiSubNode->setLeft(left);
 		if (alignment != GUILayoutNode_Alignment::HORIZONTAL || guiSubNode->flow == GUINode_Flow::FLOATING) {
 			continue;
@@ -314,18 +302,5 @@ void GUILayoutNode::setLeft(int32_t left)
 GUILayoutNode_Alignment* GUILayoutNode::createAlignment(const wstring& alignment)
 {
 	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringUtils::toUpperCase(alignment) : L"NONE");
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUILayoutNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUILayoutNode", 28);
-    return c;
-}
-
-java::lang::Class* GUILayoutNode::getClass0()
-{
-	return class_();
 }
 

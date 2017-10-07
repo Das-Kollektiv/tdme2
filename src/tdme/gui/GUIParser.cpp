@@ -1,13 +1,8 @@
-// Generated from /tdme/src/tdme/gui/GUIParser.java
 #include <tdme/gui/GUIParser.h>
 
 #include <map>
 #include <string>
 
-#include <java/lang/CharSequence.h>
-#include <java/lang/Object.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Iterator.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/GUIButton.h>
 #include <tdme/gui/elements/GUICheckbox.h>
@@ -56,10 +51,6 @@ using std::map;
 using std::wstring;
 
 using tdme::gui::GUIParser;
-using java::lang::CharSequence;
-using java::lang::Object;
-using java::lang::StringBuilder;
-using java::util::Iterator;
 using tdme::gui::GUIParserException;
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUICheckbox;
@@ -108,16 +99,7 @@ using tdme::ext::tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIParser::GUIParser(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
 	clinit();
 }
@@ -125,7 +107,6 @@ GUIParser::GUIParser(const ::default_init_tag&)
 GUIParser::GUIParser()
 	: GUIParser(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
 }
 
 map<wstring, GUIElement*> GUIParser::elements;
@@ -777,24 +758,14 @@ void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException)
 	elements.emplace(guiElement->getName(), guiElement);
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIParser::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.GUIParser", 18);
-    return c;
-}
-
 void GUIParser::clinit()
 {
-	super::clinit();
 	static bool in_cl_init = false;
 	struct clinit_ {
 		clinit_() {
 			in_cl_init = true;
 			{
 				try {
-					GUICheckbox::clinit();
 					GUIElement* guiElement = new GUICheckbox();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -802,7 +773,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIRadioButton::clinit();
 					GUIElement* guiElement = new GUIRadioButton();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -810,7 +780,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUISelectBox::clinit();
 					GUIElement* guiElement = new GUISelectBox();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -818,7 +787,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUISelectBoxOption::clinit();
 					GUIElement* guiElement = new GUISelectBoxOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -826,7 +794,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUISelectBoxMultiple::clinit();
 					GUIElement* guiElement = new GUISelectBoxMultiple();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -834,7 +801,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUISelectBoxMultipleOption::clinit();
 					GUIElement* guiElement = new GUISelectBoxMultipleOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -842,7 +808,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIDropDown::clinit();
 					GUIElement* guiElement = new GUIDropDown();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -850,7 +815,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIDropDownOption::clinit();
 					GUIElement* guiElement = new GUIDropDownOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -858,7 +822,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUITabs::clinit();
 					GUIElement* guiElement = new GUITabs();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -866,7 +829,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUITabsHeader::clinit();
 					GUIElement* guiElement = new GUITabsHeader();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -874,7 +836,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUITab::clinit();
 					GUIElement* guiElement = new GUITab();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -882,7 +843,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUITabsContent::clinit();
 					GUIElement* guiElement = new GUITabsContent();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -890,7 +850,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUITabContent::clinit();
 					GUIElement* guiElement = new GUITabContent();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -898,7 +857,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIButton::clinit();
 					GUIElement* guiElement = new GUIButton();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -906,7 +864,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIInput::clinit();
 					GUIElement* guiElement = new GUIInput();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -914,7 +871,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIScrollAreaVertical::clinit();
 					GUIElement* guiElement = new GUIScrollAreaVertical();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -922,7 +878,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIScrollAreaHorizontal::clinit();
 					GUIElement* guiElement = new GUIScrollAreaHorizontal();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -930,7 +885,6 @@ void GUIParser::clinit()
 					_Console::println(string(exception.what()));
 				}
 				try {
-					GUIScrollArea::clinit();
 					GUIElement* guiElement = new GUIScrollArea();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
@@ -944,10 +898,5 @@ void GUIParser::clinit()
 	if (!in_cl_init) {
 		static clinit_ clinit_instance;
 	}
-}
-
-java::lang::Class* GUIParser::getClass0()
-{
-	return class_();
 }
 

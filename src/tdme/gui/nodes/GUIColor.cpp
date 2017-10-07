@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIColor.java
 #include <tdme/gui/nodes/GUIColor.h>
 
 #include <array>
@@ -7,9 +6,6 @@
 #include <vector>
 
 #include <Array.h>
-#include <java/lang/Integer.h>
-#include <java/lang/StringBuilder.h>
-#include <java/util/Arrays.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>
@@ -21,9 +17,6 @@ using std::wstring;
 using std::vector;
 
 using tdme::gui::nodes::GUIColor;
-using java::lang::Integer;
-using java::lang::StringBuilder;
-using java::util::Arrays;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::gui::GUIParserException;

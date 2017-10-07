@@ -62,7 +62,6 @@ TDMELevelEditor::TDMELevelEditor()
 
 void TDMELevelEditor::main(int argc, char** argv)
 {
-	String* modelFileName = nullptr;
 	_Console::println(wstring(L"TDMELevelEditor " + VERSION));
 	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	_Console::println();

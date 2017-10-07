@@ -1,7 +1,5 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalController.java
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
-#include <tdme/utils/Time.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -19,10 +17,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/Time.h>
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
-using tdme::utils::Time;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -40,19 +38,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::utils::MutableString;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
+using tdme::utils::Time;
 
 GUIInputInternalController::GUIInputInternalController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIInputInternalController::GUIInputInternalController(GUINode* node) 
@@ -96,7 +86,7 @@ void GUIInputInternalController::setDisabled(bool disabled)
 
 void GUIInputInternalController::initialize()
 {
-	inputNode = java_cast< GUIElementNode* >(node->getParentControllerNode());
+	inputNode = dynamic_cast< GUIElementNode* >(node->getParentControllerNode());
 }
 
 void GUIInputInternalController::dispose()
@@ -138,14 +128,14 @@ GUIInputInternalController_CursorMode* GUIInputInternalController::getCursorMode
 
 void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	auto disabled = (java_cast< GUIInputController* >(inputNode->getController()))->isDisabled();
+	auto disabled = (dynamic_cast< GUIInputController* >(inputNode->getController()))->isDisabled();
 	if (disabled == true) {
 		return;
 	}
 	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED == true) {
 		isDragging = false;
 	} else if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED == true) && event->getButton() == 1) {
-		auto textInputNode = (java_cast< GUIInputInternalNode* >(node));
+		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints->left + textInputNode->computedConstraints->alignmentLeft + textInputNode->border->left+ textInputNode->padding->left));
 		resetCursorMode();
 		event->setProcessed(true);
@@ -164,7 +154,7 @@ void GUIInputInternalController::checkOffset()
 		offset = index;
 		return;
 	}
-	auto textInputNode = (java_cast< GUIInputInternalNode* >(node));
+	auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 	auto textInputNodeConstraints = textInputNode->computedConstraints;
 	auto textInputNodeBorder = textInputNode->border;
 	auto textInputNodePadding = textInputNode->padding;
@@ -177,12 +167,12 @@ void GUIInputInternalController::checkOffset()
 
 void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
-	auto disabled = (java_cast< GUIInputController* >(inputNode->getController()))->isDisabled();
+	auto disabled = (dynamic_cast< GUIInputController* >(inputNode->getController()))->isDisabled();
 	if (disabled == true) {
 		return;
 	}
 	if (node == this->node) {
-		auto textInputNode = (java_cast< GUIInputInternalNode* >(node));
+		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		auto keyChar = event->getKeyChar();
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
@@ -192,7 +182,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 					index++;
 					resetCursorMode();
 					checkOffset();
-					node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(node->getParentControllerNode()));
+					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node->getParentControllerNode()));
 				}
 			}
 		} else {
@@ -228,7 +218,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 								index--;
 								checkOffset();
 								resetCursorMode();
-								node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(node->getParentControllerNode()));
+								node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -241,7 +231,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 							if (index < textInputNode->getText()->length()) {
 								textInputNode->getText()->delete_(index, 1);
 								resetCursorMode();
-								node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(node->getParentControllerNode()));
+								node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -261,7 +251,7 @@ void GUIInputInternalController::tick()
 			return;
 		}
 		draggingTickLast = now;
-		auto textInputNode = (java_cast< GUIInputInternalNode* >(node));
+		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		if ((*dragPosition)[0] < 0) {
 			if (index > 0) {
 				index--;
@@ -296,18 +286,5 @@ MutableString* GUIInputInternalController::getValue()
 
 void GUIInputInternalController::setValue(MutableString* value)
 {
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIInputInternalController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIInputInternalController", 41);
-    return c;
-}
-
-java::lang::Class* GUIInputInternalController::getClass0()
-{
-	return class_();
 }
 

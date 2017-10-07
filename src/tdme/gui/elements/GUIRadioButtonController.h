@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIRadioButtonController.java
-
 #pragma once
 
 #include <map>
@@ -7,7 +5,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -49,6 +46,7 @@ private:
 	bool disabled {  };
 	static map<wstring, vector<GUIElementNode*>> radioButtonGroupNodesByName;
 	MutableString* value {  };
+
 protected:
 
 	/** 
@@ -92,12 +90,9 @@ public: /* protected */
 protected:
 	GUIRadioButtonController(const ::default_init_tag&);
 
-
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

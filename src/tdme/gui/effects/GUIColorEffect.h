@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIColorEffect.java
-
 #pragma once
 
 #include <tdme/gui/effects/fwd-tdme.h>
@@ -64,16 +62,11 @@ public:
 	void update(GUIRenderer* guiRenderer) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
-	// Generated
 	GUIColorEffect();
+
 protected:
 	GUIColorEffect(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

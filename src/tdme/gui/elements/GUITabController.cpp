@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabController.java
 #include <tdme/gui/elements/GUITabController.h>
 
 #include <tdme/gui/GUI.h>
@@ -30,14 +29,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUITabController::GUITabController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -68,7 +59,7 @@ void GUITabController::ctor(GUINode* node)
 	this->unfocussedNodeBorderRightColor = nullptr;
 	this->unfocussedNodeBorderTopColor = nullptr;
 	this->unfocussedNodeBorderBottomColor = nullptr;
-	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUITabController::isDisabled()
@@ -78,7 +69,7 @@ bool GUITabController::isDisabled()
 
 void GUITabController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
 	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -91,11 +82,11 @@ bool GUITabController::isSelected()
 
 void GUITabController::setSelected(bool selected)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(this->node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(this->node))->getActiveConditions();
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = selected;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	if ((java_cast< GUITabsHeaderController* >(tabsHeaderNode->getController()))->hasFocus() == true) {
+	if ((dynamic_cast< GUITabsHeaderController* >(tabsHeaderNode->getController()))->hasFocus() == true) {
 		if (selected == true) {
 			auto focussedBorderColor = node->getScreenNode()->getGUI()->getFoccussedBorderColor();
 			auto border = node->getBorder();
@@ -121,8 +112,8 @@ void GUITabController::setSelected(bool selected)
 
 void GUITabController::initialize()
 {
-	tabsNode = (java_cast< GUIParentNode* >(node))->getParentControllerNode()->getParentControllerNode();
-	tabsHeaderNode = (java_cast< GUIParentNode* >(node))->getParentControllerNode();
+	tabsNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode()->getParentControllerNode();
+	tabsHeaderNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode();
 	auto border = node->getBorder();
 	unfocussedNodeBorderTopColor = border->topColor;
 	unfocussedNodeBorderLeftColor = border->leftColor;
@@ -145,7 +136,7 @@ void GUITabController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
-			auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
+			auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
 			guiTabsController->unselect();
 			setSelected(selected == true ? false : true);
 			guiTabsController->setTabContentSelected(node->getId());
@@ -185,19 +176,11 @@ void GUITabController::setValue(MutableString* value)
 
 void GUITabController::selectTab()
 {
-	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
+	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
 	guiTabsController->unselect();
 	setSelected(true);
 	guiTabsController->setTabContentSelected(node->getId());
 	node->getScreenNode()->getGUI()->invalidateFocussedNode();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITabController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabController", 34);
-    return c;
 }
 
 void GUITabController::clinit()
@@ -212,12 +195,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUITabController::getClass0()
-{
-	return class_();
 }
 

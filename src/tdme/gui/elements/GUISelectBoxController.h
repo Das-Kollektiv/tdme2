@@ -1,12 +1,9 @@
-// Generated from /tdme/src/tdme/gui/elements/GUISelectBoxController.java
-
 #pragma once
 
 #include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -112,12 +109,9 @@ public: /* protected */
 protected:
 	GUISelectBoxController(const ::default_init_tag&);
 
-
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

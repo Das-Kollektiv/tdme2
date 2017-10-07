@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITab.java
 #include <tdme/gui/elements/GUITab.h>
 
 #include <map>
@@ -35,7 +34,6 @@ wstring GUITab::NAME = L"tab";
 
 void GUITab::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tab.xml");
 }
 
@@ -59,18 +57,5 @@ map<wstring, wstring>* GUITab::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUITab::createController(GUINode* node)
 {
 	return new GUITabController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITab::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITab", 24);
-    return c;
-}
-
-java::lang::Class* GUITab::getClass0()
-{
-	return class_();
 }
 

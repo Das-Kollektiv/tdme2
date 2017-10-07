@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIDropDownController.java
 #include <tdme/gui/elements/GUIDropDownController.h>
 
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -24,8 +21,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::elements::GUIDropDownController;
-using java::lang::Object;
-using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::events::GUIKeyboardEvent_Type;
@@ -39,14 +34,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 GUIDropDownController::GUIDropDownController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -80,7 +67,7 @@ void GUIDropDownController::ctor(GUINode* node)
 {
 	super::ctor(node);
 	init();
-	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUIDropDownController::isDisabled()
@@ -90,7 +77,7 @@ bool GUIDropDownController::isDisabled()
 
 void GUIDropDownController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	auto nodeConditionsTextElement = textElementNode->getActiveConditions();
 	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	nodeConditionsTextElement->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -104,10 +91,10 @@ void GUIDropDownController::setDisabled(bool disabled)
 
 void GUIDropDownController::initialize()
 {
-	dropDownNode = java_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal"));
-	arrowNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_arrow"));
-	textElementNode = java_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal_element"));
-	(java_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal"));
+	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_arrow"));
+	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal_element"));
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	setDisabled(disabled);
 }
@@ -127,34 +114,34 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
+		auto childControllerNode = childControllerNodes.at(i);
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
-			(java_cast< GUIDropDownOptionController* >(childController))->unselect();
+			(dynamic_cast< GUIDropDownOptionController* >(childController))->unselect();
 		}
 	}
 }
 
 void GUIDropDownController::toggleOpenState()
 {
-	(java_cast< GUIElementNode* >(node))->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	isOpen_ = isOpen_ == true ? false : true;
-	(java_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 }
 
 void GUIDropDownController::determineDropDownOptionControllers()
 {
 	dropDownOptionControllers.clear();
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
+		auto childControllerNode = childControllerNodes.at(i);
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
-			dropDownOptionControllers.push_back(java_cast< GUIDropDownOptionController* >(childController));
+			dropDownOptionControllers.push_back(dynamic_cast< GUIDropDownOptionController* >(childController));
 		}
 	}
 }
@@ -163,7 +150,7 @@ int32_t GUIDropDownController::getSelectedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto selectBoxOptionController = java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(i));
+		auto selectBoxOptionController = dropDownOptionControllers.at(i);
 		if (selectBoxOptionController->isSelected() == true) {
 			selectBoxOptionControllerIdx = i;
 			break;
@@ -184,9 +171,9 @@ void GUIDropDownController::selectNext()
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->select();
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->select();
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::selectPrevious()
@@ -201,9 +188,9 @@ void GUIDropDownController::selectPrevious()
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->select();
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeX(dropDownNode);
-	java_cast< GUIDropDownOptionController* >(dropDownOptionControllers.at(selectBoxOptionControllerIdx))->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->select();
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -212,7 +199,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
 			toggleOpenState();
-			node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(this->node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(this->node));
 		}
 	}
 }
@@ -249,7 +236,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 					toggleOpenState();
 				}
 				if (isOpen_ == false) {
-					node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(node));
+					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}
 			}
 			break;
@@ -282,7 +269,7 @@ MutableString* GUIDropDownController::getValue()
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers.at(i);
 		if (dropDownOptionController->isSelected() == true) {
-			value->append((java_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
+			value->append((dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
 		}
 	}
 	return value;
@@ -294,7 +281,7 @@ void GUIDropDownController::setValue(MutableString* value)
 	unselect();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers.at(i);
-		auto dropDownOptionNode = (java_cast< GUIElementNode* >(dropDownOptionController->getNode()));
+		auto dropDownOptionNode = (dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()));
 		if (value->equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();
 			dropDownOptionNode->scrollToNodeX(dropDownNode);
@@ -302,18 +289,5 @@ void GUIDropDownController::setValue(MutableString* value)
 			break;
 		}
 	}
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIDropDownController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDownController", 39);
-    return c;
-}
-
-java::lang::Class* GUIDropDownController::getClass0()
-{
-	return class_();
 }
 

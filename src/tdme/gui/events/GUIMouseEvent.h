@@ -1,14 +1,8 @@
-// Generated from /tdme/src/tdme/gui/events/GUIMouseEvent.java
-
 #pragma once
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::gui::events::GUIMouseEvent_Type;
 
 
@@ -20,11 +14,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::events::GUIMouseEvent
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	int64_t time {  };
@@ -36,6 +26,7 @@ private:
 	float wheelY {  };
 	float wheelZ {  };
 	bool processed {  };
+
 protected:
 
 	/** 
@@ -147,18 +138,12 @@ public:
 	 * @param processed
 	 */
 	virtual void setProcessed(bool processed);
-	String* toString() override;
 
 	// Generated
 	GUIMouseEvent();
 protected:
 	GUIMouseEvent(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class GUIMouseEvent_Type;
 };

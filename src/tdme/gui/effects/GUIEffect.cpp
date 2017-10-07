@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIEffect.java
 #include <tdme/gui/effects/GUIEffect.h>
 
 #include <tdme/engine/Engine.h>
@@ -11,9 +10,7 @@ using tdme::engine::Timing;
 using tdme::gui::events::Action;
 
 GUIEffect::GUIEffect(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIEffect::GUIEffect() 
@@ -24,7 +21,6 @@ GUIEffect::GUIEffect()
 
 void GUIEffect::ctor()
 {
-	super::ctor();
 	active = false;
 	timeTotal = 0.0f;
 	timeLeft = timeTotal;
@@ -77,18 +73,5 @@ void GUIEffect::update(GUIRenderer* guiRenderer)
 			action->performAction();
 		}
 	}
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIEffect::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.effects.GUIEffect", 26);
-    return c;
-}
-
-java::lang::Class* GUIEffect::getClass0()
-{
-	return class_();
 }
 

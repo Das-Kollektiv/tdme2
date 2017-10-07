@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIButton.java
 #include <tdme/gui/elements/GUIButton.h>
 
 #include <map>
@@ -20,6 +19,8 @@ using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemException;
 using tdme::os::filesystem::_FileSystemInterface;
 
+wstring GUIButton::NAME = L"button";
+
 GUIButton::GUIButton(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -31,11 +32,8 @@ GUIButton::GUIButton() throw (_FileSystemException)
 	ctor();
 }
 
-wstring GUIButton::NAME = L"button";
-
 void GUIButton::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"button.xml");
 }
 
@@ -62,18 +60,5 @@ map<wstring, wstring>* GUIButton::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUIButton::createController(GUINode* node)
 {
 	return new GUIButtonController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIButton::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIButton", 27);
-    return c;
-}
-
-java::lang::Class* GUIButton::getClass0()
-{
-	return class_();
 }
 

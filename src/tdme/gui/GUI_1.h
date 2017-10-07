@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/GUI.java
-
 #pragma once
 
 #include <tdme/gui/fwd-tdme.h>
@@ -27,11 +25,9 @@ public: /* protected */
 
 public:
 	GUI_1(GUI *GUI_this);
-	static ::java::lang::Class *class_();
 	GUI *GUI_this;
 
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class GUI;
 	friend class GUI_2;
 };

@@ -1,13 +1,9 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIShader.java
-
 #pragma once
 
 #include <fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 
@@ -19,11 +15,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::renderer::GUIShader final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	GLRenderer* renderer {  };
@@ -36,6 +28,7 @@ private:
 	int32_t uniformEffectColorAdd {  };
 	bool initialized {  };
 	bool isRunning {  };
+
 protected:
 
 	/** 
@@ -78,15 +71,8 @@ public:
 	 */
 	void updateEffect(GLRenderer* renderer);
 
-	// Generated
 	GUIShader(GLRenderer* renderer);
+
 protected:
 	GUIShader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

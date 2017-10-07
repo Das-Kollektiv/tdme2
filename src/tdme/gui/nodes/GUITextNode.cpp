@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUITextNode.java
 #include <tdme/gui/nodes/GUITextNode.h>
 
 #include <string>
@@ -27,7 +26,6 @@ using tdme::utils::MutableString;
 GUITextNode::GUITextNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, MutableString* text)  /* throws(Exception) */
@@ -83,18 +81,5 @@ void GUITextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNod
 
 	super::render(guiRenderer, floatingNodes);
 	font->drawString(guiRenderer, computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft, computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->contentAlignmentTop, text, 0, 0, color);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITextNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUITextNode", 26);
-    return c;
-}
-
-java::lang::Class* GUITextNode::getClass0()
-{
-	return class_();
 }
 

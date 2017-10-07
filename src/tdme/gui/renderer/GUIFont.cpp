@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIFont.java
 #include <tdme/gui/renderer/GUIFont.h>
 
 #include <map>
@@ -44,13 +43,11 @@ template<typename ComponentType, typename... Bases> struct SubArray;
 namespace tdme {
 namespace gui {
 namespace renderer {
-typedef ::SubArray< ::tdme::gui::renderer::GUIFont_CharacterDefinition, ::java::lang::ObjectArray > GUIFont_CharacterDefinitionArray;
 }  // namespace renderer
 }  // namespace gui
 }  // namespace tdme
 
 GUIFont::GUIFont(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
 	clinit();
 }
@@ -63,7 +60,6 @@ GUIFont::GUIFont()
 
 void GUIFont::ctor()
 {
-	super::ctor();
 	init();
 }
 
@@ -260,17 +256,8 @@ int32_t GUIFont::getLineHeight()
 	return lineHeight;
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIFont::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.renderer.GUIFont", 25);
-    return c;
-}
-
 void GUIFont::clinit()
 {
-	super::clinit();
 	static bool in_cl_init = false;
 	struct clinit_ {
 		clinit_() {
@@ -282,10 +269,5 @@ void GUIFont::clinit()
 	if (!in_cl_init) {
 		static clinit_ clinit_instance;
 	}
-}
-
-java::lang::Class* GUIFont::getClass0()
-{
-	return class_();
 }
 

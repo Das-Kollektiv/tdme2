@@ -1,14 +1,10 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUINodeController.java
-
 #pragma once
 
 #include <fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
@@ -23,11 +19,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::nodes::GUINodeController
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
 
 public: /* protected */
 	GUINode* node {  };
@@ -123,11 +115,4 @@ public: /* protected */
 	GUINodeController(GUINode* node);
 protected:
 	GUINodeController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

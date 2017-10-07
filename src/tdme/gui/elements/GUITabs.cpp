@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabs.java
 #include <tdme/gui/elements/GUITabs.h>
 
 #include <map>
@@ -23,7 +22,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUITabs::GUITabs(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUITabs::GUITabs() throw (_FileSystemException)
@@ -36,7 +34,6 @@ wstring GUITabs::NAME = L"tabs";
 
 void GUITabs::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs.xml");
 }
 
@@ -62,18 +59,5 @@ map<wstring, wstring>* GUITabs::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUITabs::createController(GUINode* node)
 {
 	return new GUITabsController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITabs::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabs", 25);
-    return c;
-}
-
-java::lang::Class* GUITabs::getClass0()
-{
-	return class_();
 }
 

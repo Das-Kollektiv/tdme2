@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIInput.java
 #include <tdme/gui/elements/GUIInput.h>
 
 #include <tdme/gui/elements/GUIInputController.h>
@@ -15,7 +14,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIInput::GUIInput(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIInput::GUIInput() throw (_FileSystemException)
@@ -28,7 +26,6 @@ wstring GUIInput::NAME = L"input";
 
 void GUIInput::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
 }
 
@@ -56,18 +53,5 @@ map<wstring, wstring>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUIInput::createController(GUINode* node)
 {
 	return new GUIInputController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIInput::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIInput", 26);
-    return c;
-}
-
-java::lang::Class* GUIInput::getClass0()
-{
-	return class_();
 }
 

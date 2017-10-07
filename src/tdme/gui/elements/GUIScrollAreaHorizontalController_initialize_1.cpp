@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaHorizontalController.java
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController_initialize_1.h>
 
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
@@ -11,14 +10,11 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUIParentNode;
 
 GUIScrollAreaHorizontalController_initialize_1::GUIScrollAreaHorizontalController_initialize_1(GUIScrollAreaHorizontalController *GUIScrollAreaHorizontalController_this, GUIElementNode* leftArrowNode, GUIParentNode* contentNode, GUIElementNode* rightArrowNode)
-	: super(*static_cast< ::default_init_tag* >(0))
-	, GUIScrollAreaHorizontalController_this(GUIScrollAreaHorizontalController_this)
+	: GUIScrollAreaHorizontalController_this(GUIScrollAreaHorizontalController_this)
 	, leftArrowNode(leftArrowNode)
 	, contentNode(contentNode)
 	, rightArrowNode(rightArrowNode)
 {
-	clinit();
-	ctor();
 }
 
 void GUIScrollAreaHorizontalController_initialize_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
@@ -48,18 +44,5 @@ void GUIScrollAreaHorizontalController_initialize_1::onActionPerformed(GUIAction
 		}
 		contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
 	}
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIScrollAreaHorizontalController_initialize_1::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"", 0);
-    return c;
-}
-
-java::lang::Class* GUIScrollAreaHorizontalController_initialize_1::getClass0()
-{
-	return class_();
 }
 

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIPositionEffect.java
 #include <tdme/gui/effects/GUIPositionEffect.h>
 
 #include <tdme/gui/GUI.h>
@@ -11,7 +10,6 @@ using tdme::gui::renderer::GUIRenderer;
 GUIPositionEffect::GUIPositionEffect(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIPositionEffect::GUIPositionEffect() 
@@ -87,18 +85,5 @@ void GUIPositionEffect::apply(GUIRenderer* guiRenderer)
 	positionY = positionYStart + ((positionYEnd - positionYStart) / timeTotal * (timeTotal - timeLeft));
 	guiRenderer->setGUIEffectOffsetX(-positionX / screenWidth * 2.0f);
 	guiRenderer->setGUIEffectOffsetY(-positionY / screenHeight * 2.0f);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIPositionEffect::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.effects.GUIPositionEffect", 34);
-    return c;
-}
-
-java::lang::Class* GUIPositionEffect::getClass0()
-{
-	return class_();
 }
 

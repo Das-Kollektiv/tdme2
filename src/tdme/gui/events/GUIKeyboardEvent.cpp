@@ -1,15 +1,8 @@
-// Generated from /tdme/src/tdme/gui/events/GUIKeyboardEvent.java
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 
 using tdme::gui::events::GUIKeyboardEvent;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
 int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
@@ -25,9 +18,7 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
 }
 
 GUIKeyboardEvent::GUIKeyboardEvent(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIKeyboardEvent::GUIKeyboardEvent() 
@@ -58,7 +49,6 @@ constexpr int32_t GUIKeyboardEvent::KEYCODE_ESCAPE;
 
 void GUIKeyboardEvent::ctor()
 {
-	super::ctor();
 	this->time = -1LL;
 	this->type = GUIKeyboardEvent_Type::NONE;
 	this->keyCode = -1;
@@ -158,40 +148,5 @@ bool GUIKeyboardEvent::isProcessed()
 void GUIKeyboardEvent::setProcessed(bool processed)
 {
 	this->processed = processed;
-}
-
-String* GUIKeyboardEvent::toString()
-{
-	return ::java::lang::StringBuilder().append(u"GUIKeyboardEvent [time="_j)->append(time)
-		->append(u", type="_j)
-		->append(type->getName())
-		->append(u", keyCode="_j)
-		->append(keyCode)
-		->append(u", keyChar="_j)
-		->append(keyChar)
-		->append(u", metaDown="_j)
-		->append(metaDown)
-		->append(u", controlDown="_j)
-		->append(controlDown)
-		->append(u", altDown="_j)
-		->append(altDown)
-		->append(u", shiftDown="_j)
-		->append(shiftDown)
-		->append(u", processed="_j)
-		->append(processed)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIKeyboardEvent::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.events.GUIKeyboardEvent", 32);
-    return c;
-}
-
-java::lang::Class* GUIKeyboardEvent::getClass0()
-{
-	return class_();
 }
 

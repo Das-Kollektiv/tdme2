@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIImageNode.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -87,11 +84,6 @@ public:
 protected:
 	GUIImageNode(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

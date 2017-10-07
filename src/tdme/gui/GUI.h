@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/GUI.java
-
 #pragma once
 
 #include <map>
@@ -7,7 +5,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/ApplicationInputEventsHandler.h>
@@ -16,14 +13,13 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Time.h>
 #include <tdme/utils/Pool.h>
-#include <java/lang/Object.h>
 
 using std::map;
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::engine::Engine;
 using tdme::engine::ApplicationInputEventsHandler;
 using tdme::engine::fileio::textures::Texture;
@@ -35,6 +31,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::Time;
 using tdme::utils::Pool;
 
 
@@ -46,11 +43,8 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::GUI final
-	: public virtual Object, public virtual ApplicationInputEventsHandler
+	: public virtual ApplicationInputEventsHandler
 {
-
-public:
-	typedef Object super;
 
 private:
 	GUIRenderer* guiRenderer {  };
@@ -327,12 +321,10 @@ protected:
 
 
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 	friend class GUI_1;
 	friend class GUI_2;
 };

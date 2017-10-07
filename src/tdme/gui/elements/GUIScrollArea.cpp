@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIScrollArea.java
 #include <tdme/gui/elements/GUIScrollArea.h>
 
 #include <tdme/gui/elements/GUIScrollAreaController.h>
@@ -17,7 +16,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIScrollArea::GUIScrollArea(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIScrollArea::GUIScrollArea() throw (_FileSystemException)
@@ -30,7 +28,6 @@ wstring GUIScrollArea::NAME = L"scrollarea";
 
 void GUIScrollArea::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml");
 }
 
@@ -62,18 +59,5 @@ map<wstring, wstring>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUIScrollArea::createController(GUINode* node)
 {
 	return new GUIScrollAreaController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIScrollArea::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIScrollArea", 31);
-    return c;
-}
-
-java::lang::Class* GUIScrollArea::getClass0()
-{
-	return class_();
 }
 

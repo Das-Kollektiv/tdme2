@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIShader.java
 #include <tdme/gui/renderer/GUIShader.h>
 
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -7,9 +6,7 @@ using tdme::gui::renderer::GUIShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 GUIShader::GUIShader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIShader::GUIShader(GLRenderer* renderer) 
@@ -20,7 +17,6 @@ GUIShader::GUIShader(GLRenderer* renderer)
 
 void GUIShader::ctor(GLRenderer* renderer)
 {
-	super::ctor();
 	this->renderer = renderer;
 	initialized = false;
 	isRunning = false;
@@ -107,18 +103,5 @@ void GUIShader::updateEffect(GLRenderer* renderer)
 
 	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
 	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIShader::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.renderer.GUIShader", 27);
-    return c;
-}
-
-java::lang::Class* GUIShader::getClass0()
-{
-	return class_();
 }
 

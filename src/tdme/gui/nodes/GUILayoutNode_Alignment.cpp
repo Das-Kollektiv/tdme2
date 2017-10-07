@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUILayoutNode.java
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 
 #include <string>

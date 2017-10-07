@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController_State.h>
 
 #include <string>

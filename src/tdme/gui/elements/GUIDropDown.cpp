@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIDropDown.java
 #include <tdme/gui/elements/GUIDropDown.h>
 
 #include <tdme/gui/elements/GUIDropDownController.h>
@@ -17,7 +16,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIDropDown::GUIDropDown(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIDropDown::GUIDropDown() throw (_FileSystemException)
@@ -30,7 +28,6 @@ wstring GUIDropDown::NAME = L"dropdown";
 
 void GUIDropDown::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml");
 }
 
@@ -57,18 +54,5 @@ map<wstring, wstring>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUIDropDown::createController(GUINode* node)
 {
 	return new GUIDropDownController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIDropDown::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIDropDown", 29);
-    return c;
-}
-
-java::lang::Class* GUIDropDown::getClass0()
-{
-	return class_();
 }
 

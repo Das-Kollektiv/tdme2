@@ -1,22 +1,17 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUINode.java
-
 #pragma once
 
 #include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::vector;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -44,11 +39,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::nodes::GUINode
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
 
 public: /* protected */
 	GUIScreenNode* screenNode {  };
@@ -65,6 +56,7 @@ public: /* protected */
 	GUINodeConditions* hideOn {  };
 	GUINodeController* controller {  };
 	bool conditionsMet {  };
+
 protected:
 
 	/** 
@@ -411,29 +403,14 @@ public: /* protected */
 	 */
 	virtual const wstring indent(int32_t indent);
 
-public:
-	String* toString() override;
-
 public: /* protected */
-
-	/** 
-	 * Indented string representation
-	 * @param ident
-	 * @return string representation
-	 */
-	virtual String* toString(int32_t indent);
 
 	// Generated
 	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 protected:
 	GUINode(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class GUINode_Flow;
 	friend class GUINode_AlignmentHorizontal;
 	friend class GUINode_AlignmentVertical;

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabsContent.java
 #include <tdme/gui/elements/GUITabsContent.h>
 
 #include <map>
@@ -33,7 +32,6 @@ wstring GUITabsContent::NAME = L"tabs-content";
 
 void GUITabsContent::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-content.xml");
 }
 
@@ -57,18 +55,5 @@ map<wstring, wstring>* GUITabsContent::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUITabsContent::createController(GUINode* node)
 {
 	return nullptr;
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITabsContent::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabsContent", 32);
-    return c;
-}
-
-java::lang::Class* GUITabsContent::getClass0()
-{
-	return class_();
 }
 

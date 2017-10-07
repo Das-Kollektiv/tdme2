@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIColorEffect.java
 #include <tdme/gui/effects/GUIColorEffect.h>
 
 #include <tdme/gui/nodes/GUIColor.h>
@@ -11,7 +10,6 @@ using tdme::gui::renderer::GUIRenderer;
 GUIColorEffect::GUIColorEffect(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIColorEffect::GUIColorEffect() 
@@ -70,18 +68,5 @@ void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 	guiRenderer->setGUIEffectColorMul(colorMul);
 	colorAdd->set(colorAddStart->getRed() + ((colorAddEnd->getRed() - colorAddStart->getRed()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getGreen() + ((colorAddEnd->getGreen() - colorAddStart->getGreen()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getBlue() + ((colorAddEnd->getBlue() - colorAddStart->getBlue()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getAlpha() + ((colorAddEnd->getAlpha() - colorAddStart->getAlpha()) / timeTotal * (timeTotal - timeLeft)));
 	guiRenderer->setGUIEffectColorAdd(colorAdd);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIColorEffect::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.effects.GUIColorEffect", 31);
-    return c;
-}
-
-java::lang::Class* GUIColorEffect::getClass0()
-{
-	return class_();
 }
 

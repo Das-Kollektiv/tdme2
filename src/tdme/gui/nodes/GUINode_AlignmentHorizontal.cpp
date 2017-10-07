@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUINode.java
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 
 #include <string>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 
 #include <string>

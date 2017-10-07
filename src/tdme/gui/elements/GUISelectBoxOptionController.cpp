@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUISelectBoxOptionController.java
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 
 #include <tdme/gui/GUI.h>
@@ -24,14 +23,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUISelectBoxOptionController::GUISelectBoxOptionController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -55,7 +46,7 @@ wstring GUISelectBoxOptionController::CONDITION_ENABLED;
 void GUISelectBoxOptionController::ctor(GUINode* node)
 {
 	super::ctor(node);
-	this->selected = (java_cast< GUIElementNode* >(node))->isSelected();
+	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
 
 bool GUISelectBoxOptionController::isDisabled()
@@ -74,11 +65,11 @@ bool GUISelectBoxOptionController::isSelected()
 
 void GUISelectBoxOptionController::select()
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto disabled = (java_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
+	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	nodeConditions->remove(CONDITION_DISABLED);
 	nodeConditions->remove(CONDITION_ENABLED);
 	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -86,11 +77,11 @@ void GUISelectBoxOptionController::select()
 
 void GUISelectBoxOptionController::unselect()
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = false;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto disabled = (java_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
+	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	nodeConditions->remove(CONDITION_DISABLED);
 	nodeConditions->remove(CONDITION_ENABLED);
 	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -126,14 +117,14 @@ void GUISelectBoxOptionController::postLayout()
 
 void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	auto disabled = (java_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
+	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
-			(java_cast< GUISelectBoxController* >(selectBoxNode->getController()))->unselect();
+			(dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->unselect();
 			select();
-			node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(selectBoxNode));
-			node->getScreenNode()->delegateValueChanged(java_cast< GUIElementNode* >(selectBoxNode));
+			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(selectBoxNode));
+			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(selectBoxNode));
 			node->scrollToNodeX(selectBoxNode);
 			node->scrollToNodeY(selectBoxNode);
 		}
@@ -170,14 +161,6 @@ void GUISelectBoxOptionController::setValue(MutableString* value)
 {
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUISelectBoxOptionController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUISelectBoxOptionController", 46);
-    return c;
-}
-
 void GUISelectBoxOptionController::clinit()
 {
 struct string_init_ {
@@ -190,12 +173,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUISelectBoxOptionController::getClass0()
-{
-	return class_();
 }
 

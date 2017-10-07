@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIElementController.java
 #include <tdme/gui/nodes/GUIElementController.h>
 
 #include <tdme/gui/GUI.h>
@@ -24,14 +23,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIElementController::GUIElementController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
@@ -52,7 +43,7 @@ void GUIElementController::ctor(GUINode* node)
 {
 	super::ctor(node);
 	this->isActionPerforming = false;
-	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUIElementController::isDisabled()
@@ -62,7 +53,7 @@ bool GUIElementController::isDisabled()
 
 void GUIElementController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
 	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -87,14 +78,14 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
 			isActionPerforming = true;
-			if ((java_cast< GUIElementNode* >(node))->isFocusable() == true) {
-				node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(node));
+			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
+				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			}
 		} else if (event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED) {
 			isActionPerforming = true;
 		} else if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
 			isActionPerforming = false;
-			node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, java_cast< GUIElementNode* >(node));
+			node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 		}
 	} else {
 		isActionPerforming = false;
@@ -108,7 +99,7 @@ void GUIElementController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
-					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, java_cast< GUIElementNode* >(node));
+					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 				}
 			}
 			break;
@@ -127,7 +118,7 @@ void GUIElementController::tick()
 			isActionPerforming = false;
 			return;
 		}
-		node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMING, java_cast< GUIElementNode* >(node));
+		node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMING, dynamic_cast< GUIElementNode* >(node));
 	}
 }
 
@@ -153,14 +144,6 @@ void GUIElementController::setValue(MutableString* value)
 {
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIElementController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIElementController", 35);
-    return c;
-}
-
 void GUIElementController::clinit()
 {
 struct string_init_ {
@@ -171,12 +154,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUIElementController::getClass0()
-{
-	return class_();
 }
 

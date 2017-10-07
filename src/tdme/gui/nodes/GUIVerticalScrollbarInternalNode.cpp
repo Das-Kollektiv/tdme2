@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 
 #include <array>
@@ -27,18 +26,9 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::renderer::GUIRenderer;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
@@ -84,7 +74,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	super::render(guiRenderer, floatingNodes);
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	auto controller = java_cast< GUIVerticalScrollbarInternalController* >(this->controller);
+	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
 	float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left;
@@ -112,18 +102,5 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	guiRenderer->bindTexture(0);
 	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 0.0f);
 	guiRenderer->render();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIVerticalScrollbarInternalNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIVerticalScrollbarInternalNode", 47);
-    return c;
-}
-
-java::lang::Class* GUIVerticalScrollbarInternalNode::getClass0()
-{
-	return class_();
 }
 

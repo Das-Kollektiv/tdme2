@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/events/GUIActionListener.java
-
 #pragma once
 
 #include <tdme/gui/events/fwd-tdme.h>

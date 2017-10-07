@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/events/GUIActionListener.java
 #include <tdme/gui/events/GUIActionListener_Type.h>
 
 #include <string>

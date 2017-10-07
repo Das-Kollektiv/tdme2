@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/events/GUIKeyboardEvent.java
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 
 #include <tdme/utils/Enum.h>

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaVertical.java
 #include <tdme/gui/elements/GUIScrollAreaVertical.h>
 
 #include <tdme/gui/elements/GUIScrollAreaVerticalController.h>
@@ -17,7 +16,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUIScrollAreaVertical::GUIScrollAreaVertical(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIScrollAreaVertical::GUIScrollAreaVertical() throw (_FileSystemException)
@@ -30,7 +28,6 @@ wstring GUIScrollAreaVertical::NAME = L"scrollarea-vertical";
 
 void GUIScrollAreaVertical::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-vertical.xml");
 }
 
@@ -65,18 +62,5 @@ map<wstring, wstring>* GUIScrollAreaVertical::getAttributes(GUIScreenNode* scree
 GUINodeController* GUIScrollAreaVertical::createController(GUINode* node)
 {
 	return new GUIScrollAreaVerticalController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIScrollAreaVertical::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIScrollAreaVertical", 39);
-    return c;
-}
-
-java::lang::Class* GUIScrollAreaVertical::getClass0()
-{
-	return class_();
 }
 

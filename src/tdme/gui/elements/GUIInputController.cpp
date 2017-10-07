@@ -1,9 +1,7 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIInputController.java
 #include <tdme/gui/elements/GUIInputController.h>
 
 #include <string>
 
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -16,7 +14,6 @@
 using std::wstring;
 
 using tdme::gui::elements::GUIInputController;
-using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
@@ -25,14 +22,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 GUIInputController::GUIInputController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -53,7 +42,7 @@ wstring GUIInputController::CONDITION_ENABLED;
 void GUIInputController::ctor(GUINode* node)
 {
 	super::ctor(node);
-	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUIInputController::isDisabled()
@@ -63,7 +52,7 @@ bool GUIInputController::isDisabled()
 
 void GUIInputController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
 	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -71,7 +60,7 @@ void GUIInputController::setDisabled(bool disabled)
 
 void GUIInputController::initialize()
 {
-	textInputNode = java_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_text-input"));
+	textInputNode = dynamic_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_text-input"));
 	setDisabled(disabled);
 }
 
@@ -86,7 +75,7 @@ void GUIInputController::postLayout()
 void GUIInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
-		node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(node));
+		node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		event->setProcessed(true);
 	}
 }
@@ -122,14 +111,6 @@ void GUIInputController::setValue(MutableString* value)
 	textInputNode->getText()->set(value);
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIInputController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUIInputController", 36);
-    return c;
-}
-
 void GUIInputController::clinit()
 {
 struct string_init_ {
@@ -140,12 +121,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUIInputController::getClass0()
-{
-	return class_();
 }
 

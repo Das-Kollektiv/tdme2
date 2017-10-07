@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabController.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -92,18 +89,12 @@ public:
 	 */
 	void selectTab();
 
-	// Generated
-
 public: /* protected */
 	GUITabController(GUINode* node);
+
 protected:
 	GUITabController(const ::default_init_tag&);
 
-
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

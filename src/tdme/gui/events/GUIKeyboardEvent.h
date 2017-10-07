@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/events/GUIKeyboardEvent.java
-
 #pragma once
 
 #ifdef __linux__
@@ -9,12 +7,8 @@
 #endif
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
 
@@ -26,11 +20,9 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::events::GUIKeyboardEvent
-	: public virtual Object
 {
 
 public:
-	typedef Object super;
 	static constexpr int32_t KEYCODE_TAB { 9 };
 	static constexpr int32_t KEYCODE_TAB_SHIFT { 25 };
 	static constexpr int32_t KEYCODE_BACKSPACE { 8 };
@@ -166,21 +158,10 @@ public:
 	 */
 	virtual void setProcessed(bool processed);
 
-	/**
-	 * @return string representation
-	 */
-	String* toString() override;
-
-	// Generated
 	GUIKeyboardEvent();
 protected:
 	GUIKeyboardEvent(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
-	virtual ::java::lang::Class* getClass0();
 	friend class GUIKeyboardEvent_Type;
 };

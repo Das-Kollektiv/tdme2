@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalController.java
 #include <tdme/gui/nodes/GUIInputInternalController_CursorMode.h>
 
 #include <string>

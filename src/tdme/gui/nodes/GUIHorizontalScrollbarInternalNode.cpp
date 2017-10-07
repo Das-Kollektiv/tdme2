@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.java
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
 
 #include <array>
@@ -27,18 +26,9 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::renderer::GUIRenderer;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
@@ -84,7 +74,7 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 	super::render(guiRenderer, floatingNodes);
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	auto controller = java_cast< GUIHorizontalScrollbarInternalController* >(this->controller);
+	auto controller = dynamic_cast< GUIHorizontalScrollbarInternalController* >(this->controller);
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();
 	auto left = barLeft;
@@ -112,18 +102,5 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 	guiRenderer->bindTexture(0);
 	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 0.0f);
 	guiRenderer->render();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIHorizontalScrollbarInternalNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIHorizontalScrollbarInternalNode", 49);
-    return c;
-}
-
-java::lang::Class* GUIHorizontalScrollbarInternalNode::getClass0()
-{
-	return class_();
 }
 

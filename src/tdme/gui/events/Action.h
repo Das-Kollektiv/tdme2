@@ -1,11 +1,6 @@
-// Generated from /tdme/src/tdme/gui/events/Action.java
-
 #pragma once
 
 #include <tdme/gui/events/fwd-tdme.h>
-#include <java/lang/Object.h>
-
-using java::lang::Object;
 
 
 

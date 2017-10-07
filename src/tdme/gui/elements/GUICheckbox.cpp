@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUICheckbox.java
 #include <tdme/gui/elements/GUICheckbox.h>
 
 #include <map>
@@ -23,7 +22,6 @@ using tdme::os::filesystem::_FileSystemInterface;
 GUICheckbox::GUICheckbox(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUICheckbox::GUICheckbox() throw (_FileSystemException)
@@ -36,7 +34,6 @@ wstring GUICheckbox::NAME = L"checkbox";
 
 void GUICheckbox::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"checkbox.xml");
 }
 
@@ -60,18 +57,5 @@ map<wstring, wstring>* GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUICheckbox::createController(GUINode* node)
 {
 	return new GUICheckboxController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUICheckbox::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUICheckbox", 29);
-    return c;
-}
-
-java::lang::Class* GUICheckbox::getClass0()
-{
-	return class_();
 }
 

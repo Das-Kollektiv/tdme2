@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/GUIParserException.java
 #include <tdme/gui/GUIParserException.h>
 
 #include <tdme/utils/_ExceptionBase.h>

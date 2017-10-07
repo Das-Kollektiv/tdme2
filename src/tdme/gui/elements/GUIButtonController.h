@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIButtonController.java
-
 #pragma once
 
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -23,6 +21,7 @@ class tdme::gui::elements::GUIButtonController final
 
 public:
 	typedef GUIElementController super;
+
 protected:
 
 	/** 
@@ -37,11 +36,4 @@ public: /* protected */
 	GUIButtonController(GUINode* node);
 protected:
 	GUIButtonController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

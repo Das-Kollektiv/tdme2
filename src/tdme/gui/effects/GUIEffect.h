@@ -1,14 +1,10 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIEffect.java
-
 #pragma once
 
 #include <fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <java/lang/Object.h>
 
-using java::lang::Object;
 using tdme::gui::events::Action;
 using tdme::gui::renderer::GUIRenderer;
 
@@ -21,11 +17,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::effects::GUIEffect
-	: public virtual Object
 {
-
-public:
-	typedef Object super;
 
 public: /* protected */
 	bool active {  };
@@ -33,6 +25,7 @@ public: /* protected */
 	float timeLeft {  };
 	float timePassed {  };
 	Action* action {  };
+
 protected:
 
 	/** 
@@ -90,11 +83,4 @@ public:
 	GUIEffect();
 protected:
 	GUIEffect(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

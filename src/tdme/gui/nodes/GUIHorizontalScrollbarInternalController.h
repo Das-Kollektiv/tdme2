@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.java
-
 #pragma once
 
 #include <fwd-tdme.h>
@@ -90,12 +88,7 @@ public: /* protected */
 protected:
 	GUIHorizontalScrollbarInternalController(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 	friend class GUIHorizontalScrollbarInternalController_State;
 };

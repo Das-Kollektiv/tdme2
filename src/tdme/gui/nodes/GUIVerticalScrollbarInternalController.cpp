@@ -1,7 +1,5 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.java
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
@@ -13,7 +11,6 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
-using java::lang::StringBuilder;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUILayoutNode;
@@ -24,18 +21,9 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node) 
@@ -54,7 +42,7 @@ void GUIVerticalScrollbarInternalController::ctor(GUINode* node)
 {
 	super::ctor(node);
 	init();
-	this->contentNode = java_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
+	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 bool GUIVerticalScrollbarInternalController::isDisabled()
@@ -197,18 +185,5 @@ MutableString* GUIVerticalScrollbarInternalController::getValue()
 
 void GUIVerticalScrollbarInternalController::setValue(MutableString* value)
 {
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIVerticalScrollbarInternalController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIVerticalScrollbarInternalController", 53);
-    return c;
-}
-
-java::lang::Class* GUIVerticalScrollbarInternalController::getClass0()
-{
-	return class_();
 }
 

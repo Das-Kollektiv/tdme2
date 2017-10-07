@@ -1,12 +1,9 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabsController.java
-
 #pragma once
 
 #include <string>
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -17,7 +14,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
@@ -79,18 +75,12 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUITabsController(GUINode* node);
+
 protected:
 	GUITabsController(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/effects/GUIPositionEffect.java
-
 #pragma once
 
 #include <fwd-tdme.h>
@@ -32,6 +30,7 @@ private:
 	float positionYEnd {  };
 	float positionX {  };
 	float positionY {  };
+
 protected:
 
 	/** 
@@ -86,16 +85,11 @@ public:
 	virtual void setPositionYEnd(float positionYEnd);
 	void apply(GUIRenderer* guiRenderer) override;
 
-	// Generated
 	GUIPositionEffect();
+
 protected:
 	GUIPositionEffect(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/events/GUIMouseEvent.java
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 
 #include <string>

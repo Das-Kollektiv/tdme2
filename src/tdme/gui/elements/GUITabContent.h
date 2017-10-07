@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabContent.java
-
 #pragma once
 
 #include <map>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -39,6 +36,7 @@ private:
 	static wstring NAME;
 	map<wstring, wstring> attributes {  };
 	wstring template_ {  };
+
 protected:
 
 	/** 
@@ -56,11 +54,4 @@ public:
 	GUITabContent() throw (_FileSystemException);
 protected:
 	GUITabContent(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

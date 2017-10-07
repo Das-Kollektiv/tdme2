@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIDropDownOptionController.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -93,11 +90,6 @@ public: /* protected */
 protected:
 	GUIDropDownOptionController(const ::default_init_tag&);
 
-
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

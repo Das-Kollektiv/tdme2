@@ -1,12 +1,8 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIParentNode.java
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 #include <string>
 #include <vector>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
@@ -33,9 +29,6 @@ using std::vector;
 using std::wstring;
 
 using tdme::gui::nodes::GUIParentNode;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
@@ -57,14 +50,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 GUIParentNode::GUIParentNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -303,7 +288,7 @@ void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childContr
 			childControllerNodes->push_back(node);
 		}
 		if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-			(java_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
+			(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
 		}
 	}
 }
@@ -371,7 +356,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	guiRenderer->setRenderOffsetY(renderOffsetY);
 	super::render(guiRenderer, floatingNodes);
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = java_cast< GUINode* >(subNodes.at(i));
+		auto guiSubNode = subNodes.at(i);
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 			floatingNodes->push_back(guiSubNode);
 			continue;
@@ -435,7 +420,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 		}
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = java_cast< GUINode* >(subNodes.at(i));
+		auto subNode = subNodes.at(i);
 		if (subNode->flow == GUINode_Flow::FLOATING) {
 			continue;
 		}
@@ -461,54 +446,9 @@ void GUIParentNode::tick()
 		return;
 
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = java_cast< GUINode* >(subNodes.at(i));
+		auto subNode = subNodes.at(i);
 		subNode->tick();
 	}
 	super::tick();
-}
-
-String* GUIParentNode::toString()
-{
-	return toString(0);
-}
-
-String* GUIParentNode::toString(int32_t indent)
-{
-	auto tmp = ::java::lang::StringBuilder().append(static_cast< GUINode* >(this)->indent(indent))->append(u"GUIParentNode ["_j)
-		->append(u"type="_j)
-		->append(getNodeType())
-		->append(u", id="_j)
-		->append(id)
-		->append(u", alignments="_j)
-		->append(static_cast< Object* >(alignments))
-		->append(u", requestedConstraints="_j)
-		->append(static_cast< Object* >(requestedConstraints))
-		->append(u", computedConstraints="_j)
-		->append(static_cast< Object* >(computedConstraints))
-		->append(u", border="_j)
-		->append(static_cast< Object* >(border))
-		->append(u", padding="_j)
-		->append(static_cast< Object* >(padding))
-		->append(u", controller="_j)
-		->append((this->controller != nullptr ? u"yes"_j : u"no"_j))
-		->append(u"]"_j)
-		->append(u"\n"_j)->toString();
-	for (auto i = 0; i < subNodes.size(); i++) {
-		tmp = ::java::lang::StringBuilder(tmp).append(::java::lang::StringBuilder().append(java_cast< GUINode* >(subNodes.at(i))->toString(indent + 1))->append((i == subNodes.size() - 1 ? u""_j : u"\n"_j))->toString())->toString();
-	}
-	return tmp;
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIParentNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIParentNode", 28);
-    return c;
-}
-
-java::lang::Class* GUIParentNode::getClass0()
-{
-	return class_();
 }
 

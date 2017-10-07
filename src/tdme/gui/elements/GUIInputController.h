@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIInputController.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -15,7 +12,6 @@
 using std::wstring;
 
 using tdme::gui::nodes::GUINodeController;
-using java::lang::String;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIInputInternalNode;
@@ -42,6 +38,7 @@ private:
 	static wstring CONDITION_ENABLED;
 	GUIInputInternalNode* textInputNode {  };
 	bool disabled {  };
+
 protected:
 
 	/** 
@@ -65,18 +62,13 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIInputController(GUINode* node);
+
 protected:
 	GUIInputController(const ::default_init_tag&);
 
 
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

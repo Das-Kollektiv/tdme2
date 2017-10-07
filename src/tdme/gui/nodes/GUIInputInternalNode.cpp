@@ -1,7 +1,5 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIInputInternalNode.java
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
-#include <java/lang/String.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -23,7 +21,6 @@
 #include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
-using java::lang::String;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIColor;
@@ -43,18 +40,9 @@ using tdme::utils::_Console;
 using tdme::utils::_Exception;
 using tdme::utils::Integer;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUIInputInternalNode::GUIInputInternalNode(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
@@ -65,7 +53,6 @@ GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentN
 
 int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 {
-	clinit();
 	try {
 		auto maxLength = Integer::parseInt(s);
 		return maxLength;
@@ -137,8 +124,8 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* fl
 		return;
 
 	super::render(guiRenderer, floatingNodes);
-	auto controller = java_cast< GUIInputInternalController* >(this->controller);
-	auto inputController = java_cast< GUIInputController* >(this->getParentControllerNode()->getController());
+	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
+	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
 	font->drawString(guiRenderer, computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft, computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController_CursorMode::SHOW) {
@@ -153,18 +140,5 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* fl
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 0.0f);
 		guiRenderer->render();
 	}
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIInputInternalNode::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIInputInternalNode", 35);
-    return c;
-}
-
-java::lang::Class* GUIInputInternalNode::getClass0()
-{
-	return class_();
 }
 

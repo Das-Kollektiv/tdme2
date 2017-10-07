@@ -1,10 +1,7 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIPanelNode.java
-
 #pragma once
 
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
@@ -40,6 +37,7 @@ class tdme::gui::nodes::GUIPanelNode
 
 public:
 	typedef GUILayoutNode super;
+
 protected:
 
 	/** 
@@ -73,11 +71,4 @@ public:
 	GUIPanelNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);
 protected:
 	GUIPanelNode(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

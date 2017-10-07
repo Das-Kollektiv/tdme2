@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIRenderer.java
-
 #pragma once
 
 #include <array>
@@ -11,12 +9,10 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::array;
 using std::vector;
 
-using java::lang::Object;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -33,11 +29,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::renderer::GUIRenderer final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	static constexpr int32_t QUAD_COUNT { 1024 };
@@ -73,6 +65,7 @@ private:
 	array<float, 4> effectColorAddFinal {  };
 	float guiEffectOffsetX {  };
 	float guiEffectOffsetY {  };
+
 protected:
 
 	/** 
@@ -322,16 +315,11 @@ public:
 	 */
 	void render();
 
-	// Generated
 	GUIRenderer(GLRenderer* renderer);
+
 protected:
 	GUIRenderer(const ::default_init_tag&);
 
-
-public:
-	static ::java::lang::Class *class_();
-
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 };

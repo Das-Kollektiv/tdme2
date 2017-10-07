@@ -1,7 +1,5 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabsHeaderController.java
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 
-#include <java/lang/Object.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/elements/GUITabsController.h>
@@ -16,7 +14,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using tdme::gui::elements::GUITabsHeaderController;
-using java::lang::Object;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUITabController;
 using tdme::gui::elements::GUITabsController;
@@ -30,18 +27,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
-
 GUITabsHeaderController::GUITabsHeaderController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUITabsHeaderController::GUITabsHeaderController(GUINode* node) 
@@ -67,7 +55,7 @@ void GUITabsHeaderController::setDisabled(bool disabled)
 
 void GUITabsHeaderController::initialize()
 {
-	tabsNode = (java_cast< GUIParentNode* >(node))->getParentControllerNode();
+	tabsNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode();
 }
 
 void GUITabsHeaderController::dispose()
@@ -85,12 +73,12 @@ bool GUITabsHeaderController::hasFocus()
 
 void GUITabsHeaderController::unselect()
 {
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
+		auto childControllerNode = childControllerNodes.at(i);
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
-			auto guiTabController = java_cast< GUITabController* >(childController);
+			auto guiTabController = dynamic_cast< GUITabController* >(childController);
 			if (static_cast< GUINode* >(guiTabController->getNode()->getParentControllerNode()) != node)
 				continue;
 
@@ -102,12 +90,12 @@ void GUITabsHeaderController::unselect()
 void GUITabsHeaderController::determineTabControllers()
 {
 	tabControllers.clear();
-	(java_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = java_cast< GUINode* >(childControllerNodes.at(i));
+		auto childControllerNode = childControllerNodes.at(i);
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
-			auto guiTabController = java_cast< GUITabController* >(childController);
+			auto guiTabController = dynamic_cast< GUITabController* >(childController);
 			if (static_cast< GUINode* >(guiTabController->getNode()->getParentControllerNode()) != node)
 				continue;
 
@@ -123,7 +111,7 @@ int32_t GUITabsHeaderController::getSelectedTabIdx()
 {
 	auto tabControllerIdx = -1;
 	for (auto i = 0; i < tabControllers.size(); i++) {
-		auto tabController = java_cast< GUITabController* >(tabControllers.at(i));
+		auto tabController = tabControllers.at(i);
 		if (tabController->isSelected() == true) {
 			tabControllerIdx = i;
 			break;
@@ -141,9 +129,9 @@ void GUITabsHeaderController::selectNext()
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 
-	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
-	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
+	tabControllers.at(tabControllerIdx)->setSelected(true);
+	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectPrevious()
@@ -155,9 +143,9 @@ void GUITabsHeaderController::selectPrevious()
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 
-	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
-	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
+	tabControllers.at(tabControllerIdx)->setSelected(true);
+	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectCurrent()
@@ -165,9 +153,9 @@ void GUITabsHeaderController::selectCurrent()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->setSelected(true);
-	auto guiTabsController = java_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(java_cast< GUITabController* >(tabControllers.at(tabControllerIdx))->getNode()->getId());
+	tabControllers.at(tabControllerIdx)->setSelected(true);
+	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
 }
 
 void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -175,7 +163,7 @@ void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
-			node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
 }
@@ -231,18 +219,5 @@ MutableString* GUITabsHeaderController::getValue()
 
 void GUITabsHeaderController::setValue(MutableString* value)
 {
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUITabsHeaderController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUITabsHeaderController", 41);
-    return c;
-}
-
-java::lang::Class* GUITabsHeaderController::getClass0()
-{
-	return class_();
 }
 

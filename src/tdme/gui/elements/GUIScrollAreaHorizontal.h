@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUIScrollAreaHorizontal.java
-
 #pragma once
 
 #include <map>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -55,11 +52,4 @@ public:
 	GUIScrollAreaHorizontal() throw (_FileSystemException);
 protected:
 	GUIScrollAreaHorizontal(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

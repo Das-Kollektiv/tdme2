@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabContentController.java
-
 #pragma once
 
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -77,17 +74,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUITabContentController(GUINode* node);
 protected:
 	GUITabContentController(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

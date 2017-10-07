@@ -1,25 +1,20 @@
-// Generated from /tdme/src/tdme/gui/renderer/GUIFont.java
-
 #pragma once
 
 #include <map>
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <java/lang/Object.h>
 #include <tdme/os/filesystem/_FileSystemException.h>
 
 using std::map;
 using std::wstring;
 
-using java::lang::Object;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
@@ -49,11 +44,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::renderer::GUIFont final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	static MutableString* LINEHEIGHT_STRING;
@@ -174,19 +165,16 @@ public:
 	 */
 	int32_t getLineHeight();
 
-	// Generated
 	GUIFont();
+
 protected:
 	void ctor();
 	GUIFont(const ::default_init_tag&);
 
-
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
 
 private:
 	void init();
-	virtual ::java::lang::Class* getClass0();
 	friend class GUIFont_CharacterDefinition;
 };

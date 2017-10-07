@@ -44,7 +44,6 @@ TDMEViewer::TDMEViewer()
 
 void TDMEViewer::main(int argc, char** argv)
 {
-	String* modelFileName = nullptr;
 	_Console::println(wstring(L"TDMEViewer "+ VERSION));
 	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	_Console::println();

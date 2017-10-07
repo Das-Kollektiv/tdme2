@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIColor.java
-
 #pragma once
 
 #include <array>
@@ -7,7 +5,6 @@
 #include <vector>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -19,7 +16,6 @@ using std::vector;
 
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Color4;
-using java::lang::Object;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 

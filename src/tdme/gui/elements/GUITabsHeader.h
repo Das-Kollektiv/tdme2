@@ -1,11 +1,8 @@
-// Generated from /tdme/src/tdme/gui/elements/GUITabsHeader.java
-
 #pragma once
 
 #include <map>
 #include <string>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -53,15 +50,8 @@ public:
 	map<wstring, wstring>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	// Generated
 	GUITabsHeader() throw (_FileSystemException);
+
 protected:
 	GUITabsHeader(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/elements/GUISelectBox.java
 #include <tdme/gui/elements/GUISelectBox.h>
 
 #include <tdme/gui/elements/GUISelectBoxController.h>
@@ -29,7 +28,6 @@ wstring GUISelectBox::NAME = L"selectbox";
 
 void GUISelectBox::ctor() throw (_FileSystemException)
 {
-	super::ctor();
 	template_ = _FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox.xml");
 }
 
@@ -55,18 +53,5 @@ map<wstring, wstring>* GUISelectBox::getAttributes(GUIScreenNode* screenNode)
 GUINodeController* GUISelectBox::createController(GUINode* node)
 {
 	return new GUISelectBoxController(node);
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUISelectBox::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.elements.GUISelectBox", 30);
-    return c;
-}
-
-java::lang::Class* GUISelectBox::getClass0()
-{
-	return class_();
 }
 

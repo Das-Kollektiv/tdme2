@@ -1,5 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUILayoutNode.java
-
 #pragma once
 
 #include <string>

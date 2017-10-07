@@ -1,4 +1,3 @@
-// Generated from /tdme/src/tdme/gui/nodes/GUIElementIgnoreEventsController.java
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
 
 #include <tdme/gui/GUI.h>
@@ -17,14 +16,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
-
-template<typename T, typename U>
-static T java_cast(U* u)
-{
-    if (!u) return static_cast<T>(nullptr);
-    auto t = dynamic_cast<T>(u);
-    return t;
-}
 
 GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(const ::default_init_tag&)
 	: super(*static_cast< ::default_init_tag* >(0))
@@ -45,7 +36,7 @@ wstring GUIElementIgnoreEventsController::CONDITION_ENABLED;
 void GUIElementIgnoreEventsController::ctor(GUINode* node)
 {
 	super::ctor(node);
-	this->disabled = (java_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUIElementIgnoreEventsController::isDisabled()
@@ -55,7 +46,7 @@ bool GUIElementIgnoreEventsController::isDisabled()
 
 void GUIElementIgnoreEventsController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (java_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
 	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
 	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
@@ -78,8 +69,8 @@ void GUIElementIgnoreEventsController::handleMouseEvent(GUINode* node, GUIMouseE
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
-			if ((java_cast< GUIElementNode* >(node))->isFocusable() == true) {
-				node->getScreenNode()->getGUI()->setFoccussedNode(java_cast< GUIElementNode* >(node));
+			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
+				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			}
 		}
 	}
@@ -115,14 +106,6 @@ void GUIElementIgnoreEventsController::setValue(MutableString* value)
 {
 }
 
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIElementIgnoreEventsController::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.nodes.GUIElementIgnoreEventsController", 47);
-    return c;
-}
-
 void GUIElementIgnoreEventsController::clinit()
 {
 struct string_init_ {
@@ -133,12 +116,5 @@ struct string_init_ {
 };
 
 	static string_init_ string_init_instance;
-
-	super::clinit();
-}
-
-java::lang::Class* GUIElementIgnoreEventsController::getClass0()
-{
-	return class_();
 }
 

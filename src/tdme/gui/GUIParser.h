@@ -1,16 +1,12 @@
-// Generated from /tdme/src/tdme/gui/GUIParser.java
-
 #pragma once
 
 #include <map>
 #include <vector>
 
-#include <java/lang/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 #include <tdme/gui/GUIParserException.h>
 
@@ -19,7 +15,6 @@
 using std::map;
 using std::vector;
 
-using java::lang::Object;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -34,11 +29,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::gui::GUIParser final
-	: public Object
 {
-
-public:
-	typedef Object super;
 
 private:
 	static map<wstring, GUIElement*> elements;
@@ -134,9 +125,5 @@ protected:
 
 
 public:
-	static ::java::lang::Class *class_();
 	static void clinit();
-
-private:
-	virtual ::java::lang::Class* getClass0();
 };

@@ -1,21 +1,12 @@
-// Generated from /tdme/src/tdme/gui/events/GUIMouseEvent.java
 #include <tdme/gui/events/GUIMouseEvent.h>
 
-#include <java/lang/Object.h>
-#include <java/lang/String.h>
-#include <java/lang/StringBuilder.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 
 using tdme::gui::events::GUIMouseEvent;
-using java::lang::Object;
-using java::lang::String;
-using java::lang::StringBuilder;
 using tdme::gui::events::GUIMouseEvent_Type;
 
 GUIMouseEvent::GUIMouseEvent(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
 {
-	clinit();
 }
 
 GUIMouseEvent::GUIMouseEvent() 
@@ -26,7 +17,6 @@ GUIMouseEvent::GUIMouseEvent()
 
 void GUIMouseEvent::ctor()
 {
-	super::ctor();
 	this->time = -1;
 	this->type = GUIMouseEvent_Type::NONE;
 	this->x = -1;
@@ -126,40 +116,5 @@ bool GUIMouseEvent::isProcessed()
 void GUIMouseEvent::setProcessed(bool processed)
 {
 	this->processed = processed;
-}
-
-String* GUIMouseEvent::toString()
-{
-	return ::java::lang::StringBuilder().append(u"GUIMouseEvent [time="_j)->append(time)
-		->append(u", type="_j)
-		->append(type->getName())
-		->append(u", x="_j)
-		->append(x)
-		->append(u", y="_j)
-		->append(y)
-		->append(u", button="_j)
-		->append(button)
-		->append(u", wheelX="_j)
-		->append(wheelX)
-		->append(u", wheelY="_j)
-		->append(wheelY)
-		->append(u", wheelZ="_j)
-		->append(wheelZ)
-		->append(u", processed="_j)
-		->append(processed)
-		->append(u"]"_j)->toString();
-}
-
-extern java::lang::Class* class_(const char16_t* c, int n);
-
-java::lang::Class* GUIMouseEvent::class_()
-{
-    static ::java::lang::Class* c = ::class_(u"tdme.gui.events.GUIMouseEvent", 29);
-    return c;
-}
-
-java::lang::Class* GUIMouseEvent::getClass0()
-{
-	return class_();
 }
 
