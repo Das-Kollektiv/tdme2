@@ -4,17 +4,9 @@
 #include <string>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
 
 using std::wstring;
-
-using java::lang::Object;
-using java::lang::String;
-
-
-struct default_init_tag;
 
 /** 
  * Mutable string
@@ -22,41 +14,7 @@ struct default_init_tag;
  * @version $Id$
  */
 class tdme::utils::MutableString final
-	: public Object
 {
-
-public:
-	typedef Object super;
-
-private:
-	char16_tArray* data {  };
-	int32_t length_ {  };
-	int32_t hash {  };
-protected:
-
-	/**
-	 * Public default constructor
-	 */
-	void ctor();
-
-	/**
-	 * Public constructor
-	 * @param string
-	 */
-	void ctor(String* s);
-
-	/**
-	 * Public constructor
-	 * @param string
-	 */
-	void ctor(const wstring& s);
-private:
-
-	/**
-	 * Grow string backing array
-	 */
-	void grow();
-
 public:
 
 	/**
@@ -69,7 +27,7 @@ public:
 	 * @param idx
 	 * @return char
 	 */
-	char16_t charAt(int32_t idx);
+	wchar_t charAt(int32_t idx);
 
 	/**
 	 * Reset
@@ -81,28 +39,21 @@ public:
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* set(char16_t c);
+	MutableString* set(wchar_t c);
 
 	/**
 	 * Append character
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* append(char16_t c);
+	MutableString* append(wchar_t c);
 
 	/**
 	 * Insert character c at idx
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* insert(int32_t idx, char16_t c);
-
-	/**
-	 * Set string
-	 * @param s
-	 * @return this mutable string
-	 */
-	MutableString* set(String* s);
+	MutableString* insert(int32_t idx, wchar_t c);
 
 	/**
 	 * Set string
@@ -116,21 +67,7 @@ public:
 	 * @param s
 	 * @return this mutable string
 	 */
-	MutableString* append(String* s);
-
-	/**
-	 * Append string
-	 * @param s
-	 * @return this mutable string
-	 */
 	MutableString* append(const wstring& s);
-
-	/**
-	 * Insert string at idx
-	 * @param c
-	 * @return this mutable string
-	 */
-	MutableString* insert(int32_t idx, String* s);
 
 	/**
 	 * Insert string at idx
@@ -230,7 +167,6 @@ public:
 	 * @return index where string has been found or -1
 	 */
 	int32_t indexOf(MutableString* s);
-	int32_t hashCode() override;
 
 	/**
 	 * Equals
@@ -244,29 +180,23 @@ public:
 	 * @param string 2
 	 * @return string 2 equals this string
 	 */
-	bool equals(String* s2);
+	bool equals(MutableString* s2);
 
 	/**
-	 * Equals
-	 * @param string 2
-	 * @return string 2 equals this string
+	 * @return wstring
 	 */
-	bool equals(MutableString* s2);
-	String* toString() override;
-	wstring toWString();
+	const wstring& toWString();
 
-	// Generated
+	/**
+	 * Public default constructor
+	 */
 	MutableString();
-	MutableString(String* s);
+
+	/**
+	 * Public default constructor
+	 * @param string
+	 */
 	MutableString(const wstring& s);
-protected:
-	MutableString(const ::default_init_tag&);
-
-
-public:
-	static ::java::lang::Class *class_();
-	virtual bool equals(Object* obj);
-
 private:
-	virtual ::java::lang::Class* getClass0();
+	wstring data;
 };
