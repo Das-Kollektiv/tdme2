@@ -6,7 +6,6 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <Array.h>
 
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::engine::fileio::textures::Texture;

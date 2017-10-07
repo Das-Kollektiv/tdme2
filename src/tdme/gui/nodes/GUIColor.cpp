@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <Array.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>

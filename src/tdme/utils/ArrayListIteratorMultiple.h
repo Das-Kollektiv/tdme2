@@ -5,21 +5,10 @@
 #include <algorithm>
 
 #include <fwd-tdme.h>
-#include <java/lang/fwd-tdme.h>
-#include <java/util/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <java/lang/Object.h>
-#include <java/util/Iterator.h>
-#include <java/lang/Iterable.h>
 
 using std::vector;
 using std::find;
-
-using java::lang::Object;
-using java::util::Iterator;
-using java::lang::Iterable;
-
-struct default_init_tag;
 
 namespace tdme {
 namespace utils {
@@ -32,15 +21,12 @@ namespace utils {
 template<typename T>
 class ArrayListIteratorMultiple final
 {
-
-public:
-	typedef Object super;
-
 private:
 	int32_t vectorIdx {  0 };
 	int32_t elementIdx {  0 };
 	int32_t length { 0  };
 	vector<vector<T>*> arrayLists {  };
+
 public:
 
 	/** 

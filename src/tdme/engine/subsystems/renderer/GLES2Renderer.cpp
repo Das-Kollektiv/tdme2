@@ -24,9 +24,6 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 using std::vector;

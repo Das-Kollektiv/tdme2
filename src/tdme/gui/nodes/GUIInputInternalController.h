@@ -1,10 +1,14 @@
 #pragma once
 
+#include <array>
+
 #include <fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+
+using std::array;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -38,7 +42,7 @@ private:
 	int32_t index {  };
 	int32_t offset {  };
 	bool isDragging {  };
-	int32_tArray* dragPosition {  };
+	array<float, 2> dragPosition {  };
 	int64_t draggingTickLast {  };
 protected:
 

@@ -38,7 +38,7 @@ private:
 	int64_t time {  };
 	GUIKeyboardEvent_Type* type {  };
 	int32_t keyCode {  };
-	char16_t keyChar {  };
+	wchar_t keyChar {  };
 	bool metaDown {  };
 	bool controlDown {  };
 	bool altDown {  };
@@ -95,13 +95,13 @@ public:
 	/** 
 	 * @return key char
 	 */
-	virtual char16_t getKeyChar();
+	virtual wchar_t getKeyChar();
 
 	/** 
 	 * Set key char
 	 * @param key char
 	 */
-	virtual void setKeyChar(char16_t keyChar);
+	virtual void setKeyChar(wchar_t keyChar);
 
 	/** 
 	 * @return is meta down

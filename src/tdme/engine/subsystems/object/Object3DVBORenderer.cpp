@@ -38,12 +38,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Key.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::find;
 using std::map;

@@ -19,9 +19,6 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::array;
 using std::vector;

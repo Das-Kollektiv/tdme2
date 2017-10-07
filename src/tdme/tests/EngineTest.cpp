@@ -44,7 +44,6 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::tolower;
 using std::vector;

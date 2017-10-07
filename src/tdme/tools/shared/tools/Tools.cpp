@@ -40,9 +40,6 @@
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Exception.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::array;
 using std::wstring;

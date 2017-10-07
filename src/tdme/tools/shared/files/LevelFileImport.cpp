@@ -21,7 +21,6 @@
 #include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>

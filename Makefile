@@ -24,7 +24,6 @@ EXT_LIB = lib$(NAME)-ext.a
 LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 
 SRC = src
-STUB = stub
 NATIVE = native
 TINYXML = tinyxml
 JSONBOX = jsonbox
@@ -33,7 +32,6 @@ VORBIS = vorbis
 OGG = ogg
 
 SRCS = \
-	src/j2c.cpp \
 	src/tdme/audio/Audio.cpp \
 	src/tdme/audio/AudioBufferManager.cpp \
 	src/tdme/audio/AudioBufferManager_AudioBufferManaged.cpp \
@@ -369,154 +367,21 @@ SRCS = \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
 	src/tdme/utils/Integer.cpp \
-	src/tdme/utils/Key.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Properties.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \
-	src/tdme/utils/_ArrayList.cpp \
 	src/tdme/utils/_ExceptionBase.cpp \
 	src/tdme/utils/_Console.cpp \
-	src/tdme/utils/_HashMap.cpp \
-	src/tdme/utils/_HashMap_1.cpp \
-	src/tdme/utils/_HashMap_KeysIterator.cpp \
-	src/tdme/utils/_HashMap_Pair.cpp \
-	src/tdme/utils/_HashMap_ValuesIterator.cpp \
 
 #	src/tdme/engine/EngineGLES2Renderer.cpp \
 #	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
-
-STUB_SRCS = \
-
 
 NATIVE_SRCS = \
 
 
 EXT_SRCS = \
-
-
-EXT_STUB_SRCS = \
-	ext/stub/java/io/BufferedReader-stub.cpp \
-	ext/stub/java/io/ByteArrayInputStream-stub.cpp \
-	ext/stub/java/io/DataInputStream-stub.cpp \
-	ext/stub/java/io/File-stub.cpp \
-	ext/stub/java/io/FileInputStream-stub.cpp \
-	ext/stub/java/io/FileNotFoundException-stub.cpp \
-	ext/stub/java/io/FileOutputStream-stub.cpp \
-	ext/stub/java/io/File_LazyInitialization-stub.cpp \
-	ext/stub/java/io/FilterInputStream-stub.cpp \
-	ext/stub/java/io/FilterOutputStream-stub.cpp \
-	ext/stub/java/io/IOException-stub.cpp \
-	ext/stub/java/io/InputStream-stub.cpp \
-	ext/stub/java/io/InputStreamReader-stub.cpp \
-	ext/stub/java/io/OutputStream-stub.cpp \
-	ext/stub/java/io/PrintStream-stub.cpp \
-	ext/stub/java/io/Reader-stub.cpp \
-	ext/stub/java/lang/AbstractStringBuilder-stub.cpp \
-	ext/stub/java/lang/ArrayStoreException-stub.cpp \
-	ext/stub/java/lang/Byte-stub.cpp \
-	ext/stub/java/lang/Byte_ByteCache-stub.cpp \
-	ext/stub/java/lang/Character-stub.cpp \
-	ext/stub/java/lang/Character_CharacterCache-stub.cpp \
-	ext/stub/java/lang/Character_Subset-stub.cpp \
-	ext/stub/java/lang/Character_UnicodeBlock-stub.cpp \
-	ext/stub/java/lang/Class-stub.cpp \
-	ext/stub/java/lang/ClassCastException-stub.cpp \
-	ext/stub/java/lang/ClassLoader-stub.cpp \
-	ext/stub/java/lang/ClassLoader_NativeLibrary-stub.cpp \
-	ext/stub/java/lang/ClassNotFoundException-stub.cpp \
-	ext/stub/java/lang/Class_EnclosingMethodInfo-stub.cpp \
-	ext/stub/java/lang/Class_MethodArray-stub.cpp \
-	ext/stub/java/lang/Enum-stub.cpp \
-	ext/stub/java/lang/Exception-stub.cpp \
-	ext/stub/java/lang/Float-stub.cpp \
-	ext/stub/java/lang/IllegalArgumentException-stub.cpp \
-	ext/stub/java/lang/Integer-stub.cpp \
-	ext/stub/java/lang/Integer_IntegerCache-stub.cpp \
-	ext/stub/java/lang/InterruptedException-stub.cpp \
-	ext/stub/java/lang/Math-stub.cpp \
-	ext/stub/java/lang/NullPointerException-stub.cpp \
-	ext/stub/java/lang/Number-stub.cpp \
-	ext/stub/java/lang/NumberFormatException-stub.cpp \
-	ext/stub/java/lang/Object-stub.cpp \
-	ext/stub/java/lang/RuntimeException-stub.cpp \
-	ext/stub/java/lang/Short-stub.cpp \
-	ext/stub/java/lang/Short_ShortCache-stub.cpp \
-	ext/stub/java/lang/StackTraceElement-stub.cpp \
-	ext/stub/java/lang/String-stub.cpp \
-	ext/stub/java/lang/String-stub-regex.cpp \
-	ext/stub/java/lang/StringBuffer-stub.cpp \
-	ext/stub/java/lang/StringBuilder-stub.cpp \
-	ext/stub/java/lang/String_CaseInsensitiveComparator-stub.cpp \
-	ext/stub/java/lang/System-stub.cpp \
-	ext/stub/java/lang/Thread-stub.cpp \
-	ext/stub/java/lang/Thread_State-stub.cpp \
-	ext/stub/java/lang/Throwable-stub.cpp \
-	ext/stub/java/lang/UnsupportedOperationException-stub.cpp \
-	ext/stub/java/net/URL-stub.cpp \
-	ext/stub/java/nio/Buffer-stub.cpp \
-	ext/stub/java/nio/ByteBuffer-stub.cpp \
-	ext/stub/java/nio/ByteOrder-stub.cpp \
-	ext/stub/java/nio/FloatBuffer-stub.cpp \
-	ext/stub/java/nio/IntBuffer-stub.cpp \
-	ext/stub/java/nio/ShortBuffer-stub.cpp \
-	ext/stub/java/security/CodeSource-stub.cpp \
-	ext/stub/java/security/ProtectionDomain-stub.cpp \
-	ext/stub/java/security/ProtectionDomain_Key-stub.cpp \
-	ext/stub/java/util/AbstractCollection-stub.cpp \
-	ext/stub/java/util/AbstractList-stub.cpp \
-	ext/stub/java/util/AbstractList_Itr-stub.cpp \
-	ext/stub/java/util/AbstractList_ListItr-stub.cpp \
-	ext/stub/java/util/AbstractMap-stub.cpp \
-	ext/stub/java/util/AbstractMap_SimpleEntry-stub.cpp \
-	ext/stub/java/util/AbstractMap_SimpleImmutableEntry-stub.cpp \
-	ext/stub/java/util/AbstractSet-stub.cpp \
-	ext/stub/java/util/Arrays-stub.cpp \
-	ext/stub/java/util/Arrays_ArrayList-stub.cpp \
-	ext/stub/java/util/Dictionary-stub.cpp \
-	ext/stub/java/util/EventObject-stub.cpp \
-	ext/stub/java/util/HashMap-stub.cpp \
-	ext/stub/java/util/HashMap_Entry-stub.cpp \
-	ext/stub/java/util/HashMap_EntryIterator-stub.cpp \
-	ext/stub/java/util/HashMap_EntrySet-stub.cpp \
-	ext/stub/java/util/HashMap_HashIterator-stub.cpp \
-	ext/stub/java/util/HashMap_KeyIterator-stub.cpp \
-	ext/stub/java/util/HashMap_KeySet-stub.cpp \
-	ext/stub/java/util/HashMap_ValueIterator-stub.cpp \
-	ext/stub/java/util/HashMap_Values-stub.cpp \
-	ext/stub/java/util/HashSet-stub.cpp \
-	ext/stub/java/util/Hashtable-stub.cpp \
-	ext/stub/java/util/Hashtable_EmptyEnumerator-stub.cpp \
-	ext/stub/java/util/Hashtable_EmptyIterator-stub.cpp \
-	ext/stub/java/util/Hashtable_Entry-stub.cpp \
-	ext/stub/java/util/Hashtable_EntrySet-stub.cpp \
-	ext/stub/java/util/Hashtable_Enumerator-stub.cpp \
-	ext/stub/java/util/Hashtable_KeySet-stub.cpp \
-	ext/stub/java/util/Hashtable_ValueCollection-stub.cpp \
-	ext/stub/java/util/Locale-stub.cpp \
-	ext/stub/java/util/Locale_LocaleNameGetter-stub.cpp \
-	ext/stub/java/util/Properties-stub.cpp \
-	ext/stub/java/util/Properties_LineReader-stub.cpp \
-	ext/stub/java/util/StringTokenizer-stub.cpp \
-	ext/stub/java/util/TimerTask-stub.cpp \
-	ext/stub/java/util/concurrent/locks/AbstractOwnableSynchronizer-stub.cpp \
-	ext/stub/java/util/concurrent/locks/AbstractQueuedSynchronizer-stub.cpp \
-	ext/stub/java/util/concurrent/locks/AbstractQueuedSynchronizer_ConditionObject-stub.cpp \
-	ext/stub/java/util/concurrent/locks/AbstractQueuedSynchronizer_Node-stub.cpp \
-	ext/stub/java/util/concurrent/locks/ReentrantLock-stub.cpp \
-	ext/stub/java/util/concurrent/locks/ReentrantLock_FairSync-stub.cpp \
-	ext/stub/java/util/concurrent/locks/ReentrantLock_NonfairSync-stub.cpp \
-	ext/stub/java/util/concurrent/locks/ReentrantLock_Sync-stub.cpp \
-	ext/stub/java/util/logging/Level-stub.cpp \
-	ext/stub/java/util/logging/Level_KnownLevel-stub.cpp \
-	ext/stub/java/util/logging/Logger-stub.cpp \
-	ext/stub/java/util/logging/Logger_SystemLoggerHelper-stub.cpp \
-	ext/stub/java/util/spi/LocaleNameProvider-stub.cpp \
-	ext/stub/java/util/spi/LocaleServiceProvider-stub.cpp \
-	ext/stub/java/util/zip/InflaterInputStream-stub.cpp \
-	ext/stub/java/util/zip/ZipEntry-stub.cpp \
-	ext/stub/java/util/zip/ZipInputStream-stub.cpp \
 
 EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
@@ -615,12 +480,8 @@ MAIN_SRCS = \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
-STUB_OBJS = $(STUB_SRCS:$(STUB)/%.cpp=$(OBJ)/%.o)
-NATIVE_OBJS = $(NATIVE_SRCS:$(NATIVE)/%.cpp=$(OBJ)/%.o)
 
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
-EXT_STUB_OBJS = $(EXT_STUB_SRCS:ext/$(STUB)/%.cpp=$(OBJ)/%.o)
-EXT_NATIVE_OBJS = $(EXT_NATIVE_SRCS:ext/$(NATIVE)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
@@ -642,19 +503,10 @@ endef
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cc-command)
 	
-$(STUB_OBJS):$(OBJ)/%.o: $(STUB)/%.cpp | print-opts
-	$(cc-command)
-
 $(NATIVE_OBJS):$(OBJ)/%.o: $(NATIVE)/%.cpp | print-opts
 	$(cc-command)
 
 $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
-	$(cc-command)
-
-$(EXT_STUB_OBJS):$(OBJ)/%.o: ext/$(STUB)/%.cpp | print-opts
-	$(cc-command)
-
-$(EXT_NATIVE_OBJS):$(OBJ)/%.o: ext/$(NATIVE)/%.cpp | print-opts
 	$(cc-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
@@ -678,9 +530,9 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 	@rm -f $@
 	@ar rcs $@ $^
 
-$(BIN)/$(LIB): $(OBJS) $(STUB_OBJS) $(NATIVE_OBJS)
+$(BIN)/$(LIB): $(OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_STUB_OBJS) $(EXT_NATIVE_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

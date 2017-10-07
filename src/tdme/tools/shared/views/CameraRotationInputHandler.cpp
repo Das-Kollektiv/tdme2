@@ -12,7 +12,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/Character.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;

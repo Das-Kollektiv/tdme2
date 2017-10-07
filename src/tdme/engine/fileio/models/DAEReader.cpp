@@ -49,9 +49,6 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <Array.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 #include <ext/tinyxml/tinyxml.h>
 #include "../../subsystems/object/ModelStatistics.h"

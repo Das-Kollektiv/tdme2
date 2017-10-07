@@ -17,8 +17,6 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using std::map;
 using std::vector;

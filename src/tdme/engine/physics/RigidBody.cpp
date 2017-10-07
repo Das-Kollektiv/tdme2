@@ -16,7 +16,6 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::vector;
 

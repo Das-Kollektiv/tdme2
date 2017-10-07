@@ -52,7 +52,7 @@ void GUIKeyboardEvent::ctor()
 	this->time = -1LL;
 	this->type = GUIKeyboardEvent_Type::NONE;
 	this->keyCode = -1;
-	this->keyChar = char16_t(0x0000);
+	this->keyChar = wchar_t(0x0000);
 	this->metaDown = false;
 	this->controlDown = false;
 	this->altDown = false;
@@ -90,12 +90,12 @@ void GUIKeyboardEvent::setKeyCode(int32_t code)
 	this->keyCode = code;
 }
 
-char16_t GUIKeyboardEvent::getKeyChar()
+wchar_t GUIKeyboardEvent::getKeyChar()
 {
 	return keyChar;
 }
 
-void GUIKeyboardEvent::setKeyChar(char16_t keyChar)
+void GUIKeyboardEvent::setKeyChar(wchar_t keyChar)
 {
 	this->keyChar = keyChar;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -9,6 +10,7 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
+using std::array;
 using std::vector;
 using std::wstring;
 
@@ -322,7 +324,7 @@ public:
 	 * @param x,y position in node coordinate system 
 	 * @return boolean
 	 */
-	virtual bool isEventBelongingToNode(GUIMouseEvent* event, int32_tArray* position);
+	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
 
 	/** 
 	 * Is event belonging to node
@@ -337,7 +339,7 @@ public:
 	 * @param x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
 	 * @return void
 	 */
-	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, int32_tArray* position);
+	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
 
 	/** 
 	 * @return first parent node in tree with controller node attached

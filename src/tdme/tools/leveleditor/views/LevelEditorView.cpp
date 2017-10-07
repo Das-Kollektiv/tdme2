@@ -63,7 +63,6 @@
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_ArrayList.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_Console.h>
 

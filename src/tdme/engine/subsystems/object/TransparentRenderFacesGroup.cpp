@@ -11,7 +11,6 @@
 #include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/Key.h>
 #include <tdme/utils/_Console.h>
 
 using std::vector;

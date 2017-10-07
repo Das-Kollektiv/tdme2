@@ -5,9 +5,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
-#include <Array.h>
-#include <ObjectArray.h>
-#include <SubArray.h>
 
 using tdme::engine::primitives::LineSegment;
 using tdme::math::Math;

@@ -18,7 +18,6 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Time.h>
-#include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
 using tdme::gui::elements::GUIInputController;
@@ -69,10 +68,7 @@ void GUIInputInternalController::ctor(GUINode* node)
 	this->index = 0;
 	this->offset = 0;
 	this->isDragging = false;
-	this->dragPosition = new int32_tArray({
-		0,
-		0
-	});
+	this->dragPosition = {{ 0, 0 }};
 }
 
 bool GUIInputInternalController::isDisabled()
@@ -134,15 +130,17 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	}
 	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED == true) {
 		isDragging = false;
-	} else if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED == true) && event->getButton() == 1) {
+	} else
+	if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED == true) && event->getButton() == 1) {
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints->left + textInputNode->computedConstraints->alignmentLeft + textInputNode->border->left+ textInputNode->padding->left));
 		resetCursorMode();
 		event->setProcessed(true);
 		isDragging = true;
-		(*dragPosition)[0] = 0;
-		(*dragPosition)[1] = 0;
-	} else if (isDragging == true) {
+		dragPosition[0] = 0;
+		dragPosition[1] = 0;
+	} else
+	if (isDragging == true) {
 		node->getEventOffNodeRelativePosition(event, dragPosition);
 		event->setProcessed(true);
 	}
@@ -252,12 +250,13 @@ void GUIInputInternalController::tick()
 		}
 		draggingTickLast = now;
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
-		if ((*dragPosition)[0] < 0) {
+		if (dragPosition[0] < 0) {
 			if (index > 0) {
 				index--;
 				checkOffset();
 			}
-		} else if ((*dragPosition)[0] > 0) {
+		} else
+		if (dragPosition[0] > 0) {
 			if (index < textInputNode->getText()->length()) {
 				index++;
 				checkOffset();

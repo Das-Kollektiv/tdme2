@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <fwd-tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 
+using std::array;
 using std::wstring;
 
 using tdme::gui::nodes::GUINode;
@@ -42,7 +44,7 @@ public:
 private:
 	Texture* texture {  };
 	int32_t textureId {  };
-	floatArray* color {  };
+	array<float, 4> color {  };
 	GUIColor* effectColorMul {  };
 	GUIColor* effectColorAdd {  };
 protected:

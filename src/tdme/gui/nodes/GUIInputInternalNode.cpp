@@ -18,7 +18,6 @@
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/Integer.h>
-#include <Array.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::GUI;

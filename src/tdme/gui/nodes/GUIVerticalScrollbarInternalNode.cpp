@@ -11,7 +11,6 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <Array.h>
 
 using std::array;
 using std::wstring;

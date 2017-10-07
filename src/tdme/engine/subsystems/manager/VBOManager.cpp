@@ -6,7 +6,6 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::map;
 using std::wstring;

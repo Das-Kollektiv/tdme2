@@ -9,7 +9,6 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <Array.h>
 
 using tdme::gui::nodes::GUIImageNode;
 using tdme::engine::Engine;
@@ -35,12 +34,7 @@ GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode,
 
 void GUIImageNode::init()
 {
-	color = (new floatArray({
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f
-	}));
+	color = {{1.0f, 1.0f, 1.0f, 1.0f}};
 }
 
 void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */
@@ -94,7 +88,7 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNo
 	guiRenderer->bindTexture(textureId);
 	guiRenderer->setEffectColorMul(effectColorMul);
 	guiRenderer->setEffectColorAdd(effectColorAdd);
-	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*color)[0], (*color)[1], (*color)[2], (*color)[3], 0.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*color)[0], (*color)[1], (*color)[2], (*color)[3], 1.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*color)[0], (*color)[1], (*color)[2], (*color)[3], 1.0f, 1.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*color)[0], (*color)[1], (*color)[2], (*color)[3], 0.0f, 1.0f);
+	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 0.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 1.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 1.0f, 1.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 0.0f, 1.0f);
 	guiRenderer->render();
 }
 

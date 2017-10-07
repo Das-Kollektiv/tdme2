@@ -52,8 +52,7 @@ MutableString* MutableString::append(wchar_t c)
 
 MutableString* MutableString::insert(int32_t idx, wchar_t c)
 {
-	wstring charStr = L"" + c;
-	data.insert(idx, charStr);
+	data.insert(idx, 1, c);
 	return this;
 }
 
@@ -66,9 +65,13 @@ MutableString* MutableString::set(const wstring& s)
 
 MutableString* MutableString::append(const wstring& s)
 {
-	for (auto i = 0; i < s.length(); i++) {
-		append((wchar_t)s[i]);
-	}
+	data+= s;
+	return this;
+}
+
+MutableString* MutableString::insert(int32_t idx, const wstring& s)
+{
+	data.insert(idx, s);
 	return this;
 }
 

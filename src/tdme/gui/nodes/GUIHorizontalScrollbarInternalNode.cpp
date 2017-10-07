@@ -11,7 +11,6 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <Array.h>
 
 using std::array;
 using std::vector;

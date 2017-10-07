@@ -6,7 +6,6 @@
 
 #include <fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <Array.h>
 
 using std::wstring;
 using std::vector;

@@ -32,8 +32,6 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <SubArray.h>
-#include <ObjectArray.h>
 
 using std::vector;
 using std::wstring;

@@ -18,7 +18,6 @@
 #include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using std::array;
 using std::string;

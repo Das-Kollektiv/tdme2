@@ -35,7 +35,6 @@
 #include <tdme/utils/Time.h>
 #include <tdme/utils/_Console.h>
 #include <tdme/utils/_Exception.h>
-#include <Array.h>
 
 using std::map;
 using std::vector;

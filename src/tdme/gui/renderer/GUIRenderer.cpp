@@ -14,7 +14,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/utils/_Console.h>
-#include <Array.h>
 
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
