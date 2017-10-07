@@ -16,7 +16,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::list;
 using std::map;
@@ -36,7 +36,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
 
@@ -137,7 +137,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
 	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
-		_Console::println(
+		Console::println(
 			L"PartitionOctTree::removeEntity(): '" +
 			entity->getId() +
 			L"' not registered"
@@ -185,7 +185,7 @@ bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* 
 void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionEntities.size() > 0) {
-		_Console::println(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
+		Console::println(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
 		node->partitionEntities.clear();
 	} else {
 		for (auto& subNode: node->subNodes) {

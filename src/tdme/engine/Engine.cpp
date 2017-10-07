@@ -44,7 +44,7 @@
 #include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Float.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::wstring;
 using std::to_wstring;
@@ -91,7 +91,7 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::Float;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 namespace
 {
@@ -162,7 +162,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	clinit();
 	if (instance == nullptr || instance->initialized == false) {
-		_Console::println(wstring(L"Engine::createOffScreenInstance(): Engine not created or not initialized."));
+		Console::println(wstring(L"Engine::createOffScreenInstance(): Engine not created or not initialized."));
 		return nullptr;
 	}
 	auto offScreenEngine = new Engine();
@@ -376,8 +376,8 @@ void Engine::initialize(bool debug)
 	#ifdef __APPLE__
 	{
 		renderer = new EngineGL3Renderer(this);
-		_Console::println(wstring(L"TDME::Using GL3"));
-		// _Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(wstring(L"TDME::Using GL3"));
+		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -386,8 +386,8 @@ void Engine::initialize(bool debug)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
-		_Console::println(wstring(L"TDME::Using GL2"));
-		// _Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(wstring(L"TDME::Using GL2"));
+		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -402,8 +402,8 @@ void Engine::initialize(bool debug)
 		}
 		renderer = new Engine_initialize_3(this);
 		renderer->setGL(gl);
-		_Console::println(static_cast< Object* >(u"TDME::Using GLES2"_j));
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+		Console::println(static_cast< Object* >(u"TDME::Using GLES2"_j));
+		Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
 		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 			shadowMappingEnabled = true;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -413,7 +413,7 @@ void Engine::initialize(bool debug)
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
 	} else {
-		_Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
+		Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
 		return;
 	}
 	*/
@@ -439,33 +439,33 @@ void Engine::initialize(bool debug)
 	guiShader = new GUIShader(renderer);
 	guiShader->initialize();
 	if (renderer->isBufferObjectsAvailable()) {
-		_Console::println(wstring(L"TDME::VBOs are available."));
+		Console::println(wstring(L"TDME::VBOs are available."));
 	} else {
-		_Console::println(wstring(L"TDME::VBOs are not available! Engine will not work!"));
+		Console::println(wstring(L"TDME::VBOs are not available! Engine will not work!"));
 		initialized = false;
 	}
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		_Console::println(wstring(L"TDME::Basic FBOs are not available!"));
+		Console::println(wstring(L"TDME::Basic FBOs are not available!"));
 		shadowMappingEnabled = false;
 	} else {
-		_Console::println(wstring(L"TDME::Basic FBOs are available."));
+		Console::println(wstring(L"TDME::Basic FBOs are available."));
 	}
 	if (shadowMappingEnabled == true) {
-		_Console::println(wstring(L"TDME::Using shadow mapping"));
+		Console::println(wstring(L"TDME::Using shadow mapping"));
 		shadowMappingShaderPre = new ShadowMappingShaderPre(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, object3DVBORenderer);
 	} else {
-		_Console::println(wstring(L"TDME::Not using shadow mapping"));
+		Console::println(wstring(L"TDME::Not using shadow mapping"));
 	}
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
 	initialized &= particlesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
-	_Console::println(wstring(L"TDME::initialized & ready: ") + to_wstring(initialized));
+	Console::println(wstring(L"TDME::initialized & ready: ") + to_wstring(initialized));
 }
 
 void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)

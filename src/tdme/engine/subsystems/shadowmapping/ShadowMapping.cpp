@@ -13,7 +13,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -31,7 +31,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 int32_t ShadowMapping::shadowMapWidth = 2048;
 int32_t ShadowMapping::shadowMapHeight = 2048;
@@ -216,7 +216,7 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 		}
 		if (((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER) || ((v != ShadowMapping_RunState::PRE) && (v != ShadowMapping_RunState::RENDER)))) {
 			{
-				_Console::println(wstring(L"ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_wstring(runState)));
+				Console::println(wstring(L"ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_wstring(runState)));
 				goto end_switch0;;
 			}
 		}

@@ -48,7 +48,7 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::vector;
@@ -100,7 +100,7 @@ using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 wstring ParticleSystemScreenController::TYPE_NONE = L"None";
 wstring ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = L"Object Particle System";
@@ -232,8 +232,8 @@ void ParticleSystemScreenController::initialize()
 		speCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_center"));
 		speRadius = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"spe_radius"));
 	} catch (_Exception& exception) {
-		_Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
@@ -302,8 +302,8 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<wstring
 	try {
 		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
-		_Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("ParticleSystemScreenController::setParticleSystemTypes(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -335,8 +335,8 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<wstr
 	try {
 		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
-		_Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("ParticleSystemScreenController::setParticleSystemEmitters: An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -373,7 +373,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			goto end_switch0;;
 		}
 		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-			_Console::println(
+			Console::println(
 				wstring(
 					L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
 					particleSystem->getType()->getName() +
@@ -414,7 +414,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				goto end_switch1;;
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-				_Console::println(
+				Console::println(
 					wstring(
 						L"ParticleSystemScreenController::setParticleSystemType(): unknown particle system type '" +
 						particleSystem->getType()->getName() +
@@ -446,7 +446,7 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 	if (particleSystemTypeString == TYPE_POINTSPARTICLESYSTEM) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM);
 	} else {
-		_Console::println(
+		Console::println(
 			wstring(
 				L"ParticleSystemScreenController::onParticleSystemTypeApply(): unknown particle system type '" +
 				particleSystemTypeString +
@@ -482,7 +482,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 	if (particleSystemEmitterString == EMITTER_SPHEREPARTICLEEMITTER) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER);
 	} else {
-		_Console::println(
+		Console::println(
 			wstring(
 				L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
 				particleSystemEmitterString +
@@ -622,7 +622,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 			}
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
 			{
-				_Console::println(
+				Console::println(
 					wstring(
 						L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
 						particleSystem->getEmitter()->getName() +
@@ -773,7 +773,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			}
 		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(
+			Console::println(
 				wstring(
 					L"ParticleSystemScreenController::onParticleSystemEmitterApply(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
@@ -888,7 +888,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 						new ParticleSystemScreenController_onActionPerformed_4(this)
 					);
 				} else {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +

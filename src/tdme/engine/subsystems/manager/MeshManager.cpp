@@ -5,7 +5,7 @@
 
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::wstring;
@@ -13,7 +13,7 @@ using std::wstring;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 MeshManager::MeshManager() 
 {
@@ -47,5 +47,5 @@ void MeshManager::removeMesh(const wstring& meshId)
 		}
 		return;
 	}
-	_Console::println(wstring(L"Warning: mesh not managed by mesh manager: " + meshId));
+	Console::println(wstring(L"Warning: mesh not managed by mesh manager: " + meshId));
 }

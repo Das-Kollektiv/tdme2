@@ -42,7 +42,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -90,7 +90,7 @@ using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 using tdme::ext::tinyxml::TiXmlDocument;
@@ -769,127 +769,127 @@ void GUIParser::clinit()
 					GUIElement* guiElement = new GUICheckbox();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIRadioButton();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUISelectBox();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUISelectBoxOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUISelectBoxMultiple();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUISelectBoxMultipleOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIDropDown();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIDropDownOption();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUITabs();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUITabsHeader();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUITab();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUITabsContent();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUITabContent();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIButton();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIInput();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIScrollAreaVertical();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIScrollAreaHorizontal();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				try {
 					GUIElement* guiElement = new GUIScrollArea();
 					addElement(guiElement);
 				} catch (_Exception& exception) {
-					_Console::print(string("GUIParser::clinit(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("GUIParser::clinit(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 			}
 		}

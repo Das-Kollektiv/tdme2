@@ -19,7 +19,7 @@
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -42,7 +42,7 @@ using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(L"");
@@ -71,8 +71,8 @@ void TriggerScreenController::initialize()
 		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_depth"));
 		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_trigger_apply"));
 	} catch (_Exception& exception) {
-		_Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 }
@@ -166,7 +166,7 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 				if (node->getId().compare(L"button_trigger_apply") == 0) {
 					onTriggerApply();
 				} else {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"TriggerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +

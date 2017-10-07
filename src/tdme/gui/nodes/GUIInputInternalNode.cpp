@@ -15,7 +15,7 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/Integer.h>
 
@@ -35,7 +35,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 using tdme::utils::Integer;
 
@@ -56,8 +56,8 @@ int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 		auto maxLength = Integer::parseInt(s);
 		return maxLength;
 	} catch (_Exception& exception) {
-		_Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));
+		Console::println(string(exception.what()));
 		return 0;
 	}
 }

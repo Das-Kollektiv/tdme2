@@ -14,7 +14,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tests/GUITest.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::map;
@@ -30,7 +30,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tests::GUITest;
 using tdme::utils::MutableString;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 GUITest_init_1::GUITest_init_1(GUITest* guiTest)
@@ -41,7 +41,7 @@ GUITest_init_1::GUITest_init_1(GUITest* guiTest)
 void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button") == 0) {
-		_Console::println(node->getId() + L".actionPerformed()");
+		Console::println(node->getId() + L".actionPerformed()");
 		map<wstring, MutableString*> values;
 		node->getScreenNode()->getValues(&values);
 		values.clear();
@@ -85,8 +85,8 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 					L"<selectbox-option text=\"Option 10\" value=\"10\" />", true);
 			}
 		} catch (_Exception& exception) {
-			_Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
-			_Console::println(string(exception.what()));
+			Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
+			Console::println(string(exception.what()));
 			exit(0);
 		}
 		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab2")->getController()))->selectTab();

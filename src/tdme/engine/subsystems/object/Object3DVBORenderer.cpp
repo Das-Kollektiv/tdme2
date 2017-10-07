@@ -39,7 +39,7 @@
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::find;
 using std::map;
@@ -85,7 +85,7 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::utils::Key;
 using tdme::utils::Pool;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
 {
@@ -130,7 +130,7 @@ BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer
 		if (batchVBORenderer->acquire()) return batchVBORenderer;
 
 	}
-	_Console::println(wstring(L"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
+	Console::println(wstring(L"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
 	return nullptr;
 }
 

@@ -27,7 +27,7 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -59,7 +59,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
@@ -94,8 +94,8 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_place"));
 		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_level_edit"));
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
@@ -141,8 +141,8 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	try {
 		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	if (entityLibraryListBoxSelection->length() > 0) {
 		entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
@@ -309,11 +309,11 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else {
-			_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->toWString());
+			Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->toWString());
 		}
 		node->getController()->setValue(dropdownEntityActionReset);
 	} else {
-		_Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId());
+		Console::println(L"LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId());
 	}
 }
 
@@ -325,7 +325,7 @@ void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListen
 		} else if (node->getId().compare(L"button_level_edit") == 0) {
 			onEditLevel();
 		} else {
-			_Console::println(L"LevelEditorScreenController::onActionPerformed: " + node->getId());
+			Console::println(L"LevelEditorScreenController::onActionPerformed: " + node->getId());
 		}
 	}
 }

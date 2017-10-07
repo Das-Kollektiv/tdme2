@@ -45,7 +45,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -94,7 +94,7 @@ using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 Level::Level()
 {
@@ -174,7 +174,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			}		
 		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			_Console::println(
+			Console::println(
 				wstring(
 					L"Level::createParticleSystem(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
@@ -206,7 +206,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-				_Console::println(
+				Console::println(
 					wstring(
 						L"Level::createParticleSystem(): unknown particle system type '" +
 						particleSystem->getType()->getName() +

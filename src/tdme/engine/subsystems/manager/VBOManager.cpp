@@ -5,7 +5,7 @@
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::wstring;
@@ -13,7 +13,7 @@ using std::wstring;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 VBOManager::VBOManager(GLRenderer* renderer) 
 {
@@ -47,5 +47,5 @@ void VBOManager::removeVBO(const wstring& vboId)
 		}
 		return;
 	}
-	_Console::println(wstring(L"Warning: vbo not managed by vbo manager"));
+	Console::println(wstring(L"Warning: vbo not managed by vbo manager"));
 }

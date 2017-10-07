@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIShader.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
@@ -29,7 +29,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIShader;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 GUIRenderer::GUIRenderer(const ::default_init_tag&)
 {
@@ -280,7 +280,7 @@ void GUIRenderer::setRenderOffsetY(float renderOffsetY)
 void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4)
 {
 	if (quadCount > QUAD_COUNT) {
-		_Console::println(L"GUIRenderer::addQuad()::too many quads");
+		Console::println(L"GUIRenderer::addQuad()::too many quads");
 		return;
 	}
 	x1 -= renderOffsetX;

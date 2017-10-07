@@ -20,7 +20,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::wstring;
 
@@ -42,7 +42,7 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 wstring TDMELevelEditor::VERSION = L"0.9.9";
 
@@ -62,9 +62,9 @@ TDMELevelEditor::TDMELevelEditor()
 
 void TDMELevelEditor::main(int argc, char** argv)
 {
-	_Console::println(wstring(L"TDMELevelEditor " + VERSION));
-	_Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
-	_Console::println();
+	Console::println(wstring(L"TDMELevelEditor " + VERSION));
+	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println();
 	auto tdmeLevelEditor = new TDMELevelEditor();
 	tdmeLevelEditor->run(argc, argv, L"TDMELevelEditor");
 }

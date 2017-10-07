@@ -19,7 +19,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::wstring;
@@ -43,7 +43,7 @@ using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utils::_Exception;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
 int32_t LevelEditorEntityBoundingVolume::staticIdx = 0;
@@ -180,8 +180,8 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const wstring& pathName, c
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	updateLevelEditorEntity();
 }

@@ -18,7 +18,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/StringConverter.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -41,7 +41,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::_Exception;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::ext::tinyxml::TiXmlDocument;
 using tdme::ext::tinyxml::TiXmlElement;
 
@@ -53,7 +53,7 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
 	if (xmlDocument.Error() == true) {
-		_Console::println(
+		Console::println(
 			"LevelPropertyPresets::ctor():: Could not parse file '" +
 			StringConverter::toString(pathName) + "/" + StringConverter::toString(fileName) +
 			"'. Error='" +
@@ -120,8 +120,8 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 		try {
 			instance = new LevelPropertyPresets(L"resources/tools/leveleditor/gd", L"presets.xml");
 		} catch (_Exception& exception) {
-			_Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
-			_Console::print(string(exception.what()));
+			Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
+			Console::print(string(exception.what()));
 			exit(0);
 		}
 	}

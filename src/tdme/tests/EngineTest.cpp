@@ -43,7 +43,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::tolower;
 using std::vector;
@@ -88,7 +88,7 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 EngineTest::EngineTest()
@@ -406,8 +406,8 @@ void EngineTest::initialize()
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firetop")))->setPickable(true);
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firesmoke")))->setPickable(true);
 	} catch (_Exception& exception) {
-		_Console::print(string("EngineTest::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EngineTest::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 		exit(0);
 	}
 }

@@ -47,7 +47,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -105,7 +105,7 @@ using tdme::utils::Integer;
 using tdme::utils::StringConverter;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 using tdme::ext::tinyxml::TiXmlDocument;
@@ -271,7 +271,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 					}
 				}
 				if (haveName == false) {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"DAEReader::readLevel(): Skipping model '" +
 							modelName +
@@ -387,7 +387,7 @@ LevelEditorLevel* DAEReader::readLevel(const wstring& pathName, const wstring& f
 					}
 					levelEditorEntity = emptyEntity;
 				} else {
-					_Console::println(wstring(L"DAEReader::readLevel(): unknown entity type. Skipping"));
+					Console::println(wstring(L"DAEReader::readLevel(): unknown entity type. Skipping"));
 					continue;
 				}
 				auto levelEditorObjectTransformations = new Transformations();
@@ -463,7 +463,7 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringUtils::equalsIgnoreCase(upAxis, L"X_UP") == true) {
 				model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f));
 			} else {
-				_Console::println(wstring(L"Warning: Unknown up axis: " + upAxis));
+				Console::println(wstring(L"Warning: Unknown up axis: " + upAxis));
 			}
 		}
 	}
@@ -597,7 +597,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const wstring
 									float timeStamp;
 									for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
 										if (frameIdx >= frames) {
-											_Console::println(wstring(L"Warning: skipping frame: ") + to_wstring(frameIdx));
+											Console::println(wstring(L"Warning: skipping frame: ") + to_wstring(frameIdx));
 											frameIdx++;
 											continue;
 										}
@@ -1104,7 +1104,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 		}
 	}
 	if (xmlEffectId.length() == 0) {
-		_Console::println(
+		Console::println(
 			wstring(
 				 L"Could not determine effect id for '" +
 				 xmlNodeId +
@@ -1331,8 +1331,8 @@ const wstring DAEReader::determineDisplacementFilename(const wstring& path, cons
 			return fileNameCandidates[0];
 		}
 	} catch (_Exception& exception) {
-		_Console::print(wstring(L"DAEReader::determineDisplacementFilename(): An exception occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(wstring(L"DAEReader::determineDisplacementFilename(): An exception occurred: "));
+		Console::println(string(exception.what()));
 	}
 	return L"";
 }

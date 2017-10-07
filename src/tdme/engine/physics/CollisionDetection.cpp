@@ -18,7 +18,7 @@
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Float.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::wstring;
 
@@ -39,7 +39,7 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
 using tdme::utils::Float;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 constexpr bool CollisionDetection::VERBOSE;
 
@@ -1148,7 +1148,7 @@ void CollisionDetection::checkCollision(CollisionResponse* collision)
 {
 	auto& normalXYZ = collision->getNormal()->getArray();
 	if (Float::isNaN(normalXYZ[0]) == true || Float::isNaN(normalXYZ[1]) == true || Float::isNaN(normalXYZ[2]) == true) {
-		_Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL @ "));
+		Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL @ "));
 		// TODO: Print back trace
 	}
 }

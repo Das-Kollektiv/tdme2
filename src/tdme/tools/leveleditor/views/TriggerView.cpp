@@ -21,7 +21,7 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
@@ -46,7 +46,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 TriggerView::TriggerView(PopUps* popUps) 
@@ -162,8 +162,8 @@ void TriggerView::initialize()
 		engine->getGUI()->addScreen(triggerScreenController->getScreenNode()->getId(), triggerScreenController->getScreenNode());
 		triggerScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (_Exception& exception) {
-		_Console::print(string("TriggerView::initialize(): An error occurred: "));
-		_Console::println(exception.what());
+		Console::print(string("TriggerView::initialize(): An error occurred: "));
+		Console::println(exception.what());
 	}
 	updateGUIElements();
 }

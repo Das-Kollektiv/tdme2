@@ -9,7 +9,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -21,7 +21,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 using tdme::utils::MutableString;
 
@@ -44,8 +44,8 @@ void InfoDialogScreenController::initialize()
 		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_caption"));
 		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_message"));
 	} catch (_Exception& exception) {
-		_Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 

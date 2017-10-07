@@ -22,7 +22,7 @@ namespace utils {
 		class StringTokenizer;
 		class StringUtils;
 		class _ArrayList;
-		class _Console;
+		class Console;
 		class _ExceptionBase;
 		class _HashMap;
 		class _HashMap_1;

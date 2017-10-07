@@ -33,7 +33,7 @@
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::map;
@@ -69,7 +69,7 @@ using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::Pool;
 using tdme::utils::StringConverter;
 using tdme::utils::Time;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 map<wstring, GUIFont*> GUI::fontCache;
@@ -108,8 +108,8 @@ void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
 	try {
 		this->foccussedBorderColor = new GUIColor(L"#8080FF");
 	} catch (_Exception& exception) {
-		_Console::print(string("GUI::ctor(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("GUI::ctor(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -168,8 +168,8 @@ GUIFont* GUI::getFont(const wstring& fileName)
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
-		_Console::print(string("GUI::getFont(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("GUI::getFont(): An error occurred: "));
+		Console::println(string(exception.what()));
 		return nullptr;
 	}
 
@@ -178,8 +178,8 @@ GUIFont* GUI::getFont(const wstring& fileName)
 		try {
 			font = GUIFont::parse(path, file);
 		} catch (_Exception& exception) {
-			_Console::print(string("GUI::getFont(): An error occurred: "));
-			_Console::println(string(exception.what()));
+			Console::print(string("GUI::getFont(): An error occurred: "));
+			Console::println(string(exception.what()));
 			return nullptr;
 		}
 
@@ -203,8 +203,8 @@ Texture* GUI::getImage(const wstring& fileName)
 		path = _FileSystem::getInstance()->getPathName(canonicalFile);
 		file = _FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (_Exception& exception) {
-		_Console::print(string("GUI::getImage(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("GUI::getImage(): An error occurred: "));
+		Console::println(string(exception.what()));
 		return nullptr;
 	}
 
@@ -214,8 +214,8 @@ Texture* GUI::getImage(const wstring& fileName)
 		try {
 			image = TextureLoader::loadTexture(path, file);
 		} catch (_Exception& exception) {
-			_Console::print(string("GUI::getImage(): An error occurred: "));
-			_Console::println(string(exception.what()));
+			Console::print(string("GUI::getImage(): An error occurred: "));
+			Console::println(string(exception.what()));
 			return nullptr;
 		}
 		imageCache[canonicalFile] = image;

@@ -3,7 +3,7 @@
 
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Animation.h>
@@ -20,7 +20,7 @@ using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
 using tdme::engine::model::Animation;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::Key;
 
 void printMatrix(Matrix4x4& matrix) {

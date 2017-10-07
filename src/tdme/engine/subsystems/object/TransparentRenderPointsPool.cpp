@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -18,7 +18,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax) 
 {
@@ -33,7 +33,7 @@ TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 void TransparentRenderPointsPool::addPoint(const Vector3& point, const Color4& color, float distanceFromCamera)
 {
 	if (poolIdx >= transparentRenderPoints.size()) {
-		_Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
+		Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 		return;
 	}
 	auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
@@ -50,7 +50,7 @@ void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 			break;
 
 		if (poolIdx >= transparentRenderPoints.size()) {
-			_Console::println(wstring(L"TransparentRenderPointsPool::merge(): Too many transparent render points"));
+			Console::println(wstring(L"TransparentRenderPointsPool::merge(): Too many transparent render points"));
 			break;
 		}
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);

@@ -30,7 +30,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::vector;
@@ -65,7 +65,7 @@ using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(L"");
@@ -120,8 +120,8 @@ void ModelViewerScreenController::initialize()
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
 	} catch (_Exception& exception) {
-		_Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
@@ -295,7 +295,7 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else if (node->getId().compare(L"button_pivot_apply") == 0) {
 					onPivotApply();
 				} else {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +

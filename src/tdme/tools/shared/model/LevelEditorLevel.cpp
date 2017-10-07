@@ -18,7 +18,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::remove;
@@ -39,7 +39,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 LevelEditorLevel::LevelEditorLevel() 
 {
@@ -276,7 +276,7 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	auto _entity = getObjectById(object->getId());
 	if (_entity != nullptr) {
 		removeObject(object->getId());
-		_Console::println(
+		Console::println(
 			L"LevelEditorLevel::addObject():: object with id '" +
 			object->getId() +
 			L"' already exists. Removing it!"

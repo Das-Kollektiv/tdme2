@@ -17,7 +17,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::getline;
 using std::ifstream;
@@ -32,7 +32,7 @@ using tdme::os::filesystem::_StandardFileSystem;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::StringTokenizer;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 _StandardFileSystem::_StandardFileSystem()
 {
@@ -248,7 +248,7 @@ void _StandardFileSystem::removePath(const wstring& pathName) throw (_FileSystem
 			removeFile(pathName, file);
 		}
 	}
-	_Console::println(wstring(L"_StandardFileSystem::removePath(): Removing ") + pathName);
+	Console::println(wstring(L"_StandardFileSystem::removePath(): Removing ") + pathName);
 	int32_t status = rmdir(StringConverter::toString(pathName).c_str());
 	if (status == -1) {
 		throw _FileSystemException("Unable to delete folder(" + to_string(errno) + ")");
@@ -256,7 +256,7 @@ void _StandardFileSystem::removePath(const wstring& pathName) throw (_FileSystem
 }
 
 void _StandardFileSystem::removeFile(const wstring& pathName, const wstring& fileName) throw (_FileSystemException) {
-	_Console::println(wstring(L"_StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
+	Console::println(wstring(L"_StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
 	int32_t status = unlink(StringConverter::toString(getFileName(pathName, fileName)).c_str());
 	if (status == -1) {
 		throw _FileSystemException("Unable to delete file(" + to_string(errno) + ")");

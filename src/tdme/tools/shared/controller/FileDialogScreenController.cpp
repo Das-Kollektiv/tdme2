@@ -16,7 +16,7 @@
 #include <tdme/os/filesystem/_FileSystem.h>
 #include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
@@ -40,7 +40,7 @@ using tdme::os::filesystem::_FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 FileDialogScreenController::FileDialogScreenController() 
@@ -76,8 +76,8 @@ void FileDialogScreenController::initialize()
 		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"filedialog_files"));
 		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"filedialog_filename"));
 	} catch (_Exception& exception) {
-		_Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -99,8 +99,8 @@ void FileDialogScreenController::setupFileDialogListBox()
 		auto directory = cwd;
 		_FileSystem::getInstance()->list(directory, &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
 	} catch (_Exception& exception) {
-		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 
 	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(files->getId() + L"_inner"));
@@ -123,8 +123,8 @@ void FileDialogScreenController::setupFileDialogListBox()
 	try {
 		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
-		_Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -133,8 +133,8 @@ void FileDialogScreenController::show(const wstring& cwd, const wstring& caption
 	try {
 		this->cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, L"");
 	} catch (_Exception& exception) {
-		_Console::print(string("FileDialogScreenController::show(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("FileDialogScreenController::show(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	this->captionText = captionText;
 	this->extensions = *extensions;
@@ -158,8 +158,8 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				try {
 					cwd = _FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
 				} catch (_Exception& exception) {
-					_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
-					_Console::println(string(exception.what()));
+					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
 				setupFileDialogListBox();
 			} else {
@@ -167,8 +167,8 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 			}
 		}
 	} catch (_Exception& exception) {
-		_Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 

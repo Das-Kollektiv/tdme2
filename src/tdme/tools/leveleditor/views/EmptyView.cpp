@@ -20,7 +20,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -44,7 +44,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 EmptyView::EmptyView(PopUps* popUps) 
@@ -133,8 +133,8 @@ void EmptyView::initialize()
 		engine->getGUI()->addScreen(emptyScreenController->getScreenNode()->getId(), emptyScreenController->getScreenNode());
 		emptyScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (_Exception& exception) {
-		_Console::print(string("EmptyView::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EmptyView::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	updateGUIElements();
 }

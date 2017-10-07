@@ -16,7 +16,7 @@ using std::wstring;
  * @author Andreas Drewke
  * @versio $Id$
  */
-class tdme::utils::_Console
+class tdme::utils::Console
 {
 public:
 	/** 

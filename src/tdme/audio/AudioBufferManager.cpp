@@ -5,7 +5,7 @@
 
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::string;
@@ -13,7 +13,7 @@ using std::string;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 AudioBufferManager::AudioBufferManager() 
 {
@@ -45,6 +45,6 @@ bool AudioBufferManager::removeAudioBuffer(const wstring& id)
 			return false;
 		}
 	}
-	_Console::println(wstring(L"Warning: audio buffer not loaded by audio buffer manager"));
+	Console::println(wstring(L"Warning: audio buffer not loaded by audio buffer manager"));
 	return false;
 }

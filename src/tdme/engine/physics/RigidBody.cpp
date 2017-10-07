@@ -15,7 +15,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
@@ -33,7 +33,7 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 
 RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia)
@@ -271,7 +271,7 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 	Vector3 tmp;
 	distance.set(forceOrigin).sub(position);
 	if (distance.computeLength() < MathTools::EPSILON) {
-		_Console::println(
+		Console::println(
 			wstring(L"RigidBody::addForce(): ") +
 			id +
 			wstring(L": Must not equals position")

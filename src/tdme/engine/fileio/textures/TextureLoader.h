@@ -16,7 +16,7 @@ using std::wstring;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::_FileSystemException;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 namespace tdme {
 namespace engine {

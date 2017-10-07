@@ -18,7 +18,7 @@
 #include <tdme/audio/AudioStream.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 using std::map;
@@ -31,7 +31,7 @@ using tdme::audio::AudioEntity;
 using tdme::audio::AudioStream;
 using tdme::audio::Sound;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 Audio::Audio() 
 {
@@ -98,7 +98,7 @@ AudioEntity* Audio::addStream(const wstring& id, const wstring& pathName, const 
 		audioEntities[id] = stream;
 		return stream;
 	} else {
-		_Console::println(wstring(L"Audio stream: '" + id + L"' failed"));
+		Console::println(wstring(L"Audio stream: '" + id + L"' failed"));
 		return nullptr;
 	}
 }
@@ -111,7 +111,7 @@ AudioEntity* Audio::addSound(const wstring& id, const wstring& pathName, const w
 		audioEntities[id] = sound;
 		return sound;
 	} else {
-		_Console::println(wstring(L"Audio sound: '" + id + L"' failed"));
+		Console::println(wstring(L"Audio sound: '" + id + L"' failed"));
 		return nullptr;
 	}
 }

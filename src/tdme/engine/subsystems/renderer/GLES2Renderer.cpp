@@ -23,7 +23,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 using std::vector;
@@ -49,7 +49,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 template<typename T, typename U>
 static T java_cast(U* u)
@@ -200,7 +200,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const wstring& pathName, const w
 			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
 			infoLogBuffer->get(infoLogBytes);
 			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(handle)
+			Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(handle)
 				->append(u"]"_j)
 				->append(pathName)
 				->append(u"/"_j)
@@ -246,7 +246,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 			auto const infoLogBytes = new int8_tArray(infoLogLengthBuffer->get());
 			infoLogBuffer->get(infoLogBytes);
 			auto infoLogString = new String(infoLogBytes);
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(programId)
+			Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"["_j)->append(programId)
 				->append(u"]: failed: "_j)
 				->append(infoLogString)->toString()));
 			return false;
@@ -468,7 +468,7 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, i
 	}
 	auto fboStatus = gl->glCheckFramebufferStatus(GLES2::GL_FRAMEBUFFER);
 	if (fboStatus != GLES2::GL_FRAMEBUFFER_COMPLETE) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO: "_j)->append(fboStatus)->toString()));
+		Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO: "_j)->append(fboStatus)->toString()));
 	}
 	gl->glBindFramebuffer(GLES2::GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
@@ -569,12 +569,12 @@ void GLES2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t b
 
 void GLES2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
-	_Console::println(static_cast< Object* >(u"GLES2Renderer::bindTangentsBufferObject()::not implemented yet"_j));
+	Console::println(static_cast< Object* >(u"GLES2Renderer::bindTangentsBufferObject()::not implemented yet"_j));
 }
 
 void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
-	_Console::println(static_cast< Object* >(u"GLES2Renderer::bindBitangentsBufferObject()::not implemented yet"_j));
+	Console::println(static_cast< Object* >(u"GLES2Renderer::bindBitangentsBufferObject()::not implemented yet"_j));
 }
 
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -658,11 +658,11 @@ void GLES2Renderer::checkGLError()
 {
 	auto error = gl->glGetError();
 	if (error != GL::GL_NO_ERROR) {
-		_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"OpenGL Error: ("_j)->append(error)
+		Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"OpenGL Error: ("_j)->append(error)
 			->append(u") @:"_j)->toString()));
 		auto stackTrace = Thread::currentThread()->getStackTrace();
 		for (auto i = 1; i < 4; i++) {
-			_Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"\t"_j)->append(static_cast< Object* >((*stackTrace)[i]))->toString()));
+			Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"\t"_j)->append(static_cast< Object* >((*stackTrace)[i]))->toString()));
 		}
 	}
 }

@@ -34,7 +34,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -74,7 +74,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 constexpr int32_t EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT;
@@ -125,8 +125,8 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			boundingvolumeConvexMeshFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"boundingvolume_convexmesh_file_" + to_wstring(i)));
 		}
 	} catch (_Exception& exception) {
-		_Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -172,7 +172,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 5);
 		} else {
-			_Console::println(wstring(L"ModelViewerScreenController::onTabSelected(): invalid bounding volume@" + to_wstring(idx)));
+			Console::println(wstring(L"ModelViewerScreenController::onTabSelected(): invalid bounding volume@" + to_wstring(idx)));
 		}
 	}
 }
@@ -200,8 +200,8 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
 	} catch (_Exception& exception) {
-		_Console::print(string("EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -445,7 +445,7 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 				if (StringUtils::startsWith(node->getId(), L"button_boundingvolume_convexmesh_file_")) {
 					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
 				} else {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +

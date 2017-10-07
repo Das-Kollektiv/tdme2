@@ -25,7 +25,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/_FileSystem.h>
 #include <tdme/os/filesystem/_FileSystemInterface.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/StringConverter.h>
 
 using std::array;
@@ -45,7 +45,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 GL3Renderer::GL3Renderer() 
 {
@@ -151,7 +151,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
-		_Console::println(
+		Console::println(
 			wstring(
 				wstring(L"GL3Renderer::loadShader") +
 				wstring(L"[") +
@@ -199,7 +199,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = StringConverter::toWideString(string(infoLog, infoLogLength));
-		_Console::println(
+		Console::println(
 			wstring(
 				L"[" +
 				to_wstring(programId) +
@@ -413,7 +413,7 @@ int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 	}
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		_Console::println(wstring(L"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_wstring(fboStatus)));
+		Console::println(wstring(L"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_wstring(fboStatus)));
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
@@ -625,6 +625,6 @@ void GL3Renderer::checkGLError()
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		_Console::println(wstring(L"OpenGL Error: (" + to_wstring(error) + L") @:"));
+		Console::println(wstring(L"OpenGL Error: (" + to_wstring(error) + L") @:"));
 	}
 }

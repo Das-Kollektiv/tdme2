@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using std::wstring;
@@ -30,7 +30,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::MutableString;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString(L"");
@@ -55,8 +55,8 @@ void EmptyScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
 	} catch (_Exception& exception) {
-		_Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 }

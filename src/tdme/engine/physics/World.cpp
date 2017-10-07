@@ -25,7 +25,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::wstring;
@@ -54,7 +54,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 World::World() 
 {
@@ -278,7 +278,7 @@ void World::synch(Engine* engine)
 
 		auto engineEntity = engine->getEntity(rigidBody->id);
 		if (engineEntity == nullptr) {
-			_Console::println(
+			Console::println(
 				wstring(L"World::entity '") +
 				rigidBody->id +
 				wstring(L"' not found")
@@ -497,7 +497,7 @@ void World::synch(World* world)
 		auto rigidBody = rigidBodiesDynamic.at(i);
 		auto clonedRigidBody = world->getRigidBody(rigidBody->id);
 		if (clonedRigidBody == nullptr) {
-			_Console::println(
+			Console::println(
 				wstring(L"Cloned world::entity '") +
 				rigidBody->id +
 				wstring(L"' not found")

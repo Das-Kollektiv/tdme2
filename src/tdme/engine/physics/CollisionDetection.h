@@ -11,7 +11,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 
@@ -27,7 +27,7 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 /** 
  * Collision detection
@@ -487,7 +487,7 @@ private:
 	inline static bool checkMovementFallback(const Vector3& normalCandidate, const Vector3& movement, CollisionResponse* collision) {
 		if (movement.computeLength() < MathTools::EPSILON) {
 			if (VERBOSE) {
-				_Console::println(wstring(L"checkMovementFallback::fallback::movement = 0.0, 0.0, 0.0"));
+				Console::println(wstring(L"checkMovementFallback::fallback::movement = 0.0, 0.0, 0.0"));
 				// TODO: print stack trace
 			}
 			return false;
@@ -495,7 +495,7 @@ private:
 		Vector3 zeroVector(0.0f, 0.0f, 0.0f);
 		if (normalCandidate.equals(zeroVector) == true) {
 			if (VERBOSE) {
-				_Console::println(wstring(L"checkMovementFallback::fallback"));
+				Console::println(wstring(L"checkMovementFallback::fallback"));
 				// TODO: print stack trace
 			}
 			collision->reset();

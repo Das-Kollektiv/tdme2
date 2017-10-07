@@ -11,7 +11,7 @@
 #include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -27,7 +27,7 @@ using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Key;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
 {
@@ -90,7 +90,7 @@ void TransparentRenderFacesGroup::addVertex(const Vector3& vertex, const Vector3
 	if (batchVBORenderers.size() == 0) {
 		auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 		if (batchVBORendererTriangles == nullptr) {
-			_Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+			Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 			return;
 		}
 		batchVBORenderers.push_back(batchVBORendererTriangles);
@@ -101,7 +101,7 @@ void TransparentRenderFacesGroup::addVertex(const Vector3& vertex, const Vector3
 
 	batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 	if (batchVBORendererTriangles == nullptr) {
-		_Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+		Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 		return;
 	}
 	batchVBORenderers.push_back(batchVBORendererTriangles);

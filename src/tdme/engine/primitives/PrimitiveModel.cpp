@@ -22,7 +22,7 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 using std::vector;
@@ -47,7 +47,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::MathTools;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_X;
 
@@ -387,7 +387,7 @@ Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const wstring
 	if (dynamic_cast< Capsule* >(boundingVolume) != nullptr) {
 		return PrimitiveModel::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
 	} else {
-		_Console::println(wstring(L"PrimitiveModel::createModel(): unsupported bounding volume"));
+		Console::println(wstring(L"PrimitiveModel::createModel(): unsupported bounding volume"));
 		return nullptr;
 	}
 }

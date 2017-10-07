@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::wstring;
@@ -15,7 +15,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::utils::_Console;;
+using tdme::utils::Console;;
 
 TextureManager::TextureManager(GLRenderer* renderer) 
 {
@@ -51,5 +51,5 @@ void TextureManager::removeTexture(const wstring& textureId)
 		}
 		return;
 	}
-	_Console::println(wstring(L"Warning: texture not loaded by texture manager"));
+	Console::println(wstring(L"Warning: texture not loaded by texture manager"));
 }

@@ -64,7 +64,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::find;
 using std::remove;
@@ -135,7 +135,7 @@ using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_ArrayList;
 using tdme::utils::_Exception;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 vector<wstring> LevelEditorView::OBJECTCOLOR_NAMES = {
 	L"blue",
@@ -674,8 +674,8 @@ void LevelEditorView::loadSettings()
 		levelEditorScreenController->getMapPath()->setPath(settings.get(L"map.path", L"."));
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -689,8 +689,8 @@ void LevelEditorView::initialize()
 		levelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 		engine->getGUI()->addScreen(levelEditorScreenController->getScreenNode()->getId(), levelEditorScreenController->getScreenNode());
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorView::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorView::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
@@ -738,8 +738,8 @@ void LevelEditorView::storeSettings()
 		settings.put(L"model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
 		settings.store(L"settings", L"leveleditor.properties");
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 

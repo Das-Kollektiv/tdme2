@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::wstring;
 
@@ -25,7 +25,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::shared::views::View;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 wstring TDMEParticleSystem::VERSION = L"0.9.9";
 
@@ -44,9 +44,9 @@ TDMEParticleSystem::TDMEParticleSystem()
 
 void TDMEParticleSystem::main(int argc, char** argv)
 {
-	_Console::println(wstring(L"TDMEParticleSystem " + VERSION));
-	_Console::println(wstring(L"Programmed 2017 by Andreas Drewke, drewke.net."));
-	_Console::println();
+	Console::println(wstring(L"TDMEParticleSystem " + VERSION));
+	Console::println(wstring(L"Programmed 2017 by Andreas Drewke, drewke.net."));
+	Console::println();
 	auto tdmeParticleSystem = new TDMEParticleSystem();
 	tdmeParticleSystem->run(argc, argv, L"TDMEParticleSystem");
 }

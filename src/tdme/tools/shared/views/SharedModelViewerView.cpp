@@ -32,7 +32,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/Properties.h>
 #include "../../../engine/subsystems/object/ModelStatistics.h"
@@ -72,7 +72,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 SharedModelViewerView::SharedModelViewerView(PopUps* popUps) 
@@ -203,8 +203,8 @@ void SharedModelViewerView::loadSettings()
 		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
 		modelViewerScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -218,8 +218,8 @@ void SharedModelViewerView::initialize()
 		engine->getGUI()->addScreen(modelViewerScreenController->getScreenNode()->getId(), modelViewerScreenController->getScreenNode());
 		modelViewerScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedModelViewerView::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedModelViewerView::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	loadSettings();
 	modelViewerScreenController->getEntityDisplaySubScreenController()->setupDisplay();
@@ -248,8 +248,8 @@ void SharedModelViewerView::storeSettings()
 		settings.put(L"model.path", modelViewerScreenController->getModelPath()->getPath());
 		settings.store(L"settings", L"modelviewer.properties");
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -269,7 +269,7 @@ void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldModel, LevelEditor
 
 void SharedModelViewerView::loadModel()
 {
-	_Console::println(wstring(L"Model file: " + modelFile));
+	Console::println(wstring(L"Model file: " + modelFile));
 	try {
 		auto oldModel = entity;
 		entity = loadModel(

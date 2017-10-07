@@ -14,7 +14,7 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
@@ -31,7 +31,7 @@ using tdme::engine::physics::Vector6;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodies)
 {

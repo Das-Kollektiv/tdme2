@@ -11,7 +11,7 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
@@ -20,7 +20,7 @@ using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 /** 
  * Collision response

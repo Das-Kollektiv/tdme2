@@ -34,7 +34,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::wstring;
 
@@ -70,7 +70,7 @@ using tdme::utils::Properties;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps) 
 {
@@ -218,8 +218,8 @@ void SharedParticleSystemView::loadSettings()
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get(L"particlesystem.path", L"."));
 		particleSystemScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedParticleSystemView::loadSettings(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -233,8 +233,8 @@ void SharedParticleSystemView::initialize()
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedParticleSystemView::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedParticleSystemView::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 
 	loadSettings();
@@ -279,8 +279,8 @@ void SharedParticleSystemView::storeSettings()
 		settings.put(L"model.path", particleSystemScreenController->getModelPath()->getPath());
 		settings.store(L"settings", L"particlesystem.properties");
 	} catch (_Exception& exception) {
-		_Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
-		_Console::println(string(exception.what()));
+		Console::print(string("SharedParticleSystemView::storeSettings(): An error occurred "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -300,7 +300,7 @@ void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity
 
 void SharedParticleSystemView::loadParticleSystem()
 {
-	_Console::println(wstring(L"Particle system file: " + particleSystemFile));
+	Console::println(wstring(L"Particle system file: " + particleSystemFile));
 	try {
 		auto oldEntity = entity;
 		entity = loadParticleSystem(

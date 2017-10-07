@@ -20,7 +20,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
@@ -47,7 +47,7 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::Array;
@@ -135,7 +135,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			jModel["entity"]
 		);
 		if (levelEditorEntity == nullptr) {
-			_Console::println(L"LevelFileImport::doImport(): Invalid entity = " + to_wstring(jModel["id"].getInt()));
+			Console::println(L"LevelFileImport::doImport(): Invalid entity = " + to_wstring(jModel["id"].getInt()));
 			continue;
 		}
 		level->getEntityLibrary()->addEntity(levelEditorEntity);
@@ -156,7 +156,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		auto& jObject = jObjects[i];
 		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].getInt());
 		if (model == nullptr) {
-			_Console::println(L"LevelFileImport::doImport(): No entity found with id = " + to_wstring(jObject["mid"].getInt()));
+			Console::println(L"LevelFileImport::doImport(): No entity found with id = " + to_wstring(jObject["mid"].getInt()));
 			continue;
 		}
 

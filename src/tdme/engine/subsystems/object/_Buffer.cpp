@@ -1,11 +1,11 @@
 #include <tdme/engine/subsystems/object/_Buffer.h>
 
 #include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using tdme::engine::subsystems::object::_Buffer;
 using tdme::utils::ByteBuffer;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 _Buffer::_Buffer()
 {

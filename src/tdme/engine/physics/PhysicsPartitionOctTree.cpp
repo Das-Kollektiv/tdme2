@@ -15,7 +15,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ArrayListIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::find;
 using std::list;
@@ -35,7 +35,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::ArrayListIteratorMultiple;
 using tdme::utils::Pool;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 constexpr float PhysicsPartitionOctTree::PARTITION_SIZE_MIN;
 
@@ -139,7 +139,7 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 		rigidBodyPartitionsVector = &rigidBodyPartitionsVectorIt->second;
 	}
 	if (rigidBodyPartitionsVector == nullptr || rigidBodyPartitionsVector->empty() == true) {
-		_Console::println(
+		Console::println(
 			wstring(L"PartitionOctTree::removeRigidBody(): '") +
 			rigidBody->getId() +
 			wstring(L"' not registered")
@@ -187,7 +187,7 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionRidigBodies.size() > 0) {
-		_Console::println(wstring(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
+		Console::println(wstring(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
 		node->partitionRidigBodies.clear();
 	} else {
 		for (auto& subNode: node->subNodes) {

@@ -7,7 +7,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::utils::MutableString;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
@@ -42,8 +42,8 @@ void EntityDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_shadowing"));
 		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_ground"));
 	} catch (_Exception& exception) {
-		_Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -85,7 +85,7 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 				if (node->getId().compare(L"button_display_apply") == 0) {
 					onDisplayApply();
 				} else {
-					_Console::println(
+					Console::println(
 						wstring(
 							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +

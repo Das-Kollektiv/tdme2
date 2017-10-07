@@ -13,7 +13,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -29,7 +29,7 @@ using tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRe
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Pool;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 constexpr int32_t TransparentRenderFacesPool::FACES_MAX;
 
@@ -48,7 +48,7 @@ void TransparentRenderFacesPool::createTransparentRenderFaces(Matrix4x4& modelVi
 	Vector3 tmpVector3;
 	for (auto i = 0; i < faces->size(); i++) {
 		if (size() >= FACES_MAX) {
-			_Console::println(wstring(L"TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
+			Console::println(wstring(L"TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
 			break;
 		}
 		auto faceVertexIndices = (*faces)[i].getVertexIndices();

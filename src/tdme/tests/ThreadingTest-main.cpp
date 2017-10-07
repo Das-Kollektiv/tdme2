@@ -2,7 +2,7 @@
 
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 #include "ThreadingTest_ConsumerThread.h"
 #include "ThreadingTest_ProducerThread.h"
@@ -14,14 +14,14 @@ using std::to_wstring;
 
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 #define TESTTHREAD_THREADS_COUNT	4
 
 void testthread_test() {
 	// basic thread test
 	SharedData data;
-	_Console::println(L"Hallo World!");
+	Console::println(L"Hallo World!");
 	TestThread* tt[TESTTHREAD_THREADS_COUNT];
 	// start threads
 	for(int i = 0; i < TESTTHREAD_THREADS_COUNT; i++) {
@@ -41,23 +41,23 @@ void pc_test() {
 	ConsumerThread c0(0, &queue);
 	ConsumerThread c1(1, &queue);
 
-	_Console::println(L"starting consumer threads");
+	Console::println(L"starting consumer threads");
 	c0.start();
 	c1.start();
 	Thread::sleep(500);
 
-	_Console::println(L"starting producer thread");
+	Console::println(L"starting producer thread");
 	p.start();
 
-	_Console::println(L"waiting 10 seconds");
+	Console::println(L"waiting 10 seconds");
 	Thread::sleep(2000);
 
-	_Console::println(L"stopping producer");
+	Console::println(L"stopping producer");
 	p.stop();
 	p.join();
 
 	Thread::sleep(500);
-	_Console::println(L"stopping consumer and queue");
+	Console::println(L"stopping consumer and queue");
 	c0.stop();
 	c1.stop();
 	queue.stop();
@@ -70,11 +70,11 @@ void atomic_test() {
 	int intValue = 0;
 	// 5 atomic adds
 	for(int i = 0; i < 5; i++) {
-		_Console::println(L"atomic add, result " + to_wstring(__sync_add_and_fetch(&intValue,1)));
+		Console::println(L"atomic add, result " + to_wstring(__sync_add_and_fetch(&intValue,1)));
 	}
 	// 5 atomic subs
 	for(int i = 0; i < 5; i++) {
-		_Console::println(L"atomic sub, result " + to_wstring(__sync_sub_and_fetch(&intValue,1)));
+		Console::println(L"atomic sub, result " + to_wstring(__sync_sub_and_fetch(&intValue,1)));
 	}
 }
 

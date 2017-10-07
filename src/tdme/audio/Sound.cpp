@@ -19,7 +19,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/_FileSystemException.h>
 #include <tdme/utils/StringConverter.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::to_wstring;
 using std::wstring;
@@ -35,7 +35,7 @@ using tdme::audio::decoder::VorbisDecoder;
 using tdme::math::Vector3;
 using tdme::os::filesystem::_FileSystemException;
 using tdme::utils::StringConverter;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 Sound::Sound(const wstring& id, const wstring& pathName, const wstring& fileName) : AudioEntity(id)
 {
@@ -61,7 +61,7 @@ void Sound::rewind()
 
 	alSourceRewind(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		_Console::println(wstring(L"Audio sound: '" + id + L"': Could not rewind"));
+		Console::println(wstring(L"Audio sound: '" + id + L"': Could not rewind"));
 	}
 }
 
@@ -73,7 +73,7 @@ void Sound::play()
 	update();
 	alSourcePlay(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		_Console::println(wstring(L"Audio sound: '" + id + L"': Could not play"));
+		Console::println(wstring(L"Audio sound: '" + id + L"': Could not play"));
 	}
 }
 
@@ -84,7 +84,7 @@ void Sound::pause()
 
 	alSourcePause(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		_Console::println(wstring(L"Audio sound: '" + id+ L"': Could not pause"));
+		Console::println(wstring(L"Audio sound: '" + id+ L"': Could not pause"));
 	}
 }
 
@@ -95,7 +95,7 @@ void Sound::stop()
 
 	alSourceStop(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		_Console::println(wstring(L"Audio sound: '" + id + L"': Could not stop"));
+		Console::println(wstring(L"Audio sound: '" + id + L"': Could not stop"));
 	}
 }
 
@@ -106,7 +106,7 @@ bool Sound::initialize()
 		int alError;
 		alGenBuffers(1, &alBufferId);
 		if (alGetError() != AL_NO_ERROR) {
-			_Console::println(wstring(L"Audio sound: '" + id + L"': Could not generate buffer"));
+			Console::println(wstring(L"Audio sound: '" + id + L"': Could not generate buffer"));
 			return false;
 		}
 		audioBufferManaged->setAlId(alBufferId);
@@ -118,7 +118,7 @@ bool Sound::initialize()
 		try {
 			// decode ogg vorbis
 			decoder.openFile(pathName, fileName);
-			_Console::println(
+			Console::println(
 				wstring(
 					L"Audio sound: '" +
 					id +
@@ -136,10 +136,10 @@ bool Sound::initialize()
 				case(1): format = AL_FORMAT_MONO16; break;
 				case(2): format = AL_FORMAT_STEREO16; break;
 				default:
-					_Console::println(wstring(L"Audio sound: '" + id + L"': Unsupported number of channels"));
+					Console::println(wstring(L"Audio sound: '" + id + L"': Unsupported number of channels"));
 			}
 			if (decoder.readFromStream(data) == 0) throw new AudioDecoderException("no audio data was decoded");
-			_Console::println(
+			Console::println(
 				wstring(
 					L"Audio sound: '" +
 					id +
@@ -152,25 +152,25 @@ bool Sound::initialize()
 				)
 			);
 		} catch (_FileSystemException& fse) {
-			_Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + fse.what()));
+			Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + fse.what()));
 			decoder.close();
 			dispose();
 			return false;
 		} catch (AudioDecoderException& ade) {
-			_Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + ade.what()));
+			Console::println(string("Audio sound: '" + StringConverter::toString(id) + "': " + ade.what()));
 			decoder.close();
 			dispose();
 			return false;
 		}
 		decoder.close();
 		if (format == -1 || frequency == -1) {
-			_Console::println(wstring(L"Audio sound: '" + id + L"': Format or frequency invalid"));
+			Console::println(wstring(L"Audio sound: '" + id + L"': Format or frequency invalid"));
 			dispose();
 			return false;
 		}
 		alBufferData(alBufferId, format, data->getBuffer(), data->getPosition(), frequency);
 		if (alGetError() != AL_NO_ERROR) {
-			_Console::println(wstring(L"Audio sound: '" + id + L"': Could not upload buffer data"));
+			Console::println(wstring(L"Audio sound: '" + id + L"': Could not upload buffer data"));
 			dispose();
 			return false;
 		}
@@ -179,7 +179,7 @@ bool Sound::initialize()
 	}
 	alGenSources(1, &alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		_Console::println(wstring(L"Audio sound: '" + id + L"': Could not generate source"));
+		Console::println(wstring(L"Audio sound: '" + id + L"': Could not generate source"));
 		dispose();
 		return false;
 	}
@@ -211,14 +211,14 @@ void Sound::dispose()
 	if (alSourceId != Audio::ALSOURCEID_NONE) {
 		alDeleteSources(1, &alSourceId);
 		if (alGetError() != AL_NO_ERROR) {
-			_Console::println(wstring(L"Audio sound: '" + id + L"': Could not delete source"));
+			Console::println(wstring(L"Audio sound: '" + id + L"': Could not delete source"));
 		}
 		alSourceId = Audio::ALSOURCEID_NONE;
 	}
 	if (alBufferId != Audio::ALBUFFERID_NONE && Audio::instance->audioBufferManager.removeAudioBuffer(bufferId) == true) {
 		alDeleteBuffers(1, &alBufferId);
 		if (alGetError() != AL_NO_ERROR) {
-			_Console::println(wstring(L"Audio sound: '" + id + L"': Could not delete buffers"));
+			Console::println(wstring(L"Audio sound: '" + id + L"': Could not delete buffers"));
 		}
 		alBufferId = Audio::ALBUFFERID_NONE;
 	}

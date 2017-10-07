@@ -12,7 +12,7 @@
 #include <tdme/os/filesystem/_FileSystemInterface.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 #include <ext/libpng/png.h>
 
@@ -28,11 +28,11 @@ using tdme::os::filesystem::_FileSystem;
 using tdme::os::filesystem::_FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (_FileSystemException)
 {
-	// _Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
+	// Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
 		Texture* texture = TextureLoader::loadPNG(path, fileName);
 		return texture;

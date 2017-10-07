@@ -29,7 +29,7 @@
 #include <tdme/utils/Float.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 #include <ext/jsonbox/Value.h>
@@ -66,7 +66,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 using tdme::ext::jsonbox::JsonException;
@@ -132,7 +132,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 			throw new ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
 		}
 		if (model == nullptr) {
-			_Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + L"/" + modelFile + L"'");
+			Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + L"/" + modelFile + L"'");
 			return nullptr;
 		}
 	} else
@@ -204,8 +204,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 						auto particleModelPath = (gameRoot.length() > 0 ? gameRoot + L"/" : L"") + Tools::getPath(particleModelRelativeFileName);
 						objectParticleSystem->setModelFile(particleModelPath + L"/" + Tools::getFileName(particleModelRelativeFileName));
 					} catch (_Exception& exception) {
-						_Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
-						_Console::println(string(exception.what()));
+						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+						Console::println(string(exception.what()));
 					}
 					goto end_switch0;;
 				}			}
@@ -218,7 +218,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 				}			}
 			if (((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) || ((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
 				{
-					_Console::println(
+					Console::println(
 						wstring(
 							 L"ModelMetaDataFileExport::export(): unknown particle system type '" +
 							 particleSystem->getType()->getName() +
@@ -408,7 +408,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 				}
 			}
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-				_Console::println(
+				Console::println(
 					L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
 					L"'"
@@ -501,8 +501,8 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 		try {
 			entityBoundingVolume->setupConvexMesh(pathName, StringConverter::toWideString(jBv["file"].getString()));
 		} catch (_Exception& exception) {
-			_Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
-			_Console::println(string(exception.what()));
+			Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
+			Console::println(string(exception.what()));
 		}
 	}
 	return entityBoundingVolume;

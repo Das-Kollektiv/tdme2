@@ -35,7 +35,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 
 #include <ext/jsonbox/Array.h>
@@ -76,7 +76,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (_FileSystemException)
@@ -114,10 +114,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jEntityRoot["thumbnail] = StringConverter::toString(thumbnail));
 			copyFile(L"./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
 		} catch (_Exception& exception) {
-			_Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
-			_Console::print(entity->getFileName());
-			_Console::print(string(": "));
-			_Console::println(exception.what());
+			Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
+			Console::print(entity->getFileName());
+			Console::print(string(": "));
+			Console::println(exception.what());
 		}
 		*/
 	}
@@ -177,7 +177,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			if (((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) || ((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM))))
 			{
 				{
-					_Console::println(
+					Console::println(
 						wstring(
 							L"ModelMetaDataFileExport::export(): unknown particle system type '" +
 							particleSystem->getType()->getName() +
@@ -378,7 +378,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			}
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
 			{
-				_Console::println(
+				Console::println(
 					wstring(
 						L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
 						particleSystem->getEmitter()->getName() +

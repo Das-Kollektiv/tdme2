@@ -25,7 +25,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Time.h>
 #include <tdme/utils/_Exception.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::string;
 using std::to_wstring;
@@ -54,7 +54,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Time;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 using tdme::utils::_Exception;
 
 constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
@@ -127,7 +127,7 @@ void PhysicsTest3::display()
 	world->synch(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	_Console::println(wstring(L"PhysicsTest::display::" + to_wstring(end - start) + L"ms"));
+	Console::println(wstring(L"PhysicsTest::display::" + to_wstring(end - start) + L"ms"));
 }
 
 void PhysicsTest3::dispose()
@@ -328,8 +328,8 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody(L"tire2", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
 	} catch (_Exception& exception) {
-		_Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 		exit(0);
 	}
 }

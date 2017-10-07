@@ -34,7 +34,7 @@
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/_Exception.h>
 #include <tdme/utils/_ExceptionBase.h>
 
@@ -77,7 +77,7 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::_Exception;
 using tdme::utils::_ExceptionBase;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 MutableString* LevelEditorScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
 
@@ -172,8 +172,8 @@ void LevelEditorScreenController::initialize()
 		value = new MutableString();
 		selectedObjects = new MutableString();
  	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -281,8 +281,8 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 	try {
 		objectsListBoxInnerNode->replaceSubNodes(objectsListBoxSubNodesXML, false);
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorScreenController::setObjectListbox(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorScreenController::setObjectListbox(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	objectsListBox->getController()->setValue(selectedObjects);
 }
@@ -440,8 +440,8 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 	try {
 		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	onMapPropertiesSelectionChanged();
 }
@@ -499,8 +499,8 @@ void LevelEditorScreenController::setObjectPresetIds(const map<wstring, vector<P
 	try {
 		objectPropertiesPresetsInnerNode->replaceSubNodes(objectPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorScreenController::setObjectPresetIds(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorScreenController::setObjectPresetIds(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 }
 
@@ -566,8 +566,8 @@ void LevelEditorScreenController::setObjectProperties(const wstring& presetId, L
 	try {
 		objectPropertiesListBoxInnerNode->replaceSubNodes(objectPropertiesListBoxSubNodesXML, false);
 	} catch (_Exception& exception) {
-		_Console::print(string("LevelEditorScreenController::setObjectProperties(): An error occurred: "));
-		_Console::println(string(exception.what()));
+		Console::print(string("LevelEditorScreenController::setObjectProperties(): An error occurred: "));
+		Console::println(string(exception.what()));
 	}
 	onObjectPropertiesSelectionChanged();
 }
@@ -748,8 +748,8 @@ void LevelEditorScreenController::setLightPresetsIds(const map<wstring, LevelEdi
 		try {
 			lightPresetsInnerNode->replaceSubNodes(lightPresetsInnerNodeSubNodesXML, true);
 		} catch (_Exception& exception) {
-			_Console::print(string("LevelEditorScreenController::setLightPresetsIds(): An error occurred: "));
-			_Console::println(string(exception.what()));
+			Console::print(string("LevelEditorScreenController::setLightPresetsIds(): An error occurred: "));
+			Console::println(string(exception.what()));
 		}
 	}
 }
@@ -926,7 +926,7 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId().compare(L"object_properties_listbox") == 0) {
 		onObjectPropertiesSelectionChanged();
 	} else {
-		_Console::println(wstring(L"LevelEditorScreenController::onValueChanged: " + node->getId()));
+		Console::println(wstring(L"LevelEditorScreenController::onValueChanged: " + node->getId()));
 	}
 }
 
@@ -1026,13 +1026,13 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 		if (node->getId().compare(L"button_light3_apply") == 0) {
 			onLight3Apply();
 		} else {
-			_Console::println(wstring(L"LevelEditorScreenController::onActionPerformed: " + node->getId()));
+			Console::println(wstring(L"LevelEditorScreenController::onActionPerformed: " + node->getId()));
 		}
 	}
 }
 
 void LevelEditorScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
 {
-	_Console::println(wstring(caption + L":" + message));
+	Console::println(wstring(caption + L":" + message));
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }

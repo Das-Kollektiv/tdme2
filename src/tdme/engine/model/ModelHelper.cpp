@@ -18,7 +18,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/_Console.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 using std::vector;
@@ -39,7 +39,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::utils::_Console;
+using tdme::utils::Console;
 
 ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
 {
@@ -302,10 +302,10 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 	} else {
 		if (defaultAnimation->getStartFrame() != 0 || defaultAnimation->getEndFrame() != frames - 1) {
-			_Console::println(wstring(L"Warning: default animation mismatch"));
+			Console::println(wstring(L"Warning: default animation mismatch"));
 		}
 		if (frames - 1 > defaultAnimation->getEndFrame()) {
-			_Console::println(wstring(L"Warning: default animation mismatch, will be fixed"));
+			Console::println(wstring(L"Warning: default animation mismatch, will be fixed"));
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 		}
 	}
