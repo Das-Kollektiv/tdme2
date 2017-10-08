@@ -23,28 +23,15 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementController::GUIElementController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIElementController::GUIElementController(GUINode* node) 
-	: GUIElementController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-wstring GUIElementController::CONDITION_DISABLED;
-
-wstring GUIElementController::CONDITION_ENABLED;
-
-void GUIElementController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->isActionPerforming = false;
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
+
+wstring GUIElementController::CONDITION_DISABLED = L"disabled";
+wstring GUIElementController::CONDITION_ENABLED = L"enabled";
 
 bool GUIElementController::isDisabled()
 {
@@ -142,17 +129,5 @@ MutableString* GUIElementController::getValue()
 
 void GUIElementController::setValue(MutableString* value)
 {
-}
-
-void GUIElementController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
 }
 

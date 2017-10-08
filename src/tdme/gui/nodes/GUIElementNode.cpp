@@ -33,34 +33,9 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementNode::GUIElementNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
-	: GUIElementNode(*static_cast< ::default_init_tag* >(0))
+	: GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,name,value,selected,disabled,focusable,ignoreEvents);
-}
-
-void GUIElementNode::init()
-{
-	activeConditions = new GUINodeConditions();
-}
-
-wstring GUIElementNode::CONDITION_ALWAYS;
-
-wstring GUIElementNode::CONDITION_ONMOUSEOVER;
-
-wstring GUIElementNode::CONDITION_CLICK;
-
-wstring GUIElementNode::CONDITION_FOCUS;
-
-void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */
-{
-	super::ctor(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();
 	this->name = name;
 	this->value = value;
@@ -71,6 +46,16 @@ void GUIElementNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, 
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
 }
+
+void GUIElementNode::init()
+{
+	activeConditions = new GUINodeConditions();
+}
+
+wstring GUIElementNode::CONDITION_ALWAYS = L"always";
+wstring GUIElementNode::CONDITION_ONMOUSEOVER = L"mouseover";
+wstring GUIElementNode::CONDITION_CLICK = L"click";
+wstring GUIElementNode::CONDITION_FOCUS = L"focus";
 
 const wstring GUIElementNode::getNodeType()
 {
@@ -119,7 +104,7 @@ bool GUIElementNode::isFocusable()
 
 void GUIElementNode::setTop(int32_t top)
 {
-	super::setTop(top);
+	GUIParentNode::setTop(top);
 	top += computedConstraints->alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes.at(i)->setTop(top);
@@ -128,7 +113,7 @@ void GUIElementNode::setTop(int32_t top)
 
 void GUIElementNode::setLeft(int32_t left)
 {
-	super::setLeft(left);
+	GUIParentNode::setLeft(left);
 	left += computedConstraints->alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes.at(i)->setLeft(left);
@@ -137,7 +122,7 @@ void GUIElementNode::setLeft(int32_t left)
 
 void GUIElementNode::layoutSubNodes()
 {
-	super::layoutSubNodes();
+	GUIParentNode::layoutSubNodes();
 	auto height = computedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
 	auto width = computedConstraints->width - border->left - border->right- padding->left- padding->right;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -176,7 +161,7 @@ void GUIElementNode::layout()
 			}
 		}
 	}
-	super::layout();
+	GUIParentNode::layout();
 	setTop(computedConstraints->top);
 	setLeft(computedConstraints->left);
 	computeHorizontalChildrenAlignment();
@@ -242,7 +227,7 @@ end_switch0:;
 		}
 
 	}
-	super::handleMouseEvent(event);
+	GUIParentNode::handleMouseEvent(event);
 }
 
 void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
@@ -257,20 +242,6 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 		auto subNode = subNodes.at(i);
 		subNode->handleKeyboardEvent(event);
 	}
-	super::handleKeyboardEvent(event);
-}
-
-void GUIElementNode::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_ALWAYS = L"always";
-	CONDITION_ONMOUSEOVER = L"mouseover";
-	CONDITION_CLICK = L"click";
-	CONDITION_FOCUS = L"focus";
-	}
-};
-
-	static string_init_ string_init_instance;
+	GUIParentNode::handleKeyboardEvent(event);
 }
 

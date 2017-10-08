@@ -19,23 +19,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUIRadioButton::GUIRadioButton(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIRadioButton::GUIRadioButton() throw (FileSystemException)
-	: GUIRadioButton(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUIRadioButton::NAME = L"radiobutton";
-
-void GUIRadioButton::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"radiobutton.xml");
 }
+
+wstring GUIRadioButton::NAME = L"radiobutton";
 
 const wstring& GUIRadioButton::getName()
 {

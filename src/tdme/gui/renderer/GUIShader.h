@@ -6,9 +6,6 @@
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Shader
  * @author Andreas Drewke
@@ -28,13 +25,6 @@ private:
 	int32_t uniformEffectColorAdd {  };
 	bool initialized {  };
 	bool isRunning {  };
-
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor(GLRenderer* renderer);
 
 public:
 
@@ -72,7 +62,4 @@ public:
 	void updateEffect(GLRenderer* renderer);
 
 	GUIShader(GLRenderer* renderer);
-
-protected:
-	GUIShader(const ::default_init_tag&);
 };

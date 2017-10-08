@@ -13,9 +13,6 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode;
 
-
-struct default_init_tag;
-
 /** 
  * Requested constraints for this node
  * @author Andreas Drewke
@@ -35,11 +32,7 @@ public: /* protected */
 	int32_t height {  };
 
 public:
-	// Generated
 	GUINode_RequestedConstraints();
-
-protected:
-	GUINode_RequestedConstraints(const ::default_init_tag&);
 
 private:
 	friend class GUINode;

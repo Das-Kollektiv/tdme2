@@ -19,9 +19,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI select box multiple controller
  * @author Andreas Drewke
@@ -30,9 +27,6 @@ struct default_init_tag;
 class tdme::gui::elements::GUISelectBoxMultipleController final
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
 
 private:
 	static wstring CONDITION_DISABLED;
@@ -43,13 +37,6 @@ private:
 	bool disabled {  };
 	MutableString* value {  };
 	MutableString* searchValue {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -121,9 +108,6 @@ public:
 
 public: /* protected */
 	GUISelectBoxMultipleController(GUINode* node);
-protected:
-	GUISelectBoxMultipleController(const ::default_init_tag&);
-
 
 public:
 	static void clinit();

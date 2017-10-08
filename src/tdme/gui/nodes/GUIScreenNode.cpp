@@ -39,26 +39,9 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
-GUIScreenNode::GUIScreenNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIScreenNode::GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
-	: GUIScreenNode(*static_cast< ::default_init_tag* >(0))
+	: GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,scrollable,popUp);
-}
-
-void GUIScreenNode::init()
-{
-	guiEffectOffsetX = 0;
-	guiEffectOffsetY = 0;
-}
-
-void GUIScreenNode::ctor(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp) /* throws(GUIParserException) */
-{
-	super::ctor(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();
 	this->gui = nullptr;
 	this->nodeCounter = 0;
@@ -69,6 +52,12 @@ void GUIScreenNode::ctor(const wstring& id, GUINode_Flow* flow, GUIParentNode_Ov
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
+}
+
+void GUIScreenNode::init()
+{
+	guiEffectOffsetX = 0;
+	guiEffectOffsetY = 0;
 }
 
 GUI* GUIScreenNode::getGUI()
@@ -259,7 +248,7 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 		}
 	}
 	floatingNodes.clear();
-	super::render(guiRenderer, &floatingNodes);
+	GUIParentNode::render(guiRenderer, &floatingNodes);
 	guiRenderer->doneScreen();
 }
 
@@ -302,7 +291,7 @@ void GUIScreenNode::handleMouseEvent(GUIMouseEvent* event)
 		auto floatingNode = floatingNodes.at(i);
 		floatingNode->handleMouseEvent(event);
 	}
-	super::handleMouseEvent(event);
+	GUIParentNode::handleMouseEvent(event);
 }
 
 void GUIScreenNode::handleKeyboardEvent(GUIKeyboardEvent* event)
@@ -425,6 +414,6 @@ bool GUIScreenNode::removeEffect(const wstring& id)
 
 void GUIScreenNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 {
-	super::render(guiRenderer, floatingNodes);
+	GUIParentNode::render(guiRenderer, floatingNodes);
 }
 

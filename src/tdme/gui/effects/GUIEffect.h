@@ -8,9 +8,6 @@
 using tdme::gui::events::Action;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Effect base class
  * @author Andreas Drewke
@@ -25,13 +22,6 @@ public: /* protected */
 	float timeLeft {  };
 	float timePassed {  };
 	Action* action {  };
-
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -79,8 +69,5 @@ public:
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;
 
-	// Generated
 	GUIEffect();
-protected:
-	GUIEffect(const ::default_init_tag&);
 };

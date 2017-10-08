@@ -21,28 +21,17 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 
-GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node) 
-	: GUIVerticalScrollbarInternalController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 void GUIVerticalScrollbarInternalController::init()
 {
 	state = GUIVerticalScrollbarInternalController_State::NONE;
 	mouseYOffset = -1;
-}
-
-void GUIVerticalScrollbarInternalController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 bool GUIVerticalScrollbarInternalController::isDisabled()

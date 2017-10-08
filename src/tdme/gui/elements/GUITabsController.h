@@ -19,9 +19,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI tabs controller
  * @author Andreas Drewke
@@ -31,19 +28,9 @@ class tdme::gui::elements::GUITabsController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	vector<GUINode*> childControllerNodes {  };
 	MutableString* tabContentNodeId {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -77,9 +64,6 @@ public:
 
 public: /* protected */
 	GUITabsController(GUINode* node);
-
-protected:
-	GUITabsController(const ::default_init_tag&);
 
 private:
 	void init();

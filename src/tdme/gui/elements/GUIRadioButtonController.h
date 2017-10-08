@@ -22,9 +22,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Checkbox controller
  * @author Andreas Drewke
@@ -33,9 +30,6 @@ struct default_init_tag;
 class tdme::gui::elements::GUIRadioButtonController final
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
 
 private:
 	static wstring CONDITION_SELECTED;
@@ -46,14 +40,6 @@ private:
 	bool disabled {  };
 	static map<wstring, vector<GUIElementNode*>> radioButtonGroupNodesByName;
 	MutableString* value {  };
-
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public: /* protected */
 
@@ -83,15 +69,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIRadioButtonController(GUINode* node);
-protected:
-	GUIRadioButtonController(const ::default_init_tag&);
-
-public:
-	static void clinit();
 
 private:
 	void init();

@@ -21,30 +21,19 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIImageNode::GUIImageNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd)  /* throws(GUIParserException) */
-	: GUIImageNode(*static_cast< ::default_init_tag* >(0))
+	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,src,effectColorMul,effectColorAdd);
-}
-
-void GUIImageNode::init()
-{
-	color = {{1.0f, 1.0f, 1.0f, 1.0f}};
-}
-
-void GUIImageNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd) /* throws(GUIParserException) */
-{
-	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	init();
 	this->texture = GUI::getImage(src);
 	this->textureId = Engine::getInstance()->getTextureManager()->addTexture(texture);
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;
+}
+
+void GUIImageNode::init()
+{
+	color = {{1.0f, 1.0f, 1.0f, 1.0f}};
 }
 
 const wstring GUIImageNode::getNodeType()
@@ -70,7 +59,7 @@ int32_t GUIImageNode::getContentHeight()
 void GUIImageNode::dispose()
 {
 	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
-	super::dispose();
+	GUINode::dispose();
 }
 
 void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
@@ -78,7 +67,7 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNo
 	if (conditionsMet == false)
 		return;
 
-	super::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer, floatingNodes);
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	float left = computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft;

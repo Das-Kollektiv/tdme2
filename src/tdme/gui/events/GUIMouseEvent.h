@@ -5,9 +5,6 @@
 
 using tdme::gui::events::GUIMouseEvent_Type;
 
-
-struct default_init_tag;
-
 /** 
  * GUI mouse event
  * @author Andreas Drewke
@@ -26,17 +23,6 @@ private:
 	float wheelY {  };
 	float wheelZ {  };
 	bool processed {  };
-
-protected:
-
-	/** 
-	 * Public constructor
-	 * @param type
-	 * @param x
-	 * @param y
-	 * @param button
-	 */
-	void ctor();
 
 public:
 
@@ -139,10 +125,7 @@ public:
 	 */
 	virtual void setProcessed(bool processed);
 
-	// Generated
 	GUIMouseEvent();
-protected:
-	GUIMouseEvent(const ::default_init_tag&);
 
 private:
 	friend class GUIMouseEvent_Type;

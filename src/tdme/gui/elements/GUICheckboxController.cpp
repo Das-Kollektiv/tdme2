@@ -23,16 +23,12 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUICheckboxController::GUICheckboxController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+GUICheckboxController::GUICheckboxController(GUINode* node)
+	: GUINodeController(node)
 {
-	clinit();
-}
-
-GUICheckboxController::GUICheckboxController(GUINode* node) 
-	: GUICheckboxController(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(node);
+	this->checked = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	this->value = new MutableString();
 }
 
 wstring GUICheckboxController::CONDITION_CHECKED;
@@ -42,14 +38,6 @@ wstring GUICheckboxController::CONDITION_UNCHECKED;
 wstring GUICheckboxController::CONDITION_DISABLED;
 
 wstring GUICheckboxController::CONDITION_ENABLED;
-
-void GUICheckboxController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	this->checked = (dynamic_cast< GUIElementNode* >(node))->isSelected();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-	this->value = new MutableString();
-}
 
 bool GUICheckboxController::isChecked()
 {

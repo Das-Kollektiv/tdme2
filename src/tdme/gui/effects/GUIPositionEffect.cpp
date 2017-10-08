@@ -7,15 +7,9 @@ using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIPositionEffect::GUIPositionEffect(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIPositionEffect::GUIPositionEffect() 
-	: GUIPositionEffect(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
+	init();
 }
 
 void GUIPositionEffect::init()
@@ -26,12 +20,6 @@ void GUIPositionEffect::init()
 	positionYEnd = 0.0f;
 	positionX = 0.0f;
 	positionY = 0.0f;
-}
-
-void GUIPositionEffect::ctor()
-{
-	super::ctor();
-	init();
 }
 
 float GUIPositionEffect::getPositionXStart()

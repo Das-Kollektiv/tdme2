@@ -14,9 +14,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 
-
-struct default_init_tag;
-
 /** 
  * Border
  * @author Andreas Drewke
@@ -35,11 +32,7 @@ public:
 	int32_t right {  };
 	int32_t bottom {  };
 
-	// Generated
 	GUINode_Border();
-
-protected:
-	GUINode_Border(const ::default_init_tag&);
 
 private:
 	friend class GUINode;

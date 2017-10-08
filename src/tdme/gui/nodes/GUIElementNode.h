@@ -22,9 +22,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 
-
-struct default_init_tag;
-
 /** 
  * GUI element node
  * @author Andreas Drewke
@@ -33,9 +30,6 @@ struct default_init_tag;
 class tdme::gui::nodes::GUIElementNode final
 	: public GUIParentNode
 {
-
-public:
-	typedef GUIParentNode super;
 
 public: /* protected */
 	static wstring CONDITION_ALWAYS;
@@ -53,32 +47,6 @@ public: /* protected */
 	GUINodeConditions* activeConditions {  };
 	bool focusable {  };
 	bool ignoreEvents {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param name
-	 * @param value
-	 * @param selected
-	 * @param disabled
-	 * @param focusable
-	 * @param ignore events
-	 * @throws GUIParserException
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) /* throws(GUIParserException) */;
 
 public: /* protected */
 
@@ -142,14 +110,7 @@ public:
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
-	// Generated
 	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
-protected:
-	GUIElementNode(const ::default_init_tag&);
-
-
-public:
-	static void clinit();
 
 private:
 	void init();

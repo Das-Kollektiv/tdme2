@@ -23,31 +23,16 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUISelectBoxOptionController::GUISelectBoxOptionController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node) 
-	: GUISelectBoxOptionController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-wstring GUISelectBoxOptionController::CONDITION_SELECTED;
-
-wstring GUISelectBoxOptionController::CONDITION_UNSELECTED;
-
-wstring GUISelectBoxOptionController::CONDITION_DISABLED;
-
-wstring GUISelectBoxOptionController::CONDITION_ENABLED;
-
-void GUISelectBoxOptionController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
+
+wstring GUISelectBoxOptionController::CONDITION_SELECTED = L"selected";
+wstring GUISelectBoxOptionController::CONDITION_UNSELECTED = L"unselected";
+wstring GUISelectBoxOptionController::CONDITION_DISABLED = L"disabled";
+wstring GUISelectBoxOptionController::CONDITION_ENABLED = L"enabled";
 
 bool GUISelectBoxOptionController::isDisabled()
 {
@@ -159,19 +144,5 @@ MutableString* GUISelectBoxOptionController::getValue()
 
 void GUISelectBoxOptionController::setValue(MutableString* value)
 {
-}
-
-void GUISelectBoxOptionController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_SELECTED = L"selected";
-	CONDITION_UNSELECTED = L"unselected";
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
 }
 

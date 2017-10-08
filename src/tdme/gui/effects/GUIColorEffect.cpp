@@ -7,15 +7,9 @@ using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIColorEffect::GUIColorEffect(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
+GUIColorEffect::GUIColorEffect()
 {
-}
-
-GUIColorEffect::GUIColorEffect() 
-	: GUIColorEffect(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
+	init();
 }
 
 void GUIColorEffect::init()
@@ -26,12 +20,6 @@ void GUIColorEffect::init()
 	colorMulEnd = new GUIColor();
 	colorAdd = new GUIColor();
 	colorMul = new GUIColor();
-}
-
-void GUIColorEffect::ctor()
-{
-	super::ctor();
-	init();
 }
 
 GUIColor* GUIColorEffect::getColorAddStart()
@@ -56,7 +44,7 @@ GUIColor* GUIColorEffect::getColorMulEnd()
 
 void GUIColorEffect::update(GUIRenderer* guiRenderer)
 {
-	super::update(guiRenderer);
+	GUIEffect::update(guiRenderer);
 }
 
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)

@@ -11,8 +11,6 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 
-
-struct default_init_tag;
 class tdme::gui::elements::GUIScrollAreaVerticalController_initialize_1
 	: public virtual GUIActionListener
 {

@@ -9,9 +9,6 @@
 using std::vector;
 using std::wstring;
 
-
-struct default_init_tag;
-
 /** 
  * GUI node conditions
  * @author Andreas Drewke
@@ -22,13 +19,6 @@ class tdme::gui::nodes::GUINodeConditions final
 
 public: /* protected */
 	vector<wstring> conditions {  };
-
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor();
 
 public:
 
@@ -54,8 +44,5 @@ public:
 	 */
 	void removeAll();
 
-	// Generated
 	GUINodeConditions();
-protected:
-	GUINodeConditions(const ::default_init_tag&);
 };

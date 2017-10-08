@@ -9,19 +9,12 @@ using tdme::utils::Pool;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 
-
-struct default_init_tag;
 class tdme::gui::GUI_1
 	: public Pool<GUIMouseEvent*>
 {
 
-public:
-	typedef Pool super;
-
 public: /* protected */
 	GUIMouseEvent* instantiate() override;
-
-	// Generated
 
 public:
 	GUI_1(GUI *GUI_this);

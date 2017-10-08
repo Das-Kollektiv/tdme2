@@ -29,16 +29,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUISelectBoxController::GUISelectBoxController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUISelectBoxController::GUISelectBoxController(GUINode* node) 
-	: GUISelectBoxController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 void GUISelectBoxController::init()
@@ -46,16 +41,8 @@ void GUISelectBoxController::init()
 	value = new MutableString();
 }
 
-wstring GUISelectBoxController::CONDITION_DISABLED;
-
-wstring GUISelectBoxController::CONDITION_ENABLED;
-
-void GUISelectBoxController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-}
+wstring GUISelectBoxController::CONDITION_DISABLED = L"disabled";
+wstring GUISelectBoxController::CONDITION_ENABLED = L"enabled";
 
 bool GUISelectBoxController::isDisabled()
 {
@@ -240,17 +227,5 @@ void GUISelectBoxController::setValue(MutableString* value)
 			break;
 		}
 	}
-}
-
-void GUISelectBoxController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
 }
 

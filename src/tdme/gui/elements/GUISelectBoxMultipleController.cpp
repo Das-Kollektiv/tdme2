@@ -33,16 +33,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUISelectBoxMultipleController::GUISelectBoxMultipleController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
-	: GUISelectBoxMultipleController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 void GUISelectBoxMultipleController::init()
@@ -56,13 +51,6 @@ wstring GUISelectBoxMultipleController::CONDITION_DISABLED;
 wstring GUISelectBoxMultipleController::CONDITION_ENABLED;
 
 constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
-
-void GUISelectBoxMultipleController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-}
 
 bool GUISelectBoxMultipleController::isDisabled()
 {

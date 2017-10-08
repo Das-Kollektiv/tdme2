@@ -21,9 +21,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI drop down controller
  * @author Andreas Drewke
@@ -32,9 +29,6 @@ struct default_init_tag;
 class tdme::gui::elements::GUIDropDownController final
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
 
 private:
 	static wstring CONDITION_DISABLED;
@@ -49,13 +43,6 @@ private:
 	GUIElementNode* arrowNode {  };
 	GUIElementNode* textElementNode {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -113,12 +100,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIDropDownController(GUINode* node);
-protected:
-	GUIDropDownController(const ::default_init_tag&);
 
 private:
 	void init();

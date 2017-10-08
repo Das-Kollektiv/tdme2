@@ -17,9 +17,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI tabs header controller
  * @author Andreas Drewke
@@ -29,21 +26,11 @@ class tdme::gui::elements::GUITabsHeaderController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	GUINode* tabsNode {  };
 	vector<GUINode*> childControllerNodes {  };
 	vector<GUITabController*> tabControllers {  };
 	bool hasFocus_ {  };
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -101,10 +88,6 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUITabsHeaderController(GUINode* node);
-protected:
-	GUITabsHeaderController(const ::default_init_tag&);
 };

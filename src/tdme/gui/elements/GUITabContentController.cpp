@@ -11,20 +11,9 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 
-GUITabContentController::GUITabContentController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUITabContentController::GUITabContentController(GUINode* node) 
-	: GUITabContentController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-void GUITabContentController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->selected = false;
 	CONDITION_SELECTED = node->getId() + L"-selected";
 	CONDITION_UNSELECTED = node->getId() + L"-unselected";

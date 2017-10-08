@@ -13,9 +13,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 
-
-struct default_init_tag;
-
 /** 
  * Computed constraints for this node
  * @author Andreas Drewke
@@ -34,10 +31,7 @@ public:
 	int32_t contentAlignmentLeft {  };
 	int32_t contentAlignmentTop {  };
 
-	// Generated
 	GUINode_ComputedConstraints();
-protected:
-	GUINode_ComputedConstraints(const ::default_init_tag&);
 
 private:
 	friend class GUINode;

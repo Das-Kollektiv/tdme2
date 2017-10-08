@@ -5,17 +5,7 @@
 using tdme::gui::renderer::GUIShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
-GUIShader::GUIShader(const ::default_init_tag&)
-{
-}
-
 GUIShader::GUIShader(GLRenderer* renderer) 
-	: GUIShader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(renderer);
-}
-
-void GUIShader::ctor(GLRenderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;

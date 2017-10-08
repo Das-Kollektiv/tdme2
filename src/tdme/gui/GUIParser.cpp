@@ -99,13 +99,7 @@ using tdme::ext::tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-GUIParser::GUIParser(const ::default_init_tag&)
-{
-	clinit();
-}
-
 GUIParser::GUIParser()
-	: GUIParser(*static_cast< ::default_init_tag* >(0))
 {
 }
 

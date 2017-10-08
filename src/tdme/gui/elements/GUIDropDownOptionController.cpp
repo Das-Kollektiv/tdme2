@@ -29,27 +29,15 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
 
-GUIDropDownOptionController::GUIDropDownOptionController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node) 
-	: GUIDropDownOptionController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
 
 wstring GUIDropDownOptionController::CONDITION_SELECTED;
 
 wstring GUIDropDownOptionController::CONDITION_UNSELECTED;
-
-void GUIDropDownOptionController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
-}
 
 bool GUIDropDownOptionController::isSelected()
 {

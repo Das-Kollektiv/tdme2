@@ -29,9 +29,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUIParserException;
 
-
-struct default_init_tag;
-
 /** 
  * A parent node supporting child notes
  * @author Andreas Drewke
@@ -41,34 +38,12 @@ class tdme::gui::nodes::GUIParentNode
 	: public GUINode
 {
 
-public:
-	typedef GUINode super;
-
 public: /* protected */
 	vector<GUINode*> subNodes {  };
 	GUIParentNode_Overflow* overflowX {  };
 	GUIParentNode_Overflow* overflowY {  };
 	float childrenRenderOffsetX {  };
 	float childrenRenderOffsetY {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @oaram background color
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on 
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */;
 
 public:
 
@@ -185,10 +160,7 @@ public:
 	void tick() override;
 
 public: /* protected */
-	// Generated
 	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
-protected:
-	GUIParentNode(const ::default_init_tag&);
 
 private:
 	friend class GUIParentNode_Overflow;

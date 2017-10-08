@@ -35,15 +35,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUIDropDownController::GUIDropDownController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIDropDownController::GUIDropDownController(GUINode* node) 
-	: GUIDropDownController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 void GUIDropDownController::init()
@@ -62,13 +58,6 @@ wstring GUIDropDownController::CONDITION_ENABLED = L"enabled";
 wstring GUIDropDownController::CONDITION_OPENED = L"opened";
 
 wstring GUIDropDownController::CONDITION_CLOSED = L"closed";
-
-void GUIDropDownController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-}
 
 bool GUIDropDownController::isDisabled()
 {

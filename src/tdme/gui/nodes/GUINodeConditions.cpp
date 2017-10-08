@@ -7,17 +7,7 @@ using std::vector;
 
 using tdme::gui::nodes::GUINodeConditions;
 
-GUINodeConditions::GUINodeConditions(const ::default_init_tag&)
-{
-}
-
 GUINodeConditions::GUINodeConditions() 
-	: GUINodeConditions(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void GUINodeConditions::ctor()
 {
 }
 

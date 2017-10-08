@@ -39,9 +39,6 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Screen Node
  * @author Andreas Drewke
@@ -50,9 +47,6 @@ struct default_init_tag;
 class tdme::gui::nodes::GUIScreenNode final
 	: public GUIParentNode
 {
-
-public:
-	typedef GUIParentNode super;
 
 private:
 	GUI* gui {  };
@@ -75,25 +69,6 @@ private:
 	map<wstring, GUIEffect*> effects {  };
 	int32_t guiEffectOffsetX {  };
 	int32_t guiEffectOffsetY {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param scrollable
-	 * @param pop up
-	 */
-	void ctor(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp) /* throws(GUIParserException) */;
 
 public:
 
@@ -343,10 +318,7 @@ public:
 	 */
 	bool removeEffect(const wstring& id);
 
-	// Generated
 	GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);
-protected:
-	GUIScreenNode(const ::default_init_tag&);
 
 private:
 	void init();

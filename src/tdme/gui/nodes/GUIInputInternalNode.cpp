@@ -39,15 +39,17 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::Integer;
 
-GUIInputInternalNode::GUIInputInternalNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
-	: GUIInputInternalNode(*static_cast< ::default_init_tag* >(0))
+	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,font,color,colorDisabled,text,maxLength);
+	this->font = GUI::getFont(font);
+	this->color = color.empty() == true || color.length() == 0 ? new GUIColor() : new GUIColor(color);
+	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? new GUIColor() : new GUIColor(colorDisabled);
+	this->text = text;
+	this->maxLength = maxLength;
+	this->font->initialize();
+	this->controller = new GUIInputInternalController(this);
+	this->controller->initialize();
 }
 
 int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
@@ -60,19 +62,6 @@ int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 		Console::println(string(exception.what()));
 		return 0;
 	}
-}
-
-void GUIInputInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */
-{
-	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
-	this->font = GUI::getFont(font);
-	this->color = color.empty() == true || color.length() == 0 ? new GUIColor() : new GUIColor(color);
-	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? new GUIColor() : new GUIColor(colorDisabled);
-	this->text = text;
-	this->maxLength = maxLength;
-	this->font->initialize();
-	this->controller = new GUIInputInternalController(this);
-	this->controller->initialize();
 }
 
 const wstring GUIInputInternalNode::getNodeType()
@@ -113,7 +102,7 @@ int32_t GUIInputInternalNode::getMaxLength()
 void GUIInputInternalNode::dispose()
 {
 	this->font->dispose();
-	super::dispose();
+	GUINode::dispose();
 	this->controller->dispose();
 }
 
@@ -122,7 +111,7 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* fl
 	if (conditionsMet == false)
 		return;
 
-	super::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer, floatingNodes);
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
 	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();

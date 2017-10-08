@@ -21,28 +21,17 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(GUINode* node) 
-	: GUIHorizontalScrollbarInternalController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 void GUIHorizontalScrollbarInternalController::init()
 {
 	state = GUIHorizontalScrollbarInternalController_State::NONE;
 	mouseXOffset = -1;
-}
-
-void GUIHorizontalScrollbarInternalController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
 }
 
 bool GUIHorizontalScrollbarInternalController::isDisabled()

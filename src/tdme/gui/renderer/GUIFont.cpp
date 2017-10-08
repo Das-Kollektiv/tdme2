@@ -45,19 +45,9 @@ namespace renderer {
 }  // namespace gui
 }  // namespace tdme
 
-GUIFont::GUIFont(const ::default_init_tag&)
+GUIFont::GUIFont()
 {
 	clinit();
-}
-
-GUIFont::GUIFont()
-	: GUIFont(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void GUIFont::ctor()
-{
 	init();
 }
 

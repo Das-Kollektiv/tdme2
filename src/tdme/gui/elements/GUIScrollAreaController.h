@@ -13,9 +13,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI scroll area controller
  * @author Andreas Drewke
@@ -24,17 +21,6 @@ struct default_init_tag;
 class tdme::gui::elements::GUIScrollAreaController
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
-
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -51,12 +37,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIScrollAreaController(GUINode* node);
-protected:
-	GUIScrollAreaController(const ::default_init_tag&);
 
 private:
 	friend class GUIScrollAreaController_initialize_1;

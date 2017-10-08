@@ -32,9 +32,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Node class
  * @author Andreas Drewke
@@ -58,23 +55,6 @@ public: /* protected */
 	GUINodeConditions* hideOn {  };
 	GUINodeController* controller {  };
 	bool conditionsMet {  };
-
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 public: /* protected */
 
@@ -407,10 +387,7 @@ public: /* protected */
 
 public: /* protected */
 
-	// Generated
 	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
-protected:
-	GUINode(const ::default_init_tag&);
 
 private:
 	friend class GUINode_Flow;

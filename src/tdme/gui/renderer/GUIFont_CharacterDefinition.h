@@ -6,9 +6,6 @@
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * The definition of a single character as defined in the AngelCode file format
  * @author kevin, Andreas Drewke
@@ -69,13 +66,8 @@ public: /* protected */
 	 */
 	void draw(GUIRenderer* guiRenderer, int32_t x, int32_t y);
 
-	// Generated
-
 public:
 	GUIFont_CharacterDefinition(GUIFont *GUIFont_this);
-protected:
-	GUIFont_CharacterDefinition(GUIFont *GUIFont_this, const ::default_init_tag&);
-
 
 public:
 	GUIFont *GUIFont_this;

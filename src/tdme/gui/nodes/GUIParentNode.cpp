@@ -51,20 +51,9 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 
-GUIParentNode::GUIParentNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)  /* throws(GUIParserException) */
-	: GUIParentNode(*static_cast< ::default_init_tag* >(0))
+	: GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn);
-}
-
-void GUIParentNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn) /* throws(GUIParserException) */
-{
-	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->overflowX = overflowX;
 	this->overflowY = overflowY;
 	this->childrenRenderOffsetX = 0.0f;
@@ -199,7 +188,7 @@ GUINode_RequestedConstraints* GUIParentNode::createRequestedConstraints(const ws
 
 void GUIParentNode::layout()
 {
-	super::layout();
+	GUINode::layout();
 	layoutSubNodes();
 }
 
@@ -304,7 +293,7 @@ void GUIParentNode::dispose()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes.at(i)->dispose();
 	}
-	super::dispose();
+	GUINode::dispose();
 }
 
 void GUIParentNode::setConditionsMet()
@@ -354,7 +343,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
-	super::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer, floatingNodes);
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
@@ -426,7 +415,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 		}
 		subNode->handleMouseEvent(event);
 	}
-	super::handleMouseEvent(event);
+	GUINode::handleMouseEvent(event);
 	if (flow == GUINode_Flow::FLOATING && event->isProcessed() == true) {
 		screenNode->mouseEventProcessedByFloatingNode = true;
 	}
@@ -437,7 +426,7 @@ void GUIParentNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (conditionsMet == false)
 		return;
 
-	super::handleKeyboardEvent(event);
+	GUINode::handleKeyboardEvent(event);
 }
 
 void GUIParentNode::tick()
@@ -449,6 +438,6 @@ void GUIParentNode::tick()
 		auto subNode = subNodes.at(i);
 		subNode->tick();
 	}
-	super::tick();
+	GUINode::tick();
 }
 

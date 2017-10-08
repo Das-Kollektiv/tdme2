@@ -25,20 +25,9 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
-	: GUIVerticalScrollbarInternalNode(*static_cast< ::default_init_tag* >(0))
+	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,barColorNone,barColorMouseOver,barColorDragging);
-}
-
-void GUIVerticalScrollbarInternalNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
-{
-	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->controller = new GUIVerticalScrollbarInternalController(this);
 	this->barColorNone = barColorNone;
 	this->barColorMouseOver = barColorMouseOver;
@@ -70,7 +59,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	if (conditionsMet == false)
 		return;
 
-	super::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer, floatingNodes);
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);

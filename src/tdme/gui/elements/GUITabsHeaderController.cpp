@@ -27,20 +27,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUITabsHeaderController::GUITabsHeaderController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUITabsHeaderController::GUITabsHeaderController(GUINode* node) 
-	: GUITabsHeaderController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-void GUITabsHeaderController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->hasFocus_ = false;
 }
 

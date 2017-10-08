@@ -14,13 +14,8 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont *GUIFont_this, const ::default_init_tag&)
-	: GUIFont_this(GUIFont_this)
-{
-}
-
 GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont *GUIFont_this)
-	: GUIFont_CharacterDefinition(GUIFont_this, *static_cast< ::default_init_tag* >(0))
+	: GUIFont_this(GUIFont_this)
 {
 }
 

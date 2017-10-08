@@ -18,9 +18,6 @@ using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI input controller
  * @author Andreas Drewke
@@ -30,22 +27,11 @@ class tdme::gui::elements::GUIInputController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	static wstring CONDITION_DISABLED;
 	static wstring CONDITION_ENABLED;
 	GUIInputInternalNode* textInputNode {  };
 	bool disabled {  };
-
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -64,9 +50,6 @@ public:
 
 public: /* protected */
 	GUIInputController(GUINode* node);
-
-protected:
-	GUIInputController(const ::default_init_tag&);
 
 
 public:

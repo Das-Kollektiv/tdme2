@@ -17,27 +17,14 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node) 
-	: GUIElementIgnoreEventsController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-wstring GUIElementIgnoreEventsController::CONDITION_DISABLED;
-
-wstring GUIElementIgnoreEventsController::CONDITION_ENABLED;
-
-void GUIElementIgnoreEventsController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
+
+wstring GUIElementIgnoreEventsController::CONDITION_DISABLED= L"disabled";
+wstring GUIElementIgnoreEventsController::CONDITION_ENABLED = L"enabled";
 
 bool GUIElementIgnoreEventsController::isDisabled()
 {
@@ -104,17 +91,5 @@ MutableString* GUIElementIgnoreEventsController::getValue()
 
 void GUIElementIgnoreEventsController::setValue(MutableString* value)
 {
-}
-
-void GUIElementIgnoreEventsController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
 }
 
