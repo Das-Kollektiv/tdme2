@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>

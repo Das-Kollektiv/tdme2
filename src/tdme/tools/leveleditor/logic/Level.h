@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/RigidBody.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 using tdme::gui::nodes::GUIColor;

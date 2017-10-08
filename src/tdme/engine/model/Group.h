@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>

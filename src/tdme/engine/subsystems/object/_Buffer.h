@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 

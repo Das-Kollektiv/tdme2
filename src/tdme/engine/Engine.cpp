@@ -382,7 +382,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif __linux__
+	#elif __linux__ and !defined(__arm__)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
@@ -392,18 +392,12 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#endif
-	/*
-	// GLES2
-	if (drawable->getGL()->isGLES2()) {
-		auto gl = dynamic_cast< GLES2* >(drawable->getGL()->getGLES2());
-		if (debug == true) {
-			drawable->setGL(new DebugGLES2(gl));
-		}
-		renderer = new Engine_initialize_3(this);
-		renderer->setGL(gl);
-		Console::println(static_cast< Object* >(u"TDME::Using GLES2"_j));
-		Console::println(static_cast< Object* >(::java::lang::StringBuilder().append(u"TDME::Extensions: "_j)->append(gl->glGetString(GL::GL_EXTENSIONS))->toString()));
+	#elif __linux__ and defined(__arm__)
+	// GL2
+	{
+		renderer = new EngineGLES2Renderer(this);
+		Console::println(wstring(L"TDME::Using GLES2"));
+		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 			shadowMappingEnabled = true;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -412,11 +406,13 @@ void Engine::initialize(bool debug)
 			shadowMappingEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
-	} else {
-		Console::println(static_cast< Object* >(u"Engine::initialize(): unsupported GL!"_j));
-		return;
 	}
-	*/
+	#else
+		Console::println(L"Engine::initialize(): unsupported GL!");
+		return;
+	#endif
+
+	//
 	initialized = true;
 	renderer->initialize();
 	renderer->renderingTexturingClientState = false;

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 

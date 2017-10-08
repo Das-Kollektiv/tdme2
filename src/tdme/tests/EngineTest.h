@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/engine/ApplicationInputEventsHandler.h>

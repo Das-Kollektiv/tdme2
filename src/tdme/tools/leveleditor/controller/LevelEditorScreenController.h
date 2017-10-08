@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/events/fwd-tdme.h>

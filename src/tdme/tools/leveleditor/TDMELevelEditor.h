@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/tools/leveleditor/fwd-tdme.h>

@@ -4,7 +4,7 @@
 	#include <GLUT/glut.h>
 #endif
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 
 #include <tdme/utils/Time.h>
 #include <tdme/os/threading/Thread.h>

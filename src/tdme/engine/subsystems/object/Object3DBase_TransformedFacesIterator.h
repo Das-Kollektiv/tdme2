@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>

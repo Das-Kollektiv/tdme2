@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 

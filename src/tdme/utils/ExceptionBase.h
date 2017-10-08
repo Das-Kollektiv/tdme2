@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::runtime_error;

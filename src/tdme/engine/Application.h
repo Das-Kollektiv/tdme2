@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 
 #include "ApplicationInputEventsHandler.h"

@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;

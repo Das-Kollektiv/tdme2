@@ -1,11 +1,10 @@
-
 #pragma once
 
 #include <array>
 #include <vector>
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>

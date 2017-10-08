@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
