@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <array>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/Vector6.h>
 #include <tdme/math/fwd-tdme.h>

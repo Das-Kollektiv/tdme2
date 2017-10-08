@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
 using tdme::engine::subsystems::object::ModelUtilitiesInternal;

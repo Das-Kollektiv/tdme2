@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
 using tdme::gui::events::GUIMouseEvent_Type;

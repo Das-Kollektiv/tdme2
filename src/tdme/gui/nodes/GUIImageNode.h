@@ -3,7 +3,7 @@
 #include <array>
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>

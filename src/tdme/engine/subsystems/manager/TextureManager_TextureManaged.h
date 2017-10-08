@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 
 using tdme::engine::subsystems::manager::TextureManager;

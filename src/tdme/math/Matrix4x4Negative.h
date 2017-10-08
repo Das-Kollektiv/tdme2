@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>

@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include <fwd-tdme.h>
+#include <tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
