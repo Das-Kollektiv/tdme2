@@ -27,7 +27,7 @@ namespace object {
 				class TransparentRenderFacesPool_TransparentRenderFacesPool;
 				class TransparentRenderPoint;
 				class TransparentRenderPointsPool;
-				class _Buffer;
+				class ObjectBuffer;
 }  // namespace object
 }  // namespace subsystems
 }  // namespace engine

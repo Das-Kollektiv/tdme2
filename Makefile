@@ -119,13 +119,13 @@ SRCS = \
 	src/tdme/engine/subsystems/object/Object3DModelInternal.cpp \
 	src/tdme/engine/subsystems/object/Object3DVBORenderer.cpp \
 	src/tdme/engine/subsystems/object/Object3DVBORenderer_TransparentRenderFacesGroupPool.cpp \
+	src/tdme/engine/subsystems/object/ObjectBuffer.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFace.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFacesPool.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderFacesPool_TransparentRenderFacesPool.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderPoint.cpp \
 	src/tdme/engine/subsystems/object/TransparentRenderPointsPool.cpp \
-	src/tdme/engine/subsystems/object/_Buffer.cpp \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
