@@ -47,19 +47,14 @@ SRCS = \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EngineGL3Renderer.cpp \
 	src/tdme/engine/EngineGL2Renderer.cpp \
-	src/tdme/engine/Entity.cpp \
-	src/tdme/engine/EntityPickingFilter.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
-	src/tdme/engine/ModelUtilities.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/ObjectParticleSystemEntity.cpp \
-	src/tdme/engine/Partition.cpp \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
-	src/tdme/engine/PartitionOctTree_PartitionTreeNode.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/Rotations.cpp \
@@ -92,30 +87,16 @@ SRCS = \
 	src/tdme/engine/model/Skinning.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/CollisionDetection.cpp \
-	src/tdme/engine/physics/CollisionListener.cpp \
-	src/tdme/engine/physics/CollisionResponse.cpp \
-	src/tdme/engine/physics/CollisionResponse_Entity.cpp \
-	src/tdme/engine/physics/ConstraintsEntity.cpp \
 	src/tdme/engine/physics/ConstraintsSolver.cpp \
-	src/tdme/engine/physics/ContactCache.cpp \
-	src/tdme/engine/physics/ContactCache_ContactCacheInfo.cpp \
-	src/tdme/engine/physics/DynamicVector.cpp \
-	src/tdme/engine/physics/Matrix1x6.cpp \
-	src/tdme/engine/physics/Matrix6x6.cpp \
-	src/tdme/engine/physics/PhysicsPartition.cpp \
 	src/tdme/engine/physics/PhysicsPartitionNone.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.cpp \
 	src/tdme/engine/physics/RigidBody.cpp \
-	src/tdme/engine/physics/Vector6.cpp \
 	src/tdme/engine/physics/World.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
-	src/tdme/engine/primitives/BoundingVolume.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
 	src/tdme/engine/primitives/LineSegment.cpp \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
-	src/tdme/engine/primitives/Plane.cpp \
 	src/tdme/engine/primitives/PrimitiveModel.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
@@ -126,11 +107,9 @@ SRCS = \
 	src/tdme/engine/subsystems/manager/TextureManager_TextureManaged.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp \
-	src/tdme/engine/subsystems/object/AnimationState.cpp \
 	src/tdme/engine/subsystems/object/BatchVBORendererPoints.cpp \
 	src/tdme/engine/subsystems/object/BatchVBORendererTriangles.cpp \
 	src/tdme/engine/subsystems/object/ModelUtilitiesInternal.cpp \
-	src/tdme/engine/subsystems/object/ModelStatistics.cpp \
 	src/tdme/engine/subsystems/object/Object3DBase.cpp \
 	src/tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.cpp \
 	src/tdme/engine/subsystems/object/Object3DGroup.cpp \
@@ -151,9 +130,6 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
 	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.cpp \
-	src/tdme/engine/subsystems/particlesystem/Particle.cpp \
-	src/tdme/engine/subsystems/particlesystem/ParticleEmitter.cpp \
-	src/tdme/engine/subsystems/particlesystem/ParticleSystemEntity.cpp \
 	src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
@@ -161,8 +137,6 @@ SRCS = \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
-	src/tdme/engine/subsystems/renderer/GLRenderer_Light.cpp \
-	src/tdme/engine/subsystems/renderer/GLRenderer_Material.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
@@ -214,11 +188,7 @@ SRCS = \
 	src/tdme/gui/elements/GUITabsController.cpp \
 	src/tdme/gui/elements/GUITabsHeader.cpp \
 	src/tdme/gui/elements/GUITabsHeaderController.cpp \
-	src/tdme/gui/events/Action.cpp \
-	src/tdme/gui/events/GUIActionListener.cpp \
 	src/tdme/gui/events/GUIActionListener_Type.cpp \
-	src/tdme/gui/events/GUIChangeListener.cpp \
-	src/tdme/gui/events/GUIInputEventHandler.cpp \
 	src/tdme/gui/events/GUIKeyboardEvent.cpp \
 	src/tdme/gui/events/GUIKeyboardEvent_Type.cpp \
 	src/tdme/gui/events/GUIMouseEvent.cpp \
@@ -262,17 +232,9 @@ SRCS = \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
 	src/tdme/math/MathTools.cpp \
-	src/tdme/math/Matrix4x4.cpp \
-	src/tdme/math/Matrix4x4Negative.cpp \
-	src/tdme/math/Quaternion.cpp \
-	src/tdme/math/SeparatingAxisTheorem.cpp \
 	src/tdme/math/TriangleTriangleIntersection.cpp \
-	src/tdme/math/Vector2.cpp \
-	src/tdme/math/Vector3.cpp \
-	src/tdme/math/Vector4.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
-	src/tdme/os/filesystem/FileSystemInterface.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
@@ -328,7 +290,6 @@ SRCS = \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onEntitySave_3.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.cpp \
-	src/tdme/tools/shared/controller/ScreenController.cpp \
 	src/tdme/tools/shared/files/LevelFileExport.cpp \
 	src/tdme/tools/shared/files/LevelFileImport.cpp \
 	src/tdme/tools/shared/files/ModelMetaDataFileExport.cpp \
@@ -361,7 +322,6 @@ SRCS = \
 	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/SharedModelViewerView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
-	src/tdme/tools/shared/views/View.cpp \
 	src/tdme/tools/viewer/TDMEViewer.cpp \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
