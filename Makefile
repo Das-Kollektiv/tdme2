@@ -334,9 +334,8 @@ SRCS = \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
-
-#	src/tdme/engine/EngineGLES2Renderer.cpp \
-#	src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
+	# src/tdme/engine/EngineGLES2Renderer.cpp \
+	# src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
 NATIVE_SRCS = \
 
