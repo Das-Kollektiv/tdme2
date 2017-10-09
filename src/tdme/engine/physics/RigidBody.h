@@ -361,4 +361,9 @@ public: /* protected */
 	 * @param mass in kg
 	 */
 	RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
+
+	/**
+	 * Destructor
+	 */
+	~RigidBody();
 };

@@ -1,7 +1,6 @@
 // Forward declarations for tdme.engine.physics
 #pragma once
 
-
 namespace tdme {
 namespace engine {
 namespace physics {

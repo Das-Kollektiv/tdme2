@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/engine/physics/fwd-tdme.h>

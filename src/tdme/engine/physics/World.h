@@ -204,4 +204,9 @@ public:
 	 * Public constructor
 	 */
 	World();
+
+	/**
+	 * Destructor
+	 */
+	~World();
 };
