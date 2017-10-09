@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -11,6 +10,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -51,7 +51,7 @@ public: /* protected */
 	Model* model {  };
 	bool autoEmit {  };
 	bool enableDynamicShadows {  };
-	vector<Particle*> particles {  };
+	vector<Particle> particles {  };
 	vector<Object3D*> objects {  };
 	vector<Object3D*> enabledObjects {  };
 	BoundingBox* boundingBox {  };
@@ -108,4 +108,9 @@ public:
 	 * @param emitter
 	 */
 	ObjectParticleSystemEntityInternal(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ObjectParticleSystemEntityInternal();
 };

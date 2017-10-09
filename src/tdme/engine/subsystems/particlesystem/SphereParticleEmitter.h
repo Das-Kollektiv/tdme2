@@ -61,4 +61,10 @@ public:
 	 * @param color end
 	 */
 	SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~SphereParticleEmitter();
+
 };

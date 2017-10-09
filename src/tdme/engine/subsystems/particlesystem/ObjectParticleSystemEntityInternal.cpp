@@ -52,9 +52,6 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 	this->autoEmit = autoEmit;
 	this->enableDynamicShadows = enableDynamicShadows;
 	particles.resize(maxCount);
-	for (auto i = 0; i < particles.size(); i++) {
-		particles[i] = new Particle();
-	}
 	objects.resize(maxCount);
 	for (auto i = 0; i < objects.size(); i++) {
 		objects[i] = new Object3D(
@@ -76,6 +73,12 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->particlesToSpawnRemainder = 0.0f;
+}
+
+ObjectParticleSystemEntityInternal::~ObjectParticleSystemEntityInternal() {
+	delete emitter;
+	delete boundingBox;
+	delete boundingBoxTransformed;
 }
 
 const wstring& ObjectParticleSystemEntityInternal::getId()
@@ -189,13 +192,13 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
-		auto particle = particles[i];
-		if (particle->active == true)
+		auto& particle = particles[i];
+		if (particle.active == true)
 			continue;
 
-		emitter->emit(particle);
+		emitter->emit(&particle);
 		auto object = objects[i];
-		object->getTranslation().set(particle->position);
+		object->getTranslation().set(particle.position);
 		object->update();
 		object->setEnabled(true);
 		object->getEffectColorAdd().set(effectColorAdd);
@@ -217,24 +220,24 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 	auto& bbMaxXYZ = boundingBoxTransformed->getMax().getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	for (auto i = 0; i < particles.size(); i++) {
-		auto particle = particles[i];
-		if (particle->active == false)
+		auto& particle = particles[i];
+		if (particle.active == false)
 			continue;
 
 		auto object = objects[i];
-		particle->lifeTimeCurrent += timeDelta;
-		if (particle->lifeTimeCurrent >= particle->lifeTimeMax) {
-			particle->active = false;
+		particle.lifeTimeCurrent += timeDelta;
+		if (particle.lifeTimeCurrent >= particle.lifeTimeMax) {
+			particle.active = false;
 			object->setEnabled(false);
 			enabledObjects.erase(remove(enabledObjects.begin(), enabledObjects.end(), object), enabledObjects.end());
 			continue;
 		}
-		if (particle->mass > MathTools::EPSILON)
-			particle->velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+		if (particle.mass > MathTools::EPSILON)
+			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
 
 		object->getEffectColorAdd().set(effectColorAdd);
 		object->getEffectColorMul().set(effectColorMul);
-		object->getTranslation().add(velocityForTime.set(particle->velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->getTranslation().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed->getMin().set(object->getBoundingBoxTransformed()->getMin());

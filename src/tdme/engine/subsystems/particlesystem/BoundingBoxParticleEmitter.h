@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme.h>
@@ -61,4 +60,9 @@ public:
 	 * @param color end 
 	 */
 	BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~BoundingBoxParticleEmitter();
 };

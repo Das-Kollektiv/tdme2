@@ -32,6 +32,11 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->colorEnd.set(colorEnd);
 }
 
+SphereParticleEmitter::~SphereParticleEmitter() {
+	delete sphere;
+	delete sphereTransformed;
+}
+
 int32_t SphereParticleEmitter::getCount()
 {
 	return count;
