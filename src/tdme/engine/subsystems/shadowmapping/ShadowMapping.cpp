@@ -55,6 +55,12 @@ ShadowMapping::ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORe
 	runState = ShadowMapping_RunState::NONE;
 }
 
+ShadowMapping::~ShadowMapping() {
+	for (auto i = 0; i < shadowMaps.size(); i++) {
+		if (shadowMaps[i] != nullptr) delete shadowMaps[i];
+	}
+}
+
 void ShadowMapping::setShadowMapSize(int32_t width, int32_t height)
 {
 	shadowMapWidth = width;
@@ -201,7 +207,7 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 		auto v = runState;
 		if ((v == ShadowMapping_RunState::PRE)) {
 			{
-				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(&mvpMatrix);
+				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(mvpMatrix);
 				goto end_switch0;;
 			}
 		}

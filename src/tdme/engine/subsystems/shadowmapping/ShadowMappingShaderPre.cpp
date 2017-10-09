@@ -64,7 +64,7 @@ void ShadowMappingShaderPre::unUseProgram()
 {
 }
 
-void ShadowMappingShaderPre::setProgramMVPMatrix(Matrix4x4* mvpMatrix)
+void ShadowMappingShaderPre::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(preUniformMVPMatrix, mvpMatrix->getArray());
+	renderer->setProgramUniformFloatMatrix4x4(preUniformMVPMatrix, mvpMatrix.getArray());
 }
