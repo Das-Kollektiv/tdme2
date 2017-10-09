@@ -229,7 +229,6 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
-	src/tdme/math/MathTools.cpp \
 	src/tdme/math/TriangleTriangleIntersection.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
