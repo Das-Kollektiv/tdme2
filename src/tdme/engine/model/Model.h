@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -47,6 +46,12 @@ private:
 	map<wstring, AnimationSetup*> animationSetups {  };
 	Matrix4x4 importTransformationsMatrix {  };
 	BoundingBox* boundingBox {  };
+
+	/**
+	 * Delete sub groups
+	 * @param sub groups
+	 */
+	void deleteSubGroups(map<wstring, Group*>* subGroups);
 public:
 
 	/** 
@@ -194,4 +199,9 @@ public: /* protected */
 	 * @param bounding box
 	 */
 	Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+
+	/**
+	 * Deconstructor
+	 */
+	~Model();
 };

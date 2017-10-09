@@ -30,6 +30,10 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 
+wstring Model::ANIMATIONSETUP_DEFAULT = L"tdme.default";
+
+constexpr float Model::FPS_DEFAULT;
+
 Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
 {
 	this->id = id;
@@ -42,9 +46,23 @@ Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, R
 	this->boundingBox = boundingBox;
 }
 
-wstring Model::ANIMATIONSETUP_DEFAULT = L"tdme.default";
+Model::~Model() {
+	for (auto it = materials.begin(); it != materials.end(); ++it) {
+		delete it->second;
+	}
+	for (auto it = animationSetups.begin(); it != animationSetups.end(); ++it) {
+		delete it->second;
+	}
+	deleteSubGroups(&subGroups);
+	if (boundingBox != nullptr) delete boundingBox;
+}
 
-constexpr float Model::FPS_DEFAULT;
+void Model::deleteSubGroups(map<wstring, Group*>* subGroups) {
+	for (auto it = subGroups->begin(); it != subGroups->end(); ++it) {
+		deleteSubGroups(it->second->getSubGroups());
+		delete it->second;
+	}
+}
 
 const wstring& Model::getId()
 {

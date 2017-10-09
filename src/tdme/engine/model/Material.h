@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -226,4 +225,9 @@ public:
 	 * @param id
 	 */
 	Material(const wstring& id);
+
+	/**
+	 * Destructor
+	 */
+	~Material();
 };
