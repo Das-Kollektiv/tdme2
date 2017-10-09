@@ -124,6 +124,7 @@ void Audio::removeEntity(const wstring& id)
 		audioEntity->stop();
 		audioEntity->dispose();
 		audioEntities.erase(audioEntityIt);
+		delete audioEntity;
 	}
 }
 

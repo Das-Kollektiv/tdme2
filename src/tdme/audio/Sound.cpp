@@ -112,9 +112,9 @@ bool Sound::initialize()
 		audioBufferManaged->setAlId(alBufferId);
 		auto format = -1;
 		auto frequency = -1;
-		auto data = ByteBuffer::allocate(2 * 2 * 10 * 60 * 44100);
 
 		VorbisDecoder decoder;
+		ByteBuffer* data = nullptr;
 		try {
 			// decode ogg vorbis
 			decoder.openFile(pathName, fileName);
@@ -138,6 +138,7 @@ bool Sound::initialize()
 				default:
 					Console::println(wstring(L"Audio sound: '" + id + L"': Unsupported number of channels"));
 			}
+			data = ByteBuffer::allocate(2 * 2 * decoder.getSamples());
 			if (decoder.readFromStream(data) == 0) throw new AudioDecoderException("no audio data was decoded");
 			Console::println(
 				wstring(
@@ -174,6 +175,7 @@ bool Sound::initialize()
 			dispose();
 			return false;
 		}
+		delete data;
 	} else {
 		alBufferId = audioBufferManaged->alId;
 	}
