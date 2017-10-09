@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -146,13 +145,6 @@ public:
 	 * @return off screen engine
 	 */
 	static Engine* createOffScreenInstance(int32_t width, int32_t height);
-
-protected:
-
-	/** 
-	 * Default constructor
-	 */
-	void ctor();
 
 public:
 
@@ -411,8 +403,15 @@ public:
 	// Generated
 
 private:
+	/**
+	 * Constructor
+	 */
 	Engine();
-	static void clinit();
+
+	/**
+	 * Destructor
+	 */
+	~Engine();
 
 private:
 	friend class EngineGL3Renderer;

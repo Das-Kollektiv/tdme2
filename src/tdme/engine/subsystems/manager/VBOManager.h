@@ -49,4 +49,9 @@ public:
 	 * Public constructor
 	 */
 	VBOManager(GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~VBOManager();
 };

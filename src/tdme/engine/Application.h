@@ -1,4 +1,3 @@
-
 #pragma once
 
 #ifdef __linux__

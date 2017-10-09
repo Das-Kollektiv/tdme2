@@ -147,4 +147,9 @@ public:
 	 * @param renderer
 	 */
 	Camera(GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~Camera();
 };
