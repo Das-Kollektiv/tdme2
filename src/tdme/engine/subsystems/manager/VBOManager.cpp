@@ -44,6 +44,7 @@ void VBOManager::removeVBO(const wstring& vboId)
 			auto vboIds = vboManaged->getVBOGlIds();
 			renderer->disposeBufferObjects(vboIds);
 			vbos.erase(vboManagedIt);
+			delete vboManaged;
 		}
 		return;
 	}

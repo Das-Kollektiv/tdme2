@@ -44,6 +44,7 @@ void MeshManager::removeMesh(const wstring& meshId)
 		auto meshManaged = meshManagedIt->second;
 		if (meshManaged->decrementReferenceCounter()) {
 			meshes.erase(meshManagedIt);
+			delete meshManaged;
 		}
 		return;
 	}

@@ -48,6 +48,7 @@ void TextureManager::removeTexture(const wstring& textureId)
 		if (textureManaged->decrementReferenceCounter()) {
 			renderer->disposeTexture(textureManaged->getGlId());
 			textures.erase(textureManagedIt);
+			delete textureManaged;
 		}
 		return;
 	}
