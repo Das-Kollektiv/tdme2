@@ -1,7 +1,6 @@
 // Forward declarations for tdme.os
 #pragma once
 
-
 namespace tdme {
 namespace os {
 namespace threading {
