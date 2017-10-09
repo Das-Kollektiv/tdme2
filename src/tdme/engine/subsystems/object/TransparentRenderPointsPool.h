@@ -10,12 +10,14 @@
 #include <tdme/engine/subsystems/object/TransparentRenderPoint.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 /** 
  * Transparent render points pool
@@ -35,7 +37,17 @@ public:
 	 * @param point
 	 * @param color
 	 */
-	void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera);
+	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
+		if (poolIdx >= transparentRenderPoints.size()) {
+			Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
+			return;
+		}
+		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
+		transparentRenderPoint.acquired = true;
+		transparentRenderPoint.point.set(point);
+		transparentRenderPoint.color.set(color);
+		transparentRenderPoint.distanceFromCamera = distanceFromCamera;
+	}
 
 	/** 
 	 * Merge another pool into this pool

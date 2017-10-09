@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
@@ -13,7 +12,9 @@ class tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRe
 	: public Pool<TransparentRenderFace*>
 {
 public: /* protected */
-	TransparentRenderFace* instantiate() override;
+	inline TransparentRenderFace* instantiate() override {
+		return new TransparentRenderFace();
+	}
 
 public:
 	TransparentRenderFacesPool_TransparentRenderFacesPool();

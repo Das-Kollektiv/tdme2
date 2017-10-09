@@ -87,20 +87,27 @@ using tdme::utils::Key;
 using tdme::utils::Pool;
 using tdme::utils::Console;
 
+constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
+
 Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
 {
 	this->engine = engine;
 	this->renderer = renderer;
-	transparentRenderFacesPool = nullptr;
-	pseTransparentRenderPointsPool = nullptr;
-	psePointBatchVBORenderer = nullptr;
 	transparentRenderFacesGroupPool = new Object3DVBORenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
 }
 
-constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
+Object3DVBORenderer::~Object3DVBORenderer() {
+	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
+		delete batchVBORenderer;
+	}
+	delete transparentRenderFacesGroupPool;
+	delete transparentRenderFacesPool;
+	delete pseTransparentRenderPointsPool;
+	delete psePointBatchVBORenderer;
+}
 
 void Object3DVBORenderer::initialize()
 {
@@ -222,7 +229,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			trfGroup = trfGroupIt->second;
 		}
 		if (trfGroup == nullptr) {
-			trfGroup = static_cast<TransparentRenderFacesGroup*>(transparentRenderFacesGroupPool->allocate());
+			trfGroup = transparentRenderFacesGroupPool->allocate();
 			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
 			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
@@ -233,7 +240,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
 				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
 					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
-					static_cast< TextureCoordinate* >(nullptr)
+					nullptr
 			);
 		}
 	}

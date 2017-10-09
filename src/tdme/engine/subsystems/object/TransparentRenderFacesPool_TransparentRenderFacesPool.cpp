@@ -9,8 +9,3 @@ using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 TransparentRenderFacesPool_TransparentRenderFacesPool::TransparentRenderFacesPool_TransparentRenderFacesPool()
 {
 }
-
-TransparentRenderFace* TransparentRenderFacesPool_TransparentRenderFacesPool::instantiate()
-{
-	return new TransparentRenderFace();
-}

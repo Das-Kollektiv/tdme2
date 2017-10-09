@@ -7,10 +7,6 @@ using tdme::engine::subsystems::object::ObjectBuffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
 
-ObjectBuffer::ObjectBuffer()
-{
-}
-
 ByteBuffer* ObjectBuffer::byteBuffer = nullptr;
 
 ByteBuffer* ObjectBuffer::getByteBuffer(int32_t bytes)

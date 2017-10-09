@@ -30,19 +30,6 @@ TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 	}
 }
 
-void TransparentRenderPointsPool::addPoint(const Vector3& point, const Color4& color, float distanceFromCamera)
-{
-	if (poolIdx >= transparentRenderPoints.size()) {
-		Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
-		return;
-	}
-	auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
-	transparentRenderPoint.acquired = true;
-	transparentRenderPoint.point.set(point);
-	transparentRenderPoint.color.set(color);
-	transparentRenderPoint.distanceFromCamera = distanceFromCamera;
-}
-
 void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 {
 	for (auto point: pool2->transparentRenderPoints) {

@@ -1,13 +1,9 @@
-
 #pragma once
 
 #include <tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
 using tdme::engine::subsystems::object::Object3DGroup;
-
-
-struct default_init_tag;
 
 /** 
  * Transparent face to be rendered
@@ -26,5 +22,8 @@ struct tdme::engine::subsystems::object::TransparentRenderFace final
 	 * @param face 1
 	 * @param face 2
 	 */
-	static bool compare(TransparentRenderFace* face1, TransparentRenderFace* face2);
+	inline static bool compare(TransparentRenderFace* face1, TransparentRenderFace* face2) {
+		return face1->distanceFromCamera > face2->distanceFromCamera;
+	}
+
 };

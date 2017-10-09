@@ -26,11 +26,4 @@ public: /* protected */
 	 */
 	static ByteBuffer* getByteBuffer(int32_t bytes);
 
-	// Generated
-
-public:
-	/**
-	 * Public constructor
-	 */
-	ObjectBuffer();
 };

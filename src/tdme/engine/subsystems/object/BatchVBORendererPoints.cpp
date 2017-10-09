@@ -38,6 +38,12 @@ BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id)
 	fbColors = ByteBuffer::allocate(VERTEX_COUNT * 4 * sizeof(float))->asFloatBuffer();
 }
 
+BatchVBORendererPoints::~BatchVBORendererPoints()
+{
+	delete fbVertices;
+	delete fbColors;
+}
+
 bool BatchVBORendererPoints::isAcquired()
 {
 	return acquired;

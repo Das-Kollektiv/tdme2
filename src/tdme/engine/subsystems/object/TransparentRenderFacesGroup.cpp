@@ -85,29 +85,6 @@ const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup
 	return key;
 }
 
-void TransparentRenderFacesGroup::addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate)
-{
-	if (batchVBORenderers.size() == 0) {
-		auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
-		if (batchVBORendererTriangles == nullptr) {
-			Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
-			return;
-		}
-		batchVBORenderers.push_back(batchVBORendererTriangles);
-	}
-	auto batchVBORendererTriangles = batchVBORenderers.at(batchVBORenderers.size() - 1);
-	if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
-		return;
-
-	batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
-	if (batchVBORendererTriangles == nullptr) {
-		Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
-		return;
-	}
-	batchVBORenderers.push_back(batchVBORendererTriangles);
-	batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
-}
-
 void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 {
 	Matrix4x4 modelViewMatrix;

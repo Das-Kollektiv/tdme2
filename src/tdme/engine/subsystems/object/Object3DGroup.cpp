@@ -53,6 +53,11 @@ Object3DGroup::Object3DGroup()
 	groupTransformationsMatrix = nullptr;
 }
 
+Object3DGroup::~Object3DGroup()
+{
+	delete renderer;
+}
+
 void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
 {
 	auto model = object->getModel();

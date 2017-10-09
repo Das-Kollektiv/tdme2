@@ -28,5 +28,17 @@ struct tdme::engine::subsystems::object::TransparentRenderPoint final
 	 * @param point 1
 	 * @param point 2
 	 */
-	static bool compare(TransparentRenderPoint& point1, TransparentRenderPoint& point2);
+	inline static bool compare(TransparentRenderPoint& point1, TransparentRenderPoint& point2) {
+		if (point1.acquired == false && point2.acquired == false) {
+			return false;
+		} else
+		if (point1.acquired == false) {
+			return false;
+		} else
+		if (point2.acquired == false) {
+			return true;
+		} else {
+			return point1.distanceFromCamera > point2.distanceFromCamera;
+		}
+	}
 };

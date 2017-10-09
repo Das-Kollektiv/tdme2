@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -8,10 +7,13 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/object/BatchVBORendererTriangles.h>
+#include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 using std::wstring;
@@ -20,11 +22,13 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::subsystems::object::BatchVBORendererTriangles;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 /** 
  * Transparent render faces group
@@ -83,7 +87,27 @@ public: /* protected */
 	 * @param normal
 	 * @param texture coordinate
 	 */
-	void addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate);
+	inline void addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+		if (batchVBORenderers.size() == 0) {
+			auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
+			if (batchVBORendererTriangles == nullptr) {
+				Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+				return;
+			}
+			batchVBORenderers.push_back(batchVBORendererTriangles);
+		}
+		auto batchVBORendererTriangles = batchVBORenderers.at(batchVBORenderers.size() - 1);
+		if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
+			return;
+
+		batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
+		if (batchVBORendererTriangles == nullptr) {
+			Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+			return;
+		}
+		batchVBORenderers.push_back(batchVBORendererTriangles);
+		batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
+	}
 
 	/** 
 	 * Render this transparent render faces group

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -155,4 +154,9 @@ public:
 	 * @param renderer
 	 */
 	Object3DVBORenderer(Engine* engine, GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~Object3DVBORenderer();
 };
