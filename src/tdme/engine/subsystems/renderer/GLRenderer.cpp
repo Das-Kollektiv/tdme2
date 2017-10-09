@@ -24,10 +24,10 @@ GLRenderer::GLRenderer()
 	for (auto i = 0; i < lights.size(); i++) {
 		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
 	}
-	projectionMatrix = (new Matrix4x4())->identity();
-	cameraMatrix = (new Matrix4x4())->identity();
-	modelViewMatrix = (new Matrix4x4())->identity();
-	viewportMatrix = (new Matrix4x4())->identity();
+	projectionMatrix.identity();
+	cameraMatrix.identity();
+	modelViewMatrix.identity();
+	viewportMatrix.identity();
 	viewPortX = 0;
 	viewPortY = 0;
 	viewPortWidth = 0;
