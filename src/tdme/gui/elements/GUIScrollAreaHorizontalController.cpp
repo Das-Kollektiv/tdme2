@@ -13,20 +13,9 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIScrollAreaHorizontalController::GUIScrollAreaHorizontalController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIScrollAreaHorizontalController::GUIScrollAreaHorizontalController(GUINode* node) 
-	: GUIScrollAreaHorizontalController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-void GUIScrollAreaHorizontalController::ctor(GUINode* node)
-{
-	super::ctor(node);
 }
 
 bool GUIScrollAreaHorizontalController::isDisabled()

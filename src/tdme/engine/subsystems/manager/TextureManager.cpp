@@ -22,6 +22,12 @@ TextureManager::TextureManager(GLRenderer* renderer)
 	this->renderer = renderer;
 }
 
+TextureManager::~TextureManager() {
+	for (auto it = textures.begin(); it != textures.end(); ++it) {
+		delete it->second;
+	}
+}
+
 int32_t TextureManager::addTexture(Texture* texture)
 {
 	auto textureManagedIt = textures.find(texture->getId());
@@ -48,6 +54,7 @@ void TextureManager::removeTexture(const wstring& textureId)
 		if (textureManaged->decrementReferenceCounter()) {
 			renderer->disposeTexture(textureManaged->getGlId());
 			textures.erase(textureManagedIt);
+			delete textureManaged;
 		}
 		return;
 	}

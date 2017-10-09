@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -58,7 +57,7 @@ public:
 	 * @param index
 	 * @return rotation
 	 */
-	Rotation* remove(int32_t index);
+	void remove(int32_t index);
 
 	/** 
 	 * @return rotation quaternion
@@ -80,4 +79,9 @@ public:
 	 * Public constructor
 	 */
 	Rotations();
+
+	/**
+	 * Destructor
+	 */
+	~Rotations();
 };

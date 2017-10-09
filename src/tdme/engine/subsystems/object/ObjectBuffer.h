@@ -12,7 +12,7 @@ using tdme::utils::ByteBuffer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::object::_Buffer
+class tdme::engine::subsystems::object::ObjectBuffer
 {
 private:
 	static ByteBuffer* byteBuffer;
@@ -26,11 +26,4 @@ public: /* protected */
 	 */
 	static ByteBuffer* getByteBuffer(int32_t bytes);
 
-	// Generated
-
-public:
-	/**
-	 * Public constructor
-	 */
-	_Buffer();
 };

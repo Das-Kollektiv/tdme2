@@ -12,9 +12,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 
-
-struct default_init_tag;
-
 /** 
  * Alignments
  * @author Andreas Drewke
@@ -27,10 +24,7 @@ public: /* protected */
 	GUINode_AlignmentHorizontal* horizontal {  };
 	GUINode_AlignmentVertical* vertical {  };
 
-	// Generated
 	GUINode_Alignments();
-protected:
-	GUINode_Alignments(const ::default_init_tag&);
 
 private:
 	friend class GUINode;

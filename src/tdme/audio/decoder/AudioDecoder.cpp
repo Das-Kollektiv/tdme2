@@ -30,3 +30,8 @@ int32_t AudioDecoder::getBitsPerSample()
 	return bitsPerSample;
 }
 
+int32_t AudioDecoder::getSamples()
+{
+	return samples;
+}
+

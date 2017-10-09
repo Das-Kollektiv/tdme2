@@ -50,6 +50,9 @@ AudioStream::AudioStream(const wstring& id, const wstring& pathName, const wstri
 	data = nullptr;
 }
 
+AudioStream::~AudioStream() {
+}
+
 bool AudioStream::isPlaying()
 {
 	ALint state;
@@ -59,9 +62,6 @@ bool AudioStream::isPlaying()
 
 void AudioStream::rewind()
 {
-	if (initiated == false)
-		return;
-
 	try {
 		decoder.reset();
 	} catch (FileSystemException &fse) {
@@ -261,6 +261,9 @@ void AudioStream::updateProperties()
 
 void AudioStream::dispose()
 {
+	if (initiated == false)
+		return;
+
 	if (alSourceId != Audio::ALSOURCEID_NONE) {
 		alDeleteSources(1, &alSourceId);
 		if (alGetError() != AL_NO_ERROR) {
@@ -277,6 +280,9 @@ void AudioStream::dispose()
 	// }
 
 	decoder.close();
-
+	if (data != nullptr) {
+		delete data;
+		data = nullptr;
+	}
 	initiated = false;
 }

@@ -22,9 +22,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI space node
  * @author Andreas Drewke
@@ -33,26 +30,6 @@ struct default_init_tag;
 class tdme::gui::nodes::GUISpaceNode final
 	: public GUINode
 {
-
-public:
-	typedef GUINode super;
-
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 public: /* protected */
 
@@ -78,8 +55,5 @@ public:
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
-	// Generated
 	GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
-protected:
-	GUISpaceNode(const ::default_init_tag&);
 };

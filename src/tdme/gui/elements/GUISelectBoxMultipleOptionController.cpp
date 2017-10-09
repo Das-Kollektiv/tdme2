@@ -23,16 +23,11 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
-	: GUISelectBoxMultipleOptionController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->focussed = false;
 }
 
 wstring GUISelectBoxMultipleOptionController::CONDITION_SELECTED;
@@ -46,13 +41,6 @@ wstring GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED;
 wstring GUISelectBoxMultipleOptionController::CONDITION_DISABLED;
 
 wstring GUISelectBoxMultipleOptionController::CONDITION_ENABLED;
-
-void GUISelectBoxMultipleOptionController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
-	this->focussed = false;
-}
 
 bool GUISelectBoxMultipleOptionController::isDisabled()
 {

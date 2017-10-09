@@ -32,6 +32,11 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->obbTransformed = dynamic_cast< OrientedBoundingBox* >(obb->clone());
 }
 
+BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
+	delete obb;
+	delete obbTransformed;
+}
+
 int32_t BoundingBoxParticleEmitter::getCount()
 {
 	return count;

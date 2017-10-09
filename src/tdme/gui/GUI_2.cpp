@@ -8,7 +8,7 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 
 GUI_2::GUI_2(GUI *GUI_this)
-	: super()
+	: Pool()
 	, GUI_this(GUI_this)
 {
 }

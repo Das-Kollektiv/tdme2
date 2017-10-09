@@ -8,9 +8,6 @@
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI position effect
  * @author Andreas Drewke
@@ -20,9 +17,6 @@ class tdme::gui::effects::GUIPositionEffect
 	: public GUIEffect
 {
 
-public:
-	typedef GUIEffect super;
-
 private:
 	float positionXStart {  };
 	float positionXEnd {  };
@@ -30,13 +24,6 @@ private:
 	float positionYEnd {  };
 	float positionX {  };
 	float positionY {  };
-
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -86,9 +73,6 @@ public:
 	void apply(GUIRenderer* guiRenderer) override;
 
 	GUIPositionEffect();
-
-protected:
-	GUIPositionEffect(const ::default_init_tag&);
 
 private:
 	void init();

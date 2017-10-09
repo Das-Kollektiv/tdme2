@@ -20,9 +20,6 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 
-
-struct default_init_tag;
-
 /** 
  * GUI
  * @author Andreas Drewke
@@ -65,14 +62,6 @@ private:
 	array<float, 4> effectColorAddFinal {  };
 	float guiEffectOffsetX {  };
 	float guiEffectOffsetY {  };
-
-protected:
-
-	/** 
-	 * Constructor
-	 * @param renderer
-	 */
-	void ctor(GLRenderer* renderer);
 
 public:
 
@@ -316,9 +305,6 @@ public:
 	void render();
 
 	GUIRenderer(GLRenderer* renderer);
-
-protected:
-	GUIRenderer(const ::default_init_tag&);
 
 private:
 	void init();

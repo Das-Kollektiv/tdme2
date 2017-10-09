@@ -19,6 +19,12 @@ MeshManager::MeshManager()
 {
 }
 
+MeshManager::~MeshManager() {
+	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
+		delete it->second;
+	}
+}
+
 Object3DGroupMesh* MeshManager::getMesh(const wstring& meshId)
 {
 	auto meshManagedIt = meshes.find(meshId);
@@ -44,6 +50,7 @@ void MeshManager::removeMesh(const wstring& meshId)
 		auto meshManaged = meshManagedIt->second;
 		if (meshManaged->decrementReferenceCounter()) {
 			meshes.erase(meshManagedIt);
+			delete meshManaged;
 		}
 		return;
 	}

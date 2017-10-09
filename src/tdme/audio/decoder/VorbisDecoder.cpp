@@ -58,6 +58,7 @@ void VorbisDecoder::openFile(const wstring& pathName, const wstring& fileName) t
 	channels = vi->channels;
 	sampleRate = vi->rate;
 	bitsPerSample = 16;
+	samples = ov_pcm_total(&vf, -1);
 	section = 0;
 }
 

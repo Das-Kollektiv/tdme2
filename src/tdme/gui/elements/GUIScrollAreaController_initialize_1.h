@@ -11,8 +11,6 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 
-
-struct default_init_tag;
 class tdme::gui::elements::GUIScrollAreaController_initialize_1
 	: public virtual GUIActionListener
 {
@@ -20,7 +18,6 @@ class tdme::gui::elements::GUIScrollAreaController_initialize_1
 public:
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	// Generated
 	GUIScrollAreaController_initialize_1(GUIScrollAreaController *GUIScrollAreaController_this, GUIElementNode* upArrowNode, GUIParentNode* contentNode, GUIElementNode* downArrowNode, GUIElementNode* leftArrowNode, GUIElementNode* rightArrowNode);
 	GUIScrollAreaController *GUIScrollAreaController_this;
 	GUIElementNode* upArrowNode;

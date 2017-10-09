@@ -29,20 +29,9 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::StringUtils;
 
-GUILayoutNode::GUILayoutNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUILayoutNode::GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment)  /* throws(GUIParserException) */
-	: GUILayoutNode(*static_cast< ::default_init_tag* >(0))
+	: 	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,overflowX,overflowY,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn,alignment);
-}
-
-void GUILayoutNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment) /* throws(GUIParserException) */
-{
-	super::ctor(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 	this->alignment = alignment;
 }
 
@@ -114,8 +103,8 @@ int32_t GUILayoutNode::getContentHeight()
 
 void GUILayoutNode::layoutSubNodes()
 {
-	super::layoutSubNodes();
-	super::layoutSubNodes();
+	GUIParentNode::layoutSubNodes();
+	GUIParentNode::layoutSubNodes();
 	{
 		auto v = alignment;
 		if ((v == GUILayoutNode_Alignment::VERTICAL)) {
@@ -273,7 +262,7 @@ end_switch0:;
 
 void GUILayoutNode::setTop(int32_t top)
 {
-	super::setTop(top);
+	GUIParentNode::setTop(top);
 	top += computedConstraints->alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);
@@ -287,7 +276,7 @@ void GUILayoutNode::setTop(int32_t top)
 
 void GUILayoutNode::setLeft(int32_t left)
 {
-	super::setLeft(left);
+	GUIParentNode::setLeft(left);
 	left += computedConstraints->alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);

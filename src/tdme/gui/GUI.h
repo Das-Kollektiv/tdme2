@@ -34,9 +34,6 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Time;
 using tdme::utils::Pool;
 
-
-struct default_init_tag;
-
 /** 
  * GUI
  * @author Andreas Drewke
@@ -68,14 +65,6 @@ private:
 	int32_t width {  };
 	int32_t height {  };
 	int32_t mouseButtonLast { };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param engine 
-	 * @param GUI renderer
-	 */
-	void ctor(Engine* engine, GUIRenderer* guiRenderer);
 
 public:
 
@@ -314,11 +303,7 @@ private:
 
 public:
 
-	// Generated
 	GUI(Engine* engine, GUIRenderer* guiRenderer);
-protected:
-	GUI(const ::default_init_tag&);
-
 
 public:
 	static void clinit();

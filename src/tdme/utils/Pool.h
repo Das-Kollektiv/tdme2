@@ -98,6 +98,16 @@ public:
 	 */
 	Pool() {
 	}
+
+	~Pool() {
+		for (auto element: usedElements) {
+			delete element;
+		}
+		for (auto element: freeElements) {
+			delete element;
+		}
+	}
+
 };
 
 };

@@ -9,17 +9,7 @@ using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::gui::events::Action;
 
-GUIEffect::GUIEffect(const ::default_init_tag&)
-{
-}
-
 GUIEffect::GUIEffect() 
-	: GUIEffect(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void GUIEffect::ctor()
 {
 	active = false;
 	timeTotal = 0.0f;

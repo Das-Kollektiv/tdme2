@@ -75,15 +75,19 @@ using tdme::utils::Exception;
 map<wstring, GUIFont*> GUI::fontCache;
 map<wstring, Texture*> GUI::imageCache;
 
-GUI::GUI(const ::default_init_tag&)
+GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
-	clinit();
-}
-
-GUI::GUI(Engine* engine, GUIRenderer* guiRenderer) 
-	: GUI(*static_cast< ::default_init_tag* >(0))
-{
-	ctor(engine,guiRenderer);
+	init();
+	this->engine = engine;
+	this->guiRenderer = guiRenderer;
+	this->width = 0;
+	this->height = 0;
+	try {
+		this->foccussedBorderColor = new GUIColor(L"#8080FF");
+	} catch (Exception& exception) {
+		Console::print(string("GUI(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 }
 
 void GUI::init()
@@ -96,21 +100,6 @@ void GUI::init()
 	mouseEventsPool = new GUI_1(this);
 	keyboardEventsPool = new GUI_2(this);
 	mouseButtonLast = 0;
-}
-
-void GUI::ctor(Engine* engine, GUIRenderer* guiRenderer)
-{
-	init();
-	this->engine = engine;
-	this->guiRenderer = guiRenderer;
-	this->width = 0;
-	this->height = 0;
-	try {
-		this->foccussedBorderColor = new GUIColor(L"#8080FF");
-	} catch (Exception& exception) {
-		Console::print(string("GUI::ctor(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
 }
 
 int32_t GUI::getWidth()

@@ -38,6 +38,13 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 	this->fbTextureCoordinates = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float))->asFloatBuffer();
 }
 
+BatchVBORendererTriangles::~BatchVBORendererTriangles()
+{
+	delete fbVertices;
+	delete fbNormals;
+	delete fbTextureCoordinates;
+}
+
 bool BatchVBORendererTriangles::isAcquired()
 {
 	return acquired;
@@ -94,20 +101,4 @@ void BatchVBORendererTriangles::clear()
 	fbVertices->clear();
 	fbNormals->clear();
 	fbTextureCoordinates->clear();
-}
-
-bool BatchVBORendererTriangles::addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate)
-{
-	if (vertices == VERTEX_COUNT)
-		return false;
-
-	fbVertices->put(vertex.getArray());
-	fbNormals->put(normal.getArray());
-	if (textureCoordinate != nullptr) {
-		fbTextureCoordinates->put(textureCoordinate->getArray());
-	} else {
-		fbTextureCoordinates->put(&TEXTURECOORDINATE_NONE);
-	}
-	vertices++;
-	return true;
 }

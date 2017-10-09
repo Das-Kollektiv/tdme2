@@ -56,6 +56,11 @@ RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t type
 	computeWorldInverseInertiaMatrix();
 }
 
+RigidBody::~RigidBody() {
+	delete transformations;
+	delete cbv;
+}
+
 constexpr int32_t RigidBody::TYPEIDS_ALL;
 
 constexpr float RigidBody::VELOCITY_SLEEPTOLERANCE;

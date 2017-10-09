@@ -11,23 +11,12 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUIInput::GUIInput(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIInput::GUIInput() throw (FileSystemException)
-	: GUIInput(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUIInput::NAME = L"input";
-
-void GUIInput::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
 }
+
+wstring GUIInput::NAME = L"input";
 
 const wstring& GUIInput::getName()
 {

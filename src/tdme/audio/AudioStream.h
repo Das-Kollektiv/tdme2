@@ -67,4 +67,9 @@ public: /* protected */
 	 * @param file name
 	 */
 	AudioStream(const wstring& id, const wstring& pathName, const wstring& fileName);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~AudioStream();
 };

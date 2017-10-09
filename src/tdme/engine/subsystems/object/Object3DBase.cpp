@@ -75,6 +75,18 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
 
+Object3DBase::~Object3DBase() {
+	for (auto it = transformationsMatrices.begin(); it != transformationsMatrices.end(); ++it) {
+		delete it->second;
+	}
+	for (auto skinningGroupMatricies: skinningGroupsMatrices) {
+		for (auto it = skinningGroupMatricies.begin(); it != skinningGroupMatricies.end(); ++it) {
+			delete it->second;
+		}
+	}
+	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
+}
+
 Model* Object3DBase::getModel()
 {
 	return model;
@@ -121,7 +133,6 @@ void Object3DBase::removeOverlayAnimation(const wstring& id)
 	auto overlayAnimationsByJointIdIt = overlayAnimationsByJointId.find(animationState->setup->getOverlayFromGroupId());
 	if (overlayAnimationsByJointIdIt == overlayAnimationsByJointId.end()) return;
 	overlayAnimationsByJointId.erase(overlayAnimationsByJointIdIt);
-
 }
 
 void Object3DBase::removeOverlayAnimationsFinished()

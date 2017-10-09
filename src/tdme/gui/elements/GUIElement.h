@@ -14,9 +14,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 
-
-struct default_init_tag;
-
 /** 
  * GUI element
  * @author Andreas Drewke
@@ -51,8 +48,5 @@ public:
 	 */
 	virtual GUINodeController* createController(GUINode* node) = 0;
 
-	// Generated
 	GUIElement();
-protected:
-	GUIElement(const ::default_init_tag&);
 };

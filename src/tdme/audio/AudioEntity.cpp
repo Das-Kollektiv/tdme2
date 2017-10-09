@@ -21,6 +21,9 @@ AudioEntity::AudioEntity(const wstring& id)
 	sourceVelocity.set(0.0f, 0.0f, 0.0f);
 }
 
+AudioEntity::~AudioEntity() {
+}
+
 const wstring& AudioEntity::getId()
 {
 	return id;

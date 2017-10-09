@@ -112,4 +112,9 @@ public:
 	 * @param auto emit
 	 */
 	PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~PointsParticleSystemEntityInternal();
 };

@@ -21,6 +21,7 @@ PhysicsPartitionNone::PhysicsPartitionNone()
 
 void PhysicsPartitionNone::reset()
 {
+	bodies.clear();
 }
 
 void PhysicsPartitionNone::addRigidBody(RigidBody* rigidBody)

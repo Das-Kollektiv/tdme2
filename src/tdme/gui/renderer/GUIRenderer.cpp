@@ -31,14 +31,10 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIShader;
 using tdme::utils::Console;
 
-GUIRenderer::GUIRenderer(const ::default_init_tag&)
-{
-}
-
 GUIRenderer::GUIRenderer(GLRenderer* renderer) 
-	: GUIRenderer(*static_cast< ::default_init_tag* >(0))
 {
-	ctor(renderer);
+	init();
+	this->renderer = renderer;
 }
 
 void GUIRenderer::init()
@@ -66,12 +62,6 @@ constexpr float GUIRenderer::SCREEN_TOP;
 constexpr float GUIRenderer::SCREEN_RIGHT;
 
 constexpr float GUIRenderer::SCREEN_BOTTOM;
-
-void GUIRenderer::ctor(GLRenderer* renderer)
-{
-	init();
-	this->renderer = renderer;
-}
 
 void GUIRenderer::setGUI(GUI* gui)
 {

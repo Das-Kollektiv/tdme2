@@ -50,7 +50,7 @@ public:
 	 * Set up pre program mvp matrix
 	 * @param mvp matrix
 	 */
-	virtual void setProgramMVPMatrix(Matrix4x4* mvpMatrix);
+	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
 
 	/**
 	 * Constructor

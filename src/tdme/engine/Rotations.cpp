@@ -15,6 +15,12 @@ Rotations::Rotations()
 {
 }
 
+Rotations::~Rotations() {
+	for (auto rotation: rotations) {
+		delete rotation;
+	}
+}
+
 int32_t Rotations::size()
 {
 	return rotations.size();
@@ -35,11 +41,11 @@ void Rotations::set(int32_t index, Rotation* rotation)
 	rotations[index] = rotation;
 }
 
-Rotation* Rotations::remove(int32_t index)
+void Rotations::remove(int32_t index)
 {
 	Rotation* rotation = rotations.at(index);
 	rotations.erase(rotations.begin() + index);
-	return rotation;
+	delete rotation;
 }
 
 Quaternion& Rotations::getQuaternion()
@@ -60,7 +66,9 @@ void Rotations::fromRotations(Rotations* transformations)
 		_rotation->fromRotation(rotation);
 	}
 	while (rotationIdx < rotations.size()) {
-		rotations.erase(rotations.begin() + rotations.size() - 1);
+		Rotation* rotation = rotations[rotations.size() - 1];
+		auto _rotation = rotations.erase(rotations.begin() + rotations.size() - 1);
+		delete rotation;
 	}
 	this->quaternion.set(transformations->quaternion);
 }

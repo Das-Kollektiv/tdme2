@@ -62,8 +62,18 @@ World::World()
 	updateRigidBodyIndices = true;
 }
 
+World::~World()
+{
+	reset();
+	if (constraintsSolver != nullptr) delete constraintsSolver;
+	if (partition != nullptr) delete partition;
+}
+
 void World::reset()
 {
+	for (auto rigidBody: rigidBodies) {
+		delete rigidBody;
+	}
 	rigidBodies.clear();
 	rigidBodiesDynamic.clear();
 	rigidBodiesById.clear();
@@ -78,6 +88,7 @@ PhysicsPartition* World::getPartition()
 
 void World::setPartition(PhysicsPartition* partition)
 {
+	if (partition != nullptr) delete partition;
 	this->partition = partition;
 }
 

@@ -139,4 +139,9 @@ public: /* protected */
 	 * Constructor
 	 */
 	AudioEntity(const wstring& id);
+
+	/**
+	 * Constructor
+	 */
+	virtual ~AudioEntity();
 };

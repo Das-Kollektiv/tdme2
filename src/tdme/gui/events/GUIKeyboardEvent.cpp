@@ -17,14 +17,17 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
 	}
 }
 
-GUIKeyboardEvent::GUIKeyboardEvent(const ::default_init_tag&)
-{
-}
-
 GUIKeyboardEvent::GUIKeyboardEvent() 
-	: GUIKeyboardEvent(*static_cast< ::default_init_tag* >(0))
 {
-	ctor();
+	this->time = -1LL;
+	this->type = GUIKeyboardEvent_Type::NONE;
+	this->keyCode = -1;
+	this->keyChar = wchar_t(0x0000);
+	this->metaDown = false;
+	this->controlDown = false;
+	this->altDown = false;
+	this->shiftDown = false;
+	this->processed = false;
 }
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB;
@@ -46,19 +49,6 @@ constexpr int32_t GUIKeyboardEvent::KEYCODE_RIGHT;
 constexpr int32_t GUIKeyboardEvent::KEYCODE_DOWN;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_ESCAPE;
-
-void GUIKeyboardEvent::ctor()
-{
-	this->time = -1LL;
-	this->type = GUIKeyboardEvent_Type::NONE;
-	this->keyCode = -1;
-	this->keyChar = wchar_t(0x0000);
-	this->metaDown = false;
-	this->controlDown = false;
-	this->altDown = false;
-	this->shiftDown = false;
-	this->processed = false;
-}
 
 int64_t GUIKeyboardEvent::getTime()
 {

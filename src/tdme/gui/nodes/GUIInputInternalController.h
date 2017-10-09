@@ -18,9 +18,6 @@ using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI input internal controller
  * @author Andreas Drewke
@@ -29,9 +26,6 @@ struct default_init_tag;
 class tdme::gui::nodes::GUIInputInternalController final
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
 
 private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
@@ -44,13 +38,6 @@ private:
 	bool isDragging {  };
 	array<float, 2> dragPosition {  };
 	int64_t draggingTickLast {  };
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -100,12 +87,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIInputInternalController(GUINode* node);
-protected:
-	GUIInputInternalController(const ::default_init_tag&);
 
 private:
 	void init();

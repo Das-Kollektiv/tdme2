@@ -19,9 +19,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI select box controller
  * @author Andreas Drewke
@@ -31,9 +28,6 @@ class tdme::gui::elements::GUISelectBoxController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	static wstring CONDITION_DISABLED;
 	static wstring CONDITION_ENABLED;
@@ -41,13 +35,6 @@ private:
 	vector<GUISelectBoxOptionController*> selectBoxOptionControllers {  };
 	bool disabled {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -102,15 +89,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUISelectBoxController(GUINode* node);
-protected:
-	GUISelectBoxController(const ::default_init_tag&);
-
-public:
-	static void clinit();
 
 private:
 	void init();

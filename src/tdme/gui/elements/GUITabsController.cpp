@@ -19,26 +19,15 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::MutableString;
 
-GUITabsController::GUITabsController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUITabsController::GUITabsController(GUINode* node) 
-	: GUITabsController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
 }
 
 void GUITabsController::init()
 {
 	tabContentNodeId = new MutableString();
-}
-
-void GUITabsController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
 }
 
 bool GUITabsController::isDisabled()

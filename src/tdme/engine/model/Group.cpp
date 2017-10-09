@@ -38,6 +38,10 @@ Group::Group(Model* model, Group* parentGroup, const wstring& id, const wstring&
 	this->skinning = nullptr;
 }
 
+Group::~Group() {
+	if (animation != nullptr) delete animation;
+	if (skinning != nullptr) delete skinning;
+}
 
 Model* Group::getModel()
 {

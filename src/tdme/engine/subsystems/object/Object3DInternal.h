@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -173,4 +172,9 @@ public:
 	 * @param model
 	 */
 	Object3DInternal(const wstring& id, Model* model);
+
+	/**
+	 * Destructor
+	 */
+	~Object3DInternal();
 };

@@ -93,22 +93,18 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Float;
 using tdme::utils::Console;
 
-namespace
-{
-template<typename F>
-struct finally_
-{
-    finally_(F f) : f(f), moved(false) { }
-    finally_(finally_ &&x) : f(x.f), moved(false) { x.moved = true; }
-    ~finally_() { if(!moved) f(); }
-private:
-    finally_(const finally_&); finally_& operator=(const finally_&);
-    F f;
-    bool moved;
-};
-
-template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
-}
+Engine* Engine::instance = nullptr;
+GLRenderer* Engine::renderer = nullptr;
+TextureManager* Engine::textureManager = nullptr;
+VBOManager* Engine::vboManager = nullptr;
+MeshManager* Engine::meshManager = nullptr;
+GUIRenderer* Engine::guiRenderer = nullptr;
+Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
+ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
+LightingShader* Engine::lightingShader = nullptr;
+ParticlesShader* Engine::particlesShader = nullptr;
+GUIShader* Engine::guiShader = nullptr;
 
 Engine::Engine() 
 {
@@ -125,33 +121,32 @@ Engine::Engine()
 	initialized = false;
 }
 
-Engine* Engine::instance;
-
-GLRenderer* Engine::renderer;
-
-TextureManager* Engine::textureManager;
-
-VBOManager* Engine::vboManager;
-
-MeshManager* Engine::meshManager;
-
-GUIRenderer* Engine::guiRenderer;
-
-Engine::AnimationProcessingTarget Engine::animationProcessingTarget;
-
-ShadowMappingShaderPre* Engine::shadowMappingShaderPre;
-
-ShadowMappingShaderRender* Engine::shadowMappingShaderRender;
-
-LightingShader* Engine::lightingShader;
-
-ParticlesShader* Engine::particlesShader;
-
-GUIShader* Engine::guiShader;
+Engine::~Engine() {
+	delete timing;
+	delete camera;
+	delete gui;
+	delete frameBuffer;
+	delete partition;
+	if (shadowMappingEnabled == true) {
+		delete shadowMapping;
+	}
+	delete object3DVBORenderer;
+	if (instance == this) {
+		delete renderer;
+		delete textureManager;
+		delete vboManager;
+		delete meshManager;
+		delete guiRenderer;
+		delete lightingShader;
+		delete particlesShader;
+		delete guiShader;
+		delete shadowMappingShaderPre;
+		delete shadowMappingShaderRender;
+	}
+}
 
 Engine* Engine::getInstance()
 {
-	clinit();
 	if (instance == nullptr) {
 		instance = new Engine();
 	}
@@ -160,7 +155,6 @@ Engine* Engine::getInstance()
 
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
-	clinit();
 	if (instance == nullptr || instance->initialized == false) {
 		Console::println(wstring(L"Engine::createOffScreenInstance(): Engine not created or not initialized."));
 		return nullptr;
@@ -260,31 +254,26 @@ MeshManager* Engine::getMeshManager()
 
 ShadowMappingShaderPre* Engine::getShadowMappingShaderPre()
 {
-	clinit();
 	return shadowMappingShaderPre;
 }
 
 ShadowMappingShaderRender* Engine::getShadowMappingShaderRender()
 {
-	clinit();
 	return shadowMappingShaderRender;
 }
 
 LightingShader* Engine::getLightingShader()
 {
-	clinit();
 	return lightingShader;
 }
 
 ParticlesShader* Engine::getParticlesShader()
 {
-	clinit();
 	return particlesShader;
 }
 
 GUIShader* Engine::getGUIShader()
 {
-	clinit();
 	return guiShader;
 }
 
@@ -317,11 +306,8 @@ void Engine::addEntity(Entity* entity)
 	auto oldEntity = getEntity(entity->getId());
 	if (oldEntity != nullptr) {
 		oldEntity->dispose();
-		if (oldEntity->isEnabled() == true)
-			partition->removeEntity(oldEntity);
-
+		if (oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
 	}
-
 	entity->setEngine(this);
 	entity->setRenderer(renderer);
 	entity->initialize();
@@ -337,14 +323,12 @@ void Engine::removeEntity(const wstring& id)
 		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
 	}
-
 	if (entity != nullptr) {
-		if (entity->isEnabled() == true)
-			partition->removeEntity(entity);
-
+		if (entity->isEnabled() == true) partition->removeEntity(entity);
 		entity->dispose();
 		entity->setEngine(nullptr);
 		entity->setRenderer(nullptr);
+		delete entity;
 	}
 }
 
@@ -723,6 +707,10 @@ void Engine::dispose()
 	if (this == Engine::instance) {
 		guiRenderer->dispose();
 	}
+	object3DVBORenderer->dispose();
+	if (instance == this) {
+		guiRenderer->dispose();
+	}
 }
 
 void Engine::initGUIMode()
@@ -757,29 +745,3 @@ bool Engine::makeScreenshot(const wstring& pathName, const wstring& fileName)
 
 	return true;
 }
-
-void Engine::clinit()
-{
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-			instance = nullptr;
-			textureManager = nullptr;
-			vboManager = nullptr;
-			meshManager = nullptr;
-			guiRenderer = nullptr;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-			shadowMappingShaderPre = nullptr;
-			shadowMappingShaderRender = nullptr;
-			lightingShader = nullptr;
-			particlesShader = nullptr;
-			guiShader = nullptr;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-

@@ -18,6 +18,7 @@ PartitionNone::PartitionNone()
 
 void PartitionNone::reset()
 {
+	entities.clear();
 }
 
 void PartitionNone::addEntity(Entity* entity)

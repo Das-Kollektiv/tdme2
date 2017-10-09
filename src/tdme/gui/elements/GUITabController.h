@@ -18,9 +18,6 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI tab controller
  * @author Andreas Drewke
@@ -29,9 +26,6 @@ struct default_init_tag;
 class tdme::gui::elements::GUITabController final
 	: public GUINodeController
 {
-
-public:
-	typedef GUINodeController super;
 
 private:
 	static wstring CONDITION_DISABLED;
@@ -46,13 +40,6 @@ private:
 	GUIColor* unfocussedNodeBorderTopColor {  };
 	GUIColor* unfocussedNodeBorderBottomColor {  };
 	bool disabled {  };
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -91,9 +78,6 @@ public:
 
 public: /* protected */
 	GUITabController(GUINode* node);
-
-protected:
-	GUITabController(const ::default_init_tag&);
 
 public:
 	static void clinit();

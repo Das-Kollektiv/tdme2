@@ -40,12 +40,16 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	dynamicShadowing = false;
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
-	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
+	boundingBox = model->getBoundingBox();
 	boundingBoxTransformed = dynamic_cast< BoundingBox* >(boundingBox->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
 	boundingBoxTransformed->getMin().sub(0.05f);
 	boundingBoxTransformed->getMax().add(0.05f);
 	boundingBoxTransformed->update();
+}
+
+Object3DInternal::~Object3DInternal() {
+	delete boundingBoxTransformed;
 }
 
 const wstring& Object3DInternal::getId()

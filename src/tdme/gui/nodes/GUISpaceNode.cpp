@@ -15,20 +15,9 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::utils::StringUtils;
 
-GUISpaceNode::GUISpaceNode(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
-	: GUISpaceNode(*static_cast< ::default_init_tag* >(0))
+	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
-	ctor(screenNode,parentNode,id,flow,alignments,requestedConstraints,backgroundColor,border,padding,showOn,hideOn);
-}
-
-void GUISpaceNode::ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
-{
-	super::ctor(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn);
 }
 
 const wstring GUISpaceNode::getNodeType()
@@ -67,7 +56,7 @@ GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const wst
 
 void GUISpaceNode::dispose()
 {
-	super::dispose();
+	GUINode::dispose();
 }
 
 void GUISpaceNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
@@ -75,6 +64,6 @@ void GUISpaceNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNo
 	if (conditionsMet == false)
 		return;
 
-	super::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer, floatingNodes);
 }
 

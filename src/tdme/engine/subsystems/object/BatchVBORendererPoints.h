@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -24,7 +23,7 @@ class tdme::engine::subsystems::object::BatchVBORendererPoints final
 private:
 	static constexpr int32_t VERTEX_COUNT { 32768 };
 	GLRenderer* renderer {  };
-	vector<int32_t> * vboIds {  };
+	vector<int32_t>* vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
 	FloatBuffer* fbVertices {  };
@@ -83,4 +82,9 @@ public: /* protected */
 	 * Public constructor
 	 */
 	BatchVBORendererPoints(GLRenderer* renderer, int32_t id);
+
+	/**
+	 * Destructor
+	 */
+	~BatchVBORendererPoints();
 };

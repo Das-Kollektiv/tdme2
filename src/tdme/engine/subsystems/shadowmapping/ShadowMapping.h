@@ -141,4 +141,9 @@ public:
 	 * @param object 3d vbo renderer
 	 */
 	ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORenderer* object3DVBORenderer);
+
+	/**
+	 * Destructor
+	 */
+	~ShadowMapping();
 };

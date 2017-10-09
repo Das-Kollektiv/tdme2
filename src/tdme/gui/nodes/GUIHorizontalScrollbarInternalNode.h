@@ -22,9 +22,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI horizontal scrollbar internal node
  * @author Andreas Drewke
@@ -34,30 +31,10 @@ class tdme::gui::nodes::GUIHorizontalScrollbarInternalNode
 	: public GUINode
 {
 
-public:
-	typedef GUINode super;
-
 private:
 	GUIColor* barColorNone {  };
 	GUIColor* barColorMouseOver {  };
 	GUIColor* barColorDragging {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging);
 
 public: /* protected */
 	const wstring getNodeType() override;
@@ -74,8 +51,5 @@ public:
 	 */
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
-	// Generated
 	GUIHorizontalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging);
-protected:
-	GUIHorizontalScrollbarInternalNode(const ::default_init_tag&);
 };

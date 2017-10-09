@@ -15,7 +15,7 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/subsystems/object/_Buffer.h>
+#include <tdme/engine/subsystems/object/ObjectBuffer.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -36,7 +36,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::object::_Buffer;
+using tdme::engine::subsystems::object::ObjectBuffer;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -237,7 +237,7 @@ bool Object3DGroupMesh::hasRecreatedBuffers()
 
 ShortBuffer* Object3DGroupMesh::setupVertexIndicesBuffer()
 {
-	auto sbIndices = _Buffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
+	auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
 	for (auto index : indices) {
 		sbIndices->put(index);
 	}
@@ -250,7 +250,7 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 	if (groupTextureCoordinates == nullptr)
 		return nullptr;
 
-	auto fbTextureCoordinates = _Buffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
+	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates->put(textureCoordinate.getArray());
 	}
@@ -259,7 +259,7 @@ FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
 
 FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 {
-	auto fbVertices = _Buffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbVertices = ObjectBuffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& vertex : *vertices) {
 		fbVertices->put(vertex.getArray());
 	}
@@ -268,7 +268,7 @@ FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
 
 FloatBuffer* Object3DGroupMesh::setupNormalsBuffer()
 {
-	auto fbNormals = _Buffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbNormals = ObjectBuffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& normal : *normals) {
 		fbNormals->put(normal.getArray());
 	}
@@ -280,7 +280,7 @@ FloatBuffer* Object3DGroupMesh::setupTangentsBuffer()
 	if (tangents == nullptr) {
 		return nullptr;
 	}
-	auto fbTangents = _Buffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbTangents = ObjectBuffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& tangent : *tangents) {
 		fbTangents->put(tangent.getArray());
 	}
@@ -292,7 +292,7 @@ FloatBuffer* Object3DGroupMesh::setupBitangentsBuffer()
 	if (bitangents == nullptr) {
 		return nullptr;
 	}
-	auto fbBitangents = _Buffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbBitangents = ObjectBuffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& bitangent : *bitangents) {
 		fbBitangents->put(bitangent.getArray());
 	}

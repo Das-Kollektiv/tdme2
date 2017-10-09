@@ -30,6 +30,10 @@ Camera::Camera(GLRenderer* renderer)
 	frustum = new Frustum(renderer);
 }
 
+Camera::~Camera() {
+	delete frustum;
+}
+
 Vector3 Camera::defaultUp(0.0f, 1.0f, 0.0f);
 
 float Camera::getFovY()

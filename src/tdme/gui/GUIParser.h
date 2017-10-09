@@ -21,8 +21,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
 using tdme::ext::tinyxml::TiXmlElement;
 
-struct default_init_tag;
-
 /** 
  * GUI parser 
  * @author Andreas Drewke
@@ -118,11 +116,7 @@ public:
 	 */
 	static void addElement(GUIElement* guiElement) throw (GUIParserException);
 
-	// Generated
 	GUIParser();
-protected:
-	GUIParser(const ::default_init_tag&);
-
 
 public:
 	static void clinit();

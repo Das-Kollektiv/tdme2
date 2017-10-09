@@ -9,19 +9,12 @@ using tdme::utils::Pool;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 
-
-struct default_init_tag;
 class tdme::gui::GUI_2
 	: public Pool<GUIKeyboardEvent*>
 {
 
-public:
-	typedef Pool super;
-
 public: /* protected */
 	GUIKeyboardEvent* instantiate() override;
-
-	// Generated
 
 public:
 	GUI_2(GUI *GUI_this);

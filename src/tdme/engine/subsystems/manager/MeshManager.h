@@ -51,4 +51,9 @@ public:
 	 * Public constructor
 	 */
 	MeshManager();
+
+	/**
+	 * Destructor
+	 */
+	~MeshManager();
 };

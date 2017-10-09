@@ -19,23 +19,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUITabsHeader::GUITabsHeader(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUITabsHeader::GUITabsHeader() throw (FileSystemException)
-	: GUITabsHeader(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUITabsHeader::NAME = L"tabs-header";
-
-void GUITabsHeader::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-header.xml");
 }
+
+wstring GUITabsHeader::NAME = L"tabs-header";
 
 const wstring& GUITabsHeader::getName()
 {

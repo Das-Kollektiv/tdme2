@@ -25,16 +25,14 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUIRadioButtonController::GUIRadioButtonController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIRadioButtonController::GUIRadioButtonController(GUINode* node) 
-	: GUIRadioButtonController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	radioButtonGroupNodesByName[node->getScreenNode()->getId() + L"_radiobuttongroup_"
+		+ (dynamic_cast< GUIElementNode* >(node))->getName()].push_back(dynamic_cast< GUIElementNode* >(node));
 }
 
 void GUIRadioButtonController::init()
@@ -42,25 +40,12 @@ void GUIRadioButtonController::init()
 	value = new MutableString();
 }
 
-wstring GUIRadioButtonController::CONDITION_SELECTED;
-
-wstring GUIRadioButtonController::CONDITION_UNSELECTED;
-
-wstring GUIRadioButtonController::CONDITION_DISABLED;
-
-wstring GUIRadioButtonController::CONDITION_ENABLED;
+wstring GUIRadioButtonController::CONDITION_SELECTED = L"selected";
+wstring GUIRadioButtonController::CONDITION_UNSELECTED = L"unselected";
+wstring GUIRadioButtonController::CONDITION_DISABLED = L"disabled";
+wstring GUIRadioButtonController::CONDITION_ENABLED = L"enabled";
 
 map<wstring, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
-
-void GUIRadioButtonController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-	radioButtonGroupNodesByName[node->getScreenNode()->getId() + L"_radiobuttongroup_"
-		+ (dynamic_cast< GUIElementNode* >(node))->getName()].push_back(dynamic_cast< GUIElementNode* >(node));
-}
 
 bool GUIRadioButtonController::isSelected()
 {
@@ -179,31 +164,6 @@ void GUIRadioButtonController::setValue(MutableString* value)
 {
 	if (value->equals((dynamic_cast< GUIElementNode* >(node))->getValue()) == true) {
 		select();
-	}
-}
-
-void GUIRadioButtonController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_SELECTED = L"selected";
-	CONDITION_UNSELECTED = L"unselected";
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
-
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
 	}
 }
 

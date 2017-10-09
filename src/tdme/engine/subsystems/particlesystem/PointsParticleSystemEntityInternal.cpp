@@ -57,6 +57,14 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const wst
 	this->pickable = false;
 	this->autoEmit = autoEmit;
 	this->particlesToSpawnRemainder = 0.0f;
+	this->pointsRenderPool = nullptr;
+}
+
+PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
+	delete emitter;
+	delete boundingBox;
+	delete boundingBoxTransformed;
+	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 }
 
 const wstring& PointsParticleSystemEntityInternal::getId()

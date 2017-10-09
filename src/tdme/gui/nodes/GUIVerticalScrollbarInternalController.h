@@ -14,9 +14,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Scrollbar controller
  * @author Andreas Drewke
@@ -26,20 +23,10 @@ class tdme::gui::nodes::GUIVerticalScrollbarInternalController
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	GUILayoutNode* contentNode {  };
 	GUIVerticalScrollbarInternalController_State* state {  };
 	int32_t mouseYOffset {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -81,12 +68,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUIVerticalScrollbarInternalController(GUINode* node);
-protected:
-	GUIVerticalScrollbarInternalController(const ::default_init_tag&);
 
 private:
 	void init();

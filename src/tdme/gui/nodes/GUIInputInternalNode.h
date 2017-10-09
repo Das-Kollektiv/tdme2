@@ -24,9 +24,6 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI input internal node
  * @author Andreas Drewke
@@ -37,7 +34,6 @@ class tdme::gui::nodes::GUIInputInternalNode final
 {
 
 public:
-	typedef GUINode super;
 
 	/** 
 	 * Create max length
@@ -52,27 +48,6 @@ private:
 	GUIColor* colorDisabled {  };
 	MutableString* text {  };
 	int32_t maxLength {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param screen node
-	 * @param parent mode
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param font
-	 * @param color
-	 * @param color if disabled
-	 * @param text
-	 * @throws Exception
-	 */
-	void ctor(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength) /* throws(Exception) */;
 
 public: /* protected */
 
@@ -104,6 +79,4 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
 	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength);
-protected:
-	GUIInputInternalNode(const ::default_init_tag&);
 };

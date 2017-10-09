@@ -29,29 +29,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUITabController::GUITabController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUITabController::GUITabController(GUINode* node) 
-	: GUITabController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
-}
-
-wstring GUITabController::CONDITION_DISABLED;
-
-wstring GUITabController::CONDITION_ENABLED;
-
-wstring GUITabController::CONDITION_SELECTED;
-
-wstring GUITabController::CONDITION_UNSELECTED;
-
-void GUITabController::ctor(GUINode* node)
-{
-	super::ctor(node);
 	this->tabsNode = nullptr;
 	this->tabsHeaderNode = nullptr;
 	this->selected = false;
@@ -61,6 +41,14 @@ void GUITabController::ctor(GUINode* node)
 	this->unfocussedNodeBorderBottomColor = nullptr;
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
+
+wstring GUITabController::CONDITION_DISABLED;
+
+wstring GUITabController::CONDITION_ENABLED;
+
+wstring GUITabController::CONDITION_SELECTED;
+
+wstring GUITabController::CONDITION_UNSELECTED;
 
 bool GUITabController::isDisabled()
 {

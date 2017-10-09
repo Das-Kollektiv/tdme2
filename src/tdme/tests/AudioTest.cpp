@@ -28,4 +28,5 @@ void AudioTest::main()
 	stream->play();
 	while(stream->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
 	Console::println(wstring(L"Finished playing music"));
+	Audio::getInstance()->shutdown();
 }

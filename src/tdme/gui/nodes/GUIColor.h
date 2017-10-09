@@ -19,8 +19,6 @@ using tdme::engine::model::Color4;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 
-struct default_init_tag;
-
 /** 
  * GUI color
  * @author Andreas Drewke

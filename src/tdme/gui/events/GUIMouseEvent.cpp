@@ -5,17 +5,7 @@
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 
-GUIMouseEvent::GUIMouseEvent(const ::default_init_tag&)
-{
-}
-
 GUIMouseEvent::GUIMouseEvent() 
-	: GUIMouseEvent(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-void GUIMouseEvent::ctor()
 {
 	this->time = -1;
 	this->type = GUIMouseEvent_Type::NONE;

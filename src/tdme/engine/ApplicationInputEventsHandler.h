@@ -21,8 +21,6 @@
 #define KEYBOARD_KEYCODE_RIGHT GLUT_KEY_RIGHT
 #define KEYBOARD_KEYCODE_DOWN GLUT_KEY_DOWN
 
-
-
 /** 
  * Application input events handler
  * @author Andreas Drewke

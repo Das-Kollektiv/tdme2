@@ -13,23 +13,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUIScrollAreaHorizontal::GUIScrollAreaHorizontal(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (FileSystemException)
-	: GUIScrollAreaHorizontal(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
-
-void GUIScrollAreaHorizontal::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
 }
+
+wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
 
 const wstring& GUIScrollAreaHorizontal::getName()
 {

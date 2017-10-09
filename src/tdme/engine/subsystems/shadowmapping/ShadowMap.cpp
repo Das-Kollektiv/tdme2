@@ -44,6 +44,11 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 	depthBiasMVPMatrix.identity();
 }
 
+ShadowMap::~ShadowMap() {
+	delete lightCamera;
+	delete frameBuffer;
+}
+
 int32_t ShadowMap::getWidth()
 {
 	return frameBuffer->getWidth();

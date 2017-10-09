@@ -8,7 +8,7 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 
 GUI_1::GUI_1(GUI *GUI_this)
-	: super()
+	: Pool()
 	, GUI_this(GUI_this)
 {
 }

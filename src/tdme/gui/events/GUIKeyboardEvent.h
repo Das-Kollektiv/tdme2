@@ -11,9 +11,6 @@
 
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
-
-struct default_init_tag;
-
 /** 
  * GUI keyboard event
  * @author Andreas Drewke
@@ -44,12 +41,6 @@ private:
 	bool altDown {  };
 	bool shiftDown {  };
 	bool processed {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -159,8 +150,6 @@ public:
 	virtual void setProcessed(bool processed);
 
 	GUIKeyboardEvent();
-protected:
-	GUIKeyboardEvent(const ::default_init_tag&);
 
 private:
 	friend class GUIKeyboardEvent_Type;

@@ -19,23 +19,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUICheckbox::GUICheckbox(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUICheckbox::GUICheckbox() throw (FileSystemException)
-	: GUICheckbox(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUICheckbox::NAME = L"checkbox";
-
-void GUICheckbox::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"checkbox.xml");
 }
+
+wstring GUICheckbox::NAME = L"checkbox";
 
 const wstring& GUICheckbox::getName()
 {

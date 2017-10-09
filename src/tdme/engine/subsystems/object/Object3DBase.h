@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -225,6 +224,11 @@ public: /* protected */
 	 * @param animation processing target
 	 */
 	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Object3DBase();
 
 public:
 	virtual Matrix4x4& getTransformationsMatrix();

@@ -22,11 +22,6 @@ using tdme::utils::ByteBuffer;
 class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
 {
 public:
-	static constexpr int32_t CHANNELS_NONE { -1 };
-	static constexpr int32_t SAMPLERATE_NONE { -1 };
-	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
-
-public:
 
 	/**
 	 * Open a local file

@@ -1,19 +1,15 @@
-#include <tdme/engine/subsystems/object/_Buffer.h>
+#include <tdme/engine/subsystems/object/ObjectBuffer.h>
 
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
 
-using tdme::engine::subsystems::object::_Buffer;
+using tdme::engine::subsystems::object::ObjectBuffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
 
-_Buffer::_Buffer()
-{
-}
+ByteBuffer* ObjectBuffer::byteBuffer = nullptr;
 
-ByteBuffer* _Buffer::byteBuffer = nullptr;
-
-ByteBuffer* _Buffer::getByteBuffer(int32_t bytes)
+ByteBuffer* ObjectBuffer::getByteBuffer(int32_t bytes)
 {
 	if (byteBuffer == nullptr || bytes > byteBuffer->getCapacity()) {
 		if (byteBuffer != nullptr) {

@@ -27,11 +27,13 @@ public:
 	static constexpr int32_t CHANNELS_NONE { -1 };
 	static constexpr int32_t SAMPLERATE_NONE { -1 };
 	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
+	static constexpr int32_t SAMPLES_NONE { -1 };
 
 public: /* protected */
 	int32_t channels {  };
 	int32_t sampleRate {  };
 	int32_t bitsPerSample {  };
+	int32_t samples { };
 
 public:
 
@@ -63,6 +65,11 @@ public:
 	virtual int32_t getBitsPerSample();
 
 	/** 
+	 * @return samples or SAMPLES_NONE
+	 */
+	virtual int32_t getSamples();
+
+	/**
 	 * Read raw PCM data from stream 
 	 * @param byte buffer
 	 * @return number of bytes read

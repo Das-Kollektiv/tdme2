@@ -13,23 +13,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUIDropDown::GUIDropDown(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIDropDown::GUIDropDown() throw (FileSystemException)
-	: GUIDropDown(*static_cast< ::default_init_tag* >(0))
-{
-	ctor();
-}
-
-wstring GUIDropDown::NAME = L"dropdown";
-
-void GUIDropDown::ctor() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown.xml");
 }
+
+wstring GUIDropDown::NAME = L"dropdown";
 
 const wstring& GUIDropDown::getName()
 {

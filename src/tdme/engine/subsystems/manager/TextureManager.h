@@ -50,4 +50,9 @@ public:
 	 * @param renderer
 	 */
 	TextureManager(GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~TextureManager();
 };

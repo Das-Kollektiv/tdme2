@@ -18,8 +18,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
-struct default_init_tag;
-
 /** 
  * GUI select box option element
  * @author Andreas Drewke
@@ -29,19 +27,10 @@ class tdme::gui::elements::GUISelectBoxOption final
 	: public GUIElement
 {
 
-public:
-	typedef GUIElement super;
-
 private:
 	static wstring NAME;
 	map<wstring, wstring> attributes {  };
 	wstring template_ {  };
-protected:
-
-	/** 
-	 * Constructor
-	 */
-	void ctor() throw (FileSystemException);
 
 public:
 	const wstring& getName() override;
@@ -49,8 +38,5 @@ public:
 	map<wstring, wstring>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	// Generated
 	GUISelectBoxOption() throw (FileSystemException);
-protected:
-	GUISelectBoxOption(const ::default_init_tag&);
 };

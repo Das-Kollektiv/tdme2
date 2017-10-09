@@ -18,9 +18,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI select box option controller
  * @author Andreas Drewke
@@ -30,9 +27,6 @@ class tdme::gui::elements::GUISelectBoxOptionController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	static wstring CONDITION_SELECTED;
 	static wstring CONDITION_UNSELECTED;
@@ -40,14 +34,6 @@ private:
 	static wstring CONDITION_ENABLED;
 	GUIParentNode* selectBoxNode {  };
 	bool selected {  };
-
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -86,9 +72,4 @@ public:
 
 public: /* protected */
 	GUISelectBoxOptionController(GUINode* node);
-protected:
-	GUISelectBoxOptionController(const ::default_init_tag&);
-
-public:
-	static void clinit();
 };

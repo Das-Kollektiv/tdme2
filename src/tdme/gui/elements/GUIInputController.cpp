@@ -23,27 +23,15 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-GUIInputController::GUIInputController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-	clinit();
-}
-
 GUIInputController::GUIInputController(GUINode* node) 
-	: GUIInputController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 wstring GUIInputController::CONDITION_DISABLED;
 
 wstring GUIInputController::CONDITION_ENABLED;
-
-void GUIInputController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-}
 
 bool GUIInputController::isDisabled()
 {

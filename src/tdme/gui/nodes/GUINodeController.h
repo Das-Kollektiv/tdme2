@@ -10,9 +10,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI element controller
  * @author Andreas Drewke
@@ -23,13 +20,6 @@ class tdme::gui::nodes::GUINodeController
 
 public: /* protected */
 	GUINode* node {  };
-protected:
-
-	/** 
-	 * Constructor
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public:
 
@@ -109,10 +99,6 @@ public:
 	 */
 	virtual void setDisabled(bool disabled) = 0;
 
-	// Generated
-
 public: /* protected */
 	GUINodeController(GUINode* node);
-protected:
-	GUINodeController(const ::default_init_tag&);
 };

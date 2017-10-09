@@ -9,9 +9,6 @@ using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIRenderer;
 
-
-struct default_init_tag;
-
 /** 
  * GUI color effect
  * @author Andreas Drewke
@@ -21,9 +18,6 @@ class tdme::gui::effects::GUIColorEffect
 	: public GUIEffect
 {
 
-public:
-	typedef GUIEffect super;
-
 private:
 	GUIColor* colorAddStart {  };
 	GUIColor* colorAddEnd {  };
@@ -31,12 +25,6 @@ private:
 	GUIColor* colorMulEnd {  };
 	GUIColor* colorAdd {  };
 	GUIColor* colorMul {  };
-protected:
-
-	/** 
-	 * Public constructor
-	 */
-	void ctor();
 
 public:
 
@@ -63,9 +51,6 @@ public:
 	void apply(GUIRenderer* guiRenderer) override;
 
 	GUIColorEffect();
-
-protected:
-	GUIColorEffect(const ::default_init_tag&);
 
 private:
 	void init();

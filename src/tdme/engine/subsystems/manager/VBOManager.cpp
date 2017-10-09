@@ -20,6 +20,12 @@ VBOManager::VBOManager(GLRenderer* renderer)
 	this->renderer = renderer;
 }
 
+VBOManager::~VBOManager() {
+	for (auto it = vbos.begin(); it != vbos.end(); ++it) {
+		delete it->second;
+	}
+}
+
 VBOManager_VBOManaged* VBOManager::addVBO(const wstring& vboId, int32_t ids)
 {
 	auto vboManagedIt = vbos.find(vboId);
@@ -44,6 +50,7 @@ void VBOManager::removeVBO(const wstring& vboId)
 			auto vboIds = vboManaged->getVBOGlIds();
 			renderer->disposeBufferObjects(vboIds);
 			vbos.erase(vboManagedIt);
+			delete vboManaged;
 		}
 		return;
 	}

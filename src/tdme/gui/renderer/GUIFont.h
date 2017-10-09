@@ -22,9 +22,6 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Font
  * A font implementation that will parse the output of the AngelCode font tool available at:
@@ -166,10 +163,6 @@ public:
 	int32_t getLineHeight();
 
 	GUIFont();
-
-protected:
-	void ctor();
-	GUIFont(const ::default_init_tag&);
 
 public:
 	static void clinit();

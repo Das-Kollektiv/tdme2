@@ -32,6 +32,13 @@ Material::Material(const wstring& id)
 	displacementTexture = nullptr;
 }
 
+Material::~Material() {
+	if (diffuseTexture != nullptr) delete diffuseTexture;
+	if (specularTexture != nullptr) delete specularTexture;
+	if (normalTexture != nullptr) delete normalTexture;
+	if (displacementTexture != nullptr) delete displacementTexture;
+}
+
 Material* Material::getDefaultMaterial()
 {
 	return defaultMaterial;

@@ -40,6 +40,7 @@ bool AudioBufferManager::removeAudioBuffer(const wstring& id)
 	if (audioBufferManaged != nullptr) {
 		if (audioBufferManaged->decrementReferenceCounter()) {
 			audioBuffers.erase(audioBufferManagedIt);
+			delete audioBufferManaged;
 			return true;
 		} else {
 			return false;

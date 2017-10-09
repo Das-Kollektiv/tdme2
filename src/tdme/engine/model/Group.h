@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -204,4 +203,9 @@ public:
 	 * @param name
 	 */
 	Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
+
+	/**
+	 * Destructor
+	 */
+	~Group();
 };

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -102,4 +101,9 @@ public:
 	 * Public constructor
 	 */
 	Object3DGroup();
+
+	/**
+	 * Destructor
+	 */
+	~Object3DGroup();
 };

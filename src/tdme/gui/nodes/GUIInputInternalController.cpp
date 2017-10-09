@@ -39,15 +39,14 @@ using tdme::gui::renderer::GUIFont;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
 
-GUIInputInternalController::GUIInputInternalController(const ::default_init_tag&)
-	: super(*static_cast< ::default_init_tag* >(0))
-{
-}
-
 GUIInputInternalController::GUIInputInternalController(GUINode* node) 
-	: GUIInputInternalController(*static_cast< ::default_init_tag* >(0))
+	: GUINodeController(node)
 {
-	ctor(node);
+	init();
+	this->index = 0;
+	this->offset = 0;
+	this->isDragging = false;
+	this->dragPosition = {{ 0, 0 }};
 }
 
 void GUIInputInternalController::init()
@@ -60,16 +59,6 @@ void GUIInputInternalController::init()
 constexpr int64_t GUIInputInternalController::CURSOR_MODE_DURATION;
 
 constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
-
-void GUIInputInternalController::ctor(GUINode* node)
-{
-	super::ctor(node);
-	init();
-	this->index = 0;
-	this->offset = 0;
-	this->isDragging = false;
-	this->dragPosition = {{ 0, 0 }};
-}
 
 bool GUIInputInternalController::isDisabled()
 {

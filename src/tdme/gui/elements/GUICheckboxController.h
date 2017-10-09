@@ -17,9 +17,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
-
-struct default_init_tag;
-
 /** 
  * GUI Checkbox controller
  * @author Andreas Drewke
@@ -29,9 +26,6 @@ class tdme::gui::elements::GUICheckboxController final
 	: public GUINodeController
 {
 
-public:
-	typedef GUINodeController super;
-
 private:
 	static wstring CONDITION_CHECKED;
 	static wstring CONDITION_UNCHECKED;
@@ -40,13 +34,6 @@ private:
 	bool checked {  };
 	bool disabled {  };
 	MutableString* value {  };
-protected:
-
-	/** 
-	 * GUI Checkbox controller
-	 * @param node
-	 */
-	void ctor(GUINode* node);
 
 public: /* protected */
 
@@ -76,13 +63,8 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-	// Generated
-
 public: /* protected */
 	GUICheckboxController(GUINode* node);
-protected:
-	GUICheckboxController(const ::default_init_tag&);
-
 
 public:
 	static void clinit();
