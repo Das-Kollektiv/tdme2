@@ -447,7 +447,7 @@ EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
-define cc-command
+define cpp-command
 @mkdir -p $(dir $@); 
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 endef
@@ -458,19 +458,19 @@ define c-command
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 	
 $(NATIVE_OBJS):$(OBJ)/%.o: $(NATIVE)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 	$(c-command)
