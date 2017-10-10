@@ -42,13 +42,18 @@ TDMEParticleSystem::TDMEParticleSystem()
 	quitRequested = false;
 }
 
+TDMEParticleSystem::~TDMEParticleSystem() {
+	delete popUps;
+	delete particleSystemView;
+}
+
 void TDMEParticleSystem::main(int argc, char** argv)
 {
 	Console::println(wstring(L"TDMEParticleSystem " + VERSION));
 	Console::println(wstring(L"Programmed 2017 by Andreas Drewke, drewke.net."));
 	Console::println();
-	auto tdmeParticleSystem = new TDMEParticleSystem();
-	tdmeParticleSystem->run(argc, argv, L"TDMEParticleSystem");
+	TDMEParticleSystem tdmeParticleSystem;
+	tdmeParticleSystem.run(argc, argv, L"TDMEParticleSystem");
 }
 
 TDMEParticleSystem* TDMEParticleSystem::getInstance()
@@ -118,7 +123,7 @@ void TDMEParticleSystem::initialize()
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(new SharedParticleSystemView(popUps));
+	setView(particleSystemView = new SharedParticleSystemView(popUps));
 }
 
 void TDMEParticleSystem::reshape(int32_t width, int32_t height)
