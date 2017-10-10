@@ -48,11 +48,19 @@ wstring TDMELevelEditor::VERSION = L"0.9.9";
 
 TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
+void TDMELevelEditor::main(int argc, char** argv)
+{
+	Console::println(wstring(L"TDMELevelEditor " + VERSION));
+	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println();
+	TDMELevelEditor tdmeLevelEditor;
+	tdmeLevelEditor.run(argc, argv, L"TDMELevelEditor");
+}
+
 TDMELevelEditor::TDMELevelEditor()
 {
 	TDMELevelEditor::instance = this;
-	level = new LevelEditorLevel();
-	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(level);
+	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(&level);
 	engine = Engine::getInstance();
 	view = nullptr;
 	popUps = new PopUps();
@@ -60,13 +68,14 @@ TDMELevelEditor::TDMELevelEditor()
 
 }
 
-void TDMELevelEditor::main(int argc, char** argv)
-{
-	Console::println(wstring(L"TDMELevelEditor " + VERSION));
-	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
-	Console::println();
-	auto tdmeLevelEditor = new TDMELevelEditor();
-	tdmeLevelEditor->run(argc, argv, L"TDMELevelEditor");
+TDMELevelEditor::~TDMELevelEditor() {
+	delete levelEditorView;
+	delete modelViewerView;
+	delete triggerView;
+	delete emptyView;
+	delete particleSystemView;
+	delete popUps;
+	delete levelEditorEntityLibraryScreenController;
 }
 
 TDMELevelEditor* TDMELevelEditor::getInstance()
@@ -81,12 +90,12 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 
 LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary()
 {
-	return level->getEntityLibrary();
+	return level.getEntityLibrary();
 }
 
 LevelEditorLevel* TDMELevelEditor::getLevel()
 {
-	return level;
+	return &level;
 }
 
 void TDMELevelEditor::setView(View* view)

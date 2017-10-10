@@ -10,6 +10,7 @@
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::wstring;
@@ -41,7 +42,7 @@ private:
 	Engine* engine {  };
 	View* view {  };
 	bool quitRequested {  };
-	LevelEditorLevel* level {  };
+	LevelEditorLevel level {  };
 	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController {  };
 	PopUps* popUps {  };
 	LevelEditorView* levelEditorView {  };
@@ -146,4 +147,9 @@ public:
 	 * Public constructor
 	 */
 	TDMELevelEditor();
+
+	/**
+	 * Destructor
+	 */
+	~TDMELevelEditor();
 };
