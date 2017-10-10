@@ -88,7 +88,7 @@ PhysicsPartition* World::getPartition()
 
 void World::setPartition(PhysicsPartition* partition)
 {
-	if (partition != nullptr) delete partition;
+	if (this->partition != nullptr) delete this->partition;
 	this->partition = partition;
 }
 

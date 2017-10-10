@@ -220,6 +220,7 @@ Partition* Engine::getPartition()
 
 void Engine::setPartition(Partition* partition)
 {
+	if (this->partition != nullptr) delete this->partition;
 	this->partition = partition;
 }
 
