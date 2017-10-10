@@ -129,7 +129,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 				modelFile
 			);
 		} else {
-			throw new ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
+			throw ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
 		}
 		if (model == nullptr) {
 			Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + L"/" + modelFile + L"'");
