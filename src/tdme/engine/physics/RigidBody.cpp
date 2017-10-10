@@ -44,7 +44,7 @@ RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t type
 	this->enabled = enabled;
 	this->typeId = typeId;
 	this->collisionTypeIds = TYPEIDS_ALL;
-	this->transformations = new Transformations();
+	this->transformations = transformations;
 	this->inverseInertia.set(inverseInertia);
 	this->restitution = restitution;
 	this->friction = friction;
@@ -58,6 +58,7 @@ RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t type
 
 RigidBody::~RigidBody() {
 	delete transformations;
+	delete obv;
 	delete cbv;
 }
 
@@ -156,8 +157,8 @@ BoundingVolume* RigidBody::getBoudingVolume()
 
 void RigidBody::setBoundingVolume(BoundingVolume* obv)
 {
-	this->obv = obv;
-	this->cbv = this->obv == nullptr ? nullptr : obv->clone();
+	this->obv = obv->clone();
+	this->cbv = obv->clone();
 }
 
 BoundingVolume* RigidBody::getBoundingVolumeTransformed()
