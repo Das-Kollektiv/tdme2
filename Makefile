@@ -25,7 +25,6 @@ EXT_LIB = lib$(NAME)-ext.a
 LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 
 SRC = src
-NATIVE = native
 TINYXML = tinyxml
 JSONBOX = jsonbox
 LIBPNG = libpng
@@ -335,9 +334,6 @@ SRCS = \
 	# src/tdme/engine/EngineGLES2Renderer.cpp \
 	# src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
-NATIVE_SRCS = \
-
-
 EXT_SRCS = \
 
 EXT_TINYXML_SRCS = \
@@ -405,21 +401,6 @@ EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c \
 
-EXT_NATIVE_SRCS = \
-	ext/native/java/io/FileInputStream-native.cpp \
-	ext/native/java/io/FileOutputStream-native.cpp \
-	ext/native/java/lang/Class-native.cpp \
-	ext/native/java/lang/ClassLoader-native.cpp \
-	ext/native/java/lang/ClassLoader_NativeLibrary-native.cpp \
-	ext/native/java/lang/Float-native.cpp \
-	ext/native/java/lang/Object-native.cpp \
-	ext/native/java/lang/String-native.cpp \
-	ext/native/java/lang/System-native.cpp \
-	ext/native/java/lang/Thread-native.cpp \
-	ext/native/java/lang/Throwable-native.cpp \
-	ext/native/java/util/zip/ZipEntry-native.cpp \
-
-
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -458,9 +439,6 @@ define c-command
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
-	$(cpp-command)
-	
-$(NATIVE_OBJS):$(OBJ)/%.o: $(NATIVE)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
