@@ -24,7 +24,7 @@ void GUINodeConditions::add(const wstring& condition)
 
 void GUINodeConditions::remove(const wstring& condition)
 {
-	for (vector<wstring>::iterator i = conditions.begin(); i != conditions.end(); i++) {
+	for (vector<wstring>::iterator i = conditions.begin(); i != conditions.end(); ++i) {
 		if (condition == *i) {
 			conditions.erase(i);
 			return;

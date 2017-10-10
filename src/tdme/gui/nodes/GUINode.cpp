@@ -330,8 +330,8 @@ GUINodeConditions* GUINode::createConditions(const wstring& conditions)
 
 bool GUINode::checkConditions()
 {
-	auto showOn = this->showOn->conditions;
-	auto hideOn = this->hideOn->conditions;
+	auto& showOn = this->showOn->conditions;
+	auto& hideOn = this->hideOn->conditions;
 
 	for (auto i = 0; i < showOn.size(); i++) {
 		if (showOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
