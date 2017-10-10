@@ -42,6 +42,8 @@ using tdme::utils::Pool;
 class tdme::gui::GUI final
 	: public virtual ApplicationInputEventsHandler
 {
+	friend class GUI_1;
+	friend class GUI_2;
 
 private:
 	GUIRenderer* guiRenderer {  };
@@ -305,11 +307,7 @@ public:
 
 	GUI(Engine* engine, GUIRenderer* guiRenderer);
 
-public:
-	static void clinit();
-
 private:
 	void init();
-	friend class GUI_1;
-	friend class GUI_2;
+
 };

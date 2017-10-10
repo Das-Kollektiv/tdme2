@@ -29,6 +29,11 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
+wstring GUITabController::CONDITION_DISABLED = L"disabled";
+wstring GUITabController::CONDITION_ENABLED = L"enabled";
+wstring GUITabController::CONDITION_SELECTED = L"selected";
+wstring GUITabController::CONDITION_UNSELECTED = L"unselected";
+
 GUITabController::GUITabController(GUINode* node) 
 	: GUINodeController(node)
 {
@@ -41,14 +46,6 @@ GUITabController::GUITabController(GUINode* node)
 	this->unfocussedNodeBorderBottomColor = nullptr;
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
-
-wstring GUITabController::CONDITION_DISABLED;
-
-wstring GUITabController::CONDITION_ENABLED;
-
-wstring GUITabController::CONDITION_SELECTED;
-
-wstring GUITabController::CONDITION_UNSELECTED;
 
 bool GUITabController::isDisabled()
 {
@@ -170,18 +167,3 @@ void GUITabController::selectTab()
 	guiTabsController->setTabContentSelected(node->getId());
 	node->getScreenNode()->getGUI()->invalidateFocussedNode();
 }
-
-void GUITabController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	CONDITION_SELECTED = L"selected";
-	CONDITION_UNSELECTED = L"unselected";
-	}
-};
-
-	static string_init_ string_init_instance;
-}
-

@@ -147,7 +147,6 @@ vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 
 GUIFont* GUI::getFont(const wstring& fileName)
 {
-	clinit();
 	wstring canonicalFile;
 	wstring path;
 	wstring file;
@@ -182,7 +181,6 @@ GUIFont* GUI::getFont(const wstring& fileName)
 
 Texture* GUI::getImage(const wstring& fileName)
 {
-	clinit();
 	// TODO: fix me, proper get path, filename
 	wstring canonicalFile;
 	wstring path;
@@ -714,19 +712,5 @@ void GUI::fakeKeyboardModifierEvent() {
 	guiKeyboardEvent->setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
-}
-
-void GUI::clinit()
-{
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
 }
 

@@ -33,6 +33,10 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
+constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
+wstring GUISelectBoxMultipleController::CONDITION_DISABLED = L"disabled";
+wstring GUISelectBoxMultipleController::CONDITION_ENABLED = L"enabled";
+
 GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
 	: GUINodeController(node)
 {
@@ -45,12 +49,6 @@ void GUISelectBoxMultipleController::init()
 	value = new MutableString();
 	searchValue = new MutableString();
 }
-
-wstring GUISelectBoxMultipleController::CONDITION_DISABLED;
-
-wstring GUISelectBoxMultipleController::CONDITION_ENABLED;
-
-constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
 
 bool GUISelectBoxMultipleController::isDisabled()
 {
@@ -279,16 +277,3 @@ void GUISelectBoxMultipleController::setValue(MutableString* value)
 		(dynamic_cast< GUISelectBoxMultipleOptionController* >(selectBoxOptionNodeLast->getController()))->focus();
 	}
 }
-
-void GUISelectBoxMultipleController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
-}
-

@@ -73,6 +73,4 @@ public:
 public: /* protected */
 	GUIDropDownOptionController(GUINode* node);
 
-public:
-	static void clinit();
 };

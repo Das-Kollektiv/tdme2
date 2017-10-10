@@ -34,6 +34,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/math/Matrix4x4.h>
@@ -82,6 +83,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix4x4;
@@ -406,6 +408,7 @@ void Engine::initialize(bool debug)
 	meshManager = new MeshManager();
 	object3DVBORenderer = new Object3DVBORenderer(this, renderer);
 	object3DVBORenderer->initialize();
+	GUIParser::initialize();
 	guiRenderer = new GUIRenderer(renderer);
 	guiRenderer->initialize();
 	gui = new GUI(this, guiRenderer);

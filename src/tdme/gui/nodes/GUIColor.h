@@ -43,10 +43,6 @@ private:
 	static vector<wstring> COLOR_NAMES;
 
 public:
-	/**
-	 * Static class init
-	 */
-	static void clinit();
 
 	/**
 	 * Public constructor

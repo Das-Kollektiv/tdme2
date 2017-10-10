@@ -42,10 +42,10 @@ using tdme::utils::MutableString;
  */
 class tdme::gui::renderer::GUIFont final
 {
+	friend class GUIFont_CharacterDefinition;
 
 private:
 	static MutableString* LINEHEIGHT_STRING;
-	static constexpr int32_t CHARACTERS_MAX { 10000 };
 
 	/** 
 	 * The image containing the bitmap font 
@@ -164,10 +164,7 @@ public:
 
 	GUIFont();
 
-public:
-	static void clinit();
-
 private:
 	void init();
-	friend class GUIFont_CharacterDefinition;
+
 };

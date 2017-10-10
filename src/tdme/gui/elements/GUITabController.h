@@ -79,6 +79,4 @@ public:
 public: /* protected */
 	GUITabController(GUINode* node);
 
-public:
-	static void clinit();
 };
