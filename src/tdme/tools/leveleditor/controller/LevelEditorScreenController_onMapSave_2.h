@@ -20,5 +20,5 @@ public:
 	LevelEditorScreenController_onMapSave_2(LevelEditorScreenController* levelEditorScreenController);
 
 private:
-	LevelEditorScreenController *levelEditorScreenController;
+	LevelEditorScreenController* levelEditorScreenController;
 };
