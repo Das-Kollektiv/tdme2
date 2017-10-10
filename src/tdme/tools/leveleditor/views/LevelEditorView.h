@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -440,4 +439,9 @@ public:
 	 * @param pop ups
 	 */
 	LevelEditorView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorView();
 };

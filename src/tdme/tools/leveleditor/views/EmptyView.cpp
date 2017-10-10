@@ -57,6 +57,11 @@ EmptyView::EmptyView(PopUps* popUps)
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
+EmptyView::~EmptyView() {
+	delete emptyScreenController;
+	delete cameraRotationInputHandler;
+}
+
 PopUps* EmptyView::getPopUpsViews()
 {
 	return popUps;

@@ -59,6 +59,11 @@ TriggerView::TriggerView(PopUps* popUps)
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
+TriggerView::~TriggerView() {
+	delete cameraRotationInputHandler;
+	delete triggerScreenController;
+}
+
 PopUps* TriggerView::getPopUpsViews()
 {
 	return popUps;

@@ -210,6 +210,21 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	entityPickingFilterNoGrid = new LevelEditorView_LevelEditorView_1(this);
 }
 
+LevelEditorView::~LevelEditorView() {
+	delete camLookRotationX;
+	delete camLookRotationY;
+	delete objectColors[L"red"];
+	delete objectColors[L"green"];
+	delete objectColors[L"blue"];
+	delete objectColors[L"yellow"];
+	delete objectColors[L"magenta"];
+	delete objectColors[L"cyan"];
+	delete objectColors[L"none"];
+	delete levelEditorGround;
+	delete entityPickingFilterNoGrid;
+	delete levelEditorScreenController;
+}
+
 PopUps* LevelEditorView::getPopUps()
 {
 	return popUps;

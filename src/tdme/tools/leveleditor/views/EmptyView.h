@@ -83,4 +83,9 @@ public:
 	 * @param pop ups view
 	 */
 	EmptyView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EmptyView();
 };

@@ -15,4 +15,9 @@ struct tdme::gui::events::GUIInputEventHandler
 	 * Handle input events that have not yet been processed
 	 */
 	virtual void handleInputEvents() = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUIInputEventHandler() {}
 };
