@@ -40,8 +40,8 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 	dynamicShadowing = false;
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
-	boundingBox = model->getBoundingBox();
-	boundingBoxTransformed = dynamic_cast< BoundingBox* >(boundingBox->clone());
+	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
+	boundingBoxTransformed = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
 	boundingBoxTransformed->getMin().sub(0.05f);
 	boundingBoxTransformed->getMax().add(0.05f);
@@ -49,6 +49,7 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 }
 
 Object3DInternal::~Object3DInternal() {
+	delete boundingBox;
 	delete boundingBoxTransformed;
 }
 
