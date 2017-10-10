@@ -2,6 +2,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,7 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
 using std::map;
+using std::set;
 using std::wstring;
 using std::vector;
 
@@ -114,8 +116,8 @@ public: /* package */
 private:
 	Model* levelEditorGround {  };
 	LevelEditorLevel* level {  };
-	vector<Entity*> selectedObjects {  };
-	map<wstring, Entity*> selectedObjectsById {  };
+	vector<wstring> selectedEntityIds {  };
+	set<wstring> selectedEntityIdsById {  };
 	vector<LevelEditorObject*> pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
@@ -184,7 +186,7 @@ public:
 	 * Select objects
 	 * @param object ids
 	 */
-	void selectObjects(vector<wstring>* objectIds);
+	void selectObjects(vector<wstring>* entityIds);
 
 	/** 
 	 * Select objects by id
