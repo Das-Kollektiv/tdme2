@@ -750,6 +750,12 @@ public:
 	 * Public constructor
 	 */
 	GLRenderer();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GLRenderer();
+
 private:
 	/**
 	 * Init

@@ -47,4 +47,9 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	 * @param transformations
 	 */
 	virtual void fromTransformations(Transformations* transformations) = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ParticleEmitter() {}
 };

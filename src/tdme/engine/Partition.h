@@ -19,10 +19,8 @@ using tdme::utils::ArrayListIteratorMultiple;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::Partition
+struct tdme::engine::Partition
 {
-public: /* protected */
-
 	/** 
 	 * Reset
 	 */
@@ -46,8 +44,6 @@ public: /* protected */
 	 */
 	virtual void removeEntity(Entity* entity) = 0;
 
-public:
-
 	/** 
 	 * Get visible entities
 	 * @param frustum
@@ -68,4 +64,9 @@ public:
 	 * @return objects near to given world position
 	 */
 	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Partition() {}
 };

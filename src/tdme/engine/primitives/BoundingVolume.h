@@ -82,4 +82,9 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @return cloned bounding volume
 	 */
 	virtual BoundingVolume* clone() const = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~BoundingVolume() {}
 };

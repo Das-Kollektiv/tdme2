@@ -24,6 +24,9 @@ Transformations::Transformations()
 	rotationsTranslationsMatrix.identity();
 }
 
+Transformations::~Transformations() {
+}
+
 Vector3& Transformations::getTranslation()
 {
 	return translation;

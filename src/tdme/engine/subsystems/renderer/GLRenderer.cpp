@@ -36,6 +36,9 @@ GLRenderer::GLRenderer()
 	activeTextureUnit = 0;
 }
 
+GLRenderer::~GLRenderer() {
+}
+
 void GLRenderer::init()
 {
 	ID_NONE = -1;

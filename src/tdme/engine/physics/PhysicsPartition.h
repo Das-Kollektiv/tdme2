@@ -19,9 +19,8 @@ using tdme::utils::ArrayListIteratorMultiple;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::physics::PhysicsPartition
+struct tdme::engine::physics::PhysicsPartition
 {
-public: /* protected */
 
 	/** 
 	 * Reset
@@ -46,8 +45,6 @@ public: /* protected */
 	 */
 	virtual void removeRigidBody(RigidBody* rigidBody) = 0;
 
-public:
-
 	/** 
 	 * Get objects near to
 	 * @param cbv
@@ -61,4 +58,10 @@ public:
 	 * @return objects near to cbv
 	 */
 	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~PhysicsPartition() {}
+
 };

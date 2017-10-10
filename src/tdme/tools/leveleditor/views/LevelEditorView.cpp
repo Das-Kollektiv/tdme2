@@ -810,7 +810,6 @@ void LevelEditorView::updateGrid()
 	auto gridDimensionFar = GRID_DIMENSION_Y + (centerLastZ > centerZ ? centerLastZ - centerZ : 0);
 	auto addedCells = 0;
 	auto removedCells = 0;
-	auto reAddedCells = 0;
 	for (auto gridZ = -gridDimensionNear; gridZ < gridDimensionFar; gridZ++) 
 	for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
 		wstring objectId =
@@ -820,32 +819,28 @@ void LevelEditorView::updateGrid()
 			 to_wstring(centerZ + gridZ);
 		auto _object = engine->getEntity(objectId);
 		if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
+			// TODO: keep selected grids even if out of view
+			auto _objectIt = selectedObjectsById.find(objectId);
+			if (_objectIt != selectedObjectsById.end()) {
+				selectedObjectsById.erase(_objectIt);
+			}
 			if (_object != nullptr) {
 				engine->removeEntity(objectId);
 				removedCells++;
 			}
 		} else
 		if (_object == nullptr) {
-			auto _objectIt = selectedObjectsById.find(objectId);
-			if (_objectIt != selectedObjectsById.end()) {
-				_object = _objectIt->second;
-			}
-			if (_object != nullptr) {
-				engine->addEntity(_object);
-				reAddedCells++;
-			} else {
-				_object = new Object3D(objectId, levelEditorGround);
-				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
-				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
-				_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
-				_object->getTranslation().set(centerX + static_cast< float >(gridX) * groundPlateWidth, gridY - 0.05f, centerZ + static_cast< float >(gridZ) * groundPlateDepth);
-				_object->setEnabled(true);
-				_object->setPickable(true);
-				_object->update();
-				setStandardObjectColorEffect(_object);
-				engine->addEntity(_object);
-				addedCells++;
-			}
+			_object = new Object3D(objectId, levelEditorGround);
+			_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
+			_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
+			_object->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
+			_object->getTranslation().set(centerX + static_cast< float >(gridX) * groundPlateWidth, gridY - 0.05f, centerZ + static_cast< float >(gridZ) * groundPlateDepth);
+			_object->setEnabled(true);
+			_object->setPickable(true);
+			_object->update();
+			setStandardObjectColorEffect(_object);
+			engine->addEntity(_object);
+			addedCells++;
 		}
 	}
 
