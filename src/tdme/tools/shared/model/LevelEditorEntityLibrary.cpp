@@ -52,8 +52,17 @@ LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level)
 	this->entityIdx = 0;
 }
 
+LevelEditorEntityLibrary::~LevelEditorEntityLibrary() {
+	for (auto entity: entities) {
+		delete entity;
+	}
+}
+
 void LevelEditorEntityLibrary::clear()
 {
+	for (auto entity: entities) {
+		delete entity;
+	}
 	this->entitiesById.clear();
 	this->entities.clear();
 	this->entityIdx = 0;
@@ -210,6 +219,7 @@ void LevelEditorEntityLibrary::removeEntity(int32_t id)
 	if (entityByIdIt != entitiesById.end()) {
 		entitiesById.erase(entityByIdIt);
 		entities.erase(remove(entities.begin(), entities.end(), entityByIdIt->second), entities.end());
+		delete entityByIdIt->second;
 	}
 }
 

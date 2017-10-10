@@ -82,4 +82,9 @@ public:
 	 * @param file name
 	 */
 	LevelPropertyPresets(const wstring& pathName, const wstring& fileName);
+
+	/**
+	 * Destructor
+	 */
+	~LevelPropertyPresets();
 };

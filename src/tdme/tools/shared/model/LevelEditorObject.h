@@ -81,4 +81,9 @@ public:
 	 */
 	LevelEditorObject(const wstring& id, const wstring& description, Transformations* transformations, LevelEditorEntity* entity);
 
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorObject();
+
 };

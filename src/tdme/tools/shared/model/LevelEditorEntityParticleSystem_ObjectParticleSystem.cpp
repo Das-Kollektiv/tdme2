@@ -32,6 +32,10 @@ LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleS
 	modelFileName = L"";
 }
 
+LevelEditorEntityParticleSystem_ObjectParticleSystem::~LevelEditorEntityParticleSystem_ObjectParticleSystem() {
+	if (model != nullptr) delete model;
+}
+
 Vector3& LevelEditorEntityParticleSystem_ObjectParticleSystem::getScale()
 {
 	return scale;

@@ -23,6 +23,10 @@ LevelEditorObject::LevelEditorObject(const wstring& id, const wstring& descripti
 	this->entity = entity;
 }
 
+LevelEditorObject::~LevelEditorObject() {
+	delete transformations;
+}
+
 const wstring& LevelEditorObject::getId()
 {
 	return id;

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -102,4 +101,9 @@ public:
 	 * Public constructor
 	 */
 	LevelEditorEntityParticleSystem_ObjectParticleSystem();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorEntityParticleSystem_ObjectParticleSystem();
 };

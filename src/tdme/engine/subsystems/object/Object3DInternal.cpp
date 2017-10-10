@@ -51,6 +51,9 @@ Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
 Object3DInternal::~Object3DInternal() {
 	delete boundingBox;
 	delete boundingBoxTransformed;
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		delete object3dGroups[i];
+	}
 }
 
 const wstring& Object3DInternal::getId()

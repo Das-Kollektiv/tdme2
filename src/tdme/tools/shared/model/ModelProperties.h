@@ -84,4 +84,9 @@ public:
 	 * Public constructor
 	 */
 	ModelProperties();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ModelProperties();
 };

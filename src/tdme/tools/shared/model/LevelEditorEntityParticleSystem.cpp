@@ -36,32 +36,40 @@ LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem()
 	spe = nullptr;
 }
 
+LevelEditorEntityParticleSystem::~LevelEditorEntityParticleSystem() {
+	unsetType();
+	unsetEmitter();
+}
+
 LevelEditorEntityParticleSystem_Type* LevelEditorEntityParticleSystem::getType()
 {
 	return type;
 }
 
+void LevelEditorEntityParticleSystem::unsetType() {
+	auto v = this->type;
+	if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
+		goto end_switch0;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
+		delete ops;
+		ops = nullptr;
+		goto end_switch0;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
+		delete pps;
+		pps = nullptr;
+		goto end_switch0;;
+	}
+	if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
+		Console::println(wstring(L"LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->getName() + L"'"));
+	}
+	end_switch0:;
+}
+
 void LevelEditorEntityParticleSystem::setType(LevelEditorEntityParticleSystem_Type* type)
 {
-	{
-		auto v = this->type;
-		if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
-			goto end_switch0;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
-			ops = nullptr;
-			goto end_switch0;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
-			pps = nullptr;
-			goto end_switch0;;
-		}
-		if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-			Console::println(wstring(L"LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->getName() + L"'"));
-		}
-		end_switch0:;
-	}
-
+	unsetType();
 	this->type = type;
 	{
 		auto v = this->type;
@@ -99,39 +107,45 @@ LevelEditorEntityParticleSystem_Emitter* LevelEditorEntityParticleSystem::getEmi
 	return emitter;
 }
 
+void LevelEditorEntityParticleSystem::unsetEmitter() {
+	auto v = this->emitter;
+	if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
+		goto end_switch2;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
+		delete ppe;
+		ppe = nullptr;
+		goto end_switch2;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
+		delete bbpe;
+		bbpe = nullptr;
+		goto end_switch2;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
+		delete cpe;
+		cpe = nullptr;
+		goto end_switch2;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
+		delete cpepv;
+		cpepv = nullptr;
+		goto end_switch2;;
+	}
+	if ((v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
+		delete spe;
+		spe = nullptr;
+		goto end_switch2;;
+	}
+	if ((((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
+		Console::println(wstring(L"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + L"'"));
+	}
+	end_switch2:;
+}
+
 void LevelEditorEntityParticleSystem::setEmitter(LevelEditorEntityParticleSystem_Emitter* emitter)
 {
-	{
-		auto v = this->emitter;
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-			goto end_switch2;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-			ppe = nullptr;
-			goto end_switch2;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-			bbpe = nullptr;
-			goto end_switch2;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-			cpe = nullptr;
-			goto end_switch2;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-			cpepv = nullptr;
-			goto end_switch2;;
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-			spe = nullptr;
-			goto end_switch2;;
-		}
-		if ((((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
-			Console::println(wstring(L"LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + L"'"));
-		}
-		end_switch2:;
-	}
-
+	unsetEmitter();
 	this->emitter = emitter;
 	{
 		auto v = this->emitter;

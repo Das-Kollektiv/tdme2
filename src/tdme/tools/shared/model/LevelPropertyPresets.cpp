@@ -114,6 +114,20 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 	}
 }
 
+LevelPropertyPresets::~LevelPropertyPresets() {
+	for (auto mapPropertiesPresetEntity: mapPropertiesPreset) {
+		delete mapPropertiesPresetEntity;
+	}
+	for (auto it = objectPropertiesPresets.begin(); it != objectPropertiesPresets.end(); ++it) {
+		for (auto propertyModelClass: it->second) {
+			delete propertyModelClass;
+		}
+	}
+	for (auto it = lightPresets.begin(); it != lightPresets.end(); ++it) {
+		delete it->second;
+	}
+}
+
 LevelPropertyPresets* LevelPropertyPresets::getInstance()
 {
 	if (instance == nullptr) {

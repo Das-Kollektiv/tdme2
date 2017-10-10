@@ -41,6 +41,18 @@ private:
 	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* cpepv {  };
 	LevelEditorEntityParticleSystem_SphereParticleEmitter* spe {  };
 
+	/**
+	 * Unset particle system type
+	 * @param type
+	 */
+	virtual void unsetType();
+
+	/**
+	 * Unset emitter
+	 * @param emitter
+	 */
+	virtual void unsetEmitter();
+
 public:
 
 	/** 
@@ -48,7 +60,7 @@ public:
 	 */
 	virtual LevelEditorEntityParticleSystem_Type* getType();
 
-	/** 
+	/**
 	 * Set particle system type
 	 * @param type
 	 */
@@ -69,7 +81,7 @@ public:
 	 */
 	virtual LevelEditorEntityParticleSystem_Emitter* getEmitter();
 
-	/** 
+	/**
 	 * Set emitter
 	 * @param emitter
 	 */
@@ -104,4 +116,9 @@ public:
 	 * Public constructor
 	 */
 	LevelEditorEntityParticleSystem();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorEntityParticleSystem();
 };

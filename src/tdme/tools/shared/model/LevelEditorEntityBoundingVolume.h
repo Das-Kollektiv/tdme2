@@ -118,4 +118,9 @@ public:
 	 */
 	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
 
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorEntityBoundingVolume();
+
 };
