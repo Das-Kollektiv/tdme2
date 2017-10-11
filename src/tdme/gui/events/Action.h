@@ -15,4 +15,9 @@ struct tdme::gui::events::Action
 	 * Perform action
 	 */
 	virtual void performAction() = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Action() {}
 };

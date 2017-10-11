@@ -227,4 +227,9 @@ public:
 	 * @param model viewer screen controller
 	 */
 	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityBoundingVolumeSubScreenController();
 };

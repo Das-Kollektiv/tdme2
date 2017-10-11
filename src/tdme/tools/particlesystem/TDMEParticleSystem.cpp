@@ -39,6 +39,7 @@ TDMEParticleSystem::TDMEParticleSystem()
 	viewInitialized = false;
 	viewNew = nullptr;
 	popUps = new PopUps();
+	particleSystemView = nullptr;
 	quitRequested = false;
 }
 

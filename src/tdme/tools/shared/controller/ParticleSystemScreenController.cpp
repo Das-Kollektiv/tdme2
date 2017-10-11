@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -122,6 +121,14 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
 	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), particleSystemPath);
 	this->value = new MutableString();
+}
+
+ParticleSystemScreenController::~ParticleSystemScreenController() {
+	delete particleSystemPath;
+	delete modelPath;
+	delete entityBaseSubScreenController;
+	delete entityDisplaySubScreenController;
+	delete entityBoundingVolumeSubScreenController;
 }
 
 EntityDisplaySubScreenController* ParticleSystemScreenController::getEntityDisplaySubScreenController()
@@ -540,12 +547,12 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getColorEnd().set(Tools::convertToColor4(bbpeColorEnd->getController()->getValue()->toWString()));
 					emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue()->toWString()));
 					emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue()->toWString()));
-					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
-					rotations->update();
-					rotations->getTransformationsMatrix().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
+					Transformations transformations;
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
+					transformations.update();
+					transformations.getTransformationsMatrix().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 					goto end_switch2;;
 				}
 			}
@@ -565,13 +572,13 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getColorEnd().set(Tools::convertToColor4(cpeColorEnd->getController()->getValue()->toWString()));
 					emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue()->toWString()));
 					emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue()->toWString()));
-					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
-					rotations->update();
+					Transformations transformations;
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
+					transformations.update();
 					Vector3 tmpVector3;
-					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
+					transformations.getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}
@@ -591,13 +598,13 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 					emitter->getColorEnd().set(Tools::convertToColor4(cpepvColorEnd->getController()->getValue()->toWString()));
 					emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue()->toWString()));
 					emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue()->toWString()));
-					auto rotations = new Transformations();
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
-					rotations->getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
-					rotations->update();
+					Transformations transformations;
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
+					transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
+					transformations.update();
 					Vector3 tmpVector3;
-					rotations->getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
+					transformations.getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 					goto end_switch2;;
 				}
 			}

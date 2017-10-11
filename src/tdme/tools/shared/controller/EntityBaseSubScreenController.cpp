@@ -55,6 +55,11 @@ EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Act
 	value = new MutableString();
 }
 
+EntityBaseSubScreenController::~EntityBaseSubScreenController() {
+	delete view;
+	delete onSetEntityDataAction;
+}
+
 void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {

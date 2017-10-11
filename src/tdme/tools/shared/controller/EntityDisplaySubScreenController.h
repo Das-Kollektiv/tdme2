@@ -72,4 +72,9 @@ public:
 	 * Public constructor
 	 */
 	EntityDisplaySubScreenController();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityDisplaySubScreenController();
 };

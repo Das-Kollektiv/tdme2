@@ -274,4 +274,9 @@ public:
 	 * @param view
 	 */
 	ParticleSystemScreenController(SharedParticleSystemView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ParticleSystemScreenController();
 };

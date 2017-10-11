@@ -24,7 +24,6 @@
 using std::vector;
 using std::wstring;
 
-
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
@@ -48,6 +47,10 @@ FileDialogScreenController::FileDialogScreenController()
 	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->value = new MutableString();
 	this->applyAction = nullptr;
+}
+
+FileDialogScreenController::~FileDialogScreenController() {
+	if (applyAction != nullptr) delete applyAction;
 }
 
 GUIScreenNode* FileDialogScreenController::getScreenNode()
@@ -97,7 +100,8 @@ void FileDialogScreenController::setupFileDialogListBox()
 	vector<wstring> fileList;
 	try {
 		auto directory = cwd;
-		FileSystem::getInstance()->list(directory, &fileList, new FileDialogScreenController_setupFileDialogListBox_1(this));
+		FileDialogScreenController_setupFileDialogListBox_1 extensionsFilter(this);
+		FileSystem::getInstance()->list(directory, &fileList, &extensionsFilter);
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -141,6 +145,7 @@ void FileDialogScreenController::show(const wstring& cwd, const wstring& caption
 	this->fileName->getController()->setValue(value->set(fileName));
 	setupFileDialogListBox();
 	screenNode->setVisible(true);
+	if (this->applyAction != nullptr) delete this->applyAction;
 	this->applyAction = applyAction;
 }
 
