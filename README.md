@@ -3,6 +3,7 @@ TDME2
 
     - What is it?
         - ThreeDeeMiniEngine2 is a small 3d engine suited for small 3d games written in C++
+        - it was originally developed by me in JAVA then got a C++11 port initially done by a customized version of J2C
 
     - What is already working
         - 3d engine
@@ -114,6 +115,8 @@ TDME2
 
     - What is WIP
         - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
+        - GUI system port needs to be finished(Memory Management)
+        - Logic documentation/comments need to be imported from TDME(-JAVA)
 
     - Technology
         - designed for simple multi threading
