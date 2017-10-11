@@ -111,6 +111,7 @@ LevelEditorEntity* SharedParticleSystemView::getEntity()
 
 void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initParticleSystemRequested = true;
 }
@@ -176,7 +177,6 @@ void SharedParticleSystemView::display()
 		cameraRotationInputHandler->reset();
 	}
 	if (initParticleSystemRequested == true) {
-		engine->reset();
 		initParticleSystem();
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();

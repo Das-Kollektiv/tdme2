@@ -76,6 +76,7 @@ LevelEditorEntity* TriggerView::getEntity()
 
 void TriggerView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }

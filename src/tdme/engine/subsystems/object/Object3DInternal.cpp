@@ -166,12 +166,12 @@ void Object3DInternal::initialize()
 
 void Object3DInternal::dispose()
 {
-	Object3DBase::dispose();
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
 		object3DGroup->renderer->dispose();
 		object3DGroup->dispose();
 	}
+	Object3DBase::dispose();
 }
 
 void Object3DInternal::fromTransformations(Transformations* transformations)

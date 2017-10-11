@@ -105,6 +105,7 @@ LevelEditorEntity* SharedModelViewerView::getEntity()
 
 void SharedModelViewerView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }
@@ -167,7 +168,6 @@ void SharedModelViewerView::display()
 		cameraRotationInputHandler->reset();
 	}
 	if (initModelRequested == true) {
-		engine->reset();
 		initModel();
 		initModelRequested = false;
 	}

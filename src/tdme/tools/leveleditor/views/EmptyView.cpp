@@ -74,6 +74,7 @@ LevelEditorEntity* EmptyView::getEntity()
 
 void EmptyView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }
