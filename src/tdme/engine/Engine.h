@@ -400,18 +400,16 @@ public:
 	 */
 	bool makeScreenshot(const wstring& pathName, const wstring& fileName);
 
-	// Generated
+	/**
+	 * Destructor
+	 */
+	~Engine();
 
 private:
 	/**
 	 * Constructor
 	 */
 	Engine();
-
-	/**
-	 * Destructor
-	 */
-	~Engine();
 
 private:
 	friend class EngineGL3Renderer;

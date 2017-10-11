@@ -268,22 +268,26 @@ void SharedModelViewerView::dispose()
 	Engine::getInstance()->reset();
 }
 
-void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldModel, LevelEditorEntity* model)
+void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
+	delete oldEntity;
 }
 
 void SharedModelViewerView::loadModel()
 {
 	Console::println(wstring(L"Model file: " + modelFile));
 	try {
-		auto oldModel = entity;
-		entity = loadModel(
-			FileSystem::getInstance()->getFileName(modelFile),
-			L"",
-			FileSystem::getInstance()->getPathName(modelFile),
-			FileSystem::getInstance()->getFileName(modelFile),
-			Vector3());
-		onLoadModel(oldModel, entity);
+		auto oldEntity = entity;
+		setEntity(
+			loadModel(
+				FileSystem::getInstance()->getFileName(modelFile),
+				L"",
+				FileSystem::getInstance()->getPathName(modelFile),
+				FileSystem::getInstance()->getFileName(modelFile),
+				Vector3()
+			)
+		);
+		onLoadModel(oldEntity, entity);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}

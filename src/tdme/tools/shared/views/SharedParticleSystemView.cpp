@@ -301,6 +301,7 @@ void SharedParticleSystemView::deactivate()
 
 void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
+	delete entity;
 }
 
 void SharedParticleSystemView::loadParticleSystem()
@@ -308,11 +309,13 @@ void SharedParticleSystemView::loadParticleSystem()
 	Console::println(wstring(L"Particle system file: " + particleSystemFile));
 	try {
 		auto oldEntity = entity;
-		entity = loadParticleSystem(
-			particleSystemFile,
-			L"",
-			FileSystem::getInstance()->getPathName(particleSystemFile),
-			FileSystem::getInstance()->getFileName(particleSystemFile)
+		setEntity(
+			loadParticleSystem(
+				particleSystemFile,
+				L"",
+				FileSystem::getInstance()->getPathName(particleSystemFile),
+				FileSystem::getInstance()->getFileName(particleSystemFile)
+			)
 		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (Exception& exception) {

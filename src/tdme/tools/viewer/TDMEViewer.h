@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Application.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/tools/viewer/fwd-tdme.h>
 
 using std::wstring;
@@ -15,6 +16,7 @@ using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
+using tdme::tools::shared::views::SharedModelViewerView;
 
 /** 
  * TDME Level Editor
@@ -34,6 +36,7 @@ private:
 	View* viewNew {  };
 	bool quitRequested {  };
 	PopUps* popUps {  };
+	SharedModelViewerView* modelViewerView;
 
 public:
 	/** 
@@ -91,4 +94,9 @@ public:
 	 * Public constructor
 	 */
 	TDMEViewer();
+
+	/**
+	 * Destructor
+	 */
+	~TDMEViewer();
 };

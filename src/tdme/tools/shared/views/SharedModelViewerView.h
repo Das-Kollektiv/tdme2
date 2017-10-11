@@ -142,10 +142,10 @@ public:
 
 	/** 
 	 * On load model
-	 * @param oldModel
+	 * @param old entity
 	 * @oaram entity
 	 */
-	virtual void onLoadModel(LevelEditorEntity* oldModel, LevelEditorEntity* model);
+	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 
 private:
 
