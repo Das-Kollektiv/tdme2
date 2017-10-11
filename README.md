@@ -2,7 +2,7 @@ TDME2
 =====
 
     - What is it?
-        - ThreeDeeMiniEngine2 is a small 3d engine suited for small 3d games written in C++
+        - ThreeDeeMiniEngine2 is a small 3d engine suited for small 3d games written in C++11
         - it was originally developed by me in JAVA then got a C++11 port initially done by a customized version of J2C
 
     - What is already working
