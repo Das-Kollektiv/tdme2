@@ -16,6 +16,7 @@
 using std::array;
 using std::vector;
 
+using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -35,9 +36,12 @@ private:
 	int32_t id {  };
 	bool acquired {  };
 	int32_t vertices {  };
-	FloatBuffer* fbVertices {  };
-	FloatBuffer* fbNormals {  };
-	FloatBuffer* fbTextureCoordinates {  };
+	ByteBuffer* fbVerticesByteBuffer;
+	FloatBuffer fbVertices {  };
+	ByteBuffer* fbNormalsByteBuffer {  };
+	FloatBuffer fbNormals {  };
+	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
+	FloatBuffer fbTextureCoordinates {  };
 	static array<float, 2> TEXTURECOORDINATE_NONE;
 
 public:
@@ -92,12 +96,12 @@ public: /* protected */
 		if (vertices == VERTEX_COUNT)
 			return false;
 
-		fbVertices->put(vertex.getArray());
-		fbNormals->put(normal.getArray());
+		fbVertices.put(vertex.getArray());
+		fbNormals.put(normal.getArray());
 		if (textureCoordinate != nullptr) {
-			fbTextureCoordinates->put(textureCoordinate->getArray());
+			fbTextureCoordinates.put(textureCoordinate->getArray());
 		} else {
-			fbTextureCoordinates->put(&TEXTURECOORDINATE_NONE);
+			fbTextureCoordinates.put(&TEXTURECOORDINATE_NONE);
 		}
 		vertices++;
 		return true;

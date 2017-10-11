@@ -89,7 +89,7 @@ public:
 	inline Buffer(Buffer* buffer) {
 		this->createdBuffer = false;
 		this->position = 0;
-		this->buffer = buffer->buffer;
+		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
 	}
 
 	/**
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	inline ~Buffer() {
+	inline virtual ~Buffer() {
 		if (createdBuffer == true) {
 			delete this->buffer;
 		}

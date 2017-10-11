@@ -39,6 +39,11 @@ struct tdme::engine::fileio::textures::Texture
 		ByteBuffer* textureData
 	);
 
+	/**
+	 * Destructor
+	 */
+	~Texture();
+
 	/** 
 	 * @return id
 	 */

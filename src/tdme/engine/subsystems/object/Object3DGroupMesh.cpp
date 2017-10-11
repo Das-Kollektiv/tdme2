@@ -16,6 +16,7 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/object/ObjectBuffer.h>
+#include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -37,6 +38,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::object::ObjectBuffer;
+using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -235,67 +237,61 @@ bool Object3DGroupMesh::hasRecreatedBuffers()
 	}
 }
 
-ShortBuffer* Object3DGroupMesh::setupVertexIndicesBuffer()
+void Object3DGroupMesh::setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
 	for (auto index : indices) {
-		sbIndices->put(index);
+		sbIndices.put(index);
 	}
-	return sbIndices;
+	renderer->uploadIndicesBufferObject(vboId, sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 }
 
-FloatBuffer* Object3DGroupMesh::setupTextureCoordinatesBuffer()
+void Object3DGroupMesh::setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto groupTextureCoordinates = group->getTextureCoordinates();
-	if (groupTextureCoordinates == nullptr)
-		return nullptr;
-
+	if (groupTextureCoordinates == nullptr) return;
 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
-		fbTextureCoordinates->put(textureCoordinate.getArray());
+		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
-	return fbTextureCoordinates;
+	renderer->uploadBufferObject(vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
-FloatBuffer* Object3DGroupMesh::setupVerticesBuffer()
+void Object3DGroupMesh::setupVerticesBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& vertex : *vertices) {
-		fbVertices->put(vertex.getArray());
+		fbVertices.put(vertex.getArray());
 	}
-	return fbVertices;
+	renderer->uploadBufferObject(vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
-FloatBuffer* Object3DGroupMesh::setupNormalsBuffer()
+void Object3DGroupMesh::setupNormalsBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& normal : *normals) {
-		fbNormals->put(normal.getArray());
+		fbNormals.put(normal.getArray());
 	}
-	return fbNormals;
+	renderer->uploadBufferObject(vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
-FloatBuffer* Object3DGroupMesh::setupTangentsBuffer()
+void Object3DGroupMesh::setupTangentsBuffer(GLRenderer* renderer, int32_t vboId)
 {
-	if (tangents == nullptr) {
-		return nullptr;
-	}
+	if (tangents == nullptr) return;
 	auto fbTangents = ObjectBuffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& tangent : *tangents) {
-		fbTangents->put(tangent.getArray());
+		fbTangents.put(tangent.getArray());
 	}
-	return fbTangents;
+	renderer->uploadBufferObject(vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-FloatBuffer* Object3DGroupMesh::setupBitangentsBuffer()
+void Object3DGroupMesh::setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId)
 {
-	if (bitangents == nullptr) {
-		return nullptr;
-	}
+	if (bitangents == nullptr) return;
 	auto fbBitangents = ObjectBuffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	for (auto& bitangent : *bitangents) {
-		fbBitangents->put(bitangent.getArray());
+		fbBitangents.put(bitangent.getArray());
 	}
-	return fbBitangents;
+	renderer->uploadBufferObject(vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 

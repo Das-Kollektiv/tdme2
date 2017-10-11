@@ -33,16 +33,16 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 	this->renderer = renderer;
 	this->acquired = false;
 	this->vertices = 0;
-	this->fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))->asFloatBuffer();
-	this->fbNormals = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))->asFloatBuffer();
-	this->fbTextureCoordinates = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float))->asFloatBuffer();
+	this->fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+	this->fbNormals = (fbNormalsByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+	this->fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float)))->asFloatBuffer();
 }
 
 BatchVBORendererTriangles::~BatchVBORendererTriangles()
 {
-	delete fbVertices;
-	delete fbNormals;
-	delete fbTextureCoordinates;
+	delete fbVerticesByteBuffer;
+	delete fbNormalsByteBuffer;
+	delete fbTextureCoordinatesByteBuffer;
 }
 
 bool BatchVBORendererTriangles::isAcquired()
@@ -74,13 +74,13 @@ void BatchVBORendererTriangles::initialize()
 
 void BatchVBORendererTriangles::render()
 {
-	if (fbVertices->getPosition() == 0 || fbNormals->getPosition() == 0 || fbTextureCoordinates->getPosition() == 0)
+	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0)
 		return;
 
-	auto triangles = fbVertices->getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * sizeof(float), fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbNormals->getPosition() * sizeof(float), fbNormals);
-	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates->getPosition() * sizeof(float), fbTextureCoordinates);
+	auto triangles = fbVertices.getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
+	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);
@@ -98,7 +98,7 @@ void BatchVBORendererTriangles::dispose()
 void BatchVBORendererTriangles::clear()
 {
 	vertices = 0;
-	fbVertices->clear();
-	fbNormals->clear();
-	fbTextureCoordinates->clear();
+	fbVertices.clear();
+	fbNormals.clear();
+	fbTextureCoordinates.clear();
 }

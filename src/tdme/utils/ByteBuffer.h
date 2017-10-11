@@ -30,22 +30,22 @@ public:
 	/**
 	 * @return this buffer as float buffer
 	 */
-	inline FloatBuffer* asFloatBuffer() {
-		return new FloatBuffer(this);
+	inline FloatBuffer asFloatBuffer() {
+		return FloatBuffer(this);
 	}
 
 	/**
 	 * @return this buffer as int buffer
 	 */
-	inline IntBuffer* asIntBuffer() {
-		return new IntBuffer(this);
+	inline IntBuffer asIntBuffer() {
+		return IntBuffer(this);
 	}
 
 	/**
 	 * @return this buffer as short buffer
 	 */
-	inline ShortBuffer* asShortBuffer() {
-		return new ShortBuffer(this);
+	inline ShortBuffer asShortBuffer() {
+		return ShortBuffer(this);
 	}
 
 public:

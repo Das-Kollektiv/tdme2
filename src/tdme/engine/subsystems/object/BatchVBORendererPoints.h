@@ -4,11 +4,13 @@
 
 #include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/FloatBuffer.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::vector;
 
+using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -26,8 +28,10 @@ private:
 	vector<int32_t>* vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
-	FloatBuffer* fbVertices {  };
-	FloatBuffer* fbColors {  };
+	ByteBuffer* fbVerticesByteBuffer;
+	FloatBuffer fbVertices {  };
+	ByteBuffer* fbColorsByteBuffer;
+	FloatBuffer fbColors {  };
 
 public:
 

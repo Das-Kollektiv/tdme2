@@ -46,6 +46,12 @@ public:
 	}
 
 	/**
+	 * Default constructor
+	 */
+	ShortBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
+	/**
 	 * Public constructor
 	 * @param buffer
 	 */

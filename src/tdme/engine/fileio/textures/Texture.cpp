@@ -24,6 +24,10 @@ Texture::Texture(
 	//
 }
 
+Texture::~Texture() {
+	delete textureData;
+}
+
 const wstring& Texture::getId() {
 	return id;
 }

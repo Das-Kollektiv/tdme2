@@ -34,14 +34,14 @@ BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id)
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
-	fbVertices = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))->asFloatBuffer();
-	fbColors = ByteBuffer::allocate(VERTEX_COUNT * 4 * sizeof(float))->asFloatBuffer();
+	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 }
 
 BatchVBORendererPoints::~BatchVBORendererPoints()
 {
-	delete fbVertices;
-	delete fbColors;
+	delete fbVerticesByteBuffer;
+	delete fbColorsByteBuffer;
 }
 
 bool BatchVBORendererPoints::isAcquired()
@@ -73,12 +73,12 @@ void BatchVBORendererPoints::initialize()
 
 void BatchVBORendererPoints::render()
 {
-	if (fbVertices->getPosition() == 0 || fbColors->getPosition() == 0)
+	if (fbVertices.getPosition() == 0 || fbColors.getPosition() == 0)
 		return;
 
-	auto points = fbVertices->getPosition() / 3 /* 3 components */;
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices->getPosition() * sizeof(float), fbVertices);
-	renderer->uploadBufferObject((*vboIds)[1], fbColors->getPosition() * sizeof(float), fbColors);
+	auto points = fbVertices.getPosition() / 3 /* 3 components */;
+	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject((*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
 	renderer->bindColorsBufferObject((*vboIds)[1]);
 	renderer->drawPointsFromBufferObjects(points, 0);
@@ -94,12 +94,12 @@ void BatchVBORendererPoints::dispose()
 
 void BatchVBORendererPoints::clear()
 {
-	fbVertices->clear();
-	fbColors->clear();
+	fbVertices.clear();
+	fbColors.clear();
 }
 
 void BatchVBORendererPoints::addPoint(TransparentRenderPoint* point)
 {
-	fbVertices->put(point->point.getArray());
-	fbColors->put(point->color.getArray());
+	fbVertices.put(point->point.getArray());
+	fbColors.put(point->color.getArray());
 }
