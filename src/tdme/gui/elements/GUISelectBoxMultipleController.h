@@ -31,7 +31,7 @@ class tdme::gui::elements::GUISelectBoxMultipleController final
 private:
 	static wstring CONDITION_DISABLED;
 	static wstring CONDITION_ENABLED;
-	static constexpr char16_t VALUE_DELIMITER { L'|' };
+	static constexpr wchar_t VALUE_DELIMITER { L'|' };
 	vector<GUINode*> childControllerNodes {  };
 	vector<GUISelectBoxMultipleOptionController*> selectBoxMultipleOptionControllers {  };
 	bool disabled {  };

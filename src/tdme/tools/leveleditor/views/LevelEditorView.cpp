@@ -780,13 +780,9 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	object->getEffectColorAdd().set(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f);
 	object->getEffectColorMul().set(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f);
 	auto levelEditorObject = level->getObjectById(object->getId());
-	if (levelEditorObject == nullptr)
-		return;
-
+	if (levelEditorObject == nullptr) return;
 	auto colorProperty = levelEditorObject->getProperty(L"object.color");
-	if (colorProperty == nullptr)
-		colorProperty = levelEditorObject->getEntity()->getProperty(L"object.color");
-
+	if (colorProperty == nullptr) colorProperty = levelEditorObject->getEntity()->getProperty(L"object.color");
 	if (colorProperty != nullptr) {
 		auto objectColorIt = objectColors.find(colorProperty->getValue());
 		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
@@ -1021,9 +1017,11 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 		}
 		if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			auto object = Level::createParticleSystem(levelEditorObject->getEntity()->getParticleSystem(), levelEditorObject->getId(), false);
-			object->fromTransformations(levelEditorObjectTransformations);
-			object->setPickable(true);
-			engine->addEntity(object);
+			if (object != nullptr) {
+				object->fromTransformations(levelEditorObjectTransformations);
+				object->setPickable(true);
+				engine->addEntity(object);
+			}
 		}
 		levelEditorScreenController->setObjectListbox(level);
 	}

@@ -33,7 +33,8 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
+constexpr wchar_t GUISelectBoxMultipleController::VALUE_DELIMITER;
+
 wstring GUISelectBoxMultipleController::CONDITION_DISABLED = L"disabled";
 wstring GUISelectBoxMultipleController::CONDITION_ENABLED = L"enabled";
 

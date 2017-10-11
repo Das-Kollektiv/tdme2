@@ -119,7 +119,7 @@ public:
 			wstring s;
 			for (auto i = 0; i < l; i++) {
 				// FIXME: actually we use wide string
-				s+= static_cast< char16_t >(readByte());
+				s+= static_cast< wchar_t >(readByte());
 			}
 			return s;
 		}
