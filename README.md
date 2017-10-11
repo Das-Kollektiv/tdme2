@@ -119,7 +119,7 @@ TDME2
         - designed for simple multi threading
             - 3d engine uses one thread for now
             - physics or game mechanics can run in a separate thread(s)
-        - uses GLUT, OpenGL, OpenAL, Vorbis/OGG, JsonBox, libpng, tinyxml
+        - uses GLUT, OpenGL, OpenAL, Vorbis/OGG, JsonBox, libpng, tinyxml, pthreads
         - targeted platforms and its current state
             - Windows(port pending)
             - Linux(port is WIP)
