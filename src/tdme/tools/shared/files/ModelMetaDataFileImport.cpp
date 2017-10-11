@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
@@ -37,7 +36,6 @@
 #include <ext/jsonbox/JsonException.h>
 
 using std::wstring;
-
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;
