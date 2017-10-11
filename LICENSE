@@ -20,7 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Please note that TDME2 depends on several 3rd party libraries which are or will be included in this repository.
+Please note that TDME2 depends on several 3rd party libraries which are or will 
+be included in this repository. 
+
 For now their respective licenses are included in its headers. 
 
-I will soon compile a list here to have a full enumeration of used 3rd party software.
+I will soon compile a list here to have a full enumeration of used 3rd party 
+software and its licenses.
