@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -96,6 +95,10 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	entity->setDefaultBoundingVolumes();
 }
 
+SharedParticleSystemView::~SharedParticleSystemView() {
+	delete cameraRotationInputHandler;
+}
+
 PopUps* SharedParticleSystemView::getPopUpsViews()
 {
 	return popUps;
@@ -125,13 +128,15 @@ void SharedParticleSystemView::initParticleSystem()
 	particleSystemFile = entity->getEntityFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
-	BoundingBox* boundingBox = nullptr;
+	BoundingBox boundingBox;
 	if (entity->getModel() == nullptr) {
-		boundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
+		boundingBox.getMin().set(Vector3(-0.5f, 0.0f, -0.5f));
+		boundingBox.getMax().set(Vector3(0.5f, 3.0f, 0.5f));
 	} else {
-		boundingBox = entity->getModel()->getBoundingBox();
+		boundingBox.fromBoundingVolume(entity->getModel()->getBoundingBox());
 	}
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(boundingBox));
+	boundingBox.update();
+	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(&boundingBox));
 	updateGUIElements();
 }
 

@@ -180,4 +180,9 @@ public:
 	 * @param pop ups
 	 */
 	SharedModelViewerView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~SharedModelViewerView();
 };

@@ -175,4 +175,9 @@ public:
 	 * @param pop ups view
 	 */
 	SharedParticleSystemView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~SharedParticleSystemView();
 };

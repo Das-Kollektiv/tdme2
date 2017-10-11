@@ -35,7 +35,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Properties.h>
-#include "../../../engine/subsystems/object/ModelStatistics.h"
+#include <tdme/engine/subsystems/object/ModelStatistics.h>
 
 using std::wstring;
 
@@ -86,6 +86,11 @@ SharedModelViewerView::SharedModelViewerView(PopUps* popUps)
 	entity = nullptr;
 	modelFile = L"";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+}
+
+SharedModelViewerView::~SharedModelViewerView() {
+	delete modelViewerScreenController;
+	delete cameraRotationInputHandler;
 }
 
 PopUps* SharedModelViewerView::getPopUpsViews()

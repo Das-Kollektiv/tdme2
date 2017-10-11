@@ -76,4 +76,9 @@ public:
 	 * Public constructor
 	 */
 	CameraRotationInputHandler(Engine* engine);
+
+	/**
+	 * Destructor
+	 */
+	~CameraRotationInputHandler();
 };

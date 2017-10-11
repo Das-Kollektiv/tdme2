@@ -219,6 +219,8 @@ void Tools::oseInit()
 void Tools::oseDispose()
 {
 	osEngine->dispose();
+	delete osEngine;
+	delete oseLookFromRotations;
 }
 
 void Tools::oseThumbnail(LevelEditorEntity* model)

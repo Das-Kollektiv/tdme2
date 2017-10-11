@@ -53,6 +53,10 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine)
 	mouseLastY = 0;
 }
 
+CameraRotationInputHandler::~CameraRotationInputHandler() {
+	delete lookFromRotations;
+}
+
 float CameraRotationInputHandler::getMaxAxisDimension()
 {
 	return maxAxisDimension;
