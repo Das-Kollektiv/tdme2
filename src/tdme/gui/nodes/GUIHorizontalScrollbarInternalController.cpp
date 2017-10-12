@@ -109,11 +109,11 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 	if (node != this->node)
 		return;
 
-	if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSE_MOVED) {
+	if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
 		state = GUIHorizontalScrollbarInternalController_State::MOUSEOVER;
 		event->setProcessed(true);
 	} else if (event->getButton() == 1) {
-		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			auto barLeft = getBarLeft();
 			auto barWidth = getBarWidth();
 			if (event->getX() < barLeft) {
@@ -131,11 +131,11 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 				state = GUIHorizontalScrollbarInternalController_State::DRAGGING;
 			}
 			event->setProcessed(true);
-		} else if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		} else if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			mouseXOffset = -1;
 			state = GUIHorizontalScrollbarInternalController_State::NONE;
 			event->setProcessed(true);
-		} else if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED) {
+		} else if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			auto barLeft = getBarLeft();
 			auto draggedX = event->getX() - barLeft - mouseXOffset;
 			setDraggedX(draggedX);

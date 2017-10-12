@@ -120,7 +120,7 @@ void GUITabController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
 			guiTabsController->unselect();
 			setSelected(selected == true ? false : true);

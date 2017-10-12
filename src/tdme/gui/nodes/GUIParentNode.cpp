@@ -378,7 +378,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 	if (screenNode->mouseEventProcessedByFloatingNode == true)
 		return;
 
-	if (isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSE_WHEEL_MOVED) {
+	if (isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
 		if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
 			childrenRenderOffsetX -= event->getWheelX();
 			float elementWidth = this->computedConstraints->width;

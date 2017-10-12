@@ -107,7 +107,7 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 {
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
 			select();
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();

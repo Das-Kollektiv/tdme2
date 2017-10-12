@@ -105,7 +105,7 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			(dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->unselect();
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(selectBoxNode));

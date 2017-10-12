@@ -63,14 +63,14 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			isActionPerforming = true;
 			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
 				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			}
-		} else if (event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED) {
+		} else if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			isActionPerforming = true;
-		} else if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		} else if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			isActionPerforming = false;
 			node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 		}

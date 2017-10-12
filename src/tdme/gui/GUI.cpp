@@ -579,7 +579,7 @@ void GUI::onMouseDragged(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_DRAGGED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_DRAGGED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
@@ -599,7 +599,7 @@ void GUI::onMouseMoved(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(0);
@@ -620,7 +620,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	mouseButtonLast = button + 1;
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSE_PRESSED:GUIMouseEvent_Type::MOUSE_RELEASED);
+	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSEEVENT_PRESSED:GUIMouseEvent_Type::MOUSEEVENT_RELEASED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
@@ -640,7 +640,7 @@ void GUI::mouseWheelMoved(MouseEvent* event)
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_WHEEL_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED);
 	guiMouseEvent->setX(event->getX());
 	guiMouseEvent->setY(event->getY());
 	guiMouseEvent->setButton(0);
@@ -658,7 +658,7 @@ void GUI::fakeMouseMovedEvent()
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
 	guiMouseEvent->setX(-10000);
 	guiMouseEvent->setY(-10000);
 	guiMouseEvent->setButton(0);

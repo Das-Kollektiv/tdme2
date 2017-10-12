@@ -8,7 +8,7 @@ using tdme::gui::events::GUIMouseEvent_Type;
 GUIMouseEvent::GUIMouseEvent() 
 {
 	this->time = -1;
-	this->type = GUIMouseEvent_Type::NONE;
+	this->type = GUIMouseEvent_Type::MOUSEEVENT_NONE;
 	this->x = -1;
 	this->y = -1;
 	this->button = -1;

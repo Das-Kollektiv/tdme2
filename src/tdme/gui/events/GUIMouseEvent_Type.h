@@ -17,12 +17,12 @@ class tdme::gui::events::GUIMouseEvent_Type final
 	friend class GUIMouseEvent;
 
 public:
-	static GUIMouseEvent_Type *NONE;
-	static GUIMouseEvent_Type *MOUSE_WHEEL_MOVED;
-	static GUIMouseEvent_Type *MOUSE_PRESSED;
-	static GUIMouseEvent_Type *MOUSE_RELEASED;
-	static GUIMouseEvent_Type *MOUSE_MOVED;
-	static GUIMouseEvent_Type *MOUSE_DRAGGED;
+	static GUIMouseEvent_Type* MOUSEEVENT_NONE;
+	static GUIMouseEvent_Type* MOUSEEVENT_WHEEL_MOVED;
+	static GUIMouseEvent_Type* MOUSEEVENT_PRESSED;
+	static GUIMouseEvent_Type* MOUSEEVENT_RELEASED;
+	static GUIMouseEvent_Type* MOUSEEVENT_MOVED;
+	static GUIMouseEvent_Type* MOUSEEVENT_DRAGGED;
 	GUIMouseEvent_Type(const wstring& name, int ordinal);
 	static GUIMouseEvent_Type* valueOf(const wstring& a0);
 
