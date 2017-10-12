@@ -135,7 +135,7 @@ TDME2
             - pthreads
             - (collision resolving of) ReactPhysics3D
         - targeted platforms and its current state
-            - Windows(port pending)
+            - Windows(port is WIP)
             - Linux(port is WIP)
             - Mac Os X(port completed)
             - Android(port pending)
