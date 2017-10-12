@@ -3,10 +3,10 @@ INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
-	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -L/usr/lib -lz -pthread
+	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lfreeglut -lopenal -pthread
-	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lz -lGL -lfreeglut-gles -lopenal -pthread 
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lfreeglut -lopenal -pthread
+	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
@@ -27,6 +27,7 @@ LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 SRC = src
 TINYXML = tinyxml
 JSONBOX = jsonbox
+ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
@@ -353,6 +354,23 @@ EXT_JSONBOX_SRCS = \
 	ext/jsonbox/SolidusEscaper.cpp \
 	ext/jsonbox/Value.cpp \
 
+EXT_ZLIB_SRCS = \
+	ext/zlib/adler32.c \
+	ext/zlib/crc32.c \
+	ext/zlib/deflate.c \
+	ext/zlib/infback.c \
+	ext/zlib/inffast.c \
+	ext/zlib/inflate.c \
+	ext/zlib/inftrees.c \
+	ext/zlib/trees.c \
+	ext/zlib/zutil.c \
+	ext/zlib/compress.c \
+	ext/zlib/uncompr.c \
+	ext/zlib/gzclose.c \
+	ext/zlib/gzlib.c \
+	ext/zlib/gzread.c \
+	ext/zlib/gzwrite.c  \
+
 EXT_LIBPNG_SRCS = \
 	ext/libpng/pngrio.c \
 	ext/libpng/pngwio.c \
@@ -422,6 +440,7 @@ OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
+EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
@@ -450,6 +469,9 @@ $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 $(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
 	$(cpp-command)
 
+$(EXT_ZLIB_OBJS):$(OBJ)/%.o: ext/$(ZLIB)/%.c | print-opts
+	$(c-command)
+
 $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 	$(c-command)
 
@@ -467,7 +489,7 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
