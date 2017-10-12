@@ -3,17 +3,17 @@
 #include <vector>
 
 #include <tdme/engine/Entity.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 
 using std::vector;
 
 using tdme::engine::PartitionNone;
 using tdme::engine::Entity;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 PartitionNone::PartitionNone() 
 {
-	arrayListIteratorMultiple.addArrayList(&entities);
+	arrayListIteratorMultiple.addVector(&entities);
 }
 
 void PartitionNone::reset()
@@ -49,12 +49,12 @@ const vector<Entity*>* PartitionNone::getVisibleEntities(Frustum* frustum)
 	return &entities;
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)
+VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)
 {
 	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center)
 {
 	return &arrayListIteratorMultiple;
 }

@@ -13,7 +13,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
 
@@ -33,7 +33,7 @@ using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::Console;
 
@@ -219,13 +219,13 @@ void PhysicsPartitionOctTree::addToPartitionTree(RigidBody* rigidBody, BoundingB
 	}
 }
 
-int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<RigidBody*>& rigidBodyIterator)
+int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<RigidBody*>& rigidBodyIterator)
 {
 	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
 		return 1;
 	}
 	if (node->partitionRidigBodies.size() > 0) {
-		rigidBodyIterator.addArrayList(&node->partitionRidigBodies);
+		rigidBodyIterator.addVector(&node->partitionRidigBodies);
 		return 1;
 	} else {
 		auto lookUps = 1;
@@ -236,7 +236,7 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 	}
 }
 
-ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto& center = cbv->getCenter();
 	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
@@ -253,7 +253,7 @@ ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo
 	return &rigidBodyIterator;
 }
 
-ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(const Vector3& center)
 {
 	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
 	boundingBox.getMin().set(center);

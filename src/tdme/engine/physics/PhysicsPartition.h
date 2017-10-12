@@ -7,12 +7,12 @@
 #include <tdme/utils/fwd-tdme.h>
 
 #include <tdme/engine/physics/RigidBody.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 /** 
  * Physics partition interface
@@ -50,14 +50,14 @@ struct tdme::engine::physics::PhysicsPartition
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
+	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) = 0;
+	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) = 0;
 
 	/**
 	 * Destructor

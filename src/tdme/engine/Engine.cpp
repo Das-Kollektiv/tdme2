@@ -43,7 +43,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
 

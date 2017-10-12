@@ -14,7 +14,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
 
@@ -34,7 +34,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::Console;
 
@@ -264,13 +264,13 @@ void PartitionOctTree::addToPartitionTree(Entity* entity, BoundingBox* cbv)
 	}
 }
 
-int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<Entity*>& entityIterator)
+int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<Entity*>& entityIterator)
 {
 	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
 		return 1;
 	}
 	if (node->partitionEntities.size() > 0) {
-		entityIterator.addArrayList(&node->partitionEntities);
+		entityIterator.addVector(&node->partitionEntities);
 		return 1;
 	} else
 	if (node->subNodes.size() > 0) {
@@ -282,7 +282,7 @@ int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_Par
 	}
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
+VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto& center = cbv->getCenter();
 	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
@@ -299,7 +299,7 @@ ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingV
 	return &entityIterator;
 }
 
-ArrayListIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center)
 {
 	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
 	boundingBox.getMin().set(center);

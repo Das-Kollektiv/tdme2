@@ -23,7 +23,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
 
@@ -52,7 +52,7 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::Console;
 

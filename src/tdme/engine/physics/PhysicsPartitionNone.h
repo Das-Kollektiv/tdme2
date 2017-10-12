@@ -16,7 +16,7 @@ using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 /** 
  * Partition none implementation
@@ -28,7 +28,7 @@ class tdme::engine::physics::PhysicsPartitionNone final
 {
 private:
 	vector<RigidBody*> bodies {  };
-	ArrayListIteratorMultiple<RigidBody*> arrayListIteratorMultiple {  };
+	VectorIteratorMultiple<RigidBody*> arrayListIteratorMultiple {  };
 
 public: /* protected */
 
@@ -62,14 +62,14 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
+	VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
+	VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
 
 	// Generated
 
