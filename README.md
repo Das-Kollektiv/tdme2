@@ -129,6 +129,7 @@ TDME2
             - OpenAL
             - Vorbis/OGG,
             - JsonBox
+            - zlib
             - libpng
             - tinyxml
             - pthreads
