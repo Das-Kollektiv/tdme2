@@ -1,8 +1,8 @@
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif __linux__
+#elif defined(__linux__) or defined(_WIN32)
         #define GL_GLEXT_PROTOTYPES
         #include <GL/gl.h>
         #include <GL/glext.h>

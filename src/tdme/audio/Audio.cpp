@@ -3,7 +3,7 @@
 #if defined(__APPLE__)
 	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
-#elif defined(__linux__)
+#elif defined(__linux__) or defined(_WIN32)
 	#include <AL/al.h>
 	#include <AL/alc.h>
 #endif

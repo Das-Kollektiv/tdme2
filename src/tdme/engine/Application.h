@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef __linux__
+#if defined(__linux__) or defined(_WIN32)
 	#include <GL/freeglut.h>
-#elif __APPLE__
+#elif defined(__APPLE__)
 	#include <GLUT/glut.h>
 #endif
 

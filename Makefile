@@ -1,12 +1,17 @@
-INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
-
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
+	#GL2ES on ARM, WIP
 	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
+else
+	# Win-MINGW, WIP
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/openal-soft/include -Iext/freeglut/include
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext 
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
