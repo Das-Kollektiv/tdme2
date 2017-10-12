@@ -1,8 +1,12 @@
-#ifdef __linux__
+#if defined(__linux__)
 	#include <GL/freeglut.h>
-#elif __APPLE__
+#elif defined(__APPLE__)
 	#include <GLUT/glut.h>
+#elif defined(_WIN32)
+	#include<GL/glew.h>
 #endif
+
+#include <string>
 
 #include <tdme.h>
 
@@ -12,9 +16,17 @@
 #include <tdme/engine/Application.h>
 #include <tdme/utils/StringConverter.h>
 #include "ApplicationInputEventsHandler.h"
+#include <tdme/utils/Console.h>
+#include <tdme/utils/StringConverter.h>
+
+using std::string;
+using std::wstring;
+using std::to_wstring;
 
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
+using tdme::utils::StringConverter;
+using tdme::utils::Console;
 using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::os::threading::Thread;
@@ -48,6 +60,16 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 #elif defined(__linux__) and defined(__arm__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitContextVersion(2,0);
+#elif defined(_WIN32)
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitContextVersion(2,1);
+	// glutInitContextFlags(GLUT_CORE_PROFILE | GLUT_DEBUG);
+	glewExperimental = TRUE;
+	GLenum glewInitStatus = glewInit();
+	if (glewInitStatus != GLEW_OK) {
+		Console::println(L"glewInit(): Error: " + StringConverter::toWideString(string((char*)glewGetErrorString(glewInitStatus))));
+	}
+	Console::println(L"glewInit(): Using GLEW " + StringConverter::toWideString(string((char*)glewGetString(GLEW_VERSION))));
 #endif
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
