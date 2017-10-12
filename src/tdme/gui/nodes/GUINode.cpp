@@ -292,10 +292,10 @@ GUINode_Border* GUINode::createBorder(const wstring& allBorder, const wstring& l
 	border->top = getRequestedPixelValue(top, border->top);
 	border->right = getRequestedPixelValue(right, border->right);
 	border->bottom = getRequestedPixelValue(bottom, border->bottom);
-	border->leftColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
-	border->topColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
-	border->rightColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
-	border->bottomColor = getRequestedColor(allBorderColor, &GUIColor::BLACK);
+	border->leftColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
+	border->topColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
+	border->rightColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
+	border->bottomColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
 	border->leftColor = getRequestedColor(leftColor, border->leftColor);
 	border->topColor = getRequestedColor(topColor, border->topColor);
 	border->rightColor = getRequestedColor(rightColor, border->rightColor);
@@ -387,7 +387,7 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	if (backgroundColor != &GUIColor::TRANSPARENT) {
+	if (backgroundColor != &GUIColor::GUICOLOR_TRANSPARENT) {
 		float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left;
 		float top = computedConstraints->top + computedConstraints->alignmentTop + border->top;
 		float width = computedConstraints->width - border->left - border->right;

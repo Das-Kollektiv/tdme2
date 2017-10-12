@@ -163,14 +163,14 @@ void GUITabsHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					selectPrevious();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_RIGHT: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					selectNext();
 				}
 			}

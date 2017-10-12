@@ -120,7 +120,7 @@ void GUIRadioButtonController::handleKeyboardEvent(GUINode* node, GUIKeyboardEve
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					select();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}

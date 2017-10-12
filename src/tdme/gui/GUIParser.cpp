@@ -136,7 +136,7 @@ GUIScreenNode* GUIParser::parse(const wstring& xml) throw (GUIParserException)
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("width"))),
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("height")))
 		),
-		GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+		GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 		GUINode::createBorder(
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border"))),
 			StringConverter::toWideString(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border-left"))),
@@ -261,7 +261,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -311,7 +311,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -361,7 +361,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -416,7 +416,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -439,8 +439,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("src")))),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), &GUIColor::EFFECT_COLOR_MUL),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), &GUIColor::EFFECT_COLOR_ADD)
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), &GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), &GUIColor::GUICOLOR_EFFECT_COLOR_ADD)
 				);
 				guiParentNode->addSubNode(guiImageNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -467,7 +467,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -518,7 +518,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -571,7 +571,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -593,9 +593,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), &GUIColor::BLACK),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), &GUIColor::BLACK),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), &GUIColor::BLACK)
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), &GUIColor::GUICOLOR_BLACK),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), &GUIColor::GUICOLOR_BLACK),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), &GUIColor::GUICOLOR_BLACK)
 				);
 				guiParentNode->addSubNode(guiVerticalScrollbarInternalNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -622,7 +622,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::TRANSPARENT),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), &GUIColor::GUICOLOR_TRANSPARENT),
 					GUINode::createBorder(
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -644,9 +644,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), &GUIColor::BLACK),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), &GUIColor::BLACK),
-					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), &GUIColor::BLACK)
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), &GUIColor::GUICOLOR_BLACK),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), &GUIColor::GUICOLOR_BLACK),
+					GUINode::getRequestedColor(StringConverter::toWideString(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), &GUIColor::GUICOLOR_BLACK)
 				);
 				guiParentNode->addSubNode(guiHorizontalScrollbarInternalNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

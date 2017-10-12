@@ -196,21 +196,21 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					focusPrevious();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					focusNext();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					toggle();
 				}
 			}
