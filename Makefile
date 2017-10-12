@@ -11,7 +11,7 @@ else ifeq ($(OS), Linux)
 else
 	# Win-MINGW, WIP
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/openal-soft/include -Iext/freeglut/include
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext 
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -lopengl32
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
