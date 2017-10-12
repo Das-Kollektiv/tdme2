@@ -29,14 +29,14 @@ class tdme::gui::nodes::GUIColor final
 {
 
 public:
-	static GUIColor WHITE;
-	static GUIColor BLACK;
-	static GUIColor RED;
-	static GUIColor GREEN;
-	static GUIColor BLUE;
-	static GUIColor TRANSPARENT;
-	static GUIColor EFFECT_COLOR_MUL;
-	static GUIColor EFFECT_COLOR_ADD;
+	static GUIColor GUICOLOR_WHITE;
+	static GUIColor GUICOLOR_BLACK;
+	static GUIColor GUICOLOR_RED;
+	static GUIColor GUICOLOR_GREEN;
+	static GUIColor GUICOLOR_BLUE;
+	static GUIColor GUICOLOR_TRANSPARENT;
+	static GUIColor GUICOLOR_EFFECT_COLOR_MUL;
+	static GUIColor GUICOLOR_EFFECT_COLOR_ADD;
 
 private:
 	static vector<GUIColor*> COLOR_INSTANCES;

@@ -439,7 +439,7 @@ void GUI::handleEvents(GUINode* node)
 		switch (event->getKeyCode()) {
 			case (GUIKeyboardEvent::KEYCODE_TAB):
 				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						focusNextNode();
 					}
 					event->setProcessed(true);
@@ -447,7 +447,7 @@ void GUI::handleEvents(GUINode* node)
 				}
 			case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
 				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						focusPreviousNode();
 					}
 					event->setProcessed(true);
@@ -510,7 +510,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
@@ -527,7 +527,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
@@ -544,7 +544,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
@@ -561,7 +561,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
@@ -702,7 +702,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(-1);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);

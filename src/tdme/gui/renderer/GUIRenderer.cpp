@@ -144,8 +144,8 @@ void GUIRenderer::initScreen(GUIScreenNode* screenNode)
 void GUIRenderer::doneScreen()
 {
 	this->screenNode = nullptr;
-	guiEffectColorMul = GUIColor::WHITE.getArray();
-	guiEffectColorAdd = GUIColor::BLACK.getArray();
+	guiEffectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 }
 
 void GUIRenderer::setFontColor(GUIColor* color)
@@ -392,9 +392,9 @@ void GUIRenderer::bindTexture(int32_t textureId)
 void GUIRenderer::render()
 {
 	if (quadCount == 0) {
-		fontColor = GUIColor::WHITE.getArray();
-		effectColorMul = GUIColor::WHITE.getArray();
-		effectColorAdd = GUIColor::BLACK.getArray();
+		fontColor = GUIColor::GUICOLOR_WHITE.getArray();
+		effectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+		effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 		return;
 	}
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
@@ -416,9 +416,9 @@ void GUIRenderer::render()
 	fbVertices.clear();
 	fbColors.clear();
 	fbTextureCoordinates.clear();
-	fontColor = GUIColor::WHITE.getArray();
-	effectColorMul = GUIColor::WHITE.getArray();
-	effectColorAdd = GUIColor::BLACK.getArray();
+	fontColor = GUIColor::GUICOLOR_WHITE.getArray();
+	effectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+	effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 	effectColorAdd[3] = 0.0f;
 	guiEffectColorAdd[3] = 0.0f;
 }

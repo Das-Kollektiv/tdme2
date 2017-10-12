@@ -22,22 +22,22 @@ using tdme::gui::GUIParserException;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 
-GUIColor GUIColor::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-GUIColor GUIColor::BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-GUIColor GUIColor::RED(1.0f, 0.0f, 0.0f, 1.0f);
-GUIColor GUIColor::GREEN(0.0f, 1.0f, 0.0f, 1.0f);
-GUIColor GUIColor::BLUE(0.0f, 0.0f, 1.0f, 1.0f);
-GUIColor GUIColor::TRANSPARENT(0.0f, 0.0f, 0.0f, 0.0f);
-GUIColor GUIColor::EFFECT_COLOR_MUL(1.0f, 1.0f, 1.0f, 1.0f);
-GUIColor GUIColor::EFFECT_COLOR_ADD(0.0f, 0.0f, 0.0f, 0.0f);
+GUIColor GUIColor::GUICOLOR_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_RED(1.0f, 0.0f, 0.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_BLUE(0.0f, 0.0f, 1.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_TRANSPARENT(0.0f, 0.0f, 0.0f, 0.0f);
+GUIColor GUIColor::GUICOLOR_EFFECT_COLOR_MUL(1.0f, 1.0f, 1.0f, 1.0f);
+GUIColor GUIColor::GUICOLOR_EFFECT_COLOR_ADD(0.0f, 0.0f, 0.0f, 0.0f);
 
 vector<GUIColor*> GUIColor::COLOR_INSTANCES = {{
-	&WHITE,
-	&BLACK,
-	&RED,
-	&GREEN,
-	&BLUE,
-	&TRANSPARENT
+	&GUICOLOR_WHITE,
+	&GUICOLOR_BLACK,
+	&GUICOLOR_RED,
+	&GUICOLOR_GREEN,
+	&GUICOLOR_BLUE,
+	&GUICOLOR_TRANSPARENT
 }};
 
 vector<wstring> GUIColor::COLOR_NAMES = {{

@@ -20,7 +20,7 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
 GUIKeyboardEvent::GUIKeyboardEvent() 
 {
 	this->time = -1LL;
-	this->type = GUIKeyboardEvent_Type::NONE;
+	this->type = GUIKeyboardEvent_Type::KEYBOARDEVENT_NONE;
 	this->keyCode = -1;
 	this->keyChar = wchar_t(0x0000);
 	this->metaDown = false;
