@@ -2,10 +2,14 @@
 
 #include <string>
 
+#include <tdme/utils/ByteBuffer.h>
+
 using std::wstring;
 using std::to_wstring;
 
 using tdme::engine::fileio::textures::Texture;
+
+using tdme::utils::ByteBuffer;
 
 Texture::Texture(
 	const wstring& id,
