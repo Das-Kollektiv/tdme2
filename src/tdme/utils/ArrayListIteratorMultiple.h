@@ -60,7 +60,7 @@ public:
 	}
 
 	bool hasNext() {
-		auto hasNext = (vectorIdx < arrayLists.size() - 1) || (vectorIdx == arrayLists.size() - 1 && elementIdx < arrayLists.at(vectorIdx)->size());
+		auto hasNext = arrayLists.size() > 0 && (vectorIdx < arrayLists.size() - 1) || (vectorIdx == arrayLists.size() - 1 && elementIdx < arrayLists.at(vectorIdx)->size());
 		return hasNext;
 	}
 

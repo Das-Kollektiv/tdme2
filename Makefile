@@ -5,13 +5,13 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lfreeglut -lopenal -pthread
+	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
 	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
