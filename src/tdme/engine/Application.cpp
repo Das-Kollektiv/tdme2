@@ -54,10 +54,10 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 
 #if defined(__APPLE__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif defined(__linux__) and !defined(__arm__)
+#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitContextVersion(2,1);
-#elif defined(__linux__) and defined(__arm__)
+#elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitContextVersion(2,0);
 #elif defined(_WIN32)

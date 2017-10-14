@@ -369,7 +369,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif (defined(__linux__) and !defined(__arm__)) or defined(_WIN32)
+	#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
@@ -379,8 +379,8 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif defined(__linux__) and defined(__arm__)
-	// GL2
+	#elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
+	// GLES2
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(wstring(L"TDME::Using GLES2"));
