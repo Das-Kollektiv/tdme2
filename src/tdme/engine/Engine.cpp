@@ -360,7 +360,7 @@ void Engine::initialize(bool debug)
 		return;
 
 	// GL3
-	#if defined(__APPLE__)
+	#if defined(__APPLE__) or defined(_WIN32)
 	{
 		renderer = new EngineGL3Renderer(this);
 		Console::println(wstring(L"TDME::Using GL3"));
@@ -369,7 +369,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
+	#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);

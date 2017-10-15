@@ -162,7 +162,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
 		Console::println(
 			wstring(
-				wstring(L"GL3Renderer::loadShader") +
+				wstring(L"GL2Renderer::loadShader") +
 				wstring(L"[") +
 				to_wstring(handle) +
 				wstring(L"]") +
