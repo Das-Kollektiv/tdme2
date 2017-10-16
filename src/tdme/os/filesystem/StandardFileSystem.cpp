@@ -94,7 +94,7 @@ void StandardFileSystem::setContentFromString(const wstring& pathName, const wst
 
 void StandardFileSystem::getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException)
 {
-	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
+	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
