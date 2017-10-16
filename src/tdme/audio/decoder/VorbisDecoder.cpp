@@ -42,7 +42,7 @@ VorbisDecoder::VorbisDecoder() : AudioDecoder()
 void VorbisDecoder::openFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException, AudioDecoderException) {
 	this->pathName = pathName;
 	this->fileName = fileName;
-	if (ov_open_callbacks(fopen(StringConverter::toString(pathName + L"/" + fileName).c_str(), "r"), &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
+	if (ov_open_callbacks(fopen(StringConverter::toString(pathName + L"/" + fileName).c_str(), "rb"), &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
 		throw AudioDecoderException("Input does not appear to be an Ogg bitstream.");
 	}
 	/* Throw the comments plus a few lines about the bitstream we're decoding */
