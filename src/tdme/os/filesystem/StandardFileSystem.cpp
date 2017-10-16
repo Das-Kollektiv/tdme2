@@ -194,7 +194,8 @@ const wstring StandardFileSystem::getCanonicalPath(const wstring& pathName, cons
 	// add cwd if required
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
-		StringUtils::startsWith(canonicalPathString, L"/") == false) {
+		(StringUtils::startsWith(canonicalPathString, L"/") == false &&
+		StringUtils::matches(canonicalPathString, L"^[A-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + L"/" + canonicalPathString;
 	}
 
