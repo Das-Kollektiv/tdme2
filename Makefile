@@ -498,7 +498,7 @@ $(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLI
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) -Wl,--stack,8388608 $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 mains: $(MAINS)
 
