@@ -1,3 +1,5 @@
+STACKFLAGS =
+
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
@@ -12,6 +14,7 @@ else
 	# Win-MINGW, WIP
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
+	STACKFLAGS := -Wl,--stack,8388608
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
@@ -498,7 +501,7 @@ $(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLI
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) -Wl,--stack,8388608 $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 mains: $(MAINS)
 
