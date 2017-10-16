@@ -7,6 +7,9 @@
 	#include <GL/freeglut.h>
 #endif
 
+
+#include <stdlib.h>
+
 #include <string>
 
 #include <tdme.h>
@@ -72,6 +75,7 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 	GLenum glewInitStatus = glewInit();
 	if (glewInitStatus != GLEW_OK) {
 		Console::println(L"glewInit(): Error: " + StringConverter::toWideString(string((char*)glewGetErrorString(glewInitStatus))));
+		exit(0);
 	}
 #endif
 	// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
