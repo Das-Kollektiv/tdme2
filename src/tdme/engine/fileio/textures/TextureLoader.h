@@ -6,7 +6,6 @@
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-
 #include <tdme/os/filesystem/FileSystemException.h>
 
 #include <ext/libpng/png.h>
@@ -16,7 +15,6 @@ using std::wstring;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::Console;
 
 namespace tdme {
 namespace engine {
