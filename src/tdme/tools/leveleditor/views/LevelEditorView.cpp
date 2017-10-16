@@ -1321,6 +1321,7 @@ bool LevelEditorView::objectPropertyAdd()
 
 void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 {
+	engine->reset();
 	selectedEntity = nullptr;
 	try {
 		wstring tlFile = file;
