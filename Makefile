@@ -1,8 +1,11 @@
 STACKFLAGS =
+SRCS_PLATFORM =
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
@@ -18,8 +21,8 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
@@ -242,6 +245,12 @@ SRCS = \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
+	src/tdme/os/network/NIOException.cpp \
+	src/tdme/os/network/NIOIOException.cpp \
+	src/tdme/os/network/NIOKEMException.cpp \
+	src/tdme/os/network/NIONetworkSocket.cpp \
+	src/tdme/os/network/NIOSocketException.cpp \
+	src/tdme/os/network/NIOUDPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
@@ -340,6 +349,7 @@ SRCS = \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
+	$(SRCS_PLATFORM)
 	# src/tdme/engine/EngineGLES2Renderer.cpp \
 	# src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 
