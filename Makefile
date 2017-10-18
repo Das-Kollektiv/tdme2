@@ -4,11 +4,11 @@ SRCS_PLATFORM =
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
+	SRCS_PLATFORM:= src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
+	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
 	#GL2ES on ARM, WIP
