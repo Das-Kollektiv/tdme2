@@ -13,10 +13,10 @@ using tdme::utils::ExceptionBase;
  * @author Andreas Drewke
  */
 class tdme::os::network::NIOException: public ExceptionBase {
-	public:
-		/**
-		 * @brief public constructor
-		 * @param message exception message
-		 */
-		NIOException(const string &message) throw();
+public:
+	/**
+	 * @brief public constructor
+	 * @param message exception message
+	 */
+	NIOException(const string &message) throw();
 };
