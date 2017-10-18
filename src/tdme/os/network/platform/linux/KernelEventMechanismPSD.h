@@ -9,7 +9,7 @@
  * Linux kernel event mechanism platform specific data
  * @author Andreas Drewke
  */
-class KernelEventMechanismPSD {
+class tdme::os::network::platform::_linux::KernelEventMechanismPSD {
 	friend class tdme::os::network::KernelEventMechanism;
 
 private:
