@@ -5,7 +5,7 @@ namespace tdme {
 namespace os {
 namespace network {
 namespace platform {
-namespace linux {
+namespace _linux {
 	class KernelEventMechanismPSD;
 } // namespace linux
 } // namespace platform

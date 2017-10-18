@@ -5,7 +5,6 @@
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/linux/fwd-tdme.h>
 
-
 /**
  * Linux kernel event mechanism platform specific data
  * @author Andreas Drewke

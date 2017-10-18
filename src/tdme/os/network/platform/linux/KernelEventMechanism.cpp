@@ -16,7 +16,7 @@
 
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
-using tdme::os::network::platform::linux::KernelEventMechanismPSD;
+using tdme::os::network::platform::_linux::KernelEventMechanismPSD;
 
 KernelEventMechanism::KernelEventMechanism() throw (NIOKEMException) : initialized(false), _psd(NULL) {
 	// allocate platform specific data
