@@ -19,31 +19,31 @@ using tdme::network::udpserver::NIOServerClientRequestHandlerHub;
 using tdme::utils::Exception;
 
 class CRHShutdown : public NIOServerClientRequestHandler<NIOUDPServerClient,string> {
-	public:
-		CRHShutdown();
+public:
+	CRHShutdown();
 
-		virtual ~CRHShutdown();
+	virtual ~CRHShutdown();
 
-		void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
+	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
 };
 
 class CRHDefault : public NIOServerClientRequestHandler<NIOUDPServerClient,string> {
-	public:
-		CRHDefault();
+public:
+	CRHDefault();
 
-		virtual ~CRHDefault();
+	virtual ~CRHDefault();
 
-		void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
+	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
 };
 
 class EchoUDPServer : public NIOUDPServer {
 	friend class EchoUDPServerClient;
-	public:
-		EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU);
+public:
+	EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU);
 
-		virtual ~EchoUDPServer();
-	protected:
-		NIOUDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port);
+	virtual ~EchoUDPServer();
+protected:
+	NIOUDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port);
 
-		NIOServerClientRequestHandlerHub<NIOUDPServerClient,string> requestHandlerHub;
+	NIOServerClientRequestHandlerHub<NIOUDPServerClient,string> requestHandlerHub;
 };
