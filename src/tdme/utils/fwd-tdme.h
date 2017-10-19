@@ -12,10 +12,13 @@ namespace utils {
 		class FloatBuffer;
 		class IntBuffer;
 		class Integer;
+		class IntEncDec;
 		class Key;
 		class MutableString;
 		class FilenameFilter;
 		class Properties;
+		class ReferenceCounter;
+		class RTTI;
 		class Time;
 		class ShortBuffer;
 		class StringConverter;

@@ -241,6 +241,15 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
+	src/tdme/network/udpserver/NIONetworkServerException.cpp \
+	src/tdme/network/udpserver/NIOServerClient.cpp \
+	src/tdme/network/udpserver/NIOServerClientRequestHandlerHubException.cpp \
+	src/tdme/network/udpserver/NIOServerRequest.cpp \
+	src/tdme/network/udpserver/NIOServerWorkerThread.cpp \
+	src/tdme/network/udpserver/NIOServerWorkerThreadPool.cpp \
+	src/tdme/network/udpserver/NIOUDPServer.cpp \
+	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
+	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
 	src/tdme/math/TriangleTriangleIntersection.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
@@ -268,6 +277,8 @@ SRCS = \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
+	src/tdme/tests/UDPServerTest_UDPServer.cpp \
+	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
@@ -342,8 +353,11 @@ SRCS = \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
 	src/tdme/utils/Integer.cpp \
+	src/tdme/utils/IntEncDec.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Properties.cpp \
+	src/tdme/utils/ReferenceCounter.cpp \
+	src/tdme/utils/RTTI.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \
@@ -440,13 +454,14 @@ EXT_OGG_SRCS = \
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
-	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
+	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/viewer/TDMEViewer-main.cpp \
