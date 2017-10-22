@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 	client = new NIOUDPClient("127.0.0.1", 10000);
 	client->start();
 	while(client->isStopRequested() == false) {
-		Thread::sleep(100L);
+		Thread::sleep(1L);
 		// process incoming messages
 		NIOUDPClientMessage* message = client->receiveMessage();
 		if (message != nullptr) {

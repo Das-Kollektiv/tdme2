@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 
+#include <tdme/network/udpclient/NIOUDPClient.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Time.h>
 #include <tdme/utils/IntEncDec.h>
@@ -15,6 +16,7 @@ using std::ios_base;
 using std::string;
 using std::stringstream;
 
+using tdme::network::udpclient::NIOUDPClient;
 using tdme::utils::Console;
 using tdme::utils::Time;
 using tdme::utils::IntEncDec;
@@ -82,8 +84,16 @@ const uint32_t NIOUDPClientMessage::getMessageId() {
 	return messageId;
 }
 
+const int64_t NIOUDPClientMessage::getRetryTime() {
+	return NIOUDPClient::getRetryTime(retries);
+}
+
 const uint8_t NIOUDPClientMessage::getRetryCount() {
 	return retries;
+}
+
+void NIOUDPClientMessage::retry() {
+	retries++;
 }
 
 stringstream* NIOUDPClientMessage::getFrame() {

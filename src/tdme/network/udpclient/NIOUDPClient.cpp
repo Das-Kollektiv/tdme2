@@ -133,36 +133,56 @@ void NIOUDPClient::run() {
 
 					// receive datagrams as long as its size > 0 and read would not block
 					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
-						stringstream* frame = NULL;
 						NIOUDPClientMessage* clientMessage = NIOUDPClientMessage::parse(message, bytesReceived);
-						// Console::println("Got message: " + string(message, bytesReceived));
-						switch(clientMessage->getMessageType()) {
-							case NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
-								processAckReceived(clientMessage->getMessageId());
-								delete clientMessage;
-								break;
-							case NIOUDPClientMessage::MESSAGETYPE_CONNECT:
-								sendMessage(
-									new NIOUDPClientMessage(
-										NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT,
-										clientMessage->getClientId(),
-										clientMessage->getMessageId(),
-										clientMessage->getRetryCount() + 1,
-										nullptr
-									),
-									false
-								);
-								clientId = clientMessage->getClientId();
-								connected = true;
-								delete clientMessage;
-								break;
-							case NIOUDPClientMessage::MESSAGETYPE_MESSAGE:
-								recvMessageQueueMutex.lock();
-								recvMessageQueue.push(clientMessage);
-								recvMessageQueueMutex.unlock();
-								break;
-							case NIOUDPClientMessage::MESSAGETYPE_NONE:
-								break;
+						try {
+							switch(clientMessage->getMessageType()) {
+								case NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
+									processAckReceived(clientMessage->getMessageId());
+									delete clientMessage;
+									break;
+								case NIOUDPClientMessage::MESSAGETYPE_CONNECT:
+									sendMessage(
+										new NIOUDPClientMessage(
+											NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT,
+											clientMessage->getClientId(),
+											clientMessage->getMessageId(),
+											clientMessage->getRetryCount() + 1,
+											nullptr
+										),
+										false
+									);
+									clientId = clientMessage->getClientId();
+									connected = true;
+									delete clientMessage;
+									break;
+								case NIOUDPClientMessage::MESSAGETYPE_MESSAGE:
+									//	check if message queue is full
+									recvMessageQueueMutex.lock();
+									if (recvMessageQueue.size() > 20) {
+										recvMessageQueueMutex.unlock();
+										throw NIOClientException("recv message queue overflow");
+									}
+									recvMessageQueue.push(clientMessage);
+									recvMessageQueueMutex.unlock();
+									break;
+								case NIOUDPClientMessage::MESSAGETYPE_NONE:
+									break;
+							}
+						} catch (Exception &exception) {
+							if (clientMessage != nullptr) delete clientMessage;
+
+							// log
+							Console::println(
+								L"NIOUDPClient::run(): " +
+								StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
+								L": " +
+								StringConverter::toWideString(exception.what())
+							);
+
+							// rethrow to quit communication for now
+							// TODO: maybe find a better way to handle errors
+							//	one layer up should be informed about network client problems somehow
+							throw exception;
 						}
 					}
 				}
@@ -226,7 +246,7 @@ void NIOUDPClient::run() {
 	} catch (Exception &exception) {
 		// log
 		Console::println(
-			L"NIOUDPClientThread::run(): " +
+			L"NIOUDPClient::run(): " +
 			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
 			L": " +
 			StringConverter::toWideString(exception.what())
@@ -238,7 +258,7 @@ void NIOUDPClient::run() {
 	socket.close();
 
 	// log
-	Console::println(L"NIOUDPClientThread::run(): done");
+	Console::println(L"NIOUDPClient::run(): done");
 }
 
 void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) throw (NIOClientException) {
@@ -353,7 +373,8 @@ void NIOUDPClient::processAckMessages() {
 			// parse client message from message raw data
 			NIOUDPClientMessage* clientMessage = NIOUDPClientMessage::parse(message.message, message.bytes);
 
-			// TODO: increase/set retry
+			// increase/set retry
+			clientMessage->retry();
 
 			// recreate message
 			clientMessage->generate(message.message, message.bytes);

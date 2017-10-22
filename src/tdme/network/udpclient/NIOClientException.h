@@ -10,7 +10,7 @@
 using tdme::os::network::NIOException;
 
 /**
- * Base exception class for NIO UDP client exceptions
+ * Base exception class for NIO client exceptions
  * @author Andreas Drewke
  */
 class tdme::network::udpclient::NIOClientException: public NIOException {

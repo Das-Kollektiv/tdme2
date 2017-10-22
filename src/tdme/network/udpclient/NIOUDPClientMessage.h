@@ -62,6 +62,16 @@ public:
 	const uint8_t getRetryCount();
 
 	/**
+	 * @return retry time
+	 */
+	const int64_t getRetryTime();
+
+	/**
+	 * Mark message to be resend with increased retry count
+	 */
+	void retry();
+
+	/**
 	 * @return frame
 	 */
 	stringstream* getFrame();
