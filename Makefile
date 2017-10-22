@@ -4,17 +4,19 @@ SRCS_PLATFORM =
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
+	# Mac OS X
 	SRCS_PLATFORM:= src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 else ifeq ($(OS), Linux)
+	# Linux
 	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
 	#GL2ES on ARM, WIP
 	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
 else
-	# Win-MINGW, WIP
+	# Windows via MINGW
 	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
