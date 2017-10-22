@@ -103,6 +103,15 @@ TDME2
                 - selectbox multiple
                 - tabs
             - supports position and color based effects
+        - Networking module, which consists of
+            - UDP server
+                - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
+                - supports safe messages with acknowledgment and automatic resending
+                - support fast messages
+                - can be used in a heavy multithreaded environment (the networking module is thread safe)
+            - UDP client
+                - has single thread with a simple threadsafe API
+                - supports all features required by UDP server
 
     - What does it (maybe still) lack
         - animation blending
@@ -116,7 +125,6 @@ TDME2
     - What is WIP
         - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
-        - Network/UDP Server/UDP Client needs to be imported from (old) TDMECPP
         - Logic documentation/comments need to be imported from TDME(-JAVA)
 
     - Technology
