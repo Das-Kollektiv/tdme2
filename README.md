@@ -125,7 +125,6 @@ TDME2
     - What is WIP
         - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
-        - Network/UDP Server/UDP Client needs to be imported from (old) TDMECPP
         - Logic documentation/comments need to be imported from TDME(-JAVA)
 
     - Technology
