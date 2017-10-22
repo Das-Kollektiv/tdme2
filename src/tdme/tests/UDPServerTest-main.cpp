@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// start echo server
-	server = new EchoUDPServer("127.0.0.1", 10000, 1000);
+	server = new EchoUDPServer("127.0.0.1", 10000, 100);
 	bc = new ServerBroadcaster(server);
 	bc->start();
 	server->start();
