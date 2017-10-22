@@ -123,6 +123,19 @@ void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, co
 
 	} catch (NIOSocketException &exception) {
 		socket.close();
-		throw;
+		throw exception;
+	}
+}
+
+void NIOUDPSocket::createClientSocket(NIOUDPSocket& socket) throw (NIOSocketException) {
+	// create socket
+	NIOUDPSocket::create(socket);
+
+	try {
+		// set non blocked
+		socket.setNonBlocked();
+	} catch (NIOSocketException &exception) {
+		socket.close();
+		throw exception;
 	}
 }

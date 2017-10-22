@@ -175,10 +175,10 @@ int KernelEventMechanism::doKernelEventMechanism()  throw (NIOKEMException) {
 	// platform specific data
 	KernelEventMechanismPSD* psd = (KernelEventMechanismPSD*)_psd;
 
-	// have a timeout of 10ms
+	// have a timeout of 1ms
 	// as we only can delegate interest changes to the kernel by
 	// running kevent
-	const struct timespec timeout = {0, 10L * 1000L * 1000L};
+	const struct timespec timeout = {0, 1L * 1000L * 1000L};
 
 	//
 	while (true == true) {

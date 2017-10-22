@@ -161,7 +161,6 @@ private:
 		uint64_t time;
 		uint8_t receptions;
 	};
-
 	typedef map<uint32_t, Message> MessageMapSafe;
 
 	/**

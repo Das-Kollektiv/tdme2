@@ -59,5 +59,12 @@ public:
 	 * @throws NIOSocketException
 	 */
 	static void createServerSocket(NIOUDPSocket& socket, const std::string& ip, const unsigned int port) throw (NIOSocketException);
+
+	/**
+	 * @brief creates a udp client socket
+	 * @param socket
+	 * @throws NIOSocketException
+	 */
+	static void createClientSocket(NIOUDPSocket& socket) throw (NIOSocketException);
 };
 

@@ -21,8 +21,8 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
@@ -241,6 +241,9 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
+	src/tdme/network/udpclient/NIOClientException.cpp \
+	src/tdme/network/udpclient/NIOUDPClient.cpp \
+	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
 	src/tdme/network/udpserver/NIONetworkServerException.cpp \
 	src/tdme/network/udpserver/NIOServerClient.cpp \
 	src/tdme/network/udpserver/NIOServerClientRequestHandlerHubException.cpp \
@@ -461,6 +464,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
+	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
