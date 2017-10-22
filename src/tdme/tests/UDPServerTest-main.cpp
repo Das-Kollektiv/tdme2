@@ -6,6 +6,7 @@
 #include "UDPServerTest_UDPServer.h"
 #include "UDPServerTest_UDPServerClient.h"
 
+#include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/utils/Console.h>
@@ -13,6 +14,7 @@
 using std::wstring;
 using std::stringstream;
 
+using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
 using tdme::utils::Console;
@@ -64,6 +66,9 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGINT, sigHandlerINT) == SIG_ERR) {
 		Console::println("Can't install signal handler for SIGINT");
 	}
+
+	// initialize network module
+	Network::initialize();
 
 	// start echo server
 	server = new EchoUDPServer("127.0.0.1", 10000, 100);

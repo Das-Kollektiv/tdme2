@@ -258,6 +258,7 @@ SRCS = \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
+	src/tdme/os/network/Network.cpp \
 	src/tdme/os/network/NIOException.cpp \
 	src/tdme/os/network/NIOIOException.cpp \
 	src/tdme/os/network/NIOKEMException.cpp \

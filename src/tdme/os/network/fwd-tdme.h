@@ -5,6 +5,7 @@ namespace tdme {
 namespace os {
 namespace network {
 	class KernelEventMechanism;
+	class Network;
 	class NIOException;
 	class NIOIOException;
 	class NIOKEMException;

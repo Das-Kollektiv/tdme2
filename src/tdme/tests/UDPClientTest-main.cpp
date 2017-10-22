@@ -4,6 +4,7 @@
 
 #include <tdme/network/udpclient/NIOUDPClient.h>
 #include <tdme/network/udpclient/NIOUDPClientMessage.h>
+#include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 
 #include <tdme/utils/Console.h>
@@ -15,6 +16,7 @@ using std::wstring;
 using std::stringstream;
 
 using tdme::utils::Console;
+using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::network::udpclient::NIOUDPClient;
 using tdme::network::udpclient::NIOUDPClientMessage;
@@ -56,10 +58,18 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGINT, sigHandlerINT) == SIG_ERR) {
 		Console::println("Can't install signal handler for SIGINT");
 	}
+	// initialize network module
+	Network::initialize();
+
+	// input thread
 	inputThread = new InputThread();
 	inputThread->start();
+
+	// UDP client
 	client = new NIOUDPClient("127.0.0.1", 10000);
 	client->start();
+
+	// handle incoming messages
 	while(client->isStopRequested() == false) {
 		Thread::sleep(1L);
 		// process incoming messages
