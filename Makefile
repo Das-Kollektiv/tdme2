@@ -15,6 +15,7 @@ else ifeq ($(OS), Linux)
 	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
 else
 	# Win-MINGW, WIP
+	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,8388608

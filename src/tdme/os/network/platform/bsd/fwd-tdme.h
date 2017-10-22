@@ -1,4 +1,4 @@
-// Forward declarations for tdme.os.network
+// Forward declarations for tdme.os.network.platform.bsd
 #pragma once
 
 namespace tdme {
