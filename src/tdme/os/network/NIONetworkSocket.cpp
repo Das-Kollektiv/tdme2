@@ -2,9 +2,14 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+#if defined(_WIN32)
+	#include <winsock2.h>
+	#define SHUT_RDWR SD_BOTH	
+#else
+	#include <netinet/in.h>
+	#include <sys/socket.h>
+	#include <arpa/inet.h>
+#endif
 
 #include <string>
 
@@ -54,20 +59,26 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 }
 
 void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
-	// get the server socket file descriptor control settings
-	int fdc = fcntl(descriptor, F_GETFL, 0);
-	if (fdc == -1) {
-		std::string msg = "Could not get socket file descriptor settings: ";
-		msg+= strerror(errno);
-		throw NIOSocketException(msg);
-	}
+	#if defined(_WIN32)
+		u_long mode = 1;
+		ioctlsocket(descriptor, FIONBIO, &mode);
+	#else
+		// get the server socket file descriptor control settings
+		int fdc = fcntl(descriptor, F_GETFL, 0);
+		if (fdc == -1) {
+			std::string msg = "Could not get socket file descriptor settings: ";
+			msg+= strerror(errno);
+			throw NIOSocketException(msg);
+		}
 
-	// make the socket non blocked
-	if (fcntl(descriptor, F_SETFL, fdc | O_NONBLOCK) == -1) {
-		std::string msg = "Could not set socket non blocked: ";
-		msg+= strerror(errno);
-		throw NIOSocketException(msg);
+		// make the socket non blocked
+		if (fcntl(descriptor, F_SETFL, fdc | O_NONBLOCK) == -1) {
+			std::string msg = "Could not set socket non blocked: ";
+			msg+= strerror(errno);
+			throw NIOSocketException(msg);
+		}
 	}
+	#endif
 }
 
 void NIONetworkSocket::close() {

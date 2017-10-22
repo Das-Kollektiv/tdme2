@@ -1,12 +1,15 @@
-/**
- * @version $Id: 195918a6413fa6c4091868423121684636669354 $
- */
-
 #include <errno.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#if defined(_WIN32)
+	#include <winsock2.h>
+	#define socklen_t int
+	#define BUF_CAST(buf) ((char*)buf)
+#else
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#define BUF_CAST(buf) ((void*)buf)
+#endif
 
 #include <string>
 
@@ -17,7 +20,9 @@ using std::string;
 using tdme::os::network::NIOUDPSocket;
 
 // determine which SO_REUSE option to use
-#if defined(__linux__)
+#if defined(_WIN32)
+	#define SO_REUSEOPTION	SO_REUSEADDR	
+#elif defined(__linux__)
 	// on linux < 3.9 we need to to use "addr". it behaves like "port" on BSD for UDP sockets
 	#define SO_REUSEOPTION	SO_REUSEADDR
 #else
@@ -32,7 +37,7 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	// read from socket
 	struct sockaddr_in sin;
 	socklen_t sin_len = sizeof(sin);
-	ssize_t bytesRead = ::recvfrom(descriptor, buf, bytes, 0, (struct sockaddr *)&sin, &sin_len);
+	ssize_t bytesRead = ::recvfrom(descriptor, BUF_CAST(buf), bytes, 0, (struct sockaddr *)&sin, &sin_len);
 	if (bytesRead == -1) {
 		// nope throw an exception
 		if (errno == EAGAIN) {
@@ -63,10 +68,10 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	sin.sin_port = htons(port);
 
 	// go
-	#ifdef __APPLE__
-		ssize_t bytesWritten = ::sendto(descriptor, buf, bytes, 0, (const struct sockaddr*)&sin, sin_len);
+	#if defined(__APPLE__) or defined(_WIN32)
+		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, 0, (const struct sockaddr*)&sin, sin_len);
 	#else
-		ssize_t bytesWritten = ::sendto(descriptor, buf, bytes, MSG_NOSIGNAL, (const struct sockaddr*)&sin, sin_len);
+		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL, (const struct sockaddr*)&sin, sin_len);
 	#endif
 
 	// send successful?
@@ -112,7 +117,7 @@ void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, co
 
 		// enable socket reuse port
 		int flag = 1;
-		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_REUSEOPTION, (void*)&flag, sizeof(flag)) == -1) {
+		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_REUSEOPTION, BUF_CAST(&flag), sizeof(flag)) == -1) {
 			string msg = "Could not set reuse port on socket: ";
 			msg+= strerror(errno);
 			throw NIOSocketException(msg);
