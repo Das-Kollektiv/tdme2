@@ -77,7 +77,6 @@ void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 			msg+= strerror(errno);
 			throw NIOSocketException(msg);
 		}
-	}
 	#endif
 }
 
