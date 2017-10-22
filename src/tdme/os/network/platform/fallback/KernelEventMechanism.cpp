@@ -1,7 +1,11 @@
 #include <tdme.h>
 
-#include <sys/select.h>
-#include <sys/time.h>
+#if defined(_WIN32)
+	#include <winsock2.h>
+#else
+	#include <sys/select.h>
+	#include <sys/time.h>
+#endif
 
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOInterest.h>

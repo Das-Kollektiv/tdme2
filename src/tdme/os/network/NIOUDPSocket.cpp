@@ -16,6 +16,7 @@
 #include <tdme/os/network/NIOUDPSocket.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::os::network::NIOUDPSocket;
 
@@ -39,14 +40,25 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	socklen_t sin_len = sizeof(sin);
 	ssize_t bytesRead = ::recvfrom(descriptor, BUF_CAST(buf), bytes, 0, (struct sockaddr *)&sin, &sin_len);
 	if (bytesRead == -1) {
-		// nope throw an exception
-		if (errno == EAGAIN) {
-			return -1;
-		} else {
-			string msg = "error while reading from socket: ";
-			msg+= strerror(errno);
-			throw NIOIOException(msg);
-		}
+		#if defined(_WIN32)
+			int wsaError = WSAGetLastError();
+			if (wsaError == WSAEWOULDBLOCK) {
+				return -1;
+			} else {
+				string msg = "error while reading from socket: ";
+				msg+= to_string(wsaError);
+				throw NIOIOException(msg);
+			}
+		#else
+			// nope throw an exception
+			if (errno == EAGAIN) {
+				return -1;
+			} else {
+				string msg = "error while reading from socket: ";
+				msg+= strerror(errno);
+				throw NIOIOException(msg);
+			}
+		#endif
 	}
 
 	// set up senders ip + port
@@ -76,14 +88,25 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 
 	// send successful?
 	if (bytesWritten == -1) {
-		// nope throw an exception
-		if (errno == EAGAIN) {
-			return -1;
-		} else {
-			string msg = "error while writing to socket: ";
-			msg+= strerror(errno);
-			throw NIOIOException(msg);
-		}
+		#if defined(_WIN32)
+			int wsaError = WSAGetLastError();
+			if (wsaError == WSAEWOULDBLOCK) {
+				return -1;
+			} else {
+				string msg = "error while reading from socket: ";
+				msg+= to_string(wsaError);
+				throw NIOIOException(msg);
+			}
+		#else
+			// nope throw an exception
+			if (errno == EAGAIN) {
+				return -1;
+			} else {
+				string msg = "error while writing to socket: ";
+				msg+= strerror(errno);
+				throw NIOIOException(msg);
+			}
+		#endif
 	}
 
 	// return bytes written

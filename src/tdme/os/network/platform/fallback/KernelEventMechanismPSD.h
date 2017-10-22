@@ -1,6 +1,10 @@
 #pragma once
 
-#include <sys/select.h>
+#if defined(_WIN32)
+	#include <winsock2.h>
+#else
+	#include <sys/select.h>
+#endif
 
 #include <map>
 #include <vector>
