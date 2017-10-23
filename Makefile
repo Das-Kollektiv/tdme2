@@ -8,7 +8,7 @@ ifeq ($(OS), Darwin)
 	SRCS_PLATFORM:= src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
-	STACKFLAGS := -Wl,-stack_size -Wl,0x2000000
+	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), Linux)
 	# Linux
 	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
@@ -21,12 +21,12 @@ else
 	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
-	STACKFLAGS := -Wl,--stack,0x2000000
+	STACKFLAGS := -Wl,--stack,0x1000000
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
