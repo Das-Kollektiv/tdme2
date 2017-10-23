@@ -13,9 +13,9 @@ else ifeq ($(OS), Linux)
 	# Linux
 	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
 	#GL2ES on ARM, WIP
-	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
+	#EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
 else
 	# Windows via MINGW
 	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
