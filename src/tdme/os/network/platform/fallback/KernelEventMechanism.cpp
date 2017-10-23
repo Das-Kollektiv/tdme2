@@ -24,7 +24,7 @@ KernelEventMechanism::KernelEventMechanism() throw (NIOKEMException) : initializ
 	//
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	//
+	// clear fd sets
 	FD_ZERO(&psd->rfds);
 	FD_ZERO(&psd->wfds);
 }
@@ -35,13 +35,16 @@ KernelEventMechanism::~KernelEventMechanism() {
 }
 
 void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException) {
+	// skip if not initialized
+	if (initialized == false) return;
+
 	//
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// synchronize fd set access
 	psd->fdsMutex.lock();
 
-	// remove from cookies
+	// remove fd from fds
 	psd->fds.erase(socket.descriptor);
 
 	// remove last read interest
@@ -67,7 +70,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 		haveInterest = true;
 	}
 
-	// add to cookies
+	// add fd to fds
 	if (haveInterest == true) {
 		if (socket.descriptor > psd->maxFd) psd->maxFd = socket.descriptor;
 		psd->fds[socket.descriptor] = (void*)cookie;
@@ -93,26 +96,30 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 }
 
 int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
+	// skip if not initialized
+	if (initialized == false) return -1;
+
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// have a timeout of 1ms
 	// as we only can delegate interest changes to the kernel by
-	// running kevent
+	// select
 	struct timeval timeout = {0, 1L * 1000L};
 
-	// clone sets
+	// clone fd sets
 	psd->fdsMutex.lock();
 	fd_set rfds = psd->rfds;
 	fd_set wfds = psd->wfds;
 	psd->fdsMutex.unlock();
 
+	// run select
 	int result = select(psd->maxFd + 1, &rfds, &wfds, NULL, &timeout);
 	if (result == -1) {
 		throw NIOKEMException("select failed");
 	}
 
-	// compile list of descriptors with events
+	// compile list of events
 	psd->events.clear();
 	for (auto fdIt = psd->fds.begin(); fdIt != psd->fds.end(); ++fdIt) {
 		if (FD_ISSET(fdIt->first, &rfds) != 0) {
@@ -136,8 +143,13 @@ int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
 }
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  throw (NIOKEMException) {
+	// skip if not initialized
+	if (initialized == false) return;
+
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+
+	// read interest and cookie from event
 	KernelEventMechanismPSD::Event& event = psd->events[index];
 	interest = event.interest;
 	cookie = event.cookie;
