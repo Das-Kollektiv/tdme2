@@ -10,6 +10,8 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/Console.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -19,6 +21,8 @@ using std::vector;
 using std::wstring;
 
 using tdme::utils::ByteBuffer;
+using tdme::utils::Console;
+using tdme::utils::Exception;
 
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
@@ -30,9 +34,13 @@ using tdme::utils::StringUtils;
 
 Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException)
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
-		Texture* texture = TextureLoader::loadPNG(path, fileName);
-		return texture;
+	try {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
+			Texture* texture = TextureLoader::loadPNG(path, fileName);
+			return texture;
+		}
+	} catch (Exception& exception) {
+		Console::println(L"TextureLoader::loadTexture(): Could not load texture: " + path + L"/" + fileName + L": " + StringConverter::toWideString(exception.what()));
 	}
 	return nullptr;
 }
