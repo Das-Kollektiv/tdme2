@@ -23,5 +23,5 @@ public:
 	LevelEditorScreenController_onMapLoad_1(LevelEditorScreenController* levelEditorScreenController);
 
 private:
-	LevelEditorScreenController *levelEditorScreenController;
+	LevelEditorScreenController* levelEditorScreenController;
 };

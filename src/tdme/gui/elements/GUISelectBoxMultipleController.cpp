@@ -33,6 +33,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
+constexpr wchar_t GUISelectBoxMultipleController::VALUE_DELIMITER;
+
+wstring GUISelectBoxMultipleController::CONDITION_DISABLED = L"disabled";
+wstring GUISelectBoxMultipleController::CONDITION_ENABLED = L"enabled";
+
 GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
 	: GUINodeController(node)
 {
@@ -45,12 +50,6 @@ void GUISelectBoxMultipleController::init()
 	value = new MutableString();
 	searchValue = new MutableString();
 }
-
-wstring GUISelectBoxMultipleController::CONDITION_DISABLED;
-
-wstring GUISelectBoxMultipleController::CONDITION_ENABLED;
-
-constexpr char16_t GUISelectBoxMultipleController::VALUE_DELIMITER;
 
 bool GUISelectBoxMultipleController::isDisabled()
 {
@@ -185,7 +184,7 @@ void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEve
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(this->node->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
@@ -197,21 +196,21 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					focusPrevious();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					focusNext();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					toggle();
 				}
 			}
@@ -279,16 +278,3 @@ void GUISelectBoxMultipleController::setValue(MutableString* value)
 		(dynamic_cast< GUISelectBoxMultipleOptionController* >(selectBoxOptionNodeLast->getController()))->focus();
 	}
 }
-
-void GUISelectBoxMultipleController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
-}
-

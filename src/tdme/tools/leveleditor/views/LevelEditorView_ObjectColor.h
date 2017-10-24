@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme.h>
@@ -38,5 +37,5 @@ public:
 	LevelEditorView_ObjectColor(LevelEditorView *LevelEditorView_this, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
 
 private:
-	LevelEditorView *levelEditorView;
+	LevelEditorView* levelEditorView;
 };

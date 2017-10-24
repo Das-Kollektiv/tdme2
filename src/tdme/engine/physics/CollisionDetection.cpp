@@ -193,7 +193,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBo
 	// SAT best fit
 	bool satHaveBestFit = false;
 	Vector3 satAxisBestFit;
-	float satPenetrationBestFit;
+	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 
@@ -497,7 +497,7 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 	// SAT best fit
 	bool satHaveBestFit = false;
 	Vector3 satAxisBestFit;
-	float satPenetrationBestFit;
+	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 
@@ -590,7 +590,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, c
 	// SAT best fit
 	bool satHaveBestFit = false;
 	Vector3 satAxisBestFit;
-	float satPenetrationBestFit;
+	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 
@@ -603,7 +603,6 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, c
 		}
 	//
 
-	CollisionResponse collision1;
 	Vector3 triangle1Edge1;
 	Vector3 triangle1Edge2;
 	Vector3 triangle1Edge3;
@@ -615,11 +614,9 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, c
 	auto meshVertices = mesh->getVertices();
 
 	for (auto& triangle : *mesh->getTriangles()) {
-		collision1.reset();
-		if (doBroadTest(&triangle, obb) == false)
-			continue;
 
 		auto triangleVertices = triangle.getVertices();
+
 		triangle1Edge1.set((*triangleVertices)[1]).sub((*triangleVertices)[0]).normalize();
 		triangle1Edge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
 		triangle1Edge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
@@ -712,7 +709,7 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, con
 	// SAT best fit
 	bool satHaveBestFit = false;
 	Vector3 satAxisBestFit;
-	float satPenetrationBestFit;
+	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 
@@ -775,7 +772,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 	// SAT best fit
 	bool satHaveBestFit = false;
 	Vector3 satAxisBestFit;
-	float satPenetrationBestFit;
+	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 
@@ -795,9 +792,6 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 
 	for (auto& triangle1 : *mesh1->getTriangles()) {
 		for (auto& triangle2 : *mesh2->getTriangles()) {
-			if (doBroadTest(&triangle1, &triangle2) == false)
-				continue;
-
 			auto triangle1Vertices = triangle1.getVertices();
 			triangle1Edge1.set((*triangle1Vertices)[1]).sub((*triangle1Vertices)[0]).normalize();
 			triangle1Edge2.set((*triangle1Vertices)[2]).sub((*triangle1Vertices)[1]).normalize();
@@ -844,7 +838,6 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 	for (auto i = 0; i < testTriangles.size() / 2; i++) {
 		computeHitPoints(testTriangles[i * 2 + 0], testTriangles[i * 2 + 1], entity);
 	}
-
 	return true;
 }
 
@@ -925,7 +918,7 @@ bool CollisionDetection::doCollide(Capsule* capsule, Triangle* triangle, const V
 bool CollisionDetection::doCollide(Capsule* capsule, ConvexMesh* mesh, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(mesh, capsule) == false)
+	if (doBroadTest(capsule, mesh) == false)
 		return false;
 
 	CollisionResponse collision1;
@@ -1148,7 +1141,6 @@ void CollisionDetection::checkCollision(CollisionResponse* collision)
 {
 	auto& normalXYZ = collision->getNormal()->getArray();
 	if (Float::isNaN(normalXYZ[0]) == true || Float::isNaN(normalXYZ[1]) == true || Float::isNaN(normalXYZ[2]) == true) {
-		Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL @ "));
-		// TODO: Print back trace
+		Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL"));
 	}
 }

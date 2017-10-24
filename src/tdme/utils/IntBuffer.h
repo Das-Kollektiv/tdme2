@@ -50,6 +50,12 @@ public:
 	}
 
 	/**
+	 * Default constructor
+	 */
+	IntBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
+	/**
 	 * Public constructor
 	 */
 	inline IntBuffer(Buffer* buffer) : Buffer(buffer) {

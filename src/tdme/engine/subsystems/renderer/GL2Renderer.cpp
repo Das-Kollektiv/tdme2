@@ -1,11 +1,13 @@
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif __linux__
+#elif defined(__linux__)
         #define GL_GLEXT_PROTOTYPES
         #include <GL/gl.h>
         #include <GL/glext.h>
+#elif defined(_WIN32)
+	#include <GL/glew.h>
 #endif
 
 #include <string.h>
@@ -160,7 +162,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
 		Console::println(
 			wstring(
-				wstring(L"GL3Renderer::loadShader") +
+				wstring(L"GL2Renderer::loadShader") +
 				wstring(L"[") +
 				to_wstring(handle) +
 				wstring(L"]") +

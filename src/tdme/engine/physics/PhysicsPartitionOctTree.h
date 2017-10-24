@@ -14,7 +14,7 @@
 #include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/PhysicsPartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/RigidBody.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 
 using std::map;
@@ -27,7 +27,7 @@ using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 
 /** 
@@ -41,7 +41,7 @@ class tdme::engine::physics::PhysicsPartitionOctTree final
 	friend class PhysicsPartitionOctTree_PartitionTreeNode;
 
 private:
-	ArrayListIteratorMultiple<RigidBody*> rigidBodyIterator {  };
+	VectorIteratorMultiple<RigidBody*> rigidBodyIterator {  };
 	BoundingBox boundingBox {  };
 	Vector3 halfExtension {  };
 	Vector3 sideVector {  };
@@ -127,7 +127,7 @@ private:
 	 * @param cbv
 	 * @param rigidBody iterator
 	 */
-	int32_t doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<RigidBody*>& rigidBodyIterator);
+	int32_t doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<RigidBody*>& rigidBodyIterator);
 
 public:
 
@@ -136,14 +136,14 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
+	VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(BoundingVolume* cbv) override;
 
 	/** 
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	ArrayListIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
+	VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor

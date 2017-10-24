@@ -94,7 +94,7 @@ void StandardFileSystem::setContentFromString(const wstring& pathName, const wst
 
 void StandardFileSystem::getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException)
 {
-	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str());
+	ifstream ifs(StringConverter::toString(getFileName(pathName, fileName)).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
 	}
@@ -194,7 +194,8 @@ const wstring StandardFileSystem::getCanonicalPath(const wstring& pathName, cons
 	// add cwd if required
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
-		StringUtils::startsWith(canonicalPathString, L"/") == false) {
+		(StringUtils::startsWith(canonicalPathString, L"/") == false &&
+		StringUtils::matches(canonicalPathString, L"^[A-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + L"/" + canonicalPathString;
 	}
 
@@ -227,7 +228,11 @@ const wstring StandardFileSystem::getFileName(const wstring& fileName) throw (Fi
 }
 
 void StandardFileSystem::createPath(const wstring& pathName) throw (FileSystemException) {
-	int32_t status = mkdir(StringConverter::toString(pathName).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	#if defined(_WIN32)
+		int32_t status = mkdir(StringConverter::toString(pathName).c_str());
+	#else
+		int32_t status = mkdir(StringConverter::toString(pathName).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	#endif
 	if (status == -1) {
 		throw FileSystemException("Unable to create path(" + to_string(errno) + ")");
 	}

@@ -66,6 +66,4 @@ public:
 public: /* protected */
 	GUICheckboxController(GUINode* node);
 
-public:
-	static void clinit();
 };

@@ -23,24 +23,19 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
+wstring GUISelectBoxMultipleOptionController::CONDITION_SELECTED = L"selected";
+wstring GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED = L"unselected";
+wstring GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED = L"focussed";
+wstring GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED = L"unfocussed";
+wstring GUISelectBoxMultipleOptionController::CONDITION_DISABLED = L"disabled";
+wstring GUISelectBoxMultipleOptionController::CONDITION_ENABLED = L"enabled";
+
 GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
 	: GUINodeController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->focussed = false;
 }
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_SELECTED;
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED;
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED;
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED;
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_DISABLED;
-
-wstring GUISelectBoxMultipleOptionController::CONDITION_ENABLED;
 
 bool GUISelectBoxMultipleOptionController::isDisabled()
 {
@@ -143,7 +138,7 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			(dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->unfocus();
 			toggle();
 			focus();
@@ -184,20 +179,3 @@ MutableString* GUISelectBoxMultipleOptionController::getValue()
 void GUISelectBoxMultipleOptionController::setValue(MutableString* value)
 {
 }
-
-void GUISelectBoxMultipleOptionController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_SELECTED = L"selected";
-	CONDITION_UNSELECTED = L"unselected";
-	CONDITION_FOCUSSED = L"focussed";
-	CONDITION_UNFOCUSSED = L"unfocussed";
-	CONDITION_DISABLED = L"disabled";
-	CONDITION_ENABLED = L"enabled";
-	}
-};
-
-	static string_init_ string_init_instance;
-}
-

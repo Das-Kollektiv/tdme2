@@ -1,7 +1,6 @@
 // Forward declarations for tdme.tools.shared.tools
 #pragma once
 
-
 namespace tdme {
 namespace tools {
 namespace shared {

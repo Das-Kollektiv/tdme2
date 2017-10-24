@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 
-
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -44,7 +43,6 @@
 
 using std::ostringstream;
 using std::wstring;
-
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::engine::fileio::models::TMWriter;

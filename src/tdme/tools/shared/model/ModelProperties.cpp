@@ -19,8 +19,17 @@ ModelProperties::ModelProperties()
 {
 }
 
+ModelProperties::~ModelProperties() {
+	for (auto property: properties) {
+		delete property;
+	}
+}
+
 void ModelProperties::clearProperties()
 {
+	for (auto property: properties) {
+		delete property;
+	}
 	properties.clear();
 	propertiesByName.clear();
 }

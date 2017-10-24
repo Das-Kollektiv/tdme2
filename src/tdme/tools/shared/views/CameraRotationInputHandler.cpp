@@ -53,6 +53,10 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine)
 	mouseLastY = 0;
 }
 
+CameraRotationInputHandler::~CameraRotationInputHandler() {
+	delete lookFromRotations;
+}
+
 float CameraRotationInputHandler::getMaxAxisDimension()
 {
 	return maxAxisDimension;
@@ -126,7 +130,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		if (event->isProcessed() == true)
 			continue;
 
-		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED;
+		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
 		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
 			keyLeft = isKeyDown;
 

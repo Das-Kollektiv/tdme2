@@ -91,39 +91,45 @@ public: /* protected */
 
 	/** 
 	 * Set up vertex indices buffer
-	 * @return vertex indices buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	ShortBuffer* setupVertexIndicesBuffer();
+	void setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up texture coordinates buffer
-	 * @return texture coordinates buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	FloatBuffer* setupTextureCoordinatesBuffer();
+	void setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up vertices buffer
-	 * @return vertices buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	FloatBuffer* setupVerticesBuffer();
+	void setupVerticesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up normals buffer
-	 * @return normals buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	FloatBuffer* setupNormalsBuffer();
+	void setupNormalsBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up tangents buffer
-	 * @return tangents buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	FloatBuffer* setupTangentsBuffer();
+	void setupTangentsBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up bitangents buffer
-	 * @return bitangents buffer
+	 * @param renderer
+	 * @param vbo id
 	 */
-	FloatBuffer* setupBitangentsBuffer();
+	void setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId);
 
 	// Generated
 

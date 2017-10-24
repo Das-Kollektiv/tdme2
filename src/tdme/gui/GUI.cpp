@@ -147,7 +147,6 @@ vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 
 GUIFont* GUI::getFont(const wstring& fileName)
 {
-	clinit();
 	wstring canonicalFile;
 	wstring path;
 	wstring file;
@@ -182,7 +181,6 @@ GUIFont* GUI::getFont(const wstring& fileName)
 
 Texture* GUI::getImage(const wstring& fileName)
 {
-	clinit();
 	// TODO: fix me, proper get path, filename
 	wstring canonicalFile;
 	wstring path;
@@ -441,7 +439,7 @@ void GUI::handleEvents(GUINode* node)
 		switch (event->getKeyCode()) {
 			case (GUIKeyboardEvent::KEYCODE_TAB):
 				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						focusNextNode();
 					}
 					event->setProcessed(true);
@@ -449,7 +447,7 @@ void GUI::handleEvents(GUINode* node)
 				}
 			case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
 				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						focusPreviousNode();
 					}
 					event->setProcessed(true);
@@ -512,7 +510,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
@@ -529,7 +527,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent->setKeyChar(key);
 	guiKeyboardEvent->setMetaDown(false);
@@ -546,7 +544,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
@@ -563,7 +561,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_RELEASED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent->setKeyCode(key);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
@@ -581,7 +579,7 @@ void GUI::onMouseDragged(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_DRAGGED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_DRAGGED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
@@ -601,7 +599,7 @@ void GUI::onMouseMoved(int x, int y) {
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(0);
@@ -622,7 +620,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	mouseButtonLast = button + 1;
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSE_PRESSED:GUIMouseEvent_Type::MOUSE_RELEASED);
+	guiMouseEvent->setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSEEVENT_PRESSED:GUIMouseEvent_Type::MOUSEEVENT_RELEASED);
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
@@ -642,7 +640,7 @@ void GUI::mouseWheelMoved(MouseEvent* event)
 	lockEvents();
 	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_WHEEL_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED);
 	guiMouseEvent->setX(event->getX());
 	guiMouseEvent->setY(event->getY());
 	guiMouseEvent->setButton(0);
@@ -660,7 +658,7 @@ void GUI::fakeMouseMovedEvent()
 	lockEvents();
 	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
-	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSE_MOVED);
+	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
 	guiMouseEvent->setX(-10000);
 	guiMouseEvent->setY(-10000);
 	guiMouseEvent->setButton(0);
@@ -704,7 +702,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	lockEvents();
 	auto guiKeyboardEvent = keyboardEventsPool->allocate();
 	guiKeyboardEvent->setTime(Time::getCurrentMillis());
-	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEY_PRESSED);
+	guiKeyboardEvent->setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent->setKeyCode(-1);
 	guiKeyboardEvent->setKeyChar(-1);
 	guiKeyboardEvent->setMetaDown(false);
@@ -714,19 +712,5 @@ void GUI::fakeKeyboardModifierEvent() {
 	guiKeyboardEvent->setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
-}
-
-void GUI::clinit()
-{
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
 }
 

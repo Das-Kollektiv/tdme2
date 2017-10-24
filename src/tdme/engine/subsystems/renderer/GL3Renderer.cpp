@@ -1,12 +1,14 @@
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
-#ifdef __APPLE__
+#if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
-#elif __linux__
+#elif defined(__linux__)
 	#define GL_GLEXT_PROTOTYPES
 	#include <GL/gl.h>
 	#include <GL/glext.h>
 	#include <GL/glcorearb.h>
+#elif defined(_WIN32)
+	#include <GL/glew.h>
 #endif
 
 #include <string.h>

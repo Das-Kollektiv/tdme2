@@ -37,17 +37,10 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::MutableString;
 
-template<typename ComponentType, typename... Bases> struct SubArray;
-namespace tdme {
-namespace gui {
-namespace renderer {
-}  // namespace renderer
-}  // namespace gui
-}  // namespace tdme
+MutableString* GUIFont::LINEHEIGHT_STRING = new MutableString(L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 
 GUIFont::GUIFont()
 {
-	clinit();
 	init();
 }
 
@@ -55,13 +48,8 @@ void GUIFont::init()
 {
 }
 
-MutableString* GUIFont::LINEHEIGHT_STRING;
-
-constexpr int32_t GUIFont::CHARACTERS_MAX;
-
 GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw (FileSystemException)
 {
-	clinit();
 	int lineIdx = 0;
 	auto font = new GUIFont();
 	vector<wstring> lines;
@@ -243,19 +231,3 @@ int32_t GUIFont::getLineHeight()
 {
 	return lineHeight;
 }
-
-void GUIFont::clinit()
-{
-	static bool in_cl_init = false;
-	struct clinit_ {
-		clinit_() {
-			in_cl_init = true;
-		LINEHEIGHT_STRING = new MutableString(L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
-		}
-	};
-
-	if (!in_cl_init) {
-		static clinit_ clinit_instance;
-	}
-}
-

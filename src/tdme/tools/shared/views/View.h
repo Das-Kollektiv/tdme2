@@ -35,4 +35,9 @@ struct tdme::tools::shared::views::View
 	 * Disposes the view
 	 */
 	virtual void dispose() = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~View() {}
 };

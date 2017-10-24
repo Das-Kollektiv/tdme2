@@ -93,7 +93,7 @@ float Tools::oseScale = 0.75f;
 wstring Tools::formatFloat(float value)
 {
 	wstring floatString = to_wstring(value);
-	return floatString;
+	return floatString.substr(0, floatString.length() - 3);
 }
 
 wstring Tools::formatVector3(const Vector3& value)
@@ -219,6 +219,8 @@ void Tools::oseInit()
 void Tools::oseDispose()
 {
 	osEngine->dispose();
+	delete osEngine;
+	delete oseLookFromRotations;
 }
 
 void Tools::oseThumbnail(LevelEditorEntity* model)

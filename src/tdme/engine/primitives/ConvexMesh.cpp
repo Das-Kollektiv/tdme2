@@ -1,5 +1,6 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 
+#include <array>
 #include <vector>
 
 #include <tdme/engine/Object3DModel.h>
@@ -16,6 +17,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
+using std::array;
 using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
@@ -33,21 +35,27 @@ using tdme::math::SeparatingAxisTheorem;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
+ConvexMesh::ConvexMesh()
+{
+	createVertices();
+	update();
+}
+
 ConvexMesh::ConvexMesh(const vector<Triangle>* triangles)
 {
 	this->triangles = *triangles;
-	update();
 	createVertices();
+	update();
 }
 
 ConvexMesh::ConvexMesh(Object3DModel* model) 
 {
 	model->getFaceTriangles(&triangles);
-	update();
 	createVertices();
+	update();
 }
 
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes)
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height)
 {
 	vector<Triangle> faceTriangles;
 	model->getFaceTriangles(&faceTriangles);
@@ -55,9 +63,9 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 		vector<Triangle> convexMeshTriangles;
 		convexMeshTriangles.push_back(faceTriangles[i]);
 		convexMeshTriangles.push_back(faceTriangles[i]);
-		(*convexMeshTriangles[1].getVertices())[0].addY(-1.0f);
-		(*convexMeshTriangles[1].getVertices())[1].addY(-1.0f);
-		(*convexMeshTriangles[1].getVertices())[2].addY(-1.0f);
+		(*convexMeshTriangles[1].getVertices())[0].addY(-height);
+		(*convexMeshTriangles[1].getVertices())[1].addY(-height);
+		(*convexMeshTriangles[1].getVertices())[2].addY(-height);
 		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles));
 	}
 }
@@ -75,7 +83,7 @@ void ConvexMesh::createVertices()
 				}
 			}
 			if (haveVertex == false) {
-				vertexReferences.push_back(&(*triangleVertices)[j]);
+				vertexReferences.push_back({{i, j}});
 				vertices.push_back((*triangleVertices)[j]);
 			}
 		}
@@ -212,7 +220,7 @@ void ConvexMesh::update()
 {
 	Vector3 tmp;
 	for (auto i = 0; i < vertexReferences.size(); i++) {
-		vertices[i].set(*vertexReferences[i]);
+		vertices[i].set((*triangles[vertexReferences[i][0]].getVertices())[vertexReferences[i][1]]);
 	}
 	center.set(0.0f, 0.0f, 0.0f);
 	for (auto i = 0; i < triangles.size(); i++) {

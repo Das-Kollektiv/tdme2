@@ -101,6 +101,4 @@ public:
 public: /* protected */
 	GUISelectBoxMultipleOptionController(GUINode* node);
 
-public:
-	static void clinit();
 };

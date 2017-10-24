@@ -1,17 +1,32 @@
-INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
+STACKFLAGS =
+SRCS_PLATFORM =
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(OS), Darwin)
-	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -L/usr/lib -lz -pthread
+	# Mac OS X
+	SRCS_PLATFORM:= src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
+	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), Linux)
-	EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -lz -lGL -lfreeglut -lopenal -pthread
-	#EXTRA_LIBS ?= -ltdme -l$(NAME)-ext -ltdme -ltdme-ext -L/usr/lib64 -L/usr/local/lib -lz -lGL -lfreeglut-gles -lopenal -pthread 
+	# Linux
+	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
+	#GL2ES on ARM, WIP
+	#EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
+else
+	# Windows via MINGW
+	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
+	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
+	STACKFLAGS := -Wl,--stack,0x1000000
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
@@ -25,9 +40,9 @@ EXT_LIB = lib$(NAME)-ext.a
 LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 
 SRC = src
-NATIVE = native
 TINYXML = tinyxml
 JSONBOX = jsonbox
+ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
@@ -230,10 +245,29 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
+	src/tdme/network/udpclient/NIOClientException.cpp \
+	src/tdme/network/udpclient/NIOUDPClient.cpp \
+	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
+	src/tdme/network/udpserver/NIONetworkServerException.cpp \
+	src/tdme/network/udpserver/NIOServerClient.cpp \
+	src/tdme/network/udpserver/NIOServerClientRequestHandlerHubException.cpp \
+	src/tdme/network/udpserver/NIOServerRequest.cpp \
+	src/tdme/network/udpserver/NIOServerWorkerThread.cpp \
+	src/tdme/network/udpserver/NIOServerWorkerThreadPool.cpp \
+	src/tdme/network/udpserver/NIOUDPServer.cpp \
+	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
+	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
 	src/tdme/math/TriangleTriangleIntersection.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
+	src/tdme/os/network/Network.cpp \
+	src/tdme/os/network/NIOException.cpp \
+	src/tdme/os/network/NIOIOException.cpp \
+	src/tdme/os/network/NIOKEMException.cpp \
+	src/tdme/os/network/NIONetworkSocket.cpp \
+	src/tdme/os/network/NIOSocketException.cpp \
+	src/tdme/os/network/NIOUDPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
@@ -251,6 +285,8 @@ SRCS = \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
+	src/tdme/tests/UDPServerTest_UDPServer.cpp \
+	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
@@ -325,18 +361,19 @@ SRCS = \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
 	src/tdme/utils/Integer.cpp \
+	src/tdme/utils/IntEncDec.cpp \
 	src/tdme/utils/MutableString.cpp \
 	src/tdme/utils/Properties.cpp \
+	src/tdme/utils/ReferenceCounter.cpp \
+	src/tdme/utils/RTTI.cpp \
 	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
+	$(SRCS_PLATFORM)
 	# src/tdme/engine/EngineGLES2Renderer.cpp \
 	# src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
-
-NATIVE_SRCS = \
-
 
 EXT_SRCS = \
 
@@ -356,6 +393,23 @@ EXT_JSONBOX_SRCS = \
 	ext/jsonbox/Object.cpp \
 	ext/jsonbox/SolidusEscaper.cpp \
 	ext/jsonbox/Value.cpp \
+
+EXT_ZLIB_SRCS = \
+	ext/zlib/adler32.c \
+	ext/zlib/crc32.c \
+	ext/zlib/deflate.c \
+	ext/zlib/infback.c \
+	ext/zlib/inffast.c \
+	ext/zlib/inflate.c \
+	ext/zlib/inftrees.c \
+	ext/zlib/trees.c \
+	ext/zlib/zutil.c \
+	ext/zlib/compress.c \
+	ext/zlib/uncompr.c \
+	ext/zlib/gzclose.c \
+	ext/zlib/gzlib.c \
+	ext/zlib/gzread.c \
+	ext/zlib/gzwrite.c  \
 
 EXT_LIBPNG_SRCS = \
 	ext/libpng/pngrio.c \
@@ -405,31 +459,18 @@ EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c \
 
-EXT_NATIVE_SRCS = \
-	ext/native/java/io/FileInputStream-native.cpp \
-	ext/native/java/io/FileOutputStream-native.cpp \
-	ext/native/java/lang/Class-native.cpp \
-	ext/native/java/lang/ClassLoader-native.cpp \
-	ext/native/java/lang/ClassLoader_NativeLibrary-native.cpp \
-	ext/native/java/lang/Float-native.cpp \
-	ext/native/java/lang/Object-native.cpp \
-	ext/native/java/lang/String-native.cpp \
-	ext/native/java/lang/System-native.cpp \
-	ext/native/java/lang/Thread-native.cpp \
-	ext/native/java/lang/Throwable-native.cpp \
-	ext/native/java/util/zip/ZipEntry-native.cpp \
-
-
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
-	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
+	src/tdme/tests/UDPClientTest-main.cpp \
+	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/viewer/TDMEViewer-main.cpp \
@@ -441,13 +482,14 @@ OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
+EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
-define cc-command
+define cpp-command
 @mkdir -p $(dir $@); 
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 endef
@@ -458,19 +500,19 @@ define c-command
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
-	$(cc-command)
-	
-$(NATIVE_OBJS):$(OBJ)/%.o: $(NATIVE)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
 
 $(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
-	$(cc-command)
+	$(cpp-command)
+
+$(EXT_ZLIB_OBJS):$(OBJ)/%.o: ext/$(ZLIB)/%.c | print-opts
+	$(c-command)
 
 $(EXT_LIBPNG_OBJS):$(OBJ)/%.o: ext/$(LIBPNG)/%.c | print-opts
 	$(c-command)
@@ -489,11 +531,11 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 mains: $(MAINS)
 

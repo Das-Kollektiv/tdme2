@@ -146,4 +146,9 @@ struct tdme::engine::Entity
 	 * Update transformations
 	 */
 	virtual void update() = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Entity() {}
 };

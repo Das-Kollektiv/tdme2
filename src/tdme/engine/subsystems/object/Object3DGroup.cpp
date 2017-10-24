@@ -183,7 +183,7 @@ void Object3DGroup::dispose()
 		}
 		auto glSpecularTextureId = materialSpecularTextureIdsByEntities[j];
 		if (glSpecularTextureId != Object3DGroup::GLTEXTUREID_NONE && glSpecularTextureId != Object3DGroup::GLTEXTUREID_NOTUSED) {
-			if (material->getDiffuseTexture() != nullptr)
+			if (material->getSpecularTexture() != nullptr)
 				textureManager->removeTexture(material->getSpecularTexture()->getId());
 
 			materialSpecularTextureIdsByEntities[j] = Object3DGroup::GLTEXTUREID_NONE;

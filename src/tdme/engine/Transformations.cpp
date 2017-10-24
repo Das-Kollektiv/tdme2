@@ -24,6 +24,9 @@ Transformations::Transformations()
 	rotationsTranslationsMatrix.identity();
 }
 
+Transformations::~Transformations() {
+}
+
 Vector3& Transformations::getTranslation()
 {
 	return translation;
@@ -51,6 +54,7 @@ Matrix4x4& Transformations::getTransformationsMatrix()
 
 void Transformations::fromTransformations(Transformations* transformations)
 {
+	if (this == transformations) return;
 	translation.set(transformations->translation);
 	scale.set(transformations->scale);
 	pivot.set(transformations->pivot);

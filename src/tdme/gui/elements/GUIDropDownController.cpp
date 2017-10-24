@@ -186,7 +186,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 {
 	if (disabled == false && node == static_cast< GUINode* >(this->dropDownNode) && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			toggleOpenState();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(this->node));
 		}
@@ -199,7 +199,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					if (isOpen() == false) {
 						toggleOpenState();
 					} else {
@@ -210,7 +210,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					if (isOpen() == false) {
 						toggleOpenState();
 					} else {
@@ -221,7 +221,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					toggleOpenState();
 				}
 				if (isOpen_ == false) {

@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 
-
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -30,7 +29,6 @@
 
 using std::ostringstream;
 using std::wstring;
-
 
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::engine::Rotation;

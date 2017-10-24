@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include <tdme/engine/physics/RigidBody.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 
 using std::find;
 using std::vector;
@@ -12,11 +12,11 @@ using std::remove;
 
 using tdme::engine::physics::PhysicsPartitionNone;
 using tdme::engine::physics::RigidBody;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 PhysicsPartitionNone::PhysicsPartitionNone() 
 {
-	arrayListIteratorMultiple.addArrayList(&bodies);
+	arrayListIteratorMultiple.addVector(&bodies);
 }
 
 void PhysicsPartitionNone::reset()
@@ -39,12 +39,12 @@ void PhysicsPartitionNone::removeRigidBody(RigidBody* rigidBody)
 	bodies.erase(remove(bodies.begin(), bodies.end(), rigidBody), bodies.end());
 }
 
-ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(BoundingVolume* cbv)
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(BoundingVolume* cbv)
 {
 	return &arrayListIteratorMultiple;
 }
 
-ArrayListIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(const Vector3& center)
 {
 	return &arrayListIteratorMultiple;
 }

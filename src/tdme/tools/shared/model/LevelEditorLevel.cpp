@@ -68,6 +68,16 @@ LevelEditorLevel::LevelEditorLevel()
 	objectIdx = 0;
 }
 
+LevelEditorLevel::~LevelEditorLevel() {
+	for (auto light: lights) {
+		delete light;
+	}
+	for (auto object: objects) {
+		delete object;
+	}
+	delete entityLibrary;
+}
+
 const wstring& LevelEditorLevel::getGameRoot()
 {
 	return gameRoot;
@@ -292,6 +302,7 @@ void LevelEditorLevel::removeObject(const wstring& id)
 	if (objectByIdIt != objectsById.end()) {
 		objectsById.erase(objectByIdIt);
 		objects.erase(remove(objects.begin(), objects.end(), objectByIdIt->second), objects.end());
+		delete objectByIdIt->second;
 	}
 }
 

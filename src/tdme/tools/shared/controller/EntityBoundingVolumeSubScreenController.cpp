@@ -96,6 +96,10 @@ EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController
 	this->view = new EntityBoundingVolumeView(this, popUps);
 }
 
+EntityBoundingVolumeSubScreenController::~EntityBoundingVolumeSubScreenController() {
+	delete view;
+}
+
 EntityBoundingVolumeView* EntityBoundingVolumeSubScreenController::getView()
 {
 	return view;

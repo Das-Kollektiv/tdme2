@@ -97,4 +97,9 @@ public:
 	 * Public constructor
 	 */
 	FileDialogScreenController();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FileDialogScreenController();
 };

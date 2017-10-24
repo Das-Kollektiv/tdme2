@@ -8,6 +8,7 @@
 #include <tdme/engine/Application.h>
 #include <tdme/tools/particlesystem/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
 using std::wstring;
 
@@ -15,6 +16,7 @@ using tdme::engine::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
+using tdme::tools::shared::views::SharedParticleSystemView;
 
 /** 
  * TDME Particle System
@@ -33,6 +35,7 @@ private:
 	View* viewNew {  };
 	bool quitRequested {  };
 	PopUps* popUps {  };
+	SharedParticleSystemView* particleSystemView;
 
 public:
 
@@ -92,4 +95,9 @@ public:
 	 * Public constructor
 	 */
 	TDMEParticleSystem();
+
+	/**
+	 * Destructor
+	 */
+	~TDMEParticleSystem();
 };

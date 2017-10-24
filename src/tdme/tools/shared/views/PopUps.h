@@ -43,4 +43,9 @@ public:
 	 * Public constructor
 	 */
 	PopUps();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~PopUps();
 };

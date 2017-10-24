@@ -219,4 +219,9 @@ public:
 	 * @param default map properties or null
 	 */
 	LevelEditorLevel();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorLevel();
 };

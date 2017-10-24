@@ -17,6 +17,11 @@ PopUps::PopUps()
 {
 }
 
+PopUps::~PopUps() {
+	delete fileDialogScreenController;
+	delete infoDialogScreenController;
+}
+
 FileDialogScreenController* PopUps::getFileDialogScreenController()
 {
 	return fileDialogScreenController;

@@ -10,9 +10,10 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/Console.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
 
 #include <ext/libpng/png.h>
 
@@ -20,6 +21,8 @@ using std::vector;
 using std::wstring;
 
 using tdme::utils::ByteBuffer;
+using tdme::utils::Console;
+using tdme::utils::Exception;
 
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::fileio::textures::Texture;
@@ -28,14 +31,16 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::Console;
 
 Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException)
 {
-	// Console::println(wstring(L"TextureLoader::loadTexture(): loading: " + path->getCPPWString() + L"/" + fileName->getCPPWString()));
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
-		Texture* texture = TextureLoader::loadPNG(path, fileName);
-		return texture;
+	try {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
+			Texture* texture = TextureLoader::loadPNG(path, fileName);
+			return texture;
+		}
+	} catch (Exception& exception) {
+		Console::println(L"TextureLoader::loadTexture(): Could not load texture: " + path + L"/" + fileName + L": " + StringConverter::toWideString(exception.what()));
 	}
 	return nullptr;
 }
@@ -64,20 +69,20 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 	pngInputStream->readBytes((int8_t*)sig, sizeof(sig));
 	if (png_sig_cmp(sig, 0, 8)) {
 		delete pngInputStream;
-	    return nullptr;
+		return nullptr;
 	}
 
 	// create two data structures: 'png_struct' and 'png_info'
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr) {
 		delete pngInputStream;
-	    return nullptr;
+		return nullptr;
 	}
 	png_infop info = png_create_info_struct(png);
 	if (info == nullptr) {
-	    png_destroy_read_struct(&png, nullptr, nullptr);
-	    delete pngInputStream;
-	    return nullptr;
+		png_destroy_read_struct(&png, nullptr, nullptr);
+		delete pngInputStream;
+		return nullptr;
 	}
 
 	// set up custom read function
@@ -85,9 +90,9 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 
 	// set libpng error handling mechanism
 	if (setjmp(png_jmpbuf(png))) {
-	    png_destroy_read_struct(&png, &info, nullptr);
-	    delete pngInputStream;
-	    return nullptr;
+		png_destroy_read_struct(&png, &info, nullptr);
+		delete pngInputStream;
+		return nullptr;
 	}
 
 	// tell libpng we already read the signature
@@ -164,8 +169,8 @@ Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) th
 	png_bytep rows[height];
 	uint8_t* p = (uint8_t*)pixelByteBuffer->getBuffer();
 	for(int i = 0; i < height; i++) {
-	    rows[i] = p;
-	    p += width * bytesPerPixel;
+		rows[i] = p;
+		p += width * bytesPerPixel;
 	}
 
 	// read all rows (data goes into 'pixels' buffer)

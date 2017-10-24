@@ -35,6 +35,10 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	}
 }
 
+LevelEditorEntity::~LevelEditorEntity() {
+	if (model != nullptr) delete model;
+}
+
 int32_t LevelEditorEntity::getId()
 {
 	return id;

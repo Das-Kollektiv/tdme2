@@ -37,12 +37,20 @@ GUIRenderer::GUIRenderer(GLRenderer* renderer)
 	this->renderer = renderer;
 }
 
+GUIRenderer::~GUIRenderer() {
+	delete sbIndicesByteBuffer;
+	delete fbVerticesByteBuffer;
+	delete fbColorsByteBuffer;
+	delete fbTextureCoordinatesByteBuffer;
+}
+
+
 void GUIRenderer::init()
 {
-	sbIndices = ByteBuffer::allocate(QUAD_COUNT * 6 * sizeof(int16_t))->asShortBuffer();
-	fbVertices = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float))->asFloatBuffer();
-	fbColors = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float))->asFloatBuffer();
-	fbTextureCoordinates = ByteBuffer::allocate(QUAD_COUNT * 6 * 2 * sizeof(float))->asFloatBuffer();
+	sbIndices = (sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * sizeof(int16_t)))->asShortBuffer();
+	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
+	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
+	fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 2 * sizeof(float)))->asFloatBuffer();
 	renderAreaLeft = 0.0f;
 	renderAreaTop = 0.0f;
 	renderAreaRight = 0.0f;
@@ -79,15 +87,15 @@ void GUIRenderer::initialize()
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.guirenderer", 4);
 		vboIds = vboManaged->getVBOGlIds();
 		for (auto i = 0; i < QUAD_COUNT; i++) {
-			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
-			sbIndices->put(static_cast< int16_t >((i * 4 + 1)));
-			sbIndices->put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices->put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices->put(static_cast< int16_t >((i * 4 + 3)));
-			sbIndices->put(static_cast< int16_t >((i * 4 + 0)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 1)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 3)));
+			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
 		}
 		// sbIndices->flip();
-		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices->getPosition() * sizeof(int16_t), sbIndices);
+		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 	}
 }
 
@@ -136,8 +144,8 @@ void GUIRenderer::initScreen(GUIScreenNode* screenNode)
 void GUIRenderer::doneScreen()
 {
 	this->screenNode = nullptr;
-	guiEffectColorMul = GUIColor::WHITE.getArray();
-	guiEffectColorAdd = GUIColor::BLACK.getArray();
+	guiEffectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 }
 
 void GUIRenderer::setFontColor(GUIColor* color)
@@ -337,42 +345,42 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 		x2 = renderAreaRight;
 		x3 = renderAreaRight;
 	}
-	fbVertices->put(x1);
-	fbVertices->put(y1);
-	fbVertices->put(0.0f);
-	fbColors->put(colorR1);
-	fbColors->put(colorG1);
-	fbColors->put(colorB1);
-	fbColors->put(colorA1);
-	fbTextureCoordinates->put(tu1);
-	fbTextureCoordinates->put(tv1);
-	fbVertices->put(x2);
-	fbVertices->put(y2);
-	fbVertices->put(0.0f);
-	fbColors->put(colorR2);
-	fbColors->put(colorG2);
-	fbColors->put(colorB2);
-	fbColors->put(colorA2);
-	fbTextureCoordinates->put(tu2);
-	fbTextureCoordinates->put(tv2);
-	fbVertices->put(x3);
-	fbVertices->put(y3);
-	fbVertices->put(0.0f);
-	fbColors->put(colorR3);
-	fbColors->put(colorG3);
-	fbColors->put(colorB3);
-	fbColors->put(colorA3);
-	fbTextureCoordinates->put(tu3);
-	fbTextureCoordinates->put(tv3);
-	fbVertices->put(x4);
-	fbVertices->put(y4);
-	fbVertices->put(0.0f);
-	fbColors->put(colorR4);
-	fbColors->put(colorG4);
-	fbColors->put(colorB4);
-	fbColors->put(colorA4);
-	fbTextureCoordinates->put(tu4);
-	fbTextureCoordinates->put(tv4);
+	fbVertices.put(x1);
+	fbVertices.put(y1);
+	fbVertices.put(0.0f);
+	fbColors.put(colorR1);
+	fbColors.put(colorG1);
+	fbColors.put(colorB1);
+	fbColors.put(colorA1);
+	fbTextureCoordinates.put(tu1);
+	fbTextureCoordinates.put(tv1);
+	fbVertices.put(x2);
+	fbVertices.put(y2);
+	fbVertices.put(0.0f);
+	fbColors.put(colorR2);
+	fbColors.put(colorG2);
+	fbColors.put(colorB2);
+	fbColors.put(colorA2);
+	fbTextureCoordinates.put(tu2);
+	fbTextureCoordinates.put(tv2);
+	fbVertices.put(x3);
+	fbVertices.put(y3);
+	fbVertices.put(0.0f);
+	fbColors.put(colorR3);
+	fbColors.put(colorG3);
+	fbColors.put(colorB3);
+	fbColors.put(colorA3);
+	fbTextureCoordinates.put(tu3);
+	fbTextureCoordinates.put(tv3);
+	fbVertices.put(x4);
+	fbVertices.put(y4);
+	fbVertices.put(0.0f);
+	fbColors.put(colorR4);
+	fbColors.put(colorG4);
+	fbColors.put(colorB4);
+	fbColors.put(colorA4);
+	fbTextureCoordinates.put(tu4);
+	fbTextureCoordinates.put(tv4);
 	quadCount++;
 }
 
@@ -384,14 +392,14 @@ void GUIRenderer::bindTexture(int32_t textureId)
 void GUIRenderer::render()
 {
 	if (quadCount == 0) {
-		fontColor = GUIColor::WHITE.getArray();
-		effectColorMul = GUIColor::WHITE.getArray();
-		effectColorAdd = GUIColor::BLACK.getArray();
+		fontColor = GUIColor::GUICOLOR_WHITE.getArray();
+		effectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+		effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 		return;
 	}
-	renderer->uploadBufferObject((*vboIds)[1], fbVertices->getPosition() * sizeof(float), fbVertices);
-	renderer->uploadBufferObject((*vboIds)[2], fbColors->getPosition() * sizeof(float), fbColors);
-	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates->getPosition() * sizeof(float), fbTextureCoordinates);
+	renderer->uploadBufferObject((*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject((*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
@@ -405,12 +413,12 @@ void GUIRenderer::render()
 	renderer->onUpdateEffect();
 	renderer->drawIndexedTrianglesFromBufferObjects(quadCount * 2, 0);
 	quadCount = 0;
-	fbVertices->clear();
-	fbColors->clear();
-	fbTextureCoordinates->clear();
-	fontColor = GUIColor::WHITE.getArray();
-	effectColorMul = GUIColor::WHITE.getArray();
-	effectColorAdd = GUIColor::BLACK.getArray();
+	fbVertices.clear();
+	fbColors.clear();
+	fbTextureCoordinates.clear();
+	fontColor = GUIColor::GUICOLOR_WHITE.getArray();
+	effectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
+	effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 	effectColorAdd[3] = 0.0f;
 	guiEffectColorAdd[3] = 0.0f;
 }

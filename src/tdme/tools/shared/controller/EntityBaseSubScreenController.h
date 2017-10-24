@@ -153,4 +153,9 @@ public:
 	 * @param on set entity data action
 	 */
 	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityBaseSubScreenController();
 };

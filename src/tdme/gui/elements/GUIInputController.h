@@ -51,7 +51,4 @@ public:
 public: /* protected */
 	GUIInputController(GUINode* node);
 
-
-public:
-	static void clinit();
 };

@@ -176,4 +176,9 @@ public:
 	 * @param view
 	 */
 	ModelViewerScreenController(SharedModelViewerView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ModelViewerScreenController();
 };

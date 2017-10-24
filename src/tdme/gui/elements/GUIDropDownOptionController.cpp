@@ -29,15 +29,14 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
 
+wstring GUIDropDownOptionController::CONDITION_SELECTED = L"selected";
+wstring GUIDropDownOptionController::CONDITION_UNSELECTED = L"unselected";
+
 GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node) 
 	: GUINodeController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
-
-wstring GUIDropDownOptionController::CONDITION_SELECTED;
-
-wstring GUIDropDownOptionController::CONDITION_UNSELECTED;
 
 bool GUIDropDownOptionController::isSelected()
 {
@@ -108,7 +107,7 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 {
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
 			select();
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();
@@ -148,16 +147,3 @@ MutableString* GUIDropDownOptionController::getValue()
 void GUIDropDownOptionController::setValue(MutableString* value)
 {
 }
-
-void GUIDropDownOptionController::clinit()
-{
-struct string_init_ {
-	string_init_() {
-	CONDITION_SELECTED = L"selected";
-	CONDITION_UNSELECTED = L"unselected";
-	}
-};
-
-	static string_init_ string_init_instance;
-}
-

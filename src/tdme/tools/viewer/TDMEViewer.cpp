@@ -39,7 +39,13 @@ TDMEViewer::TDMEViewer()
 	viewInitialized = false;
 	viewNew = nullptr;
 	popUps = new PopUps();
+	modelViewerView = nullptr;
 	quitRequested = false;
+}
+
+TDMEViewer::~TDMEViewer() {
+	delete modelViewerView;
+	delete popUps;
 }
 
 void TDMEViewer::main(int argc, char** argv)
@@ -48,8 +54,8 @@ void TDMEViewer::main(int argc, char** argv)
 	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	Console::println();
 
-	auto tdmeLevelEditor = new TDMEViewer();
-	tdmeLevelEditor->run(argc, argv, L"TDMEViewer");
+	TDMEViewer tdmeLevelEditor;
+	tdmeLevelEditor.run(argc, argv, L"TDMEViewer");
 }
 
 TDMEViewer* TDMEViewer::getInstance()
@@ -120,7 +126,7 @@ void TDMEViewer::initialize()
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(new SharedModelViewerView(popUps));
+	setView(modelViewerView = new SharedModelViewerView(popUps));
 }
 
 void TDMEViewer::reshape(int32_t width, int32_t height)

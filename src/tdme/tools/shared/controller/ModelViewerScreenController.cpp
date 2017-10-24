@@ -80,6 +80,13 @@ ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* 
 	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), modelPath);
 }
 
+ModelViewerScreenController::~ModelViewerScreenController() {
+	delete modelPath;
+	delete entityBaseSubScreenController;
+	delete entityDisplaySubScreenController;
+	delete entityBoundingVolumeSubScreenController;
+}
+
 EntityDisplaySubScreenController* ModelViewerScreenController::getEntityDisplaySubScreenController()
 {
 	return entityDisplaySubScreenController;

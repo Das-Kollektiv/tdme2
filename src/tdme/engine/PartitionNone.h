@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 
 using std::vector;
 
@@ -18,7 +18,7 @@ using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 /** 
  * PartitionQuadTree none implementation
@@ -30,7 +30,7 @@ class tdme::engine::PartitionNone final
 {
 private:
 	vector<Entity*> entities;
-	ArrayListIteratorMultiple<Entity*> arrayListIteratorMultiple;
+	VectorIteratorMultiple<Entity*> arrayListIteratorMultiple;
 
 public: /* protected */
 	void reset() override;
@@ -40,8 +40,8 @@ public: /* protected */
 
 public:
 	const vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
+	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
+	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor

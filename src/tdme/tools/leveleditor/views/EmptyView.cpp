@@ -57,6 +57,11 @@ EmptyView::EmptyView(PopUps* popUps)
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
+EmptyView::~EmptyView() {
+	delete emptyScreenController;
+	delete cameraRotationInputHandler;
+}
+
 PopUps* EmptyView::getPopUpsViews()
 {
 	return popUps;
@@ -69,6 +74,7 @@ LevelEditorEntity* EmptyView::getEntity()
 
 void EmptyView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }

@@ -70,4 +70,9 @@ public:
 	 * Public constructor
 	 */
 	Transformations();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Transformations();
 };

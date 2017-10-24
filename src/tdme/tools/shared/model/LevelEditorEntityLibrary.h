@@ -128,4 +128,9 @@ public:
 	 * Public constructor
 	 */
 	LevelEditorEntityLibrary(LevelEditorLevel* level);
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityLibrary();
 };

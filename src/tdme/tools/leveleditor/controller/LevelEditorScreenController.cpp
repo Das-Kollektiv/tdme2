@@ -292,9 +292,7 @@ void LevelEditorScreenController::unselectObjectInObjectListBox(const wstring& o
 	selectedObjects->set(objectsListBox->getController()->getValue());
 	value->set(u'|')->append(objectId)->append(u'|');
 	auto pos = selectedObjects->indexOf(value);
-	if (pos != -1)
-		selectedObjects->delete_(pos, value->length());
-
+	if (pos != -1) selectedObjects->delete_(pos, value->length());
 	objectsListBox->getController()->setValue(selectedObjects);
 }
 
@@ -308,9 +306,7 @@ void LevelEditorScreenController::selectObjectInObjectListbox(const wstring& obj
 	selectedObjects->set(objectsListBox->getController()->getValue());
 	value->set(u'|')->append(objectId)->append(u'|');
 	auto pos = selectedObjects->indexOf(value);
-	if (pos == -1)
-		selectedObjects->append(value);
-
+	if (pos == -1) selectedObjects->append(value);
 	objectsListBox->getController()->setValue(selectedObjects);
 }
 

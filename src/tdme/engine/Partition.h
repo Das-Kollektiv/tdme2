@@ -6,23 +6,21 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 
 /** 
  * PartitionQuadTree interface
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::Partition
+struct tdme::engine::Partition
 {
-public: /* protected */
-
 	/** 
 	 * Reset
 	 */
@@ -46,8 +44,6 @@ public: /* protected */
 	 */
 	virtual void removeEntity(Entity* entity) = 0;
 
-public:
-
 	/** 
 	 * Get visible entities
 	 * @param frustum
@@ -60,12 +56,17 @@ public:
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
+	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
 
 	/** 
 	 * Get objects near to given world position
 	 * @param center
 	 * @return objects near to given world position
 	 */
-	virtual ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) = 0;
+	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Partition() {}
 };

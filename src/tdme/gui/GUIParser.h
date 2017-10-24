@@ -116,8 +116,8 @@ public:
 	 */
 	static void addElement(GUIElement* guiElement) throw (GUIParserException);
 
-	GUIParser();
-
-public:
-	static void clinit();
+	/**
+	 * Initialize GUI elements
+	 */
+	static void initialize();
 };

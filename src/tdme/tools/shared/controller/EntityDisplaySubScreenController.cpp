@@ -30,6 +30,10 @@ EntityDisplaySubScreenController::EntityDisplaySubScreenController()
 	view = new EntityDisplayView(this);
 }
 
+EntityDisplaySubScreenController::~EntityDisplaySubScreenController() {
+	delete view;
+}
+
 EntityDisplayView* EntityDisplaySubScreenController::getView()
 {
 	return view;

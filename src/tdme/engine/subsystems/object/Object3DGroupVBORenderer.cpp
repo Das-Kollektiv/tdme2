@@ -53,22 +53,16 @@ void Object3DGroupVBORenderer::preRender(Object3DVBORenderer* object3DVBORendere
 	}
 	if (object3DGroup->mesh->hasRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
-			auto sbIndices = object3DGroup->mesh->setupVertexIndicesBuffer();
-			object3DVBORenderer->renderer->uploadIndicesBufferObject((*vboBaseIds)[0], sbIndices->getPosition() * sizeof(int16_t), sbIndices);
+			object3DGroup->mesh->setupVertexIndicesBuffer(object3DVBORenderer->renderer, (*vboBaseIds)[0]);
 			if (object3DGroup->mesh->group->getTextureCoordinates() != nullptr) {
-				auto fbTextureCoordinates = object3DGroup->mesh->setupTextureCoordinatesBuffer();
-				object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[3], fbTextureCoordinates->getPosition() * sizeof(float), fbTextureCoordinates);
+				object3DGroup->mesh->setupTextureCoordinatesBuffer(object3DVBORenderer->renderer, (*vboBaseIds)[3]);
 			}
 		}
-		auto fbVertices = object3DGroup->mesh->setupVerticesBuffer();
-		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[1], fbVertices->getPosition() * sizeof(float), fbVertices);
-		auto fbNormals = object3DGroup->mesh->setupNormalsBuffer();
-		object3DVBORenderer->renderer->uploadBufferObject((*vboBaseIds)[2], fbNormals->getPosition() * sizeof(float), fbNormals);
+		object3DGroup->mesh->setupVerticesBuffer(object3DVBORenderer->renderer, (*vboBaseIds)[1]);
+		object3DGroup->mesh->setupNormalsBuffer(object3DVBORenderer->renderer, (*vboBaseIds)[2]);
 		if (vboTangentBitangentIds != nullptr) {
-			auto fbTangents = object3DGroup->mesh->setupTangentsBuffer();
-			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[0], fbTangents->getPosition() * sizeof(float), fbTangents);
-			auto fbBitangents = object3DGroup->mesh->setupBitangentsBuffer();
-			object3DVBORenderer->renderer->uploadBufferObject((*vboTangentBitangentIds)[1], fbBitangents->getPosition() * sizeof(float), fbBitangents);
+			object3DGroup->mesh->setupTangentsBuffer(object3DVBORenderer->renderer, (*vboTangentBitangentIds)[0]);
+			object3DGroup->mesh->setupBitangentsBuffer(object3DVBORenderer->renderer, (*vboTangentBitangentIds)[1]);
 		}
 	}
 }

@@ -159,4 +159,9 @@ public:
 	 * @param pivot
 	 */
 	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, const Vector3& pivot);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorEntity();
 };

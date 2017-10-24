@@ -19,4 +19,9 @@ struct tdme::engine::EntityPickingFilter
 	 * @return if allowed or not
 	 */
 	virtual bool filterEntity(Entity* entity) = 0;
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityPickingFilter() {};
 };

@@ -152,7 +152,7 @@ void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* even
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(this->node->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
@@ -164,7 +164,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					selectPrevious();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}
@@ -172,7 +172,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					selectNext();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}

@@ -1,6 +1,6 @@
-
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include <tdme.h>
@@ -13,6 +13,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
+using std::array;
 using std::vector;
 
 using tdme::engine::primitives::BoundingVolume;
@@ -34,10 +35,9 @@ class tdme::engine::primitives::ConvexMesh final
 private:
 	vector<Triangle> triangles {  };
 	vector<Vector3> vertices {  };
-	vector<Vector3*> vertexReferences {  };
+	vector<array<int32_t, 2>> vertexReferences {  };
 	Vector3 center {  };
 	float sphereRadius {  };
-
 private:
 
 	/** 
@@ -51,8 +51,9 @@ public:
 	 * Create terrain convex meshes
 	 * @param model
 	 * @param convex meshes
+	 * @param height
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height = 1.0f);
 
 	/** 
 	 * @return triangles
@@ -83,6 +84,11 @@ public:
 	float computeDimensionOnAxis(const Vector3& axis) const override;
 	void update() override;
 	BoundingVolume* clone() const override;
+
+	/**
+	 * Public constructor
+	 */
+	ConvexMesh();
 
 	/**
 	 * Public constructor

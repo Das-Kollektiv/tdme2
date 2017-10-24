@@ -117,10 +117,10 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	if (disabled == true) {
 		return;
 	}
-	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED == true) {
+	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
 		isDragging = false;
 	} else
-	if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSE_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSE_DRAGGED == true) && event->getButton() == 1) {
+	if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) && event->getButton() == 1) {
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints->left + textInputNode->computedConstraints->alignmentLeft + textInputNode->border->left+ textInputNode->padding->left));
 		resetCursorMode();
@@ -163,7 +163,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 		auto keyChar = event->getKeyChar();
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
-			if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+			if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 				if (textInputNode->getMaxLength() == 0 || textInputNode->getText()->length() < textInputNode->getMaxLength()) {
 					textInputNode->getText()->insert(index, event->getKeyChar());
 					index++;
@@ -176,7 +176,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 			switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						if (index > 0) {
 							index--;
 							checkOffset();
@@ -187,7 +187,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 				break;
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						if (index < textInputNode->getText()->length()) {
 							index++;
 							checkOffset();
@@ -199,7 +199,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 			case GUIKeyboardEvent::KEYCODE_BACKSPACE: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+						if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index > 0) {
 								textInputNode->getText()->delete_(index - 1, 1);
 								index--;
@@ -214,7 +214,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 			case GUIKeyboardEvent::KEYCODE_DELETE: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+						if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index < textInputNode->getText()->length()) {
 								textInputNode->getText()->delete_(index, 1);
 								resetCursorMode();

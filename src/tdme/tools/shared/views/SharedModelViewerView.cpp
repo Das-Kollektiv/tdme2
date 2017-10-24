@@ -35,7 +35,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Properties.h>
-#include "../../../engine/subsystems/object/ModelStatistics.h"
+#include <tdme/engine/subsystems/object/ModelStatistics.h>
 
 using std::wstring;
 
@@ -88,6 +88,11 @@ SharedModelViewerView::SharedModelViewerView(PopUps* popUps)
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
+SharedModelViewerView::~SharedModelViewerView() {
+	delete modelViewerScreenController;
+	delete cameraRotationInputHandler;
+}
+
 PopUps* SharedModelViewerView::getPopUpsViews()
 {
 	return popUps;
@@ -100,6 +105,7 @@ LevelEditorEntity* SharedModelViewerView::getEntity()
 
 void SharedModelViewerView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }
@@ -162,7 +168,6 @@ void SharedModelViewerView::display()
 		cameraRotationInputHandler->reset();
 	}
 	if (initModelRequested == true) {
-		engine->reset();
 		initModel();
 		initModelRequested = false;
 	}
@@ -263,22 +268,26 @@ void SharedModelViewerView::dispose()
 	Engine::getInstance()->reset();
 }
 
-void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldModel, LevelEditorEntity* model)
+void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
+	delete oldEntity;
 }
 
 void SharedModelViewerView::loadModel()
 {
 	Console::println(wstring(L"Model file: " + modelFile));
 	try {
-		auto oldModel = entity;
-		entity = loadModel(
-			FileSystem::getInstance()->getFileName(modelFile),
-			L"",
-			FileSystem::getInstance()->getPathName(modelFile),
-			FileSystem::getInstance()->getFileName(modelFile),
-			Vector3());
-		onLoadModel(oldModel, entity);
+		auto oldEntity = entity;
+		setEntity(
+			loadModel(
+				FileSystem::getInstance()->getFileName(modelFile),
+				L"",
+				FileSystem::getInstance()->getPathName(modelFile),
+				FileSystem::getInstance()->getFileName(modelFile),
+				Vector3()
+			)
+		);
+		onLoadModel(oldEntity, entity);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
 	}

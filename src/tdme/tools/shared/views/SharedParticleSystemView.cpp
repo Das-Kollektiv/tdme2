@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -96,6 +95,10 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	entity->setDefaultBoundingVolumes();
 }
 
+SharedParticleSystemView::~SharedParticleSystemView() {
+	delete cameraRotationInputHandler;
+}
+
 PopUps* SharedParticleSystemView::getPopUpsViews()
 {
 	return popUps;
@@ -108,6 +111,7 @@ LevelEditorEntity* SharedParticleSystemView::getEntity()
 
 void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
 {
+	engine->reset();
 	this->entity = entity;
 	initParticleSystemRequested = true;
 }
@@ -125,13 +129,15 @@ void SharedParticleSystemView::initParticleSystem()
 	particleSystemFile = entity->getEntityFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
-	BoundingBox* boundingBox = nullptr;
+	BoundingBox boundingBox;
 	if (entity->getModel() == nullptr) {
-		boundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
+		boundingBox.getMin().set(Vector3(-0.5f, 0.0f, -0.5f));
+		boundingBox.getMax().set(Vector3(0.5f, 3.0f, 0.5f));
 	} else {
-		boundingBox = entity->getModel()->getBoundingBox();
+		boundingBox.fromBoundingVolume(entity->getModel()->getBoundingBox());
 	}
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(boundingBox));
+	boundingBox.update();
+	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(&boundingBox));
 	updateGUIElements();
 }
 
@@ -171,7 +177,6 @@ void SharedParticleSystemView::display()
 		cameraRotationInputHandler->reset();
 	}
 	if (initParticleSystemRequested == true) {
-		engine->reset();
 		initParticleSystem();
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
@@ -296,6 +301,7 @@ void SharedParticleSystemView::deactivate()
 
 void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
+	delete entity;
 }
 
 void SharedParticleSystemView::loadParticleSystem()
@@ -303,11 +309,13 @@ void SharedParticleSystemView::loadParticleSystem()
 	Console::println(wstring(L"Particle system file: " + particleSystemFile));
 	try {
 		auto oldEntity = entity;
-		entity = loadParticleSystem(
-			particleSystemFile,
-			L"",
-			FileSystem::getInstance()->getPathName(particleSystemFile),
-			FileSystem::getInstance()->getFileName(particleSystemFile)
+		setEntity(
+			loadParticleSystem(
+				particleSystemFile,
+				L"",
+				FileSystem::getInstance()->getPathName(particleSystemFile),
+				FileSystem::getInstance()->getFileName(particleSystemFile)
+			)
 		);
 		onLoadParticleSystem(oldEntity, entity);
 	} catch (Exception& exception) {

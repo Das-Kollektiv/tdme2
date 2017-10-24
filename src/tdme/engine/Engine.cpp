@@ -34,6 +34,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/math/Matrix4x4.h>
@@ -42,7 +43,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
 
@@ -82,6 +83,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix4x4;
@@ -220,6 +222,7 @@ Partition* Engine::getPartition()
 
 void Engine::setPartition(Partition* partition)
 {
+	if (this->partition != nullptr) delete this->partition;
 	this->partition = partition;
 }
 
@@ -357,7 +360,7 @@ void Engine::initialize(bool debug)
 		return;
 
 	// GL3
-	#ifdef __APPLE__
+	#if defined(__APPLE__) or defined(_WIN32)
 	{
 		renderer = new EngineGL3Renderer(this);
 		Console::println(wstring(L"TDME::Using GL3"));
@@ -366,7 +369,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif __linux__ and !defined(__arm__)
+	#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
@@ -376,8 +379,8 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif __linux__ and defined(__arm__)
-	// GL2
+	#elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
+	// GLES2
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(wstring(L"TDME::Using GLES2"));
@@ -405,6 +408,7 @@ void Engine::initialize(bool debug)
 	meshManager = new MeshManager();
 	object3DVBORenderer = new Object3DVBORenderer(this, renderer);
 	object3DVBORenderer->initialize();
+	GUIParser::initialize();
 	guiRenderer = new GUIRenderer(renderer);
 	guiRenderer->initialize();
 	gui = new GUI(this, guiRenderer);

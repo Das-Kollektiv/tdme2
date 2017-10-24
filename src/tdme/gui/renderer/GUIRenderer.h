@@ -5,6 +5,8 @@
 
 #include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -13,6 +15,7 @@
 using std::array;
 using std::vector;
 
+using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -42,10 +45,14 @@ private:
 	GLRenderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t quadCount {  };
-	ShortBuffer* sbIndices {  };
-	FloatBuffer* fbVertices {  };
-	FloatBuffer* fbColors {  };
-	FloatBuffer* fbTextureCoordinates {  };
+	ByteBuffer* sbIndicesByteBuffer {  };
+	ShortBuffer sbIndices {  };
+	ByteBuffer* fbVerticesByteBuffer {  };
+	FloatBuffer fbVertices {  };
+	ByteBuffer* fbColorsByteBuffer {  };
+	FloatBuffer fbColors {  };
+	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
+	FloatBuffer fbTextureCoordinates {  };
 	float renderAreaLeft {  };
 	float renderAreaTop {  };
 	float renderAreaRight {  };
@@ -304,8 +311,15 @@ public:
 	 */
 	void render();
 
+	/**
+	 * Public constructor
+	 */
 	GUIRenderer(GLRenderer* renderer);
 
+	/**
+	 * Destructor
+	 */
+	~GUIRenderer();
 private:
 	void init();
 };

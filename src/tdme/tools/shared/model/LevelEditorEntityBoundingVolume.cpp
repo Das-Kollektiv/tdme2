@@ -57,6 +57,11 @@ LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, Lev
 	boundingVolume = nullptr;
 }
 
+LevelEditorEntityBoundingVolume::~LevelEditorEntityBoundingVolume() {
+	if (model != nullptr) delete model;
+	if (boundingVolume != nullptr) delete boundingVolume;
+}
+
 int32_t LevelEditorEntityBoundingVolume::getId()
 {
 	return id;

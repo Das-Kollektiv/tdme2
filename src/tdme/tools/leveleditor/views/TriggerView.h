@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme.h>
@@ -91,4 +90,9 @@ public:
 	 * @param pop ups view
 	 */
 	TriggerView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~TriggerView();
 };

@@ -106,7 +106,7 @@ void GUIRadioButtonController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSE_RELEASED) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
@@ -120,7 +120,7 @@ void GUIRadioButtonController::handleKeyboardEvent(GUINode* node, GUIKeyboardEve
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					select();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}

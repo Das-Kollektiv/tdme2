@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
@@ -37,7 +36,6 @@
 #include <ext/jsonbox/JsonException.h>
 
 using std::wstring;
-
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -129,7 +127,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 				modelFile
 			);
 		} else {
-			throw new ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
+			throw ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
 		}
 		if (model == nullptr) {
 			Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + L"/" + modelFile + L"'");

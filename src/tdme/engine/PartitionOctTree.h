@@ -14,7 +14,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/utils/ArrayListIteratorMultiple.h>
+#include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 
 using std::map;
@@ -28,7 +28,7 @@ using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::ArrayListIteratorMultiple;
+using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 
 /** 
@@ -42,7 +42,7 @@ class tdme::engine::PartitionOctTree final
 	friend class PartitionOctTree_PartitionTreeNode;
 
 private:
-	ArrayListIteratorMultiple<Entity*> entityIterator {  };
+	VectorIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox boundingBox {  };
 	Vector3 halfExtension {  };
 	Vector3 sideVector {  };
@@ -126,11 +126,11 @@ private:
 	 * @param cbv
 	 * @param entity iterator
 	 */
-	int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, ArrayListIteratorMultiple<Entity*>& entityIterator);
+	int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<Entity*>& entityIterator);
 
 public:
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	ArrayListIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
+	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
+	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
 
 	/**
 	 * Public constructor

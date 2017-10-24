@@ -206,21 +206,21 @@ void GUIElementNode::handleMouseEvent(GUIMouseEvent* event)
 	if (isEventBelongingToNode(event)) {
 		{
 			auto v = event->getType();
-			if ((v == GUIMouseEvent_Type::MOUSE_MOVED)) {
+			if ((v == GUIMouseEvent_Type::MOUSEEVENT_MOVED)) {
 				activeConditions->add(CONDITION_ONMOUSEOVER);
 				if (ignoreEvents == false)
 					event->setProcessed(true);
 
 				goto end_switch0;;
 			}
-			if ((v == GUIMouseEvent_Type::MOUSE_PRESSED)) {
+			if ((v == GUIMouseEvent_Type::MOUSEEVENT_PRESSED)) {
 				activeConditions->add(CONDITION_CLICK);
 				if (ignoreEvents == false)
 					event->setProcessed(true);
 
 				goto end_switch0;;
 			}
-			if ((((v != GUIMouseEvent_Type::MOUSE_MOVED) && (v != GUIMouseEvent_Type::MOUSE_PRESSED)))) {
+			if ((((v != GUIMouseEvent_Type::MOUSEEVENT_MOVED) && (v != GUIMouseEvent_Type::MOUSEEVENT_PRESSED)))) {
 				goto end_switch0;;
 			}
 end_switch0:;

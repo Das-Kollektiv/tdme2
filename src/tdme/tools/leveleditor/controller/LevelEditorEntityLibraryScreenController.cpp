@@ -215,9 +215,7 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
-	if (entity == nullptr)
-		return;
-
+	if (entity == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->placeObject();
@@ -227,18 +225,16 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->toWString()));
-	if (entity == nullptr)
-		return;
-
+	if (entity == nullptr) return;
 	TDMELevelEditor::getInstance()->getLevel()->removeObjectsByEntityId(entity->getId());
-	TDMELevelEditor::getInstance()->getLevel()->getEntityLibrary()->removeEntity(entity->getId());
-	setEntityLibrary();
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
+	TDMELevelEditor::getInstance()->getLevel()->getEntityLibrary()->removeEntity(entity->getId());
+	setEntityLibrary();
 }
 
 void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* node)
