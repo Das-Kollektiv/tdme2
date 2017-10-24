@@ -8,6 +8,7 @@
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model_UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/primitives/BoundingBox.h>
