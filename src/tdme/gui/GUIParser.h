@@ -30,7 +30,7 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	static map<wstring, GUIElement*> elements;
+	static map<string, GUIElement*> elements;
 
 public:
 
@@ -41,7 +41,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(const wstring& pathName, const wstring& fileName) throw (GUIParserException);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content
@@ -49,7 +49,7 @@ public:
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
-	static GUIScreenNode* parse(const wstring& xml) throw (GUIParserException);
+	static GUIScreenNode* parse(const string& xml) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML file into parent node
@@ -58,7 +58,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, const wstring& pathName, const wstring& fileName) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content into parent node
@@ -66,7 +66,7 @@ public:
 	 * @param xml
 	 * @throws IOException
 	 */
-	static void parse(GUIParentNode* parentNode, const wstring& xml) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const string& xml) throw (GUIParserException);
 
 private:
 
@@ -91,7 +91,7 @@ private:
 	 * @param node
 	 * @return string
 	 */
-	static const wstring getInnerXml(TiXmlElement* node);
+	static const string getInnerXml(TiXmlElement* node);
 
 public:
 
@@ -100,14 +100,14 @@ public:
 	 * @param string
 	 * @return string with unescaped quotes
 	 */
-	static const wstring unescapeQuotes(const wstring& string);
+	static const string unescapeQuotes(const string& str);
 
 	/**
 	 * Escape quotes
 	 * @param string
 	 * @return string with escaped quotes
 	 */
-	static const wstring escapeQuotes(const wstring& string);
+	static const string escapeQuotes(const string& str);
 
 	/** 
 	 * Add GUI element

@@ -4,6 +4,7 @@
 #include <string>
 
 using std::string;
+using std::to_string;
 using std::stof;
 using std::isnan;
 
@@ -19,9 +20,9 @@ constexpr float tdme::utils::Float::NaN;
 constexpr float tdme::utils::Float::POSITIVE_INFINITY;
 constexpr int32_t tdme::utils::Float::SIZE;
 
-float Float::parseFloat(const wstring& string) {
-	if (string.length() == 0) return -1.0f;
-	return stof(string);
+float Float::parseFloat(const string& str) {
+	if (str.length() == 0) return 0.0f;
+	return stof(str);
 }
 
 bool Float::isNaN(float value)

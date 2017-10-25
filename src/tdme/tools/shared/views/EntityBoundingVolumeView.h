@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::math::Vector3;
@@ -131,7 +131,7 @@ public:
 	 * @param bounding volume index
 	 * @param file name
 	 */
-	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const wstring& fileName);
+	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName);
 
 	/**
 	 * Public constructor

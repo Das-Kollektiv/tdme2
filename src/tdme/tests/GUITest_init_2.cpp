@@ -20,5 +20,5 @@ GUITest_init_2::GUITest_init_2(GUITest *GUITest_this)
 
 void GUITest_init_2::onValueChanged(GUIElementNode* node)
 {
-	Console::println(node->getName() + L":onValueChanged: " + node->getController()->getValue()->toWString());
+	Console::println(node->getName() + ":onValueChanged: " + node->getController()->getValue()->toWString());
 }

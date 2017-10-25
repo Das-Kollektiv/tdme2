@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
@@ -21,7 +21,7 @@ class tdme::engine::subsystems::manager::MeshManager_MeshManaged
 	friend class MeshManager;
 
 private:
-	wstring id {  };
+	string id {  };
 	Object3DGroupMesh* mesh {  };
 	int32_t referenceCounter {  };
 private:
@@ -29,7 +29,7 @@ private:
 	/** 
 	 * @return mesh id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return object 3d group mesh
@@ -57,5 +57,5 @@ private:
 	 * @param id
 	 * @param mesh
 	 */
-	MeshManager_MeshManaged(const wstring& id, Object3DGroupMesh* mesh);
+	MeshManager_MeshManaged(const string& id, Object3DGroupMesh* mesh);
 };

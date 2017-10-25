@@ -13,29 +13,29 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIInput::GUIInput() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"input.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "input.xml");
 }
 
-wstring GUIInput::NAME = L"input";
+string GUIInput::NAME = "input";
 
-const wstring& GUIInput::getName()
+const string& GUIInput::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIInput::getTemplate()
+const string& GUIInput::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIInput::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"auto";
-	attributes[L"height"] = L"auto";
-	attributes[L"text"] = L"";
-	attributes[L"maxlength"] = L"0";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "auto";
+	attributes["height"] = "auto";
+	attributes["text"] = "";
+	attributes["maxlength"] = "0";
 	return &attributes;
 }
 

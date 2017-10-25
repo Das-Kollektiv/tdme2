@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::model::Model;
@@ -39,11 +39,11 @@ public:
 public: /* protected */
 	int32_t id {  };
 	LevelEditorEntity_EntityType* type {  };
-	wstring name {  };
-	wstring description {  };
-	wstring entityFileName {  };
-	wstring fileName {  };
-	wstring thumbnail {  };
+	string name {  };
+	string description {  };
+	string entityFileName {  };
+	string fileName {  };
+	string thumbnail {  };
 	Model* model {  };
 	Vector3 pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
@@ -64,45 +64,45 @@ public:
 	/** 
 	 * @return name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/** 
 	 * Set up model name
 	 * @param name
 	 */
-	void setName(const wstring& name);
+	void setName(const string& name);
 
 	/** 
 	 * @return description
 	 */
-	const wstring& getDescription();
+	const string& getDescription();
 
 	/** 
 	 * Set up model description
 	 * @param description
 	 */
-	void setDescription(const wstring& description);
+	void setDescription(const string& description);
 
 	/** 
 	 * @return entity file name
 	 */
-	const wstring& getEntityFileName();
+	const string& getEntityFileName();
 
 	/** 
 	 * Set entity file name
 	 * @param entity file name
 	 */
-	void setEntityFileName(const wstring& entityFileName);
+	void setEntityFileName(const string& entityFileName);
 
 	/** 
 	 * @return file name
 	 */
-	const wstring& getFileName();
+	const string& getFileName();
 
 	/** 
 	 * @return thumbnail
 	 */
-	const wstring& getThumbnail();
+	const string& getThumbnail();
 
 	/** 
 	 * @return model
@@ -158,7 +158,7 @@ public:
 	 * @param model
 	 * @param pivot
 	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, const Vector3& pivot);
+	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
 
 	/**
 	 * Destructor

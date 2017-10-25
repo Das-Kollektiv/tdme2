@@ -12,10 +12,9 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using tdme::gui::nodes::GUIElementNode;
@@ -28,7 +27,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
-using tdme::utils::StringConverter;
 using tdme::utils::Exception;
 
 LevelEditorEntityLibraryScreenController_onValueChanged_1::LevelEditorEntityLibraryScreenController_onValueChanged_1(LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController, LevelEditorEntityLibrary* entityLibrary)
@@ -43,7 +41,7 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		auto entity = entityLibrary->addModel(
 			LevelEditorEntityLibrary::ID_ALLOCATE,
 			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
-			L"",
+			"",
 			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
 			levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 			Vector3(0.0f, 0.0f, 0.0f)
@@ -54,8 +52,8 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		levelEditorEntityLibraryScreenController->onEditEntity();
 	} catch (Exception& exception) {
 		levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
-			L"Error",
-			L"An error occurred: " + StringConverter::toWideString(exception.what())
+			"Error",
+			"An error occurred: " + string(exception.what())
 		);
 	}
 	levelEditorEntityLibraryScreenController->modelPath = levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();

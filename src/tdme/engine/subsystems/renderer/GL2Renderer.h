@@ -14,7 +14,7 @@
 
 using std::array;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::utils::ByteBuffer;
@@ -46,7 +46,7 @@ protected:
 	void ctor();
 
 public:
-	const wstring getGLVersion() override;
+	const string getGLVersion() override;
 
 private:
 
@@ -72,19 +72,19 @@ public:
 	 */
 	bool isDisplacementMappingAvailable() override;
 	int32_t getTextureUnits() override;
-	int32_t loadShader(int32_t type, const wstring& pathName, const wstring& fileName) override;
+	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
 	void useProgram(int32_t programId) override;
 	int32_t createProgram() override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
-	int32_t getProgramUniformLocation(int32_t programId, const wstring& name) override;
+	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
 	void setProgramUniformInteger(int32_t uniformId, int32_t value) override;
 	void setProgramUniformFloat(int32_t uniformId, float value) override;
 	void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) override;
 	void setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data) override;
 	void setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data) override;
 	void setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data) override;
-	void setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name) override;
+	void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) override;
 	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void updateViewPort() override;
 	void setClearColor(float red, float green, float blue, float alpha) override;

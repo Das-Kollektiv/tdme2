@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/tools/viewer/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Application;
 using tdme::engine::Engine;
@@ -28,7 +28,7 @@ class tdme::tools::viewer::TDMEViewer final
 {
 
 private:
-	static wstring VERSION;
+	static string VERSION;
 	static TDMEViewer* instance;
 	Engine* engine {  };
 	View* view {  };

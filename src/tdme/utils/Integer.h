@@ -5,7 +5,7 @@
 
 #include <string>
 
-using std::wstring;
+using std::string;
 
 /**
  * Key
@@ -21,6 +21,6 @@ public:
 	 * @param string
 	 * @return integer
 	 */
-	static int parseInt(const wstring& string);
+	static int parseInt(const string& str);
 
 };

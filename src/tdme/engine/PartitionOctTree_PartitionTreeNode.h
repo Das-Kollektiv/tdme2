@@ -16,7 +16,7 @@ using tdme::engine::primitives::BoundingBox;
 
 using std::list;
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 /** 
@@ -33,6 +33,6 @@ struct tdme::engine::PartitionOctTree_PartitionTreeNode
 	PartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox bv {  };
 	list<PartitionOctTree_PartitionTreeNode> subNodes {  };
-	map<wstring, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
+	map<string, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<Entity*> partitionEntities {  };
 };

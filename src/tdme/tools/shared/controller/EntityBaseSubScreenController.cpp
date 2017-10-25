@@ -24,7 +24,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::gui::GUIParser;
@@ -45,7 +45,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString(L"");
+MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString("");
 
 EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction) 
 {
@@ -63,17 +63,17 @@ EntityBaseSubScreenController::~EntityBaseSubScreenController() {
 void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
-		entityName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_name"));
-		entityDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_description"));
-		entityApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_apply"));
-		entityPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_property_name"));
-		entityPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_property_value"));
-		entityPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_properties_save"));
-		entityPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_properties_add"));
-		entityPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_properties_remove"));
-		entityPropertiesList = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_properties_listbox"));
-		entityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_entity_properties_presetapply"));
-		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"entity_properties_presets"));
+		entityName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_name"));
+		entityDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_description"));
+		entityApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_apply"));
+		entityPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_property_name"));
+		entityPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_property_value"));
+		entityPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_save"));
+		entityPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_add"));
+		entityPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_remove"));
+		entityPropertiesList = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_properties_listbox"));
+		entityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_presetapply"));
+		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_properties_presets"));
 	} catch (Exception& exception) {
 		Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -81,7 +81,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
-void EntityBaseSubScreenController::setEntityData(const wstring& name, const wstring& description)
+void EntityBaseSubScreenController::setEntityData(const string& name, const string& description)
 {
 	entityName->getController()->setDisabled(false);
 	entityName->getController()->getValue()->set(name);
@@ -108,29 +108,29 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds)
+void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds)
 {
-	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + L"_inner")));
+	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
-	wstring entityPropertiesPresetsInnerNodeSubNodesXML = L"";
+	string entityPropertiesPresetsInnerNodeSubNodesXML = "";
 	entityPropertiesPresetsInnerNodeSubNodesXML =
 		entityPropertiesPresetsInnerNodeSubNodesXML +
-		L"<scrollarea-vertical id=\"" +
+		"<scrollarea-vertical id=\"" +
 		entityPropertiesPresets->getId() +
-		L"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: *entityPresetIds) {
 		auto entityPresetId = it.first;
 		entityPropertiesPresetsInnerNodeSubNodesXML =
-			entityPropertiesPresetsInnerNodeSubNodesXML + L"<dropdown-option text=\"" +
+			entityPropertiesPresetsInnerNodeSubNodesXML + "<dropdown-option text=\"" +
 			GUIParser::escapeQuotes(entityPresetId) +
-			L"\" value=\"" +
+			"\" value=\"" +
 			GUIParser::escapeQuotes(entityPresetId) +
-			L"\" " +
-			(idx == 0 ? L"selected=\"true\" " : L"") +
-			L" />\n";
+			"\" " +
+			(idx == 0 ? "selected=\"true\" " : "") +
+			" />\n";
 		idx++;
 	}
-	entityPropertiesPresetsInnerNodeSubNodesXML = entityPropertiesPresetsInnerNodeSubNodesXML + L"</scrollarea-vertical>";
+	entityPropertiesPresetsInnerNodeSubNodesXML = entityPropertiesPresetsInnerNodeSubNodesXML + "</scrollarea-vertical>";
 	try {
 		entityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -139,7 +139,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<wstring, vector
 	}
 }
 
-void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, const wstring& presetId, const wstring& selectedName)
+void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	entityPropertyPresetApply->getController()->setDisabled(false);
@@ -149,30 +149,30 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
-	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set(L"none"));
-	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + L"_inner")));
+	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set("none"));
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + "_inner")));
 	auto idx = 1;
-	wstring entityPropertiesListBoxSubNodesXML = L"";
+	string entityPropertiesListBoxSubNodesXML = "";
 	entityPropertiesListBoxSubNodesXML =
 		entityPropertiesListBoxSubNodesXML +
-		L"<scrollarea-vertical id=\"" +
+		"<scrollarea-vertical id=\"" +
 		entityPropertiesList->getId() +
-		L"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
+		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
 		PropertyModelClass* entityProperty = entity->getPropertyByIndex(i);
 		entityPropertiesListBoxSubNodesXML =
 			entityPropertiesListBoxSubNodesXML +
-			L"<selectbox-option text=\"" +
+			"<selectbox-option text=\"" +
 			GUIParser::escapeQuotes(entityProperty->getName()) +
-			L": " +
+			": " +
 			GUIParser::escapeQuotes(entityProperty->getValue()) +
-			L"\" value=\"" +
+			"\" value=\"" +
 			GUIParser::escapeQuotes(entityProperty->getName()) +
-			L"\" " +
-			(selectedName.length() > 0 && entityProperty->getName() == selectedName ? L"selected=\"true\" " : L"") +
-			L"/>\n";
+			"\" " +
+			(selectedName.length() > 0 && entityProperty->getName() == selectedName ? "selected=\"true\" " : "") +
+			"/>\n";
 	}
-	entityPropertiesListBoxSubNodesXML = entityPropertiesListBoxSubNodesXML + L"</scrollarea-vertical>\n";
+	entityPropertiesListBoxSubNodesXML = entityPropertiesListBoxSubNodesXML + "</scrollarea-vertical>\n";
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
@@ -184,9 +184,9 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::unsetEntityProperties()
 {
-	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + L"_inner")));
+	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + "_inner")));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
-	entityPropertiesPresets->getController()->setValue(value->set(L"none"));
+	entityPropertiesPresets->getController()->setValue(value->set("none"));
 	entityPropertiesPresets->getController()->setDisabled(true);
 	entityPropertyPresetApply->getController()->setDisabled(true);
 	entityPropertiesList->getController()->setDisabled(true);
@@ -206,25 +206,25 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 		entityPropertiesList->getController()->getValue()->toWString(),
 		entityPropertyName->getController()->getValue()->toWString(),
 		entityPropertyValue->getController()->getValue()->toWString()) == false) {
-		showErrorPopUp(L"Warning", L"Saving entity property failed");
+		showErrorPopUp("Warning", "Saving entity property failed");
 	}
 }
 
 void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entity)
 {
 	if (view->entityPropertyAdd(entity) == false) {
-		showErrorPopUp(L"Warning", L"Adding new entity property failed");
+		showErrorPopUp("Warning", "Adding new entity property failed");
 	}
 }
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
 	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toWString()) == false) {
-		showErrorPopUp(L"Warning", L"Removing entity property failed");
+		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
 
-void EntityBaseSubScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
+void EntityBaseSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -268,19 +268,19 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 		if ((v == GUIActionListener_Type::PERFORMED))
 		{
 			{
-				if (node->getId().compare(L"button_entity_apply") == 0) {
+				if (node->getId().compare("button_entity_apply") == 0) {
 					onEntityDataApply(entity);
 				} else
-				if (node->getId().compare(L"button_entity_properties_presetapply") == 0) {
+				if (node->getId().compare("button_entity_properties_presetapply") == 0) {
 					onEntityPropertyPresetApply(entity);
 				} else
-				if (node->getId().compare(L"button_entity_properties_add") == 0) {
+				if (node->getId().compare("button_entity_properties_add") == 0) {
 					onEntityPropertyAdd(entity);
 				} else
-				if (node->getId().compare(L"button_entity_properties_remove") == 0) {
+				if (node->getId().compare("button_entity_properties_remove") == 0) {
 					onEntityPropertyRemove(entity);
 				} else
-				if (node->getId().compare(L"button_entity_properties_save") == 0) {
+				if (node->getId().compare("button_entity_properties_save") == 0) {
 					onEntityPropertySave(entity);
 				} else {
 				}

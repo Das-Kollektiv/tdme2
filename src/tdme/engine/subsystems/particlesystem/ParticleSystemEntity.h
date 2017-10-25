@@ -8,7 +8,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
@@ -25,7 +25,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	/** 
 	 * @return object id
 	 */
-	virtual const wstring& getId() = 0;
+	virtual const string& getId() = 0;
 
 	/** 
 	 * @return true if enabled to be rendered

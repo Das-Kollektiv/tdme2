@@ -13,7 +13,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -54,14 +54,14 @@ public:
 	 * Set screen caption
 	 * @param text
 	 */
-	void setScreenCaption(const wstring& text);
+	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set up general entity data
 	 * @param name
 	 * @param description
 	 */
-	void setEntityData(const wstring& name, const wstring& description);
+	void setEntityData(const string& name, const string& description);
 
 	/** 
 	 * Unset entity data
@@ -74,7 +74,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(const wstring& presetId, const wstring& selectedName);
+	void setEntityProperties(const string& presetId, const string& selectedName);
 
 	/** 
 	 * Unset entity properties
@@ -89,7 +89,7 @@ public:
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(const wstring& caption, const wstring& message);
+	void showErrorPopUp(const string& caption, const string& message);
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 

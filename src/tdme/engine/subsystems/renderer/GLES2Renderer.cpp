@@ -21,12 +21,11 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/StringConverter.h>
 
 using std::array;
 using std::vector;
-using std::to_wstring;
-using std::wstring;
+using std::to_string;
+using std::string;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using tdme::utils::Buffer;
@@ -39,7 +38,6 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
 GLES2Renderer::GLES2Renderer() 
@@ -61,9 +59,9 @@ GLES2Renderer::GLES2Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 }
 
-const wstring GLES2Renderer::getGLVersion()
+const string GLES2Renderer::getGLVersion()
 {
-	return L"gles2";
+	return "gles2";
 }
 
 void GLES2Renderer::initialize()
@@ -121,7 +119,7 @@ int32_t GLES2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GLES2Renderer::loadShader(int32_t type, const wstring& pathName, const wstring& fileName)
+int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
 {
 	int32_t handle = glCreateShader(type);
 	checkGLError();
@@ -129,7 +127,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const wstring& pathName, const w
 
 	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
-	string sourceString = StringConverter::toString(shaderSource);
+	string sourceString = (shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
@@ -143,17 +141,17 @@ int32_t GLES2Renderer::loadShader(int32_t type, const wstring& pathName, const w
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
-		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
+		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
 		Console::println(
-			wstring(
-				wstring(L"GLES2Renderer::loadShader") +
-				wstring(L"[") +
-				to_wstring(handle) +
-				wstring(L"]") +
+			string(
+				string("GLES2Renderer::loadShader") +
+				string("[") +
+				to_string(handle) +
+				string("]") +
 				pathName +
-				wstring(L"/") +
+				string("/") +
 				fileName +
-				wstring(L": failed: ") +
+				string(": failed: ") +
 				infoLogString
 			 )
 		 );
@@ -191,12 +189,12 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
-		auto infoLogString = StringConverter::toWideString(string(infoLog, infoLogLength));
+		auto infoLogString = (string(infoLog, infoLogLength));
 		Console::println(
-			wstring(
-				L"[" +
-				to_wstring(programId) +
-				L"]: failed: " +
+			string(
+				"[" +
+				to_string(programId) +
+				"]: failed: " +
 				infoLogString
 			 )
 		);
@@ -205,9 +203,9 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 	return true;
 }
 
-int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const wstring& name)
+int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	auto uniformLocation = glGetUniformLocation(programId, StringConverter::toString(name).c_str());
+	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
 	return uniformLocation;
 }
 
@@ -241,9 +239,9 @@ void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, const array<fl
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)
+void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
-	glBindAttribLocation(programId, location, StringConverter::toString(name).c_str());
+	glBindAttribLocation(programId, location, (name).c_str());
 }
 
 void GLES2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -406,7 +404,7 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, i
 	}
 	auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(wstring(L"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_wstring(fboStatus)));
+		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
@@ -507,12 +505,12 @@ void GLES2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t b
 
 void GLES2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println(L"GLES2Renderer::bindTangentsBufferObject()::not implemented");
+	Console::println("GLES2Renderer::bindTangentsBufferObject()::not implemented");
 }
 
 void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println(L"GLES2Renderer::bindBitangentsBufferObject()::not implemented");
+	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -597,6 +595,6 @@ void GLES2Renderer::checkGLError()
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		Console::println(wstring(L"OpenGL Error: (" + to_wstring(error) + L") @:"));
+		Console::println(string("OpenGL Error: (" + to_string(error) + ") @:"));
 	}
 }

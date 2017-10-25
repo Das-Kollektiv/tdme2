@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -28,12 +28,12 @@ class tdme::gui::elements::GUISelectBoxMultipleOptionController final
 {
 
 private:
-	static wstring CONDITION_SELECTED;
-	static wstring CONDITION_UNSELECTED;
-	static wstring CONDITION_FOCUSSED;
-	static wstring CONDITION_UNFOCUSSED;
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
+	static string CONDITION_SELECTED;
+	static string CONDITION_UNSELECTED;
+	static string CONDITION_FOCUSSED;
+	static string CONDITION_UNFOCUSSED;
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
 	GUIParentNode* selectBoxMultipleNode {  };
 	bool selected {  };
 	bool focussed {  };

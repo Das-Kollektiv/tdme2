@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -36,7 +36,7 @@ public:
 	static GUINode_Flow *INTEGRATED;
 	static GUINode_Flow *FLOATING;
 
-	GUINode_Flow(const wstring& name, int ordinal);
-	static GUINode_Flow* valueOf(const wstring& a0);
+	GUINode_Flow(const string& name, int ordinal);
+	static GUINode_Flow* valueOf(const string& a0);
 
 };

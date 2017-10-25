@@ -6,11 +6,10 @@
 
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
-#include <tdme/utils/StringConverter.h>
 
 using std::string;
-using std::to_wstring;
-using std::wstring;
+using std::to_string;
+using std::string;
 
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -27,7 +26,7 @@ void CRHShutdown::handleRequest(NIOUDPServerClient *client, string& data, const 
 	}
 
 	// otherwise request shutdown
-	Console::println(L"received /shutdown, shutting down client");
+	Console::println("received /shutdown, shutting down client");
 	client->shutdown();
 }
 
@@ -49,7 +48,7 @@ void CRHDefault::handleRequest(NIOUDPServerClient *client, string& data, const u
 }
 
 EchoUDPServer::EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU) : NIOUDPServer("echo", host, port, maxCCU) {
-	Console::println(L"Starting echo udp server @ " + StringConverter::toWideString(host) + L":" + to_wstring(port));
+	Console::println("Starting echo udp server @ " + (host) + ":" + to_string(port));
 	Console::println();
 	setIOThreadCount(2);
 	setWorkerThreadCount(8);
@@ -61,7 +60,7 @@ EchoUDPServer::~EchoUDPServer() {
 }
 
 NIOUDPServerClient* EchoUDPServer::accept(const uint32_t clientId, const std::string& ip, const unsigned int port) {
-	Console::println(L"accepting client connection with '" + StringConverter::toWideString(ip) + L":" + to_wstring(port) + L"'");
+	Console::println("accepting client connection with '" + (ip) + ":" + to_string(port) + "'");
 
 	// create client
 	EchoUDPServerClient* client = new EchoUDPServerClient(clientId, ip, port);

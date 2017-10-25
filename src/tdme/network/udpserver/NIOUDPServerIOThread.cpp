@@ -12,7 +12,6 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/RTTI.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
 #include <tdme/network/udpserver/NIOUDPServerIOThread.h>
 #include <tdme/network/udpserver/NIOServerRequest.h>
@@ -20,8 +19,8 @@
 using std::pair;
 using std::ios;
 using std::map;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
@@ -33,7 +32,6 @@ using tdme::os::threading::Thread;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::RTTI;
-using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::network::udpserver::NIOUDPServerIOThread;
 using tdme::network::udpserver::NIOServerRequest;
@@ -41,17 +39,17 @@ using tdme::network::udpserver::NIOServerRequest;
 const uint64_t NIOUDPServerIOThread::MESSAGEACK_RESENDTIMES[NIOUDPServerIOThread::MESSAGEACK_RESENDTIMES_TRIES] = {125L, 250L, 500L, 750L, 1000L, 2000L, 5000L};
 
 NIOUDPServerIOThread::NIOUDPServerIOThread(const unsigned int id, NIOUDPServer *server, const unsigned int maxCCU) :
-	Thread(L"nioudpserveriothread"),
+	Thread("nioudpserveriothread"),
 	id(id),
 	server(server),
 	maxCCU(maxCCU),
-	messageQueueMutex(L"nioupserveriothread_messagequeue"),
-	messageMapAckMutex(L"nioupserveriothread_messagequeueack") {
+	messageQueueMutex("nioupserveriothread_messagequeue"),
+	messageMapAckMutex("nioupserveriothread_messagequeueack") {
 	//
 }
 
 void NIOUDPServerIOThread::run() {
-	Console::println(L"NIOUDPServerIOThread[" + to_wstring(id) + L"]::run(): start");
+	Console::println("NIOUDPServerIOThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
 	server->startUpBarrier->wait();
@@ -183,12 +181,12 @@ void NIOUDPServerIOThread::run() {
 
 							// log
 							Console::println(
-								L"NIOUDPServerIOThread[" +
-								to_wstring(id) +
-								L"]::run(): " +
-								StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-								L": " +
-								StringConverter::toWideString(exception.what())
+								"NIOUDPServerIOThread[" +
+								to_string(id) +
+								"]::run(): " +
+								(RTTI::demangle(typeid(exception).name())) +
+								": " +
+								(exception.what())
 							);
 
 							if (clientNew != NULL) {
@@ -262,12 +260,12 @@ void NIOUDPServerIOThread::run() {
 	} catch (Exception &exception) {
 		// log
 		Console::println(
-			L"NIOUDPServerIOThread[" +
-			to_wstring(id) +
-			L"]::run(): " +
-			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-			L": " +
-			StringConverter::toWideString(exception.what())
+			"NIOUDPServerIOThread[" +
+			to_string(id) +
+			"]::run(): " +
+			(RTTI::demangle(typeid(exception).name())) +
+			": " +
+			(exception.what())
 		);
 	}
 
@@ -276,7 +274,7 @@ void NIOUDPServerIOThread::run() {
 	socket.close();
 
 	// log
-	Console::println(L"NIOUDPServerIOThread[" + to_wstring(id) + L"]::run(): done");
+	Console::println("NIOUDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
 void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe) throw (NIONetworkServerException) {

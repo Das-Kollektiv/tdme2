@@ -8,7 +8,7 @@
 #include <tdme/engine/model/JointWeight.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::model::Skinning;
@@ -72,7 +72,7 @@ void Skinning::setupJointsByName()
 	}
 }
 
-Joint* Skinning::getJointByName(const wstring& name)
+Joint* Skinning::getJointByName(const string& name)
 {
 	auto jointIt = jointsByName.find(name);
 	if (jointIt != jointsByName.end()) {

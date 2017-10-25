@@ -8,7 +8,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -26,8 +26,8 @@ class tdme::gui::nodes::GUIElementController
 {
 
 private:
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
 	bool disabled {  };
 	bool isActionPerforming {  };
 

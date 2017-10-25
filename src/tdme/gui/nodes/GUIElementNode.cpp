@@ -33,7 +33,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
+GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
 	: GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	init();
@@ -52,14 +52,14 @@ void GUIElementNode::init()
 	activeConditions = new GUINodeConditions();
 }
 
-wstring GUIElementNode::CONDITION_ALWAYS = L"always";
-wstring GUIElementNode::CONDITION_ONMOUSEOVER = L"mouseover";
-wstring GUIElementNode::CONDITION_CLICK = L"click";
-wstring GUIElementNode::CONDITION_FOCUS = L"focus";
+string GUIElementNode::CONDITION_ALWAYS = "always";
+string GUIElementNode::CONDITION_ONMOUSEOVER = "mouseover";
+string GUIElementNode::CONDITION_CLICK = "click";
+string GUIElementNode::CONDITION_FOCUS = "focus";
 
-const wstring GUIElementNode::getNodeType()
+const string GUIElementNode::getNodeType()
 {
-	return L"element";
+	return "element";
 }
 
 bool GUIElementNode::isContentNode()
@@ -168,12 +168,12 @@ void GUIElementNode::layout()
 	computeVerticalChildrenAlignment();
 }
 
-const wstring& GUIElementNode::getName()
+const string& GUIElementNode::getName()
 {
 	return name;
 }
 
-const wstring& GUIElementNode::getValue()
+const string& GUIElementNode::getValue()
 {
 	return value;
 }

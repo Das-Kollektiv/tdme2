@@ -18,7 +18,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::Transformations;
@@ -43,7 +43,7 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityIntern
 {
 
 public: /* protected */
-	wstring id {  };
+	string id {  };
 	Engine* engine {  };
 	GLRenderer* renderer {  };
 	bool autoEmit {  };
@@ -64,7 +64,7 @@ public: /* protected */
 	bool pickable {  };
 	float particlesToSpawnRemainder {  };
 public:
-	const wstring& getId() override;
+	const string& getId() override;
 	virtual void setRenderer(GLRenderer* renderer);
 	virtual void setEngine(Engine* engine);
 	bool isEnabled() override;
@@ -111,7 +111,7 @@ public:
 	 * @param max points
 	 * @param auto emit
 	 */
-	PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
+	PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 
 	/**
 	 * Destructor

@@ -17,7 +17,7 @@
 
 using std::array;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -87,7 +87,7 @@ public:
 	/** 
 	 * @return renderer version e.g. gl2, gl3 or gles2
 	 */
-	virtual const wstring getGLVersion() = 0;
+	virtual const string getGLVersion() = 0;
 
 	/** 
 	 * Checks if buffer objects is available
@@ -134,7 +134,7 @@ public:
 	 * @param fileName
 	 * @return shader handle
 	 */
-	virtual int32_t loadShader(int32_t type, const wstring& pathName, const wstring& fileName) = 0;
+	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName) = 0;
 
 	/** 
 	 * Use shader program
@@ -168,7 +168,7 @@ public:
 	 * @param uniform name
 	 * @return
 	 */
-	virtual int32_t getProgramUniformLocation(int32_t programId, const wstring& name) = 0;
+	virtual int32_t getProgramUniformLocation(int32_t programId, const string& name) = 0;
 
 	/** 
 	 * Set up a integer uniform value
@@ -219,7 +219,7 @@ public:
 	 * @param location
 	 * @param attribute name
 	 */
-	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name) = 0;
+	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) = 0;
 
 	/** 
 	 * Set up viewport parameter

@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
@@ -35,6 +35,6 @@ public:
 	static GUINode_AlignmentHorizontal *LEFT;
 	static GUINode_AlignmentHorizontal *CENTER;
 	static GUINode_AlignmentHorizontal *RIGHT;
-	GUINode_AlignmentHorizontal(const wstring& name, int ordinal);
-	static GUINode_AlignmentHorizontal* valueOf(const wstring& a0);
+	GUINode_AlignmentHorizontal(const string& name, int ordinal);
+	static GUINode_AlignmentHorizontal* valueOf(const string& a0);
 };

@@ -12,7 +12,7 @@
 #include <tdme/engine/subsystems/object/Object3DInternal.h>
 #include <tdme/engine/Entity.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::Object3DInternal;
 using tdme::engine::Entity;
@@ -50,14 +50,14 @@ public:
 	 * @param id
 	 * @param model
 	 */
-	Object3D(const wstring& id, Model* model);
+	Object3D(const string& id, Model* model);
 public:
 	virtual void dispose();
 	virtual BoundingBox* getBoundingBox();
 	virtual BoundingBox* getBoundingBoxTransformed();
 	virtual Color4& getEffectColorAdd();
 	virtual Color4& getEffectColorMul();
-	virtual const wstring& getId();
+	virtual const string& getId();
 	virtual Vector3& getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3& getScale();
@@ -69,5 +69,5 @@ public:
 	virtual bool isPickable();
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 	virtual void setPickable(bool pickable);
-	virtual Matrix4x4* getTransformationsMatrix(const wstring& id);
+	virtual Matrix4x4* getTransformationsMatrix(const string& id);
 };

@@ -20,8 +20,8 @@
 #include <tdme/utils/MutableString.h>
 
 using std::map;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -39,7 +39,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
-GUIScreenNode::GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
+GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
 	: GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	init();
@@ -194,12 +194,12 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->computedConstraints->height = height;
 }
 
-const wstring GUIScreenNode::getNodeType()
+const string GUIScreenNode::getNodeType()
 {
-	return L"screen";
+	return "screen";
 }
 
-GUINode* GUIScreenNode::getNodeById(const wstring& nodeId)
+GUINode* GUIScreenNode::getNodeById(const string& nodeId)
 {
 	auto nodesByIdIt = nodesById.find(nodeId);
 	if (nodesByIdIt == nodesById.end()) {
@@ -208,9 +208,9 @@ GUINode* GUIScreenNode::getNodeById(const wstring& nodeId)
 	return nodesByIdIt->second;
 }
 
-const wstring GUIScreenNode::allocateNodeId()
+const string GUIScreenNode::allocateNodeId()
 {
-	return L"tdme_gui_anonymous_node_" + to_wstring(nodeCounter++);
+	return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
 }
 
 bool GUIScreenNode::addNode(GUINode* node)
@@ -342,7 +342,7 @@ void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 	}
 }
 
-void GUIScreenNode::getValues(map<wstring, MutableString*>* values)
+void GUIScreenNode::getValues(map<string, MutableString*>* values)
 {
 	values->clear();
 	getChildControllerNodes(&childControllerNodes);
@@ -364,7 +364,7 @@ void GUIScreenNode::getValues(map<wstring, MutableString*>* values)
 	}
 }
 
-void GUIScreenNode::setValues(map<wstring, MutableString*>* values)
+void GUIScreenNode::setValues(map<string, MutableString*>* values)
 {
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -385,7 +385,7 @@ void GUIScreenNode::setValues(map<wstring, MutableString*>* values)
 	}
 }
 
-bool GUIScreenNode::addEffect(const wstring& id, GUIEffect* effect)
+bool GUIScreenNode::addEffect(const string& id, GUIEffect* effect)
 {
 	if (effects.find(id) != effects.end()) {
 		return false;
@@ -394,7 +394,7 @@ bool GUIScreenNode::addEffect(const wstring& id, GUIEffect* effect)
 	return true;
 }
 
-GUIEffect* GUIScreenNode::getEffect(const wstring& id)
+GUIEffect* GUIScreenNode::getEffect(const string& id)
 {
 	auto effectsIt = effects.find(id);
 	if (effectsIt == effects.end()) {
@@ -403,7 +403,7 @@ GUIEffect* GUIScreenNode::getEffect(const wstring& id)
 	return effectsIt->second;
 }
 
-bool GUIScreenNode::removeEffect(const wstring& id)
+bool GUIScreenNode::removeEffect(const string& id)
 {
 	auto eraseCount = effects.erase(id);
 	if (eraseCount == 0) {

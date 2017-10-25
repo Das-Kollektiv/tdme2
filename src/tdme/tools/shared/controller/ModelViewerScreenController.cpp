@@ -28,13 +28,12 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ModelViewerScreenController;
 
@@ -63,16 +62,15 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString(L"");
+MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString("");
 
 ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
 {
-	this->modelPath = new FileDialogPath(L".");
+	this->modelPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelViewerScreenController_ModelViewerScreenController_1(this, finalView));
@@ -110,19 +108,19 @@ FileDialogPath* ModelViewerScreenController::getModelPath()
 void ModelViewerScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(L"resources/tools/viewer/gui", L"screen_modelviewer.xml");
+		screenNode = GUIParser::parse("resources/tools/viewer/gui", "screen_modelviewer.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
-		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_model_reload"));
-		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_model_save"));
-		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_x"));
-		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_y"));
-		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"pivot_z"));
-		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_pivot_apply"));
-		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_opaque_faces"));
-		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_transparent_faces"));
-		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"stats_material_count"));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
+		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_model_reload"));
+		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_model_save"));
+		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_x"));
+		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_y"));
+		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_z"));
+		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
+		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
+		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
+		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
@@ -140,13 +138,13 @@ void ModelViewerScreenController::dispose()
 {
 }
 
-void ModelViewerScreenController::setScreenCaption(const wstring& text)
+void ModelViewerScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
 }
 
-void ModelViewerScreenController::setEntityData(const wstring& name, const wstring& description)
+void ModelViewerScreenController::setEntityData(const string& name, const string& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 	modelReload->getController()->setDisabled(false);
@@ -160,7 +158,7 @@ void ModelViewerScreenController::unsetEntityData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setEntityProperties(const wstring& presetId, LevelEditorEntity* entity, const wstring& selectedName)
+void ModelViewerScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
@@ -206,19 +204,19 @@ void ModelViewerScreenController::onQuit()
 
 void ModelViewerScreenController::onModelLoad()
 {
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 	}
 	fileName = Tools::getFileName(fileName);
-	vector<wstring> extensions = {
-		L"tmm",
-		L"dae",
-		L"tm"
+	vector<string> extensions = {
+		"tmm",
+		"dae",
+		"tm"
 	};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		L"Load from: ",
+		"Load from: ",
 		&extensions,
 		view->getFileName(),
 		new ModelViewerScreenController_onModelLoad_2(this)
@@ -227,20 +225,20 @@ void ModelViewerScreenController::onModelLoad()
 
 void ModelViewerScreenController::onModelSave()
 {
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():L"";
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == false) {
-			fileName = fileName + L".tmm";
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == false) {
+			fileName = fileName + ".tmm";
 		}
 	}
-	vector<wstring> extensions = {
-		L"tmm"
+	vector<string> extensions = {
+		"tmm"
 	};
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		L"Save from: ",
+		"Save from: ",
 		&extensions,
 		fileName,
 		new ModelViewerScreenController_onModelSave_3(this)
@@ -260,21 +258,21 @@ void ModelViewerScreenController::onPivotApply()
 		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toWString());
 		view->pivotApply(x, y, z);
 	} catch (Exception& exception) {
-		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
+		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void ModelViewerScreenController::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
+void ModelViewerScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
+void ModelViewerScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->loadFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
+void ModelViewerScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -293,25 +291,25 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId().compare(L"button_model_load") == 0) {
+				if (node->getId().compare("button_model_load") == 0) {
 					onModelLoad();
-				} else if (node->getId().compare(L"button_model_reload") == 0) {
+				} else if (node->getId().compare("button_model_reload") == 0) {
 					onModelReload();
-				} else if (node->getId().compare(L"button_model_save") == 0) {
+				} else if (node->getId().compare("button_model_save") == 0) {
 					onModelSave();
-				} else if (node->getId().compare(L"button_pivot_apply") == 0) {
+				} else if (node->getId().compare("button_pivot_apply") == 0) {
 					onPivotApply();
 				} else {
 					Console::println(
-						wstring(
-							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+						string(
+							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
-							L"', id = '" +
+							"', id = '" +
 							node->getId() +
-							L"'" +
-							L", name = '" +
+							"'" +
+							", name = '" +
 							node->getName() +
-							L"'"
+							"'"
 						)
 					);
 				}

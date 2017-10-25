@@ -6,7 +6,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -24,7 +24,7 @@ public:
 	static LevelEditorEntity_EntityType *PARTICLESYSTEM;
 
 public:
-	LevelEditorEntity_EntityType(const wstring& name, int ordinal);
-	static LevelEditorEntity_EntityType* valueOf(const wstring& a0);
+	LevelEditorEntity_EntityType(const string& name, int ordinal);
+	static LevelEditorEntity_EntityType* valueOf(const string& a0);
 
 };

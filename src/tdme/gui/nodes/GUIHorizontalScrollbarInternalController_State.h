@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
@@ -19,6 +19,6 @@ public:
 	static GUIHorizontalScrollbarInternalController_State *NONE;
 	static GUIHorizontalScrollbarInternalController_State *MOUSEOVER;
 	static GUIHorizontalScrollbarInternalController_State *DRAGGING;
-	GUIHorizontalScrollbarInternalController_State(const wstring& name, int ordinal);
-	static GUIHorizontalScrollbarInternalController_State* valueOf(const wstring& a0);
+	GUIHorizontalScrollbarInternalController_State(const string& name, int ordinal);
+	static GUIHorizontalScrollbarInternalController_State* valueOf(const string& a0);
 };

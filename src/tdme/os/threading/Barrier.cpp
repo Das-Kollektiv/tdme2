@@ -9,8 +9,8 @@ using std::string;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::Mutex;
 
-Barrier::Barrier(const wstring& name, const unsigned int count) :
-	name(name), count(count), entered(0), exited(0), m(L"barrier_mutex"), c(L"barrier_condition") {
+Barrier::Barrier(const string& name, const unsigned int count) :
+	name(name), count(count), entered(0), exited(0), m("barrier_mutex"), c("barrier_condition") {
 	//
 }
 

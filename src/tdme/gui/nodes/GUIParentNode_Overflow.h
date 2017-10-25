@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUIParentNode;
@@ -20,6 +20,6 @@ public:
 	static GUIParentNode_Overflow *HIDDEN;
 	static GUIParentNode_Overflow *DOWNSIZE_CHILDREN;
 	static GUIParentNode_Overflow *SCROLL;
-	GUIParentNode_Overflow(const wstring& name, int ordinal);
-	static GUIParentNode_Overflow* valueOf(const wstring& a0);
+	GUIParentNode_Overflow(const string& name, int ordinal);
+	static GUIParentNode_Overflow* valueOf(const string& a0);
 };

@@ -19,7 +19,7 @@ AudioBufferManager::AudioBufferManager()
 {
 }
 
-AudioBufferManager_AudioBufferManaged* AudioBufferManager::addAudioBuffer(const wstring& id)
+AudioBufferManager_AudioBufferManaged* AudioBufferManager::addAudioBuffer(const string& id)
 {
 	auto audioBufferManagedIt = audioBuffers.find(id);
 	AudioBufferManager_AudioBufferManaged* audioBufferManaged = audioBufferManagedIt != audioBuffers.end()?audioBufferManagedIt->second:nullptr;
@@ -33,7 +33,7 @@ AudioBufferManager_AudioBufferManaged* AudioBufferManager::addAudioBuffer(const 
 	return audioBufferManaged;
 }
 
-bool AudioBufferManager::removeAudioBuffer(const wstring& id)
+bool AudioBufferManager::removeAudioBuffer(const string& id)
 {
 	auto audioBufferManagedIt = audioBuffers.find(id);
 	AudioBufferManager_AudioBufferManaged* audioBufferManaged = audioBufferManagedIt != audioBuffers.end()?audioBufferManagedIt->second:nullptr;
@@ -46,6 +46,6 @@ bool AudioBufferManager::removeAudioBuffer(const wstring& id)
 			return false;
 		}
 	}
-	Console::println(wstring(L"Warning: audio buffer not loaded by audio buffer manager"));
+	Console::println(string("Warning: audio buffer not loaded by audio buffer manager"));
 	return false;
 }

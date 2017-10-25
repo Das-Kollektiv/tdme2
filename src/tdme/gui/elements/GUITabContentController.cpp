@@ -15,8 +15,8 @@ GUITabContentController::GUITabContentController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->selected = false;
-	CONDITION_SELECTED = node->getId() + L"-selected";
-	CONDITION_UNSELECTED = node->getId() + L"-unselected";
+	CONDITION_SELECTED = node->getId() + "-selected";
+	CONDITION_UNSELECTED = node->getId() + "-unselected";
 }
 
 bool GUITabContentController::isDisabled()

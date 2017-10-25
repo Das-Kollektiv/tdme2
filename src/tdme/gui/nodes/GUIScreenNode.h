@@ -14,7 +14,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
@@ -53,7 +53,7 @@ private:
 	int32_t nodeCounter {  };
 	int32_t screenWidth {  };
 	int32_t screenHeight {  };
-	map<wstring, GUINode*> nodesById {  };
+	map<string, GUINode*> nodesById {  };
 	vector<GUINode*> floatingNodes {  };
 	vector<GUIActionListener*> actionListener {  };
 	vector<GUIChangeListener*> changeListener {  };
@@ -66,7 +66,7 @@ public: /* protected */
 	bool popUp {  };
 
 private:
-	map<wstring, GUIEffect*> effects {  };
+	map<string, GUIEffect*> effects {  };
 	int32_t guiEffectOffsetX {  };
 	int32_t guiEffectOffsetY {  };
 
@@ -181,7 +181,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	const wstring getNodeType() override;
+	const string getNodeType() override;
 
 public:
 
@@ -190,13 +190,13 @@ public:
 	 * @param nodeId
 	 * @return GUI node or null
 	 */
-	GUINode* getNodeById(const wstring& nodeId);
+	GUINode* getNodeById(const string& nodeId);
 
 	/** 
 	 * Allocate node id
 	 * @return node id
 	 */
-	const wstring allocateNodeId();
+	const string allocateNodeId();
 
 public: /* protected */
 
@@ -288,13 +288,13 @@ public:
 	 * Get values
 	 * @param values
 	 */
-	void getValues(map<wstring, MutableString*>* values);
+	void getValues(map<string, MutableString*>* values);
 
 	/** 
 	 * Set values
 	 * @param values
 	 */
-	void setValues(map<wstring, MutableString*>* values);
+	void setValues(map<string, MutableString*>* values);
 
 	/** 
 	 * Add effect that will be removed if finished
@@ -302,23 +302,23 @@ public:
 	 * @param effect
 	 * @return success
 	 */
-	bool addEffect(const wstring& id, GUIEffect* effect);
+	bool addEffect(const string& id, GUIEffect* effect);
 
 	/** 
 	 * Get effect
 	 * @param id
 	 * @return effect or null
 	 */
-	GUIEffect* getEffect(const wstring& id);
+	GUIEffect* getEffect(const string& id);
 
 	/** 
 	 * Remove effect
 	 * @param id
 	 * @return success
 	 */
-	bool removeEffect(const wstring& id);
+	bool removeEffect(const string& id);
 
-	GUIScreenNode(const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);
+	GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);
 
 private:
 	void init();

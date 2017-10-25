@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/MathTools.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Material;
 using tdme::utils::ByteBuffer;
@@ -17,7 +17,7 @@ using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::model::Color4;
 using tdme::math::MathTools;
 
-Material::Material(const wstring& id)
+Material::Material(const string& id)
 {
 	this->id = id;
 	ambientColor.set(0.2f, 0.2f, 0.2f, 0.0f);
@@ -44,7 +44,7 @@ Material* Material::getDefaultMaterial()
 	return defaultMaterial;
 }
 
-const wstring& Material::getId()
+const string& Material::getId()
 {
 	return id;
 }
@@ -79,17 +79,17 @@ void Material::setShininess(float shininess)
 	this->shininess = shininess;
 }
 
-const wstring& Material::getDiffuseTexturePathName()
+const string& Material::getDiffuseTexturePathName()
 {
 	return diffuseTexturePathName;
 }
 
-const wstring& Material::getDiffuseTextureFileName()
+const string& Material::getDiffuseTextureFileName()
 {
 	return diffuseTextureFileName;
 }
 
-void Material::setDiffuseTexture(const wstring& pathName, const wstring& fileName)
+void Material::setDiffuseTexture(const string& pathName, const string& fileName)
 {
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
@@ -127,17 +127,17 @@ void Material::checkDiffuseTextureTransparency()
 	}
 }
 
-const wstring& Material::getSpecularTexturePathName()
+const string& Material::getSpecularTexturePathName()
 {
 	return specularTexturePathName;
 }
 
-const wstring& Material::getSpecularTextureFileName()
+const string& Material::getSpecularTextureFileName()
 {
 	return specularTextureFileName;
 }
 
-void Material::setSpecularTexture(const wstring& pathName, const wstring& fileName)
+void Material::setSpecularTexture(const string& pathName, const string& fileName)
 {
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
@@ -154,17 +154,17 @@ Texture* Material::getSpecularTexture()
 	return specularTexture;
 }
 
-const wstring& Material::getNormalTexturePathName()
+const string& Material::getNormalTexturePathName()
 {
 	return normalTexturePathName;
 }
 
-const wstring& Material::getNormalTextureFileName()
+const string& Material::getNormalTextureFileName()
 {
 	return normalTextureFileName;
 }
 
-void Material::setNormalTexture(const wstring& pathName, const wstring& fileName)
+void Material::setNormalTexture(const string& pathName, const string& fileName)
 {
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
@@ -181,17 +181,17 @@ Texture* Material::getNormalTexture()
 	return normalTexture;
 }
 
-const wstring& Material::getDisplacementTexturePathName()
+const string& Material::getDisplacementTexturePathName()
 {
 	return displacementTexturePathName;
 }
 
-const wstring& Material::getDisplacementTextureFileName()
+const string& Material::getDisplacementTextureFileName()
 {
 	return displacementTextureFileName;
 }
 
-void Material::setDisplacementTexture(const wstring& pathName, const wstring& fileName)
+void Material::setDisplacementTexture(const string& pathName, const string& fileName)
 {
 	displacementTexturePathName = pathName;
 	displacementTextureFileName = fileName;
@@ -213,5 +213,5 @@ bool Material::hasTransparency()
 	return diffuseColor.getAlpha() < 1.0f - MathTools::EPSILON || diffuseTextureTransparency;
 }
 
-wstring Material::defaultMaterialId = L"tdme.default_material";
+string Material::defaultMaterialId = "tdme.default_material";
 Material* Material::defaultMaterial = new Material(Material::defaultMaterialId);

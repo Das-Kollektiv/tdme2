@@ -18,7 +18,7 @@
 
 using std::array;
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -111,15 +111,15 @@ public:
 	 * @throws model file IO exception
 	 * @return string
 	 */
-	inline const wstring readWString() throw (ModelFileIOException) {
+	inline const string readWString() throw (ModelFileIOException) {
 		if (readBoolean() == false) {
-			return L"";
+			return "";
 		} else {
 			auto l = readInt();
-			wstring s;
+			string s;
 			for (auto i = 0; i < l; i++) {
 				// FIXME: actually we use wide string
-				s+= static_cast< wchar_t >(readByte());
+				s+= static_cast< char >(readByte());
 			}
 			return s;
 		}
@@ -223,7 +223,7 @@ public:
 	 * @throws model file IO exception
 	 * @return model
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException);
+	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
 
@@ -316,7 +316,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<wstring, Group*>* subGroups) throw (ModelFileIOException);
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

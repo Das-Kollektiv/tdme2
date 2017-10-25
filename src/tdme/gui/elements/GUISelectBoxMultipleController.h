@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -29,9 +29,9 @@ class tdme::gui::elements::GUISelectBoxMultipleController final
 {
 
 private:
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
-	static constexpr wchar_t VALUE_DELIMITER { L'|' };
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
+	static constexpr char VALUE_DELIMITER { L'|' };
 	vector<GUINode*> childControllerNodes {  };
 	vector<GUISelectBoxMultipleOptionController*> selectBoxMultipleOptionControllers {  };
 	bool disabled {  };

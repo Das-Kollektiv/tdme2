@@ -28,8 +28,8 @@
 #include <tdme/utils/Console.h>
 
 using std::map;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::physics::World;
 using tdme::math::Math;
@@ -92,7 +92,7 @@ void World::setPartition(PhysicsPartition* partition)
 	this->partition = partition;
 }
 
-RigidBody* World::addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
+RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
@@ -103,7 +103,7 @@ RigidBody* World::addRigidBody(const wstring& id, bool enabled, int32_t typeId, 
 	return rigidBody;
 }
 
-RigidBody* World::addStaticRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction)
+RigidBody* World::addStaticRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
 	rigidBodies.push_back(rigidBody);
@@ -113,7 +113,7 @@ RigidBody* World::addStaticRigidBody(const wstring& id, bool enabled, int32_t ty
 	return rigidBody;
 }
 
-RigidBody* World::getRigidBody(const wstring& id)
+RigidBody* World::getRigidBody(const string& id)
 {
 	auto rididBodyByIdIt = rigidBodiesById.find(id);
 	if (rididBodyByIdIt != rigidBodiesById.end()) {
@@ -161,8 +161,8 @@ void World::update(float deltaTime)
 		auto collisionsTests = 0;
 		Vector3 collisionMovement;
 		CollisionResponse collision;
-		map<wstring, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
-		map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
+		map<string, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
+		map<string, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
 		for (auto i = 0; i < rigidBodies.size(); i++) {
 			auto rigidBody1 = rigidBodies.at(i);
 			if (rigidBody1->enabled == false) {
@@ -194,7 +194,7 @@ void World::update(float deltaTime)
 						continue;
 					}
 					nearObjects++;
-					wstring rigidBodyKey = to_wstring(rigidBody1->idx) + L"," + to_wstring(rigidBody2->idx);
+					string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
 					if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) {
 						continue;
 					}
@@ -230,13 +230,13 @@ void World::update(float deltaTime)
 		for (auto it: rigidBodyCollisionsLastFrame) {
 			RigidBodyCollisionStruct* rigidBodyCollisionStruct = &it.second;
 			{
-				wstring rigidBodyKey = to_wstring(rigidBodyCollisionStruct->rigidBody1Idx) + L"," + to_wstring(rigidBodyCollisionStruct->rigidBody2Idx);
+				string rigidBodyKey = to_string(rigidBodyCollisionStruct->rigidBody1Idx) + "," + to_string(rigidBodyCollisionStruct->rigidBody2Idx);
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
 
 			{
-				wstring rigidBodyKey = to_wstring(rigidBodyCollisionStruct->rigidBody2Idx) + L"," + to_wstring(rigidBodyCollisionStruct->rigidBody1Idx);
+				string rigidBodyKey = to_string(rigidBodyCollisionStruct->rigidBody2Idx) + "," + to_string(rigidBodyCollisionStruct->rigidBody1Idx);
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
@@ -290,9 +290,9 @@ void World::synch(Engine* engine)
 		auto engineEntity = engine->getEntity(rigidBody->id);
 		if (engineEntity == nullptr) {
 			Console::println(
-				wstring(L"World::entity '") +
+				string("World::entity '") +
 				rigidBody->id +
-				wstring(L"' not found")
+				string("' not found")
 			);
 			continue;
 		}
@@ -509,9 +509,9 @@ void World::synch(World* world)
 		auto clonedRigidBody = world->getRigidBody(rigidBody->id);
 		if (clonedRigidBody == nullptr) {
 			Console::println(
-				wstring(L"Cloned world::entity '") +
+				string("Cloned world::entity '") +
 				rigidBody->id +
-				wstring(L"' not found")
+				string("' not found")
 			);
 			continue;
 		}

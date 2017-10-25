@@ -20,9 +20,7 @@
 #include "Array.h"
 #include "Object.h"
 
-#include <tdme/utils/StringConverter.h>
 
-using tdme::utils::StringConverter;
 
 using namespace tdme::ext::jsonbox;
 

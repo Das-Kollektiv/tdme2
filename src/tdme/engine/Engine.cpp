@@ -47,8 +47,8 @@
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::Engine;
 using tdme::utils::ByteBuffer;
@@ -158,7 +158,7 @@ Engine* Engine::getInstance()
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	if (instance == nullptr || instance->initialized == false) {
-		Console::println(wstring(L"Engine::createOffScreenInstance(): Engine not created or not initialized."));
+		Console::println(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
 		return nullptr;
 	}
 	auto offScreenEngine = new Engine();
@@ -295,7 +295,7 @@ int32_t Engine::getEntityCount()
 	return entitiesById.size();
 }
 
-Entity* Engine::getEntity(const wstring& id)
+Entity* Engine::getEntity(const string& id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
@@ -318,7 +318,7 @@ void Engine::addEntity(Entity* entity)
 	if (entity->isEnabled() == true) partition->addEntity(entity);
 }
 
-void Engine::removeEntity(const wstring& id)
+void Engine::removeEntity(const string& id)
 {
 	Entity* entity = nullptr;
 	auto entityByIdIt = entitiesById.find(id);
@@ -337,7 +337,7 @@ void Engine::removeEntity(const wstring& id)
 
 void Engine::reset()
 {
-	vector<wstring> entitiesToRemove;
+	vector<string> entitiesToRemove;
 	for (auto it: entitiesById) {
 		auto entityKey = it.first;
 		entitiesToRemove.push_back(entityKey);
@@ -363,8 +363,8 @@ void Engine::initialize(bool debug)
 	#if defined(__APPLE__) or defined(_WIN32)
 	{
 		renderer = new EngineGL3Renderer(this);
-		Console::println(wstring(L"TDME::Using GL3"));
-		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(string("TDME::Using GL3"));
+		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -373,8 +373,8 @@ void Engine::initialize(bool debug)
 	// GL2
 	{
 		renderer = new EngineGL2Renderer(this);
-		Console::println(wstring(L"TDME::Using GL2"));
-		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(string("TDME::Using GL2"));
+		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
@@ -383,8 +383,8 @@ void Engine::initialize(bool debug)
 	// GLES2
 	{
 		renderer = new EngineGLES2Renderer(this);
-		Console::println(wstring(L"TDME::Using GLES2"));
-		// Console::println(wstring(L"TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(string("TDME::Using GLES2"));
+		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 			shadowMappingEnabled = true;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -395,7 +395,7 @@ void Engine::initialize(bool debug)
 		}
 	}
 	#else
-		Console::println(L"Engine::initialize(): unsupported GL!");
+		Console::println("Engine::initialize(): unsupported GL!");
 		return;
 	#endif
 
@@ -423,33 +423,33 @@ void Engine::initialize(bool debug)
 	guiShader = new GUIShader(renderer);
 	guiShader->initialize();
 	if (renderer->isBufferObjectsAvailable()) {
-		Console::println(wstring(L"TDME::VBOs are available."));
+		Console::println(string("TDME::VBOs are available."));
 	} else {
-		Console::println(wstring(L"TDME::VBOs are not available! Engine will not work!"));
+		Console::println(string("TDME::VBOs are not available! Engine will not work!"));
 		initialized = false;
 	}
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println(wstring(L"TDME::Basic FBOs are not available!"));
+		Console::println(string("TDME::Basic FBOs are not available!"));
 		shadowMappingEnabled = false;
 	} else {
-		Console::println(wstring(L"TDME::Basic FBOs are available."));
+		Console::println(string("TDME::Basic FBOs are available."));
 	}
 	if (shadowMappingEnabled == true) {
-		Console::println(wstring(L"TDME::Using shadow mapping"));
+		Console::println(string("TDME::Using shadow mapping"));
 		shadowMappingShaderPre = new ShadowMappingShaderPre(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, object3DVBORenderer);
 	} else {
-		Console::println(wstring(L"TDME::Not using shadow mapping"));
+		Console::println(string("TDME::Not using shadow mapping"));
 	}
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
 	initialized &= particlesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
-	Console::println(wstring(L"TDME::initialized & ready: ") + to_wstring(initialized));
+	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
 }
 
 void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -691,7 +691,7 @@ void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 
 void Engine::dispose()
 {
-	vector<wstring> entitiesToRemove;
+	vector<string> entitiesToRemove;
 	for (auto it: entitiesById) {
 		auto entityKey = it.first;
 		entitiesToRemove.push_back(entityKey);
@@ -733,7 +733,7 @@ void Engine::doneGUIMode()
 
 }
 
-bool Engine::makeScreenshot(const wstring& pathName, const wstring& fileName)
+bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 {
 	if (frameBuffer != nullptr)
 		frameBuffer->enableFrameBuffer();

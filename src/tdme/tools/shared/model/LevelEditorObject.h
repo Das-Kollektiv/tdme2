@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::Transformations;
@@ -22,8 +22,8 @@ class tdme::tools::shared::model::LevelEditorObject final
 	: public ModelProperties
 {
 private:
-	wstring id {  };
-	wstring description {  };
+	string id {  };
+	string description {  };
 	Transformations* transformations {  };
 	LevelEditorEntity* entity {  };
 
@@ -32,24 +32,24 @@ public:
 	/** 
 	 * @return id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * Set id
 	 * @param id
 	 */
-	void setId(const wstring& id);
+	void setId(const string& id);
 
 	/** 
 	 * @return description
 	 */
-	const wstring& getDescription();
+	const string& getDescription();
 
 	/** 
 	 * Set description
 	 * @param description
 	 */
-	void setDescription(const wstring& description);
+	void setDescription(const string& description);
 
 	/** 
 	 * @return transformations
@@ -79,7 +79,7 @@ public:
 	 * @param transformations
 	 * @param entity
 	 */
-	LevelEditorObject(const wstring& id, const wstring& description, Transformations* transformations, LevelEditorEntity* entity);
+	LevelEditorObject(const string& id, const string& description, Transformations* transformations, LevelEditorEntity* entity);
 
 	/**
 	 * Destructor

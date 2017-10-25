@@ -15,7 +15,7 @@
 
 using std::list;
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
@@ -36,6 +36,6 @@ struct tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode final
 	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
 	BoundingBox bv {  };
 	list<PhysicsPartitionOctTree_PartitionTreeNode> subNodes {  };
-	map<wstring, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
+	map<string, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	vector<RigidBody*> partitionRidigBodies {  };
 };

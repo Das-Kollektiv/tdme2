@@ -13,7 +13,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::gui::events::Action;
@@ -64,7 +64,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	virtual void setEntityData(const wstring& name, const wstring& description);
+	virtual void setEntityData(const string& name, const string& description);
 
 	/** 
 	 * Unset entity data
@@ -81,7 +81,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param entity property preset ids
 	 */
-	virtual void setEntityPresetIds(const map<wstring, vector<PropertyModelClass*>>* entityPresetIds);
+	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds);
 
 	/** 
 	 * Set up entity properties
@@ -90,7 +90,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	virtual void setEntityProperties(LevelEditorEntity* entity, const wstring& presetId, const wstring& selectedName);
+	virtual void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
 
 	/** 
 	 * Unset entity properties
@@ -118,7 +118,7 @@ public:
 	/** 
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(const wstring& caption, const wstring& message);
+	virtual void showErrorPopUp(const string& caption, const string& message);
 
 	/** 
 	 * On entity property preset apply

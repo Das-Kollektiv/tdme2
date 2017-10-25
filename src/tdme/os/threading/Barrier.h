@@ -8,7 +8,7 @@
 #include "Mutex.h"
 #include "Condition.h"
 
-using std::wstring;
+using std::string;
 
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Condition;
@@ -24,7 +24,7 @@ public:
 	 * @param name
 	 * @param Number of threads that need to "wait" on barrier to complete barrier
 	 */
-	Barrier(const wstring& name, const unsigned int count);
+	Barrier(const string& name, const unsigned int count);
 
 	/**
 	 * @brief Destroys the barrier
@@ -38,7 +38,7 @@ public:
 	bool wait();
 
 private:
-	wstring name;
+	string name;
 	unsigned int count;
 	unsigned int entered;
 	volatile unsigned int exited;

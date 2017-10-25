@@ -42,17 +42,17 @@ void printVector(Vector3& vector) {
 int main(int argc, char** argv)
 {
     cout << "DAETest" << endl;
-    Model* model = DAEReader::read(L"./resources/tests/models/test", L"cube.dae");
+    Model* model = DAEReader::read("./resources/tests/models/test", "cube.dae");
     for (auto it: *model->getSubGroups()) {
     		Group* group = it.second;
-    		wcout << it.first << endl;
-    		wcout << "--" << endl;
+    		cout << it.first << endl;
+    		cout << "--" << endl;
     		for (auto& vector: *group->getVertices()) {
     			printVector(vector);
     		}
-    		wcout << "--" << endl;
+    		cout << "--" << endl;
     		printMatrix(group->getTransformationsMatrix());
-    		wcout << "--" << endl;
+    		cout << "--" << endl;
     		Animation* animation = group->getAnimation();
     		for (auto& matrix: *animation->getTransformationsMatrices()) {
     			printMatrix(matrix);

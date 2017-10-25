@@ -39,7 +39,7 @@ private:
 	 */
 	KernelEventMechanismPSD() :
 		maxFd(0),
-		fdsMutex(L"kemfallbackpsdfdmutex")
+		fdsMutex("kemfallbackpsdfdmutex")
 	{
 		//
 	}

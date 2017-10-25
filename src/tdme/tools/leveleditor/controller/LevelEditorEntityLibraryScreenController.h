@@ -13,7 +13,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -44,7 +44,7 @@ private:
 	MutableString* entityLibraryListBoxSelection {  };
 	MutableString* dropdownEntityActionReset {  };
 	PopUps* popUps {  };
-	wstring modelPath {  };
+	string modelPath {  };
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -52,13 +52,13 @@ public:
 	/** 
 	 * @return model path
 	 */
-	virtual const wstring& getModelPath();
+	virtual const string& getModelPath();
 
 	/** 
 	 * Set model path
 	 * @param model path
 	 */
-	virtual void setModelPath(const wstring& modelPath);
+	virtual void setModelPath(const string& modelPath);
 	void initialize() override;
 	void dispose() override;
 

@@ -40,8 +40,8 @@ s			 * @param max ccu
 		port(port),
 		maxCCU(maxCCU),
 		startUpBarrier(NULL),
-		clientKeyListsReadWriteLock(L"nioserver_clientlist"),
-		groupKeyListsReadWriteLock(L"nioserver_grouplist"),
+		clientKeyListsReadWriteLock("nioserver_clientlist"),
+		groupKeyListsReadWriteLock("nioserver_grouplist"),
 		ioThreadCount(1),
 		workerThreadPoolCount(2),
 		workerThreadPoolMaxElements(128) {

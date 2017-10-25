@@ -22,7 +22,7 @@
 
 using std::array;
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::tools::shared::controller::ScreenController;
@@ -136,7 +136,7 @@ public:
 	 * Set up screen caption
 	 * @param text
 	 */
-	void setScreenCaption(const wstring& text);
+	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set grid
@@ -160,7 +160,7 @@ public:
 	/** 
 	 * @return object property preset selection
 	 */
-	const wstring getObjectPropertyPresetSelection();
+	const string getObjectPropertyPresetSelection();
 
 	/** 
 	 * Set up general object data
@@ -169,7 +169,7 @@ public:
 	 * @param model name
 	 * @param center
 	 */
-	void setObjectData(const wstring& name, const wstring& description, const wstring& modelName, const Vector3& center);
+	void setObjectData(const string& name, const string& description, const string& modelName, const Vector3& center);
 
 	/** 
 	 * Unset model data
@@ -190,7 +190,7 @@ public:
 	/** 
 	 * Unselect objects in object list box
 	 */
-	void unselectObjectInObjectListBox(const wstring& objectId);
+	void unselectObjectInObjectListBox(const string& objectId);
 
 	/** 
 	 * Unselect objects in object list box
@@ -201,7 +201,7 @@ public:
 	 * Select a object in object list box
 	 * @param object id
 	 */
-	void selectObjectInObjectListbox(const wstring& objectId);
+	void selectObjectInObjectListbox(const string& objectId);
 
 	/** 
 	 * On objects select button click event
@@ -240,7 +240,7 @@ public:
 	 * @param map properties
 	 * @param selected name
 	 */
-	void setMapProperties(LevelEditorLevel* level, const wstring& selectedName);
+	void setMapProperties(LevelEditorLevel* level, const string& selectedName);
 
 	/** 
 	 * On map property save
@@ -261,7 +261,7 @@ public:
 	 * Set up object property preset ids
 	 * @param object property preset ids
 	 */
-	void setObjectPresetIds(const map<wstring, vector<PropertyModelClass*>>* objectPresetIds);
+	void setObjectPresetIds(const map<string, vector<PropertyModelClass*>>* objectPresetIds);
 
 	/** 
 	 * Event callback for object properties selection
@@ -276,7 +276,7 @@ public:
 	 * @param object properties
 	 * @param selected name
 	 */
-	void setObjectProperties(const wstring& presetId, LevelEditorObject* object, const wstring& selectedName);
+	void setObjectProperties(const string& presetId, LevelEditorObject* object, const string& selectedName);
 
 	/** 
 	 * On object property save
@@ -352,7 +352,7 @@ public:
 	 * Set up light presets
 	 * @param light presets
 	 */
-	void setLightPresetsIds(const map<wstring, LevelEditorLight*>* lightPresetIds);
+	void setLightPresetsIds(const map<string, LevelEditorLight*>* lightPresetIds);
 
 	/** 
 	 * Unselect light presets
@@ -453,15 +453,15 @@ public:
 	 * On Light spot direction compute for given light idx 
 	 */
 	void onLightSpotDirectionCompute(int32_t lightIdx);
-	void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
-	void loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(const wstring& caption, const wstring& message);
+	void showErrorPopUp(const string& caption, const string& message);
 
 	/**
 	 * Public constructor

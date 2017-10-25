@@ -13,7 +13,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -39,9 +39,9 @@ class tdme::tools::shared::controller::FileDialogScreenController
 
 private:
 	GUIScreenNode* screenNode {  };
-	wstring cwd {  };
-	vector<wstring> extensions {  };
-	wstring captionText {  };
+	string cwd {  };
+	vector<string> extensions {  };
+	string captionText {  };
 	GUITextNode* caption {  };
 	GUIElementNode* fileName {  };
 	GUIElementNode* files {  };
@@ -54,12 +54,12 @@ public:
 	/** 
 	 * @return path name
 	 */
-	virtual const wstring& getPathName();
+	virtual const string& getPathName();
 
 	/** 
 	 * @return file name
 	 */
-	virtual const wstring getFileName();
+	virtual const string getFileName();
 
 	void initialize() override;
 	void dispose() override;
@@ -80,7 +80,7 @@ public:
 	 * @param apply action
 	 * @throws IOException 
 	 */
-	virtual void show(const wstring& cwd, const wstring& captionText, vector<wstring>* extensions, const wstring& fileName, Action* applyAction);
+	virtual void show(const string& cwd, const string& captionText, vector<string>* extensions, const string& fileName, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up

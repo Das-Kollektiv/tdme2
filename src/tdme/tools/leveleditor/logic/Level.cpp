@@ -48,8 +48,8 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::tools::leveleditor::logic::Level;
 using tdme::engine::Engine;
@@ -128,7 +128,7 @@ void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& tra
 	}
 }
 
-Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const wstring& id, bool enableDynamicShadows)
+Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& id, bool enableDynamicShadows)
 {
 	ParticleEmitter* engineEmitter = nullptr;
 	{
@@ -175,10 +175,10 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 		}
 		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
 			Console::println(
-				wstring(
-					L"Level::createParticleSystem(): unknown particle system emitter '" +
+				string(
+					"Level::createParticleSystem(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
-					L"'"
+					"'"
 				)
 			);
 			return nullptr;
@@ -207,10 +207,10 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			}
 			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
 				Console::println(
-					wstring(
-						L"Level::createParticleSystem(): unknown particle system type '" +
+					string(
+						"Level::createParticleSystem(): unknown particle system type '" +
 						particleSystem->getType()->getName() +
-						L"'"
+						"'"
 					)
 				);
 				return nullptr;
@@ -250,8 +250,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		entity->fromTransformations(object->getTransformations());
 		entity->getTranslation().add(translation);
 		entity->setPickable(pickable);
-		auto shadowingProperty = properties->getProperty(L"shadowing");
-		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), L"false");
+		auto shadowingProperty = properties->getProperty("shadowing");
+		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
 		entity->setDynamicShadowingEnabled(omitShadowing == true ? false : dynamicShadowing);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
@@ -282,7 +282,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 			auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
-			wstring worldId = object->getId() + L".bv." + to_wstring(j);
+			string worldId = object->getId() + ".bv." + to_string(j);
 			auto transformations = new Transformations();
 			transformations->fromTransformations(object->getTransformations());
 			transformations->getTranslation().add(translation);
@@ -339,7 +339,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 			for (auto k = 0; k < rigidBodies.size(); k++) {
 				auto rigidBody = rigidBodies.at(k);
 				compareMutableString->set(object->getId());
-				compareMutableString->append(L".bv.");
+				compareMutableString->append(".bv.");
 				compareMutableString->append(j);
 				if (compareMutableString->equals(rigidBody->getId()) == false)
 					continue;

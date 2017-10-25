@@ -29,15 +29,15 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utils::StringUtils;
 
-GUILayoutNode::GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment)  /* throws(GUIParserException) */
+GUILayoutNode::GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment)  /* throws(GUIParserException) */
 	: 	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->alignment = alignment;
 }
 
-const wstring GUILayoutNode::getNodeType()
+const string GUILayoutNode::getNodeType()
 {
-	return L"layout";
+	return "layout";
 }
 
 bool GUILayoutNode::isContentNode()
@@ -169,14 +169,15 @@ void GUILayoutNode::layoutSubNodes()
 						}
 						goto end_switch1;;
 					}
-end_switch1:;
+					end_switch1:;
 				}
 
 				computeHorizontalChildrenAlignment();
 				goto end_switch0;;
-			}		}
+			}
+		}
 		if ((v == GUILayoutNode_Alignment::VERTICAL) || (v == GUILayoutNode_Alignment::HORIZONTAL)) {
-{
+			{
 				auto starCount = 0;
 				auto width = computedConstraints->width - border->left - border->right- padding->left- padding->right;
 				auto nodesWidth = 0;
@@ -237,19 +238,21 @@ end_switch1:;
 						}
 						goto end_switch2;;
 					}
-end_switch2:;
+					end_switch2:;
 				}
 
 				computeVerticalChildrenAlignment();
 				goto end_switch0;;
-			}		}
+			}
+		}
 		if ((v == GUILayoutNode_Alignment::VERTICAL) || (v == GUILayoutNode_Alignment::HORIZONTAL) || (v == GUILayoutNode_Alignment::NONE)) {
-{
+			{
 				computeHorizontalChildrenAlignment();
 				computeVerticalChildrenAlignment();
 				goto end_switch0;;
-			}		}
-end_switch0:;
+			}
+		}
+		end_switch0:;
 	}
 
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -288,8 +291,8 @@ void GUILayoutNode::setLeft(int32_t left)
 	}
 }
 
-GUILayoutNode_Alignment* GUILayoutNode::createAlignment(const wstring& alignment)
+GUILayoutNode_Alignment* GUILayoutNode::createAlignment(const string& alignment)
 {
-	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringUtils::toUpperCase(alignment) : L"NONE");
+	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringUtils::toUpperCase(alignment) : "NONE");
 }
 

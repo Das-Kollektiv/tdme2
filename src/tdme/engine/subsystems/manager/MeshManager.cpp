@@ -8,7 +8,7 @@
 #include <tdme/utils/Console.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
@@ -25,7 +25,7 @@ MeshManager::~MeshManager() {
 	}
 }
 
-Object3DGroupMesh* MeshManager::getMesh(const wstring& meshId)
+Object3DGroupMesh* MeshManager::getMesh(const string& meshId)
 {
 	auto meshManagedIt = meshes.find(meshId);
 	if (meshManagedIt != meshes.end()) {
@@ -36,14 +36,14 @@ Object3DGroupMesh* MeshManager::getMesh(const wstring& meshId)
 	return nullptr;
 }
 
-void MeshManager::addMesh(const wstring& meshId, Object3DGroupMesh* mesh)
+void MeshManager::addMesh(const string& meshId, Object3DGroupMesh* mesh)
 {
 	auto meshManaged = new MeshManager_MeshManaged(meshId, mesh);
 	meshManaged->incrementReferenceCounter();
 	meshes[meshManaged->getId()] = meshManaged;
 }
 
-void MeshManager::removeMesh(const wstring& meshId)
+void MeshManager::removeMesh(const string& meshId)
 {
 	auto meshManagedIt = meshes.find(meshId);
 	if (meshManagedIt != meshes.end()) {
@@ -54,5 +54,5 @@ void MeshManager::removeMesh(const wstring& meshId)
 		}
 		return;
 	}
-	Console::println(wstring(L"Warning: mesh not managed by mesh manager: " + meshId));
+	Console::println(string("Warning: mesh not managed by mesh manager: " + meshId));
 }

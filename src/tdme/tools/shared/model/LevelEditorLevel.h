@@ -17,7 +17,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::model::RotationOrder;
@@ -36,13 +36,13 @@ class tdme::tools::shared::model::LevelEditorLevel final
 	: public ModelProperties
 {
 private:
-	wstring gameRoot {  };
-	wstring pathName {  };
-	wstring fileName {  };
+	string gameRoot {  };
+	string pathName {  };
+	string fileName {  };
 	RotationOrder* rotationOrder {  };
 	vector<LevelEditorLight*> lights {  };
 	LevelEditorEntityLibrary* entityLibrary {  };
-	map<wstring, LevelEditorObject*> objectsById {  };
+	map<string, LevelEditorObject*> objectsById {  };
 	vector<LevelEditorObject*> objects {  };
 	int32_t objectIdx {  };
 	BoundingBox boundingBox {  };
@@ -65,35 +65,35 @@ public:
 	/** 
 	 * @return game root
 	 */
-	const wstring& getGameRoot();
+	const string& getGameRoot();
 
 	/** 
 	 * Set game root
 	 * @param gameRoot
 	 */
-	void setGameRoot(const wstring& gameRoot);
+	void setGameRoot(const string& gameRoot);
 
 	/** 
 	 * @return path name
 	 */
-	const wstring& getPathName();
+	const string& getPathName();
 
 	/** 
 	 * Set up path name
 	 * @param pathName
 	 */
-	void setPathName(const wstring& pathName);
+	void setPathName(const string& pathName);
 
 	/** 
 	 * @return file name
 	 */
-	const wstring& getFileName();
+	const string& getFileName();
 
 	/** 
 	 * Set up level file name
 	 * @param file name
 	 */
-	void setFileName(const wstring& fileName);
+	void setFileName(const string& fileName);
 
 	/** 
 	 * @return rotation order
@@ -188,14 +188,14 @@ public:
 	 * Removes an object from level 
 	 * @param id
 	 */
-	void removeObject(const wstring& id);
+	void removeObject(const string& id);
 
 	/** 
 	 * Returns level editor object by id
 	 * @param id
 	 * @return level editor object or null
 	 */
-	LevelEditorObject* getObjectById(const wstring& id);
+	LevelEditorObject* getObjectById(const string& id);
 
 	/** 
 	 * @return number of objects

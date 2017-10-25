@@ -11,7 +11,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::Group;
@@ -53,7 +53,7 @@ private:
 	 * Invert normals recursive
 	 * @param groups
 	 */
-	static void invertNormals(map<wstring, Group*>* groups);
+	static void invertNormals(map<string, Group*>* groups);
 
 public:
 

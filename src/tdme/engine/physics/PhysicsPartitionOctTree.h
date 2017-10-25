@@ -19,7 +19,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode;
@@ -47,7 +47,7 @@ private:
 	Vector3 sideVector {  };
 	Vector3 forwardVector {  };
 	Vector3 upVector {  };
-	map<wstring, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
+	map<string, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode treeRoot {  };
 
 public:

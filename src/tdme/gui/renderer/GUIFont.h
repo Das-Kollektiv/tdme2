@@ -13,7 +13,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
@@ -74,7 +74,7 @@ public:
 	 * @param font file
 	 * @throws FileSystemException
 	 */
-	static GUIFont* parse(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
+	static GUIFont* parse(const string& pathName, const string& fileName) throw (FileSystemException);
 
 private:
 
@@ -83,7 +83,7 @@ private:
 	 * @param line The line to be parsed
 	 * @return The character definition from the line
 	 */
-	GUIFont_CharacterDefinition* parseCharacter(const wstring& line);
+	GUIFont_CharacterDefinition* parseCharacter(const string& line);
 
 	/**
 	 * Get character defintion

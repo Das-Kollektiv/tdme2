@@ -15,33 +15,33 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIScrollArea::GUIScrollArea() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "scrollarea.xml");
 }
 
-wstring GUIScrollArea::NAME = L"scrollarea";
+string GUIScrollArea::NAME = "scrollarea";
 
-const wstring& GUIScrollArea::getName()
+const string& GUIScrollArea::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIScrollArea::getTemplate()
+const string& GUIScrollArea::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"100%";
-	attributes[L"height"] = L"100%";
-	attributes[L"horizontal-align"] = L"left";
-	attributes[L"vertical-align"] = L"top";
-	attributes[L"alignment"] = L"vertical";
-	attributes[L"background-color"] = L"transparent";
-	attributes[L"show-on"] = L"";
-	attributes[L"hide-on"] = L"";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "100%";
+	attributes["height"] = "100%";
+	attributes["horizontal-align"] = "left";
+	attributes["vertical-align"] = "top";
+	attributes["alignment"] = "vertical";
+	attributes["background-color"] = "transparent";
+	attributes["show-on"] = "";
+	attributes["hide-on"] = "";
 	return &attributes;
 }
 

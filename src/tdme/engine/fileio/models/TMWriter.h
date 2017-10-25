@@ -19,7 +19,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
@@ -108,7 +108,7 @@ public:
 	 * @param string
 	 * @throws model file IO exception
 	 */
-	inline void writeString(const wstring& s) throw (ModelFileIOException) {
+	inline void writeString(const string& s) throw (ModelFileIOException) {
 		if (s.size() == 0) {
 			writeBoolean(false);
 		} else {
@@ -215,7 +215,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	static void write(Model* model, const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException);
+	static void write(Model* model, const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
 
@@ -297,7 +297,7 @@ private:
 	 * @param sub groups
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* subGroups) throw (ModelFileIOException);
+	static void writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

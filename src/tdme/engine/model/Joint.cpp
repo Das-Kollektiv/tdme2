@@ -7,17 +7,17 @@ using tdme::math::Matrix4x4;
 
 Joint::Joint()
 {
-	this->groupId = L"";
+	this->groupId = "";
 	this->bindMatrix.identity();
 }
 
-Joint::Joint(const wstring& groupId)
+Joint::Joint(const string& groupId)
 {
 	this->groupId = groupId;
 	this->bindMatrix.identity();
 }
 
-const wstring& Joint::getGroupId()
+const string& Joint::getGroupId()
 {
 	return groupId;
 }

@@ -26,7 +26,7 @@ private:
 		kqChangeListBuffer(0),
 		kqChangeListCurrent(0),
 		kqChangeList(NULL),
-		kqMutex(L"kem_kq_mutex"),
+		kqMutex("kem_kq_mutex"),
 		kqEventListMax(0),
 		kqEventList(NULL) {
 		//

@@ -11,7 +11,7 @@
 #include <tdme/audio/AudioEntity.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioEntity;
 using tdme::utils::ByteBuffer;
@@ -30,8 +30,8 @@ private:
 	static constexpr int32_t BUFFER_COUNT { 3 };
 	static constexpr int32_t BUFFER_SIZE { 32768 };
 	bool initiated {  };
-	wstring pathName {  };
-	wstring fileName {  };
+	string pathName {  };
+	string fileName {  };
 	array<uint32_t, BUFFER_COUNT> alBufferIds {  };
 	uint32_t alSourceId {  };
 	int32_t format {  };
@@ -66,7 +66,7 @@ public: /* protected */
 	 * @param path name
 	 * @param file name
 	 */
-	AudioStream(const wstring& id, const wstring& pathName, const wstring& fileName);
+	AudioStream(const string& id, const string& pathName, const string& fileName);
 
 	/**
 	 * Destructor

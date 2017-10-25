@@ -12,7 +12,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::model::Joint;
@@ -29,7 +29,7 @@ private:
 	vector<float> weights {  };
 	vector<Joint> joints {  };
 	vector<vector<JointWeight>> verticesJointsWeights {  };
-	map<wstring, Joint*> jointsByName {  };
+	map<string, Joint*> jointsByName {  };
 public:
 
 	/** 
@@ -71,7 +71,7 @@ public:
 	 * @param name
 	 * @return joint
 	 */
-	Joint* getJointByName(const wstring& name);
+	Joint* getJointByName(const string& name);
 
 	/**
 	 * Public constructor

@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -31,8 +31,8 @@ class tdme::tools::shared::model::LevelPropertyPresets final
 
 private:
 	vector<PropertyModelClass*> mapPropertiesPreset {  };
-	map<wstring, vector<PropertyModelClass*>> objectPropertiesPresets {  };
-	map<wstring, LevelEditorLight*> lightPresets {  };
+	map<string, vector<PropertyModelClass*>> objectPropertiesPresets {  };
+	map<string, LevelEditorLight*> lightPresets {  };
 	static LevelPropertyPresets* instance;
 
 public:
@@ -58,12 +58,12 @@ public:
 	/** 
 	 * @return object property presets
 	 */
-	const map<wstring, vector<PropertyModelClass*>>* getObjectPropertiesPresets() const;
+	const map<string, vector<PropertyModelClass*>>* getObjectPropertiesPresets() const;
 
 	/** 
 	 * @return light presets
 	 */
-	const map<wstring, LevelEditorLight*>* getLightPresets() const;
+	const map<string, LevelEditorLight*>* getLightPresets() const;
 
 private:
 
@@ -81,7 +81,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	LevelPropertyPresets(const wstring& pathName, const wstring& fileName);
+	LevelPropertyPresets(const string& pathName, const string& fileName);
 
 	/**
 	 * Destructor

@@ -14,7 +14,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/utils/MutableString.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::elements::GUIDropDownController;
@@ -29,8 +29,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
 
-wstring GUIDropDownOptionController::CONDITION_SELECTED = L"selected";
-wstring GUIDropDownOptionController::CONDITION_UNSELECTED = L"unselected";
+string GUIDropDownOptionController::CONDITION_SELECTED = "selected";
+string GUIDropDownOptionController::CONDITION_UNSELECTED = "unselected";
 
 GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node) 
 	: GUINodeController(node)
@@ -58,11 +58,11 @@ void GUIDropDownOptionController::select()
 	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_unselected"));
-	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_enabled"));
+	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
+	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_enabled"));
 	dropDownTextNodeEnabled->getText()->reset();
 	dropDownTextNodeEnabled->getText()->append(dropDownOptionTextNode->getText());
-	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + L"_text_disabled"));
+	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_disabled"));
 	dropDownTextNodeDisabled->getText()->reset();
 	dropDownTextNodeDisabled->getText()->append(dropDownOptionTextNode->getText());
 }

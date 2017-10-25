@@ -5,7 +5,7 @@
 #include <tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 
@@ -19,12 +19,12 @@ class tdme::engine::model::AnimationSetup final
 
 private:
 	Model* model {  };
-	wstring id {  };
+	string id {  };
 	int32_t startFrame {  };
 	int32_t endFrame {  };
 	int32_t frames {  };
 	bool loop {  };
-	wstring overlayFromGroupId {  };
+	string overlayFromGroupId {  };
 
 public:
 
@@ -36,7 +36,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return start frame
@@ -62,7 +62,7 @@ public:
 	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy
 	 * @return group id from which the animation will start in the hierarchy
 	 */
-	const wstring& getOverlayFromGroupId();
+	const string& getOverlayFromGroupId();
 
 	/** 
 	 * @return animation duration in milliseconds
@@ -76,5 +76,5 @@ public:
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);
 
 	// Generated
-	AnimationSetup(Model* model, const wstring& id, int32_t startFrame, int32_t endFrame, bool loop, const wstring& overlayFromGroupId);
+	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId);
 };

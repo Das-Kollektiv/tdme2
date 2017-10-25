@@ -8,7 +8,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Face;
 using tdme::engine::model::Group;
@@ -23,7 +23,7 @@ using tdme::engine::model::Material;
 class tdme::engine::model::FacesEntity final
 {
 private:
-	wstring id {  };
+	string id {  };
 	Group* group {  };
 	Material* material {  };
 	vector<Face> faces {  };
@@ -34,7 +34,7 @@ public:
 	/** 
 	 * @return faces entity id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * Set up the entity's material
@@ -83,5 +83,5 @@ public:
 	 * @param group
 	 * @param id
 	 */
-	FacesEntity(Group* group, const wstring& id);
+	FacesEntity(Group* group, const string& id);
 };

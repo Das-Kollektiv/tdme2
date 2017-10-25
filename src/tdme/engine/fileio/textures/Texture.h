@@ -7,7 +7,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::ByteBuffer;
 
@@ -30,7 +30,7 @@ struct tdme::engine::fileio::textures::Texture
 	 * @param texture data
 	 */
 	Texture(
-		const wstring& id,
+		const string& id,
 		int32_t depth,
 		int32_t width,
 		int32_t height,
@@ -47,7 +47,7 @@ struct tdme::engine::fileio::textures::Texture
 	/** 
 	 * @return id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return depth in bits per pixel
@@ -80,7 +80,7 @@ struct tdme::engine::fileio::textures::Texture
 	ByteBuffer* getTextureData();
 
 private:
-	wstring id;
+	string id;
 	int32_t depth;
 	int32_t width;
 	int32_t height;

@@ -12,7 +12,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -62,7 +62,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */;
+	LevelEditorEntity* addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
 
 	/** 
 	 * Add a trigger
@@ -74,7 +74,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addTrigger(int32_t id, const wstring& name, const wstring& description, float width, float height, float depth) /* throws(Exception) */;
+	LevelEditorEntity* addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth) /* throws(Exception) */;
 
 	/** 
 	 * Add a empty
@@ -83,7 +83,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addEmpty(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */;
+	LevelEditorEntity* addEmpty(int32_t id, const string& name, const string& description) /* throws(Exception) */;
 
 	/** 
 	 * Add a empty
@@ -92,7 +92,7 @@ public:
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	LevelEditorEntity* addParticleSystem(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */;
+	LevelEditorEntity* addParticleSystem(int32_t id, const string& name, const string& description) /* throws(Exception) */;
 
 	/** 
 	 * Add a entity

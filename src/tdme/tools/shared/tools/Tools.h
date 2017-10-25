@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/tools/fwd-tdme.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -44,84 +44,84 @@ public:
 	 * @param value
 	 * @return value as string
 	 */
-	static wstring formatFloat(float value);
+	static string formatFloat(float value);
 
 	/** 
 	 * Formats a vector3 to a human readable format
 	 * @param value
 	 * @return value as string
 	 */
-	static wstring formatVector3(const Vector3& value);
+	static string formatVector3(const Vector3& value);
 
 	/** 
 	 * Formats a color4 to a human readable format
 	 * @param value
 	 * @return value as string
 	 */
-	static wstring formatColor4(const Color4& value);
+	static string formatColor4(const Color4& value);
 
 	/** 
 	 * Convert string to array
 	 * @param text
 	 * @param array
 	 */
-	static void convertToArray(const wstring& text, array<float, 3>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 3>& array) /* throws(NumberFormatException) */;
 
 	/**
 	 * Convert string to array
 	 * @param text
 	 * @param array
 	 */
-	static void convertToArray(const wstring& text, array<float, 4>* array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 4>* array) /* throws(NumberFormatException) */;
 
 	/**
 	 * Convert string to array
 	 * @param text
 	 * @param array
 	 */
-	static void convertToArray(const wstring& text, array<float, 4>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to vector 3
 	 * @param text
 	 * @return vector3
 	 */
-	static Vector3 convertToVector3(const wstring& text) /* throws(NumberFormatException) */;
+	static Vector3 convertToVector3(const string& text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to vector 4
 	 * @param text
 	 * @return vector4
 	 */
-	static Vector4 convertToVector4(const wstring& text) /* throws(NumberFormatException) */;
+	static Vector4 convertToVector4(const string& text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert to color 4
 	 * @param text
 	 * @return color4
 	 */
-	static Color4 convertToColor4(const wstring& text) /* throws(NumberFormatException) */;
+	static Color4 convertToColor4(const string& text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert string to float
 	 * @param text
 	 * @return float
 	 */
-	static float convertToFloat(const wstring& text) /* throws(NumberFormatException) */;
+	static float convertToFloat(const string& text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert string to int
 	 * @param text
 	 * @return int
 	 */
-	static int32_t convertToInt(const wstring& text) /* throws(NumberFormatException) */;
+	static int32_t convertToInt(const string& text) /* throws(NumberFormatException) */;
 
 	/** 
 	 * Convert string to int
 	 * @param text
 	 * @return int
 	 */
-	static int32_t convertToIntSilent(const wstring& text);
+	static int32_t convertToIntSilent(const string& text);
 
 	/** 
 	 * Set up given engine light with default light
@@ -176,26 +176,26 @@ public:
 	 * @param file name
 	 * @return relative resources file name
 	 */
-	static const wstring getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName);
+	static const string getRelativeResourcesFileName(const string& gameRoot, const string& fileName);
 
 	/** 
 	 * Get game root path
 	 * @param file name
 	 * @return game root path
 	 */
-	static const wstring getGameRootPath(const wstring& fileName);
+	static const string getGameRootPath(const string& fileName);
 
 	/** 
 	 * Get path
 	 * @param file name
 	 * @return path
 	 */
-	static const wstring getPath(const wstring& fileName);
+	static const string getPath(const string& fileName);
 
 	/** 
 	 * Get file name of given path
 	 * @param file name
 	 * @return file name
 	 */
-	static const wstring getFileName(const wstring& fileName);
+	static const string getFileName(const string& fileName);
 };

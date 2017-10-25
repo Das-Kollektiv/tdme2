@@ -39,7 +39,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ContactCache_ContactCacheInfo;
@@ -56,7 +56,7 @@ class tdme::engine::physics::ContactCache final
 	friend class ContactCache_ContactCacheInfo;
 
 private:
-	map<wstring, ContactCache_ContactCacheInfo> contactCache {  };
+	map<string, ContactCache_ContactCacheInfo> contactCache {  };
 
 public: /* protected */
 
@@ -79,7 +79,7 @@ public: /* protected */
 		contactCacheInfo.rb2 = rb2;
 		contactCacheInfo.hitPoints = *collision->getHitPoints();
 		contactCacheInfo.lamdas = *lamdaValues;
-		wstring key = rb1->id + L"," + rb2->id;
+		string key = rb1->id + "," + rb2->id;
 		contactCache[key] = contactCacheInfo;
 	}
 
@@ -91,7 +91,7 @@ public: /* protected */
 	 * @return contact cache info
 	 */
 	inline ContactCache_ContactCacheInfo* get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision) {
-		wstring key = rb1->id + L"," + rb2->id;
+		string key = rb1->id + "," + rb2->id;
 		ContactCache_ContactCacheInfo* contactCacheInfo = nullptr;
 		auto contactCacheInfoIt = contactCache.find(key);
 		if (contactCacheInfoIt != contactCache.end()) {

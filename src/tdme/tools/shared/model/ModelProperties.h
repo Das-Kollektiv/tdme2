@@ -11,7 +11,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::PropertyModelClass;
 
@@ -23,7 +23,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 class tdme::tools::shared::model::ModelProperties
 {
 public: /* protected */
-	map<wstring, PropertyModelClass*> propertiesByName {  };
+	map<string, PropertyModelClass*> propertiesByName {  };
 	vector<PropertyModelClass*> properties {  };
 
 public:
@@ -38,7 +38,7 @@ public:
 	 * @param name
 	 * @return property or null
 	 */
-	virtual PropertyModelClass* getProperty(const wstring& name);
+	virtual PropertyModelClass* getProperty(const string& name);
 
 	/** 
 	 * @return property count
@@ -50,7 +50,7 @@ public:
 	 * @param name
 	 * @return index or -1 if not found
 	 */
-	virtual int32_t getPropertyIndex(const wstring& name);
+	virtual int32_t getPropertyIndex(const string& name);
 
 	/** 
 	 * Get property by index
@@ -63,7 +63,7 @@ public:
 	 * Add a property
 	 * @param property
 	 */
-	virtual bool addProperty(const wstring& name, const wstring& value);
+	virtual bool addProperty(const string& name, const string& value);
 
 	/** 
 	 * Update a property
@@ -72,13 +72,13 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	virtual bool updateProperty(const wstring& oldName, const wstring& name, const wstring& value);
+	virtual bool updateProperty(const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Removes a property
 	 * @param property name
 	 */
-	virtual bool removeProperty(const wstring& name);
+	virtual bool removeProperty(const string& name);
 
 	/**
 	 * Public constructor

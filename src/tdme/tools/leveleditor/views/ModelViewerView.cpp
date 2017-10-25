@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::views::ModelViewerView;
 using tdme::engine::Engine;
@@ -45,7 +45,7 @@ void ModelViewerView::onInitAdditionalScreens()
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 }
 
-LevelEditorEntity* ModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* ModelViewerView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(
 		LevelEditorEntityLibrary::ID_ALLOCATE,

@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Application;
 using tdme::engine::Engine;
@@ -37,7 +37,7 @@ class tdme::tools::leveleditor::TDMELevelEditor final
 	: public virtual Application
 {
 private:
-	static wstring VERSION;
+	static string VERSION;
 	static TDMELevelEditor* instance;
 	Engine* engine {  };
 	View* view {  };

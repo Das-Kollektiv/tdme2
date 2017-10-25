@@ -23,16 +23,16 @@ void ShadowMappingShaderPre::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	preVertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion + L"/shadowmapping",
-		L"pre_vertexshader.c"
+		"shader/" + rendererVersion + "/shadowmapping",
+		"pre_vertexshader.c"
 	);
 	if (preVertexShaderGlId == 0)
 		return;
 
 	preFragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion + L"/shadowmapping",
-		L"pre_fragmentshader.c"
+		"shader/" + rendererVersion + "/shadowmapping",
+		"pre_fragmentshader.c"
 	);
 	if (preFragmentShaderGlId == 0)
 		return;
@@ -41,14 +41,14 @@ void ShadowMappingShaderPre::initialize()
 	renderer->attachShaderToProgram(preProgramGlId, preVertexShaderGlId);
 	renderer->attachShaderToProgram(preProgramGlId, preFragmentShaderGlId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(preProgramGlId, 0, L"inVertex");
-		renderer->setProgramAttributeLocation(preProgramGlId, 1, L"inNormal");
-		renderer->setProgramAttributeLocation(preProgramGlId, 2, L"inTextureUV");
+		renderer->setProgramAttributeLocation(preProgramGlId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(preProgramGlId, 1, "inNormal");
+		renderer->setProgramAttributeLocation(preProgramGlId, 2, "inTextureUV");
 	}
 	if (renderer->linkProgram(preProgramGlId) == false)
 		return;
 
-	preUniformMVPMatrix = renderer->getProgramUniformLocation(preProgramGlId, L"mvpMatrix");
+	preUniformMVPMatrix = renderer->getProgramUniformLocation(preProgramGlId, "mvpMatrix");
 	if (preUniformMVPMatrix == -1)
 		return;
 

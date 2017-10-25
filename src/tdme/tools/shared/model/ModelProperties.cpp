@@ -10,7 +10,7 @@
 using std::map;
 using std::remove;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
@@ -34,7 +34,7 @@ void ModelProperties::clearProperties()
 	propertiesByName.clear();
 }
 
-PropertyModelClass* ModelProperties::getProperty(const wstring& name)
+PropertyModelClass* ModelProperties::getProperty(const string& name)
 {
 	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {
@@ -48,7 +48,7 @@ int32_t ModelProperties::getPropertyCount()
 	return properties.size();
 }
 
-int32_t ModelProperties::getPropertyIndex(const wstring& name)
+int32_t ModelProperties::getPropertyIndex(const string& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
 		if (properties.at(i)->getName() == name) {
@@ -63,7 +63,7 @@ PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
 	return idx >= 0 && idx < properties.size() ? properties.at(idx) : nullptr;
 }
 
-bool ModelProperties::addProperty(const wstring& name, const wstring& value)
+bool ModelProperties::addProperty(const string& name, const string& value)
 {
 	if (getProperty(name) != nullptr)
 		return false;
@@ -74,7 +74,7 @@ bool ModelProperties::addProperty(const wstring& name, const wstring& value)
 	return true;
 }
 
-bool ModelProperties::updateProperty(const wstring& oldName, const wstring& name, const wstring& value)
+bool ModelProperties::updateProperty(const string& oldName, const string& name, const string& value)
 {
 	auto propertyByNameIt = propertiesByName.find(oldName);
 	if (propertyByNameIt == propertiesByName.end())
@@ -95,7 +95,7 @@ bool ModelProperties::updateProperty(const wstring& oldName, const wstring& name
 	return true;
 }
 
-bool ModelProperties::removeProperty(const wstring& name)
+bool ModelProperties::removeProperty(const string& name)
 {
 	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {

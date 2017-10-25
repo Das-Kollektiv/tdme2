@@ -23,12 +23,12 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-wstring GUISelectBoxMultipleOptionController::CONDITION_SELECTED = L"selected";
-wstring GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED = L"unselected";
-wstring GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED = L"focussed";
-wstring GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED = L"unfocussed";
-wstring GUISelectBoxMultipleOptionController::CONDITION_DISABLED = L"disabled";
-wstring GUISelectBoxMultipleOptionController::CONDITION_ENABLED = L"enabled";
+string GUISelectBoxMultipleOptionController::CONDITION_SELECTED = "selected";
+string GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED = "unselected";
+string GUISelectBoxMultipleOptionController::CONDITION_FOCUSSED = "focussed";
+string GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED = "unfocussed";
+string GUISelectBoxMultipleOptionController::CONDITION_DISABLED = "disabled";
+string GUISelectBoxMultipleOptionController::CONDITION_ENABLED = "enabled";
 
 GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
 	: GUINodeController(node)

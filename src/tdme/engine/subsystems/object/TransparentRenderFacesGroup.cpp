@@ -14,8 +14,8 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesGroup;
 using tdme::engine::model::Color4;
@@ -52,36 +52,36 @@ void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, 
 	this->textureCoordinates = textureCoordinates;
 }
 
-const wstring TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates)
+const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates)
 {
 	auto& efcmData = effectColorMul.getArray();
 	auto& efcaData = effectColorAdd.getArray();
-	wstring key =
+	string key =
 		model->getId() +
-		L"," +
+		"," +
 		object3DGroup->id +
-		L"," +
-		to_wstring(facesEntityIdx) +
-		L"," +
-		to_wstring(efcmData[0]) +
-		L"," +
-		to_wstring(efcmData[1]) +
-		L"," +
-		to_wstring(efcmData[2]) +
-		L"," +
-		to_wstring(efcmData[3]) +
-		L"," +
-		to_wstring(efcaData[0]) +
-		L"," +
-		to_wstring(efcaData[1]) +
-		L"," +
-		to_wstring(efcaData[2]) +
-		L"," +
-		to_wstring(efcaData[3]) +
-		L"," +
-		(material == nullptr ? L"tdme.material.none" : material->getId()) +
-		L"," +
-		(textureCoordinates == true ? L"TCT" : L"TCF");
+		"," +
+		to_string(facesEntityIdx) +
+		"," +
+		to_string(efcmData[0]) +
+		"," +
+		to_string(efcmData[1]) +
+		"," +
+		to_string(efcmData[2]) +
+		"," +
+		to_string(efcmData[3]) +
+		"," +
+		to_string(efcaData[0]) +
+		"," +
+		to_string(efcaData[1]) +
+		"," +
+		to_string(efcaData[2]) +
+		"," +
+		to_string(efcaData[3]) +
+		"," +
+		(material == nullptr ? "tdme.material.none" : material->getId()) +
+		"," +
+		(textureCoordinates == true ? "TCT" : "TCF");
 	return key;
 }
 

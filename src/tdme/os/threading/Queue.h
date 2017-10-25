@@ -28,8 +28,8 @@ public:
 	 */
 	Queue(const unsigned int maxElements) :
 		maxElements(maxElements),
-		m(L"queue"),
-		c(L"queue"),
+		m("queue"),
+		c("queue"),
 		stopRequested(false) {
 		//
 	}

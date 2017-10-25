@@ -8,7 +8,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -27,19 +27,19 @@ public:
 	/** 
 	 * @return name
 	 */
-	virtual const wstring& getName() = 0;
+	virtual const string& getName() = 0;
 
 	/** 
 	 * @return template
 	 */
-	virtual const wstring& getTemplate() = 0;
+	virtual const string& getTemplate() = 0;
 
 	/** 
 	 * Get default attributes
 	 * @param screen node
 	 * @return default attributes
 	 */
-	virtual map<wstring, wstring>* getAttributes(GUIScreenNode* screenNode) = 0;
+	virtual map<string, string>* getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/** 
 	 * Create controller which is attached to this node

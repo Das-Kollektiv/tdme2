@@ -31,17 +31,16 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Pool.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 using std::string;
 using std::to_string;
-using std::to_wstring;
+using std::to_string;
 
 using tdme::gui::GUI;
 using tdme::engine::Engine;
@@ -67,13 +66,12 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Pool;
-using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-map<wstring, GUIFont*> GUI::fontCache;
-map<wstring, Texture*> GUI::imageCache;
+map<string, GUIFont*> GUI::fontCache;
+map<string, Texture*> GUI::imageCache;
 
 GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
@@ -83,7 +81,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = new GUIColor(L"#8080FF");
+		this->foccussedBorderColor = new GUIColor("#8080FF");
 	} catch (Exception& exception) {
 		Console::print(string("GUI(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -145,14 +143,14 @@ vector<GUIKeyboardEvent*>* GUI::getKeyboardEvents()
 	return &keyboardEvents;
 }
 
-GUIFont* GUI::getFont(const wstring& fileName)
+GUIFont* GUI::getFont(const string& fileName)
 {
-	wstring canonicalFile;
-	wstring path;
-	wstring file;
+	string canonicalFile;
+	string path;
+	string file;
 	GUIFont* font;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(L".", fileName);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(".", fileName);
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
@@ -179,14 +177,14 @@ GUIFont* GUI::getFont(const wstring& fileName)
 	return font;
 }
 
-Texture* GUI::getImage(const wstring& fileName)
+Texture* GUI::getImage(const string& fileName)
 {
 	// TODO: fix me, proper get path, filename
-	wstring canonicalFile;
-	wstring path;
-	wstring file;
+	string canonicalFile;
+	string path;
+	string file;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(L".", fileName);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(".", fileName);
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
@@ -210,7 +208,7 @@ Texture* GUI::getImage(const wstring& fileName)
 	return image;
 }
 
-GUIScreenNode* GUI::getScreen(const wstring& id)
+GUIScreenNode* GUI::getScreen(const string& id)
 {
 	auto screensIt = screens.find(id);
 	if (screensIt == screens.end()) {
@@ -219,12 +217,12 @@ GUIScreenNode* GUI::getScreen(const wstring& id)
 	return screensIt->second;
 }
 
-void GUI::addScreen(const wstring& id, GUIScreenNode* screen)
+void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
 	screens.emplace(id, screen);
 }
 
-void GUI::removeScreen(const wstring* id)
+void GUI::removeScreen(const string* id)
 {
 	auto screensIt = screens.find(*id);
 
@@ -236,7 +234,7 @@ void GUI::removeScreen(const wstring* id)
 
 void GUI::reset()
 {
-	vector<wstring> entitiesToRemove;
+	vector<string> entitiesToRemove;
 	for (auto screenKeysIt: screens) {
 		entitiesToRemove.push_back(screenKeysIt.first);
 	}
@@ -255,7 +253,7 @@ void GUI::resetRenderScreens()
 	renderScreens.clear();
 }
 
-void GUI::addRenderScreen(const wstring& screenId)
+void GUI::addRenderScreen(const string& screenId)
 {
 	auto screenIt = screens.find(screenId);
 	if (screenIt == screens.end())

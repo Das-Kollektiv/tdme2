@@ -10,7 +10,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::utils::Properties;
 
@@ -23,41 +23,41 @@ Properties::Properties()
 {
 }
 
-const wstring& Properties::get(const wstring& key, const wstring& defaultValue)
+const string& Properties::get(const string& key, const string& defaultValue)
 {
 	auto it = properties.find(key);
 	if (it == properties.end()) return defaultValue;
 	return it->second;
 }
 
-void Properties::put(const wstring& key, const wstring& value)
+void Properties::put(const string& key, const string& value)
 {
 	properties[key] = value;
 }
 
-void Properties::load(const wstring& pathName, const wstring& fileName) throw (FileSystemException)
+void Properties::load(const string& pathName, const string& fileName) throw (FileSystemException)
 {
 	properties.clear();
-	vector<wstring> lines;
+	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	for (int i = 0; i < lines.size(); i++) {
-		wstring line = StringUtils::trim(lines.at(i));
-		if (line.length() == 0 || StringUtils::startsWith(line, L"#")) continue;
+		string line = StringUtils::trim(lines.at(i));
+		if (line.length() == 0 || StringUtils::startsWith(line, "#")) continue;
 		int separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;
-		wstring key = StringUtils::substring(line, 0, separatorPos);
-		wstring value = StringUtils::substring(line, 0, separatorPos);
+		string key = StringUtils::substring(line, 0, separatorPos);
+		string value = StringUtils::substring(line, 0, separatorPos);
 		properties[key] = value;
 	}
 }
 
-void Properties::store(const wstring& pathName, const wstring& fileName) throw (FileSystemException) {
-	vector<wstring> result;
+void Properties::store(const string& pathName, const string& fileName) throw (FileSystemException) {
+	vector<string> result;
 	int32_t idx = 0;
 	for (auto it = properties.begin(); it != properties.end(); ++it) {
-		wstring key = it->first;
-		wstring value = it->second;
-		result.push_back(key + L"=" + value);
+		string key = it->first;
+		string value = it->second;
+		result.push_back(key + "=" + value);
 	}
 	FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, &result);
 }

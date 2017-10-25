@@ -11,8 +11,8 @@
 using std::copy;
 using std::begin;
 using std::end;
-using std::to_wstring;
-using std::wstring;
+using std::to_string;
+using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
@@ -47,16 +47,16 @@ void LightingShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion + L"/lighting",
-		L"render_fragmentshader.c"
+		"shader/" + rendererVersion + "/lighting",
+		"render_fragmentshader.c"
 	);
 	if (renderLightingFragmentShaderId == 0)
 		return;
 
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion + L"/lighting",
-		L"render_vertexshader.c"
+		"shader/" + rendererVersion + "/lighting",
+		"render_vertexshader.c"
 	);
 	if (renderLightingVertexShaderId == 0)
 		return;
@@ -65,137 +65,137 @@ void LightingShader::initialize()
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, L"inVertex");
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, L"inNormal");
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, L"inTextureUV");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, "inNormal");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, "inTextureUV");
 	}
 	if (renderer->linkProgram(renderLightingProgramId) == false)
 		return;
 
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, L"diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
 
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, L"diffuseTextureAvailable");
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1)
 		return;
 
 	if (renderer->isDisplacementMappingAvailable() == true) {
-		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, L"displacementTextureUnit");
+		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureUnit");
 		if (uniformDisplacementTextureUnit == -1)
 			return;
 
-		uniformDisplacementTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, L"displacementTextureAvailable");
+		uniformDisplacementTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureAvailable");
 		if (uniformDisplacementTextureAvailable == -1)
 			return;
 
 	}
 	if (renderer->isSpecularMappingAvailable()) {
-		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, L"specularTextureUnit");
+		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureUnit");
 		if (uniformSpecularTextureUnit == -1)
 			return;
 
-		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, L"specularTextureAvailable");
+		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureAvailable");
 		if (uniformSpecularTextureAvailable == -1)
 			return;
 
 	}
 	if (renderer->isNormalMappingAvailable()) {
-		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, L"normalTextureUnit");
+		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureUnit");
 		if (uniformNormalTextureUnit == -1)
 			return;
 
-		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, L"normalTextureAvailable");
+		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
 		if (uniformNormalTextureAvailable == -1)
 			return;
 
 	}
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, L"mvpMatrix");
+	uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
 
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, L"mvMatrix");
+	uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvMatrix");
 	if (uniformMVMatrix == -1)
 		return;
 
-	uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, L"normalMatrix");
+	uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
 	if (uniformNormalMatrix == -1)
 		return;
 
-	uniformSceneColor = renderer->getProgramUniformLocation(renderLightingProgramId, L"sceneColor");
+	uniformSceneColor = renderer->getProgramUniformLocation(renderLightingProgramId, "sceneColor");
 	if (uniformSceneColor == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, L"effectColorMul");
+	uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, L"effectColorAdd");
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 
-	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, L"material.ambient");
+	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
 	if (uniformMaterialAmbient == -1)
 		return;
 
-	uniformMaterialDiffuse = renderer->getProgramUniformLocation(renderLightingProgramId, L"material.diffuse");
+	uniformMaterialDiffuse = renderer->getProgramUniformLocation(renderLightingProgramId, "material.diffuse");
 	if (uniformMaterialDiffuse == -1)
 		return;
 
-	uniformMaterialSpecular = renderer->getProgramUniformLocation(renderLightingProgramId, L"material.specular");
+	uniformMaterialSpecular = renderer->getProgramUniformLocation(renderLightingProgramId, "material.specular");
 	if (uniformMaterialSpecular == -1)
 		return;
 
-	uniformMaterialEmission = renderer->getProgramUniformLocation(renderLightingProgramId, L"material.emission");
+	uniformMaterialEmission = renderer->getProgramUniformLocation(renderLightingProgramId, "material.emission");
 	if (uniformMaterialEmission == -1)
 		return;
 
-	uniformMaterialShininess = renderer->getProgramUniformLocation(renderLightingProgramId, L"material.shininess");
+	uniformMaterialShininess = renderer->getProgramUniformLocation(renderLightingProgramId, "material.shininess");
 	if (uniformMaterialShininess == -1)
 		return;
 
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) +L"].enabled");
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) +"].enabled");
 		if (uniformLightEnabled[i] == -1)
 			return;
 
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId,L"lights[" + to_wstring(i) + L"].ambient");
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId,"lights[" + to_string(i) + "].ambient");
 		if (uniformLightAmbient[i] == -1)
 			return;
 
-		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].diffuse");
+		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].diffuse");
 		if (uniformLightDiffuse[i] == -1)
 			return;
 
-		uniformLightSpecular[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].specular");
+		uniformLightSpecular[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].specular");
 		if (uniformLightSpecular[i] == -1)
 			return;
 
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].position");
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].position");
 		if (uniformLightPosition[i] == -1)
 			return;
 
-		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotDirection");
+		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotDirection");
 		if (uniformLightSpotDirection[i] == -1)
 			return;
 
-		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotExponent");
+		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotExponent");
 		if (uniformLightSpotExponent[i] == -1)
 			return;
 
-		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].spotCosCutoff");
+		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotCosCutoff");
 		if (uniformLightSpotCosCutoff[i] == -1)
 			return;
 
-		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].constantAttenuation");
+		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].constantAttenuation");
 		if (uniformLightConstantAttenuation[i] == -1)
 			return;
 
-		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].linearAttenuation");
+		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].linearAttenuation");
 		if (uniformLightLinearAttenuation[i] == -1)
 			return;
 
-		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, L"lights[" + to_wstring(i) + L"].quadraticAttenuation");
+		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].quadraticAttenuation");
 		if (uniformLightQuadraticAttenuation[i] == -1)
 			return;
 

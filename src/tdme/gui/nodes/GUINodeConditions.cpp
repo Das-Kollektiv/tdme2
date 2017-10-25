@@ -11,20 +11,20 @@ GUINodeConditions::GUINodeConditions()
 {
 }
 
-vector<wstring>* GUINodeConditions::getConditions()
+vector<string>* GUINodeConditions::getConditions()
 {
 	return &conditions;
 }
 
-void GUINodeConditions::add(const wstring& condition)
+void GUINodeConditions::add(const string& condition)
 {
 	remove(condition);
 	conditions.push_back(condition);
 }
 
-void GUINodeConditions::remove(const wstring& condition)
+void GUINodeConditions::remove(const string& condition)
 {
-	for (vector<wstring>::iterator i = conditions.begin(); i != conditions.end(); ++i) {
+	for (vector<string>::iterator i = conditions.begin(); i != conditions.end(); ++i) {
 		if (condition == *i) {
 			conditions.erase(i);
 			return;

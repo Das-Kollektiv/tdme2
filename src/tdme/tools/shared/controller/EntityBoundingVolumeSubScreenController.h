@@ -16,7 +16,7 @@
 
 using std::array;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -43,7 +43,7 @@ class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
 
 public:
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 8 };
-	static vector<wstring> MODEL_BOUNDINGVOLUME_IDS;
+	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
 
 private:
 	FileDialogPath* modelPath {  };
@@ -102,7 +102,7 @@ public:
 	 * @param idx
 	 * @param bounding volume types
 	 */
-	virtual void setupBoundingVolumeTypes(int32_t idx, vector<wstring>* boundingVolumeTypes);
+	virtual void setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes);
 
 	/** 
 	 * Display given bounding volume GUI elements
@@ -150,7 +150,7 @@ public:
 	 * @param idx
 	 * @param file
 	 */
-	virtual void setupConvexMesh(int32_t idx, const wstring& file);
+	virtual void setupConvexMesh(int32_t idx, const string& file);
 
 	/** 
 	 * On pivot apply
@@ -211,7 +211,7 @@ public:
 	/** 
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(const wstring& caption, const wstring& message);
+	virtual void showErrorPopUp(const string& caption, const string& message);
 
 	/** 
 	 * On action performed

@@ -3,17 +3,17 @@
 
 using tdme::tools::shared::controller::FileDialogPath;
 
-FileDialogPath::FileDialogPath(const wstring& path)
+FileDialogPath::FileDialogPath(const string& path)
 {
 	this->path = path;
 }
 
-const wstring& FileDialogPath::getPath()
+const string& FileDialogPath::getPath()
 {
 	return path;
 }
 
-void FileDialogPath::setPath(const wstring& path)
+void FileDialogPath::setPath(const string& path)
 {
 	this->path = path;
 }

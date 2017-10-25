@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -37,6 +37,6 @@ public:
 	static GUINode_RequestedConstraints_RequestedConstraintsType *PERCENT;
 	static GUINode_RequestedConstraints_RequestedConstraintsType *STAR;
 	static GUINode_RequestedConstraints_RequestedConstraintsType *AUTO;
-	GUINode_RequestedConstraints_RequestedConstraintsType(const wstring& name, int ordinal);
-	static GUINode_RequestedConstraints_RequestedConstraintsType* valueOf(const wstring& a0);
+	GUINode_RequestedConstraints_RequestedConstraintsType(const string& name, int ordinal);
+	static GUINode_RequestedConstraints_RequestedConstraintsType* valueOf(const string& a0);
 };

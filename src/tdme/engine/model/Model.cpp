@@ -16,7 +16,7 @@
 #include <tdme/math/Matrix4x4.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 using tdme::engine::ModelUtilities;
@@ -31,11 +31,11 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 
-wstring Model::ANIMATIONSETUP_DEFAULT = L"tdme.default";
+string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";
 
 constexpr float Model::FPS_DEFAULT;
 
-Model::Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
+Model::Model(const string& id, const string& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
 {
 	this->id = id;
 	this->name = name;
@@ -58,19 +58,19 @@ Model::~Model() {
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
-void Model::deleteSubGroups(map<wstring, Group*>* subGroups) {
+void Model::deleteSubGroups(map<string, Group*>* subGroups) {
 	for (auto it = subGroups->begin(); it != subGroups->end(); ++it) {
 		deleteSubGroups(it->second->getSubGroups());
 		delete it->second;
 	}
 }
 
-const wstring& Model::getId()
+const string& Model::getId()
 {
 	return id;
 }
 
-const wstring& Model::getName()
+const string& Model::getName()
 {
 	return name;
 }
@@ -85,17 +85,17 @@ RotationOrder* Model::getRotationOrder()
 	return rotationOrder;
 }
 
-map<wstring, Material*>* Model::getMaterials()
+map<string, Material*>* Model::getMaterials()
 {
 	return &materials;
 }
 
-map<wstring, Group*>* Model::getGroups()
+map<string, Group*>* Model::getGroups()
 {
 	return &groups;
 }
 
-Group* Model::getGroupById(const wstring& id)
+Group* Model::getGroupById(const string& id)
 {
 	auto groupIt = groups.find(id);
 	if (groupIt != groups.end()) {
@@ -105,12 +105,12 @@ Group* Model::getGroupById(const wstring& id)
 
 }
 
-map<wstring, Group*>* Model::getSubGroups()
+map<string, Group*>* Model::getSubGroups()
 {
 	return &subGroups;
 }
 
-Group* Model::getSubGroupById(const wstring& id)
+Group* Model::getSubGroupById(const string& id)
 {
 	auto groupIt = subGroups.find(id);
 	if (groupIt != subGroups.end()) {
@@ -139,21 +139,21 @@ void Model::setFPS(float fps)
 	this->fps = fps;
 }
 
-AnimationSetup* Model::addAnimationSetup(const wstring& id, int32_t startFrame, int32_t endFrame, bool loop)
+AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop)
 {
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, L"");
+	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, "");
 	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
 
-AnimationSetup* Model::addOverlayAnimationSetup(const wstring& id, const wstring& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop)
+AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop)
 {
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromGroupId);
 	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
 
-AnimationSetup* Model::getAnimationSetup(const wstring& id)
+AnimationSetup* Model::getAnimationSetup(const string& id)
 {
 	auto animationSetupIt = animationSetups.find(id);
 	if (animationSetupIt != animationSetups.end()) {
@@ -162,7 +162,7 @@ AnimationSetup* Model::getAnimationSetup(const wstring& id)
 	return nullptr;
 }
 
-map<wstring, AnimationSetup*>* Model::getAnimationSetups()
+map<string, AnimationSetup*>* Model::getAnimationSetups()
 {
 	return &animationSetups;
 }
@@ -185,7 +185,7 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const wstring& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;

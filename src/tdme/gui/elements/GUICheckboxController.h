@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -27,10 +27,10 @@ class tdme::gui::elements::GUICheckboxController final
 {
 
 private:
-	static wstring CONDITION_CHECKED;
-	static wstring CONDITION_UNCHECKED;
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
+	static string CONDITION_CHECKED;
+	static string CONDITION_UNCHECKED;
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
 	bool checked {  };
 	bool disabled {  };
 	MutableString* value {  };

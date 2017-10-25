@@ -28,7 +28,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	const wstring getNodeType() override;
+	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
@@ -47,9 +47,9 @@ public:
 	 * @param alignment
 	 * @return alignment
 	 */
-	static GUILayoutNode_Alignment* createAlignment(const wstring& alignment);
+	static GUILayoutNode_Alignment* createAlignment(const string& alignment);
 
-	GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);
+	GUILayoutNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);
 
 private:
 	friend class GUILayoutNode_Alignment;

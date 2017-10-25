@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -27,8 +27,8 @@ class tdme::gui::elements::GUITabContentController final
 {
 
 private:
-	wstring CONDITION_SELECTED {  };
-	wstring CONDITION_UNSELECTED {  };
+	string CONDITION_SELECTED {  };
+	string CONDITION_UNSELECTED {  };
 	bool selected {  };
 
 public:

@@ -15,7 +15,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
@@ -39,7 +39,7 @@ private:
 public: /* protected */
 	static constexpr int32_t GLTEXTUREID_NONE { -1 };
 	static constexpr int32_t GLTEXTUREID_NOTUSED { 0 };
-	wstring id {  };
+	string id {  };
 	Object3DBase* object {  };
 	Group* group {  };
 	bool animated {  };
@@ -73,7 +73,7 @@ private:
 	 * @param animation processing target
 	 * @param object 3D groups
 	 */
-	static void createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
+	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 public: /* protected */
 

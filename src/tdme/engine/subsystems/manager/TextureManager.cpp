@@ -9,7 +9,7 @@
 #include <tdme/utils/Console.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
@@ -46,7 +46,7 @@ int32_t TextureManager::addTexture(Texture* texture)
 	return textureId;
 }
 
-void TextureManager::removeTexture(const wstring& textureId)
+void TextureManager::removeTexture(const string& textureId)
 {
 	auto textureManagedIt = textures.find(textureId);
 	if (textureManagedIt != textures.end()) {
@@ -58,5 +58,5 @@ void TextureManager::removeTexture(const wstring& textureId)
 		}
 		return;
 	}
-	Console::println(wstring(L"Warning: texture not loaded by texture manager"));
+	Console::println(string("Warning: texture not loaded by texture manager"));
 }

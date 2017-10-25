@@ -11,7 +11,7 @@
 #include <tdme/gui/GUIParserException.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::model::Color4Base;
@@ -40,7 +40,7 @@ public:
 
 private:
 	static vector<GUIColor*> COLOR_INSTANCES;
-	static vector<wstring> COLOR_NAMES;
+	static vector<string> COLOR_NAMES;
 
 public:
 
@@ -74,5 +74,5 @@ public:
 	 * Public constructor
 	 * @param color as string
 	 */
-	GUIColor(const wstring& colorString) throw (GUIParserException);
+	GUIColor(const string& colorString) throw (GUIParserException);
 };

@@ -8,7 +8,6 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/IntEncDec.h>
 #include <tdme/utils/RTTI.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
 #include <tdme/network/udpserver/NIOUDPServerClient.h>
 
@@ -21,7 +20,6 @@ using std::stringstream;
 using tdme::utils::Console;
 using tdme::utils::IntEncDec;
 using tdme::utils::RTTI;
-using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::network::udpserver::NIOUDPServerClient;
 
@@ -32,7 +30,7 @@ NIOUDPServerClient::NIOUDPServerClient(const uint32_t clientId, const string& ip
 	ip(ip),
 	port(port),
 	shutdownRequested(false),
-	messageMapSafeMutex(L"nioudpserverclient_messagemapsafe") {
+	messageMapSafeMutex("nioudpserverclient_messagemapsafe") {
 	// key
 	ostringstream tmp;
 	tmp << KEY_PREFIX_UNNAMED;
@@ -96,12 +94,12 @@ void NIOUDPServerClient::send(stringstream* frame, bool safe) {
 
 		// log
 		Console::println(
-			L"NIOUDPServerClient::send(): send failed for client '" +
-			StringConverter::toWideString(ip) +
-			L"': " +
-			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-			L": " +
-			StringConverter::toWideString(exception.what())
+			"NIOUDPServerClient::send(): send failed for client '" +
+			(ip) +
+			"': " +
+			(RTTI::demangle(typeid(exception).name())) +
+			": " +
+			(exception.what())
 		);
 	}
 }
@@ -143,12 +141,12 @@ bool NIOUDPServerClient::processSafeMessage(const uint32_t messageId) {
 
 		// log
 		Console::println(
-			L"NIOUDPServerClient::sendAcknowledgement(): send failed for client '" +
-			StringConverter::toWideString(ip) +
-			L"': " +
-			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-			L": " +
-			StringConverter::toWideString(exception.what())
+			"NIOUDPServerClient::sendAcknowledgement(): send failed for client '" +
+			(ip) +
+			"': " +
+			(RTTI::demangle(typeid(exception).name())) +
+			": " +
+			(exception.what())
 		);
 	}
 
@@ -166,12 +164,12 @@ void NIOUDPServerClient::sendConnected() {
 
 		// log
 		Console::println(
-			L"NIOUDPServerClient::sendConnected(): send failed for client '" +
-			StringConverter::toWideString(ip) +
-			L"': " +
-			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-			L": " +
-			StringConverter::toWideString(exception.what())
+			"NIOUDPServerClient::sendConnected(): send failed for client '" +
+			(ip) +
+			"': " +
+			(RTTI::demangle(typeid(exception).name())) +
+			": " +
+			(exception.what())
 		);
 	}
 }
@@ -193,7 +191,7 @@ void NIOUDPServerClient::onFrameReceived(stringstream* frame, const uint32_t mes
 	// delegate it to thread pool, but make it declinable
 	if (server->workerThreadPool->addElement(request, true) == false) {
 		// element was declined
-		Console::println(L"NIOUDPServerClient::onFrameReceived(): client request declined from '" + StringConverter::toWideString(ip) + L"'. Shutting down client");
+		Console::println("NIOUDPServerClient::onFrameReceived(): client request declined from '" + (ip) + "'. Shutting down client");
 		// 	release client reference
 		releaseReference();
 		// 	delete frame

@@ -10,7 +10,7 @@
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 #include <tdme/engine/subsystems/object/Object3DBase.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::engine::FrameBuffer;
@@ -28,7 +28,7 @@ class tdme::engine::subsystems::object::Object3DInternal
 	: public Object3DBase
 {
 public: /* protected */
-	wstring id {  };
+	string id {  };
 	bool enabled {  };
 	bool pickable {  };
 	bool dynamicShadowing {  };
@@ -41,7 +41,7 @@ public:
 	/** 
 	 * @return object id
 	 */
-	virtual const wstring& getId();
+	virtual const string& getId();
 
 	/** 
 	 * @return true if enabled to be rendered
@@ -113,7 +113,7 @@ public:
 	 * @param faces entity name or null if texture should be bound to all faces entities
 	 * @param frame buffer
 	 */
-	virtual void bindDiffuseTexture(const wstring& groupId, FrameBuffer* frameBuffer);
+	virtual void bindDiffuseTexture(const string& groupId, FrameBuffer* frameBuffer);
 
 	/** 
 	 * Bind frame buffer color texture to a group and faces entity of this object
@@ -121,7 +121,7 @@ public:
 	 * @param faces entity id
 	 * @param frame buffer
 	 */
-	virtual void bindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, FrameBuffer* frameBuffer);
+	virtual void bindDiffuseTexture(const string& groupId, const string& facesEntityId, FrameBuffer* frameBuffer);
 
 	/** 
 	 * Unbind dynamic texture of this object
@@ -132,14 +132,14 @@ public:
 	 * Unbind dynamic texture to a group of this object
 	 * @param group id
 	 */
-	virtual void unbindDiffuseTexture(const wstring& groupId);
+	virtual void unbindDiffuseTexture(const string& groupId);
 
 	/** 
 	 * Unbind dynamic texture to a group and faces entity of this object
 	 * @param group id
 	 * @param faces entity id
 	 */
-	virtual void unbindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId);
+	virtual void unbindDiffuseTexture(const string& groupId, const string& facesEntityId);
 
 private:
 
@@ -149,7 +149,7 @@ private:
 	 * @param faces entity id or null if texture should be bound to all faces entities
 	 * @param texture id
 	 */
-	void setDynamicDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, int32_t textureId);
+	void setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId);
 
 public:
 
@@ -171,7 +171,7 @@ public:
 	 * @param id
 	 * @param model
 	 */
-	Object3DInternal(const wstring& id, Model* model);
+	Object3DInternal(const string& id, Model* model);
 
 	/**
 	 * Destructor

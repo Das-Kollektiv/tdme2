@@ -11,7 +11,7 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::TransparentRenderPointsPool;
 using tdme::engine::model::Color4;
@@ -37,7 +37,7 @@ void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 			break;
 
 		if (poolIdx >= transparentRenderPoints.size()) {
-			Console::println(wstring(L"TransparentRenderPointsPool::merge(): Too many transparent render points"));
+			Console::println(string("TransparentRenderPointsPool::merge(): Too many transparent render points"));
 			break;
 		}
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);

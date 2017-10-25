@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUICheckbox;
 using tdme::gui::elements::GUICheckboxController;
@@ -21,25 +21,25 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUICheckbox::GUICheckbox() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"checkbox.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "checkbox.xml");
 }
 
-wstring GUICheckbox::NAME = L"checkbox";
+string GUICheckbox::NAME = "checkbox";
 
-const wstring& GUICheckbox::getName()
+const string& GUICheckbox::getName()
 {
 	return NAME;
 }
 
-const wstring& GUICheckbox::getTemplate()
+const string& GUICheckbox::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUICheckbox::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes["id"] = screenNode->allocateNodeId();
 	return &attributes;
 }
 

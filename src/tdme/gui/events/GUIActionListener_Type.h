@@ -15,6 +15,6 @@ class tdme::gui::events::GUIActionListener_Type final
 public:
 	static GUIActionListener_Type *PERFORMED;
 	static GUIActionListener_Type *PERFORMING;
-	GUIActionListener_Type(const wstring& name, int ordinal);
-	static GUIActionListener_Type* valueOf(const wstring& a0);
+	GUIActionListener_Type(const string& name, int ordinal);
+	static GUIActionListener_Type* valueOf(const string& a0);
 };

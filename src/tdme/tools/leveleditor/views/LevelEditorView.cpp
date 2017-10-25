@@ -61,7 +61,6 @@
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Properties.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
@@ -69,8 +68,8 @@
 using std::find;
 using std::remove;
 using std::vector;
-using std::to_wstring;
-using std::wstring;
+using std::to_string;
+using std::string;
 
 using tdme::tools::leveleditor::views::LevelEditorView;
 
@@ -131,18 +130,16 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::Character;
 using tdme::utils::Float;
 using tdme::utils::Properties;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
-using tdme::utils::_ArrayList;
 using tdme::utils::Exception;
 using tdme::utils::Console;
 
-vector<wstring> LevelEditorView::OBJECTCOLOR_NAMES = {
-	L"blue",
-	L"yellow",
-	L"magenta",
-	L"cyan",
-	L"none"
+vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
+	"blue",
+	"yellow",
+	"magenta",
+	"cyan",
+	"none"
 };
 
 constexpr int32_t LevelEditorView::MOUSE_BUTTON_NONE;
@@ -195,13 +192,13 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	haveGridCenterLast = false;
 	gridEnabled = true;
 	gridY = 0.0f;
-	objectColors[L"red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
-	objectColors[L"green"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
-	objectColors[L"blue"] = new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
-	objectColors[L"yellow"] = new LevelEditorView_ObjectColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f);
-	objectColors[L"magenta"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
-	objectColors[L"cyan"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
-	objectColors[L"none"] = new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+	objectColors["red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
+	objectColors["green"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
+	objectColors["blue"] = new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
+	objectColors["yellow"] = new LevelEditorView_ObjectColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f);
+	objectColors["magenta"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
+	objectColors["cyan"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
+	objectColors["none"] = new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 	camScale = 1.0f;
 	camLookRotationX->update();
 	camLookRotationY->update();
@@ -213,13 +210,13 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 LevelEditorView::~LevelEditorView() {
 	delete camLookRotationX;
 	delete camLookRotationY;
-	delete objectColors[L"red"];
-	delete objectColors[L"green"];
-	delete objectColors[L"blue"];
-	delete objectColors[L"yellow"];
-	delete objectColors[L"magenta"];
-	delete objectColors[L"cyan"];
-	delete objectColors[L"none"];
+	delete objectColors["red"];
+	delete objectColors["green"];
+	delete objectColors["blue"];
+	delete objectColors["yellow"];
+	delete objectColors["magenta"];
+	delete objectColors["cyan"];
+	delete objectColors["none"];
 	delete levelEditorGround;
 	delete entityPickingFilterNoGrid;
 	delete levelEditorScreenController;
@@ -230,7 +227,7 @@ PopUps* LevelEditorView::getPopUps()
 	return popUps;
 }
 
-const wstring LevelEditorView::getFileName()
+const string LevelEditorView::getFileName()
 {
 	return FileSystem::getInstance()->getFileName(level->getFileName());
 }
@@ -251,7 +248,7 @@ LevelEditorObject* LevelEditorView::getSelectedObject()
 		return nullptr;
 
 	auto selectedObject = level->getObjectById(selectedEntityIds.at(0));
-	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), L"leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
+	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -594,7 +591,7 @@ void LevelEditorView::display()
 	engine->getGUI()->handleEvents();
 }
 
-void LevelEditorView::selectObjects(vector<wstring>* entityIds)
+void LevelEditorView::selectObjects(vector<string>* entityIds)
 {
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
@@ -627,14 +624,14 @@ void LevelEditorView::unselectObjects()
 
 void LevelEditorView::updateGUIElements()
 {
-	levelEditorScreenController->setScreenCaption(L"Level Editor - " + level->getFileName());
+	levelEditorScreenController->setScreenCaption("Level Editor - " + level->getFileName());
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), L"leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
-			auto preset = levelEditorObject->getProperty(L"preset");
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, L"");
+			auto preset = levelEditorObject->getProperty("preset");
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
 			levelEditorScreenController->setObject(
 				selectedEntity->getTranslation(),
 				selectedEntity->getScale(),
@@ -686,11 +683,11 @@ void LevelEditorView::loadSettings()
 {
 	try {
 		Properties settings;
-		settings.load(L"settings", L"leveleditor.properties");
-		gridEnabled = settings.get(L"grid.enabled", L"true") == L"true";
-		gridY = Float::parseFloat(settings.get(L"grid.y", L"0.0"));
-		levelEditorScreenController->getMapPath()->setPath(settings.get(L"map.path", L"."));
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get(L"model.path", L"."));
+		settings.load("settings", "leveleditor.properties");
+		gridEnabled = settings.get("grid.enabled", "true") == "true";
+		gridY = Float::parseFloat(settings.get("grid.y", "0.0"));
+		levelEditorScreenController->getMapPath()->setPath(settings.get("map.path", "."));
+		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -712,7 +709,7 @@ void LevelEditorView::initialize()
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
-	levelEditorScreenController->setMapProperties(level, L"");
+	levelEditorScreenController->setMapProperties(level, "");
 	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
@@ -750,11 +747,11 @@ void LevelEditorView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put(L"grid.enabled", gridEnabled == true ? L"true" : L"false");
-		settings.put(L"grid.y", to_wstring(gridY));
-		settings.put(L"map.path", levelEditorScreenController->getMapPath()->getPath());
-		settings.put(L"model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
-		settings.store(L"settings", L"leveleditor.properties");
+		settings.put("grid.enabled", gridEnabled == true ? "true" : "false");
+		settings.put("grid.y", to_string(gridY));
+		settings.put("map.path", levelEditorScreenController->getMapPath()->getPath());
+		settings.put("model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+		settings.store("settings", "leveleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -769,20 +766,20 @@ void LevelEditorView::dispose()
 
 void LevelEditorView::setHighlightObjectColorEffect(Entity* object)
 {
-	auto red = objectColors[L"red"];
+	auto red = objectColors["red"];
 	object->getEffectColorAdd().set(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f);
 	object->getEffectColorMul().set(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f);
 }
 
 void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 {
-	auto color = objectColors[L"none"];
+	auto color = objectColors["none"];
 	object->getEffectColorAdd().set(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f);
 	object->getEffectColorMul().set(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f);
 	auto levelEditorObject = level->getObjectById(object->getId());
 	if (levelEditorObject == nullptr) return;
-	auto colorProperty = levelEditorObject->getProperty(L"object.color");
-	if (colorProperty == nullptr) colorProperty = levelEditorObject->getEntity()->getProperty(L"object.color");
+	auto colorProperty = levelEditorObject->getProperty("object.color");
+	if (colorProperty == nullptr) colorProperty = levelEditorObject->getEntity()->getProperty("object.color");
 	if (colorProperty != nullptr) {
 		auto objectColorIt = objectColors.find(colorProperty->getValue());
 		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
@@ -826,11 +823,11 @@ void LevelEditorView::updateGrid()
 	auto removedCells = 0;
 	for (auto gridZ = -gridDimensionNear; gridZ < gridDimensionFar; gridZ++) 
 	for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
-		wstring entityId =
-			 L"leveleditor.ground@" +
-			 to_wstring(centerX + gridX) +
-			 L"," +
-			 to_wstring(centerZ + gridZ);
+		string entityId =
+			 "leveleditor.ground@" +
+			 to_string(centerX + gridX) +
+			 "," +
+			 to_string(centerZ + gridZ);
 		auto entity = engine->getEntity(entityId);
 		if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
 			if (entity != nullptr) {
@@ -870,11 +867,11 @@ void LevelEditorView::removeGrid()
 	auto centerZ = static_cast< int32_t >(gridCenterLast.getZ());
 	for (auto gridZ = -GRID_DIMENSION_Y; gridZ < GRID_DIMENSION_Y; gridZ++) 
 	for (auto gridX = -GRID_DIMENSION_X; gridX < GRID_DIMENSION_X; gridX++) {
-		wstring objectId =
-			L"leveleditor.ground@" +
-			to_wstring(centerX + gridX) +
-			L"," +
-			to_wstring(centerZ + gridZ);
+		string objectId =
+			"leveleditor.ground@" +
+			to_string(centerX + gridX) +
+			"," +
+			to_string(centerZ + gridZ);
 		auto _object = engine->getEntity(objectId);
 		if (_object != nullptr) {
 			removedCells++;
@@ -886,13 +883,13 @@ void LevelEditorView::removeGrid()
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model(L"leveleditor.ground", L"leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
-	auto groundPlateMaterial = new Material(L"ground");
+	auto groundPlate = new Model("leveleditor.ground", "leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
+	auto groundPlateMaterial = new Material("ground");
 	groundPlateMaterial->getDiffuseColor().setAlpha(0.75f);
-	groundPlateMaterial->setDiffuseTexture(L"resources/tools/leveleditor/textures", L"groundplate.png");
+	groundPlateMaterial->setDiffuseTexture("resources/tools/leveleditor/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*groundPlate->getMaterials())[L"ground"] = groundPlateMaterial;
-	auto groundGroup = new Group(groundPlate, nullptr, L"ground", L"ground");
+	(*groundPlate->getMaterials())["ground"] = groundPlateMaterial;
+	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
 	groundVertices.push_back(Vector3(0.0f, 0.0f, +groundPlateDepth));
@@ -908,7 +905,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, L"leveleditor.ground.facesentity");
+	FacesEntity groupFacesEntityGround(groundGroup, "leveleditor.ground.facesentity");
 	groupFacesEntityGround.setMaterial(groundPlateMaterial);
 	groupFacesEntityGround.setFaces(&groundFacesGround);
 	vector<FacesEntity> groupFacesEntities;
@@ -923,14 +920,14 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	return groundPlate;
 }
 
-bool LevelEditorView::objectDataApply(const wstring& name, const wstring& description)
+bool LevelEditorView::objectDataApply(const string& name, const string& description)
 {
 	if (selectedEntityIds.size() != 1)
 		return false;
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
 
-	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), L"leveleditor."))
+	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "leveleditor."))
 		return false;
 
 	auto levelEditorObject = level->getObjectById(selectedEntity->getId());
@@ -1003,8 +1000,8 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			}
 		}
 		auto levelEditorObject = new LevelEditorObject(
-			selectedEntity->getName() + L"_" + to_wstring(level->allocateObjectId()),
-			L"",
+			selectedEntity->getName() + "_" + to_string(level->allocateObjectId()),
+			"",
 			levelEditorObjectTransformations,
 			selectedEntity
 		);
@@ -1032,7 +1029,7 @@ void LevelEditorView::removeObject()
 	vector<Entity*> entitiesToRemove;
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), L"leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			level->removeObject(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
@@ -1060,9 +1057,9 @@ void LevelEditorView::colorObject()
 		auto levelEditorObject = level->getObjectById(selectedEntityId);
 		if (levelEditorObject == nullptr) continue;
 		auto color = OBJECTCOLOR_NAMES[0];
-		auto colorProperty = levelEditorObject->getProperty(L"object.color");
+		auto colorProperty = levelEditorObject->getProperty("object.color");
 		if (colorProperty == nullptr) {
-			levelEditorObject->addProperty(L"object.color", color);
+			levelEditorObject->addProperty("object.color", color);
 		} else {
 			color = colorProperty->getValue();
 			for (auto i = 0; i < OBJECTCOLOR_NAMES.size(); i++) {
@@ -1071,10 +1068,10 @@ void LevelEditorView::colorObject()
 					break;
 				}
 			}
-			if (color == L"none") {
-				levelEditorObject->removeProperty(L"object.color");
+			if (color == "none") {
+				levelEditorObject->removeProperty("object.color");
 			} else {
-				levelEditorObject->updateProperty(colorProperty->getName(), L"object.color", color);
+				levelEditorObject->updateProperty(colorProperty->getName(), "object.color", color);
 			}
 		}
 		setStandardObjectColorEffect(selectedEntity);
@@ -1083,10 +1080,10 @@ void LevelEditorView::colorObject()
 
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), L"leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
-			auto preset = levelEditorObject->getProperty(L"preset");
-			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : L"", levelEditorObject, L"");
+			auto preset = levelEditorObject->getProperty("preset");
+			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
 		} else {
 			levelEditorScreenController->unsetObjectProperties();
 		}
@@ -1210,7 +1207,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 	updateGUIElements();
 }
 
-bool LevelEditorView::mapPropertySave(const wstring& oldName, const wstring& name, const wstring& value)
+bool LevelEditorView::mapPropertySave(const string& oldName, const string& name, const string& value)
 {
 	if (level->updateProperty(oldName, name, value) == true) {
 		levelEditorScreenController->setMapProperties(level, name);
@@ -1221,14 +1218,14 @@ bool LevelEditorView::mapPropertySave(const wstring& oldName, const wstring& nam
 
 bool LevelEditorView::mapPropertyAdd()
 {
-	if (level->addProperty(L"new.property", L"new.value")) {
-		levelEditorScreenController->setMapProperties(level, L"new.property");
+	if (level->addProperty("new.property", "new.value")) {
+		levelEditorScreenController->setMapProperties(level, "new.property");
 		return true;
 	}
 	return false;
 }
 
-bool LevelEditorView::mapPropertyRemove(const wstring& name)
+bool LevelEditorView::mapPropertyRemove(const string& name)
 {
 	auto idx = level->getPropertyIndex(name);
 	if (idx != -1 && level->removeProperty(name) == true) {
@@ -1236,13 +1233,13 @@ bool LevelEditorView::mapPropertyRemove(const wstring& name)
 		if (property == nullptr) {
 			property = level->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setMapProperties(level, property == nullptr ? L"" : property->getName());
+		levelEditorScreenController->setMapProperties(level, property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-bool LevelEditorView::objectPropertyRemove(const wstring& name)
+bool LevelEditorView::objectPropertyRemove(const string& name)
 {
 	if (selectedEntityIds.size() != 1) return false;
 
@@ -1257,13 +1254,13 @@ bool LevelEditorView::objectPropertyRemove(const wstring& name)
 		if (property == nullptr) {
 			property = levelEntity->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setObjectProperties(L"", levelEntity, property == nullptr ? L"" : property->getName());
+		levelEditorScreenController->setObjectProperties("", levelEntity, property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-void LevelEditorView::objectPropertiesPreset(const wstring& presetId)
+void LevelEditorView::objectPropertiesPreset(const string& presetId)
 {
 	if (selectedEntityIds.size() != 1) return;
 
@@ -1284,10 +1281,10 @@ void LevelEditorView::objectPropertiesPreset(const wstring& presetId)
 			levelEntity->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
-	levelEditorScreenController->setObjectProperties(presetId, levelEntity, L"");
+	levelEditorScreenController->setObjectProperties(presetId, levelEntity, "");
 }
 
-bool LevelEditorView::objectPropertySave(const wstring& oldName, const wstring& name, const wstring& value)
+bool LevelEditorView::objectPropertySave(const string& oldName, const string& name, const string& value)
 {
 	if (selectedEntityIds.size() != 1) return false;
 
@@ -1297,7 +1294,7 @@ bool LevelEditorView::objectPropertySave(const wstring& oldName, const wstring& 
 	if (levelEntity == nullptr) return false;
 
 	if (levelEntity->updateProperty(oldName, name, value) == true) {
-		levelEditorScreenController->setObjectProperties(L"", levelEntity, name);
+		levelEditorScreenController->setObjectProperties("", levelEntity, name);
 		return true;
 	}
 	return false;
@@ -1312,28 +1309,28 @@ bool LevelEditorView::objectPropertyAdd()
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
 
-	if (levelEntity->addProperty(L"new.property", L"new.value")) {
-		levelEditorScreenController->setObjectProperties(L"", levelEntity, L"new.property");
+	if (levelEntity->addProperty("new.property", "new.value")) {
+		levelEditorScreenController->setObjectProperties("", levelEntity, "new.property");
 		return true;
 	}
 	return false;
 }
 
-void LevelEditorView::loadMap(const wstring& path, const wstring& file)
+void LevelEditorView::loadMap(const string& path, const string& file)
 {
 	engine->reset();
 	selectedEntity = nullptr;
 	try {
-		wstring tlFile = file;
-		if (StringUtils::startsWith(StringUtils::toLowerCase(file), L".dae") == true) {
+		string tlFile = file;
+		if (StringUtils::startsWith(StringUtils::toLowerCase(file), ".dae") == true) {
 			auto daeLevel = DAEReader::readLevel(path, file);
-			tlFile = file + L".tl";
+			tlFile = file + ".tl";
 		}
 		LevelFileImport::doImport(path, tlFile, level);
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}
-		levelEditorScreenController->setMapProperties(level, L"");
+		levelEditorScreenController->setMapProperties(level, "");
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
@@ -1348,20 +1345,20 @@ void LevelEditorView::loadMap(const wstring& path, const wstring& file)
 		updateGUIElements();
 	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
-			L"Warning: Could not load level file",
-			StringConverter::toWideString(string(exception.what()))
+			"Warning: Could not load level file",
+			(string(exception.what()))
 		);
 	}
 }
 
-void LevelEditorView::saveMap(const wstring& pathName, const wstring& fileName)
+void LevelEditorView::saveMap(const string& pathName, const string& fileName)
 {
 	try {
 		LevelFileExport::export_(pathName, fileName, level);
 	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
-			L"Warning: Could not save level file",
-			StringConverter::toWideString(string(exception.what()))
+			"Warning: Could not save level file",
+			(string(exception.what()))
 		);
 	}
 	updateGUIElements();
@@ -1372,7 +1369,7 @@ void LevelEditorView::copyObjects()
 	pasteObjects_.clear();
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), L"leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			pasteObjects_.push_back(levelEntity);
@@ -1430,8 +1427,8 @@ void LevelEditorView::pasteObjects()
 			}
 		}
 		auto levelEditorObject = new LevelEditorObject(
-			pasteModel->getName() + L"_" + to_wstring(level->allocateObjectId()),
-			L"",
+			pasteModel->getName() + "_" + to_string(level->allocateObjectId()),
+			"",
 			levelEditorObjectTransformations,
 			pasteModel
 		 );

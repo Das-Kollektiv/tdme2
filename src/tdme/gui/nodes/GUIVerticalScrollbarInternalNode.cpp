@@ -13,7 +13,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::gui::GUI;
@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
+GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->controller = new GUIVerticalScrollbarInternalController(this);
@@ -34,9 +34,9 @@ GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode
 	this->barColorDragging = barColorDragging;
 }
 
-const wstring GUIVerticalScrollbarInternalNode::getNodeType()
+const string GUIVerticalScrollbarInternalNode::getNodeType()
 {
-	return L"scrollbar";
+	return "scrollbar";
 }
 
 bool GUIVerticalScrollbarInternalNode::isContentNode()

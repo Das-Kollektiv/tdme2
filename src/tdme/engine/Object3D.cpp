@@ -5,13 +5,13 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Object3D;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 
-Object3D::Object3D(const wstring& id, Model* model) :
+Object3D::Object3D(const string& id, Model* model) :
 	Object3DInternal(id, model)
 {
 }
@@ -83,7 +83,7 @@ Color4& Object3D::getEffectColorMul()
 	return Object3DInternal::getEffectColorMul();
 }
 
-const wstring& Object3D::getId()
+const string& Object3D::getId()
 {
 	return Object3DInternal::getId();
 }
@@ -143,7 +143,7 @@ void Object3D::setPickable(bool pickable)
 	Object3DInternal::setPickable(pickable);
 }
 
-Matrix4x4* Object3D::getTransformationsMatrix(const wstring& id)
+Matrix4x4* Object3D::getTransformationsMatrix(const string& id)
 {
 	return Object3DInternal::getTransformationsMatrix(id);
 }

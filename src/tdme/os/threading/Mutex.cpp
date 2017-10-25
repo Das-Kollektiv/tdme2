@@ -7,23 +7,23 @@
 
 using tdme::os::threading::Mutex;
 
-Mutex::Mutex(const wstring& name) {
+Mutex::Mutex(const string& name) {
 	this->name = name;
 	int result = pthread_mutex_init(&pThreadMutex, NULL);
-	PTHREAD_CHECK_ERROR(name, L"Could not init mutex", L"pthread_mutex_init");
+	PTHREAD_CHECK_ERROR(name, "Could not init mutex", "pthread_mutex_init");
 }
 
 Mutex::~Mutex() {
 	int result = pthread_mutex_destroy(&pThreadMutex);
-	PTHREAD_CHECK_ERROR(name, L"Could not destroy mutex", L"pthread_mutex_destroy");
+	PTHREAD_CHECK_ERROR(name, "Could not destroy mutex", "pthread_mutex_destroy");
 }
 
 void Mutex::lock() {
 	int result = pthread_mutex_lock(&pThreadMutex);
-	PTHREAD_CHECK_ERROR(name, L"Could not lock mutex", L"pthread_mutex_lock");
+	PTHREAD_CHECK_ERROR(name, "Could not lock mutex", "pthread_mutex_lock");
 }
 
 void Mutex::unlock() {
 	int result = pthread_mutex_unlock (&pThreadMutex);
-	PTHREAD_CHECK_ERROR(name, L"Could not unlock mutex", L"pthread_mutex_unlock");
+	PTHREAD_CHECK_ERROR(name, "Could not unlock mutex", "pthread_mutex_unlock");
 }

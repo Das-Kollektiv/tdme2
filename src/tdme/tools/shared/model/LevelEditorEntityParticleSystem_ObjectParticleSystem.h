@@ -8,7 +8,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
@@ -44,7 +44,7 @@ private:
 	int32_t maxCount {  };
 	bool autoEmit {  };
 	Model* model {  };
-	wstring modelFileName {  };
+	string modelFileName {  };
 
 public:
 
@@ -89,13 +89,13 @@ public:
 	/** 
 	 * @return model file
 	 */
-	virtual const wstring& getModelFile();
+	virtual const string& getModelFile();
 
 	/** 
 	 * Set model file
 	 * @param model file name
 	 */
-	virtual void setModelFile(const wstring& modelFileName) /* throws(Exception) */;
+	virtual void setModelFile(const string& modelFileName) /* throws(Exception) */;
 
 	/**
 	 * Public constructor

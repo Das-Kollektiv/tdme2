@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
 #include <tdme/engine/Entity.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
 using tdme::engine::Entity;
@@ -53,12 +53,12 @@ public:
 	 * @param max points
 	 * @param auto emit
 	 */
-	PointsParticleSystemEntity(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
+	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 public:
 	virtual void dispose();
 	virtual Color4& getEffectColorAdd();
 	virtual Color4& getEffectColorMul();
-	virtual const wstring& getId();
+	virtual const string& getId();
 	virtual Vector3& getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3& getScale();

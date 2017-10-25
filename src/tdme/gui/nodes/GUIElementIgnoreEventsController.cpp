@@ -23,8 +23,8 @@ GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
-wstring GUIElementIgnoreEventsController::CONDITION_DISABLED= L"disabled";
-wstring GUIElementIgnoreEventsController::CONDITION_ENABLED = L"enabled";
+string GUIElementIgnoreEventsController::CONDITION_DISABLED= "disabled";
+string GUIElementIgnoreEventsController::CONDITION_ENABLED = "enabled";
 
 bool GUIElementIgnoreEventsController::isDisabled()
 {

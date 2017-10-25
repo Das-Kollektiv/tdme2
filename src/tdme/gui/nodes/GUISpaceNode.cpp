@@ -7,7 +7,7 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
@@ -15,14 +15,14 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::utils::StringUtils;
 
-GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
+GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 }
 
-const wstring GUISpaceNode::getNodeType()
+const string GUISpaceNode::getNodeType()
 {
-	return L"space";
+	return "space";
 }
 
 bool GUISpaceNode::isContentNode()
@@ -40,7 +40,7 @@ int32_t GUISpaceNode::getContentHeight()
 	return computedConstraints->height;
 }
 
-GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height)
+GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	auto constraints = new GUINode_RequestedConstraints();
 	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);

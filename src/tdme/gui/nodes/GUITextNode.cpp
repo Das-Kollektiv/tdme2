@@ -12,7 +12,7 @@
 #include <tdme/utils/MutableString.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIFont;
 using tdme::utils::MutableString;
 
-GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, MutableString* text)  /* throws(Exception) */
+GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, MutableString* text)  /* throws(Exception) */
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
@@ -32,9 +32,9 @@ GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, c
 	this->font->initialize();
 }
 
-const wstring GUITextNode::getNodeType()
+const string GUITextNode::getNodeType()
 {
-	return L"text";
+	return "text";
 }
 
 bool GUITextNode::isContentNode()

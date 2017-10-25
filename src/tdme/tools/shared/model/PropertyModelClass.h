@@ -5,7 +5,7 @@
 
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 /** 
  * Property model class
@@ -15,32 +15,32 @@ using std::wstring;
 class tdme::tools::shared::model::PropertyModelClass final
 {
 private:
-	wstring name {  };
-	wstring value {  };
+	string name {  };
+	string value {  };
 
 public:
 
 	/** 
 	 * @return name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/** 
 	 * Set up name 
 	 * @param name
 	 */
-	void setName(const wstring& name);
+	void setName(const string& name);
 
 	/** 
 	 * @return value
 	 */
-	const wstring& getValue();
+	const string& getValue();
 
 	/** 
 	 * Set up value
 	 * @param value
 	 */
-	void setValue(const wstring& value);
+	void setValue(const string& value);
 
 	/** 
 	 * Clones this property model entity
@@ -52,5 +52,5 @@ public:
 	 * @param name
 	 * @param value
 	 */
-	PropertyModelClass(const wstring& name, const wstring& value);
+	PropertyModelClass(const string& name, const string& value);
 };

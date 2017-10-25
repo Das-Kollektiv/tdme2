@@ -29,10 +29,10 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-wstring GUITabController::CONDITION_DISABLED = L"disabled";
-wstring GUITabController::CONDITION_ENABLED = L"enabled";
-wstring GUITabController::CONDITION_SELECTED = L"selected";
-wstring GUITabController::CONDITION_UNSELECTED = L"unselected";
+string GUITabController::CONDITION_DISABLED = "disabled";
+string GUITabController::CONDITION_ENABLED = "enabled";
+string GUITabController::CONDITION_SELECTED = "selected";
+string GUITabController::CONDITION_UNSELECTED = "unselected";
 
 GUITabController::GUITabController(GUINode* node) 
 	: GUINodeController(node)

@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
@@ -43,7 +43,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };
-	wstring particleSystemFile {  };
+	string particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
 public:
@@ -80,17 +80,17 @@ public:
 	/** 
 	 * @return current particle system file name
 	 */
-	virtual const wstring getFileName();
+	virtual const string getFileName();
 
 	/** 
 	 * Issue particle system loading
 	 */
-	virtual void loadFile(const wstring& pathName, const wstring& fileName);
+	virtual void loadFile(const string& pathName, const string& fileName);
 
 	/** 
 	 * Triggers saving a particle system
 	 */
-	virtual void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Issue file reloading
@@ -161,7 +161,7 @@ public: /* protected */
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
 
 public:
 

@@ -2,13 +2,17 @@
 
 #include <string>
 
+#include <tdme/utils/Console.h>
+
+using tdme::utils::Console;
+
 using std::string;
+using std::to_string;
 using std::stoi;
 
 using tdme::utils::Integer;
 
-int Integer::parseInt(const wstring& string) {
-	if (string.length() == 0) return -1;
-	return std::stoi(string);
-
+int Integer::parseInt(const string& str) {
+	if (str.length() == 0) return 0;
+	return stoi(str);
 }

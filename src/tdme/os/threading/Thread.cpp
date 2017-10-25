@@ -9,11 +9,11 @@
 #include "Thread.h"
 #include "ThreadingError.h"
 
-using std::wstring;
+using std::string;
 
 using tdme::os::threading::Thread;
 
-Thread::Thread(const wstring& name): name(name), pThreadCreated(false), stopRequested(false) {
+Thread::Thread(const string& name): name(name), pThreadCreated(false), stopRequested(false) {
 }
 
 Thread::~Thread() {
@@ -31,7 +31,7 @@ void Thread::sleep(const uint64_t milliseconds) {
 void Thread::join() {
 	void* status;
 	int result = pthread_join(pThread, &status);
-	PTHREAD_CHECK_ERROR(name, L"Could not join pthread", L"pthread_join");
+	PTHREAD_CHECK_ERROR(name, "Could not join pthread", "pthread_join");
 }
 
 void Thread::start() {
@@ -43,7 +43,7 @@ void Thread::start() {
 
 	// create thread
 	int result = pthread_create(&pThread, &pThreadAttr, &pThreadRun, (void*)this);
-	PTHREAD_CHECK_ERROR(name, L"Could not create pthread", L"pthread_create");
+	PTHREAD_CHECK_ERROR(name, "Could not create pthread", "pthread_create");
 }
 
 void *Thread::pThreadRun(void *thread) {

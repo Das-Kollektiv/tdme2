@@ -18,7 +18,7 @@
 #include <tdme/utils/MutableString.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::GUI;
@@ -51,13 +51,13 @@ void GUIDropDownController::init()
 	value = new MutableString();
 }
 
-wstring GUIDropDownController::CONDITION_DISABLED = L"disabled";
+string GUIDropDownController::CONDITION_DISABLED = "disabled";
 
-wstring GUIDropDownController::CONDITION_ENABLED = L"enabled";
+string GUIDropDownController::CONDITION_ENABLED = "enabled";
 
-wstring GUIDropDownController::CONDITION_OPENED = L"opened";
+string GUIDropDownController::CONDITION_OPENED = "opened";
 
-wstring GUIDropDownController::CONDITION_CLOSED = L"closed";
+string GUIDropDownController::CONDITION_CLOSED = "closed";
 
 bool GUIDropDownController::isDisabled()
 {
@@ -80,9 +80,9 @@ void GUIDropDownController::setDisabled(bool disabled)
 
 void GUIDropDownController::initialize()
 {
-	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal"));
-	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_arrow"));
-	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_layout_horizontal_element"));
+	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
+	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
+	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
 	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	setDisabled(disabled);

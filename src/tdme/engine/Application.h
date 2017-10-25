@@ -13,7 +13,7 @@
 
 #include "ApplicationInputEventsHandler.h"
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::ApplicationInputEventsHandler;
 
@@ -50,7 +50,7 @@ public:
 	 * @param title
 	 * @param application input event handler
 	 */
-	void run(int argc, char** argv, const wstring& title, ApplicationInputEventsHandler* inputEventHandler = nullptr);
+	void run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler = nullptr);
 
 	/** 
 	 * Init

@@ -5,7 +5,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
@@ -24,9 +24,9 @@ public: /* package */
 	static EntityBoundingVolumeSubScreenController_BoundingVolumeType *BOUNDINGBOX;
 	static EntityBoundingVolumeSubScreenController_BoundingVolumeType *ORIENTEDBOUNDINGBOX;
 	static EntityBoundingVolumeSubScreenController_BoundingVolumeType *CONVEXMESH;
-	EntityBoundingVolumeSubScreenController_BoundingVolumeType(const wstring& name, int ordinal);
+	EntityBoundingVolumeSubScreenController_BoundingVolumeType(const string& name, int ordinal);
 
 public:
-	static EntityBoundingVolumeSubScreenController_BoundingVolumeType* valueOf(const wstring& a0);
+	static EntityBoundingVolumeSubScreenController_BoundingVolumeType* valueOf(const string& a0);
 
 };

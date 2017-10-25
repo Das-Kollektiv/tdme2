@@ -3,23 +3,25 @@
 
 #include <tdme/utils/StringTokenizer.h>
 
+using std::string;
+
 using tdme::utils::StringTokenizer;
 
 StringTokenizer::StringTokenizer() {
 }
 
-void StringTokenizer::tokenize(const wstring& str, const wstring& delimiters)
+void StringTokenizer::tokenize(const string& str, const string& delimiters)
 {
 	idx = 0;
 	elements.clear();
-	wstring token;
+	string token;
 	for (int i = 0; i < str.length(); i++) {
 		// got a delimiter?
 		if (delimiters.find(str[i]) != -1) {
 			// yep, add token to elements if we have any
 			if (token.length() > 0) {
 				elements.push_back(token);
-				token = L"";
+				token = "";
 			}
 		} else {
 			// no delimiter, add char to token
@@ -29,7 +31,7 @@ void StringTokenizer::tokenize(const wstring& str, const wstring& delimiters)
 	// do we have a token still? add it to elements
 	if (token.length() > 0) {
 		elements.push_back(token);
-		token = L"";
+		token = "";
 	}
 }
 
@@ -43,7 +45,7 @@ bool StringTokenizer::hasMoreTokens()
 	return idx != elements.size();;
 }
 
-const wstring& StringTokenizer::nextToken()
+const string& StringTokenizer::nextToken()
 {
 	return elements[idx++];
 }

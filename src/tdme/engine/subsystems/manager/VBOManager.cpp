@@ -8,7 +8,7 @@
 #include <tdme/utils/Console.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -26,7 +26,7 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const wstring& vboId, int32_t ids)
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
 {
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
@@ -41,7 +41,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const wstring& vboId, int32_t ids)
 	return vboManaged;
 }
 
-void VBOManager::removeVBO(const wstring& vboId)
+void VBOManager::removeVBO(const string& vboId)
 {
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
@@ -54,5 +54,5 @@ void VBOManager::removeVBO(const wstring& vboId)
 		}
 		return;
 	}
-	Console::println(wstring(L"Warning: vbo not managed by vbo manager"));
+	Console::println(string("Warning: vbo not managed by vbo manager"));
 }

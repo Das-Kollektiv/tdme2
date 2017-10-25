@@ -16,30 +16,29 @@ using std::string;
 using std::transform;
 using std::tolower;
 using std::toupper;
-using std::wstring;
-using std::wregex;
-
+using std::string;
+using std::regex;
 
 using tdme::utils::StringUtils;
 
-const bool StringUtils::startsWith(const wstring& src, const wstring& prefix) {
+const bool StringUtils::startsWith(const string& src, const string& prefix) {
     return src.find(prefix) == 0;
 }
 
-const bool StringUtils::endsWith(const wstring& src, const wstring& suffix) {
+const bool StringUtils::endsWith(const string& src, const string& suffix) {
 	return
 		src.size() >= suffix.size() &&
 		src.compare(src.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-const wstring StringUtils::replace(const wstring& string, const wchar_t& what, const wchar_t& by) {
-	wstring result = string;
+const string StringUtils::replace(const string& src, const char what, const char by) {
+	string result = src;
 	std::replace(result.begin(), result.end(), what, by);
 	return result;
 }
 
-const wstring StringUtils::replace(const wstring& string, const wstring& what, const wstring& by) {
-	wstring result = string;
+const string StringUtils::replace(const string& src, const string& what, const string& by) {
+	string result = src;
 	if (what.empty()) return result;
 	size_t start_pos = 0;
 	while ((start_pos = result.find(what, start_pos)) != std::string::npos) {
@@ -49,28 +48,28 @@ const wstring StringUtils::replace(const wstring& string, const wstring& what, c
 	return result;
 }
 
-int32_t StringUtils::lastIndexOf(const wstring& string, wchar_t what) {
-	return string.find_last_of(what);
+int32_t StringUtils::lastIndexOf(const string& src, char what) {
+	return src.find_last_of(what);
 }
 
-const wstring StringUtils::substring(const wstring& string, int32_t beginIndex) {
-	return string.substr(beginIndex);
+const string StringUtils::substring(const string& src, int32_t beginIndex) {
+	return src.substr(beginIndex);
 }
 
-const wstring StringUtils::substring(const wstring& string, int32_t beginIndex, int32_t endIndex) {
-	return string.substr(beginIndex, endIndex - beginIndex);
+const string StringUtils::substring(const string& src, int32_t beginIndex, int32_t endIndex) {
+	return src.substr(beginIndex, endIndex - beginIndex);
 }
 
-bool StringUtils::equalsIgnoreCase(const wstring& string1, const wstring& string2) {
-	wstring stringA = string1;
-	wstring stringB = string2;
+bool StringUtils::equalsIgnoreCase(const string& string1, const string& string2) {
+	string stringA = string1;
+	string stringB = string2;
 	transform(stringA.begin(), stringA.end(), stringA.begin(), (int(*)(int))toupper);
 	transform(stringB.begin(), stringB.end(), stringB.begin(), (int(*)(int))toupper);
 	return stringA == stringB;
 }
 
-const wstring StringUtils::trim(const wstring& string) {
-	wstring result = string;
+const string StringUtils::trim(const string& src) {
+	string result = src;
 	result.erase(
 		result.begin(),
 		find_if(result.begin(), result.end(), not1(std::ptr_fun<int, int>(std::isspace)))
@@ -82,22 +81,22 @@ const wstring StringUtils::trim(const wstring& string) {
 	return result;
 }
 
-const wstring StringUtils::toLowerCase(const wstring& string) {
-	wstring result = string;
+const string StringUtils::toLowerCase(const string& src) {
+	string result = src;
 	transform(result.begin(), result.end(), result.begin(), (int(*)(int))tolower);
 	return result;
 }
 
-const wstring StringUtils::toUpperCase(const wstring& string) {
-	wstring result = string;
+const string StringUtils::toUpperCase(const string& src) {
+	string result = src;
 	transform(result.begin(), result.end(), result.begin(), (int(*)(int))toupper);
 	return result;
 }
 
-bool StringUtils::matches(const wstring& string, const wstring& pattern) {
-	return regex_match(string, wregex(pattern));
+bool StringUtils::matches(const string& src, const string& pattern) {
+	return regex_match(src, regex(pattern));
 }
 
-const wstring StringUtils::replaceAll(const wstring& string, const wstring& pattern, const wstring& by) {
-	return regex_replace(string, wregex(pattern), by);
+const string StringUtils::replaceAll(const string& src, const string& pattern, const string& by) {
+	return regex_replace(src, regex(pattern), by);
 }

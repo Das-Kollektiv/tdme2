@@ -17,7 +17,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
@@ -41,13 +41,13 @@ class tdme::engine::subsystems::object::Object3DBase
 
 public: /* protected */
 	Model* model {  };
-	map<wstring, Matrix4x4*> transformationsMatrices {  };
+	map<string, Matrix4x4*> transformationsMatrices {  };
 	bool hasSkinning {  };
-	vector<map<wstring, Matrix4x4*>> skinningGroupsMatrices {  };
+	vector<map<string, Matrix4x4*>> skinningGroupsMatrices {  };
 	vector<Group*> skinningGroups {  };
 	AnimationState baseAnimation {  };
-	map<wstring, AnimationState*> overlayAnimationsById {  };
-	map<wstring, AnimationState*> overlayAnimationsByJointId {  };
+	map<string, AnimationState*> overlayAnimationsById {  };
+	map<string, AnimationState*> overlayAnimationsByJointId {  };
 	vector<Object3DGroup*> object3dGroups {  };
 	bool recreateBuffers {  };
 	bool usesMeshManager {  };
@@ -67,19 +67,19 @@ public:
 	 * Sets up a base animation to play
 	 * @param id
 	 */
-	virtual void setAnimation(const wstring& id);
+	virtual void setAnimation(const string& id);
 
 	/** 
 	 * Overlays a animation above the base animation
 	 * @param id
 	 */
-	virtual void addOverlayAnimation(const wstring& id);
+	virtual void addOverlayAnimation(const string& id);
 
 	/** 
 	 * Removes a overlay animation
 	 * @param id
 	 */
-	virtual void removeOverlayAnimation(const wstring& id);
+	virtual void removeOverlayAnimation(const string& id);
 
 	/** 
 	 * Removes all finished overlay animations
@@ -94,7 +94,7 @@ public:
 	/** 
 	 * @return active animation setup id
 	 */
-	virtual const wstring getAnimation();
+	virtual const string getAnimation();
 
 	/** 
 	 * Returns current base animation time 
@@ -107,21 +107,21 @@ public:
 	 * @param id
 	 * @return animation is running
 	 */
-	virtual bool hasOverlayAnimation(const wstring& id);
+	virtual bool hasOverlayAnimation(const string& id);
 
 	/** 
 	 * Returns current overlay animation time
 	 * @param id 
 	 * @return 0.0 <= time <= 1.0
 	 */
-	virtual float getOverlayAnimationTime(const wstring& id);
+	virtual float getOverlayAnimationTime(const string& id);
 
 	/** 
 	 * Returns transformation matrix for given group
 	 * @param group id
 	 * @return transformation matrix or null
 	 */
-	virtual Matrix4x4* getTransformationsMatrix(const wstring& id);
+	virtual Matrix4x4* getTransformationsMatrix(const string& id);
 
 public: /* protected */
 
@@ -130,7 +130,7 @@ public: /* protected */
 	 * @param matrices
 	 * @param groups
 	 */
-	virtual void createTransformationsMatrices(map<wstring, Matrix4x4*>* matrices, map<wstring, Group*>* groups);
+	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups);
 
 	/** 
 	 * Calculates all groups transformation matrices
@@ -139,7 +139,7 @@ public: /* protected */
 	 * @param animation state
 	 * @param depth
 	 */
-	virtual void computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
+	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
 
 public:
 
@@ -167,7 +167,7 @@ public:
 	 * @param group id
 	 * @return object3d group mesh object
 	 */
-	virtual Object3DGroupMesh* getMesh(const wstring& groupId);
+	virtual Object3DGroupMesh* getMesh(const string& groupId);
 
 private:
 
@@ -176,14 +176,14 @@ private:
 	 * @param groups
 	 * @param current count
 	 */
-	int32_t determineSkinnedGroupCount(map<wstring, Group*>* groups);
+	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
 
 	/** 
 	 * Determine skinned group count
 	 * @param groups
 	 * @param current count
 	 */
-	int32_t determineSkinnedGroupCount(map<wstring, Group*>*, int32_t count);
+	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count);
 
 	/** 
 	 * Determine skinned groups
@@ -191,7 +191,7 @@ private:
 	 * @param skinning groups
 	 * @param idx
 	 */
-	int32_t determineSkinnedGroups(map<wstring, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
 
 public: /* protected */
 
@@ -200,7 +200,7 @@ public: /* protected */
 	 * @param group
 	 * @return matrices
 	 */
-	virtual map<wstring, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
+	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
 
 public:
 

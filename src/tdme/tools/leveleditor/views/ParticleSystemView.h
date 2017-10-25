@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -27,7 +27,7 @@ public:
 	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
 public: /* protected */
-	LevelEditorEntity* loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */ override;
+	LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */ override;
 
 public:
 	void onInitAdditionalScreens() override;

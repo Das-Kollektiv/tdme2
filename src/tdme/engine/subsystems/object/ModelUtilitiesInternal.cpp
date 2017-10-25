@@ -21,7 +21,7 @@
 #include "ModelStatistics.h"
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::ModelUtilitiesInternal;
 using tdme::engine::Timing;
@@ -99,7 +99,7 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 	invertNormals(model->getSubGroups());
 }
 
-void ModelUtilitiesInternal::invertNormals(map<wstring, Group*>* groups)
+void ModelUtilitiesInternal::invertNormals(map<string, Group*>* groups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -118,7 +118,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistic
 
 void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
 {
-	map<wstring, int32_t> materialCountById;
+	map<string, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
 	for (auto object3DGroup : object3DModelInternal->object3dGroups) {
@@ -134,7 +134,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 					transparentFacesEntity = true;
 
 			}
-			auto materialId = material == nullptr ? L"tdme.material.none" : material->getId();
+			auto materialId = material == nullptr ? "tdme.material.none" : material->getId();
 			materialCountById[materialId]++;
 			if (transparentFacesEntity == true) {
 				transparentFaceCount += faces;

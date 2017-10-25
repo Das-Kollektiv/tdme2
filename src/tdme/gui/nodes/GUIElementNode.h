@@ -7,7 +7,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -32,16 +32,16 @@ class tdme::gui::nodes::GUIElementNode final
 {
 
 public: /* protected */
-	static wstring CONDITION_ALWAYS;
-	static wstring CONDITION_ONMOUSEOVER;
-	static wstring CONDITION_CLICK;
+	static string CONDITION_ALWAYS;
+	static string CONDITION_ONMOUSEOVER;
+	static string CONDITION_CLICK;
 
 public:
-	static wstring CONDITION_FOCUS;
+	static string CONDITION_FOCUS;
 
 public: /* protected */
-	wstring name {  };
-	wstring value {  };
+	string name {  };
+	string value {  };
 	bool selected {  };
 	bool disabled {  };
 	GUINodeConditions* activeConditions {  };
@@ -53,7 +53,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	const wstring getNodeType() override;
+	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
@@ -86,12 +86,12 @@ public:
 	/** 
 	 * @return name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/** 
 	 * @return value
 	 */
-	const wstring& getValue();
+	const string& getValue();
 
 	/** 
 	 * @return is selected
@@ -110,7 +110,7 @@ public:
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
-	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& name, const wstring& value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
+	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
 
 private:
 	void init();

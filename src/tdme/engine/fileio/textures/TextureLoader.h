@@ -11,7 +11,7 @@
 #include <ext/libpng/png.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystemException;
@@ -80,7 +80,7 @@ public:
 	 * @throws FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException);
+	static Texture* loadTexture(const string& path, const string& fileName) throw (FileSystemException);
 
 private:
 	/**
@@ -96,5 +96,5 @@ private:
 	 * @param path name
 	 * @param file name
 	 */
-	static Texture* loadPNG(const wstring& path, const wstring& fileName) throw (FileSystemException);
+	static Texture* loadPNG(const string& path, const string& fileName) throw (FileSystemException);
 };

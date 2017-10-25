@@ -12,7 +12,7 @@
 
 using std::array;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -43,7 +43,7 @@ class tdme::gui::nodes::GUINode
 public: /* protected */
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
-	wstring id {  };
+	string id {  };
 	GUINode_Flow* flow {  };
 	GUINode_Alignments* alignments {  };
 	GUINode_RequestedConstraints* requestedConstraints {  };
@@ -61,7 +61,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	virtual const wstring getNodeType() = 0;
+	virtual const string getNodeType() = 0;
 
 public:
 
@@ -78,7 +78,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	virtual const wstring& getId();
+	virtual const string& getId();
 
 public: /* protected */
 
@@ -170,7 +170,7 @@ public:
 	 * @param vertical
 	 * @return alignments
 	 */
-	static GUINode_Alignments* createAlignments(const wstring& horizontal, const wstring& vertical);
+	static GUINode_Alignments* createAlignments(const string& horizontal, const string& vertical);
 
 	/** 
 	 * Create requested constraints
@@ -180,7 +180,7 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height);
+	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 public: /* protected */
 
@@ -190,7 +190,7 @@ public: /* protected */
 	 * @param default constraints type
 	 * @return requested constraints type
 	 */
-	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const wstring& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
+	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const string& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
 
 	/** 
 	 * Get requested constraints value
@@ -198,7 +198,7 @@ public: /* protected */
 	 * @param default constraints value
 	 * @return requested constraints value
 	 */
-	static int32_t getRequestedConstraintsValue(const wstring& constraint, int32_t defaultConstraintsValue);
+	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
 
 	/** 
 	 * Get requested pixel value
@@ -206,7 +206,7 @@ public: /* protected */
 	 * @param default value
 	 * @return value
 	 */
-	static int32_t getRequestedPixelValue(const wstring& value, int32_t defaultValue);
+	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
 
 public:
 
@@ -216,14 +216,14 @@ public:
 	 * @param default color
 	 * @return value
 	 */
-	static GUIColor* getRequestedColor(const wstring& color, GUIColor* defaultColor) /* throws(GUIParserException) */;
+	static GUIColor* getRequestedColor(const string& color, GUIColor* defaultColor) /* throws(GUIParserException) */;
 
 	/** 
 	 * Create flow
 	 * @param flow
 	 * @return flow
 	 */
-	static GUINode_Flow* createFlow(const wstring& flow);
+	static GUINode_Flow* createFlow(const string& flow);
 
 	/** 
 	 * Create border
@@ -239,7 +239,7 @@ public:
 	 * @param bottom color
 	 * @return border
 	 */
-	static GUINode_Border* createBorder(const wstring& allBorder, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom, const wstring& allBorderColor, const wstring& leftColor, const wstring& topColor, const wstring& rightColor, const wstring& bottomColor) /* throws(GUIParserException) */;
+	static GUINode_Border* createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) /* throws(GUIParserException) */;
 
 	/** 
 	 * Create padding
@@ -250,13 +250,13 @@ public:
 	 * @param bottom
 	 * @return padding
 	 */
-	static GUINode_Padding* createPadding(const wstring& allPadding, const wstring& left, const wstring& top, const wstring& right, const wstring& bottom) /* throws(GUIParserException) */;
+	static GUINode_Padding* createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) /* throws(GUIParserException) */;
 
 	/** 
 	 * Create conditions
 	 * @param conditions
 	 */
-	static GUINodeConditions* createConditions(const wstring& conditions);
+	static GUINodeConditions* createConditions(const string& conditions);
 
 public: /* protected */
 
@@ -383,11 +383,11 @@ public: /* protected */
 	 * @param ident
 	 * @return indented string
 	 */
-	virtual const wstring indent(int32_t indent);
+	virtual const string indent(int32_t indent);
 
 public: /* protected */
 
-	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 private:
 	friend class GUINode_Flow;

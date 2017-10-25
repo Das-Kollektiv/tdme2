@@ -5,7 +5,7 @@
 
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 
 /** 
@@ -16,23 +16,23 @@ using std::wstring;
 class tdme::tools::shared::controller::FileDialogPath
 {
 private:
-	wstring path {  };
+	string path {  };
 
 public:
 
 	/** 
 	 * @return path
 	 */
-	virtual const wstring& getPath();
+	virtual const string& getPath();
 
 	/** 
 	 * Set path
 	 * @param path
 	 */
-	virtual void setPath(const wstring& path);
+	virtual void setPath(const string& path);
 
 	/**
 	 * Public constructor
 	 */
-	FileDialogPath(const wstring& path);
+	FileDialogPath(const string& path);
 };

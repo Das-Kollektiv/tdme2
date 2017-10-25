@@ -8,14 +8,14 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
 
-ObjectParticleSystemEntity::ObjectParticleSystemEntity(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
+ObjectParticleSystemEntity::ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
 	ObjectParticleSystemEntityInternal(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter)
 {
 }
@@ -95,7 +95,7 @@ Color4& ObjectParticleSystemEntity::getEffectColorMul()
 	return ObjectParticleSystemEntityInternal::getEffectColorMul();
 }
 
-const wstring& ObjectParticleSystemEntity::getId()
+const string& ObjectParticleSystemEntity::getId()
 {
 	return ObjectParticleSystemEntityInternal::getId();
 }

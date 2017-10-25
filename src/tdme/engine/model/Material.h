@@ -7,7 +7,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
@@ -20,7 +20,7 @@ using tdme::engine::model::Color4;
 class tdme::engine::model::Material final
 {
 private:
-	static wstring defaultMaterialId;
+	static string defaultMaterialId;
 	static Material* defaultMaterial;
 
 public:
@@ -31,24 +31,24 @@ public:
 	static Material* getDefaultMaterial();
 
 private:
-	wstring id {  };
+	string id {  };
 	Color4 ambientColor {  };
 	Color4 diffuseColor {  };
 	Color4 specularColor {  };
 	Color4 emissionColor {  };
 	float shininess {  };
-	wstring diffuseTexturePathName {  };
-	wstring diffuseTextureFileName {  };
+	string diffuseTexturePathName {  };
+	string diffuseTextureFileName {  };
 	Texture* diffuseTexture {  };
 	bool diffuseTextureTransparency {  };
-	wstring specularTexturePathName {  };
-	wstring specularTextureFileName {  };
+	string specularTexturePathName {  };
+	string specularTextureFileName {  };
 	Texture* specularTexture {  };
-	wstring normalTexturePathName {  };
-	wstring normalTextureFileName {  };
+	string normalTexturePathName {  };
+	string normalTextureFileName {  };
 	Texture* normalTexture {  };
-	wstring displacementTexturePathName {  };
-	wstring displacementTextureFileName {  };
+	string displacementTexturePathName {  };
+	string displacementTextureFileName {  };
 	Texture* displacementTexture {  };
 
 public:
@@ -56,7 +56,7 @@ public:
 	/** 
 	 * @return material id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return ambient color
@@ -92,12 +92,12 @@ public:
 	/** 
 	 * @return diffuse texture path name
 	 */
-	const wstring& getDiffuseTexturePathName();
+	const string& getDiffuseTexturePathName();
 
 	/** 
 	 * @return diffuse texture file name
 	 */
-	const wstring& getDiffuseTextureFileName();
+	const string& getDiffuseTextureFileName();
 
 	/** 
 	 * Set up a diffuse texture
@@ -105,7 +105,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setDiffuseTexture(const wstring& pathName, const wstring& fileName);
+	void setDiffuseTexture(const string& pathName, const string& fileName);
 
 	/** 
 	 * @return if material has a diffuse texture
@@ -134,12 +134,12 @@ public:
 	/** 
 	 * @return specular texture path name
 	 */
-	const wstring& getSpecularTexturePathName();
+	const string& getSpecularTexturePathName();
 
 	/** 
 	 * @return specular texture file name
 	 */
-	const wstring& getSpecularTextureFileName();
+	const string& getSpecularTextureFileName();
 
 	/** 
 	 * Set up a specular texture
@@ -147,7 +147,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setSpecularTexture(const wstring& pathName, const wstring& fileName);
+	void setSpecularTexture(const string& pathName, const string& fileName);
 
 	/** 
 	 * @return if material has a specular texture
@@ -162,12 +162,12 @@ public:
 	/** 
 	 * @return normal texture path name
 	 */
-	const wstring& getNormalTexturePathName();
+	const string& getNormalTexturePathName();
 
 	/** 
 	 * @return normal texture file name
 	 */
-	const wstring& getNormalTextureFileName();
+	const string& getNormalTextureFileName();
 
 	/** 
 	 * Set up a normal texture
@@ -175,7 +175,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setNormalTexture(const wstring& pathName, const wstring& fileName);
+	void setNormalTexture(const string& pathName, const string& fileName);
 
 	/** 
 	 * @return if material has a normal texture
@@ -190,12 +190,12 @@ public:
 	/** 
 	 * @return displacement texture path name
 	 */
-	const wstring& getDisplacementTexturePathName();
+	const string& getDisplacementTexturePathName();
 
 	/** 
 	 * @return displacement texture file name
 	 */
-	const wstring& getDisplacementTextureFileName();
+	const string& getDisplacementTextureFileName();
 
 	/** 
 	 * Set up a displacement texture
@@ -203,7 +203,7 @@ public:
 	 * @param file name
 	 * @throws IOException
 	 */
-	void setDisplacementTexture(const wstring& pathName, const wstring& fileName);
+	void setDisplacementTexture(const string& pathName, const string& fileName);
 
 	/** 
 	 * @return if material has a displacement texture
@@ -224,7 +224,7 @@ public:
 	 * Public constructor
 	 * @param id
 	 */
-	Material(const wstring& id);
+	Material(const string& id);
 
 	/**
 	 * Destructor

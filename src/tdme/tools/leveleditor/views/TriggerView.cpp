@@ -20,7 +20,6 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
@@ -45,7 +44,6 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
@@ -89,11 +87,11 @@ void TriggerView::initModel()
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	auto model = engine->getEntity(L"model");
-	auto ground = engine->getEntity(L"ground");
+	auto model = engine->getEntity("model");
+	auto ground = engine->getEntity("ground");
 	model->setDynamicShadowingEnabled(false);
 	ground->setEnabled(false);
-	auto modelBoundingVolume = engine->getEntity(L"model_bv");
+	auto modelBoundingVolume = engine->getEntity("model_bv");
 	if (modelBoundingVolume != nullptr) {
 		modelBoundingVolume->setEnabled(false);
 	}
@@ -119,16 +117,16 @@ void TriggerView::display()
 void TriggerView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		triggerScreenController->setScreenCaption(L"Trigger - " + entity->getName());
-		auto preset = entity->getProperty(L"preset");
-		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
+		triggerScreenController->setScreenCaption("Trigger - " + entity->getName());
+		auto preset = entity->getProperty("preset");
+		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		Vector3 dimension;
 		dimension.set(entity->getModel()->getBoundingBox()->getMax());
 		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
 		triggerScreenController->setTrigger(dimension.getX(), dimension.getY(), dimension.getZ());
 	} else {
-		triggerScreenController->setScreenCaption(L"Trigger - no trigger loaded");
+		triggerScreenController->setScreenCaption("Trigger - no trigger loaded");
 		triggerScreenController->unsetEntityProperties();
 		triggerScreenController->unsetEntityData();
 		triggerScreenController->unsetTrigger();
@@ -154,8 +152,8 @@ void TriggerView::triggerApply(float width, float height, float depth)
 		updateGUIElements();
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show(
-			L"Error",
-			L"An error occurred: " + StringConverter::toWideString(string(exception.what()))
+			"Error",
+			"An error occurred: " + (string(exception.what()))
 		);
 	}
 }

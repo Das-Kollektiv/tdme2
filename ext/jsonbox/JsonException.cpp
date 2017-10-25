@@ -9,7 +9,7 @@
 using tdme::ext::jsonbox::JsonException;
 using tdme::utils::ExceptionBase;
 
-using std::wstring;
+using std::string;
 
 JsonException::JsonException(const string& message) throw() : ExceptionBase(message) {
 }

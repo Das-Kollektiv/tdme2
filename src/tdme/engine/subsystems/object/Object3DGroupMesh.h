@@ -17,7 +17,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
@@ -71,7 +71,7 @@ public: /* protected */
 	 * @param skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices,map<wstring, Matrix4x4*>* skinningMatrices);
+	static Object3DGroupMesh* createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices);
 
 	/** 
 	 * Computes mesh transformations

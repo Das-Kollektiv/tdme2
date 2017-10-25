@@ -42,8 +42,8 @@
 #include <tdme/utils/Exception.h>
 
 using std::array;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::tools::shared::tools::Tools;
 using tdme::engine::Camera;
@@ -90,96 +90,96 @@ Transformations* Tools::oseLookFromRotations = nullptr;
 
 float Tools::oseScale = 0.75f;
 
-wstring Tools::formatFloat(float value)
+string Tools::formatFloat(float value)
 {
-	wstring floatString = to_wstring(value);
+	string floatString = to_string(value);
 	return floatString.substr(0, floatString.length() - 3);
 }
 
-wstring Tools::formatVector3(const Vector3& value)
+string Tools::formatVector3(const Vector3& value)
 {
 	return
 		formatFloat(value.getX()) +
-		L", " +
+		", " +
 		formatFloat(value.getY()) +
-		L", " +
+		", " +
 		formatFloat(value.getZ());
 }
 
-wstring Tools::formatColor4(const Color4& value)
+string Tools::formatColor4(const Color4& value)
 {
 	return
 		formatFloat(value.getRed()) +
-		L", " +
+		", " +
 		formatFloat(value.getGreen()) +
-		L", " +
+		", " +
 		formatFloat(value.getBlue()) +
-		L", " +
+		", " +
 		formatFloat(value.getAlpha());
 }
 
-void Tools::convertToArray(const wstring& text, array<float, 3>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const string& text, array<float, 3>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text, L",");
+	t.tokenize(text, ",");
 	while (t.hasMoreTokens() && i < array.size()) {
 		array[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-void Tools::convertToArray(const wstring& text, array<float, 4>* array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const string& text, array<float, 4>* array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text, L",");
+	t.tokenize(text, ",");
 	while (t.hasMoreTokens() && i < array->size()) {
 		(*array)[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-void Tools::convertToArray(const wstring& text, array<float, 4>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
 	StringTokenizer t;
-	t.tokenize(text, L",");
+	t.tokenize(text, ",");
 	while (t.hasMoreTokens() && i < array.size()) {
 		array[i++] = Float::parseFloat(t.nextToken());
 	}
 }
 
-Vector3 Tools::convertToVector3(const wstring& text) /* throws(NumberFormatException) */
+Vector3 Tools::convertToVector3(const string& text) /* throws(NumberFormatException) */
 {
 	Vector3 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Vector4 Tools::convertToVector4(const wstring& text) /* throws(NumberFormatException) */
+Vector4 Tools::convertToVector4(const string& text) /* throws(NumberFormatException) */
 {
 	Vector4 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Color4 Tools::convertToColor4(const wstring& text) /* throws(NumberFormatException) */
+Color4 Tools::convertToColor4(const string& text) /* throws(NumberFormatException) */
 {
 	Color4 color;
 	convertToArray(text, color.getArray());
 	return color;
 }
 
-float Tools::convertToFloat(const wstring& text) /* throws(NumberFormatException) */
+float Tools::convertToFloat(const string& text) /* throws(NumberFormatException) */
 {
 	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(const wstring& text) /* throws(NumberFormatException) */
+int32_t Tools::convertToInt(const string& text) /* throws(NumberFormatException) */
 {
 	return Integer::parseInt(text);
 }
 
-int32_t Tools::convertToIntSilent(const wstring& text)
+int32_t Tools::convertToIntSilent(const string& text)
 {
 	try {
 		return Integer::parseInt(text);
@@ -231,7 +231,7 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 	// osEngine->makeScreenshot(u"tmp"_j, model->getThumbnail());
 	osEngine->getSceneColor().set(0.8f, 0.0f, 0.0f, 1.0f);
 	osEngine->display();
-	// osEngine->makeScreenshot(u"tmp"_j, L"selected_" + model->getThumbnail());
+	// osEngine->makeScreenshot(u"tmp"_j, "selected_" + model->getThumbnail());
 	osEngine->reset();
 }
 
@@ -247,11 +247,11 @@ float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
 
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
-	auto ground = new Model(L"ground", L"ground", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto groundMaterial = new Material(L"ground");
+	auto ground = new Model("ground", "ground", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto groundMaterial = new Material("ground");
 	groundMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*ground->getMaterials())[L"ground"] = groundMaterial;
-	auto groundGroup = new Group(ground, nullptr, L"ground", L"ground");
+	(*ground->getMaterials())["ground"] = groundMaterial;
+	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(-width, y, -depth));
 	groundVertices.push_back(Vector3(-width, y, +depth));
@@ -267,7 +267,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, L"ground group faces entity ground");
+	FacesEntity groupFacesEntityGround(groundGroup, "ground group faces entity ground");
 	groupFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntityGround.setFaces(&groundFacesGround);
@@ -276,8 +276,8 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundGroup->setNormals(&groundNormals);
 	groundGroup->setTextureCoordinates(&groundTextureCoordinates);
 	groundGroup->setFacesEntities(&groupFacesEntities);
-	(*ground->getGroups())[L"ground"] = groundGroup;
-	(*ground->getSubGroups())[L"ground"] = groundGroup;
+	(*ground->getGroups())["ground"] = groundGroup;
+	(*ground->getSubGroups())["ground"] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(ground);
 	return ground;
 }
@@ -290,18 +290,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	BoundingBox* entityBoundingBox = nullptr;
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
-		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), L"model", true);
+		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
 		if (particleSystemObject != nullptr) {
 			engine->addEntity(particleSystemObject);
 		}
 	} else {
 		entityBoundingBox = entity->getModel()->getBoundingBox();
-		auto modelObject = new Object3D(L"model", entity->getModel());
+		auto modelObject = new Object3D("model", entity->getModel());
 		modelObject->setDynamicShadowingEnabled(true);
 		engine->addEntity(modelObject);
 	}
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - MathTools::EPSILON);
-	auto groundObject = new Object3D(L"ground", ground);
+	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
@@ -310,7 +310,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 			continue;
 
 		auto modelBoundingVolumeObject = new Object3D(
-			L"model_bv." + to_wstring(i),
+			"model_bv." + to_string(i),
 			boundingVolume->getModel());
 		modelBoundingVolumeObject->setEnabled(false);
 		engine->addEntity(modelBoundingVolumeObject);
@@ -347,18 +347,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	cam->getUpVector().set(upVector);
 }
 
-const wstring Tools::getRelativeResourcesFileName(const wstring& gameRoot, const wstring& fileName)
+const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
 {
 	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
-		cutFileNameIdx = fileName.rfind(L"/resources/");
+		cutFileNameIdx = fileName.rfind("/resources/");
 		if (cutFileNameIdx != -1) {
 			newFileName = StringUtils::substring(fileName, cutFileNameIdx + 1);
 		}
 	}
 	if (cutFileNameIdx == -1) {
-		cutFileNameIdx = fileName.rfind(L"resources/");
+		cutFileNameIdx = fileName.rfind("resources/");
 		if (cutFileNameIdx != -1) {
 			newFileName = StringUtils::substring(fileName, cutFileNameIdx);
 		}
@@ -366,18 +366,18 @@ const wstring Tools::getRelativeResourcesFileName(const wstring& gameRoot, const
 	return newFileName;
 }
 
-const wstring Tools::getGameRootPath(const wstring& fileName)
+const string Tools::getGameRootPath(const string& fileName)
 {
 	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
-		filesRootIdx = fileName.rfind(L"/resources/");
+		filesRootIdx = fileName.rfind("/resources/");
 		if (filesRootIdx != -1)
 			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
 
 	}
 	if (filesRootIdx == -1) {
-		filesRootIdx = fileName.rfind(L"resources/");
+		filesRootIdx = fileName.rfind("resources/");
 		if (filesRootIdx != -1)
 			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
 
@@ -385,12 +385,12 @@ const wstring Tools::getGameRootPath(const wstring& fileName)
 	return newFileName;
 }
 
-const wstring Tools::getPath(const wstring& fileName)
+const string Tools::getPath(const string& fileName)
 {
 	return FileSystem::getInstance()->getPathName(fileName);
 }
 
-const wstring Tools::getFileName(const wstring& fileName)
+const string Tools::getFileName(const string& fileName)
 {
 	return FileSystem::getInstance()->getFileName(fileName);
 }

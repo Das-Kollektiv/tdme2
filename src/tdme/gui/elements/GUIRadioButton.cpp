@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIRadioButtonController;
@@ -21,26 +21,26 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIRadioButton::GUIRadioButton() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"radiobutton.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "radiobutton.xml");
 }
 
-wstring GUIRadioButton::NAME = L"radiobutton";
+string GUIRadioButton::NAME = "radiobutton";
 
-const wstring& GUIRadioButton::getName()
+const string& GUIRadioButton::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIRadioButton::getTemplate()
+const string& GUIRadioButton::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"name"] = L"";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["name"] = "";
 	return &attributes;
 }
 

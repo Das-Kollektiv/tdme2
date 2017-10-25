@@ -16,7 +16,7 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 using tdme::engine::model::Face;

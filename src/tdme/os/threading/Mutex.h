@@ -8,7 +8,7 @@
 
 #include "Condition.h"
 
-using std::wstring;
+using std::string;
 
 using tdme::os::threading::Condition;
 
@@ -26,7 +26,7 @@ public:
 	 * @brief Public constructor
 	 * @param name
 	 */
-	Mutex(const wstring& name);
+	Mutex(const string& name);
 
 	/**
 	 * @brief Destroys the mutex
@@ -44,7 +44,7 @@ public:
 	void unlock();
 
 private:
-	wstring name;
+	string name;
 	pthread_mutex_t pThreadMutex;
 
 };

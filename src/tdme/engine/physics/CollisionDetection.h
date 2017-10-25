@@ -486,7 +486,7 @@ private:
 	inline static bool checkMovementFallback(const Vector3& normalCandidate, const Vector3& movement, CollisionResponse* collision) {
 		if (movement.computeLength() < MathTools::EPSILON) {
 			if (VERBOSE) {
-				Console::println(wstring(L"checkMovementFallback::fallback::movement = 0.0, 0.0, 0.0"));
+				Console::println(string("checkMovementFallback::fallback::movement = 0.0, 0.0, 0.0"));
 				// TODO: print stack trace
 			}
 			return false;
@@ -494,7 +494,7 @@ private:
 		Vector3 zeroVector(0.0f, 0.0f, 0.0f);
 		if (normalCandidate.equals(zeroVector) == true) {
 			if (VERBOSE) {
-				Console::println(wstring(L"checkMovementFallback::fallback"));
+				Console::println(string("checkMovementFallback::fallback"));
 				// TODO: print stack trace
 			}
 			collision->reset();

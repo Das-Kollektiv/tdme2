@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -44,7 +44,7 @@ public:
 	/** 
 	 * Shows the pop up
 	 */
-	virtual void show(const wstring& caption, const wstring& message);
+	virtual void show(const string& caption, const string& message);
 
 	/** 
 	 * Closes the pop up

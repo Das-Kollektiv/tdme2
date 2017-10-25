@@ -16,16 +16,15 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::map;
 using std::remove;
-using std::to_wstring;
+using std::to_string;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::engine::fileio::models::DAEReader;
@@ -39,7 +38,6 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 using tdme::utils::ExceptionBase;
 using tdme::utils::StringUtils;
@@ -73,10 +71,10 @@ int32_t LevelEditorEntityLibrary::allocateEntityId()
 	return entityIdx++;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
 		auto model = DAEReader::read(
 			pathName,
 			fileName
@@ -86,14 +84,14 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			L"",
-			pathName + L"/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			"",
+			pathName + "/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tm") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
 		auto model = TMReader::read(
 			pathName,
 			fileName
@@ -103,20 +101,20 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			L"",
-			pathName + L"/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			"",
+			pathName + "/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == true) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
 		throw ExceptionBase(
-			StringConverter::toString(pathName) +
+			(pathName) +
 			"/" +
-			StringConverter::toString(pathName) +
+			(pathName) +
 			string(": Unknown model file format")
 		 );
 	}
@@ -124,20 +122,20 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const wstring&
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const wstring& name, const wstring& description, float width, float height, float depth) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth) /* throws(Exception) */
 {
-	auto cacheId = L"leveleditor.trigger." + to_wstring(width) + L"mx" + to_wstring(height) + L"mx" + to_wstring(depth) + L"m";
+	auto cacheId = "leveleditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-	auto model = PrimitiveModel::createModel(boundingBox, cacheId + L"_bv");
+	auto model = PrimitiveModel::createModel(boundingBox, cacheId + "_bv");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::TRIGGER,
 		name,
 		description,
-		L"",
+		"",
 		cacheId,
-		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 		model,
 		Vector3()
 	);
@@ -148,19 +146,19 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const wstrin
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& name, const string& description) /* throws(Exception) */
 {
-	auto cacheId = L"leveleditor.empty";
+	auto cacheId = "leveleditor.empty";
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	auto model = DAEReader::read(L"resources/tools/leveleditor/models", L"arrow.dae");
+	auto model = DAEReader::read("resources/tools/leveleditor/models", "arrow.dae");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::EMPTY,
 		name,
 		description,
-		L"",
+		"",
 		cacheId,
-		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 		model,
 		Vector3()
 	);
@@ -168,16 +166,16 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const wstring&
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, const wstring& name, const wstring& description) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, const string& name, const string& description) /* throws(Exception) */
 {
 	auto levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::PARTICLESYSTEM,
 		name,
 		description,
-		L"",
-		L"",
-		L"",
+		"",
+		"",
+		"",
 		nullptr,
 		Vector3()
 	);

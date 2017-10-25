@@ -23,7 +23,7 @@
 using std::map;
 using std::remove;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::engine::Transformations;
@@ -43,9 +43,9 @@ using tdme::utils::Console;
 
 LevelEditorLevel::LevelEditorLevel() 
 {
-	gameRoot = L"";
-	pathName = L".";
-	fileName = L"untitled.tl";
+	gameRoot = "";
+	pathName = ".";
+	fileName = "untitled.tl";
 	rotationOrder = RotationOrder::XYZ;
 	lights.push_back(new LevelEditorLight(0));
 	lights.push_back(new LevelEditorLight(1));
@@ -78,32 +78,32 @@ LevelEditorLevel::~LevelEditorLevel() {
 	delete entityLibrary;
 }
 
-const wstring& LevelEditorLevel::getGameRoot()
+const string& LevelEditorLevel::getGameRoot()
 {
 	return gameRoot;
 }
 
-void LevelEditorLevel::setGameRoot(const wstring& gameRoot)
+void LevelEditorLevel::setGameRoot(const string& gameRoot)
 {
 	this->gameRoot = gameRoot;
 }
 
-const wstring& LevelEditorLevel::getPathName()
+const string& LevelEditorLevel::getPathName()
 {
 	return pathName;
 }
 
-void LevelEditorLevel::setPathName(const wstring& pathName)
+void LevelEditorLevel::setPathName(const string& pathName)
 {
 	this->pathName = pathName;
 }
 
-const wstring& LevelEditorLevel::getFileName()
+const string& LevelEditorLevel::getFileName()
 {
 	return fileName;
 }
 
-void LevelEditorLevel::setFileName(const wstring& fileName)
+void LevelEditorLevel::setFileName(const string& fileName)
 {
 	this->fileName = fileName;
 }
@@ -247,7 +247,7 @@ void LevelEditorLevel::clearObjects()
 
 void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 {
-	vector<wstring> objectsToRemove;
+	vector<string> objectsToRemove;
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == entityId) {
 			objectsToRemove.push_back(object->getId());
@@ -287,16 +287,16 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	if (_entity != nullptr) {
 		removeObject(object->getId());
 		Console::println(
-			L"LevelEditorLevel::addObject():: object with id '" +
+			"LevelEditorLevel::addObject():: object with id '" +
 			object->getId() +
-			L"' already exists. Removing it!"
+			"' already exists. Removing it!"
 		);
 	}
 	objectsById[object->getId()] = object;
 	objects.push_back(object);
 }
 
-void LevelEditorLevel::removeObject(const wstring& id)
+void LevelEditorLevel::removeObject(const string& id)
 {
 	auto objectByIdIt = objectsById.find(id);
 	if (objectByIdIt != objectsById.end()) {
@@ -306,7 +306,7 @@ void LevelEditorLevel::removeObject(const wstring& id)
 	}
 }
 
-LevelEditorObject* LevelEditorLevel::getObjectById(const wstring& id)
+LevelEditorObject* LevelEditorLevel::getObjectById(const string& id)
 {
 	auto objectByIdIt = objectsById.find(id);
 	if (objectByIdIt != objectsById.end()) {

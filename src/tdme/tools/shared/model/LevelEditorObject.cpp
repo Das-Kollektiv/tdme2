@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::engine::Transformations;
@@ -15,7 +15,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 
-LevelEditorObject::LevelEditorObject(const wstring& id, const wstring& description, Transformations* transformations, LevelEditorEntity* entity)
+LevelEditorObject::LevelEditorObject(const string& id, const string& description, Transformations* transformations, LevelEditorEntity* entity)
 {
 	this->id = id;
 	this->description = description;
@@ -27,22 +27,22 @@ LevelEditorObject::~LevelEditorObject() {
 	delete transformations;
 }
 
-const wstring& LevelEditorObject::getId()
+const string& LevelEditorObject::getId()
 {
 	return id;
 }
 
-void LevelEditorObject::setId(const wstring& id)
+void LevelEditorObject::setId(const string& id)
 {
 	this->id = id;
 }
 
-const wstring& LevelEditorObject::getDescription()
+const string& LevelEditorObject::getDescription()
 {
 	return description;
 }
 
-void LevelEditorObject::setDescription(const wstring& description)
+void LevelEditorObject::setDescription(const string& description)
 {
 	this->description = description;
 }

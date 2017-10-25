@@ -9,7 +9,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
@@ -27,7 +27,7 @@ private:
 	static int32_t staticIdx;
 	int32_t id {  };
 	LevelEditorEntity* levelEditorEntity {  };
-	wstring modelMeshFile {  };
+	string modelMeshFile {  };
 	Model* model {  };
 	BoundingVolume* boundingVolume {  };
 
@@ -46,7 +46,7 @@ public:
 	/** 
 	 * @return model mesh file
 	 */
-	virtual const wstring& getModelMeshFile();
+	virtual const string& getModelMeshFile();
 
 	/** 
 	 * @return model
@@ -101,7 +101,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void setupConvexMesh(const wstring& pathName, const wstring& fileName);
+	virtual void setupConvexMesh(const string& pathName, const string& fileName);
 
 private:
 

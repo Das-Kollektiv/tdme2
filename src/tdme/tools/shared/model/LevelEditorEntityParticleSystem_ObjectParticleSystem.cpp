@@ -7,11 +7,10 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::engine::fileio::models::DAEReader;
@@ -19,7 +18,6 @@ using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::StringConverter;
 using tdme::utils::ExceptionBase;
 using tdme::utils::StringUtils;
 
@@ -29,7 +27,7 @@ LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleS
 	maxCount = 10;
 	autoEmit = true;
 	model = nullptr;
-	modelFileName = L"";
+	modelFileName = "";
 }
 
 LevelEditorEntityParticleSystem_ObjectParticleSystem::~LevelEditorEntityParticleSystem_ObjectParticleSystem() {
@@ -71,21 +69,21 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModel(Model* model
 	this->model = model;
 }
 
-const wstring& LevelEditorEntityParticleSystem_ObjectParticleSystem::getModelFile()
+const string& LevelEditorEntityParticleSystem_ObjectParticleSystem::getModelFile()
 {
 	return modelFileName;
 }
 
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const wstring& modelFileName) /* throws(Exception) */
+void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName) /* throws(Exception) */
 {
 	this->modelFileName = modelFileName;
-	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), L".tm") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), ".tm") == true) {
 		model = TMReader::read(
 			Tools::getPath(modelFileName),
 			Tools::getFileName(modelFileName)
 		);
 	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), L".dae") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), ".dae") == true) {
 		model = DAEReader::read(
 			Tools::getPath(modelFileName),
 			Tools::getFileName(modelFileName)
@@ -93,7 +91,7 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const ws
 	} else {
 		throw new ExceptionBase(
 			string("LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '") +
-			StringConverter::toString(modelFileName)
+			(modelFileName)
 		);
 	}
 }

@@ -41,8 +41,8 @@ void GUISelectBoxController::init()
 	value = new MutableString();
 }
 
-wstring GUISelectBoxController::CONDITION_DISABLED = L"disabled";
-wstring GUISelectBoxController::CONDITION_ENABLED = L"enabled";
+string GUISelectBoxController::CONDITION_DISABLED = "disabled";
+string GUISelectBoxController::CONDITION_ENABLED = "enabled";
 
 bool GUISelectBoxController::isDisabled()
 {

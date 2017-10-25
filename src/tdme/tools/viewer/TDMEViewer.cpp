@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::viewer::TDMEViewer;
 
@@ -27,7 +27,7 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::shared::views::View;
 using tdme::utils::Console;
 
-wstring TDMEViewer::VERSION = L"0.9.9";
+string TDMEViewer::VERSION = "0.9.9";
 
 TDMEViewer* TDMEViewer::instance = nullptr;
 
@@ -50,12 +50,12 @@ TDMEViewer::~TDMEViewer() {
 
 void TDMEViewer::main(int argc, char** argv)
 {
-	Console::println(wstring(L"TDMEViewer "+ VERSION));
-	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println(string("TDMEViewer "+ VERSION));
+	Console::println(string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	Console::println();
 
 	TDMEViewer tdmeLevelEditor;
-	tdmeLevelEditor.run(argc, argv, L"TDMEViewer");
+	tdmeLevelEditor.run(argc, argv, "TDMEViewer");
 }
 
 TDMEViewer* TDMEViewer::getInstance()
@@ -121,7 +121,7 @@ void TDMEViewer::dispose()
 
 void TDMEViewer::initialize()
 {
-	Console::println(L"initialize");
+	Console::println("initialize");
 	engine->initialize();
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();

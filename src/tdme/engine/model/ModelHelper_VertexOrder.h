@@ -6,7 +6,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::engine::model::ModelHelper;
@@ -20,8 +20,8 @@ public:
 	static ModelHelper_VertexOrder *CLOCKWISE;
 	static ModelHelper_VertexOrder *COUNTERCLOCKWISE;
 
-	ModelHelper_VertexOrder(const wstring& name, int ordinal);
+	ModelHelper_VertexOrder(const string& name, int ordinal);
 
 public:
-	static ModelHelper_VertexOrder* valueOf(const wstring& a0);
+	static ModelHelper_VertexOrder* valueOf(const string& a0);
 };

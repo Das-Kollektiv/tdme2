@@ -5,9 +5,9 @@
 
 #include <string>
 
-using std::wstring;
+using std::string;
 
 struct tdme::utils::FilenameFilter
 {
-	virtual bool accept(const wstring& path, const wstring& file) = 0;
+	virtual bool accept(const string& path, const string& file) = 0;
 };

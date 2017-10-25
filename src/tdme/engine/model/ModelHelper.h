@@ -14,7 +14,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
@@ -72,7 +72,7 @@ private:
 	 * Prepares this group for indexed rendering
 	 * @param groups
 	 */
-	static void prepareForIndexedRendering(map<wstring, Group*>* groups);
+	static void prepareForIndexedRendering(map<string, Group*>* groups);
 
 	/** 
 	 * Maps original vertices to new vertice mapping

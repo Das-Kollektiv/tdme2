@@ -27,7 +27,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::math::Math;
@@ -92,7 +92,7 @@ Model* Object3DBase::getModel()
 	return model;
 }
 
-void Object3DBase::setAnimation(const wstring& id)
+void Object3DBase::setAnimation(const string& id)
 {
 	auto _animationActiveSetup = model->getAnimationSetup(id);
 	if (_animationActiveSetup != nullptr) {
@@ -104,7 +104,7 @@ void Object3DBase::setAnimation(const wstring& id)
 	}
 }
 
-void Object3DBase::addOverlayAnimation(const wstring& id)
+void Object3DBase::addOverlayAnimation(const string& id)
 {
 	removeOverlayAnimation(id);
 	auto animationSetup = model->getAnimationSetup(id);
@@ -124,7 +124,7 @@ void Object3DBase::addOverlayAnimation(const wstring& id)
 	overlayAnimationsByJointId[animationSetup->getOverlayFromGroupId()] = animationState;
 }
 
-void Object3DBase::removeOverlayAnimation(const wstring& id)
+void Object3DBase::removeOverlayAnimation(const string& id)
 {
 	auto animationStateIt = overlayAnimationsById.find(id);
 	if (animationStateIt == overlayAnimationsById.end()) return;
@@ -137,9 +137,9 @@ void Object3DBase::removeOverlayAnimation(const wstring& id)
 
 void Object3DBase::removeOverlayAnimationsFinished()
 {
-	vector<wstring> overlayAnimationsToRemove;
+	vector<string> overlayAnimationsToRemove;
 	for (auto it: overlayAnimationsById) {
-		const wstring& id = it.first;
+		const string& id = it.first;
 		AnimationState* animationState = it.second;
 		{
 			if (animationState->finished == true) {
@@ -154,9 +154,9 @@ void Object3DBase::removeOverlayAnimationsFinished()
 
 void Object3DBase::removeOverlayAnimations()
 {
-	vector<wstring> overlayAnimationsToRemove;
+	vector<string> overlayAnimationsToRemove;
 	for (auto it: overlayAnimationsById) {
-		const wstring& id = it.first;
+		const string& id = it.first;
 		AnimationState* animationState = it.second;
 		overlayAnimationsToRemove.push_back(id);
 	}
@@ -165,9 +165,9 @@ void Object3DBase::removeOverlayAnimations()
 	}
 }
 
-const wstring Object3DBase::getAnimation()
+const string Object3DBase::getAnimation()
 {
-	return baseAnimation.setup == nullptr ? L"none" : baseAnimation.setup->getId();
+	return baseAnimation.setup == nullptr ? "none" : baseAnimation.setup->getId();
 }
 
 float Object3DBase::getAnimationTime()
@@ -175,12 +175,12 @@ float Object3DBase::getAnimationTime()
 	return baseAnimation.time;
 }
 
-bool Object3DBase::hasOverlayAnimation(const wstring& id)
+bool Object3DBase::hasOverlayAnimation(const string& id)
 {
 	return overlayAnimationsById.find(id) != overlayAnimationsById.end();
 }
 
-float Object3DBase::getOverlayAnimationTime(const wstring& id)
+float Object3DBase::getOverlayAnimationTime(const string& id)
 {
 	AnimationState* animationState = nullptr;
 	auto animationStateIt = overlayAnimationsById.find(id);
@@ -190,7 +190,7 @@ float Object3DBase::getOverlayAnimationTime(const wstring& id)
 	return animationState == nullptr ? 1.0f : animationState->time;
 }
 
-Matrix4x4* Object3DBase::getTransformationsMatrix(const wstring& id)
+Matrix4x4* Object3DBase::getTransformationsMatrix(const string& id)
 {
 	auto transformationMatrixIt = transformationsMatrices.find(id);
 	if (transformationMatrixIt != transformationsMatrices.end()) {
@@ -199,7 +199,7 @@ Matrix4x4* Object3DBase::getTransformationsMatrix(const wstring& id)
 	return nullptr;
 }
 
-void Object3DBase::createTransformationsMatrices(map<wstring, Matrix4x4*>* matrices, map<wstring, Group*>* groups)
+void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -213,7 +213,7 @@ void Object3DBase::createTransformationsMatrices(map<wstring, Matrix4x4*>* matri
 	}
 }
 
-void Object3DBase::computeTransformationsMatrices(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth)
+void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -352,7 +352,7 @@ Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator
 	return transformedFacesIterator;
 }
 
-Object3DGroupMesh* Object3DBase::getMesh(const wstring& groupId)
+Object3DGroupMesh* Object3DBase::getMesh(const string& groupId)
 {
 	for (auto object3DGroup : object3dGroups) {
 		if (object3DGroup->group->getId() == groupId) {
@@ -362,12 +362,12 @@ Object3DGroupMesh* Object3DBase::getMesh(const wstring& groupId)
 	return nullptr;
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups)
+int32_t Object3DBase::determineSkinnedGroupCount(map<string, Group*>* groups)
 {
 	return determineSkinnedGroupCount(groups, 0);
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups, int32_t count)
+int32_t Object3DBase::determineSkinnedGroupCount(map<string, Group*>* groups, int32_t count)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -382,7 +382,7 @@ int32_t Object3DBase::determineSkinnedGroupCount(map<wstring, Group*>* groups, i
 	return count;
 }
 
-int32_t Object3DBase::determineSkinnedGroups(map<wstring, Group*>* groups, vector<Group*>* skinningGroups, int32_t idx)
+int32_t Object3DBase::determineSkinnedGroups(map<string, Group*>* groups, vector<Group*>* skinningGroups, int32_t idx)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -397,7 +397,7 @@ int32_t Object3DBase::determineSkinnedGroups(map<wstring, Group*>* groups, vecto
 	return idx;
 }
 
-map<wstring, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
+map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 {
 	if (hasSkinning == false)
 		return nullptr;

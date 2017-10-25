@@ -13,7 +13,6 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/RTTI.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Time.h>
 #include <tdme/network/udpclient/NIOUDPClient.h>
 #include <tdme/network/udpclient/NIOUDPClientMessage.h>
@@ -24,8 +23,8 @@ using std::ios;
 using std::map;
 using std::stringstream;
 using std::string;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
@@ -37,7 +36,6 @@ using tdme::os::threading::Thread;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::RTTI;
-using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::network::udpclient::NIOUDPClient;
 using tdme::network::udpclient::NIOUDPClientMessage;
@@ -46,11 +44,11 @@ using tdme::network::udpclient::NIOClientException;
 const uint64_t NIOUDPClient::MESSAGEACK_RESENDTIMES[NIOUDPClient::MESSAGEACK_RESENDTIMES_TRIES] = {125L, 250L, 500L, 750L, 1000L, 2000L, 5000L};
 
 NIOUDPClient::NIOUDPClient(const string& ip, const unsigned int port) :
-	Thread(L"nioudpclientthread"),
-	messageQueueMutex(L"nioupclientthread_messagequeue"),
-	messageMapAckMutex(L"nioupclientthread_messagequeueack"),
-	recvMessageQueueMutex(L"nioupclientthread_recvmessagequeuemutex"),
-	messageMapSafeMutex(L"nioupclientthread_messagemasafemutex"),
+	Thread("nioudpclientthread"),
+	messageQueueMutex("nioupclientthread_messagequeue"),
+	messageMapAckMutex("nioupclientthread_messagequeueack"),
+	recvMessageQueueMutex("nioupclientthread_recvmessagequeuemutex"),
+	messageMapSafeMutex("nioupclientthread_messagemasafemutex"),
 	ip(ip),
 	port(port),
 	clientId(0),
@@ -69,7 +67,7 @@ bool NIOUDPClient::isConnected() {
 }
 
 void NIOUDPClient::run() {
-	Console::println(L"NIOUDPClient::run(): start");
+	Console::println("NIOUDPClient::run(): start");
 
 	// catch kernel event and server socket exceptions
 	try {
@@ -173,10 +171,10 @@ void NIOUDPClient::run() {
 
 							// log
 							Console::println(
-								L"NIOUDPClient::run(): " +
-								StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-								L": " +
-								StringConverter::toWideString(exception.what())
+								"NIOUDPClient::run(): " +
+								(RTTI::demangle(typeid(exception).name())) +
+								": " +
+								(exception.what())
 							);
 
 							// rethrow to quit communication for now
@@ -246,10 +244,10 @@ void NIOUDPClient::run() {
 	} catch (Exception &exception) {
 		// log
 		Console::println(
-			L"NIOUDPClient::run(): " +
-			StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-			L": " +
-			StringConverter::toWideString(exception.what())
+			"NIOUDPClient::run(): " +
+			(RTTI::demangle(typeid(exception).name())) +
+			": " +
+			(exception.what())
 		);
 	}
 
@@ -258,7 +256,7 @@ void NIOUDPClient::run() {
 	socket.close();
 
 	// log
-	Console::println(L"NIOUDPClient::run(): done");
+	Console::println("NIOUDPClient::run(): done");
 }
 
 void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) throw (NIOClientException) {

@@ -16,7 +16,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::gui::GUIParser;
@@ -33,7 +33,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString(L"");
+MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString("");
 
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
 {
@@ -50,10 +50,10 @@ GUIScreenNode* EmptyScreenController::getScreenNode()
 void EmptyScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(L"resources/tools/leveleditor/gui", L"screen_empty.xml");
+		screenNode = GUIParser::parse("resources/tools/leveleditor/gui", "screen_empty.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
 	} catch (Exception& exception) {
 		Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -65,13 +65,13 @@ void EmptyScreenController::dispose()
 {
 }
 
-void EmptyScreenController::setScreenCaption(const wstring& text)
+void EmptyScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
 }
 
-void EmptyScreenController::setEntityData(const wstring& name, const wstring& description)
+void EmptyScreenController::setEntityData(const string& name, const string& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 }
@@ -81,7 +81,7 @@ void EmptyScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void EmptyScreenController::setEntityProperties(const wstring& presetId, const wstring& selectedName)
+void EmptyScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
@@ -96,7 +96,7 @@ void EmptyScreenController::onQuit()
 	TDMEViewer::getInstance()->quit();
 }
 
-void EmptyScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
+void EmptyScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }

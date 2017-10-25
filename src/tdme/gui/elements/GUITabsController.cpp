@@ -81,9 +81,9 @@ void GUITabsController::unselect()
 	}
 }
 
-void GUITabsController::setTabContentSelected(const wstring& id)
+void GUITabsController::setTabContentSelected(const string& id)
 {
-	tabContentNodeId->set(id + L"-content");
+	tabContentNodeId->set(id + "-content");
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes.at(i);

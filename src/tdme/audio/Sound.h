@@ -6,7 +6,7 @@
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioEntity;
 
@@ -20,9 +20,9 @@ class tdme::audio::Sound final
 {
 private:
 	bool initiated {  };
-	wstring pathName {  };
-	wstring fileName {  };
-	wstring bufferId {  };
+	string pathName {  };
+	string fileName {  };
+	string bufferId {  };
 	uint32_t alBufferId {  };
 	uint32_t alSourceId {  };
 
@@ -44,5 +44,5 @@ public: /* protected */
 	 * @param path name
 	 * @param file name
 	 */
-	Sound(const wstring& id, const wstring& pathName, const wstring& fileName);
+	Sound(const string& id, const string& pathName, const string& fileName);
 };

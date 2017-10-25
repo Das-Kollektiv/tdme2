@@ -15,7 +15,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -48,15 +48,15 @@ class tdme::tools::shared::controller::ParticleSystemScreenController final
 	friend class ParticleSystemScreenController_onActionPerformed_4;
 
 private:
-	static wstring TYPE_NONE;
-	static wstring TYPE_OBJECTPARTICLESYSTEM;
-	static wstring TYPE_POINTSPARTICLESYSTEM;
-	static wstring EMITTER_NONE;
-	static wstring EMITTER_POINTPARTICLEEMITTER;
-	static wstring EMITTER_BOUNDINGBOXPARTICLEEMITTER;
-	static wstring EMITTER_CIRCLEPARTICLEEMITTER;
-	static wstring EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
-	static wstring EMITTER_SPHEREPARTICLEEMITTER;
+	static string TYPE_NONE;
+	static string TYPE_OBJECTPARTICLESYSTEM;
+	static string TYPE_POINTSPARTICLESYSTEM;
+	static string EMITTER_NONE;
+	static string EMITTER_POINTPARTICLEEMITTER;
+	static string EMITTER_BOUNDINGBOXPARTICLEEMITTER;
+	static string EMITTER_CIRCLEPARTICLEEMITTER;
+	static string EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
+	static string EMITTER_SPHEREPARTICLEEMITTER;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };
@@ -171,14 +171,14 @@ public:
 	 * Set screen caption
 	 * @param text
 	 */
-	void setScreenCaption(const wstring& text);
+	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set up general entity data
 	 * @param name
 	 * @param description
 	 */
-	void setEntityData(const wstring& name, const wstring& description);
+	void setEntityData(const string& name, const string& description);
 
 	/** 
 	 * Unset entity data
@@ -191,7 +191,7 @@ public:
 	 * @param entity properties
 	 * @param selected name
 	 */
-	void setEntityProperties(const wstring& presetId, LevelEditorEntity* entity, const wstring& selectedName);
+	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
 
 	/** 
 	 * Unset entity properties
@@ -202,13 +202,13 @@ public:
 	 * Set up particle system types
 	 * @param particle system types
 	 */
-	void setParticleSystemTypes(const vector<wstring>* particleSystemTypesCollection);
+	void setParticleSystemTypes(const vector<string>* particleSystemTypesCollection);
 
 	/** 
 	 * Set up emitters
 	 * @param emitters
 	 */
-	void setParticleSystemEmitters(const vector<wstring>* emittersCollection);
+	void setParticleSystemEmitters(const vector<string>* emittersCollection);
 
 	/** 
 	 * On quit
@@ -259,13 +259,13 @@ public:
 	 * On particle system reload
 	 */
 	void onParticleSystemReload();
-	void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
-	void loadFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Shows the error pop up
 	 */
-	void showErrorPopUp(const wstring& caption, const wstring& message);
+	void showErrorPopUp(const string& caption, const string& message);
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 

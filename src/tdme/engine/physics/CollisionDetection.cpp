@@ -20,7 +20,7 @@
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::physics::CollisionDetection;
 using tdme::math::Math;
@@ -1141,6 +1141,6 @@ void CollisionDetection::checkCollision(CollisionResponse* collision)
 {
 	auto& normalXYZ = collision->getNormal()->getArray();
 	if (Float::isNaN(normalXYZ[0]) == true || Float::isNaN(normalXYZ[1]) == true || Float::isNaN(normalXYZ[2]) == true) {
-		Console::println(wstring(L"CollisionDetection::checkCollision(): BROKEN NORMAL"));
+		Console::println(string("CollisionDetection::checkCollision(): BROKEN NORMA"));
 	}
 }

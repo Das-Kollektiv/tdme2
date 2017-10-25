@@ -7,7 +7,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/FilenameFilter.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::FilenameFilter;
 
@@ -19,7 +19,7 @@ class tdme::tools::shared::controller::FileDialogScreenController_setupFileDialo
 	friend class FileDialogScreenController;
 
 public:
-	bool accept(const wstring& pathName, const wstring& fileName) override;
+	bool accept(const string& pathName, const string& fileName) override;
 
 	// Generated
 	FileDialogScreenController_setupFileDialogListBox_1(FileDialogScreenController* fileDialogScreenController);

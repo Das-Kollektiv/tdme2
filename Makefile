@@ -378,7 +378,6 @@ SRCS = \
 	src/tdme/utils/Properties.cpp \
 	src/tdme/utils/ReferenceCounter.cpp \
 	src/tdme/utils/RTTI.cpp \
-	src/tdme/utils/StringConverter.cpp \
 	src/tdme/utils/StringUtils.cpp \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \

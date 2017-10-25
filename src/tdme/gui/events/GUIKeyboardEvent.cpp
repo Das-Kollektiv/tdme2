@@ -5,7 +5,7 @@
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
-int32_t GUIKeyboardEvent::getKeyCodeFromChar(wchar_t key) {
+int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 	switch(key) {
 		case(9): return KEYCODE_TAB;
 		case(25): return KEYCODE_TAB_SHIFT;
@@ -22,7 +22,7 @@ GUIKeyboardEvent::GUIKeyboardEvent()
 	this->time = -1LL;
 	this->type = GUIKeyboardEvent_Type::KEYBOARDEVENT_NONE;
 	this->keyCode = -1;
-	this->keyChar = wchar_t(0x0000);
+	this->keyChar = char(0x0000);
 	this->metaDown = false;
 	this->controlDown = false;
 	this->altDown = false;
@@ -80,12 +80,12 @@ void GUIKeyboardEvent::setKeyCode(int32_t code)
 	this->keyCode = code;
 }
 
-wchar_t GUIKeyboardEvent::getKeyChar()
+char GUIKeyboardEvent::getKeyChar()
 {
 	return keyChar;
 }
 
-void GUIKeyboardEvent::setKeyChar(wchar_t keyChar)
+void GUIKeyboardEvent::setKeyChar(char keyChar)
 {
 	this->keyChar = keyChar;
 }

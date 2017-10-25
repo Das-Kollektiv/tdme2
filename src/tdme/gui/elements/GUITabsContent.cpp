@@ -9,7 +9,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::nodes::GUIScreenNode;
@@ -19,25 +19,25 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUITabsContent::GUITabsContent() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tabs-content.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "tabs-content.xml");
 }
 
-wstring GUITabsContent::NAME = L"tabs-content";
+string GUITabsContent::NAME = "tabs-content";
 
-const wstring& GUITabsContent::getName()
+const string& GUITabsContent::getName()
 {
 	return NAME;
 }
 
-const wstring& GUITabsContent::getTemplate()
+const string& GUITabsContent::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUITabsContent::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUITabsContent::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes["id"] = screenNode->allocateNodeId();
 	return &attributes;
 }
 

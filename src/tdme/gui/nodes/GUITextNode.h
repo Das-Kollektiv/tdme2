@@ -10,7 +10,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIColor;
@@ -45,7 +45,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	const wstring getNodeType() override;
+	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
@@ -59,5 +59,5 @@ public:
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
-	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, MutableString* text);
+	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, MutableString* text);
 };

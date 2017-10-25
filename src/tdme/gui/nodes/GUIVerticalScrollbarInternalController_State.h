@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
@@ -20,6 +20,6 @@ public:
 	static GUIVerticalScrollbarInternalController_State *NONE;
 	static GUIVerticalScrollbarInternalController_State *MOUSEOVER;
 	static GUIVerticalScrollbarInternalController_State *DRAGGING;
-	GUIVerticalScrollbarInternalController_State(const wstring& name, int ordinal);
-	static GUIVerticalScrollbarInternalController_State* valueOf(const wstring& a0);
+	GUIVerticalScrollbarInternalController_State(const string& name, int ordinal);
+	static GUIVerticalScrollbarInternalController_State* valueOf(const string& a0);
 };

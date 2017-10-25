@@ -17,7 +17,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
@@ -47,11 +47,11 @@ public: /* protected */
 
 private:
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
-	map<wstring, vector<Object3D*>> visibleObjectsByModels {  };
+	map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
 	Object3DVBORenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
-	map<wstring, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
+	map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
@@ -138,7 +138,7 @@ private:
 	 * @param depthBuffer
 	 * @param sort
 	 */
-	static const wstring createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort);
+	static const string createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort);
 
 public:
 

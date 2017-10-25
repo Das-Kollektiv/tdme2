@@ -6,7 +6,7 @@
 
 #include <string>
 
-using std::wstring;
+using std::string;
 
 /**
  * Implementation for read/write lock
@@ -18,7 +18,7 @@ public:
 	 * @brief Public constructor
 	 * @param name
 	 */
-	ReadWriteLock(const wstring& name);
+	ReadWriteLock(const string& name);
 
 	/**
 	 * @brief Destroys the read write lock
@@ -40,6 +40,6 @@ public:
 	 */
 	void unlock();
 private:
-	wstring name;
+	string name;
 	pthread_rwlock_t pReadWriteLock;
 };

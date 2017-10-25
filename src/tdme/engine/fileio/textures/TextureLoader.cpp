@@ -12,13 +12,12 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 
 #include <ext/libpng/png.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
@@ -29,18 +28,17 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 
-Texture* TextureLoader::loadTexture(const wstring& path, const wstring& fileName) throw (FileSystemException)
+Texture* TextureLoader::loadTexture(const string& path, const string& fileName) throw (FileSystemException)
 {
 	try {
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".png") == true) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) {
 			Texture* texture = TextureLoader::loadPNG(path, fileName);
 			return texture;
 		}
 	} catch (Exception& exception) {
-		Console::println(L"TextureLoader::loadTexture(): Could not load texture: " + path + L"/" + fileName + L": " + StringConverter::toWideString(exception.what()));
+		Console::println("TextureLoader::loadTexture(): Could not load texture: " + path + "/" + fileName + ": " + (exception.what()));
 	}
 	return nullptr;
 }
@@ -53,7 +51,7 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureLoader::loadPNG(const wstring& path, const wstring& fileName) throw (FileSystemException) {
+Texture* TextureLoader::loadPNG(const string& path, const string& fileName) throw (FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id

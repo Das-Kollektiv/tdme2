@@ -7,7 +7,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 /** 
  * GUI node conditions
@@ -18,26 +18,26 @@ class tdme::gui::nodes::GUINodeConditions final
 {
 
 public: /* protected */
-	vector<wstring> conditions {  };
+	vector<string> conditions {  };
 
 public:
 
 	/** 
 	 * @return conditions
 	 */
-	vector<wstring>* getConditions();
+	vector<string>* getConditions();
 
 	/** 
 	 * Add a condition
 	 * @param condition
 	 */
-	void add(const wstring& condition);
+	void add(const string& condition);
 
 	/** 
 	 * Remove a condition
 	 * @param condition
 	 */
-	void remove(const wstring& condition);
+	void remove(const string& condition);
 
 	/** 
 	 * Remove all

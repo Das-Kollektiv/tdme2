@@ -29,10 +29,10 @@ GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
 
-wstring GUISelectBoxOptionController::CONDITION_SELECTED = L"selected";
-wstring GUISelectBoxOptionController::CONDITION_UNSELECTED = L"unselected";
-wstring GUISelectBoxOptionController::CONDITION_DISABLED = L"disabled";
-wstring GUISelectBoxOptionController::CONDITION_ENABLED = L"enabled";
+string GUISelectBoxOptionController::CONDITION_SELECTED = "selected";
+string GUISelectBoxOptionController::CONDITION_UNSELECTED = "unselected";
+string GUISelectBoxOptionController::CONDITION_DISABLED = "disabled";
+string GUISelectBoxOptionController::CONDITION_ENABLED = "enabled";
 
 bool GUISelectBoxOptionController::isDisabled()
 {

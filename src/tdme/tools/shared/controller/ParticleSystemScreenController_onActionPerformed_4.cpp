@@ -26,7 +26,7 @@ ParticleSystemScreenController_onActionPerformed_4::ParticleSystemScreenControll
 
 void ParticleSystemScreenController_onActionPerformed_4::performAction()
 {
-	particleSystemScreenController->opsModel->getController()->setValue(particleSystemScreenController->value->set(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + L"/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+	particleSystemScreenController->opsModel->getController()->setValue(particleSystemScreenController->value->set(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
 	particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 	particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }

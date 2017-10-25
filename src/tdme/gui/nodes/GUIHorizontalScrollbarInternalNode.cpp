@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
+GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->controller = new GUIHorizontalScrollbarInternalController(this);
@@ -34,9 +34,9 @@ GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(GUIScreen
 	this->barColorDragging = barColorDragging;
 }
 
-const wstring GUIHorizontalScrollbarInternalNode::getNodeType()
+const string GUIHorizontalScrollbarInternalNode::getNodeType()
 {
-	return L"scrollbar";
+	return "scrollbar";
 }
 
 bool GUIHorizontalScrollbarInternalNode::isContentNode()

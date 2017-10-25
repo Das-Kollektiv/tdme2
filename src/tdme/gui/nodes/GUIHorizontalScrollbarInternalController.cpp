@@ -25,7 +25,7 @@ GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalControll
 	: GUINodeController(node)
 {
 	init();
-	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + L"_inner"));
+	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
 }
 
 void GUIHorizontalScrollbarInternalController::init()

@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabContentController;
@@ -21,27 +21,27 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUITabContent::GUITabContent() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"tab-content.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "tab-content.xml");
 }
 
-wstring GUITabContent::NAME = L"tab-content";
+string GUITabContent::NAME = "tab-content";
 
-const wstring& GUITabContent::getName()
+const string& GUITabContent::getName()
 {
 	return NAME;
 }
 
-const wstring& GUITabContent::getTemplate()
+const string& GUITabContent::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"horizontal-align"] = L"center";
-	attributes[L"vertical-align"] = L"center";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["horizontal-align"] = "center";
+	attributes["vertical-align"] = "center";
 	return &attributes;
 }
 

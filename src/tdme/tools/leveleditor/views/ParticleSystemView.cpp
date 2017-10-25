@@ -15,7 +15,7 @@
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::engine::Engine;
@@ -46,9 +46,9 @@ void ParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, Leve
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
-LevelEditorEntity* ParticleSystemView::loadParticleSystem(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName) /* throws(Exception) */
+LevelEditorEntity* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tps") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(LevelEditorEntityLibrary::ID_ALLOCATE, pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		TDMELevelEditor::getInstance()->getEntityLibrary()->addEntity(levelEditorEntity);

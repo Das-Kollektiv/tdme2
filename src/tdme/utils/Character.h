@@ -17,13 +17,13 @@ public:
 	 * @param character
 	 * @return lower case character
 	 */
-	static wchar_t toLowerCase(wchar_t character);
+	static char toLowerCase(char character);
 
 	/**
 	 * Convert character to upper case character
 	 * @param character
 	 * @return upper case character
 	 */
-	static wchar_t toUpperCase(wchar_t character);
+	static char toUpperCase(char character);
 
 };

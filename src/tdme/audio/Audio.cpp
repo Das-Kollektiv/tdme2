@@ -23,7 +23,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;
@@ -83,14 +83,14 @@ Vector3& Audio::getListenerOrientationUp()
 	return listenerOrientationUp;
 }
 
-AudioEntity* Audio::getEntity(const wstring& id)
+AudioEntity* Audio::getEntity(const string& id)
 {
 	auto audioEntityIt = audioEntities.find(id);
 	if (audioEntityIt == audioEntities.end()) return nullptr;
 	return audioEntityIt->second;
 }
 
-AudioEntity* Audio::addStream(const wstring& id, const wstring& pathName, const wstring& fileName)
+AudioEntity* Audio::addStream(const string& id, const string& pathName, const string& fileName)
 {
 	AudioEntity* stream = new AudioStream(id, pathName, fileName);
 	if (stream->initialize() == true) {
@@ -98,12 +98,12 @@ AudioEntity* Audio::addStream(const wstring& id, const wstring& pathName, const 
 		audioEntities[id] = stream;
 		return stream;
 	} else {
-		Console::println(wstring(L"Audio stream: '" + id + L"' failed"));
+		Console::println(string("Audio stream: '" + id + "' failed"));
 		return nullptr;
 	}
 }
 
-AudioEntity* Audio::addSound(const wstring& id, const wstring& pathName, const wstring& fileName)
+AudioEntity* Audio::addSound(const string& id, const string& pathName, const string& fileName)
 {
 	AudioEntity* sound = new Sound(id, pathName, fileName);
 	if (sound->initialize() == true) {
@@ -111,12 +111,12 @@ AudioEntity* Audio::addSound(const wstring& id, const wstring& pathName, const w
 		audioEntities[id] = sound;
 		return sound;
 	} else {
-		Console::println(wstring(L"Audio sound: '" + id + L"' failed"));
+		Console::println(string("Audio sound: '" + id + "' failed"));
 		return nullptr;
 	}
 }
 
-void Audio::removeEntity(const wstring& id)
+void Audio::removeEntity(const string& id)
 {
 	auto audioEntityIt = audioEntities.find(id);
 	if (audioEntityIt != audioEntities.end()) {
@@ -130,7 +130,7 @@ void Audio::removeEntity(const wstring& id)
 
 void Audio::reset()
 {
-	vector<wstring> keys;
+	vector<string> keys;
 	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
 		keys.push_back(it->first);
 	}

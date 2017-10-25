@@ -9,7 +9,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 class tdme::utils::Properties
 {
 private:
-	map<wstring, wstring> properties;
+	map<string, string> properties;
 
 public:
 	/**
@@ -30,7 +30,7 @@ public:
 	 * @param default value
 	 * @return value if found or default value
 	 */
-	const wstring& get(const wstring& key, const wstring& defaultValue);
+	const string& get(const string& key, const string& defaultValue);
 
 	/**
 	 * Add property
@@ -38,7 +38,7 @@ public:
 	 * @param value
 	 *
 	 */
-	void put(const wstring& key, const wstring& value);
+	void put(const string& key, const string& value);
 
 	/**
 	 * Load property file
@@ -46,7 +46,7 @@ public:
 	 * @param file name
 	 * @throws file system exception
 	 */
-	void load(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
+	void load(const string& pathName, const string& fileName) throw (FileSystemException);
 
 	/**
 	 * Store property file
@@ -54,7 +54,7 @@ public:
 	 * @param file name
 	 * @throws file system exception
 	 */
-	void store(const wstring& pathName, const wstring& fileName) throw (FileSystemException);
+	void store(const string& pathName, const string& fileName) throw (FileSystemException);
 
 	/**
 	 * Public constructor

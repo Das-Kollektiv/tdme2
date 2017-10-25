@@ -11,9 +11,9 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
-using std::wstring;
+using std::string;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model_UpVector;
@@ -30,20 +30,20 @@ class tdme::engine::model::Model final
 {
 
 public:
-	static wstring ANIMATIONSETUP_DEFAULT;
+	static string ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
 
 private:
-	wstring id {  };
-	wstring name {  };
+	string id {  };
+	string name {  };
 	Model_UpVector* upVector {  };
 	RotationOrder* rotationOrder {  };
-	map<wstring, Material*> materials {  };
-	map<wstring, Group*> groups {  };
-	map<wstring, Group*> subGroups {  };
+	map<string, Material*> materials {  };
+	map<string, Group*> groups {  };
+	map<string, Group*> subGroups {  };
 	bool hasSkinning_ {  };
 	float fps {  };
-	map<wstring, AnimationSetup*> animationSetups {  };
+	map<string, AnimationSetup*> animationSetups {  };
 	Matrix4x4 importTransformationsMatrix {  };
 	BoundingBox* boundingBox {  };
 
@@ -51,18 +51,18 @@ private:
 	 * Delete sub groups
 	 * @param sub groups
 	 */
-	void deleteSubGroups(map<wstring, Group*>* subGroups);
+	void deleteSubGroups(map<string, Group*>* subGroups);
 public:
 
 	/** 
 	 * @return model id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return model name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/** 
 	 * @return up vector
@@ -78,33 +78,33 @@ public:
 	 * Returns all object materials
 	 * @return materials
 	 */
-	map<wstring, Material*>* getMaterials();
+	map<string, Material*>* getMaterials();
 
 	/** 
 	 * Returns all object's groups
 	 * @return all groups
 	 */
-	map<wstring, Group*>* getGroups();
+	map<string, Group*>* getGroups();
 
 	/** 
 	 * Returns a group by given name or null
 	 * @param id
 	 * @return
 	 */
-	Group* getGroupById(const wstring& id);
+	Group* getGroupById(const string& id);
 
 	/** 
 	 * Returns object's sub groups
 	 * @return sub groups
 	 */
-	map<wstring, Group*>* getSubGroups();
+	map<string, Group*>* getSubGroups();
 
 	/** 
 	 * Returns a sub group by given name or null
 	 * @param id
 	 * @return
 	 */
-	Group* getSubGroupById(const wstring& id);
+	Group* getSubGroupById(const string& id);
 
 	/** 
 	 * @return has skinning
@@ -140,7 +140,7 @@ public:
 	 * @param loop
 	 * @return animation setup
 	 */
-	AnimationSetup* addAnimationSetup(const wstring& id, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop);
 
 	/** 
 	 * Adds an overlay animation setup
@@ -151,17 +151,17 @@ public:
 	 * @param loop
 	 * @return animation setup
 	 */
-	AnimationSetup* addOverlayAnimationSetup(const wstring& id, const wstring& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
 
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	AnimationSetup* getAnimationSetup(const wstring& id);
+	AnimationSetup* getAnimationSetup(const string& id);
 
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	map<wstring, AnimationSetup*>* getAnimationSetups();
+	map<string, AnimationSetup*>* getAnimationSetups();
 
 	/** 
 	 * @return if model has animations
@@ -188,7 +188,7 @@ public: /* protected */
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	bool computeTransformationsMatrix(map<wstring, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const wstring& groupId, Matrix4x4& transformationsMatrix);
+	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 	/**
 	 * Public constructor
@@ -198,7 +198,7 @@ public: /* protected */
 	 * @param rotation order
 	 * @param bounding box
 	 */
-	Model(const wstring& id, const wstring& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	Model(const string& id, const string& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
 
 	/**
 	 * Deconstructor

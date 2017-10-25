@@ -21,16 +21,9 @@ namespace utils {
 		class RTTI;
 		class Time;
 		class ShortBuffer;
-		class StringConverter;
 		class StringTokenizer;
 		class StringUtils;
-		class _ArrayList;
 		class Console;
 		class ExceptionBase;
-		class _HashMap;
-		class _HashMap_1;
-		class _HashMap_KeysIterator;
-		class _HashMap_Pair;
-		class _HashMap_ValuesIterator;
 }  // namespace utils
 }  // namespace tdme

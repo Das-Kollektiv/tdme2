@@ -30,8 +30,8 @@ GUIElementController::GUIElementController(GUINode* node)
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
-wstring GUIElementController::CONDITION_DISABLED = L"disabled";
-wstring GUIElementController::CONDITION_ENABLED = L"enabled";
+string GUIElementController::CONDITION_DISABLED = "disabled";
+string GUIElementController::CONDITION_ENABLED = "enabled";
 
 bool GUIElementController::isDisabled()
 {

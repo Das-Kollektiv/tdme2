@@ -5,7 +5,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::events::GUIMouseEvent;
@@ -23,7 +23,7 @@ public:
 	static GUIMouseEvent_Type* MOUSEEVENT_RELEASED;
 	static GUIMouseEvent_Type* MOUSEEVENT_MOVED;
 	static GUIMouseEvent_Type* MOUSEEVENT_DRAGGED;
-	GUIMouseEvent_Type(const wstring& name, int ordinal);
-	static GUIMouseEvent_Type* valueOf(const wstring& a0);
+	GUIMouseEvent_Type(const string& name, int ordinal);
+	static GUIMouseEvent_Type* valueOf(const string& a0);
 
 };

@@ -35,7 +35,7 @@ private:
 	int64_t time {  };
 	GUIKeyboardEvent_Type* type {  };
 	int32_t keyCode {  };
-	wchar_t keyChar {  };
+	char keyChar {  };
 	bool metaDown {  };
 	bool controlDown {  };
 	bool altDown {  };
@@ -48,7 +48,7 @@ public:
 	 * Get key code from char
 	 * @param key char
 	 */
-	static int32_t getKeyCodeFromChar(wchar_t key);
+	static int32_t getKeyCodeFromChar(char key);
 
 	/** 
 	 * @return time in milliseconds
@@ -86,13 +86,13 @@ public:
 	/** 
 	 * @return key char
 	 */
-	virtual wchar_t getKeyChar();
+	virtual char getKeyChar();
 
 	/** 
 	 * Set key char
 	 * @param key char
 	 */
-	virtual void setKeyChar(wchar_t keyChar);
+	virtual void setKeyChar(char keyChar);
 
 	/** 
 	 * @return is meta down

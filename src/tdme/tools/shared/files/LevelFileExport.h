@@ -9,7 +9,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <ext/jsonbox/JsonException.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::filesystem::FileSystemException;
@@ -35,6 +35,6 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void export_(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
 
 };

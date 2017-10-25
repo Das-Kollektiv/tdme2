@@ -15,25 +15,25 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxOption::GUISelectBoxOption() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox-option.xml");
 }
 
-wstring GUISelectBoxOption::NAME = L"selectbox-option";
+string GUISelectBoxOption::NAME = "selectbox-option";
 
-const wstring& GUISelectBoxOption::getName()
+const string& GUISelectBoxOption::getName()
 {
 	return NAME;
 }
 
-const wstring& GUISelectBoxOption::getTemplate()
+const string& GUISelectBoxOption::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUISelectBoxOption::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUISelectBoxOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes["id"] = screenNode->allocateNodeId();
 	return &attributes;
 }
 

@@ -26,7 +26,6 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/Float.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -35,7 +34,7 @@
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/JsonException.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -62,80 +61,79 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
 using tdme::ext::jsonbox::JsonException;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Value jEntityRoot;
 	jEntityRoot.loadFromString(
-		StringConverter::toString(jsonContent)
+		(jsonContent)
 	);
 
 	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot);
-	levelEditorEntity->setEntityFileName(pathName + L"/" + fileName);
+	levelEditorEntity->setEntityFileName(pathName + "/" + fileName);
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	LevelEditorEntity* levelEditorEntity;
-	auto version = Float::parseFloat(StringConverter::toWideString(jEntityRoot["version"].getString()));
+	auto version = Float::parseFloat((jEntityRoot["version"].getString()));
 	auto pivot = Vector3(
 		static_cast< float >(jEntityRoot["px"].getDouble()),
 		static_cast< float >(jEntityRoot["py"].getDouble()),
 		static_cast< float >(jEntityRoot["pz"].getDouble())
 	);
-	auto modelType = LevelEditorEntity_EntityType::valueOf(StringConverter::toWideString(jEntityRoot["type"].getString()));
-	wstring modelFile = L"";
+	auto modelType = LevelEditorEntity_EntityType::valueOf((jEntityRoot["type"].getString()));
+	string modelFile = "";
 	if (jEntityRoot["file"].isNull() == false) {
-		auto modelFileString = StringConverter::toWideString(jEntityRoot["file"].getString());
+		auto modelFileString = (jEntityRoot["file"].getString());
 		modelFile = FileSystem::getInstance()->getCanonicalPath(
 			(
-				StringUtils::startsWith(FileSystem::getInstance()->getPathName(modelFileString), L"/") == true?
+				StringUtils::startsWith(FileSystem::getInstance()->getPathName(modelFileString), "/") == true?
 					FileSystem::getInstance()->getPathName(modelFileString):
-					pathName + L"/" +  FileSystem::getInstance()->getPathName(modelFileString)
+					pathName + "/" +  FileSystem::getInstance()->getPathName(modelFileString)
 			 ),
 			FileSystem::getInstance()->getFileName(modelFileString)
 		);
 	}
-	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? StringConverter::toWideString(jEntityRoot["thumbnail"].getString()) : L"";
-	auto name = StringConverter::toWideString(jEntityRoot["name"].getString());
-	auto description = StringConverter::toWideString(jEntityRoot["descr"].getString());
+	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? (jEntityRoot["thumbnail"].getString()) : "";
+	auto name = (jEntityRoot["name"].getString());
+	auto description = (jEntityRoot["descr"].getString());
 	Model* model = nullptr;
 	auto gameRoot = Tools::getGameRootPath(pathName);
-	wstring modelRelativeFileName = L"";
+	string modelRelativeFileName = "";
 	if (modelFile.length() > 0) {
 		modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
-		auto modelPath = (gameRoot.length() > 0 ? gameRoot + L"/" : L"") + Tools::getPath(modelRelativeFileName);
+		auto modelPath = (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 		auto modelFile = Tools::getFileName(modelRelativeFileName);
-		if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), L".dae") == true) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), ".dae") == true) {
 			model = DAEReader::read(
 				modelPath,
 				modelFile
 			);
 		} else
-			if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), L".tm") == true) {
+			if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), ".tm") == true) {
 			model = TMReader::read(
 				modelPath,
 				modelFile
 			);
 		} else {
-			throw ModelFileIOException(string("Unsupported mode file: ") + StringConverter::toString(modelFile));
+			throw ModelFileIOException(string("Unsupported mode file: ") + (modelFile));
 		}
 		if (model == nullptr) {
-			Console::println(L"ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + L"/" + modelFile + L"'");
+			Console::println("ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + "/" + modelFile + "'");
 			return nullptr;
 		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
-		model = DAEReader::read(L"resources/tools/leveleditor/models", L"arrow.dae");
+		model = DAEReader::read("resources/tools/leveleditor/models", "arrow.dae");
 	}
 
 	levelEditorEntity = new LevelEditorEntity(
@@ -143,8 +141,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 		modelType,
 		name,
 		description,
-		L"",
-		modelFile.length() > 0 ? FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : L"",
+		"",
+		modelFile.length() > 0 ? FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : "",
 		modelThumbnail,
 		model,
 		pivot
@@ -153,8 +151,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	for (auto i = 0; i < jProperties.size(); i++) {
 		auto& jProperty = jProperties[i];
 		levelEditorEntity->addProperty(
-			StringConverter::toWideString(jProperty["name"].getString()),
-			StringConverter::toWideString(jProperty["value"].getString())
+			(jProperty["name"].getString()),
+			(jProperty["value"].getString())
 		);
 	}
 
@@ -180,7 +178,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();
 		auto& jParticleSystem = jEntityRoot["ps"];
-		particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf(StringConverter::toWideString(jParticleSystem["t"].getString())));
+		particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].getString())));
 		{
 			auto v = particleSystem->getType();
 			if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
@@ -197,10 +195,10 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 					objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].getDouble()));
 					objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
 					try {
-						auto particleModelFile = StringConverter::toWideString(jObjectParticleSystem["mf"].getString());
+						auto particleModelFile = (jObjectParticleSystem["mf"].getString());
 						auto particleModelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, particleModelFile);
-						auto particleModelPath = (gameRoot.length() > 0 ? gameRoot + L"/" : L"") + Tools::getPath(particleModelRelativeFileName);
-						objectParticleSystem->setModelFile(particleModelPath + L"/" + Tools::getFileName(particleModelRelativeFileName));
+						auto particleModelPath = (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(particleModelRelativeFileName);
+						objectParticleSystem->setModelFile(particleModelPath + "/" + Tools::getFileName(particleModelRelativeFileName));
 					} catch (Exception& exception) {
 						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
 						Console::println(string(exception.what()));
@@ -217,10 +215,10 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 			if (((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) || ((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
 				{
 					Console::println(
-						wstring(
-							 L"ModelMetaDataFileExport::export(): unknown particle system type '" +
+						string(
+							 "ModelMetaDataFileExport::export(): unknown particle system type '" +
 							 particleSystem->getType()->getName() +
-							 L"'"
+							 "'"
 						 )
 					 );
 					goto end_switch0;;
@@ -229,7 +227,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 			end_switch0:;
 		}
 
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf(StringConverter::toWideString(jParticleSystem["e"].getString())));
+		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf((jParticleSystem["e"].getString())));
 		{
 			auto v = particleSystem->getEmitter();
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
@@ -407,9 +405,9 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 			}
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
 				Console::println(
-					L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
+					"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
-					L"'"
+					"'"
 				 );
 			}
 			end_switch1:;
@@ -419,15 +417,15 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const w
 	return levelEditorEntity;
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
-	auto bvTypeString = StringConverter::toWideString(jBv["type"].getString());
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"none") == true) {
+	auto bvTypeString = (jBv["type"].getString());
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "none") == true) {
 		entityBoundingVolume->setupNone();
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"sphere") == true) {
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "sphere") == true) {
 		entityBoundingVolume->setupSphere(
 			Vector3(
 				static_cast< float >(jBv["cx"].getDouble()),
@@ -437,7 +435,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			static_cast< float >(jBv["r"].getDouble())
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"capsule") == true) {
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "capsule") == true) {
 		entityBoundingVolume->setupCapsule(
 			Vector3(
 				static_cast< float >(jBv["ax"].getDouble()),
@@ -452,7 +450,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			static_cast< float >(jBv["r"].getDouble())
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"aabb") == true) {
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "aabb") == true) {
 		entityBoundingVolume->setupAabb(
 			Vector3(
 				static_cast< float >(jBv["mix"].getDouble()),
@@ -466,7 +464,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			)
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"obb") == true) {
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "obb") == true) {
 		entityBoundingVolume->setupObb(
 			Vector3(
 				static_cast< float >(jBv["cx"].getDouble()),
@@ -495,9 +493,9 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			)
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, L"convexmesh") == true) {
+	if (StringUtils::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			entityBoundingVolume->setupConvexMesh(pathName, StringConverter::toWideString(jBv["file"].getString()));
+			entityBoundingVolume->setupConvexMesh(pathName, (jBv["file"].getString()));
 		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));

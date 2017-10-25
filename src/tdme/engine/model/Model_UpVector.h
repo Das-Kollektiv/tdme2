@@ -6,7 +6,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::engine::model::Model;
@@ -22,9 +22,9 @@ public:
 	static Model_UpVector *Z_UP;
 
 public:
-	Model_UpVector(const wstring& name, int ordinal);
+	Model_UpVector(const string& name, int ordinal);
 
 public:
-	static Model_UpVector* valueOf(const wstring& a0);
+	static Model_UpVector* valueOf(const string& a0);
 
 };

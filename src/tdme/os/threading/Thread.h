@@ -6,7 +6,7 @@
 
 #include <string>
 
-using std::wstring;
+using std::string;
 
 /**
  * Base class for threads.
@@ -17,7 +17,7 @@ public:
 	/**
 	 * @brief Public constructor
 	 */
-	Thread(const wstring& name);
+	Thread(const string& name);
 
 	/**
 	 * @brief Public destructor
@@ -58,7 +58,7 @@ public:
 private:
 	static void *pThreadRun(void *thread);
 
-	wstring name;
+	string name;
 	bool pThreadCreated;
 	pthread_t pThread;
 	volatile bool stopRequested;

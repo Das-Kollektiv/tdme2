@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::GUI;
@@ -23,8 +23,8 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-wstring GUIInputController::CONDITION_DISABLED = L"disabled";
-wstring GUIInputController::CONDITION_ENABLED = L"enabled";
+string GUIInputController::CONDITION_DISABLED = "disabled";
+string GUIInputController::CONDITION_ENABLED = "enabled";
 
 GUIInputController::GUIInputController(GUINode* node) 
 	: GUINodeController(node)
@@ -47,7 +47,7 @@ void GUIInputController::setDisabled(bool disabled)
 
 void GUIInputController::initialize()
 {
-	textInputNode = dynamic_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + L"_text-input"));
+	textInputNode = dynamic_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + "_text-input"));
 	setDisabled(disabled);
 }
 

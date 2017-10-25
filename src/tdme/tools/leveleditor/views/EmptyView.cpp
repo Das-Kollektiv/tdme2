@@ -23,7 +23,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::engine::Engine;
@@ -87,11 +87,11 @@ void EmptyView::initModel()
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	auto model = engine->getEntity(L"model");
-	auto ground = engine->getEntity(L"ground");
+	auto model = engine->getEntity("model");
+	auto ground = engine->getEntity("ground");
 	model->setDynamicShadowingEnabled(false);
 	ground->setEnabled(false);
-	auto modelBoundingVolume = engine->getEntity(L"model_bv");
+	auto modelBoundingVolume = engine->getEntity("model_bv");
 	if (modelBoundingVolume != nullptr) {
 		modelBoundingVolume->setEnabled(false);
 	}
@@ -117,15 +117,15 @@ void EmptyView::display()
 void EmptyView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		emptyScreenController->setScreenCaption(L"Empty - " + entity->getName());
-		auto preset = entity->getProperty(L"preset");
-		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", L"");
+		emptyScreenController->setScreenCaption("Empty - " + entity->getName());
+		auto preset = entity->getProperty("preset");
+		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		emptyScreenController->setEntityData(entity->getName(), entity->getDescription());
 		Vector3 dimension;
 		dimension.set(entity->getModel()->getBoundingBox()->getMax());
 		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
 	} else {
-		emptyScreenController->setScreenCaption(L"Empty - no trigger loaded");
+		emptyScreenController->setScreenCaption("Empty - no trigger loaded");
 		emptyScreenController->unsetEntityProperties();
 		emptyScreenController->unsetEntityData();
 	}

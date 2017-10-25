@@ -5,7 +5,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -20,6 +20,6 @@ public:
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_NONE;
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_PRESSED;
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_RELEASED;
-	GUIKeyboardEvent_Type(const wstring& name, int ordinal);
-	static GUIKeyboardEvent_Type* valueOf(const wstring& a0);
+	GUIKeyboardEvent_Type(const string& name, int ordinal);
+	static GUIKeyboardEvent_Type* valueOf(const string& a0);
 };

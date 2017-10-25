@@ -5,7 +5,7 @@
 #include <tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioBufferManager;
 
@@ -18,7 +18,7 @@ class tdme::audio::AudioBufferManager_AudioBufferManaged
 	friend class AudioBufferManager;
 
 public: /* package */
-	wstring id {  };
+	string id {  };
 	int32_t alId {  };
 	int32_t referenceCounter {  };
 
@@ -27,7 +27,7 @@ public: /* protected */
 	/** 
 	 * @return audio buffer id
 	 */
-	virtual const wstring& getId();
+	virtual const string& getId();
 
 	/** 
 	 * @return Open AL id
@@ -64,7 +64,7 @@ private:
 	 * @param Open AL id
 	 * @param referenceCounter
 	 */
-	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const wstring& id, int32_t alId);
+	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
 
 private:
 	AudioBufferManager* audioBufferManager;

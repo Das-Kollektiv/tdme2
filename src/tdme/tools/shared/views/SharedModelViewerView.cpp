@@ -30,14 +30,13 @@
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Properties.h>
 #include <tdme/engine/subsystems/object/ModelStatistics.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::engine::Engine;
@@ -71,7 +70,6 @@ using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
@@ -84,7 +82,7 @@ SharedModelViewerView::SharedModelViewerView(PopUps* popUps)
 	loadModelRequested = false;
 	initModelRequested = false;
 	entity = nullptr;
-	modelFile = L"";
+	modelFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
@@ -125,18 +123,18 @@ void SharedModelViewerView::initModel()
 	updateGUIElements();
 }
 
-const wstring& SharedModelViewerView::getFileName()
+const string& SharedModelViewerView::getFileName()
 {
 	return modelFile;
 }
 
-void SharedModelViewerView::loadFile(const wstring& pathName, const wstring& fileName)
+void SharedModelViewerView::loadFile(const string& pathName, const string& fileName)
 {
 	loadModelRequested = true;
 	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
 }
 
-void SharedModelViewerView::saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */
+void SharedModelViewerView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	ModelMetaDataFileExport::export_(pathName, fileName, entity);
 }
@@ -179,14 +177,14 @@ void SharedModelViewerView::display()
 void SharedModelViewerView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelViewerScreenController->setScreenCaption(L"Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
-		auto preset = entity->getProperty(L"preset");
-		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : L"", entity, L"");
+		modelViewerScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
+		auto preset = entity->getProperty("preset");
+		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelViewerScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 	} else {
-		modelViewerScreenController->setScreenCaption(L"Model Viewer - no entity loaded");
+		modelViewerScreenController->setScreenCaption("Model Viewer - no entity loaded");
 		modelViewerScreenController->unsetEntityProperties();
 		modelViewerScreenController->unsetEntityData();
 		modelViewerScreenController->unsetPivot();
@@ -202,11 +200,11 @@ void SharedModelViewerView::loadSettings()
 {
 	try {
 		Properties settings;
-		settings.load(L"settings", L"modelviewer.properties");
-		entityDisplayView->setDisplayBoundingVolume(settings.get(L"display.boundingvolumes", L"false") == L"true");
-		entityDisplayView->setDisplayGroundPlate(settings.get(L"display.groundplate", L"false") == L"true");
-		entityDisplayView->setDisplayShadowing(settings.get(L"display.shadowing", L"false") == L"true");
-		modelViewerScreenController->getModelPath()->setPath(settings.get(L"model.path", L"."));
+		settings.load("settings", "modelviewer.properties");
+		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
+		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
+		modelViewerScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -247,11 +245,11 @@ void SharedModelViewerView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put(L"display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? L"true" : L"false");
-		settings.put(L"display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? L"true" : L"false");
-		settings.put(L"display.shadowing", entityDisplayView->isDisplayShadowing() == true ? L"true" : L"false");
-		settings.put(L"model.path", modelViewerScreenController->getModelPath()->getPath());
-		settings.store(L"settings", L"modelviewer.properties");
+		settings.put("display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
+		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
+		settings.put("model.path", modelViewerScreenController->getModelPath()->getPath());
+		settings.store("settings", "modelviewer.properties");
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -275,13 +273,13 @@ void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldEntity, LevelEdito
 
 void SharedModelViewerView::loadModel()
 {
-	Console::println(wstring(L"Model file: " + modelFile));
+	Console::println(string("Model file: " + modelFile));
 	try {
 		auto oldEntity = entity;
 		setEntity(
 			loadModel(
 				FileSystem::getInstance()->getFileName(modelFile),
-				L"",
+				"",
 				FileSystem::getInstance()->getPathName(modelFile),
 				FileSystem::getInstance()->getFileName(modelFile),
 				Vector3()
@@ -289,13 +287,13 @@ void SharedModelViewerView::loadModel()
 		);
 		onLoadModel(oldEntity, entity);
 	} catch (Exception& exception) {
-		popUps->getInfoDialogScreenController()->show(L"Warning", StringConverter::toWideString(exception.what()));
+		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
 }
 
-LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".dae") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
 		auto model = DAEReader::read(
 			pathName,
 			fileName
@@ -305,16 +303,16 @@ LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const w
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			L"",
-			pathName + L"/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			"",
+			pathName + "/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			pivot
 			);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tm") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
 		auto model = TMReader::read(
 			pathName,
 			fileName
@@ -324,16 +322,16 @@ LevelEditorEntity* SharedModelViewerView::loadModel(const wstring& name, const w
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
-			L"",
-			pathName + L"/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), L"\\", L"_"), L"/", L"_"), L":", L"_") + L".png",
+			"",
+			pathName + "/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			pivot
 		);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L".tmm") == true) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
 			LevelEditorEntity::ID_NONE,
 			pathName,

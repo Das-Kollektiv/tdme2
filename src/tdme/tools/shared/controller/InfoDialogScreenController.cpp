@@ -12,7 +12,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::gui::GUIParser;
@@ -38,11 +38,11 @@ GUIScreenNode* InfoDialogScreenController::getScreenNode()
 void InfoDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(L"resources/tools/shared/gui", L"infodialog.xml");
+		screenNode = GUIParser::parse("resources/tools/shared/gui", "infodialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
-		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_caption"));
-		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"infodialog_message"));
+		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_caption"));
+		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_message"));
 	} catch (Exception& exception) {
 		Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -53,7 +53,7 @@ void InfoDialogScreenController::dispose()
 {
 }
 
-void InfoDialogScreenController::show(const wstring& caption, const wstring& message)
+void InfoDialogScreenController::show(const string& caption, const string& message)
 {
 	screenNode->setVisible(true);
 	captionNode->getText()->set(value->set(caption));
@@ -72,7 +72,7 @@ void InfoDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId().compare(L"infodialog_ok") == 0) {
+				if (node->getId().compare("infodialog_ok") == 0) {
 					close();
 				}
 				goto end_switch0;;

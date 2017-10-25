@@ -12,7 +12,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
@@ -28,7 +28,7 @@ public:
 	 * @param path name
 	 * @param file name
 	 */
-	virtual void openFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException, AudioDecoderException);
+	virtual void openFile(const string& pathName, const string& fileName) throw (FileSystemException, AudioDecoderException);
 
 	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
@@ -53,8 +53,8 @@ public:
 	VorbisDecoder();
 
 private:
-	wstring pathName;
-	wstring fileName;
+	string pathName;
+	string fileName;
 	OggVorbis_File vf;
 	int section;
 };

@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINode;
 using tdme::engine::fileio::textures::Texture;
@@ -47,7 +47,7 @@ public: /* protected */
 	/** 
 	 * @return node type
 	 */
-	const wstring getNodeType() override;
+	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
@@ -56,7 +56,7 @@ public:
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
-	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
+	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
 
 private:
 	void init();

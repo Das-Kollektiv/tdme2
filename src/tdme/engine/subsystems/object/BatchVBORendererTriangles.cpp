@@ -11,8 +11,8 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::BatchVBORendererTriangles;
 using tdme::utils::ByteBuffer;
@@ -67,7 +67,7 @@ void BatchVBORendererTriangles::release()
 void BatchVBORendererTriangles::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborenderertriangles." + to_wstring(id), 3);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 3);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -90,7 +90,7 @@ void BatchVBORendererTriangles::render()
 void BatchVBORendererTriangles::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborenderertriangles." + to_wstring(id));
+		Engine::getInstance()->getVBOManager()->removeVBO("tdme.batchvborenderertriangles." + to_string(id));
 		vboIds = nullptr;
 	}
 }

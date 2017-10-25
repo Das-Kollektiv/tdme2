@@ -18,7 +18,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::ApplicationInputEventsHandler;
@@ -48,9 +48,9 @@ class tdme::gui::GUI final
 private:
 	GUIRenderer* guiRenderer {  };
 	Engine* engine {  };
-	map<wstring, GUIScreenNode*> screens {  };
-	static map<wstring, GUIFont*> fontCache;
-	static map<wstring, Texture*> imageCache;
+	map<string, GUIScreenNode*> screens {  };
+	static map<string, GUIFont*> fontCache;
+	static map<string, Texture*> imageCache;
 	GUIColor* foccussedBorderColor {  };
 	vector<GUIElementNode*> focusableNodes {  };
 	vector<GUIScreenNode*> focusableScreenNodes {  };
@@ -122,34 +122,34 @@ public:
 	 * @param file name
 	 * @return
 	 */
-	static GUIFont* getFont(const wstring& fileName);
+	static GUIFont* getFont(const string& fileName);
 
 	/** 
 	 * Get image
 	 * @param file name
 	 * @return
 	 */
-	static Texture* getImage(const wstring& fileName);
+	static Texture* getImage(const string& fileName);
 
 	/** 
 	 * Get screen
 	 * @param id
 	 * @return screen
 	 */
-	GUIScreenNode* getScreen(const wstring& id);
+	GUIScreenNode* getScreen(const string& id);
 
 	/** 
 	 * Add screen
 	 * @param id
 	 * @param gui
 	 */
-	void addScreen(const wstring& id, GUIScreenNode* screen);
+	void addScreen(const string& id, GUIScreenNode* screen);
 
 	/** 
 	 * Removes an screen
 	 * @param id
 	 */
-	void removeScreen(const wstring* id);
+	void removeScreen(const string* id);
 
 	/** 
 	 * Removes all screens and caches
@@ -165,7 +165,7 @@ public:
 	 * Add render screen
 	 * @param screenId
 	 */
-	void addRenderScreen(const wstring& screenId);
+	void addRenderScreen(const string& screenId);
 
 	/** 
 	 * @return focussed border color

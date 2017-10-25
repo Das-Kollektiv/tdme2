@@ -36,7 +36,7 @@ public:
 	NIOServerGroup(const uint32_t groupId) :
 		server(NULL),
 		groupId(groupId),
-		clientKeyListsReadWriteLock(L"nioservergroup_clientlists"){
+		clientKeyListsReadWriteLock("nioservergroup_clientlists"){
 		//
 		ostringstream tmp;
 		tmp << "unnamed.";

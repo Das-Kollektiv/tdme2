@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Application;
 using tdme::engine::Engine;
@@ -27,7 +27,7 @@ class tdme::tools::particlesystem::TDMEParticleSystem final
 	: public virtual Application
 {
 private:
-	static wstring VERSION;
+	static string VERSION;
 	static TDMEParticleSystem* instance;
 	Engine* engine {  };
 	View* view {  };

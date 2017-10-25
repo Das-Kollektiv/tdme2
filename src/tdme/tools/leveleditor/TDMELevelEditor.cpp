@@ -22,7 +22,7 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::utils::Time;
@@ -44,17 +44,17 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utils::Console;
 
-wstring TDMELevelEditor::VERSION = L"0.9.9";
+string TDMELevelEditor::VERSION = "0.9.9";
 
 TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
 void TDMELevelEditor::main(int argc, char** argv)
 {
-	Console::println(wstring(L"TDMELevelEditor " + VERSION));
-	Console::println(wstring(L"Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println(string("TDMELevelEditor " + VERSION));
+	Console::println(string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	Console::println();
 	TDMELevelEditor tdmeLevelEditor;
-	tdmeLevelEditor.run(argc, argv, L"TDMELevelEditor");
+	tdmeLevelEditor.run(argc, argv, "TDMELevelEditor");
 }
 
 TDMELevelEditor::TDMELevelEditor()

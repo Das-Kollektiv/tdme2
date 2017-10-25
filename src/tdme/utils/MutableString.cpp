@@ -5,8 +5,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/utils/Time.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::utils::MutableString;
 using tdme::math::Math;
@@ -16,7 +16,7 @@ MutableString::MutableString()
 {
 }
 
-MutableString::MutableString(const wstring& s)
+MutableString::MutableString(const string& s)
 {
 	data = s;
 }
@@ -26,50 +26,50 @@ int32_t MutableString::length()
 	return data.size();
 }
 
-wchar_t MutableString::charAt(int32_t idx)
+char MutableString::charAt(int32_t idx)
 {
 	return data[idx];
 }
 
 MutableString* MutableString::reset()
 {
-	data = L"";
+	data = "";
 	return this;
 }
 
-MutableString* MutableString::set(wchar_t c)
+MutableString* MutableString::set(char c)
 {
 	reset();
 	append(c);
 	return this;
 }
 
-MutableString* MutableString::append(wchar_t c)
+MutableString* MutableString::append(char c)
 {
 	data.push_back(c);
 	return this;
 }
 
-MutableString* MutableString::insert(int32_t idx, wchar_t c)
+MutableString* MutableString::insert(int32_t idx, char c)
 {
 	data.insert(idx, 1, c);
 	return this;
 }
 
-MutableString* MutableString::set(const wstring& s)
+MutableString* MutableString::set(const string& s)
 {
 	reset();
 	append(s);
 	return this;
 }
 
-MutableString* MutableString::append(const wstring& s)
+MutableString* MutableString::append(const string& s)
 {
 	data+= s;
 	return this;
 }
 
-MutableString* MutableString::insert(int32_t idx, const wstring& s)
+MutableString* MutableString::insert(int32_t idx, const string& s)
 {
 	data.insert(idx, s);
 	return this;
@@ -103,7 +103,7 @@ MutableString* MutableString::set(int32_t i)
 
 MutableString* MutableString::append(int32_t i)
 {
-	data+= to_wstring(i);
+	data+= to_string(i);
 	return this;
 }
 
@@ -117,13 +117,13 @@ MutableString* MutableString::insert(int32_t idx, int32_t i)
 	while (true == true) {
 		auto remainder = i % 10;
 		i = i / 10;
-		insert(idx, static_cast< wchar_t >((u'0' + remainder)));
+		insert(idx, static_cast< char >(('0' + remainder)));
 		if (i == 0) {
 			break;
 		}
 	}
 	if (negative == true) {
-		insert(idx, u'-');
+		insert(idx, '-');
 	}
 	return this;
 }
@@ -174,7 +174,7 @@ int32_t MutableString::indexOf(MutableString* s)
 }
 
 
-bool MutableString::equals(const wstring& s2)
+bool MutableString::equals(const string& s2)
 {
 	return data == s2;
 }
@@ -184,7 +184,7 @@ bool MutableString::equals(MutableString* s2)
 	return data == s2->data;
 }
 
-const wstring& MutableString::toWString()
+const string& MutableString::toWString()
 {
 	return data;
 }

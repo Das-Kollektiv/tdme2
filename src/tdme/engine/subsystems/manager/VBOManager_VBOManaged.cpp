@@ -4,19 +4,19 @@
 
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
 
-VBOManager_VBOManaged::VBOManager_VBOManaged(const wstring& id, vector<int32_t>* vboGlIds)
+VBOManager_VBOManaged::VBOManager_VBOManaged(const string& id, vector<int32_t>* vboGlIds)
 {
 	this->id = id;
 	this->vboGlIds = *vboGlIds;
 	this->referenceCounter = 0;
 }
 
-const wstring& VBOManager_VBOManaged::getId()
+const string& VBOManager_VBOManaged::getId()
 {
 	return id;
 }

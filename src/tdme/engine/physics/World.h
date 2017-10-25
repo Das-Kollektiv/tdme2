@@ -38,7 +38,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::Engine;
@@ -70,9 +70,9 @@ private:
 
 	vector<RigidBody*> rigidBodies {  };
 	vector<RigidBody*> rigidBodiesDynamic {  };
-	map<wstring, RigidBody*> rigidBodiesById {  };
+	map<string, RigidBody*> rigidBodiesById {  };
 	ConstraintsSolver* constraintsSolver { nullptr };
-	map<wstring, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
 	bool updateRigidBodyIndices {  };
 public:
 
@@ -104,7 +104,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body
@@ -115,14 +115,14 @@ public:
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const wstring& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 
 	 * @param id
 	 * @return ridig body
 	 */
-	RigidBody* getRigidBody(const wstring& id);
+	RigidBody* getRigidBody(const string& id);
 
 	/** 
 	 * Update world

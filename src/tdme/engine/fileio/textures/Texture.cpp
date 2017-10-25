@@ -4,15 +4,15 @@
 
 #include <tdme/utils/ByteBuffer.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::fileio::textures::Texture;
 
 using tdme::utils::ByteBuffer;
 
 Texture::Texture(
-	const wstring& id,
+	const string& id,
 	int32_t depth,
 	int32_t width, int32_t height,
 	int32_t textureWidth, int32_t textureHeight,
@@ -32,7 +32,7 @@ Texture::~Texture() {
 	delete textureData;
 }
 
-const wstring& Texture::getId() {
+const string& Texture::getId() {
 	return id;
 }
 

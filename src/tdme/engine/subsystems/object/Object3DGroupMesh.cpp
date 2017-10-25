@@ -23,7 +23,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
 using tdme::math::Math;
@@ -56,7 +56,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningJoints = -1;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<wstring, Matrix4x4*>* transformationMatrices, map<wstring, Matrix4x4*>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	mesh->group = group;

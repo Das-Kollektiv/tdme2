@@ -12,7 +12,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::gui::nodes::GUINodeController;
@@ -32,13 +32,13 @@ class tdme::gui::elements::GUIRadioButtonController final
 {
 
 private:
-	static wstring CONDITION_SELECTED;
-	static wstring CONDITION_UNSELECTED;
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
+	static string CONDITION_SELECTED;
+	static string CONDITION_UNSELECTED;
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
 	bool selected {  };
 	bool disabled {  };
-	static map<wstring, vector<GUIElementNode*>> radioButtonGroupNodesByName;
+	static map<string, vector<GUIElementNode*>> radioButtonGroupNodesByName;
 	MutableString* value {  };
 
 public: /* protected */

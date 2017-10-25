@@ -8,7 +8,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -35,7 +35,7 @@ public:
 	 * @param entity
 	 * @param preset id
 	 */
-	virtual void entityPropertiesPreset(LevelEditorEntity* entity, const wstring& presetId);
+	virtual void entityPropertiesPreset(LevelEditorEntity* entity, const string& presetId);
 
 	/** 
 	 * Save a entity property
@@ -45,7 +45,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	virtual bool entityPropertySave(LevelEditorEntity* entity, const wstring& oldName, const wstring& name, const wstring& value);
+	virtual bool entityPropertySave(LevelEditorEntity* entity, const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Add a entity property
@@ -60,7 +60,7 @@ public:
 	 * @param name
 	 * @return success
 	 */
-	virtual bool entityPropertyRemove(LevelEditorEntity* entity, const wstring& name);
+	virtual bool entityPropertyRemove(LevelEditorEntity* entity, const string& name);
 
 	/** 
 	 * Update current model data
@@ -68,7 +68,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	virtual void setEntityData(LevelEditorEntity* entity, const wstring& name, const wstring& description);
+	virtual void setEntityData(LevelEditorEntity* entity, const string& name, const string& description);
 
 	/**
 	 * Public constructor

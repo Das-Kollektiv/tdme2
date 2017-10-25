@@ -6,14 +6,14 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
 
-PointsParticleSystemEntity::PointsParticleSystemEntity(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) :
+PointsParticleSystemEntity::PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) :
 	PointsParticleSystemEntityInternal(id, doCollisionTests, emitter, maxPoints, autoEmit)
 {
 }
@@ -88,7 +88,7 @@ Color4& PointsParticleSystemEntity::getEffectColorMul()
 	return PointsParticleSystemEntityInternal::getEffectColorMul();
 }
 
-const wstring& PointsParticleSystemEntity::getId()
+const string& PointsParticleSystemEntity::getId()
 {
 	return PointsParticleSystemEntityInternal::getId();
 }

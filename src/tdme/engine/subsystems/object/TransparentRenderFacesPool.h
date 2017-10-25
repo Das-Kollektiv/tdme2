@@ -20,7 +20,7 @@
 #include <tdme/utils/Pool.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 using tdme::engine::model::Face;
@@ -67,7 +67,7 @@ public: /* protected */
 		Vector3 tmpVector3;
 		for (auto i = 0; i < faces->size(); i++) {
 			if (transparentRenderFacesPool.size() >= FACES_MAX) {
-				Console::println(wstring(L"TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
+				Console::println(string("TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
 				break;
 			}
 			auto faceVertexIndices = (*faces)[i].getVertexIndices();

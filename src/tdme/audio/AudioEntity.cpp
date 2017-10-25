@@ -4,12 +4,12 @@
 
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
 
-AudioEntity::AudioEntity(const wstring& id)
+AudioEntity::AudioEntity(const string& id)
 {
 	this->id = id;
 	looping = false;
@@ -24,7 +24,7 @@ AudioEntity::AudioEntity(const wstring& id)
 AudioEntity::~AudioEntity() {
 }
 
-const wstring& AudioEntity::getId()
+const string& AudioEntity::getId()
 {
 	return id;
 }

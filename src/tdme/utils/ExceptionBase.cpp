@@ -5,9 +5,8 @@
 
 #include <string>
 
-#include <tdme/utils/StringConverter.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::ExceptionBase;
 

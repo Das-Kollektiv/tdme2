@@ -19,14 +19,13 @@
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/Float.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/Array.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::engine::Rotation;
@@ -46,36 +45,35 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::Array;
 
-void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	doImport(pathName, fileName, level, L"");
+	doImport(pathName, fileName, level, "");
 }
 
-void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level, const wstring& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Value jRoot;
 	jRoot.loadFromString(
-		StringConverter::toString(jsonContent)
+		(jsonContent)
 	);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
-	auto version = Float::parseFloat(StringConverter::toWideString(jRoot["version"].getString()));
-	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf(StringConverter::toWideString(jRoot["ro"].getString())) : RotationOrder::XYZ);
+	auto version = Float::parseFloat((jRoot["version"].getString()));
+	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf((jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
 	auto jMapProperties = jRoot["properties"].getArray();
 	for (auto i = 0; i < jMapProperties.size(); i++) {
 		auto& jMapProperty = jMapProperties[i];
 		level->addProperty(
-			StringConverter::toWideString(jMapProperty["name"].getString()),
-			StringConverter::toWideString(jMapProperty["value"].getString())
+			(jMapProperty["name"].getString()),
+			(jMapProperty["value"].getString())
 		);
 	}
 	if (jRoot["lights"].isNull() == false) {
@@ -135,7 +133,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			jModel["entity"]
 		);
 		if (levelEditorEntity == nullptr) {
-			Console::println(L"LevelFileImport::doImport(): Invalid entity = " + to_wstring(jModel["id"].getInt()));
+			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].getInt()));
 			continue;
 		}
 		level->getEntityLibrary()->addEntity(levelEditorEntity);
@@ -144,8 +142,8 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			for (auto j = 0; j < jModelProperties.size(); j++) {
 				auto jModelProperty = jModelProperties[j];
 				levelEditorEntity->addProperty(
-					StringConverter::toWideString(jModelProperty["name"].getString()),
-					StringConverter::toWideString(jModelProperty["value"].getString())
+					(jModelProperty["name"].getString()),
+					(jModelProperty["value"].getString())
 				);
 			}
 		}
@@ -156,7 +154,7 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		auto& jObject = jObjects[i];
 		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].getInt());
 		if (model == nullptr) {
-			Console::println(L"LevelFileImport::doImport(): No entity found with id = " + to_wstring(jObject["mid"].getInt()));
+			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].getInt()));
 			continue;
 		}
 
@@ -182,10 +180,10 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
 		transformations->update();
 		auto levelEditorObject = new LevelEditorObject(
-			objectIdPrefix != L"" ?
-				objectIdPrefix + StringConverter::toWideString(jObject["id"].getString()) :
-				StringConverter::toWideString(jObject["id"].getString()),
-			 jObject["descr"].isNull() == false?StringConverter::toWideString(jObject["descr"].getString()) : L"",
+			objectIdPrefix != "" ?
+				objectIdPrefix + (jObject["id"].getString()) :
+				(jObject["id"].getString()),
+			 jObject["descr"].isNull() == false?(jObject["descr"].getString()) : "",
 			 transformations,
 			 model
 		);
@@ -195,8 +193,8 @@ void LevelFileImport::doImport(const wstring& pathName, const wstring& fileName,
 			for (auto j = 0; j < jObjectProperties.size(); j++) {
 				auto jObjectProperty = jObjectProperties[j];
 				levelEditorObject->addProperty(
-					StringConverter::toWideString(jObjectProperty["name"].getString()),
-					StringConverter::toWideString(jObjectProperty["value"].getString())
+					(jObjectProperty["name"].getString()),
+					(jObjectProperty["value"].getString())
 				);
 			}
 		}

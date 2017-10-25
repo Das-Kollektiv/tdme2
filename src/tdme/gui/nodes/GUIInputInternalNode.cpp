@@ -39,7 +39,7 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::Integer;
 
-GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const wstring& font, const wstring& color, const wstring& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
+GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, const string& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
@@ -52,7 +52,7 @@ GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentN
 	this->controller->initialize();
 }
 
-int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
+int32_t GUIInputInternalNode::createMaxLength(const string& s)
 {
 	try {
 		auto maxLength = Integer::parseInt(s);
@@ -64,9 +64,9 @@ int32_t GUIInputInternalNode::createMaxLength(const wstring& s)
 	}
 }
 
-const wstring GUIInputInternalNode::getNodeType()
+const string GUIInputInternalNode::getNodeType()
 {
-	return L"text";
+	return "text";
 }
 
 bool GUIInputInternalNode::isContentNode()

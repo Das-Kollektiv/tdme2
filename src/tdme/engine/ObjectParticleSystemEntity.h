@@ -16,7 +16,7 @@
 #include <tdme/engine/Entity.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
@@ -64,13 +64,13 @@ public:
 	 * @param max count
 	 * @param emitter
 	 */
-	ObjectParticleSystemEntity(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
 	virtual void dispose();
 	virtual Color4& getEffectColorAdd();
 	virtual Color4& getEffectColorMul();
-	virtual const wstring& getId();
+	virtual const string& getId();
 	virtual Vector3& getPivot();
 	virtual Rotations* getRotations();
 	virtual Vector3& getScale();

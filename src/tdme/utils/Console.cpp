@@ -9,40 +9,26 @@ using namespace std;
 using tdme::utils::Console;
 using tdme::utils::Time;
 
-Mutex Console::mutex(L"console");
+Mutex Console::mutex("console");
 
-void Console::println(const wstring& string)
+void Console::println(const string& str)
 {
 	mutex.lock();
-	wcout << string << endl;
+	cout << str << endl;
 	mutex.unlock();
 }
 
-void Console::println(const string& string)
+void Console::print(const string& str)
 {
 	mutex.lock();
-	cout << string << endl;
-	mutex.unlock();
-}
-
-void Console::print(const wstring& string)
-{
-	mutex.lock();
-	wcout << string;
-	mutex.unlock();
-}
-
-void Console::print(const string& string)
-{
-	mutex.lock();
-	cout << string;
+	cout << str;
 	mutex.unlock();
 }
 
 void Console::println()
 {
 	mutex.lock();
-	wcout << endl;
+	cout << endl;
 	mutex.unlock();
 }
 

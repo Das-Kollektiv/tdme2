@@ -8,7 +8,7 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::math::Vector3;
@@ -29,7 +29,7 @@ public:
 	void onInitAdditionalScreens() override;
 
 public: /* protected */
-	LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */ override;
+	LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */ override;
 
 public:
 	/**

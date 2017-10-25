@@ -4,7 +4,7 @@
 
 #include <tdme/utils/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 /**
  * Enum entity class
@@ -12,14 +12,14 @@ class tdme::utils::Enum
  */
 class tdme::utils::Enum {
 private:
-	wstring name {  };
+	string name {  };
 	int32_t ordinal {  };
 
 public:
 	/**
 	 * @return name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/**
 	 * @return ordinal or index
@@ -37,6 +37,6 @@ public:
 	 * @param name
 	 * @param ordinal or index
 	 */
-	Enum(const wstring& name, int32_t ordinal);
+	Enum(const string& name, int32_t ordinal);
 
 };

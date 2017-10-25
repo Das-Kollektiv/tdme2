@@ -43,7 +43,7 @@
 
 using std::remove;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
@@ -72,7 +72,7 @@ private:
 public: /* protected */
 	World* world {  };
 	int32_t idx {  };
-	wstring id {  };
+	string id {  };
 	int32_t typeId {  };
 	int32_t collisionTypeIds {  };
 	bool enabled {  };
@@ -144,7 +144,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return type id
@@ -360,7 +360,7 @@ public: /* protected */
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
+	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
 
 	/**
 	 * Destructor

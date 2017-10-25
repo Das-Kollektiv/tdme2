@@ -4,23 +4,21 @@
 
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
-#include <tdme/utils/StringConverter.h>
 
 using std::string;
-using std::to_wstring;
-using std::wstring;
+using std::to_string;
+using std::string;
 using std::endl;
 
 using tdme::utils::Console;
 using tdme::utils::Exception;
-using tdme::utils::StringConverter;
 
 EchoUDPServerClient::EchoUDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
 	NIOUDPServerClient(clientId, ip, port) {
 }
 
 EchoUDPServerClient::~EchoUDPServerClient() {
-	Console::println(L"EchoUDPServerClient::~EchoUDPServerClient()");
+	Console::println("EchoUDPServerClient::~EchoUDPServerClient()");
 }
 
 void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) {
@@ -50,13 +48,13 @@ void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageI
 }
 
 void EchoUDPServerClient::onInit() throw (Exception) {
-	Console::println(L"initiated connection with '" + StringConverter::toWideString(getIp()) + L":" + to_wstring(getPort()) + L"'");
+	Console::println("initiated connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
 void EchoUDPServerClient::onClose() throw (Exception) {
-	Console::println(L"closed connection with '" + StringConverter::toWideString(getIp()) + L":" + to_wstring(getPort()) + L"'");
+	Console::println("closed connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
 void EchoUDPServerClient::onCustom(const string& type) throw (Exception) {
-	Console::println(L"custom event '" + StringConverter::toWideString(type) + L"' with '" + StringConverter::toWideString(getIp()) + L":" + to_wstring(getPort()) + L"'");
+	Console::println("custom event '" + (type) + "' with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }

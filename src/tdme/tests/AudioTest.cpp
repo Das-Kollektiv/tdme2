@@ -14,19 +14,19 @@ using tdme::utils::Console;
 
 void AudioTest::main()
 {
-	Console::println(wstring(L"Starting playing sound"));
-	auto sound = Audio::getInstance()->addSound(L"sound", L"resources/tests/sounds", L"water.ogg");
+	Console::println(string("Starting playing sound"));
+	auto sound = Audio::getInstance()->addSound("sound", "resources/tests/sounds", "water.ogg");
 	sound->setLooping(false);
 	sound->setFixed(true);
 	sound->play();
 	while(sound->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
-	Console::println(wstring(L"Finished playing sound"));
-	Console::println(wstring(L"Starting playing music"));
-	auto stream = Audio::getInstance()->addSound(L"music", L"resources/tests/music", L"memento-sanchez_monate_spaeter.ogg");
+	Console::println(string("Finished playing sound"));
+	Console::println(string("Starting playing music"));
+	auto stream = Audio::getInstance()->addSound("music", "resources/tests/music", "memento-sanchez_monate_spaeter.ogg");
 	stream->setLooping(false);
 	stream->setFixed(true);
 	stream->play();
 	while(stream->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
-	Console::println(wstring(L"Finished playing music"));
+	Console::println(string("Finished playing music"));
 	Audio::getInstance()->shutdown();
 }

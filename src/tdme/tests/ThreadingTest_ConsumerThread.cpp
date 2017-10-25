@@ -6,26 +6,26 @@
 #include <tdme/os/threading/Queue.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
 using tdme::utils::Console;
 
-ConsumerThread::ConsumerThread(int id, Queue<int>* queue) : Thread(L"consumer"), id(id), queue(queue) {
+ConsumerThread::ConsumerThread(int id, Queue<int>* queue) : Thread("consumer"), id(id), queue(queue) {
 }
 
 void ConsumerThread::run() {
-	Console::println(L"ConsumerThread[" + to_wstring(id) + L"]::init()");
+	Console::println("ConsumerThread[" + to_string(id) + "]::init()");
 	while(isStopRequested() == false) {
 		int* element = queue->getElement();
 		if (element == NULL) {
 			break;
 		}
-		Console::println(L"ConsumerThread[" + to_wstring(id) + L"]: got " + to_wstring(*element) + L" from queue");
+		Console::println("ConsumerThread[" + to_string(id) + "]: got " + to_string(*element) + " from queue");
 		delete element;
 		Thread::sleep(100);
 	}
-	Console::println(L"ConsumerThread[" + to_wstring(id) + L"]::done()");
+	Console::println("ConsumerThread[" + to_string(id) + "]::done()");
 }

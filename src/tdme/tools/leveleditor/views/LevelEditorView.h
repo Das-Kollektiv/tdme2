@@ -22,7 +22,7 @@
 
 using std::map;
 using std::set;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::tools::shared::views::View;
@@ -56,7 +56,7 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 	friend class LevelEditorView_LevelEditorView_1;
 
 private:
-	static vector<wstring> OBJECTCOLOR_NAMES;
+	static vector<string> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
 	static constexpr int32_t MOUSE_BUTTON_MIDDLE { 2 };
@@ -70,7 +70,7 @@ private:
 	Engine* engine {  };
 	LevelEditorEntity* selectedEntity {  };
 	bool reloadEntityLibrary {  };
-	map<wstring, LevelEditorView_ObjectColor*> objectColors {  };
+	map<string, LevelEditorView_ObjectColor*> objectColors {  };
 	Rotation* camLookRotationX {  };
 	Rotation* camLookRotationY {  };
 	float camScale {  };
@@ -115,8 +115,8 @@ public: /* package */
 private:
 	Model* levelEditorGround {  };
 	LevelEditorLevel* level {  };
-	vector<wstring> selectedEntityIds {  };
-	set<wstring> selectedEntityIdsById {  };
+	vector<string> selectedEntityIds {  };
+	set<string> selectedEntityIdsById {  };
 	vector<LevelEditorObject*> pasteObjects_ {  };
 	PopUps* popUps {  };
 	EntityPickingFilter* entityPickingFilterNoGrid {  };
@@ -131,7 +131,7 @@ public:
 	/** 
 	 * @return level file name
 	 */
-	const wstring getFileName();
+	const string getFileName();
 
 	/** 
 	 * @return level
@@ -185,7 +185,7 @@ public:
 	 * Select objects
 	 * @param object ids
 	 */
-	void selectObjects(vector<wstring>* entityIds);
+	void selectObjects(vector<string>* entityIds);
 
 	/** 
 	 * Select objects by id
@@ -286,7 +286,7 @@ public:
 	 * @param name
 	 * @param description
 	 */
-	bool objectDataApply(const wstring& name, const wstring& description);
+	bool objectDataApply(const string& name, const string& description);
 
 	/** 
 	 * Places selected model on selected object
@@ -344,7 +344,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	bool mapPropertySave(const wstring& oldName, const wstring& name, const wstring& value);
+	bool mapPropertySave(const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Add a map property
@@ -357,20 +357,20 @@ public:
 	 * @param name
 	 * @return success
 	 */
-	bool mapPropertyRemove(const wstring& name);
+	bool mapPropertyRemove(const string& name);
 
 	/** 
 	 * Remove a object property from object properties
 	 * @param name
 	 * @return success
 	 */
-	bool objectPropertyRemove(const wstring& name);
+	bool objectPropertyRemove(const string& name);
 
 	/** 
 	 * Apply object property preset
 	 * @param preset id
 	 */
-	void objectPropertiesPreset(const wstring& presetId);
+	void objectPropertiesPreset(const string& presetId);
 
 	/** 
 	 * Save a model property
@@ -379,7 +379,7 @@ public:
 	 * @param value
 	 * @return success
 	 */
-	bool objectPropertySave(const wstring& oldName, const wstring& name, const wstring& value);
+	bool objectPropertySave(const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Add a model property
@@ -390,12 +390,12 @@ public:
 	/** 
 	 * Triggers loading a map
 	 */
-	void loadMap(const wstring& path, const wstring& file);
+	void loadMap(const string& path, const string& file);
 
 	/** 
 	 * Triggers saving a map
 	 */
-	void saveMap(const wstring& pathName, const wstring& fileName);
+	void saveMap(const string& pathName, const string& fileName);
 
 private:
 

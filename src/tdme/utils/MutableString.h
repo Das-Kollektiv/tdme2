@@ -6,7 +6,7 @@
 #include <tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 /** 
  * Mutable string
@@ -27,7 +27,7 @@ public:
 	 * @param idx
 	 * @return char
 	 */
-	wchar_t charAt(int32_t idx);
+	char charAt(int32_t idx);
 
 	/**
 	 * Reset
@@ -39,42 +39,42 @@ public:
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* set(wchar_t c);
+	MutableString* set(char c);
 
 	/**
 	 * Append character
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* append(wchar_t c);
+	MutableString* append(char c);
 
 	/**
 	 * Insert character c at idx
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* insert(int32_t idx, wchar_t c);
+	MutableString* insert(int32_t idx, char c);
 
 	/**
 	 * Set string
 	 * @param s
 	 * @return this mutable string
 	 */
-	MutableString* set(const wstring& s);
+	MutableString* set(const string& s);
 
 	/**
 	 * Append string
 	 * @param s
 	 * @return this mutable string
 	 */
-	MutableString* append(const wstring& s);
+	MutableString* append(const string& s);
 
 	/**
 	 * Insert string at idx
 	 * @param c
 	 * @return this mutable string
 	 */
-	MutableString* insert(int32_t idx, const wstring& s);
+	MutableString* insert(int32_t idx, const string& s);
 
 	/**
 	 * Set mutable string
@@ -173,7 +173,7 @@ public:
 	 * @param string 2
 	 * @return string 2 equals this string
 	 */
-	bool equals(const wstring& s2);
+	bool equals(const string& s2);
 
 	/**
 	 * Equals
@@ -183,9 +183,9 @@ public:
 	bool equals(MutableString* s2);
 
 	/**
-	 * @return wstring
+	 * @return string
 	 */
-	const wstring& toWString();
+	const string& toWString();
 
 	/**
 	 * Public default constructor
@@ -196,7 +196,7 @@ public:
 	 * Public default constructor
 	 * @param string
 	 */
-	MutableString(const wstring& s);
+	MutableString(const string& s);
 private:
-	wstring data;
+	string data;
 };

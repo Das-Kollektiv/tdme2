@@ -1,25 +1,23 @@
 #include <tdme/gui/nodes/GUIColor.h>
 
 #include <array>
-#include <cwchar>
+#include <cstdio>
 #include <string>
 #include <vector>
 
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::gui::nodes::GUIColor;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::gui::GUIParserException;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 
 GUIColor GUIColor::GUICOLOR_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
@@ -40,13 +38,13 @@ vector<GUIColor*> GUIColor::COLOR_INSTANCES = {{
 	&GUICOLOR_TRANSPARENT
 }};
 
-vector<wstring> GUIColor::COLOR_NAMES = {{
-	L"WHITE",
-	L"BLACK",
-	L"RED",
-	L"GREEN",
-	L"BLUE",
-	L"TRANSPARENT"
+vector<string> GUIColor::COLOR_NAMES = {{
+	"WHITE",
+	"BLACK",
+	"RED",
+	"GREEN",
+	"BLUE",
+	"TRANSPARENT"
 }};
 
 GUIColor::GUIColor() : Color4Base()
@@ -65,7 +63,7 @@ GUIColor::GUIColor(const array<float, 4>& color): Color4Base(color)
 {
 }
 
-GUIColor::GUIColor(const wstring& colorString) throw (GUIParserException) : Color4Base()
+GUIColor::GUIColor(const string& colorString) throw (GUIParserException) : Color4Base()
 {
 	if (colorString.empty() == true) {
 		throw GUIParserException("No color given");
@@ -79,22 +77,22 @@ GUIColor::GUIColor(const wstring& colorString) throw (GUIParserException) : Colo
 			return;
 		}
 	}
-	if (StringUtils::startsWith(colorString, L"#") == false || (colorString.length() != 7 && colorString.length() != 9)) {
+	if (StringUtils::startsWith(colorString, "#") == false || (colorString.length() != 7 && colorString.length() != 9)) {
 		throw GUIParserException(
 			"Invalid color '" +
-			StringConverter::toString(colorString) +
+			(colorString) +
 			"'"
 		);
 	}
 	int colorValue;
-	swscanf(colorString.substr(1, 3).c_str(), L"%02x", &colorValue);
+	sscanf(colorString.substr(1, 3).c_str(), "%02x", &colorValue);
 	data[0] = colorValue / 255.0f;
-	swscanf(colorString.substr(3, 5).c_str(), L"%02x", &colorValue);
+	sscanf(colorString.substr(3, 5).c_str(), "%02x", &colorValue);
 	data[1] = colorValue / 255.0f;
-	swscanf(colorString.substr(5, 7).c_str(), L"%02x", &colorValue);
+	sscanf(colorString.substr(5, 7).c_str(), "%02x", &colorValue);
 	data[2] = colorValue / 255.0f;
 	if (colorString.length() > 7) {
-		swscanf(colorString.substr(7, 9).c_str(), L"%02x", &colorValue);
+		sscanf(colorString.substr(7, 9).c_str(), "%02x", &colorValue);
 		data[3] = colorValue / 255.0f;
 	}
 }

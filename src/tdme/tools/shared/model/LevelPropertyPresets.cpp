@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/math/Vector3.h>
@@ -19,7 +18,6 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
-#include <tdme/utils/StringConverter.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -39,7 +37,6 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::StringConverter;
 using tdme::utils::Exception;
 using tdme::utils::Console;
 using tdme::ext::tinyxml::TiXmlDocument;
@@ -47,15 +44,15 @@ using tdme::ext::tinyxml::TiXmlElement;
 
 LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
-LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstring& fileName)  /* throws(Exception) */
+LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string& fileName)  /* throws(Exception) */
 {
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(StringConverter::toString(xmlContent).c_str());
+	xmlDocument.Parse(xmlContent.c_str());
 	if (xmlDocument.Error() == true) {
 		Console::println(
 			"LevelPropertyPresets::ctor():: Could not parse file '" +
-			StringConverter::toString(pathName) + "/" + StringConverter::toString(fileName) +
+			pathName + "/" + fileName +
 			"'. Error='" +
 			xmlDocument.ErrorDesc() +
 			"'. Exiting.\n"
@@ -68,8 +65,8 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {
 			mapPropertiesPreset.push_back(
 				new PropertyModelClass(
-					StringConverter::toWideString(xmlProperty->Attribute("name")),
-					StringConverter::toWideString(xmlProperty->Attribute("value"))
+					(xmlProperty->Attribute("name")),
+					(xmlProperty->Attribute("value"))
 				)
 			);
 		}
@@ -77,13 +74,13 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 
 	for (auto xmlObject: getChildrenByTagName(xmlRoot, "object")) {
 		for (auto xmlType: getChildrenByTagName(xmlObject, "type")) {
-			auto typeId = StringConverter::toWideString(xmlType->Attribute("id"));
-			objectPropertiesPresets[typeId].push_back(new PropertyModelClass(L"preset", typeId));
+			auto typeId = (xmlType->Attribute("id"));
+			objectPropertiesPresets[typeId].push_back(new PropertyModelClass("preset", typeId));
 			for (auto xmlProperty: getChildrenByTagName(xmlType, "property")) {
 				objectPropertiesPresets[typeId].push_back(
 					new PropertyModelClass(
-						StringConverter::toWideString(xmlProperty->Attribute("name")),
-						StringConverter::toWideString(xmlProperty->Attribute("value"))
+						(xmlProperty->Attribute("name")),
+						(xmlProperty->Attribute("value"))
 					)
 				);
 			}
@@ -94,19 +91,19 @@ LevelPropertyPresets::LevelPropertyPresets(const wstring& pathName, const wstrin
 	for (auto xmlLights: getChildrenByTagName(xmlRoot, "lights")) {
 		for (auto xmlType: getChildrenByTagName(xmlLights, "type")) {
 			{
-				auto typeId = StringConverter::toWideString((xmlType->Attribute("id")));
+				auto typeId = ((xmlType->Attribute("id")));
 				auto light = new LevelEditorLight(lightId++);
-				light->getAmbient().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "ambient").at(0)->GetText())));
-				light->getDiffuse().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())));
-				light->getSpecular().set(Tools::convertToColor4(StringConverter::toWideString(getChildrenByTagName(xmlType, "specular").at(0)->GetText())));
-				light->getPosition().set(Tools::convertToVector4(StringConverter::toWideString(getChildrenByTagName(xmlType, "position").at(0)->GetText())));
-				light->setConstantAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText())));
-				light->setLinearAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText())));
-				light->setQuadraticAttenuation(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText())));
-				light->getSpotTo().set(Tools::convertToVector3(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_to").at(0)->GetText())));
-				light->getSpotDirection().set(Tools::convertToVector3(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText())));
-				light->setSpotExponent(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText())));
-				light->setSpotCutOff(Tools::convertToFloat(StringConverter::toWideString(getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText())));
+				light->getAmbient().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "ambient").at(0)->GetText())));
+				light->getDiffuse().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())));
+				light->getSpecular().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "specular").at(0)->GetText())));
+				light->getPosition().set(Tools::convertToVector4((getChildrenByTagName(xmlType, "position").at(0)->GetText())));
+				light->setConstantAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText())));
+				light->setLinearAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText())));
+				light->setQuadraticAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText())));
+				light->getSpotTo().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_to").at(0)->GetText())));
+				light->getSpotDirection().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText())));
+				light->setSpotExponent(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText())));
+				light->setSpotCutOff(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText())));
 				light->setEnabled(true);
 				lightPresets[typeId] = light;
 			}
@@ -132,7 +129,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 {
 	if (instance == nullptr) {
 		try {
-			instance = new LevelPropertyPresets(L"resources/tools/leveleditor/gd", L"presets.xml");
+			instance = new LevelPropertyPresets("resources/tools/leveleditor/gd", "presets.xml");
 		} catch (Exception& exception) {
 			Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));
@@ -154,12 +151,12 @@ const vector<PropertyModelClass*>* LevelPropertyPresets::getMapPropertiesPreset(
 	return &mapPropertiesPreset;
 }
 
-const map<wstring, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const
+const map<string, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const
 {
 	return &objectPropertiesPresets;
 }
 
-const map<wstring, LevelEditorLight*>* LevelPropertyPresets::getLightPresets() const
+const map<string, LevelEditorLight*>* LevelPropertyPresets::getLightPresets() const
 {
 	return &lightPresets;
 }

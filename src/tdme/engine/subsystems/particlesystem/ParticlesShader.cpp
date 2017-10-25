@@ -31,16 +31,16 @@ void ParticlesShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion + L"/particles",
-		L"render_fragmentshader.c"
+		"shader/" + rendererVersion + "/particles",
+		"render_fragmentshader.c"
 	);
 	if (renderFragmentShaderId == 0)
 		return;
 
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion + L"/particles",
-		L"render_vertexshader.c"
+		"shader/" + rendererVersion + "/particles",
+		"render_vertexshader.c"
 	);
 	if (renderVertexShaderId == 0)
 		return;
@@ -49,37 +49,37 @@ void ParticlesShader::initialize()
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderProgramId, 0, L"inVertex");
-		renderer->setProgramAttributeLocation(renderProgramId, 3, L"inColor");
+		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(renderProgramId, 3, "inColor");
 	}
 	if (renderer->linkProgram(renderProgramId) == false)
 		return;
 
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, L"mvpMatrix");
+	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
 
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, L"mvMatrix");
+	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
 	if (uniformMVMatrix == -1)
 		return;
 
-	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, L"pointSize");
+	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, "pointSize");
 	if (uniformPointSize == -1)
 		return;
 
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, L"diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, L"effectColorMul");
+	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, "effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, L"effectColorAdd");
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, "effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 
-	pointTextureId = engine->getTextureManager()->addTexture(TextureLoader::loadTexture(L"resources/textures", L"point.png"));
+	pointTextureId = engine->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/textures", "point.png"));
 	initialized = true;
 }
 

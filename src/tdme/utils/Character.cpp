@@ -4,10 +4,10 @@
 
 using tdme::utils::Character;
 
-wchar_t Character::toLowerCase(wchar_t character) {
+char Character::toLowerCase(char character) {
 	return towlower(character);
 }
 
-wchar_t Character::toUpperCase(wchar_t character) {
+char Character::toUpperCase(char character) {
 	return towupper(character);
 }

@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
@@ -21,8 +21,8 @@ public: /* package */
 	static DAEReader_AuthoringTool *BLENDER;
 
 public:
-	DAEReader_AuthoringTool(const wstring& name, int ordinal);
+	DAEReader_AuthoringTool(const string& name, int ordinal);
 
 public:
-	static DAEReader_AuthoringTool* valueOf(const wstring& a0);
+	static DAEReader_AuthoringTool* valueOf(const string& a0);
 };

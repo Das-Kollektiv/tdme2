@@ -31,7 +31,7 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 	init();
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-	radioButtonGroupNodesByName[node->getScreenNode()->getId() + L"_radiobuttongroup_"
+	radioButtonGroupNodesByName[node->getScreenNode()->getId() + "_radiobuttongroup_"
 		+ (dynamic_cast< GUIElementNode* >(node))->getName()].push_back(dynamic_cast< GUIElementNode* >(node));
 }
 
@@ -40,12 +40,12 @@ void GUIRadioButtonController::init()
 	value = new MutableString();
 }
 
-wstring GUIRadioButtonController::CONDITION_SELECTED = L"selected";
-wstring GUIRadioButtonController::CONDITION_UNSELECTED = L"unselected";
-wstring GUIRadioButtonController::CONDITION_DISABLED = L"disabled";
-wstring GUIRadioButtonController::CONDITION_ENABLED = L"enabled";
+string GUIRadioButtonController::CONDITION_SELECTED = "selected";
+string GUIRadioButtonController::CONDITION_UNSELECTED = "unselected";
+string GUIRadioButtonController::CONDITION_DISABLED = "disabled";
+string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
 
-map<wstring, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
+map<string, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
 
 bool GUIRadioButtonController::isSelected()
 {
@@ -54,7 +54,7 @@ bool GUIRadioButtonController::isSelected()
 
 void GUIRadioButtonController::select()
 {
-	auto radioButtonGroupNodesIt = radioButtonGroupNodesByName.find(this->node->getScreenNode()->getId() + L"_radiobuttongroup_" +
+	auto radioButtonGroupNodesIt = radioButtonGroupNodesByName.find(this->node->getScreenNode()->getId() + "_radiobuttongroup_" +
 		(dynamic_cast< GUIElementNode* >(this->node))->getName());
 	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
 		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
@@ -94,7 +94,7 @@ void GUIRadioButtonController::initialize()
 
 void GUIRadioButtonController::dispose()
 {
-	radioButtonGroupNodesByName.erase(radioButtonGroupNodesByName.find(this->node->getScreenNode()->getId() + L"_radiobuttongroup_" +
+	radioButtonGroupNodesByName.erase(radioButtonGroupNodesByName.find(this->node->getScreenNode()->getId() + "_radiobuttongroup_" +
 		(dynamic_cast< GUIElementNode* >(this->node))->getName()));
 }
 

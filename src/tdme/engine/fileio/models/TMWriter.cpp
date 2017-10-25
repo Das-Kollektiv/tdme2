@@ -28,7 +28,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
@@ -51,10 +51,10 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Exception;
 
-void TMWriter::write(Model* model, const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
+void TMWriter::write(Model* model, const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	TMWriterOutputStream os;
-	os.writeString(L"TDME Model");
+	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(0));
 	os.writeByte(static_cast< uint8_t >(0));
@@ -201,7 +201,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 	}
 }
 
-void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
+void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException)
 {
 	os->writeInt(subGroups->size());
 	for (auto it: *subGroups) {

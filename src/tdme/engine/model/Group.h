@@ -12,7 +12,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Animation;
 using tdme::engine::model::FacesEntity;
@@ -32,8 +32,8 @@ class tdme::engine::model::Group final
 private:
 	Model* model {  };
 	Group* parentGroup {  };
-	wstring id {  };
-	wstring name {  };
+	string id {  };
+	string name {  };
 	bool isJoint_ {  };
 	Matrix4x4 transformationsMatrix {  };
 	vector<Vector3> vertices;
@@ -44,7 +44,7 @@ private:
 	Animation* animation {  };
 	Skinning* skinning {  };
 	vector<FacesEntity> facesEntities;
-	map<wstring, Group*> subGroups {  };
+	map<string, Group*> subGroups {  };
 public:
 	/** 
 	 * @return model
@@ -60,12 +60,12 @@ public:
 	 * Returns id
 	 * @return id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return group's name
 	 */
-	const wstring& getName();
+	const string& getName();
 
 	/** 
 	 * @return if this group is a joint/bone
@@ -180,14 +180,14 @@ public:
 	/** 
 	 * @return sub sub groups of this group
 	 */
-	map<wstring, Group*>* getSubGroups();
+	map<string, Group*>* getSubGroups();
 
 	/** 
 	 * Returns a sub group by id
 	 * @param groupId
 	 * @return sub group or null
 	 */
-	Group* getSubGroupById(const wstring& groupId);
+	Group* getSubGroupById(const string& groupId);
 
 	/** 
 	 * Post set up faces
@@ -202,7 +202,7 @@ public:
 	 * @param id
 	 * @param name
 	 */
-	Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name);
+	Group(Model* model, Group* parentGroup, const string& id, const string& name);
 
 	/**
 	 * Destructor

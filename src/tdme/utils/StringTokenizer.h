@@ -7,7 +7,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 /**
  * String tokenizer class
@@ -18,7 +18,7 @@ class tdme::utils::StringTokenizer
 {
 
 private:
-	vector<wstring> elements;
+	vector<string> elements;
 	int idx { 0 };
 
 public:
@@ -27,7 +27,7 @@ public:
 	 * @param string to tokenize
 	 * @param delimiters
 	 */
-	void tokenize(const wstring& str, const wstring& delimiters);
+	void tokenize(const string& str, const string& delimiters);
 
 	/**
 	 * @return number of tokens
@@ -42,7 +42,7 @@ public:
 	/**
 	 * @return next token
 	 */
-	const wstring& nextToken();
+	const string& nextToken();
 
 	/**
 	 * Public constructor

@@ -6,7 +6,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -40,6 +40,6 @@ public:
 	static LevelEditorEntityParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER;
 	static LevelEditorEntityParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
 	static LevelEditorEntityParticleSystem_Emitter *SPHERE_PARTICLE_EMITTER;
-	LevelEditorEntityParticleSystem_Emitter(const wstring& name, int ordinal);
-	static LevelEditorEntityParticleSystem_Emitter* valueOf(const wstring& a0);
+	LevelEditorEntityParticleSystem_Emitter(const string& name, int ordinal);
+	static LevelEditorEntityParticleSystem_Emitter* valueOf(const string& a0);
 };

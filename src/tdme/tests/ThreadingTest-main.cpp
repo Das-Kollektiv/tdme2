@@ -9,8 +9,8 @@
 #include "ThreadingTest_SharedData.h"
 #include "ThreadingTest_TestThread.h"
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
@@ -21,7 +21,7 @@ using tdme::utils::Console;
 void testthread_test() {
 	// basic thread test
 	SharedData data;
-	Console::println(L"Hallo World!");
+	Console::println("Hallo World!");
 	TestThread* tt[TESTTHREAD_THREADS_COUNT];
 	// start threads
 	for(int i = 0; i < TESTTHREAD_THREADS_COUNT; i++) {
@@ -41,23 +41,23 @@ void pc_test() {
 	ConsumerThread c0(0, &queue);
 	ConsumerThread c1(1, &queue);
 
-	Console::println(L"starting consumer threads");
+	Console::println("starting consumer threads");
 	c0.start();
 	c1.start();
 	Thread::sleep(500);
 
-	Console::println(L"starting producer thread");
+	Console::println("starting producer thread");
 	p.start();
 
-	Console::println(L"waiting 10 seconds");
+	Console::println("waiting 10 seconds");
 	Thread::sleep(2000);
 
-	Console::println(L"stopping producer");
+	Console::println("stopping producer");
 	p.stop();
 	p.join();
 
 	Thread::sleep(500);
-	Console::println(L"stopping consumer and queue");
+	Console::println("stopping consumer and queue");
 	c0.stop();
 	c1.stop();
 	queue.stop();
@@ -70,11 +70,11 @@ void atomic_test() {
 	int intValue = 0;
 	// 5 atomic adds
 	for(int i = 0; i < 5; i++) {
-		Console::println(L"atomic add, result " + to_wstring(__sync_add_and_fetch(&intValue,1)));
+		Console::println("atomic add, result " + to_string(__sync_add_and_fetch(&intValue,1)));
 	}
 	// 5 atomic subs
 	for(int i = 0; i < 5; i++) {
-		Console::println(L"atomic sub, result " + to_wstring(__sync_sub_and_fetch(&intValue,1)));
+		Console::println("atomic sub, result " + to_string(__sync_sub_and_fetch(&intValue,1)));
 	}
 }
 

@@ -7,7 +7,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::math::Vector3;
 
@@ -19,7 +19,7 @@ using tdme::math::Vector3;
 class tdme::audio::AudioEntity
 {
 public: /* protected */
-	wstring id {  };
+	string id {  };
 	bool looping {  };
 	bool fixed {  };
 	float pitch {  };
@@ -33,7 +33,7 @@ public:
 	/** 
 	 * @return id
 	 */
-	virtual const wstring& getId();
+	virtual const string& getId();
 
 	/** 
 	 * @return if sound will be looped
@@ -138,7 +138,7 @@ public: /* protected */
 	/**
 	 * Constructor
 	 */
-	AudioEntity(const wstring& id);
+	AudioEntity(const string& id);
 
 	/**
 	 * Constructor

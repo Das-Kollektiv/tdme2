@@ -149,7 +149,7 @@ void ModelHelper::prepareForIndexedRendering(Model* model)
 	prepareForIndexedRendering(model->getSubGroups());
 }
 
-void ModelHelper::prepareForIndexedRendering(map<wstring, Group*>* groups)
+void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -302,10 +302,10 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 	} else {
 		if (defaultAnimation->getStartFrame() != 0 || defaultAnimation->getEndFrame() != frames - 1) {
-			Console::println(wstring(L"Warning: default animation mismatch"));
+			Console::println(string("Warning: default animation mismatch"));
 		}
 		if (frames - 1 > defaultAnimation->getEndFrame()) {
-			Console::println(wstring(L"Warning: default animation mismatch, will be fixed"));
+			Console::println(string("Warning: default animation mismatch, will be fixed"));
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 		}
 	}

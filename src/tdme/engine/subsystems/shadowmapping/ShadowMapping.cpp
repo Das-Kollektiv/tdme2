@@ -16,8 +16,8 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
@@ -222,7 +222,7 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 		}
 		if (((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER) || ((v != ShadowMapping_RunState::PRE) && (v != ShadowMapping_RunState::RENDER)))) {
 			{
-				Console::println(wstring(L"ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_wstring(runState)));
+				Console::println(string("ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_string(runState)));
 				goto end_switch0;;
 			}
 		}

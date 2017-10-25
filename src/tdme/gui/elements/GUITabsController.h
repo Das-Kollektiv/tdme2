@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -50,7 +50,7 @@ public: /* protected */
 	 * Set tab content selected
 	 * @param id
 	 */
-	void setTabContentSelected(const wstring& id);
+	void setTabContentSelected(const string& id);
 
 public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;

@@ -18,7 +18,7 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;
@@ -58,7 +58,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException);
+	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
 	/** 
 	 * Reads Collada DAE file level
@@ -68,7 +68,7 @@ public:
 	 * @throws file system exception
 	 * @return model instance
 	 */
-	static LevelEditorLevel* readLevel(const wstring& pathName, const wstring& fileName) throw (ModelFileIOException, FileSystemException);
+	static LevelEditorLevel* readLevel(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
 private:
 
@@ -112,7 +112,7 @@ private:
 	 * @param frames per second
 	 * @return group
 	 */
-	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a DAE visual scene group node
@@ -126,7 +126,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static Group* readNode(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
+	static Group* readNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a instance controller
@@ -140,7 +140,7 @@ private:
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
+	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a geometry
@@ -153,7 +153,7 @@ private:
 	 * @param material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const wstring& xmlNodeId, const map<wstring, wstring>* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
@@ -164,7 +164,7 @@ private:
 	 * @param xml node id
 	 * @return material
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const wstring& pathName, Model* model, TiXmlElement* xmlRoot, const wstring& xmlNodeId);
+	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 
@@ -173,14 +173,14 @@ private:
 	 * @param file name
 	 * @return displacement file name or null
 	 */
-	static const wstring determineDisplacementFilename(const wstring& path, const wstring& mapType, const wstring& fileName);
+	static const string determineDisplacementFilename(const string& path, const string& mapType, const string& fileName);
 
 	/** 
 	 * Make file name relative
 	 * @param file name
 	 * @return file name
 	 */
-	static const wstring makeFileNameRelative(const wstring& fileName);
+	static const string makeFileNameRelative(const string& fileName);
 
 	/** 
 	 * Get texture file name by id
@@ -188,7 +188,7 @@ private:
 	 * @param xml texture id
 	 * @return xml texture file name
 	 */
-	static const wstring getTextureFileNameById(TiXmlElement* xmlRoot, const wstring& xmlTextureId);
+	static const string getTextureFileNameById(TiXmlElement* xmlRoot, const string& xmlTextureId);
 
 public:
 

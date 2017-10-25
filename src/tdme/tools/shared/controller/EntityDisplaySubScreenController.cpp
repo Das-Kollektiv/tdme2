@@ -21,9 +21,9 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString(L"1");
+MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString("1");
 
-MutableString* EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = new MutableString(L"");
+MutableString* EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = new MutableString("");
 
 EntityDisplaySubScreenController::EntityDisplaySubScreenController() 
 {
@@ -42,9 +42,9 @@ EntityDisplayView* EntityDisplaySubScreenController::getView()
 void EntityDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
-		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_boundingvolume"));
-		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_shadowing"));
-		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"display_ground"));
+		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_boundingvolume"));
+		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_shadowing"));
+		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_ground"));
 	} catch (Exception& exception) {
 		Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -86,19 +86,19 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId().compare(L"button_display_apply") == 0) {
+				if (node->getId().compare("button_display_apply") == 0) {
 					onDisplayApply();
 				} else {
 					Console::println(
-						wstring(
-							L"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+						string(
+							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
-							L"', id = '" +
+							"', id = '" +
 							node->getId() +
-							L"'" +
-							L", name = '" +
+							"'" +
+							", name = '" +
 							node->getName() +
-							L"'"
+							"'"
 						)
 					);
 				}

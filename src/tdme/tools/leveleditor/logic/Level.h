@@ -58,7 +58,7 @@ public:
 	 * @param enable dynamic shadows
 	 * @return engine particle system entity
 	 */
-	static Entity* createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const wstring& id, bool enableDynamicShadows);
+	static Entity* createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& id, bool enableDynamicShadows);
 
 	/** 
 	 * Add level to engine

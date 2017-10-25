@@ -18,20 +18,16 @@
 #include <tdme/os/threading/Thread.h>
 
 #include <tdme/engine/Application.h>
-#include <tdme/utils/StringConverter.h>
 #include "ApplicationInputEventsHandler.h"
 #include <tdme/utils/Console.h>
-#include <tdme/utils/StringConverter.h>
 
 using std::string;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::Application;
 using tdme::engine::ApplicationInputEventsHandler;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
-using tdme::utils::StringConverter;
 using tdme::utils::Time;
 using tdme::os::threading::Thread;
 
@@ -51,7 +47,7 @@ void Application::setInputEventHandler(ApplicationInputEventsHandler* inputEvent
 	Application::inputEventHandler = inputEventHandler;
 }
 
-void Application::run(int argc, char** argv, const wstring& title, ApplicationInputEventsHandler* inputEventHandler) {
+void Application::run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 	glutInit(&argc, argv);
 #if defined(__APPLE__)
@@ -69,12 +65,12 @@ void Application::run(int argc, char** argv, const wstring& title, ApplicationIn
 #endif
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow(StringConverter::toString(title).c_str());
+	glutCreateWindow((title).c_str());
 #if defined(_WIN32)
 	glewExperimental = TRUE;
 	GLenum glewInitStatus = glewInit();
 	if (glewInitStatus != GLEW_OK) {
-		Console::println(L"glewInit(): Error: " + StringConverter::toWideString(string((char*)glewGetErrorString(glewInitStatus))));
+		Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
 		exit(0);
 	}
 #endif

@@ -4,18 +4,18 @@
 
 #include <tdme/utils/Console.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::utils::Console;
 
-TestThread::TestThread(int id, SharedData *data) : Thread(L"test"), id(id), data(data) {
+TestThread::TestThread(int id, SharedData *data) : Thread("test"), id(id), data(data) {
 }
 
 void TestThread::run() {
-	Console::println(L"TestThread::run()");
+	Console::println("TestThread::run()");
 	for(int i = 0; i < 100; i++) {
-		Console::println(to_wstring(id) + L":" + to_wstring(data->getCounter()));
+		Console::println(to_string(id) + ":" + to_string(data->getCounter()));
 		data->incrementCounter();
 	}
 }

@@ -20,7 +20,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::renderer::GUIFont;
 using tdme::math::Math;
@@ -37,7 +37,7 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::MutableString;
 
-MutableString* GUIFont::LINEHEIGHT_STRING = new MutableString(L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
+MutableString* GUIFont::LINEHEIGHT_STRING = new MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 
 GUIFont::GUIFont()
 {
@@ -48,33 +48,33 @@ void GUIFont::init()
 {
 }
 
-GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw (FileSystemException)
+GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (FileSystemException)
 {
 	int lineIdx = 0;
 	auto font = new GUIFont();
-	vector<wstring> lines;
+	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	auto info = lines[lineIdx++];
 	auto common = lines[lineIdx++];
 	auto page = lines[lineIdx++];
 	font->texture = TextureLoader::loadTexture(
 		pathName,
-		StringUtils::substring(page, page.find(L"file=") + wstring(L"file=\"").length(), page.find_last_of(L"\""))
+		StringUtils::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\""))
 	);
 	auto done = false;
 	while (lineIdx < lines.size()) {
 		auto line = lines[lineIdx++];
-		if (StringUtils::startsWith(line, L"chars c")) {
+		if (StringUtils::startsWith(line, "chars c")) {
 		} else
-		if (StringUtils::startsWith(line, L"char")) {
+		if (StringUtils::startsWith(line, "char")) {
 			auto def = font->parseCharacter(line);
 			font->chars[def->id] = def;
 		}
-		if (StringUtils::startsWith(line, L"kernings c")) {
+		if (StringUtils::startsWith(line, "kernings c")) {
 		} else
-		if (StringUtils::startsWith(line, L"kerning")) {
+		if (StringUtils::startsWith(line, "kerning")) {
 			StringTokenizer t;
-			t.tokenize(line, L" =");
+			t.tokenize(line, " =");
 			t.nextToken();
 			t.nextToken();
 			auto first = Integer::parseInt(t.nextToken());
@@ -88,11 +88,11 @@ GUIFont* GUIFont::parse(const wstring& pathName, const wstring& fileName) throw 
 	return font;
 }
 
-GUIFont_CharacterDefinition* GUIFont::parseCharacter(const wstring& line)
+GUIFont_CharacterDefinition* GUIFont::parseCharacter(const string& line)
 {
 	auto characterDefinition = new GUIFont_CharacterDefinition(this);
 	StringTokenizer t;
-	t.tokenize(line, L" =");
+	t.tokenize(line, " =");
 	t.nextToken();
 	t.nextToken();
 	characterDefinition->id = Integer::parseInt(t.nextToken());

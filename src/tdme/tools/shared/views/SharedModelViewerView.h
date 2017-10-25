@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
@@ -44,7 +44,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };
 	bool initModelRequested {  };
-	wstring modelFile {  };
+	string modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
 public:
@@ -76,17 +76,17 @@ public:
 	/** 
 	 * @return current model file name
 	 */
-	virtual const wstring& getFileName();
+	virtual const string& getFileName();
 
 	/** 
 	 * Issue file loading
 	 */
-	virtual void loadFile(const wstring& pathName, const wstring& fileName);
+	virtual void loadFile(const string& pathName, const string& fileName);
 
 	/** 
 	 * Triggers saving a map
 	 */
-	virtual void saveFile(const wstring& pathName, const wstring& fileName) /* throws(Exception) */;
+	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Issue file reloading
@@ -166,7 +166,7 @@ public: /* protected */
 	 * @return level editor entity
 	 * @throws Exception
 	 */
-	virtual LevelEditorEntity* loadModel(const wstring& name, const wstring& description, const wstring& pathName, const wstring& fileName, const Vector3& pivot) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
 
 public:
 

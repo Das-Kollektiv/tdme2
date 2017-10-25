@@ -26,13 +26,12 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 
 using std::array;
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
 using tdme::utils::Buffer;
@@ -45,7 +44,6 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 
 GL2Renderer::GL2Renderer() 
@@ -68,9 +66,9 @@ GL2Renderer::GL2Renderer()
 	bufferObjectsAvailable = true;
 }
 
-const wstring GL2Renderer::getGLVersion()
+const string GL2Renderer::getGLVersion()
 {
-	return L"gl2";
+	return "gl2";
 }
 
 bool GL2Renderer::checkBufferObjectsAvailable()
@@ -138,14 +136,14 @@ int32_t GL2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wstring& fileName)
+int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
 {
 	int32_t handle = glCreateShader(type);
 	if (handle == 0) return 0;
 
 	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
-	string sourceString = StringConverter::toString(shaderSource);
+	string sourceString = (shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
@@ -159,17 +157,17 @@ int32_t GL2Renderer::loadShader(int32_t type, const wstring& pathName, const wst
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
-		auto infoLogString = StringConverter::toWideString(string(infoLogBuffer, infoLogLengthBuffer));
+		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
 		Console::println(
-			wstring(
-				wstring(L"GL2Renderer::loadShader") +
-				wstring(L"[") +
-				to_wstring(handle) +
-				wstring(L"]") +
+			string(
+				string("GL2Renderer::loadShader") +
+				string("[") +
+				to_string(handle) +
+				string("]") +
 				pathName +
-				L"/" +
+				"/" +
 				fileName +
-				wstring(L": failed: ") +
+				string(": failed: ") +
 				infoLogString
 			 )
 		 );
@@ -207,12 +205,12 @@ bool GL2Renderer::linkProgram(int32_t programId)
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
-		auto infoLogString = StringConverter::toWideString(string(infoLog, infoLogLength));
+		auto infoLogString = (string(infoLog, infoLogLength));
 		Console::println(
-			wstring(
-				L"[" +
-				to_wstring(programId) +
-				L"]: failed: " +
+			string(
+				"[" +
+				to_string(programId) +
+				"]: failed: " +
 				infoLogString
 			 )
 		);
@@ -221,9 +219,9 @@ bool GL2Renderer::linkProgram(int32_t programId)
 	return true;
 }
 
-int32_t GL2Renderer::getProgramUniformLocation(int32_t programId, const wstring& name)
+int32_t GL2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	auto uniformLocation = glGetUniformLocation(programId, StringConverter::toString(name).c_str());
+	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
 	return uniformLocation;
 }
 
@@ -257,9 +255,9 @@ void GL2Renderer::setProgramUniformFloatVec3(int32_t uniformId, const array<floa
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const wstring& name)
+void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
-	glBindAttribLocation(programId, location, StringConverter::toString(name).c_str());
+	glBindAttribLocation(programId, location, (name).c_str());
 }
 
 void GL2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -430,7 +428,7 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 	}
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		Console::println(wstring(L"GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: ") + to_wstring(fboStatus));
+		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: ") + to_string(fboStatus));
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
@@ -506,27 +504,27 @@ void GL2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 
 void GL2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
 {
-	Console::println(wstring(L"GL2Renderer::bindSkinningVerticesJointsBufferObject()::not implemented yet"));
+	Console::println(string("GL2Renderer::bindSkinningVerticesJointsBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
 {
-	Console::println(wstring(L"GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject()::not implemented yet"));
+	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
 {
-	Console::println(wstring(L"GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject()::not implemented yet"));
+	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println(wstring(L"GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
+	Console::println(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println(wstring(L"GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
+	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)

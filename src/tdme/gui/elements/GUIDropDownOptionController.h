@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -28,8 +28,8 @@ class tdme::gui::elements::GUIDropDownOptionController final
 {
 
 private:
-	static wstring CONDITION_SELECTED;
-	static wstring CONDITION_UNSELECTED;
+	static string CONDITION_SELECTED;
+	static string CONDITION_UNSELECTED;
 	GUIParentNode* dropDownNode {  };
 	bool selected {  };
 

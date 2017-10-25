@@ -18,7 +18,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Transformations;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
@@ -46,7 +46,7 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityIntern
 {
 public: /* protected */
 	Engine* engine {  };
-	wstring id {  };
+	string id {  };
 	bool enabled {  };
 	Model* model {  };
 	bool autoEmit {  };
@@ -63,7 +63,7 @@ public: /* protected */
 	Color4 effectColorAdd {  };
 	float particlesToSpawnRemainder {  };
 public:
-	const wstring& getId() override;
+	const string& getId() override;
 	virtual void setEngine(Engine* engine);
 	virtual void setRenderer(GLRenderer* renderer);
 	bool isEnabled() override;
@@ -107,7 +107,7 @@ public:
 	 * @param maxCount
 	 * @param emitter
 	 */
-	ObjectParticleSystemEntityInternal(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystemEntityInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 	/**
 	 * Destructor

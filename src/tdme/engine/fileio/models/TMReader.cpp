@@ -25,14 +25,13 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/StringConverter.h>
 
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 using std::to_string;
-using std::to_wstring;
+using std::to_string;
 
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
@@ -56,18 +55,17 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::StringConverter;
 
-Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
+Model* TMReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(pathName, fileName, &content);
 	TMReaderInputStream is(&content);
 	auto fileId = is.readWString();
-	if (fileId.length() == 0 || fileId != L"TDME Model") {
+	if (fileId.length() == 0 || fileId != "TDME Model") {
 		throw ModelFileIOException(
 			"File is not a TDME model file, file id = '" +
-			StringConverter::toString(fileId) +
+			(fileId) +
 			"'"
 		);
 	}
@@ -94,7 +92,7 @@ Model* TMReader::read(const wstring& pathName, const wstring& fileName) throw (F
 	is.readFloatArray(&boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
-		pathName + L"/" + fileName,
+		pathName + "/" + fileName,
 		fileName,
 		upVector,
 		rotationOrder,
@@ -296,7 +294,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<wstring, Group*>* subGroups) throw (ModelFileIOException)
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException)
 {
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {

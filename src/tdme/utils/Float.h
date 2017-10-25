@@ -7,7 +7,7 @@
 #include <string>
 
 using std::numeric_limits;
-using std::wstring;
+using std::string;
 
 /**
  * Float
@@ -32,7 +32,7 @@ public:
 	 * @param string
 	 * @return float
 	 */
-	static float parseFloat(const wstring& string);
+	static float parseFloat(const string& str);
 
 	/**
 	 * Check if float is nane

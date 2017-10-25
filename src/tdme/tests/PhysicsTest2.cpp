@@ -18,8 +18,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::tests::PhysicsTest2;
 
@@ -53,7 +53,7 @@ PhysicsTest2::PhysicsTest2()
 void PhysicsTest2::main(int argc, char** argv)
 {
 	auto physicsTest2 = new PhysicsTest2();
-	physicsTest2->run(argc, argv, L"PhysicsTest2");
+	physicsTest2->run(argc, argv, "PhysicsTest2");
 }
 
 void PhysicsTest2::display()
@@ -93,25 +93,25 @@ void PhysicsTest2::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(30.0f, 1.0f, 30.0f));
-	auto groundModel = PrimitiveModel::createModel(ground, L"ground_model");
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
-	entity = new Object3D(L"ground", groundModel);
+	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
+	(*groundModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*groundModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	entity = new Object3D("ground", groundModel);
 	entity->getTranslation().setY(-1.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
+	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
-	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
+	auto boxModel = PrimitiveModel::createModel(box, "box_model");
+	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
+	(*boxModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D(L"box" + to_wstring(i), boxModel);
+		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(i * 2.0f + 1.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"box" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 

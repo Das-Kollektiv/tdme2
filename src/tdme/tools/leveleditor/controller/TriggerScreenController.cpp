@@ -18,11 +18,10 @@
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using tdme::gui::GUIParser;
@@ -41,11 +40,10 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
-using tdme::utils::StringConverter;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString(L"");
+MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString("");
 
 TriggerScreenController::TriggerScreenController(TriggerView* view) 
 {
@@ -62,14 +60,14 @@ GUIScreenNode* TriggerScreenController::getScreenNode()
 void TriggerScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse(L"resources/tools/leveleditor/gui", L"screen_trigger.xml");
+		screenNode = GUIParser::parse("resources/tools/leveleditor/gui", "screen_trigger.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById(L"screen_caption"));
-		triggerWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_width"));
-		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_height"));
-		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"trigger_depth"));
-		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById(L"button_trigger_apply"));
+		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
+		triggerWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("trigger_width"));
+		triggerHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("trigger_height"));
+		triggerDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("trigger_depth"));
+		triggerApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_trigger_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -81,13 +79,13 @@ void TriggerScreenController::dispose()
 {
 }
 
-void TriggerScreenController::setScreenCaption(const wstring& text)
+void TriggerScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
 }
 
-void TriggerScreenController::setEntityData(const wstring& name, const wstring& description)
+void TriggerScreenController::setEntityData(const string& name, const string& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 }
@@ -97,7 +95,7 @@ void TriggerScreenController::unsetEntityData()
 	entityBaseSubScreenController->unsetEntityData();
 }
 
-void TriggerScreenController::setEntityProperties(const wstring& presetId, const wstring& selectedName)
+void TriggerScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
@@ -142,11 +140,11 @@ void TriggerScreenController::onTriggerApply()
 		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toWString());
 		view->triggerApply(width, height, depth);
 	} catch (Exception& exception) {
-		showErrorPopUp(L"Warning", StringConverter::toWideString(string(exception.what())));
+		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void TriggerScreenController::showErrorPopUp(const wstring& caption, const wstring& message)
+void TriggerScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -163,19 +161,19 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 		auto v = type;
 		if ((v == GUIActionListener_Type::PERFORMED)) {
 			{
-				if (node->getId().compare(L"button_trigger_apply") == 0) {
+				if (node->getId().compare("button_trigger_apply") == 0) {
 					onTriggerApply();
 				} else {
 					Console::println(
-						wstring(
-							L"TriggerScreenController::onActionPerformed()::unknown, type='" +
+						string(
+							"TriggerScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
-							L"', id = '" +
+							"', id = '" +
 							node->getId() +
-							L"'" +
-							L", name = '" +
+							"'" +
+							", name = '" +
 							node->getName() +
-							L"'"
+							"'"
 						)
 					);
 				}

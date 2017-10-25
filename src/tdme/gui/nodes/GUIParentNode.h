@@ -12,7 +12,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -57,7 +57,7 @@ public:
 	 * @param xml
 	 * @param reset scroll offsets
 	 */
-	virtual void replaceSubNodes(const wstring& xml, bool resetScrollOffsets) /* throws(Exception) */;
+	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */;
 
 	/** 
 	 * Add sub node
@@ -81,7 +81,7 @@ public:
 	 * @return over flow
 	 * @throws gui parser exception
 	 */
-	static GUIParentNode_Overflow* createOverflow(const wstring& overflow) throw (GUIParserException);
+	static GUIParentNode_Overflow* createOverflow(const string& overflow) throw (GUIParserException);
 
 	/** 
 	 * @return children render offset x
@@ -113,7 +113,7 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(const wstring& left, const wstring& top, const wstring& width, const wstring& height);
+	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 public: /* protected */
 
@@ -160,7 +160,7 @@ public:
 	void tick() override;
 
 public: /* protected */
-	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const wstring& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 private:
 	friend class GUIParentNode_Overflow;

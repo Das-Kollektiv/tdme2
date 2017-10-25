@@ -17,11 +17,11 @@ FileDialogScreenController_setupFileDialogListBox_1::FileDialogScreenController_
 {
 }
 
-bool FileDialogScreenController_setupFileDialogListBox_1::accept(const wstring& pathName, const wstring& fileName)
+bool FileDialogScreenController_setupFileDialogListBox_1::accept(const string& pathName, const string& fileName)
 {
-	if (FileSystem::getInstance()->isPath(pathName + L"/" + fileName) == true) return true;
+	if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 	for (auto& extension : fileDialogScreenController->extensions) {
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), L"." + extension) == true) return true;
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), "." + extension) == true) return true;
 
 	}
 	return false;

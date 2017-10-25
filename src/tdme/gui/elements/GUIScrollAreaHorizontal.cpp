@@ -15,36 +15,36 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"scrollarea-horizontal.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "scrollarea-horizontal.xml");
 }
 
-wstring GUIScrollAreaHorizontal::NAME = L"scrollarea-horizontal";
+string GUIScrollAreaHorizontal::NAME = "scrollarea-horizontal";
 
-const wstring& GUIScrollAreaHorizontal::getName()
+const string& GUIScrollAreaHorizontal::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIScrollAreaHorizontal::getTemplate()
+const string& GUIScrollAreaHorizontal::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"100%";
-	attributes[L"height"] = L"100%";
-	attributes[L"horizontal-align"] = L"left";
-	attributes[L"vertical-align"] = L"top";
-	attributes[L"alignment"] = L"vertical";
-	attributes[L"background-color"] = L"transparent";
-	attributes[L"border"] = L"0";
-	attributes[L"border-color"] = L"transparent";
-	attributes[L"padding"] = L"0";
-	attributes[L"show-on"] = L"";
-	attributes[L"hide-on"] = L"";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "100%";
+	attributes["height"] = "100%";
+	attributes["horizontal-align"] = "left";
+	attributes["vertical-align"] = "top";
+	attributes["alignment"] = "vertical";
+	attributes["background-color"] = "transparent";
+	attributes["border"] = "0";
+	attributes["border-color"] = "transparent";
+	attributes["padding"] = "0";
+	attributes["show-on"] = "";
+	attributes["hide-on"] = "";
 	return &attributes;
 }
 

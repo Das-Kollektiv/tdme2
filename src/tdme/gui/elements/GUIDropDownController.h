@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -31,10 +31,10 @@ class tdme::gui::elements::GUIDropDownController final
 {
 
 private:
-	static wstring CONDITION_DISABLED;
-	static wstring CONDITION_ENABLED;
-	static wstring CONDITION_OPENED;
-	static wstring CONDITION_CLOSED;
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
+	static string CONDITION_OPENED;
+	static string CONDITION_CLOSED;
 	vector<GUINode*> childControllerNodes {  };
 	vector<GUIDropDownOptionController*> dropDownOptionControllers {  };
 	bool isOpen_ {  };

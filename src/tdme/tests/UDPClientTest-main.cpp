@@ -12,7 +12,7 @@
 using std::cin;
 using std::cout;
 using std::endl;
-using std::wstring;
+using std::string;
 using std::stringstream;
 
 using tdme::utils::Console;
@@ -25,7 +25,7 @@ NIOUDPClient* client = NULL;
 
 class InputThread: public Thread {
 public:
-	InputThread(): Thread(L"inputthread") {
+	InputThread(): Thread("inputthread") {
 	}
 
 	virtual void run() {
@@ -44,7 +44,7 @@ public:
 InputThread* inputThread = NULL;
 
 void sigHandlerINT(int signal) {
-	Console::println(L"Interrupt signal catched");
+	Console::println("Interrupt signal catched");
 	if (inputThread != nullptr) {
 		inputThread->stop();
 	}

@@ -16,5 +16,5 @@ LevelEditorView_LevelEditorView_1::LevelEditorView_LevelEditorView_1(LevelEditor
 
 bool LevelEditorView_LevelEditorView_1::filterEntity(Entity* entity)
 {
-	return StringUtils::startsWith(entity->getId(), L"leveleditor.ground@") == false;
+	return StringUtils::startsWith(entity->getId(), "leveleditor.ground@") == false;
 }

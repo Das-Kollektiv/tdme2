@@ -32,7 +32,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -42,7 +41,7 @@
 #include <ext/jsonbox/Object.h>
 
 using std::ostringstream;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::engine::fileio::models::TMWriter;
@@ -72,16 +71,15 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::StringConverter;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-void ModelMetaDataFileExport::copyFile(const wstring& source, const wstring& dest) throw (FileSystemException)
+void ModelMetaDataFileExport::copyFile(const string& source, const string& dest) throw (FileSystemException)
 {
 }
 
-void ModelMetaDataFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
+void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	auto jEntityRoot = exportToJSON(entity);
@@ -89,7 +87,7 @@ void ModelMetaDataFileExport::export_(const wstring& pathName, const wstring& fi
 	ostringstream json;
 	json << jEntityRoot;
 
-	FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, (json.str()));
 }
 
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
@@ -99,18 +97,18 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName =
 			 Tools::getFileName(entity->getFileName()) +
-			 (StringUtils::endsWith(entity->getFileName(), L".tm") == false ? L".tm" : L"");
+			 (StringUtils::endsWith(entity->getFileName(), ".tm") == false ? ".tm" : "");
 		TMWriter::write(
 			entity->getModel(),
 			modelPathName,
 			modelFileName
 		);
-		jEntityRoot["file"] = StringConverter::toString(modelPathName + L"/" + modelFileName);
+		jEntityRoot["file"] = (modelPathName + "/" + modelFileName);
 		/*
 		try {
-			auto thumbnail = modelFileName + L".png";
-			jEntityRoot["thumbnail] = StringConverter::toString(thumbnail));
-			copyFile(L"./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
+			auto thumbnail = modelFileName + ".png";
+			jEntityRoot["thumbnail] = (thumbnail));
+			copyFile("./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
 		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
 			Console::print(entity->getFileName());
@@ -120,16 +118,16 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		*/
 	}
 	jEntityRoot["version"] = "0.99";
-	jEntityRoot["type"] = StringConverter::toString(entity->getType()->getName());
-	jEntityRoot["name"] = StringConverter::toString(entity->getName());
-	jEntityRoot["descr"] = StringConverter::toString(entity->getDescription());
+	jEntityRoot["type"] = (entity->getType()->getName());
+	jEntityRoot["name"] = (entity->getName());
+	jEntityRoot["descr"] = (entity->getDescription());
 	jEntityRoot["px"] = static_cast< double >(entity->getPivot().getX());
 	jEntityRoot["py"] = static_cast< double >(entity->getPivot().getY());
 	jEntityRoot["pz"] = static_cast< double >(entity->getPivot().getZ());
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = entity->getParticleSystem();
 		ext::jsonbox::Object jParticleSystem;
-		jParticleSystem["t"] = StringConverter::toString(particleSystem->getType()->getName());
+		jParticleSystem["t"] = (particleSystem->getType()->getName());
 		{
 			auto v = particleSystem->getType();
 			if ((v == LevelEditorEntityParticleSystem_Type::NONE))
@@ -144,19 +142,19 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					ext::jsonbox::Object jObjectParticleSystem;
 					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
 						auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), L".tm") == false ? L".tm" : L""));
+						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), ".tm") == false ? ".tm" : ""));
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,
 							modelFileName
 						);
-						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + L"/" + modelFileName);
+						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + "/" + modelFileName);
 					}
 					jObjectParticleSystem["mc"] = particleSystem->getObjectParticleSystem()->getMaxCount();
 					jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getX());
 					jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getY());
 					jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getZ());
-					jObjectParticleSystem["mf"] = StringConverter::toString(particleSystem->getObjectParticleSystem()->getModelFile());
+					jObjectParticleSystem["mf"] = (particleSystem->getObjectParticleSystem()->getModelFile());
 					jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
 					jParticleSystem["ops"] = jObjectParticleSystem;
 					goto end_switch0;;
@@ -176,10 +174,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			{
 				{
 					Console::println(
-						wstring(
-							L"ModelMetaDataFileExport::export(): unknown particle system type '" +
+						string(
+							"ModelMetaDataFileExport::export(): unknown particle system type '" +
 							particleSystem->getType()->getName() +
-							L"'"
+							"'"
 						)
 					);
 					goto end_switch0;;
@@ -188,7 +186,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			end_switch0:;
 		}
 
-		jParticleSystem["e"] = StringConverter::toString(particleSystem->getEmitter()->getName());
+		jParticleSystem["e"] = (particleSystem->getEmitter()->getName());
 		{
 			auto v = particleSystem->getEmitter();
 			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE))
@@ -377,10 +375,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
 			{
 				Console::println(
-					wstring(
-						L"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
+					string(
+						"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
 						particleSystem->getEmitter()->getName() +
-						L"'"
+						"'"
 					 )
 				 );
 			}
@@ -455,7 +453,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			auto mesh = dynamic_cast< ConvexMesh* >(bv);
 			jBoundingVolume["type"] = "convexmesh";
-			jBoundingVolume["file"] = StringConverter::toString(entityBoundingVolume->getModelMeshFile());
+			jBoundingVolume["file"] = (entityBoundingVolume->getModelMeshFile());
 			jBoundingVolumes.push_back(jBoundingVolume);
 		}
 	}
@@ -464,8 +462,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	for (auto i = 0; entity->getPropertyCount(); i++) {
 		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
 		ext::jsonbox::Object jObjectProperty;
-		jObjectProperty["name"] = StringConverter::toString(modelProperty->getName());
-		jObjectProperty["value"] = StringConverter::toString(modelProperty->getValue());
+		jObjectProperty["name"] = (modelProperty->getName());
+		jObjectProperty["value"] = (modelProperty->getValue());
 		jModelProperties.push_back(jObjectProperty);
 	}
 	jEntityRoot["properties"] = jModelProperties;

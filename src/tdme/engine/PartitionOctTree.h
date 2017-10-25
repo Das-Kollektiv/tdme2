@@ -19,7 +19,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Partition;
 using tdme::engine::Entity;
@@ -48,7 +48,7 @@ private:
 	Vector3 sideVector {  };
 	Vector3 forwardVector {  };
 	Vector3 upVector {  };
-	map<wstring, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
+	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
 	PartitionOctTree_PartitionTreeNode treeRoot {  };
 

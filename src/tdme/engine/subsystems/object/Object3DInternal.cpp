@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/object/Object3DGroupVBORenderer.h>
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::object::Object3DInternal;
 using tdme::engine::Engine;
@@ -31,7 +31,7 @@ using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupVBORenderer;
 using tdme::math::Vector3;
 
-Object3DInternal::Object3DInternal(const wstring& id, Model* model) :
+Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	Object3DBase(model, true, Engine::animationProcessingTarget)
 {
 	this->id = id;
@@ -56,7 +56,7 @@ Object3DInternal::~Object3DInternal() {
 	}
 }
 
-const wstring& Object3DInternal::getId()
+const string& Object3DInternal::getId()
 {
 	return id;
 }
@@ -113,45 +113,45 @@ BoundingBox* Object3DInternal::getBoundingBoxTransformed()
 
 void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer)
 {
-	setDynamicDiffuseTexture(L"", L"", frameBuffer->getColorBufferTextureId());
+	setDynamicDiffuseTexture("", "", frameBuffer->getColorBufferTextureId());
 }
 
-void Object3DInternal::bindDiffuseTexture(const wstring& groupId, FrameBuffer* frameBuffer)
+void Object3DInternal::bindDiffuseTexture(const string& groupId, FrameBuffer* frameBuffer)
 {
-	setDynamicDiffuseTexture(groupId, L"", frameBuffer->getColorBufferTextureId());
+	setDynamicDiffuseTexture(groupId, "", frameBuffer->getColorBufferTextureId());
 }
 
-void Object3DInternal::bindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, FrameBuffer* frameBuffer)
+void Object3DInternal::bindDiffuseTexture(const string& groupId, const string& facesEntityId, FrameBuffer* frameBuffer)
 {
 	setDynamicDiffuseTexture(groupId, facesEntityId, frameBuffer->getColorBufferTextureId());
 }
 
 void Object3DInternal::unbindDiffuseTexture()
 {
-	setDynamicDiffuseTexture(L"", L"", Object3DGroup::GLTEXTUREID_NONE);
+	setDynamicDiffuseTexture("", "", Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::unbindDiffuseTexture(const wstring& groupId)
+void Object3DInternal::unbindDiffuseTexture(const string& groupId)
 {
-	setDynamicDiffuseTexture(groupId, L"", Object3DGroup::GLTEXTUREID_NONE);
+	setDynamicDiffuseTexture(groupId, "", Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::unbindDiffuseTexture(const wstring& groupId, const wstring& facesEntityId)
+void Object3DInternal::unbindDiffuseTexture(const string& groupId, const string& facesEntityId)
 {
 	setDynamicDiffuseTexture(groupId, facesEntityId, Object3DGroup::GLTEXTUREID_NONE);
 }
 
-void Object3DInternal::setDynamicDiffuseTexture(const wstring& groupId, const wstring& facesEntityId, int32_t textureId)
+void Object3DInternal::setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId)
 {
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
-		if (groupId != L"" && groupId != object3DGroup->group->getId())
+		if (groupId != "" && groupId != object3DGroup->group->getId())
 			continue;
 
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->size(); facesEntityIdx++) {
 			auto& facesEntity = (*facesEntities)[facesEntityIdx];
-			if (facesEntityId != L"" && facesEntityId != facesEntity.getId())
+			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 
 			object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;

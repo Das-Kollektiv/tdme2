@@ -47,7 +47,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::physics::ConstraintsEntity;
 using tdme::engine::physics::ContactCache;
@@ -73,7 +73,7 @@ private:
 	int32_t constraintsEntityCount {  };
 	int32_t constraintsCount {  };
 	vector<RigidBody*>* rigidBodies {  };
-	map<wstring, RigidBody*> constrainedBodies {  };
+	map<string, RigidBody*> constrainedBodies {  };
 	ContactCache contactCache {  };
 	vector<array<int32_t, 2>> constraintsBodyIdxMap {  };
 	vector<array<Matrix1x6, 2>> jacobianMatrices {  };

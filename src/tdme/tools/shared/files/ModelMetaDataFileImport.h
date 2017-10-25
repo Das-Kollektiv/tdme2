@@ -12,7 +12,7 @@
 #include <ext/jsonbox/Value.h>
 #include <ext/jsonbox/JsonException.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -39,7 +39,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, const wstring& pathName, const wstring& fileName) throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName) throw (FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Imports a model meta data file from JSON object
@@ -51,7 +51,7 @@ public:
 	 * @throws model file io exception
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, const wstring& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException);
 
 private:
 
@@ -66,5 +66,5 @@ private:
 	 * @throws model file io exception
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const wstring& pathName, Value& jBv)  throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)  throw (FileSystemException, JsonException, ModelFileIOException);
 };

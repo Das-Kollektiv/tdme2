@@ -13,7 +13,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::Material;
@@ -37,7 +37,7 @@ public:
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static Model* read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException);
+	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
 
@@ -49,5 +49,5 @@ private:
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static void readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (FileSystemException, ModelFileIOException);
+	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException);
 };

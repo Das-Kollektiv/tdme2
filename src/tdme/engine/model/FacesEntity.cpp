@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Face;
@@ -21,14 +21,14 @@ using tdme::math::Vector3;
 
 FacesEntity::FacesEntity()
 {
-	this->id = L"";
+	this->id = "";
 	this->group = nullptr;
 	this->material = nullptr;
 	this->textureCoordinatesAvailable = false;
 	this->tangentBitangentAvailable = false;
 }
 
-FacesEntity::FacesEntity(Group* group, const wstring& id)
+FacesEntity::FacesEntity(Group* group, const string& id)
 {
 	this->id = id;
 	this->group = group;
@@ -37,7 +37,7 @@ FacesEntity::FacesEntity(Group* group, const wstring& id)
 	this->tangentBitangentAvailable = false;
 }
 
-const wstring& FacesEntity::getId()
+const string& FacesEntity::getId()
 {
 	return id;
 }

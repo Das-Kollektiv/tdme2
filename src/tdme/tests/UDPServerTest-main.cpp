@@ -11,7 +11,7 @@
 #include <tdme/os/threading/Queue.h>
 #include <tdme/utils/Console.h>
 
-using std::wstring;
+using std::string;
 using std::stringstream;
 
 using tdme::os::network::Network;
@@ -21,7 +21,7 @@ using tdme::utils::Console;
 
 class ServerBroadcaster : public Thread {
 public:
-	ServerBroadcaster(EchoUDPServer *server) : Thread(L"broadcaster"), server(server), time(0) {}
+	ServerBroadcaster(EchoUDPServer *server) : Thread("broadcaster"), server(server), time(0) {}
 
 	virtual ~ServerBroadcaster() {
 	}
@@ -54,7 +54,7 @@ EchoUDPServer* server = NULL;
 ServerBroadcaster* bc = NULL;
 
 void sigHandlerINT(int signal) {
-	Console::println(L"Interrupt signal catched");
+	Console::println("Interrupt signal catched");
 	if (server != NULL) {
 		// stop broad caster
 		server->stop();

@@ -39,7 +39,7 @@ public:
 	 */
 	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
 		if (poolIdx >= transparentRenderPoints.size()) {
-			Console::println(wstring(L"TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
+			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 			return;
 		}
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);

@@ -23,8 +23,8 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::Engine;
@@ -64,7 +64,7 @@ void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engi
 	createGroups(object, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget, object3DGroups);
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -77,15 +77,15 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<wstring, Group*>* g
 			object3DGroups->push_back(object3DGroup);
 			object3DGroup->id =
 				group->getModel()->getId() +
-				L":" +
+				":" +
 				group->getId() +
-				L":" +
-				to_wstring(animationProcessingTarget);
+				":" +
+				to_string(animationProcessingTarget);
 			if (animated == true && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
 				object3DGroup->id =
 					object3DGroup->id +
-					L":" +
-					to_wstring(counter++);
+					":" +
+					to_string(counter++);
 			}
 			object3DGroup->object = object3D;
 			object3DGroup->group = group;

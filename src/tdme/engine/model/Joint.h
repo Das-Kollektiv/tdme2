@@ -8,7 +8,7 @@
 
 using tdme::math::Matrix4x4;
 
-using std::wstring;
+using std::string;
 
 /** 
  * Joint / Bone
@@ -17,14 +17,14 @@ using std::wstring;
 class tdme::engine::model::Joint final
 {
 private:
-	wstring groupId {  };
+	string groupId {  };
 	Matrix4x4 bindMatrix {  };
 public:
 	/** 
 	 * Associated group or bone id
 	 * @return group id
 	 */
-	const wstring& getGroupId();
+	const string& getGroupId();
 
 	/** 
 	 * Bind matrix
@@ -41,5 +41,5 @@ public:
 	 * Public constructor
 	 * @param group id
 	 */
-	Joint(const wstring& groupId);
+	Joint(const string& groupId);
 };

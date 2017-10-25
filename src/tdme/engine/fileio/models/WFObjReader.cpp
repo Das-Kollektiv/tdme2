@@ -30,7 +30,7 @@ using std::array;
 using std::map;
 using std::vector;
 using std::string;
-using std::to_wstring;
+using std::to_string;
 
 using tdme::engine::fileio::models::WFObjReader;
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -70,10 +70,10 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw (FileSystemException, ModelFileIOException)
+Model* WFObjReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	auto model = new Model(
-		pathName + L"/" + fileName,
+		pathName + "/" + fileName,
 		fileName,
 		Model_UpVector::Y_UP,
 		RotationOrder::XYZ,
@@ -81,7 +81,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 	);
 	vector<Vector3> vertices;
 	vector<TextureCoordinate> textureCoordinates;
-	map<wstring, Material*> materials;
+	map<string, Material*> materials;
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
 	Group* group = nullptr;
@@ -100,54 +100,54 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 		{
 			StringTokenizer t;
 			StringTokenizer t2;
-			vector<wstring> lines;
+			vector<string> lines;
 			FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
-			wstring line;
+			string line;
 			for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 				line = StringUtils::trim(lines[lineIdx]);
-				if (StringUtils::startsWith(line, L"#")) {
+				if (StringUtils::startsWith(line, "#")) {
 					continue;
 				}
 				auto commandEndIdx = line.find(L' ');
 				if (commandEndIdx == -1) commandEndIdx = line.size();
 				auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
-				auto arguments = command.size() + 1 > line.length() ? L"" : StringUtils::substring(line, command.length() + 1);
-				if (command == L"mtllib") {
+				auto arguments = command.size() + 1 > line.length() ? "" : StringUtils::substring(line, command.length() + 1);
+				if (command == "mtllib") {
 					auto materialFileName = arguments;
 					WFObjReader::readMaterials(pathName, materialFileName, &materials);
 				} else
-				if (command == L"v") {
-					t.tokenize(arguments, L" ");
+				if (command == "v") {
+					t.tokenize(arguments, " ");
 					auto x = Float::parseFloat(t.nextToken());
 					auto y = Float::parseFloat(t.nextToken());
 					auto z = Float::parseFloat(t.nextToken());
 					vertices.push_back(Vector3(x, y, z));
 				} else
-				if (command == L"vt") {
-					t.tokenize(arguments, L" ");
+				if (command == "vt") {
+					t.tokenize(arguments, " ");
 					auto u = Float::parseFloat(t.nextToken());
 					auto v = Float::parseFloat(t.nextToken());
 					textureCoordinates.push_back(TextureCoordinate(u, v));
 				} else
-				if (command == L"f") {
-					t.tokenize(arguments, L" ");
+				if (command == "f") {
+					t.tokenize(arguments, " ");
 					auto v0 = -1;
 					auto v1 = -1;
 					auto v2 = -1;
 					auto vt0 = -1;
 					auto vt1 = -1;
 					auto vt2 = -1;
-					t2.tokenize(t.nextToken(), L"/");
+					t2.tokenize(t.nextToken(), "/");
 					v0 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt0 = Integer::parseInt(t2.nextToken()) - 1;
 					}
-					t2.tokenize(t.nextToken(), L"/");
+					t2.tokenize(t.nextToken(), "/");
 					v1 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt1 = Integer::parseInt(t2.nextToken()) - 1;
 					}
-					t2.tokenize(t.nextToken(), L"/");
+					t2.tokenize(t.nextToken(), "/");
 					v2 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt2 = Integer::parseInt(t2.nextToken()) - 1;
@@ -231,7 +231,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 					}
 					groupFacesEntityFaces.push_back(face);
 				} else
-				if (command == L"g") {
+				if (command == "g") {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
@@ -243,7 +243,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 						group->setFacesEntities(&groupFacesEntities);
 						group->determineFeatures();
 					}
-					t.tokenize(arguments, L" ");
+					t.tokenize(arguments, " ");
 					auto name = t.nextToken();
 					groupVertices.clear();
 					groupNormals.clear();
@@ -257,7 +257,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 					(*subGroups)[name] = group;
 					(*groups)[name] = group;
 				} else
-				if (command == L"usemtl") {
+				if (command == "usemtl") {
 					if (group != nullptr) {
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
@@ -265,7 +265,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 						}
 						groupFacesEntity = new FacesEntity(
 							group,
-							L"#" + to_wstring(groupFacesEntities.size())
+							"#" + to_string(groupFacesEntities.size())
 						);
 						groupFacesEntityFaces.clear();
 					}
@@ -298,7 +298,7 @@ Model* WFObjReader::read(const wstring& pathName, const wstring& fileName) throw
 	return model;
 }
 
-void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName, map<wstring, Material*>* materials) throw (FileSystemException, ModelFileIOException)
+void WFObjReader::readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException)
 {
 	Material* current = nullptr;
 	auto alpha = 1.0f;
@@ -307,54 +307,54 @@ void WFObjReader::readMaterials(const wstring& pathName, const wstring& fileName
 			// finally block
 		});
 		StringTokenizer t;
-		vector<wstring> lines;
+		vector<string> lines;
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 		for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 			auto line = StringUtils::trim(lines[lineIdx]);
-			if (StringUtils::startsWith(line, L"#") == true) {
+			if (StringUtils::startsWith(line, "#") == true) {
 				continue;
 			}
 			auto commandEndIdx = line.find(L' ');
 			if (commandEndIdx == -1) commandEndIdx = line.length();
 			auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
-			auto arguments = command.length() + 1 > line.length() ? L"" : StringUtils::substring(line, command.length() + 1);
-			if (command == L"newmtl") {
+			auto arguments = command.length() + 1 > line.length() ? "" : StringUtils::substring(line, command.length() + 1);
+			if (command == "newmtl") {
 				auto name = arguments;
 				current = new Material(name);
 				(*materials)[name] = current;
 			} else
-			if (command == L"map_ka") {
+			if (command == "map_ka") {
 				current->setDiffuseTexture(pathName, arguments);
 			} else
-			if (command == L"map_kd") {
+			if (command == "map_kd") {
 				current->setDiffuseTexture(pathName, arguments);
 			} else
-			if (command == L"ka") {
-				t.tokenize(arguments, L" ");
+			if (command == "ka") {
+				t.tokenize(arguments, " ");
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
 				current->getAmbientColor().set(r, g, b, alpha);
 			} else
-			if (command == L"kd") {
-				t.tokenize(arguments, L" ");
+			if (command == "kd") {
+				t.tokenize(arguments, " ");
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
 				current->getDiffuseColor().set(r, g, b, alpha);
 			} else
-			if (command == L"ks") {
-				t.tokenize(arguments, L" ");
+			if (command == "ks") {
+				t.tokenize(arguments, " ");
 				float r = Float::parseFloat(t.nextToken());
 				float g = Float::parseFloat(t.nextToken());
 				float b = Float::parseFloat(t.nextToken());
 				current->getSpecularColor().set(r, g, b, alpha);
 			} else
-			if (command == L"tr") {
+			if (command == "tr") {
 				alpha = Float::parseFloat(arguments);
 				current->getDiffuseColor().setAlpha(alpha);
 			} else
-			if (command == L"d") {
+			if (command == "d") {
 				alpha = Float::parseFloat(arguments);
 				current->getDiffuseColor().setAlpha(alpha);
 			}

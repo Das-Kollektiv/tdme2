@@ -46,8 +46,8 @@ using std::map;
 using std::set;
 using std::sort;
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::Object3DVBORenderer;
 using tdme::engine::Engine;
@@ -137,7 +137,7 @@ BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer
 		if (batchVBORenderer->acquire()) return batchVBORenderer;
 
 	}
-	Console::println(wstring(L"Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
+	Console::println(string("Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
 	return nullptr;
 }
 
@@ -222,7 +222,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			material = facesEntity->getMaterial();
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
-		wstring transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
+		string transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
 		TransparentRenderFacesGroup* trfGroup = nullptr;
 		auto trfGroupIt = transparentRenderFacesGroups.find(transparentRenderFacesGroupKey);
 		if (trfGroupIt != transparentRenderFacesGroups.end()) {
@@ -451,30 +451,30 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
 
-const wstring Object3DVBORenderer::createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort)
+const string Object3DVBORenderer::createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort)
 {
 	auto& efcaData = effectColorAdd.getArray();
 	auto& efcmData = effectColorMul.getArray();
-	wstring key =
-		to_wstring(efcmData[0]) +
-		L"," +
-		to_wstring(efcmData[1]) +
-		L"," +
-		to_wstring(efcmData[2]) +
-		L"," +
-		to_wstring(efcmData[3]) +
-		L"," +
-		to_wstring(efcaData[0]) +
-		L"," +
-		to_wstring(efcaData[1]) +
-		L"," +
-		to_wstring(efcaData[2]) +
-		L"," +
-		to_wstring(efcaData[3]) +
-		L"," +
-		(depthBuffer == true ? L"DBT" : L"DBF") +
-		L"," +
-		(sort == true ? L"DS" : L"NS");
+	string key =
+		to_string(efcmData[0]) +
+		"," +
+		to_string(efcmData[1]) +
+		"," +
+		to_string(efcmData[2]) +
+		"," +
+		to_string(efcmData[3]) +
+		"," +
+		to_string(efcaData[0]) +
+		"," +
+		to_string(efcaData[1]) +
+		"," +
+		to_string(efcaData[2]) +
+		"," +
+		to_string(efcaData[3]) +
+		"," +
+		(depthBuffer == true ? "DBT" : "DBF") +
+		"," +
+		(sort == true ? "DS" : "NS");
 	return key;
 }
 
@@ -496,10 +496,10 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	}
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
-	set<wstring> pseKeys;
+	set<string> pseKeys;
 	for (auto i = 0; i < visiblePses.size(); i++) {
 		PointsParticleSystemEntityInternal* ppse = visiblePses.at(i);
-		wstring pseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
+		string pseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 		pseKeys.insert(pseKey);
 	}
 	for (auto pseKey: pseKeys) {
@@ -507,7 +507,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		PointsParticleSystemEntityInternal* currentPse = nullptr;
 		for (auto j = 0; j < visiblePses.size(); j++) {
 			PointsParticleSystemEntityInternal* ppse = visiblePses.at(j);
-			wstring innerPseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
+			string innerPseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 			if (pseKey != innerPseKey) {
 				continue;
 			} else {

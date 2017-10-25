@@ -15,27 +15,27 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBox::GUISelectBox() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox.xml");
 }
 
-wstring GUISelectBox::NAME = L"selectbox";
+string GUISelectBox::NAME = "selectbox";
 
-const wstring& GUISelectBox::getName()
+const string& GUISelectBox::getName()
 {
 	return NAME;
 }
 
-const wstring& GUISelectBox::getTemplate()
+const string& GUISelectBox::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUISelectBox::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUISelectBox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"100%";
-	attributes[L"height"] = L"auto";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "100%";
+	attributes["height"] = "auto";
 	return &attributes;
 }
 

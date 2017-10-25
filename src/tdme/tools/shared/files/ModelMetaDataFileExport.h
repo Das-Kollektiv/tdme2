@@ -34,7 +34,7 @@ private:
 	 * @param dest
 	 * @throws file system exception
 	 */
-	static void copyFile(const wstring& source, const wstring& dest) throw (FileSystemException);
+	static void copyFile(const string& source, const string& dest) throw (FileSystemException);
 
 public:
 
@@ -46,7 +46,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void export_(const wstring& pathName, const wstring& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Export model meta data file to JSON node

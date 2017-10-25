@@ -6,25 +6,23 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/RTTI.h>
-#include <tdme/utils/StringConverter.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/NIOServerClient.h>
 #include <tdme/network/udpserver/NIOServerGroup.h>
 #include <tdme/network/udpserver/NIOServerWorkerThread.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::RTTI;
-using tdme::utils::StringConverter;
 using tdme::network::udpserver::NIOServerClient;
 using tdme::network::udpserver::NIOServerGroup;
 using tdme::network::udpserver::NIOServerWorkerThread;
 
 NIOServerWorkerThread::NIOServerWorkerThread(const unsigned int id, NIOServerWorkerThreadPool* threadPool) :
-	Thread(L"nioworkerthread"),
+	Thread("nioworkerthread"),
 	id(id),
 	threadPool(threadPool) {
 	//
@@ -34,7 +32,7 @@ NIOServerWorkerThread::~NIOServerWorkerThread() {
 }
 
 void NIOServerWorkerThread::run() {
-	Console::println(L"ServerWorkerThread[" + to_wstring(id) + L"]::run(): start");
+	Console::println("ServerWorkerThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
 	threadPool->startUpBarrier->wait();
@@ -59,12 +57,12 @@ void NIOServerWorkerThread::run() {
 					client->onRequest(frame, messageId, retries);
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): client: request: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): client: request: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 
 					// unhandled exception, so shutdown the client
@@ -84,12 +82,12 @@ void NIOServerWorkerThread::run() {
 					client->onInit();
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): client: init: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): client: init: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -101,12 +99,12 @@ void NIOServerWorkerThread::run() {
 					client->onClose();
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): client: close: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): client: close: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -118,12 +116,12 @@ void NIOServerWorkerThread::run() {
 					client->onCustom(request->getCustomEvent());
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): client: custom: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): client: custom: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -135,12 +133,12 @@ void NIOServerWorkerThread::run() {
 					group->onInit();
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): group: init: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): group: init: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -152,12 +150,12 @@ void NIOServerWorkerThread::run() {
 					group->onClose();
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): group: close: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): group: close: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -169,12 +167,12 @@ void NIOServerWorkerThread::run() {
 					group->onCustomEvent(request->getCustomEvent());
 				} catch(Exception& exception) {
 					Console::println(
-						L"ServerWorkerThread[" +
-						to_wstring(id) +
-						L"]::run(): group: custom: " +
-						StringConverter::toWideString(RTTI::demangle(typeid(exception).name())) +
-						L": " +
-						StringConverter::toWideString(exception.what())
+						"ServerWorkerThread[" +
+						to_string(id) +
+						"]::run(): group: custom: " +
+						(RTTI::demangle(typeid(exception).name())) +
+						": " +
+						(exception.what())
 					);
 				}
 				break;
@@ -190,5 +188,5 @@ void NIOServerWorkerThread::run() {
 	}
 
 	//
-	Console::println(L"ServerWorkerThread[" + to_wstring(id) + L"]::run(): done");
+	Console::println("ServerWorkerThread[" + to_string(id) + "]::run(): done");
 }

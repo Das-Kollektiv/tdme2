@@ -58,13 +58,13 @@ PopUps* EntityBoundingVolumeView::getPopUpsViews()
 
 void EntityBoundingVolumeView::initialize()
 {
-	vector<wstring> boundingVolumeTypes = {
-		L"None",
-		L"Sphere",
-		L"Capsule",
-		L"Bounding Box",
-		L"Oriented Bounding Box",
-		L"Convex Mesh"
+	vector<string> boundingVolumeTypes = {
+		"None",
+		"Sphere",
+		"Capsule",
+		"Bounding Box",
+		"Oriented Bounding Box",
+		"Convex Mesh"
 	};
 	for (auto i = 0; i < EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		modelViewerScreenController->setupBoundingVolumeTypes(i, &boundingVolumeTypes);
@@ -254,7 +254,7 @@ void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity,
 	updateModelBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const wstring& fileName)
+void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName)
 {
 	if (entity == nullptr)
 		return;

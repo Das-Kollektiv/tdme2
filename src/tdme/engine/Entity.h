@@ -10,7 +10,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Rotations;
@@ -44,7 +44,7 @@ struct tdme::engine::Entity
 	/** 
 	 * @return object id
 	 */
-	virtual const wstring& getId() = 0;
+	virtual const string& getId() = 0;
 
 	/** 
 	 * @return true if enabled to be rendered

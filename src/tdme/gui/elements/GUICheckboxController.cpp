@@ -23,10 +23,10 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
-wstring GUICheckboxController::CONDITION_CHECKED = L"checked";
-wstring GUICheckboxController::CONDITION_UNCHECKED = L"unchecked";
-wstring GUICheckboxController::CONDITION_DISABLED = L"disabled";
-wstring GUICheckboxController::CONDITION_ENABLED = L"enabled";
+string GUICheckboxController::CONDITION_CHECKED = "checked";
+string GUICheckboxController::CONDITION_UNCHECKED = "unchecked";
+string GUICheckboxController::CONDITION_DISABLED = "disabled";
+string GUICheckboxController::CONDITION_ENABLED = "enabled";
 
 GUICheckboxController::GUICheckboxController(GUINode* node)
 	: GUINodeController(node)

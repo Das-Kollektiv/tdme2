@@ -8,7 +8,7 @@
 
 using tdme::engine::subsystems::manager::TextureManager;
 
-using std::wstring;
+using std::string;
 
 /** 
  * Managed texture entity
@@ -18,7 +18,7 @@ class tdme::engine::subsystems::manager::TextureManager_TextureManaged
 {
 	friend class TextureManager;
 private:
-	wstring id {  };
+	string id {  };
 	int32_t glId {  };
 	int32_t referenceCounter {  };
 private:
@@ -26,7 +26,7 @@ private:
 	/** 
 	 * @return texture id
 	 */
-	const wstring& getId();
+	const string& getId();
 
 	/** 
 	 * @return texture open gl id
@@ -54,5 +54,5 @@ private:
 	 * @param id
 	 * @param gl id
 	 */
-	TextureManager_TextureManaged(const wstring& id, int32_t glId);
+	TextureManager_TextureManaged(const string& id, int32_t glId);
 };

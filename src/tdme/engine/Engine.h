@@ -26,7 +26,7 @@
 using std::array;
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::Camera;
 using tdme::engine::Entity;
@@ -99,7 +99,7 @@ private:
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
-	map<wstring, Entity*> entitiesById {  };
+	map<string, Entity*> entitiesById {  };
 
 public: /* protected */
 	vector<Object3D*> objects {  };
@@ -271,7 +271,7 @@ public:
 	 * @param id
 	 * @return entity or null
 	 */
-	Entity* getEntity(const wstring& id);
+	Entity* getEntity(const string& id);
 
 	/** 
 	 * Adds an entity by id
@@ -283,7 +283,7 @@ public:
 	 * Removes an entity
 	 * @param id
 	 */
-	void removeEntity(const wstring& id);
+	void removeEntity(const string& id);
 
 	/** 
 	 * Removes all entities and caches
@@ -398,7 +398,7 @@ public:
 	 * @param file name
 	 * @return success
 	 */
-	bool makeScreenshot(const wstring& pathName, const wstring& fileName);
+	bool makeScreenshot(const string& pathName, const string& fileName);
 
 	/**
 	 * Destructor

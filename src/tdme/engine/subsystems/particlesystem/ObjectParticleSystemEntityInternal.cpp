@@ -23,8 +23,8 @@
 
 using std::vector;
 using std::remove;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Engine;
@@ -44,7 +44,7 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wstring& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
+ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
 {
 	this->id = id;
 	this->enabled = true;
@@ -55,10 +55,10 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const wst
 	objects.resize(maxCount);
 	for (auto i = 0; i < objects.size(); i++) {
 		objects[i] = new Object3D(
-			L"tdme.opse." +
+			"tdme.opse." +
 				id +
-				L":" +
-				to_wstring(i),
+				":" +
+				to_string(i),
 			model
 		);
 		objects[i]->setEnabled(false);
@@ -81,7 +81,7 @@ ObjectParticleSystemEntityInternal::~ObjectParticleSystemEntityInternal() {
 	delete boundingBoxTransformed;
 }
 
-const wstring& ObjectParticleSystemEntityInternal::getId()
+const string& ObjectParticleSystemEntityInternal::getId()
 {
 	return id;
 }

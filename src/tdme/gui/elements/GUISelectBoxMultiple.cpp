@@ -15,27 +15,27 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxMultiple::GUISelectBoxMultiple() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-multiple.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox-multiple.xml");
 }
 
-wstring GUISelectBoxMultiple::NAME = L"selectbox-multiple";
+string GUISelectBoxMultiple::NAME = "selectbox-multiple";
 
-const wstring& GUISelectBoxMultiple::getName()
+const string& GUISelectBoxMultiple::getName()
 {
 	return NAME;
 }
 
-const wstring& GUISelectBoxMultiple::getTemplate()
+const string& GUISelectBoxMultiple::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUISelectBoxMultiple::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUISelectBoxMultiple::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"100%";
-	attributes[L"height"] = L"auto";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "100%";
+	attributes["height"] = "auto";
 	return &attributes;
 }
 

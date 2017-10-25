@@ -19,7 +19,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const wstring& name, const wstring& description, const wstring& entityFileName, const wstring& fileName, const wstring& thumbnail, Model* model, const Vector3& pivot)
+LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -49,42 +49,42 @@ LevelEditorEntity_EntityType* LevelEditorEntity::getType()
 	return type;
 }
 
-const wstring& LevelEditorEntity::getName()
+const string& LevelEditorEntity::getName()
 {
 	return name;
 }
 
-void LevelEditorEntity::setName(const wstring& name)
+void LevelEditorEntity::setName(const string& name)
 {
 	this->name = name;
 }
 
-const wstring& LevelEditorEntity::getDescription()
+const string& LevelEditorEntity::getDescription()
 {
 	return description;
 }
 
-void LevelEditorEntity::setDescription(const wstring& description)
+void LevelEditorEntity::setDescription(const string& description)
 {
 	this->description = description;
 }
 
-const wstring& LevelEditorEntity::getEntityFileName()
+const string& LevelEditorEntity::getEntityFileName()
 {
 	return entityFileName;
 }
 
-void LevelEditorEntity::setEntityFileName(const wstring& entityFileName)
+void LevelEditorEntity::setEntityFileName(const string& entityFileName)
 {
 	this->entityFileName = entityFileName;
 }
 
-const wstring& LevelEditorEntity::getFileName()
+const string& LevelEditorEntity::getFileName()
 {
 	return fileName;
 }
 
-const wstring& LevelEditorEntity::getThumbnail()
+const string& LevelEditorEntity::getThumbnail()
 {
 	return thumbnail;
 }

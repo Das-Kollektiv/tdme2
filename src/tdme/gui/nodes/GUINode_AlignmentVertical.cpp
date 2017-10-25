@@ -4,21 +4,21 @@
 
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::utils::Enum;
 
-GUINode_AlignmentVertical::GUINode_AlignmentVertical(const wstring& name, int ordinal)
+GUINode_AlignmentVertical::GUINode_AlignmentVertical(const string& name, int ordinal)
 	: Enum(name, ordinal)
 {
 }
 
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::TOP = new GUINode_AlignmentVertical(L"TOP", 0);
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::CENTER = new GUINode_AlignmentVertical(L"CENTER", 1);
-GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::BOTTOM = new GUINode_AlignmentVertical(L"BOTTOM", 2);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::TOP = new GUINode_AlignmentVertical("TOP", 0);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::CENTER = new GUINode_AlignmentVertical("CENTER", 1);
+GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::BOTTOM = new GUINode_AlignmentVertical("BOTTOM", 2);
 
-GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(const wstring& a0)
+GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(const string& a0)
 {
 	if (BOTTOM->getName() == a0) return BOTTOM;
 	if (CENTER->getName() == a0) return CENTER;

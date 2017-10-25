@@ -4,12 +4,12 @@
 
 #include <tdme/audio/AudioBufferManager.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::audio::AudioBufferManager;
 
-AudioBufferManager_AudioBufferManaged::AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const wstring& id, int32_t alId)
+AudioBufferManager_AudioBufferManaged::AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId)
 {
 	this->audioBufferManager = audioBufferManager;
 	this->id = id;
@@ -17,7 +17,7 @@ AudioBufferManager_AudioBufferManaged::AudioBufferManager_AudioBufferManaged(Aud
 	this->referenceCounter = 0;
 }
 
-const wstring& AudioBufferManager_AudioBufferManaged::getId()
+const string& AudioBufferManager_AudioBufferManaged::getId()
 {
 	return id;
 }

@@ -35,7 +35,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::physics::ContactCache;
@@ -46,7 +46,7 @@ using tdme::math::Vector3;
  * Contact cache info
  */
 struct tdme::engine::physics::ContactCache_ContactCacheInfo {
-	wstring key {  };
+	string key {  };
 	RigidBody* rb1 {  };
 	RigidBody* rb2 {  };
 	vector<Vector3> hitPoints {  };

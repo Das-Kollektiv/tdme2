@@ -8,7 +8,7 @@
 
 #include <tdme/utils/ExceptionBase.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::ExceptionBase;
 

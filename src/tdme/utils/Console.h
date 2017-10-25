@@ -9,7 +9,6 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::string;
-using std::wstring;
 
 /** 
  * Console 
@@ -21,27 +20,15 @@ class tdme::utils::Console
 public:
 	/** 
 	 * Print given string and trailing newline to console
-	 * @param wstring
-	 */
-	static void println(const wstring& string);
-
-	/** 
-	 * Print given string and trailing newline to console
 	 * @param string
 	 */
-	static void println(const string& string);
+	static void println(const string& str);
 
 	/** 
 	 * Print given string
-	 * @param wstring
-	 */
-	static void print(const wstring& string);
-
-	/**
-	 * Print given string
 	 * @param string
 	 */
-	static void print(const string& string);
+	static void print(const string& str);
 
 	/** 
 	 * Print new line to console

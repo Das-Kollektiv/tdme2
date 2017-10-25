@@ -15,7 +15,7 @@
 
 using std::map;
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Group;
 using tdme::engine::model::Animation;
@@ -27,7 +27,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Group::Group(Model* model, Group* parentGroup, const wstring& id, const wstring& name)
+Group::Group(Model* model, Group* parentGroup, const string& id, const string& name)
 {
 	this->model = model;
 	this->parentGroup = parentGroup;
@@ -53,12 +53,12 @@ Group* Group::getParentGroup()
 	return parentGroup;
 }
 
-const wstring& Group::getId()
+const string& Group::getId()
 {
 	return id;
 }
 
-const wstring& Group::getName()
+const string& Group::getName()
 {
 	return name;
 }
@@ -194,12 +194,12 @@ void Group::setFacesEntities(const vector<FacesEntity>* facesEntities)
 	}
 }
 
-map<wstring, Group*>* Group::getSubGroups()
+map<string, Group*>* Group::getSubGroups()
 {
 	return &subGroups;
 }
 
-Group* Group::getSubGroupById(const wstring& groupId)
+Group* Group::getSubGroupById(const string& groupId)
 {
 	auto groupIt = subGroups.find(groupId);
 	if (groupIt != subGroups.end()) {

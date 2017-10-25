@@ -10,7 +10,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -41,7 +41,7 @@ public:
 	 * @param id
 	 * @return model
 	 */
-	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const wstring& id);
+	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const string& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
@@ -49,7 +49,7 @@ public:
 	 * @param id
 	 * @return model
 	 */
-	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const wstring& id);
+	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
@@ -59,7 +59,7 @@ public:
 	 * @param number of y segments
 	 * @return model
 	 */
-	static Model* createSphereModel(Sphere* sphere, const wstring& id, int32_t segmentsX, int32_t segmentsY);
+	static Model* createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Creates a model from capsule
@@ -69,7 +69,7 @@ public:
 	 * @param number of y segments
 	 * @return model
 	 */
-	static Model* createCapsuleModel(Capsule* capsule, const wstring& id, int32_t segmentsX, int32_t segmentsY);
+	static Model* createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Set up a convex mesh model
@@ -82,7 +82,7 @@ private:
 	 * Set up convex mesh material
 	 * @param groups
 	 */
-	static void setupConvexMeshMaterial(map<wstring, Group*>* groups, Material* material);
+	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
 
 public:
 	/** 
@@ -91,5 +91,5 @@ public:
 	 * @param id
 	 * @return model
 	 */
-	static Model* createModel(BoundingVolume* boundingVolume, const wstring& id);
+	static Model* createModel(BoundingVolume* boundingVolume, const string& id);
 };

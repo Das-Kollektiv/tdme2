@@ -36,7 +36,7 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 
 
-RigidBody::RigidBody(World* world, const wstring& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia)
+RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia)
 {
 	this->world = world;
 	this->idx = -1;
@@ -97,7 +97,7 @@ int32_t RigidBody::getIdx()
 	return idx;
 }
 
-const wstring& RigidBody::getId()
+const string& RigidBody::getId()
 {
 	return id;
 }
@@ -278,9 +278,9 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 	distance.set(forceOrigin).sub(position);
 	if (distance.computeLength() < MathTools::EPSILON) {
 		Console::println(
-			wstring(L"RigidBody::addForce(): ") +
+			string("RigidBody::addForce(): ") +
 			id +
-			wstring(L": Must not equals position")
+			string(": Must not equals position")
 		);
 	}
 	Vector3::computeCrossProduct(force, distance, tmp);

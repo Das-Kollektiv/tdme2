@@ -22,13 +22,12 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
-#include <tdme/utils/StringConverter.h>
 
 #include <ext/jsonbox/Array.h>
 #include <ext/jsonbox/Object.h>
 
 using std::ostringstream;
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::engine::Rotation;
@@ -48,15 +47,14 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
-using tdme::utils::StringConverter;
 
-void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileExport::export_(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	level->setFileName(pathName + L'/' + fileName);
+	level->setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
 	jRoot["version"] = "0.99";
-	jRoot["ro"] = StringConverter::toString(level->getRotationOrder()->getName());
+	jRoot["ro"] = (level->getRotationOrder()->getName());
 	tdme::ext::jsonbox::Array jLights;
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		auto light = level->getLightAt(i);
@@ -98,9 +96,9 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		auto entity = entityLibrary->getEntityAt(i);
 		tdme::ext::jsonbox::Object jModel;
 		jModel["id"] = entity->getId();
-		jModel["type"] = StringConverter::toString(entity->getType()->getName());
-		jModel["name"] = StringConverter::toString(entity->getName());
-		jModel["descr"] = StringConverter::toString(entity->getDescription());
+		jModel["type"] = (entity->getType()->getName());
+		jModel["name"] = (entity->getName());
+		jModel["descr"] = (entity->getDescription());
 		jModel["entity"] = ModelMetaDataFileExport::exportToJSON(entity);
 		jEntityLibrary.push_back(jModel);
 	}
@@ -108,8 +106,8 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 	for (auto i = 0; i < level->getPropertyCount(); i++) {
 		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
 		tdme::ext::jsonbox::Object jMapProperty;
-		jMapProperty["name"] = StringConverter::toString(mapProperty->getName());
-		jMapProperty["value"] = StringConverter::toString(mapProperty->getValue());
+		jMapProperty["name"] = (mapProperty->getName());
+		jMapProperty["value"] = (mapProperty->getValue());
 		jMapProperties.push_back(jMapProperty);
 	}
 	jRoot["properties"] = jMapProperties;
@@ -124,8 +122,8 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		auto rotationAroundXAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisXIndex());
 		auto rotationAroundYAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisYIndex());
 		auto rotationAroundZAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisZIndex());
-		jObject["id"] = StringConverter::toString(levelEditorObject->getId());
-		jObject["descr"] = StringConverter::toString(levelEditorObject->getDescription());
+		jObject["id"] = (levelEditorObject->getId());
+		jObject["descr"] = (levelEditorObject->getDescription());
 		jObject["mid"] = levelEditorObject->getEntity()->getId();
 		jObject["tx"] = static_cast< double >(translation.getX());
 		jObject["ty"] = static_cast< double >(translation.getY());
@@ -140,8 +138,8 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
 			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);
 			tdme::ext::jsonbox::Object jObjectProperty;
-			jObjectProperty["name"] = StringConverter::toString(objectProperty->getName());
-			jObjectProperty["value"] = StringConverter::toString(objectProperty->getValue());
+			jObjectProperty["name"] = (objectProperty->getName());
+			jObjectProperty["value"] = (objectProperty->getValue());
 			jObjectProperties.push_back(jObjectProperty);
 		}
 		jObject["properties"] = jObjectProperties;
@@ -153,5 +151,5 @@ void LevelFileExport::export_(const wstring& pathName, const wstring& fileName, 
 	ostringstream json;
 	json << jRoot;
 
-	FileSystem::getInstance()->setContentFromString(pathName, fileName, StringConverter::toWideString(json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, (json.str()));
 }

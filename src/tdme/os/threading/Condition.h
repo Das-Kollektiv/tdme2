@@ -9,7 +9,7 @@
 #include "fwd-tdme.h"
 #include "Mutex.h"
 
-using std::wstring;
+using std::string;
 
 using tdme::os::threading::Mutex;
 
@@ -23,7 +23,7 @@ public:
 	 * @brief Public constructor, creates condition variable
 	 * @param string
 	 */
-	Condition(const wstring& name);
+	Condition(const string& name);
 
 	/**
 	 * @brief Destructor, removes condition variable
@@ -46,6 +46,6 @@ public:
 	void wait(Mutex &mutex);
 
 private:
-	wstring name;
+	string name;
 	pthread_cond_t pThreadCond;
 };

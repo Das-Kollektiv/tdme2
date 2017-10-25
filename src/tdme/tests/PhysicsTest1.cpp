@@ -27,8 +27,8 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::tests::PhysicsTest1;
 
@@ -80,22 +80,22 @@ PhysicsTest1::PhysicsTest1()
 void PhysicsTest1::main(int argc, char** argv)
 {
 	auto physicsTest1 = new PhysicsTest1();
-	physicsTest1->run(argc, argv, L"PhysicsTest1", physicsTest1);
+	physicsTest1->run(argc, argv, "PhysicsTest1", physicsTest1);
 }
 
 void PhysicsTest1::display()
 {
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		auto body = world->getRigidBody(L"box" + to_wstring(i));
+		auto body = world->getRigidBody("box" + to_string(i));
 		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
 		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
-		auto body = world->getRigidBody(L"box" + to_wstring(BOX_COUNT + i));
+		auto body = world->getRigidBody("box" + to_string(BOX_COUNT + i));
 		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
 		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
 	}
-	auto capsuleBig1 = world->getRigidBody(L"capsulebig1");
+	auto capsuleBig1 = world->getRigidBody("capsulebig1");
 	if (keyLeft)
 		capsuleBig1->getLinearVelocity().setX(8.0f);
 	else if (keyRight)
@@ -108,7 +108,7 @@ void PhysicsTest1::display()
 		capsuleBig1->getLinearVelocity().setZ(-8.0f);
 	else
 		capsuleBig1->getLinearVelocity().setZ(0.0f);
-	auto capsuleBig2 = world->getRigidBody(L"capsulebig2");
+	auto capsuleBig2 = world->getRigidBody("capsulebig2");
 	if (keyA)
 		capsuleBig2->getLinearVelocity().setX(6.0f);
 	else if (keyD)
@@ -127,7 +127,7 @@ void PhysicsTest1::display()
 	world->synch(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(wstring(L"PhysicsTest::display::" + to_wstring(end - start) + L"ms"));
+	Console::println(string("PhysicsTest::display::" + to_string(end - start) + "ms"));
 }
 
 void PhysicsTest1::dispose()
@@ -158,150 +158,150 @@ void PhysicsTest1::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 1.0f, 8.0f));
-	auto groundModel = PrimitiveModel::createModel(ground, L"ground_model");
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*groundModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
-	entity = new Object3D(L"ground", groundModel);
+	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
+	(*groundModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*groundModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	entity = new Object3D("ground", groundModel);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
+	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
 	auto side = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f));
-	auto sideModel = PrimitiveModel::createModel(side, L"side_model");
-	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*sideModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	auto sideModel = PrimitiveModel::createModel(side, "side_model");
+	(*sideModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*sideModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	auto nearFar = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 16.0f, 1.0f));
-	auto nearFarModel = PrimitiveModel::createModel(nearFar, L"far_model");
-	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*nearFarModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
-	entity = new Object3D(L"far", nearFarModel);
+	auto nearFarModel = PrimitiveModel::createModel(nearFar, "far_model");
+	(*nearFarModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
+	(*nearFarModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	entity = new Object3D("far", nearFarModel);
 	entity->getTranslation().addZ(+9.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"far", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
-	entity = new Object3D(L"near", nearFarModel);
+	world->addStaticRigidBody("far", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
+	entity = new Object3D("near", nearFarModel);
 	entity->getTranslation().addZ(-9.0f);
 	entity->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 0.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"near", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
-	entity = new Object3D(L"sideright", sideModel);
+	world->addStaticRigidBody("near", true, RIGID_TYPEID_STANDARD, entity, nearFar, 0.5f);
+	entity = new Object3D("sideright", sideModel);
 	entity->getTranslation().addX(-9.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"sideright", true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
-	entity = new Object3D(L"sideleft", sideModel);
+	world->addStaticRigidBody("sideright", true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
+	entity = new Object3D("sideleft", sideModel);
 	entity->getTranslation().addX(9.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody(L"sideleft", true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
+	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity, side, 0.5f);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f));
-	auto boxModel = PrimitiveModel::createModel(box, L"box_model");
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
-	(*boxModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
+	auto boxModel = PrimitiveModel::createModel(box, "box_model");
+	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
+	(*boxModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D(L"box" + to_wstring(i), boxModel);
+		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(10.0f + i * 3.0f);
 		entity->getTranslation().addX(-2.0f + i * 0.1f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"box" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
-		entity = new Object3D(L"box" + to_wstring(BOX_COUNT + i), boxModel);
+		entity = new Object3D("box" + to_string(BOX_COUNT + i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(1.6f + (i * 1.2f));
 		entity->getTranslation().addX(+3.0f);
 		entity->getTranslation().addZ(-5.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"box" + to_wstring(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto sphere = new Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.4f);
-	auto sphereModel = PrimitiveModel::createModel(sphere, L"sphere_model");
-	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.5f, 0.8f, 0.8f, 1.0f);
-	(*sphereModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(0.0f, 1.0f, 1.0f, 1.0f);
+	auto sphereModel = PrimitiveModel::createModel(sphere, "sphere_model");
+	(*sphereModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.5f, 0.8f, 0.8f, 1.0f);
+	(*sphereModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(0.0f, 1.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
-		entity = new Object3D(L"sphere" + to_wstring(i), sphereModel);
+		entity = new Object3D("sphere" + to_string(i), sphereModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(12.0f + (i * 1.0f));
 		entity->getTranslation().addX(0.45f * i - 3.0f);
 		entity->getTranslation().addZ(0.1f * i - 3.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"sphere" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto capsule = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, -0.5f, 0.0f), 0.25f);
-	auto capsuleModel = PrimitiveModel::createModel(capsule, L"capsule_model");
-	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.0f, 0.8f, 1.0f);
-	(*capsuleModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 1.0f, 1.0f);
+	auto capsuleModel = PrimitiveModel::createModel(capsule, "capsule_model");
+	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.0f, 0.8f, 1.0f);
+	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 1.0f, 1.0f);
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
-		entity = new Object3D(L"capsule" + to_wstring(i), capsuleModel);
+		entity = new Object3D("capsule" + to_string(i), capsuleModel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(14.0f + (i * 2.0f));
 		entity->getTranslation().addX((i * 0.5f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"capsule" + to_wstring(i), true, RIGID_TYPEID_STANDARD, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
 	}
 	auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
-	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, L"capsulebig_model");
-	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getAmbientColor().set(1.0f, 0.8f, 0.8f, 1.0f);
-	(*capsuleBigModel->getMaterials())[L"tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
-	entity = new Object3D(L"capsulebig1", capsuleBigModel);
+	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
+	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(1.0f, 0.8f, 0.8f, 1.0f);
+	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
+	entity = new Object3D("capsulebig1", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->getTranslation().addY(5.0f);
 	entity->getTranslation().addX(-2.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody(L"capsulebig1", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 80.0f, RigidBody::getNoRotationInertiaMatrix());
-	entity = new Object3D(L"capsulebig2", capsuleBigModel);
+	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 80.0f, RigidBody::getNoRotationInertiaMatrix());
+	entity = new Object3D("capsulebig2", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->getTranslation().addY(5.0f);
 	entity->getTranslation().addX(+2.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody(L"capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
+	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
 	try {
-		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
+		auto _barrel = DAEReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
-		entity = new Object3D(L"barrel1", _barrel);
+		entity = new Object3D("barrel1", _barrel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(+4.0f);
 		entity->getScale().set(2.0f, 2.0f, 2.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"barrel1", true, RIGID_TYPEID_STANDARD, entity, barrelBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		entity = new Object3D(L"barrel2", _barrel);
+		world->addRigidBody("barrel1", true, RIGID_TYPEID_STANDARD, entity, barrelBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		entity = new Object3D("barrel2", _barrel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(+6.0f);
 		entity->getScale().set(2.0f, 2.0f, 2.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"barrel2", true, RIGID_TYPEID_STANDARD, entity, barrelBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		auto _cone = DAEReader::read(L"resources/tests/models/cone", L"cone.dae");
+		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity, barrelBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		auto _cone = DAEReader::read("resources/tests/models/cone", "cone.dae");
 		auto coneBoundingVolume = new ConvexMesh(new Object3DModel(_cone));
-		entity = new Object3D(L"cone1", _cone);
+		entity = new Object3D("cone1", _cone);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(-4.0f);
 		entity->getScale().set(3.0f, 3.0f, 3.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"cone1", true, RIGID_TYPEID_STANDARD, entity, coneBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		entity = new Object3D(L"cone2", _cone);
+		world->addRigidBody("cone1", true, RIGID_TYPEID_STANDARD, entity, coneBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		entity = new Object3D("cone2", _cone);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getTranslation().addY(5.0f);
 		entity->getTranslation().addX(-5.0f);
 		entity->getScale().set(3.0f, 3.0f, 3.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"cone2", true, RIGID_TYPEID_STANDARD, entity, coneBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		auto _tire = DAEReader::read(L"resources/tests/models/tire", L"tire.dae");
+		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity, coneBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		auto _tire = DAEReader::read("resources/tests/models/tire", "tire.dae");
 		auto tireBoundingVolume = new ConvexMesh(new Object3DModel(_tire));
-		entity = new Object3D(L"tire1", _tire);
+		entity = new Object3D("tire1", _tire);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getRotations()->add(new Rotation(90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 		entity->getTranslation().addY(5.0f);
@@ -310,8 +310,8 @@ void PhysicsTest1::initialize()
 		entity->getScale().set(2.0f, 2.0f, 2.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"tire1", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		entity = new Object3D(L"tire2", _tire);
+		world->addRigidBody("tire1", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		entity = new Object3D("tire2", _tire);
 		entity->setDynamicShadowingEnabled(true);
 		entity->getRotations()->add(new Rotation(90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 		entity->getTranslation().addY(5.0f);
@@ -320,7 +320,7 @@ void PhysicsTest1::initialize()
 		entity->getScale().set(2.0f, 2.0f, 2.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody(L"tire2", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("tire2", true, RIGID_TYPEID_STANDARD, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest1::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

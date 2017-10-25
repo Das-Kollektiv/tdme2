@@ -8,7 +8,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <ext/jsonbox/JsonException.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -36,7 +36,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
@@ -48,5 +48,5 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void doImport(const wstring& pathName, const wstring& fileName, LevelEditorLevel* level, const wstring& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException);
 };

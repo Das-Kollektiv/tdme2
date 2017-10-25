@@ -109,17 +109,17 @@ EngineTest::EngineTest()
 void EngineTest::main(int argc, char** argv)
 {
 	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, L"EngineTest", engineTest);
+	engineTest->run(argc, argv, "EngineTest", engineTest);
 }
 
 Model* EngineTest::createWallModel()
 {
-	auto wall = new Model(L"wall", L"wall", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto wallMaterial = new Material(L"wall");
+	auto wall = new Model("wall", "wall", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto wallMaterial = new Material("wall");
 	wallMaterial->getAmbientColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	wallMaterial->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
-	(*wall->getMaterials())[L"wall"] = wallMaterial;
-	auto wallGroup = new Group(wall, nullptr, L"wall", L"wall");
+	(*wall->getMaterials())["wall"] = wallMaterial;
+	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
 	vector<FacesEntity> groupFacesEntities;
 	vector<Vector3> vertices;
 	vertices.push_back(Vector3(-4.0f, 0.0f, +4.0f));
@@ -136,7 +136,7 @@ Model* EngineTest::createWallModel()
 	vector<Face> facesFarPlane;
 	facesFarPlane.push_back(Face(wallGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	facesFarPlane.push_back(Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityFarPlane(wallGroup, L"wall");
+	FacesEntity groupFacesEntityFarPlane(wallGroup, "wall");
 	groupFacesEntityFarPlane.setMaterial(wallMaterial);
 	groupFacesEntityFarPlane.setFaces(&facesFarPlane);
 	groupFacesEntities.push_back(groupFacesEntityFarPlane);
@@ -145,8 +145,8 @@ Model* EngineTest::createWallModel()
 	wallGroup->setTextureCoordinates(&textureCoordinates);
 	wallGroup->setFacesEntities(&groupFacesEntities);
 	wallGroup->determineFeatures();
-	(*wall->getGroups())[L"wall"] = wallGroup;
-	(*wall->getSubGroups())[L"wall"] = wallGroup;
+	(*wall->getGroups())["wall"] = wallGroup;
+	(*wall->getSubGroups())["wall"] = wallGroup;
 	ModelHelper::prepareForIndexedRendering(wall);
 	return wall;
 }
@@ -160,7 +160,7 @@ void EngineTest::display()
 		circleTransformations->getTranslation().setY(0.0f);
 	}
 	circleTransformations->update();
-	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
+	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	for (auto i = 0; i < players.size(); i++) {
@@ -210,12 +210,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->getTranslation().add(movement);
 		player->update();
 		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
-		if (player->getAnimation() != L"walk") {
-			player->setAnimation(L"walk");
+		if (player->getAnimation() != "walk") {
+			player->setAnimation("walk");
 		}
 	} else {
-		if (player->getAnimation() == L"walk") {
-			player->setAnimation(L"still");
+		if (player->getAnimation() == "walk") {
+			player->setAnimation("still");
 		}
 	}
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
@@ -293,8 +293,8 @@ void EngineTest::initialize()
 	light2->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition().getX(), light2->getPosition().getY(), light2->getPosition().getZ()));
 	light2->setEnabled(true);
 	try {
-		auto _barrel = DAEReader::read(L"resources/tests/models/barrel", L"barrel.dae");
-		auto barrel = new Object3D(L"barrel", _barrel);
+		auto _barrel = DAEReader::read("resources/tests/models/barrel", "barrel.dae");
+		auto barrel = new Object3D("barrel", _barrel);
 		barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		barrel->getTranslation().set(1.5f, 0.35f, -2.0f);
 		barrel->setDynamicShadowingEnabled(true);
@@ -304,23 +304,23 @@ void EngineTest::initialize()
 		barrelBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(barrelBoundingVolume, barrel);
 		engine->addEntity(barrel);
 		auto _farPlane = createWallModel();
-		auto farPlane = new Object3D(L"wall", _farPlane);
-		farPlane->bindDiffuseTexture(L"wall", L"wall", osEngine->getFrameBuffer());
+		auto farPlane = new Object3D("wall", _farPlane);
+		farPlane->bindDiffuseTexture("wall", "wall", osEngine->getFrameBuffer());
 		engine->addEntity(farPlane);
-		auto _grass = DAEReader::read(L"resources/tests/models/grass", L"grass.dae");
-		auto grass = new Object3D(L"ground", _grass);
+		auto _grass = DAEReader::read("resources/tests/models/grass", "grass.dae");
+		auto grass = new Object3D("ground", _grass);
 		grass->setEnabled(true);
 		grass->getScale().set(8.0f, 1.0f, 8.0f);
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = DAEReader::read(L"resources/tests/models/dummy", L"testDummy_textured.DAE");
-		_player->addAnimationSetup(L"still", 3, 3, true);
-		_player->addAnimationSetup(L"walk", 0, 18, true);
+		auto _player = DAEReader::read("resources/tests/models/dummy", "testDummy_textured.DAE");
+		_player->addAnimationSetup("still", 3, 3, true);
+		_player->addAnimationSetup("walk", 0, 18, true);
 		playerBoundingVolume = new Capsule(Vector3(0, 30.0f / 130.0f, 0), Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
-		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, L"player_bv");
-		auto player1 = new Object3D(L"player1", _player);
+		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, "player_bv");
+		auto player1 = new Object3D("player1", _player);
 		player1->getTranslation().add(Vector3(-1.5f, 0.0f, 0.0f));
-		player1->setAnimation(L"still");
+		player1->setAnimation("still");
 		player1->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f)));
 		player1->update();
 		player1->setEnabled(true);
@@ -331,13 +331,13 @@ void EngineTest::initialize()
 		player1BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player1);
 		playerBoundingVolumesTransformed.push_back(player1BoundingVolumeTransformed);
 		players.push_back(player1);
-		auto player1BoundingVolume = new Object3D(L"player1_bv", playerBoundingVolumeModel);
+		auto player1BoundingVolume = new Object3D("player1_bv", playerBoundingVolumeModel);
 		player1BoundingVolume->fromTransformations(player1);
 		player1BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player1BoundingVolume);
-		auto player2 = new Object3D(L"player2", _player);
+		auto player2 = new Object3D("player2", _player);
 		player2->getTranslation().add(Vector3(1.5f, 0.0f, 0.0f));
-		player2->setAnimation(L"still");
+		player2->setAnimation("still");
 		player2->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f)));
 		player2->update();
 		player2->setEnabled(true);
@@ -348,12 +348,12 @@ void EngineTest::initialize()
 		player2BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player2);
 		playerBoundingVolumesTransformed.push_back(player2BoundingVolumeTransformed);
 		engine->addEntity(player2);
-		auto player2BoundingVolume = new Object3D(L"player2_bv", playerBoundingVolumeModel);
+		auto player2BoundingVolume = new Object3D("player2_bv", playerBoundingVolumeModel);
 		player2BoundingVolume->fromTransformations(player2);
 		player2BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
-		auto _cube = DAEReader::read(L"resources/tests/models/test", L"cube.dae");
-		cube = new Object3D(L"cube", _cube);
+		auto _cube = DAEReader::read("resources/tests/models/test", "cube.dae");
+		cube = new Object3D("cube", _cube);
 		cube->getTranslation().add(Vector3(0.0f, 0.0f, 0.0f));
 		cube->getScale().set(2.0f, 2.0f, 2.0f);
 		cube->update();
@@ -364,47 +364,47 @@ void EngineTest::initialize()
 		cubeBoundingVolumeTransformed = cubeBoundingVolume->clone();
 		cubeBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(cubeBoundingVolume, cube);
 		engine->addEntity(cube);
-		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, L"cube_bv");
-		auto cubeBoundingVolumeObject3D = new Object3D(L"cube_bv", cubeBoundingVolumeModel);
+		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, "cube_bv");
+		auto cubeBoundingVolumeObject3D = new Object3D("cube_bv", cubeBoundingVolumeModel);
 		cubeBoundingVolumeObject3D->fromTransformations(cube);
 		cubeBoundingVolumeObject3D->setEnabled(true);
 		engine->addEntity(cubeBoundingVolumeObject3D);
-		auto _wall = DAEReader::read(L"resources/tests/models/wall", L"wall.dae");
-		auto wall0 = new Object3D(L"wall0", _wall);
+		auto _wall = DAEReader::read("resources/tests/models/wall", "wall.dae");
+		auto wall0 = new Object3D("wall0", _wall);
 		wall0->getTranslation().add(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();
 		wall0->setPickable(true);
 		wall0->setEnabled(true);
 		engine->addEntity(wall0);
-		auto wall1 = new Object3D(L"wall1", _wall);
+		auto wall1 = new Object3D("wall1", _wall);
 		wall1->getTranslation().add(Vector3(0.0f, 0.0f, 3.0f));
 		wall1->update();
 		wall1->setPickable(true);
 		wall1->setEnabled(true);
 		engine->addEntity(wall1);
-		auto osCube = new Object3D(L"cube", _cube);
+		auto osCube = new Object3D("cube", _cube);
 		osCube->getTranslation().add(Vector3(0.0f, 0.0f, 0.0f));
 		osCube->getScale().set(2.0f, 2.0f, 2.0f);
 		osCube->update();
 		osEngine->addEntity(osCube);
 		circleTransformations = new Transformations();
-		engine->addEntity(new PointsParticleSystemEntity(L"circle", false, new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, true));
-		engine->getEntity(L"circle")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity(L"water", true, new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, true));
-		engine->getEntity(L"water")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity(L"snow", false, new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, true));
-		engine->getEntity(L"snow")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity(L"firebase", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, true));
-		engine->getEntity(L"firebase")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity(L"firetop", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, true));
-		engine->getEntity(L"firetop")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity(L"firesmoke", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, true));
-		engine->getEntity(L"firesmoke")->setEnabled(true);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"circle")))->setPickable(false);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"snow")))->setPickable(false);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firebase")))->setPickable(true);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firetop")))->setPickable(true);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity(L"firesmoke")))->setPickable(true);
+		engine->addEntity(new PointsParticleSystemEntity("circle", false, new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, true));
+		engine->getEntity("circle")->setEnabled(true);
+		engine->addEntity(new PointsParticleSystemEntity("water", true, new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, true));
+		engine->getEntity("water")->setEnabled(true);
+		engine->addEntity(new PointsParticleSystemEntity("snow", false, new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, true));
+		engine->getEntity("snow")->setEnabled(true);
+		engine->addEntity(new PointsParticleSystemEntity("firebase", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, true));
+		engine->getEntity("firebase")->setEnabled(true);
+		engine->addEntity(new PointsParticleSystemEntity("firetop", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, true));
+		engine->getEntity("firetop")->setEnabled(true);
+		engine->addEntity(new PointsParticleSystemEntity("firesmoke", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, true));
+		engine->getEntity("firesmoke")->setEnabled(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->setPickable(false);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("snow")))->setPickable(false);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firebase")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firetop")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firesmoke")))->setPickable(true);
 	} catch (Exception& exception) {
 		Console::print(string("EngineTest::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

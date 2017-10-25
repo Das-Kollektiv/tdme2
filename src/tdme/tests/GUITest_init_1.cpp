@@ -18,7 +18,7 @@
 #include <tdme/utils/Exception.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::tests::GUITest_init_1;
 using tdme::gui::elements::GUITabController;
@@ -40,55 +40,55 @@ GUITest_init_1::GUITest_init_1(GUITest* guiTest)
 
 void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
-	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button") == 0) {
-		Console::println(node->getId() + L".actionPerformed()");
-		map<wstring, MutableString*> values;
+	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare("button") == 0) {
+		Console::println(node->getId() + ".actionPerformed()");
+		map<string, MutableString*> values;
 		node->getScreenNode()->getValues(&values);
 		values.clear();
-		values.emplace(L"select", new MutableString(L"8"));
-		values.emplace(L"input", new MutableString(L"Enter some more text here!"));
-		values.emplace(L"checkbox1", new MutableString(L"1"));
-		values.emplace(L"checkbox2", new MutableString(L"1"));
-		values.emplace(L"checkbox3", new MutableString(L"1"));
-		values.emplace(L"dropdown", new MutableString(L"11"));
-		values.emplace(L"radio", new MutableString(L"3"));
-		values.emplace(L"selectmultiple", new MutableString(L"|1|2|3|15|16|17|"));
+		values.emplace("select", new MutableString("8"));
+		values.emplace("input", new MutableString("Enter some more text here!"));
+		values.emplace("checkbox1", new MutableString("1"));
+		values.emplace("checkbox2", new MutableString("1"));
+		values.emplace("checkbox3", new MutableString("1"));
+		values.emplace("dropdown", new MutableString("11"));
+		values.emplace("radio", new MutableString("3"));
+		values.emplace("selectmultiple", new MutableString("|1|2|3|15|16|17|"));
 		node->getScreenNode()->setValues(&values);
-		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab1")->getController()))->selectTab();
+		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById("tab1")->getController()))->selectTab();
 	} else
-	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare(L"button2") == 0) {
+	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare("button2") == 0) {
 		try {
 			{
-				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sadd_inner")));
-				parentNode->replaceSubNodes(wstring(L"<dropdown-option text=\"Option 1\" value=\"1\" />") +
-					L"<dropdown-option text=\"Option 2\" value=\"2\" />" +
-					L"<dropdown-option text=\"Option 3\" value=\"3\" />" +
-					L"<dropdown-option text=\"Option 4\" value=\"4\" />" +
-					L"<dropdown-option text=\"Option 5\" value=\"5\" />" +
-					L"<dropdown-option text=\"Option 6\" value=\"6\" />" +
-					L"<dropdown-option text=\"Option 7\" value=\"7\" />" +
-					L"<dropdown-option text=\"Option 8\" value=\"8\" selected=\"true\" />" +
-					L"<dropdown-option text=\"Option 9\" value=\"9\" />" +
-					L"<dropdown-option text=\"Option 10\" value=\"10\" />", true);
+				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById("sadd_inner")));
+				parentNode->replaceSubNodes(string("<dropdown-option text=\"Option 1\" value=\"1\" />") +
+					"<dropdown-option text=\"Option 2\" value=\"2\" />" +
+					"<dropdown-option text=\"Option 3\" value=\"3\" />" +
+					"<dropdown-option text=\"Option 4\" value=\"4\" />" +
+					"<dropdown-option text=\"Option 5\" value=\"5\" />" +
+					"<dropdown-option text=\"Option 6\" value=\"6\" />" +
+					"<dropdown-option text=\"Option 7\" value=\"7\" />" +
+					"<dropdown-option text=\"Option 8\" value=\"8\" selected=\"true\" />" +
+					"<dropdown-option text=\"Option 9\" value=\"9\" />" +
+					"<dropdown-option text=\"Option 10\" value=\"10\" />", true);
 			}
 			{
-				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById(L"sasb_inner")));
-				parentNode->replaceSubNodes(wstring(L"<selectbox-option text=\"Option 1\" value=\"1\" />") +
-					L"<selectbox-option text=\"Option 2\" value=\"2\" />" +
-					L"<selectbox-option text=\"Option 3\" value=\"3\" />" +
-					L"<selectbox-option text=\"Option 4\" value=\"4\" selected=\"true\" />" +
-					L"<selectbox-option text=\"Option 5\" value=\"5\" />" +
-					L"<selectbox-option text=\"Option 6\" value=\"6\" />" +
-					L"<selectbox-option text=\"Option 7\" value=\"7\" />" +
-					L"<selectbox-option text=\"Option 8\" value=\"8\" />" +
-					L"<selectbox-option text=\"Option 9\" value=\"9\" />" +
-					L"<selectbox-option text=\"Option 10\" value=\"10\" />", true);
+				auto parentNode = dynamic_cast< GUIParentNode* >((node->getScreenNode()->getNodeById("sasb_inner")));
+				parentNode->replaceSubNodes(string("<selectbox-option text=\"Option 1\" value=\"1\" />") +
+					"<selectbox-option text=\"Option 2\" value=\"2\" />" +
+					"<selectbox-option text=\"Option 3\" value=\"3\" />" +
+					"<selectbox-option text=\"Option 4\" value=\"4\" selected=\"true\" />" +
+					"<selectbox-option text=\"Option 5\" value=\"5\" />" +
+					"<selectbox-option text=\"Option 6\" value=\"6\" />" +
+					"<selectbox-option text=\"Option 7\" value=\"7\" />" +
+					"<selectbox-option text=\"Option 8\" value=\"8\" />" +
+					"<selectbox-option text=\"Option 9\" value=\"9\" />" +
+					"<selectbox-option text=\"Option 10\" value=\"10\" />", true);
 			}
 		} catch (Exception& exception) {
 			Console::print(string("GUITest_init_1::onActionPerformed(): An error occurred: "));
 			Console::println(string(exception.what()));
 			exit(0);
 		}
-		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById(L"tab2")->getController()))->selectTab();
+		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById("tab2")->getController()))->selectTab();
 	}
 }

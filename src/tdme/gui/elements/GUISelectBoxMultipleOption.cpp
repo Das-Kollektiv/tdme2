@@ -7,7 +7,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
@@ -18,25 +18,25 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxMultipleOption::GUISelectBoxMultipleOption() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"selectbox-multiple-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox-multiple-option.xml");
 }
 
-wstring GUISelectBoxMultipleOption::NAME = L"selectbox-multiple-option";
+string GUISelectBoxMultipleOption::NAME = "selectbox-multiple-option";
 
-const wstring& GUISelectBoxMultipleOption::getName()
+const string& GUISelectBoxMultipleOption::getName()
 {
 	return NAME;
 }
 
-const wstring& GUISelectBoxMultipleOption::getTemplate()
+const string& GUISelectBoxMultipleOption::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes["id"] = screenNode->allocateNodeId();
 	return &attributes;
 }
 

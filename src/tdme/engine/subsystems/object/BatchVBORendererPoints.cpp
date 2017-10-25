@@ -12,8 +12,8 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::BatchVBORendererPoints;
 
@@ -66,7 +66,7 @@ void BatchVBORendererPoints::release()
 void BatchVBORendererPoints::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(L"tdme.batchvborendererpoints." + to_wstring(id), 2);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 2);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -87,7 +87,7 @@ void BatchVBORendererPoints::render()
 void BatchVBORendererPoints::dispose()
 {
 	if (vboIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(L"tdme.batchvborendererpoints." + to_wstring(id));
+		Engine::getInstance()->getVBOManager()->removeVBO("tdme.batchvborendererpoints." + to_string(id));
 		vboIds = nullptr;
 	}
 }

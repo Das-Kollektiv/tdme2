@@ -9,7 +9,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
@@ -22,7 +22,7 @@ using tdme::engine::subsystems::object::Object3DGroupMesh;
 class tdme::engine::subsystems::manager::MeshManager final
 {
 private:
-	map<wstring, MeshManager_MeshManaged*> meshes {  };
+	map<string, MeshManager_MeshManaged*> meshes {  };
 
 public:
 
@@ -31,21 +31,21 @@ public:
 	 * @param meshId
 	 * @return object 3d group mesh or null
 	 */
-	Object3DGroupMesh* getMesh(const wstring& meshId);
+	Object3DGroupMesh* getMesh(const string& meshId);
 
 	/** 
 	 * Adds a mesh to manager
 	 * @param mesh id
 	 * @param mesh
 	 */
-	void addMesh(const wstring& meshId, Object3DGroupMesh* mesh);
+	void addMesh(const string& meshId, Object3DGroupMesh* mesh);
 
 	/** 
 	 * Removes a mesh from manager
 	 * @param gl
 	 * @param texture
 	 */
-	void removeMesh(const wstring& meshId);
+	void removeMesh(const string& meshId);
 
 	/**
 	 * Public constructor

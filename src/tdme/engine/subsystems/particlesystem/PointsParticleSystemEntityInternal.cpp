@@ -20,7 +20,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
@@ -41,7 +41,7 @@ using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const wstring& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
+PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
 {
 	this->id = id;
 	this->enabled = true;
@@ -67,7 +67,7 @@ PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
 	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 }
 
-const wstring& PointsParticleSystemEntityInternal::getId()
+const string& PointsParticleSystemEntityInternal::getId()
 {
 	return id;
 }

@@ -4,30 +4,30 @@
 
 using tdme::tools::shared::model::PropertyModelClass;
 
-using std::wstring;
+using std::string;
 
-PropertyModelClass::PropertyModelClass(const wstring& name, const wstring& value)
+PropertyModelClass::PropertyModelClass(const string& name, const string& value)
 {
 	this->name = name;
 	this->value = value;
 }
 
-const wstring& PropertyModelClass::getName()
+const string& PropertyModelClass::getName()
 {
 	return name;
 }
 
-void PropertyModelClass::setName(const wstring& name)
+void PropertyModelClass::setName(const string& name)
 {
 	this->name = name;
 }
 
-const wstring& PropertyModelClass::getValue()
+const string& PropertyModelClass::getValue()
 {
 	return value;
 }
 
-void PropertyModelClass::setValue(const wstring& value)
+void PropertyModelClass::setValue(const string& value)
 {
 	this->value = value;
 }

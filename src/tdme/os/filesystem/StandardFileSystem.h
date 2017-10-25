@@ -7,7 +7,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 using tdme::os::filesystem::FileSystemInterface;
@@ -18,22 +18,22 @@ class tdme::os::filesystem::StandardFileSystem final
 {
 
 public:
-	const wstring getFileName(const wstring& path, const wstring& fileName) throw (FileSystemException) override;
-	void list(const wstring& pathName, vector<wstring>* files, FilenameFilter* filter = nullptr) throw (FileSystemException) override;
-	bool isPath(const wstring& pathName) throw (FileSystemException) override;
-	bool fileExists(const wstring& fileName) throw (FileSystemException) override;
-	const wstring getContentAsString(const wstring& pathName, const wstring& fileName) throw (FileSystemException) override;
-	void setContentFromString(const wstring& pathName, const wstring& fileName, const wstring& content) throw (FileSystemException) override;
-	void getContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException) override;
-	void setContent(const wstring& pathName, const wstring& fileName, vector<uint8_t>* content) throw (FileSystemException) override;
-	void getContentAsStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (FileSystemException) override;
-	void setContentFromStringArray(const wstring& pathName, const wstring& fileName, vector<wstring>* content) throw (FileSystemException) override;
-	const wstring getCanonicalPath(const wstring& pathName, const wstring& fileName) throw (FileSystemException) override;
-	const wstring getCurrentWorkingPathName() throw (FileSystemException) override;
-	const wstring getPathName(const wstring& fileName) throw (FileSystemException) override;
-	const wstring getFileName(const wstring& fileName) throw (FileSystemException) override;
-	void createPath(const wstring& pathName) throw (FileSystemException) override;
-	void removePath(const wstring& pathName) throw (FileSystemException) override;
-	void removeFile(const wstring& pathName, const wstring& fileName) throw (FileSystemException) override;
+	const string getFileName(const string& path, const string& fileName) throw (FileSystemException) override;
+	void list(const string& pathName, vector<string>* files, FilenameFilter* filter = nullptr) throw (FileSystemException) override;
+	bool isPath(const string& pathName) throw (FileSystemException) override;
+	bool fileExists(const string& fileName) throw (FileSystemException) override;
+	const string getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) override;
+	void setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) override;
+	void getContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) override;
+	void setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) override;
+	void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) override;
+	void setContentFromStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) override;
+	const string getCanonicalPath(const string& pathName, const string& fileName) throw (FileSystemException) override;
+	const string getCurrentWorkingPathName() throw (FileSystemException) override;
+	const string getPathName(const string& fileName) throw (FileSystemException) override;
+	const string getFileName(const string& fileName) throw (FileSystemException) override;
+	void createPath(const string& pathName) throw (FileSystemException) override;
+	void removePath(const string& pathName) throw (FileSystemException) override;
+	void removeFile(const string& pathName, const string& fileName) throw (FileSystemException) override;
 	StandardFileSystem();
 };

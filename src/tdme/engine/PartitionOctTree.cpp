@@ -22,8 +22,8 @@ using std::list;
 using std::map;
 using std::remove;
 using std::vector;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 
 using tdme::engine::PartitionOctTree;
 using tdme::math::Math;
@@ -77,7 +77,7 @@ PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionO
 	parent->subNodes.push_back(node);
 	PartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
 	if (parent == &treeRoot) {
-		wstring key = to_wstring(node.x) + L"," + to_wstring(node.y) + L"," + to_wstring(node.z);
+		string key = to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z);
 		parent->subNodesByCoordinate[key] = storedNode;
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
@@ -115,7 +115,7 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition));
+		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
 			auto node = createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
@@ -138,9 +138,9 @@ void PartitionOctTree::removeEntity(Entity* entity)
 	}
 	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
 		Console::println(
-			L"PartitionOctTree::removeEntity(): '" +
+			"PartitionOctTree::removeEntity(): '" +
 			entity->getId() +
-			L"' not registered"
+			"' not registered"
 		);
 		return;
 	}
@@ -160,7 +160,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 						break;
 					}
 				}
-				wstring key = to_wstring(rootPartitionTreeNode->x) + L"," + to_wstring(rootPartitionTreeNode->y) + L"," + to_wstring(rootPartitionTreeNode->z);
+				string key = to_string(rootPartitionTreeNode->x) + "," + to_string(rootPartitionTreeNode->y) + "," + to_string(rootPartitionTreeNode->z);
 				treeRoot.subNodesByCoordinate.erase(key);
 			}
 		}
@@ -185,7 +185,7 @@ bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* 
 void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionEntities.size() > 0) {
-		Console::println(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
+		Console::println("PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
 		node->partitionEntities.clear();
 	} else {
 		for (auto& subNode: node->subNodes) {

@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUIButtonController;
@@ -19,30 +19,30 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-wstring GUIButton::NAME = L"button";
+string GUIButton::NAME = "button";
 
 GUIButton::GUIButton() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"button.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "button.xml");
 }
 
-const wstring& GUIButton::getName()
+const string& GUIButton::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIButton::getTemplate()
+const string& GUIButton::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIButton::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIButton::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
-	attributes[L"width"] = L"auto";
-	attributes[L"height"] = L"auto";
-	attributes[L"text"] = L"";
+	attributes["id"] = screenNode->allocateNodeId();
+	attributes["width"] = "auto";
+	attributes["height"] = "auto";
+	attributes["text"] = "";
 	return &attributes;
 }
 

@@ -10,7 +10,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -26,7 +26,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 
 private:
 	GLRenderer* renderer {  };
-	map<wstring, VBOManager_VBOManaged*> vbos {  };
+	map<string, VBOManager_VBOManaged*> vbos {  };
 
 public:
 
@@ -36,14 +36,14 @@ public:
 	 * @param texture
 	 * @param vbo id count
 	 */
-	VBOManager_VBOManaged* addVBO(const wstring& vboId, int32_t ids);
+	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids);
 
 	/** 
 	 * Removes a vbo from manager / open gl stack
 	 * @param gl
 	 * @param texture
 	 */
-	void removeVBO(const wstring& vboId);
+	void removeVBO(const string& vboId);
 
 	/**
 	 * Public constructor

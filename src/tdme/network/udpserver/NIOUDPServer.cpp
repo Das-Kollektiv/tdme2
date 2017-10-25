@@ -33,8 +33,8 @@ using tdme::utils::Time;
 
 NIOUDPServer::NIOUDPServer(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU) :
 	NIOServer<NIOUDPServerClient, NIOUDPServerGroup>(name, host, port, maxCCU),
-	Thread(L"nioudpserver"),
-	clientIdMapReadWriteLock(L"nioudpserver_clientmap"),
+	Thread("nioudpserver"),
+	clientIdMapReadWriteLock("nioudpserver_clientmap"),
 	ioThreadCurrent(0),
 	ioThreads(NULL),
 	workerThreadPool(NULL),
@@ -47,10 +47,10 @@ NIOUDPServer::~NIOUDPServer() {
 }
 
 void NIOUDPServer::run() {
-	Console::println(L"NIOUDPServer::run(): start");
+	Console::println("NIOUDPServer::run(): start");
 
 	// create start up barrier for io threads
-	startUpBarrier = new Barrier(L"nioudpserver_startup_iothreads", ioThreadCount + 1);
+	startUpBarrier = new Barrier("nioudpserver_startup_iothreads", ioThreadCount + 1);
 
 	// create and start IO threads
 	ioThreads = new NIOUDPServerIOThread*[ioThreadCount];
@@ -65,7 +65,7 @@ void NIOUDPServer::run() {
 	startUpBarrier = NULL;
 
 	// init worker thread pool
-	startUpBarrier = new Barrier(L"nioudpserver_startup_workers", workerThreadPoolCount + 1);
+	startUpBarrier = new Barrier("nioudpserver_startup_workers", workerThreadPoolCount + 1);
 
 	// setup worker thread pool
 	workerThreadPool = new NIOServerWorkerThreadPool(startUpBarrier, workerThreadPoolCount, workerThreadPoolMaxElements);
@@ -148,7 +148,7 @@ void NIOUDPServer::run() {
 	ioThreads = NULL;
 
 	//
-	Console::println(L"NIOUDPServer::run(): done");
+	Console::println("NIOUDPServer::run(): done");
 }
 
 NIOUDPServerClient* NIOUDPServer::accept(const uint32_t clientId, const std::string& ip, const unsigned int port) {

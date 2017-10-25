@@ -10,7 +10,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;
@@ -28,14 +28,14 @@ class tdme::gui::elements::GUISelectBoxMultiple final
 {
 
 private:
-	static wstring NAME;
-	map<wstring, wstring> attributes {  };
-	wstring template_ {  };
+	static string NAME;
+	map<string, string> attributes {  };
+	string template_ {  };
 
 public:
-	const wstring& getName() override;
-	const wstring& getTemplate() override;
-	map<wstring, wstring>* getAttributes(GUIScreenNode* screenNode) override;
+	const string& getName() override;
+	const string& getTemplate() override;
+	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
 	GUISelectBoxMultiple() throw (FileSystemException);

@@ -21,8 +21,8 @@ using std::find;
 using std::list;
 using std::map;
 using std::remove;
-using std::wstring;
-using std::to_wstring;
+using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::PhysicsPartitionOctTree;
@@ -72,7 +72,7 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	parent->subNodes.push_back(node);
 	PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
 	if (parent == &treeRoot) {
-		parent->subNodesByCoordinate[to_wstring(node.x) + L"," + to_wstring(node.y) + L"," + to_wstring(node.z)] = storedNode;
+		parent->subNodesByCoordinate[to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z)] = storedNode;
 	}
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
@@ -117,7 +117,7 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_wstring(xPartition) + L"," + to_wstring(yPartition) + L"," + to_wstring(zPartition));
+		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
 			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
@@ -140,9 +140,9 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 	}
 	if (rigidBodyPartitionsVector == nullptr || rigidBodyPartitionsVector->empty() == true) {
 		Console::println(
-			wstring(L"PartitionOctTree::removeRigidBody(): '") +
+			string("PartitionOctTree::removeRigidBody(): '") +
 			rigidBody->getId() +
-			wstring(L"' not registered")
+			string("' not registered")
 		);
 		return;
 	}
@@ -163,7 +163,7 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 					}
 				}
 				treeRoot.subNodesByCoordinate.erase(
-					to_wstring(rootPartitionTreeNode->x) + L"," + to_wstring(rootPartitionTreeNode->y) + L"," + to_wstring(rootPartitionTreeNode->z)
+					to_string(rootPartitionTreeNode->x) + "," + to_string(rootPartitionTreeNode->y) + "," + to_string(rootPartitionTreeNode->z)
 				);
 			}
 		}
@@ -187,7 +187,7 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
 	if (node->partitionRidigBodies.size() > 0) {
-		Console::println(wstring(L"PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
+		Console::println(string("PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
 		node->partitionRidigBodies.clear();
 	} else {
 		for (auto& subNode: node->subNodes) {

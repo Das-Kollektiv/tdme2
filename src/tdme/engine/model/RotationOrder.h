@@ -9,7 +9,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Enum.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::utils::Enum;
 using tdme::math::Vector3;
@@ -83,7 +83,7 @@ public:
 	/**
 	 * @return rotation order by string
 	 */
-	static RotationOrder* valueOf(const wstring& a0);
+	static RotationOrder* valueOf(const string& a0);
 
 	/**
 	 * Constructor
@@ -97,5 +97,5 @@ public:
 	 * @param axis Y index
 	 * @param axis Z index
 	 */
-	RotationOrder(const wstring& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
+	RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
 };

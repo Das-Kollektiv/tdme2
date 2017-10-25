@@ -7,7 +7,7 @@
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
-using std::wstring;
+using std::string;
 
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
@@ -25,7 +25,7 @@ void EntityBaseView::initialize()
 	entityBaseSubScreenController->setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
-void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const wstring& presetId)
+void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const string& presetId)
 {
 	if (entity == nullptr)
 		return;
@@ -42,16 +42,16 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const wst
 			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
-	entityBaseSubScreenController->setEntityProperties(entity, presetId, L"");
+	entityBaseSubScreenController->setEntityProperties(entity, presetId, "");
 }
 
-bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, const wstring& oldName, const wstring& name, const wstring& value)
+bool EntityBaseView::entityPropertySave(LevelEditorEntity* entity, const string& oldName, const string& name, const string& value)
 {
 	if (entity == nullptr)
 		return false;
 
 	if (entity->updateProperty(oldName, name, value) == true) {
-		entityBaseSubScreenController->setEntityProperties(entity, L"", name);
+		entityBaseSubScreenController->setEntityProperties(entity, "", name);
 		return true;
 	}
 	return false;
@@ -62,14 +62,14 @@ bool EntityBaseView::entityPropertyAdd(LevelEditorEntity* entity)
 	if (entity == nullptr)
 		return false;
 
-	if (entity->addProperty(L"new.property", L"new.value")) {
-		entityBaseSubScreenController->setEntityProperties(entity, L"", L"new.property");
+	if (entity->addProperty("new.property", "new.value")) {
+		entityBaseSubScreenController->setEntityProperties(entity, "", "new.property");
 		return true;
 	}
 	return false;
 }
 
-bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, const wstring& name)
+bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, const string& name)
 {
 	if (entity == nullptr)
 		return false;
@@ -80,13 +80,13 @@ bool EntityBaseView::entityPropertyRemove(LevelEditorEntity* entity, const wstri
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, L"", property == nullptr ? L"" : property->getName());
+		entityBaseSubScreenController->setEntityProperties(entity, "", property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-void EntityBaseView::setEntityData(LevelEditorEntity* entity, const wstring& name, const wstring& description)
+void EntityBaseView::setEntityData(LevelEditorEntity* entity, const string& name, const string& description)
 {
 	if (entity == nullptr)
 		return;

@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 
 using tdme::engine::Engine;
@@ -26,7 +26,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 class tdme::tools::shared::views::EntityDisplayView
 {
 private:
-	static vector<wstring> MODEL_BOUNDINGVOLUME_IDS;
+	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
 	Engine* engine {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	bool displayGroundPlate {  };

@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 
 using std::map;
-using std::wstring;
+using std::string;
 
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
@@ -29,7 +29,7 @@ public: /* protected */
 	static Audio* instance;
 
 private:
-	map<wstring, AudioEntity*> audioEntities;
+	map<string, AudioEntity*> audioEntities;
 
 public: /* protected */
 	AudioBufferManager audioBufferManager {  };
@@ -71,7 +71,7 @@ public:
 	 * @param id
 	 * @return audio entity
 	 */
-	AudioEntity* getEntity(const wstring& id);
+	AudioEntity* getEntity(const string& id);
 
 	/** 
 	 * Adds an stream
@@ -81,7 +81,7 @@ public:
 	 * @param file name
 	 * @return audio entity
 	 */
-	AudioEntity* addStream(const wstring& id, const wstring& pathName, const wstring& fileName);
+	AudioEntity* addStream(const string& id, const string& pathName, const string& fileName);
 
 	/** 
 	 * Adds an sound
@@ -91,13 +91,13 @@ public:
 	 * @param file name
 	 * @return audio entity
 	 */
-	AudioEntity* addSound(const wstring& id, const wstring& pathName, const wstring& fileName);
+	AudioEntity* addSound(const string& id, const string& pathName, const string& fileName);
 
 	/** 
 	 * Removes an audio entity
 	 * @param id
 	 */
-	void removeEntity(const wstring& id);
+	void removeEntity(const string& id);
 
 	/** 
 	 * Clears all audio entities

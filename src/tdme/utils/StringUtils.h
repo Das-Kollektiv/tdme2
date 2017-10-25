@@ -5,7 +5,6 @@
 #include <tdme/utils/fwd-tdme.h>
 
 using std::string;
-using std::wstring;
 
 /** 
  * String utilities
@@ -22,7 +21,7 @@ public:
      * @param prefix string
 	 * @return bool
 	 */
-	static const bool startsWith(const wstring& src, const wstring& prefix);
+	static const bool startsWith(const string& src, const string& prefix);
 
 	/**
 	 * Checks if string ends with suffix
@@ -30,50 +29,50 @@ public:
      * @param suffix string
 	 * @return bool
 	 */
-	static const bool endsWith(const wstring& src, const wstring& suffix);
+	static const bool endsWith(const string& src, const string& suffix);
 
 	/**
 	 * Replace char with another char
-	 * @param string to be processed
+	 * @param source string to be processed
 	 * @param what to replace
 	 * @param to replace by
 	 * @return new string
 	 */
-	static const wstring replace(const wstring& string, const wchar_t& what, const wchar_t& by);
+	static const string replace(const string& src, const char what, const char by);
 
 	/**
 	 * Replace string with another string
-	 * @param string to be processed
+	 * @param source string to be processed
 	 * @param what to replace
 	 * @param to replace by
 	 * @return new string
 	 */
-	static const wstring replace(const wstring& string, const wstring& what, const wstring& by);
+	static const string replace(const string& src, const string& what, const string& by);
 
 	/**
 	 * Finds last index of given character
-	 * @param string
+	 * @param source string
 	 * @param what
 	 * @return index or -1 if not found
 	 */
-	static int32_t lastIndexOf(const wstring& string, wchar_t what);
+	static int32_t lastIndexOf(const string& src, char what);
 
 	/**
 	 * Returns substring of given string from begin index
-	 * @param string
+	 * @param source string
 	 * @param begin index
 	 * @return new string
 	 */
-	static const wstring substring(const wstring& string, int32_t beginIndex);
+	static const string substring(const string& src, int32_t beginIndex);
 
 	/**
 	 * Returns substring of given string from begin index to end index
-	 * @param string
+	 * @param source string
 	 * @param begin index
 	 * @param end index
 	 * @return new string
 	 */
-	static const wstring substring(const wstring& string, int32_t beginIndex, int32_t endIndex);
+	static const string substring(const string& src, int32_t beginIndex, int32_t endIndex);
 
 	/**
 	 * Checks if string equals ignoring case
@@ -81,44 +80,44 @@ public:
 	 * @param string 2
 	 * @return equals
 	 */
-	static bool equalsIgnoreCase(const wstring& string1, const wstring& string2);
+	static bool equalsIgnoreCase(const string& string1, const string& string2);
 
 	/**
 	 * Trim string
-	 * @param string
+	 * @param source string
 	 * @return trimmed string
 	 */
-	static const wstring trim(const wstring& string);
+	static const string trim(const string& src);
 
 	/**
 	 * Transform string to lower case
-	 * @param string
+	 * @param source string
 	 * @return transformed string
 	 */
-	static const wstring toLowerCase(const wstring& string);
+	static const string toLowerCase(const string& src);
 
 	/**
 	 * Transform string to upper case
-	 * @param string
+	 * @param source string
 	 * @return transformed string
 	 */
-	static const wstring toUpperCase(const wstring& string);
+	static const string toUpperCase(const string& src);
 
 	/**
 	 * Do regex pattern matching
-	 * @param string to test
+	 * @param source string to test
 	 * @param pattern
 	 * @return if patter matches
 	 */
-	static bool matches(const wstring& string, const wstring& pattern);
+	static bool matches(const string& src, const string& pattern);
 
 	/**
 	 * Replace regex pattern with given string
-	 * @param string to operate on
+	 * @param source string to operate on
 	 * @param pattern to search
 	 * @param string that will replace pattern occurrances
 	 */
-	static const wstring replaceAll(const wstring& string, const wstring& pattern, const wstring& by);
+	static const string replaceAll(const string& src, const string& pattern, const string& by);
 
 };
 

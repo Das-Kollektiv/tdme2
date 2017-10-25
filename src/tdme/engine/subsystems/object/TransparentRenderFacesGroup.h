@@ -16,7 +16,7 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
-using std::wstring;
+using std::string;
 
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -79,7 +79,7 @@ public: /* protected */
 	 * @param texture coordinates
 	 * @return
 	 */
-	static const wstring createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates);
+	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, Color4& effectColorAdd, Color4& effectColorMul, Material* material, bool textureCoordinates);
 
 	/** 
 	 * Adds a vertex to this transparent render faces group
@@ -91,7 +91,7 @@ public: /* protected */
 		if (batchVBORenderers.size() == 0) {
 			auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 			if (batchVBORendererTriangles == nullptr) {
-				Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 				return;
 			}
 			batchVBORenderers.push_back(batchVBORendererTriangles);
@@ -102,7 +102,7 @@ public: /* protected */
 
 		batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 		if (batchVBORendererTriangles == nullptr) {
-			Console::println(wstring(L"TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 			return;
 		}
 		batchVBORenderers.push_back(batchVBORendererTriangles);

@@ -27,7 +27,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::_ArrayList;
 using tdme::utils::Character;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine) 

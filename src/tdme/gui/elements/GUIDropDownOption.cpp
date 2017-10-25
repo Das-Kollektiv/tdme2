@@ -15,25 +15,25 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIDropDownOption::GUIDropDownOption() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString(L"resources/gui/definitions/elements", L"dropdown-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "dropdown-option.xml");
 }
 
-wstring GUIDropDownOption::NAME = L"dropdown-option";
+string GUIDropDownOption::NAME = "dropdown-option";
 
-const wstring& GUIDropDownOption::getName()
+const string& GUIDropDownOption::getName()
 {
 	return NAME;
 }
 
-const wstring& GUIDropDownOption::getTemplate()
+const string& GUIDropDownOption::getTemplate()
 {
 	return template_;
 }
 
-map<wstring, wstring>* GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
+map<string, string>* GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
-	attributes[L"id"] = screenNode->allocateNodeId();
+	attributes["id"] = screenNode->allocateNodeId();
 	return &attributes;
 }
 

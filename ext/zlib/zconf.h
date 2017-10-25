@@ -453,7 +453,7 @@ typedef uLong FAR uLongf;
 
 #ifdef _WIN32
 #  ifndef Z_SOLO
-#    include <stddef.h>         /* for wchar_t */
+#    include <stddef.h>         /* for char */
 #  endif
 #endif
 
@@ -526,7 +526,7 @@ typedef uLong FAR uLongf;
   #pragma map(inflateSync,"INSY")
   #pragma map(inflateSetDictionary,"INSEDI")
   #pragma map(compressBound,"CMBND")
-  #pragma map(inflate_table,"INTABL")
+  #pragma map(inflate_table,"INTAB")
   #pragma map(inflate_fast,"INFA")
   #pragma map(inflate_copyright,"INCOPY")
 #endif

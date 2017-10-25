@@ -22,16 +22,16 @@ void GUIShader::initialize()
 	auto rendererVersion = renderer->getGLVersion();
 	vertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		L"shader/" + rendererVersion + L"/gui",
-		L"render_vertexshader.c"
+		"shader/" + rendererVersion + "/gui",
+		"render_vertexshader.c"
 	);
 	if (vertexShaderGlId == 0)
 		return;
 
 	fragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		L"shader/" + rendererVersion + L"/gui",
-		L"render_fragmentshader.c"
+		"shader/" + rendererVersion + "/gui",
+		"render_fragmentshader.c"
 	);
 	if (fragmentShaderGlId == 0)
 		return;
@@ -40,26 +40,26 @@ void GUIShader::initialize()
 	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
 	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programGlId, 0, L"inVertex");
-		renderer->setProgramAttributeLocation(programGlId, 2, L"inTextureUV");
-		renderer->setProgramAttributeLocation(programGlId, 3, L"inColor");
+		renderer->setProgramAttributeLocation(programGlId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programGlId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(programGlId, 3, "inColor");
 	}
 	if (renderer->linkProgram(programGlId) == false)
 		return;
 
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, L"diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
 
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, L"diffuseTextureAvailable");
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(programGlId, L"effectColorMul");
+	uniformEffectColorMul = renderer->getProgramUniformLocation(programGlId, "effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(programGlId, L"effectColorAdd");
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(programGlId, "effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 
