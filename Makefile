@@ -1,24 +1,40 @@
 STACKFLAGS =
-SRCS_PLATFORM =
+SRC_PLATFORM =
+INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
+ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
-	SRCS_PLATFORM:= src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp 
-	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
+	SRC_PLATFORM:= ($SRC_PLATFORM) \
+			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGLES2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), Linux)
-	# Linux
-	SRCS_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
-	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
-	#GL2ES on ARM, WIP
-	#EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGL -lfreeglut-gles -lopenal -pthread 
+	SRC_PLATFORM:= $(SRC_PLATFORM) src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
+	ifeq ($(ARCH), aarch64)
+		# Linux, ARM64
+		SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/engine/EngineGLES2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+	else
+		# Linux, any other
+		SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+		SRC_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
+	endif
 else
 	# Windows via MINGW
-	SRCS_PLATFORM:= src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp
+	SRC_PLATFORM:= ($SRC_PLATFORM) \
+			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
@@ -61,8 +77,6 @@ SRCS = \
 	src/tdme/engine/ApplicationInputEventsHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
-	src/tdme/engine/EngineGL3Renderer.cpp \
-	src/tdme/engine/EngineGL2Renderer.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
@@ -148,8 +162,6 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
-	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
@@ -371,9 +383,7 @@ SRCS = \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
-	$(SRCS_PLATFORM)
-	# src/tdme/engine/EngineGLES2Renderer.cpp \
-	# src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
+	$(SRC_PLATFORM)
 
 EXT_SRCS = \
 
