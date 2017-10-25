@@ -7,10 +7,10 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
-	SRC_PLATFORM:= ($SRC_PLATFORM) \
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), Linux)
@@ -31,7 +31,7 @@ else ifeq ($(OS), Linux)
 	endif
 else
 	# Windows via MINGW
-	SRC_PLATFORM:= ($SRC_PLATFORM) \
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
