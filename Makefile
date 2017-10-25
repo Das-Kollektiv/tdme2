@@ -26,7 +26,6 @@ else ifeq ($(OS), Linux)
 		SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
-		SRC_PLATFORM:= src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
 	endif
 else
