@@ -185,7 +185,7 @@ public:
 	/**
 	 * @return string
 	 */
-	const string& toWString();
+	const string& getString();
 
 	/**
 	 * Public default constructor

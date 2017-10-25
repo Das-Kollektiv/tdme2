@@ -253,9 +253,9 @@ void ModelViewerScreenController::onModelReload()
 void ModelViewerScreenController::onPivotApply()
 {
 	try {
-		auto x = Float::parseFloat(pivotX->getController()->getValue()->toWString());
-		auto y = Float::parseFloat(pivotY->getController()->getValue()->toWString());
-		auto z = Float::parseFloat(pivotZ->getController()->getValue()->toWString());
+		auto x = Float::parseFloat(pivotX->getController()->getValue()->getString());
+		auto y = Float::parseFloat(pivotY->getController()->getValue()->getString());
+		auto z = Float::parseFloat(pivotZ->getController()->getValue()->getString());
 		view->pivotApply(x, y, z);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));

@@ -65,7 +65,7 @@ const string& FileDialogScreenController::getPathName()
 
 const string FileDialogScreenController::getFileName()
 {
-	return fileName->getController()->getValue()->toWString();
+	return fileName->getController()->getValue()->getString();
 }
 
 void FileDialogScreenController::initialize()
@@ -158,7 +158,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
-			auto selectedFile = node->getController()->getValue()->toWString();
+			auto selectedFile = node->getController()->getValue()->getString();
 			if (FileSystem::getInstance()->isPath(cwd + "/" + selectedFile) == true) {
 				try {
 					cwd = FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);

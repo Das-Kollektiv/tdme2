@@ -135,9 +135,9 @@ void TriggerScreenController::onQuit()
 void TriggerScreenController::onTriggerApply()
 {
 	try {
-		auto width = Float::parseFloat(triggerWidth->getController()->getValue()->toWString());
-		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->toWString());
-		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->toWString());
+		auto width = Float::parseFloat(triggerWidth->getController()->getValue()->getString());
+		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->getString());
+		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->getString());
 		view->triggerApply(width, height, depth);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));

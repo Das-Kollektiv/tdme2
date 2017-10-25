@@ -184,7 +184,7 @@ bool MutableString::equals(MutableString* s2)
 	return data == s2->data;
 }
 
-const string& MutableString::toWString()
+const string& MutableString::getString()
 {
 	return data;
 }

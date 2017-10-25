@@ -104,7 +104,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	if (model == nullptr)
 		return;
 
-	view->setEntityData(model, entityName->getController()->getValue()->toWString(), entityDescription->getController()->getValue()->toWString());
+	view->setEntityData(model, entityName->getController()->getValue()->getString(), entityDescription->getController()->getValue()->getString());
 	onSetEntityDataAction->performAction();
 }
 
@@ -203,9 +203,9 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 {
 	if (view->entityPropertySave(
 		entity,
-		entityPropertiesList->getController()->getValue()->toWString(),
-		entityPropertyName->getController()->getValue()->toWString(),
-		entityPropertyValue->getController()->getValue()->toWString()) == false) {
+		entityPropertiesList->getController()->getValue()->getString(),
+		entityPropertyName->getController()->getValue()->getString(),
+		entityPropertyValue->getController()->getValue()->getString()) == false) {
 		showErrorPopUp("Warning", "Saving entity property failed");
 	}
 }
@@ -219,7 +219,7 @@ void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
-	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->toWString()) == false) {
+	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->getString()) == false) {
 		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
@@ -231,7 +231,7 @@ void EntityBaseSubScreenController::showErrorPopUp(const string& caption, const 
 
 void EntityBaseSubScreenController::onEntityPropertyPresetApply(LevelEditorEntity* model)
 {
-	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->toWString());
+	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->getString());
 }
 
 void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEditorEntity* entity)
@@ -242,7 +242,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyRemove->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->toWString());
+	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->getString());
 	if (entityProperty != nullptr) {
 		entityPropertyName->getController()->setValue(value->set(entityProperty->getName()));
 		entityPropertyValue->getController()->setValue(value->set(entityProperty->getValue()));

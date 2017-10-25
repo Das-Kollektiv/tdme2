@@ -295,7 +295,7 @@ void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const
 
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx)
 {
-	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue()->toWString());
+	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue()->getString());
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
 	switch (boundingVolumeTypeId) {
 	case (0):
@@ -331,8 +331,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 		view->applyBoundingVolumeSphere(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->toWString()),
-			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->toWString())
+			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->getString()),
+			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -345,9 +345,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 		view->applyBoundingVolumeCapsule(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue()->toWString()),
-			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->toWString()),
-			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->toWString())
+			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue()->getString()),
+			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->getString()),
+			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -360,8 +360,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 		view->applyBoundingVolumeAabb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->toWString()),
-			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->toWString())
+			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->getString()),
+			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -372,9 +372,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 {
 	try {
 		auto rotations = new Transformations();
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Z));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_Y));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->toWString()), OrientedBoundingBox::AABB_AXIS_X));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_Z));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_Y));
+		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_X));
 		rotations->update();
 		Vector3 xAxis;
 		Vector3 yAxis;
@@ -383,11 +383,11 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue()->toWString()),
+			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue()->getString()),
 			xAxis,
 			yAxis,
 			zAxis,
-			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->toWString())
+			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -399,7 +399,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(Le
 	view->applyBoundingVolumeConvexMesh(
 		entity,
 		idx,
-		boundingvolumeConvexMeshFile[idx]->getController()->getValue()->toWString()
+		boundingvolumeConvexMeshFile[idx]->getController()->getValue()->getString()
 	);
 }
 
