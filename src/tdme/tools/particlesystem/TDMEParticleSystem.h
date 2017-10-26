@@ -5,14 +5,14 @@
 
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Application.h>
+#include <tdme/application/Application.h>
 #include <tdme/tools/particlesystem/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
 using std::string;
 
-using tdme::engine::Application;
+using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;

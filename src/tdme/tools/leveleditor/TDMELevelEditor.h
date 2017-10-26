@@ -5,7 +5,7 @@
 
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Application.h>
+#include <tdme/application/Application.h>
 #include <tdme/tools/leveleditor/fwd-tdme.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
@@ -15,7 +15,7 @@
 
 using std::string;
 
-using tdme::engine::Application;
+using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;

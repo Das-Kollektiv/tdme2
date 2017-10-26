@@ -3,11 +3,11 @@
 
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Application.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 
-using tdme::engine::Application;
+using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
 

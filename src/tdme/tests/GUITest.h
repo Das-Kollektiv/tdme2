@@ -3,13 +3,13 @@
 
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Application.h>
+#include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
 
-using tdme::engine::Application;
+using tdme::application::Application;
 using tdme::engine::Engine;
 
-using tdme::engine::Application;
+using tdme::application::Application;
 
 /** 
  * GUI Test

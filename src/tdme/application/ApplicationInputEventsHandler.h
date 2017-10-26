@@ -7,7 +7,7 @@
 #endif
 
 #include <tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/application/fwd-tdme.h>
 
 #define KEYBOARD_MODIFIER_SHIFT	GLUT_ACTIVE_SHIFT
 #define KEYBOARD_MODIFIER_CTRL GLUT_ACTIVE_CTRL
@@ -26,7 +26,7 @@
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::ApplicationInputEventsHandler
+class tdme::application::ApplicationInputEventsHandler
 {
 public:
 	/**

@@ -1,6 +1,6 @@
 #include <tdme/tests/GUITest.h>
 
-#include <tdme/engine/Application.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -15,7 +15,7 @@
 
 using tdme::tests::GUITest;
 
-using tdme::engine::Application;
+using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;

@@ -4,9 +4,9 @@
 	#include <GLUT/glut.h>
 #endif
 
-#include "ApplicationInputEventsHandler.h"
+#include <tdme/application/ApplicationInputEventsHandler.h>
 
-using tdme::engine::ApplicationInputEventsHandler;
+using tdme::application::ApplicationInputEventsHandler;
 
 int ApplicationInputEventsHandler::getKeyboardModifiers() {
 	return glutGetModifiers();

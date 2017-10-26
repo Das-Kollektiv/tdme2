@@ -3,13 +3,13 @@
 
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Application.h>
-#include <tdme/engine/ApplicationInputEventsHandler.h>
+#include <tdme/application/Application.h>
+#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 
-using tdme::engine::Application;
-using tdme::engine::ApplicationInputEventsHandler;
+using tdme::application::Application;
+using tdme::application::ApplicationInputEventsHandler;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
 

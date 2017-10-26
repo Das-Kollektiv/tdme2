@@ -7,7 +7,7 @@
 #include <tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/ApplicationInputEventsHandler.h>
+#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -21,7 +21,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::Engine;
-using tdme::engine::ApplicationInputEventsHandler;
+using tdme::application::ApplicationInputEventsHandler;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;

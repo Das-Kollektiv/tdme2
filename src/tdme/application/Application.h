@@ -9,20 +9,19 @@
 #include <string>
 
 #include <tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-
-#include "ApplicationInputEventsHandler.h"
+#include <tdme/application/fwd-tdme.h>
+#include <tdme/application/ApplicationInputEventsHandler.h>
 
 using std::string;
 
-using tdme::engine::ApplicationInputEventsHandler;
+using tdme::application::ApplicationInputEventsHandler;
 
 /** 
  * Application
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::Application
+class tdme::application::Application
 {
 public:
 	static constexpr int32_t FPS { 60 };

@@ -16,17 +16,16 @@
 
 #include <tdme/utils/Time.h>
 #include <tdme/os/threading/Thread.h>
-
-#include <tdme/engine/Application.h>
-#include "ApplicationInputEventsHandler.h"
+#include <tdme/application/Application.h>
+#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/utils/Console.h>
 
 using std::string;
 using std::string;
 using std::to_string;
 
-using tdme::engine::Application;
-using tdme::engine::ApplicationInputEventsHandler;
+using tdme::application::Application;
+using tdme::application::ApplicationInputEventsHandler;
 using tdme::utils::Console;
 using tdme::utils::Time;
 using tdme::os::threading::Thread;
