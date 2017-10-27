@@ -69,6 +69,10 @@ TDME2
               - narrowphase collision detection
               - collision filtering by type
               - sleeping technology
+        - path finding
+            - uses A*
+            - is paired with physics world to determine if a "cell" is walkable
+            - optional custom walkable test
         - 3d audio
             - decoder
               - ogg vorbis decoder
