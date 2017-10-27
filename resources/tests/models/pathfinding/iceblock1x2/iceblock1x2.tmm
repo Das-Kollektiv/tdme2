@@ -1,0 +1,21 @@
+{
+  "thumbnail": "iceblock1x2.DAE.png",
+  "px": 0,
+  "py": 0,
+  "file": "iceblock1x2.DAE",
+  "pz": 0,
+  "name": "iceblock 1m x 2m",
+  "bv": {
+    "maz": 0.4948999881744385,
+    "may": 1.2105000019073486,
+    "max": 1.0099999904632568,
+    "miz": -0.49390000104904175,
+    "type": "aabb",
+    "mix": -1.0099999904632568,
+    "miy": -0.009499999694526196
+  },
+  "properties": [],
+  "descr": "icqblock 1m x 2m",
+  "type": "MODEL",
+  "version": "0.1"
+}

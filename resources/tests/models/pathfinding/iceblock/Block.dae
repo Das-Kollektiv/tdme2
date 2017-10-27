@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset><contributor><author></author><authoring_tool>FBX COLLADA exporter</authoring_tool><comments></comments></contributor><created>2014-02-01T17:41:18Z</created><keywords></keywords><modified>2014-02-01T17:41:18Z</modified><revision></revision><subject></subject><title></title><unit meter="1.000000" name="centimeter"></unit><up_axis>Y_UP</up_axis></asset>
+  <library_images>
+    <image id="Map #1-image" name="Map #1"><init_from>file://Block.png</init_from></image>
+  </library_images>
+  <library_materials>
+    <material id="_02 - Default" name="_02 - Default">
+      <instance_effect url="#_02 - Default-fx"/>
+    </material>
+  </library_materials>
+  <library_effects>
+    <effect id="_02 - Default-fx" name="_02 - Default">
+      <profile_COMMON>
+        <technique sid="standard">
+          <phong>
+            <emission>
+              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.588235  0.588235 0.588235 1.000000</color>
+            </ambient>
+            <diffuse>
+              <texture texture="Map #1-image" texcoord="CHANNEL0">
+                <extra>
+                  <technique profile="MAYA">
+                    <wrapU sid="wrapU0">TRUE</wrapU>
+                    <wrapV sid="wrapV0">TRUE</wrapV>
+                    <blend_mode>ADD</blend_mode>
+                  </technique>
+                </extra>
+              </texture>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.000000  0.000000 0.000000 1.000000</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">2.000000</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.000000</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">0.000000</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="iceblock-lib" name="iceblockMesh">
+      <mesh>
+        <source id="iceblock-POSITION">
+          <float_array id="iceblock-POSITION-array" count="60">
+-0.410343 -0.500000 0.000000
+0.500000 -0.410343 0.000000
+-0.500000 0.410343 0.000000
+0.410343 0.500000 0.000000
+-0.410343 -0.500000 1.110343
+0.500000 -0.410343 1.110343
+-0.500000 0.410343 1.110343
+0.410343 0.500000 1.110343
+-0.500000 -0.410343 0.000000
+0.410343 -0.500000 0.000000
+-0.410343 0.500000 0.000000
+0.500000 0.410343 0.000000
+-0.410343 -0.410343 1.200000
+-0.500000 -0.410343 1.110343
+0.410343 -0.410343 1.200000
+0.410343 -0.500000 1.110343
+-0.410343 0.410343 1.200000
+-0.410343 0.500000 1.110343
+0.410343 0.410343 1.200000
+0.500000 0.410343 1.110343
+</float_array>
+          <technique_common>
+            <accessor source="#iceblock-POSITION-array" count="20" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="iceblock-Normal0">
+          <float_array id="iceblock-Normal0-array" count="270">
+0.244062 0.378437 0.892871
+-0.453365 0.292404 0.841998
+-0.244062 -0.378437 0.892871
+0.244062 0.378437 0.892871
+-0.244062 -0.378437 0.892871
+0.453365 -0.292404 0.841998
+0.244064 -0.892869 0.378440
+-0.453366 -0.841997 0.292405
+-0.252727 -0.967538 0.000000
+0.244064 -0.892869 0.378440
+-0.252727 -0.967538 0.000000
+0.505452 -0.862854 0.000000
+0.892869 0.244064 0.378440
+0.841997 -0.453366 0.292405
+0.967538 -0.252727 0.000000
+0.892869 0.244064 0.378440
+0.967538 -0.252727 0.000000
+0.862854 0.505452 0.000000
+-0.244064 0.892869 0.378440
+0.453366 0.841997 0.292405
+0.252727 0.967538 0.000000
+-0.244064 0.892869 0.378440
+0.252727 0.967538 0.000000
+-0.505452 0.862854 0.000000
+-0.892869 -0.244064 0.378440
+-0.841997 0.453366 0.292405
+-0.967538 0.252727 0.000000
+-0.892869 -0.244064 0.378440
+-0.967538 0.252727 0.000000
+-0.862854 -0.505452 0.000000
+-0.453366 -0.841997 0.292405
+-0.244062 -0.378437 0.892871
+-0.892869 -0.244064 0.378440
+0.841997 -0.453366 0.292405
+0.453365 -0.292404 0.841998
+0.244064 -0.892869 0.378440
+-0.841997 0.453366 0.292405
+-0.453365 0.292404 0.841998
+-0.244064 0.892869 0.378440
+0.453366 0.841997 0.292405
+0.244062 0.378437 0.892871
+0.892869 0.244064 0.378440
+-0.453366 -0.841997 0.292405
+0.244064 -0.892869 0.378440
+-0.244062 -0.378437 0.892871
+0.453365 -0.292404 0.841998
+-0.244062 -0.378437 0.892871
+0.244064 -0.892869 0.378440
+0.244062 0.378437 0.892871
+0.453365 -0.292404 0.841998
+0.892869 0.244064 0.378440
+0.892869 0.244064 0.378440
+0.453365 -0.292404 0.841998
+0.841997 -0.453366 0.292405
+0.453366 0.841997 0.292405
+-0.244064 0.892869 0.378440
+0.244062 0.378437 0.892871
+-0.453365 0.292404 0.841998
+0.244062 0.378437 0.892871
+-0.244064 0.892869 0.378440
+-0.841997 0.453366 0.292405
+-0.892869 -0.244064 0.378440
+-0.453365 0.292404 0.841998
+-0.453365 0.292404 0.841998
+-0.892869 -0.244064 0.378440
+-0.244062 -0.378437 0.892871
+0.244064 -0.892869 0.378440
+0.505452 -0.862854 0.000000
+0.841997 -0.453366 0.292405
+0.841997 -0.453366 0.292405
+0.505452 -0.862854 0.000000
+0.967538 -0.252727 0.000000
+-0.892869 -0.244064 0.378440
+-0.862854 -0.505452 0.000000
+-0.453366 -0.841997 0.292405
+-0.453366 -0.841997 0.292405
+-0.862854 -0.505452 0.000000
+-0.252727 -0.967538 0.000000
+0.892869 0.244064 0.378440
+0.862854 0.505452 0.000000
+0.453366 0.841997 0.292405
+0.453366 0.841997 0.292405
+0.862854 0.505452 0.000000
+0.252727 0.967538 0.000000
+-0.244064 0.892869 0.378440
+-0.505452 0.862854 0.000000
+-0.841997 0.453366 0.292405
+-0.841997 0.453366 0.292405
+-0.505452 0.862854 0.000000
+-0.967538 0.252727 0.000000
+</float_array>
+          <technique_common>
+            <accessor source="#iceblock-Normal0-array" count="90" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="iceblock-UV0">
+          <float_array id="iceblock-UV0-array" count="68">
+0.500497 0.296434
+0.742254 0.296436
+0.984012 0.296436
+0.258739 0.296433
+0.500498 0.013121
+0.709903 0.013122
+0.726077 0.324453
+0.484320 0.324452
+0.742255 0.013122
+0.951659 0.013123
+0.967835 0.324454
+0.709901 0.296435
+0.016982 0.013119
+0.226387 0.013120
+0.242563 0.324451
+0.951659 0.296436
+0.258740 0.013120
+0.468145 0.013120
+0.468144 0.296433
+0.226387 0.296433
+0.742254 0.328788
+0.951659 0.328788
+0.984012 0.013123
+0.258739 0.328786
+0.468144 0.328786
+0.016982 0.296432
+0.016982 0.328785
+0.226387 0.328785
+0.500496 0.328786
+0.709901 0.328788
+0.017882 0.347448
+0.227287 0.347448
+0.227287 0.556853
+0.017882 0.556853
+</float_array>
+          <technique_common>
+            <accessor source="#iceblock-UV0-array" count="34" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="iceblock-VERTEX">
+          <input semantic="POSITION" source="#iceblock-POSITION"/>
+        </vertices>
+        <triangles count="30" material="_02 - Default"><input semantic="VERTEX" offset="0" source="#iceblock-VERTEX"/><input semantic="NORMAL" offset="1" source="#iceblock-Normal0"/><input semantic="TEXCOORD" offset="2" set="0" source="#iceblock-UV0"/><p> 18 0 32 16 1 33 12 2 30 18 3 32 12 4 30 14 5 31 15 6 11 4 7 0 0 8 4 15 9 11 0 10 4 9 11 5 19 12 15 5 13 1 1 14 8 19 15 15 1 16 8 11 17 9 17 18 19 7 19 25 3 20 12 17 21 19 3 22 12 10 23 13 13 24 18 6 25 3 2 26 16 13 27 18 2 28 16 8 29 17 4 30 0 12 31 7 13 32 18 5 33 1 14 34 6 15 35 11 6 36 3 16 37 14 17 38 19 7 39 2 18 40 10 19 41 15 4 42 0 15 43 11 12 44 28 14 45 29 12 46 28 15 47 11 18 48 21 14 49 20 19 50 15 19 51 15 14 52 20 5 53 1 7 54 25 17 55 19 18 56 26 16 57 27 18 58 26 17 59 19 6 60 3 13 61 18 16 62 23 16 63 23 13 64 18 12 65 24 15 66 11 9 67 5 5 68 1 5 69 1 9 70 5 1 71 8 13 72 18 8 73 17 4 74 0 4 75 0 8 76 17 0 77 4 19 78 15 11 79 9 7 80 2 7 81 2 11 82 9 3 83 22 17 84 19 10 85 13 6 86 3 6 87 3 10 88 13 2 89 16</p></triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Block" name="Block">
+      <node name="iceblock" id="iceblock" sid="iceblock"><matrix sid="matrix">1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 1.000000</matrix><instance_geometry url="#iceblock-lib"><bind_material><technique_common><instance_material symbol="_02 - Default" target="#_02 - Default"/></technique_common></bind_material></instance_geometry><extra><technique profile="FCOLLADA"><visibility>1.000000</visibility></technique></extra></node>
+      <extra><technique profile="MAX3D"><frame_rate>30.000000</frame_rate></technique><technique profile="FCOLLADA"><start_time>0.000000</start_time><end_time>3.333333</end_time></technique></extra>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Block"></instance_visual_scene>
+  </scene>
+</COLLADA>

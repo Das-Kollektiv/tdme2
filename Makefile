@@ -290,6 +290,7 @@ SRCS = \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
 	src/tdme/tests/GUITest_init_2.cpp \
+	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
@@ -374,6 +375,7 @@ SRCS = \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/IntEncDec.cpp \
 	src/tdme/utils/MutableString.cpp \
+	src/tdme/utils/PathFinding.cpp \
 	src/tdme/utils/Properties.cpp \
 	src/tdme/utils/ReferenceCounter.cpp \
 	src/tdme/utils/RTTI.cpp \
@@ -473,6 +475,7 @@ MAIN_SRCS = \
 	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
+	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \

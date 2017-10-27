@@ -1,0 +1,21 @@
+{
+  "descr": "",
+  "thumbnail": "ground.dae.png",
+  "file": "ground.dae",
+  "bv": {
+    "may": 3.725290298461914E-8,
+    "max": 0.5,
+    "maz": 0.5000004172325134,
+    "type": "aabb",
+    "miy": -0.2500000298023224,
+    "mix": -0.5,
+    "miz": -0.4999999701976776
+  },
+  "name": "ground.dae",
+  "px": 0,
+  "py": 0,
+  "pz": 0,
+  "type": "MODEL",
+  "version": "0.1",
+  "properties": []
+}

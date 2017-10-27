@@ -1,7 +1,6 @@
 // Forward declarations for tdme.tests
 #pragma once
 
-
 namespace tdme {
 namespace tests {
 		class AngleTest;
@@ -11,6 +10,7 @@ namespace tests {
 		class GUITest;
 		class GUITest_init_1;
 		class GUITest_init_2;
+		class PathFindingTest;
 		class PhysicsTest1;
 		class PhysicsTest2;
 		class PhysicsTest3;

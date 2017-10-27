@@ -16,6 +16,9 @@ namespace utils {
 		class Key;
 		class MutableString;
 		class FilenameFilter;
+		class PathFinding;
+		class PathFindingNode;
+		class PathFindingCustomTest;
 		class Properties;
 		class ReferenceCounter;
 		class RTTI;
