@@ -4,7 +4,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 /**
- * Path finding test interface
+ * Path finding custom test interface
  * @author Andreas Drewke
  * @version $Id$
  */
