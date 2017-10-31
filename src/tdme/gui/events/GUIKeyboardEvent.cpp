@@ -11,8 +11,8 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 		case(25): return KEYCODE_TAB_SHIFT;
 		case(27): return KEYCODE_ESCAPE;
 		case(32): return KEYCODE_SPACE;
-		case(95): return KEYCODE_DELETE;
-		case(127): return KEYCODE_BACKSPACE;
+		case(127): return KEYCODE_DELETE;
+		case(8): return KEYCODE_BACKSPACE;
 		default: return -1;
 	}
 }

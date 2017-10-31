@@ -24,7 +24,7 @@ public:
 	static constexpr int32_t KEYCODE_TAB_SHIFT { 25 };
 	static constexpr int32_t KEYCODE_BACKSPACE { 8 };
 	static constexpr int32_t KEYCODE_SPACE { 32 };
-	static constexpr int32_t KEYCODE_DELETE { 95 };
+	static constexpr int32_t KEYCODE_DELETE { 46 };
 	static constexpr int32_t KEYCODE_LEFT { GLUT_KEY_LEFT };
 	static constexpr int32_t KEYCODE_UP { GLUT_KEY_UP };
 	static constexpr int32_t KEYCODE_RIGHT { GLUT_KEY_RIGHT };
