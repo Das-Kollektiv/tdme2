@@ -115,7 +115,6 @@ public:
 			writeBoolean(true);
 			writeInt(s.size());
 			for (auto i = 0; i < s.size(); i++) {
-				// FIXME: actually we use wide string
 				writeByte(static_cast< uint8_t >(s[i]));
 			}
 		}

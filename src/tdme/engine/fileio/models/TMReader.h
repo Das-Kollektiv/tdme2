@@ -111,14 +111,13 @@ public:
 	 * @throws model file IO exception
 	 * @return string
 	 */
-	inline const string readWString() throw (ModelFileIOException) {
+	inline const string readString() throw (ModelFileIOException) {
 		if (readBoolean() == false) {
 			return "";
 		} else {
 			auto l = readInt();
 			string s;
 			for (auto i = 0; i < l; i++) {
-				// FIXME: actually we use wide string
 				s+= static_cast< char >(readByte());
 			}
 			return s;

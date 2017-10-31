@@ -61,7 +61,7 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(pathName, fileName, &content);
 	TMReaderInputStream is(&content);
-	auto fileId = is.readWString();
+	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
 		throw ModelFileIOException(
 			"File is not a TDME model file, file id = '" +
@@ -83,9 +83,9 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 			to_string(version[2])
 		);
 	}
-	auto name = is.readWString();
-	auto upVector = Model_UpVector::valueOf(is.readWString());
-	auto rotationOrder = RotationOrder::valueOf(is.readWString());
+	auto name = is.readString();
+	auto upVector = Model_UpVector::valueOf(is.readString());
+	auto rotationOrder = RotationOrder::valueOf(is.readString());
 	array<float, 3> boundingBoxMinXYZ;
 	is.readFloatArray(&boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
@@ -113,7 +113,7 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 
 Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	auto id = is->readWString();
+	auto id = is->readString();
 	auto m = new Material(id);
 	array<float, 4> colorRGBAArray;
 	is->readFloatArray(&colorRGBAArray);
@@ -125,23 +125,23 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	is->readFloatArray(&colorRGBAArray);
 	m->getEmissionColor().set(colorRGBAArray);
 	m->setShininess(is->readFloat());
-	auto diffuseTexturePathName = is->readWString();
-	auto diffuseTextureFileName = is->readWString();
+	auto diffuseTexturePathName = is->readString();
+	auto diffuseTextureFileName = is->readString();
 	if (diffuseTextureFileName.size() != 0) {
 		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName);
 	}
-	auto specularTexturePathName = is->readWString();
-	auto specularTextureFileName = is->readWString();
+	auto specularTexturePathName = is->readString();
+	auto specularTextureFileName = is->readString();
 	if (specularTextureFileName.size() != 0) {
 		m->setSpecularTexture(specularTexturePathName, specularTextureFileName);
 	}
-	auto normalTexturePathName = is->readWString();
-	auto normalTextureFileName = is->readWString();
+	auto normalTexturePathName = is->readString();
+	auto normalTextureFileName = is->readString();
 	if (normalTextureFileName.size() != 0) {
 		m->setNormalTexture(normalTexturePathName, normalTextureFileName);
 	}
-	auto displacementTexturePathName = is->readWString();
-	auto displacementTextureFileName = is->readWString();
+	auto displacementTexturePathName = is->readString();
+	auto displacementTextureFileName = is->readString();
 	if (displacementTextureFileName.size() != 0) {
 		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
 	}
@@ -213,10 +213,10 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	vector<FacesEntity> facesEntities;
 	facesEntities.resize(is->readInt());
 	for (auto i = 0; i < facesEntities.size(); i++) {
-		facesEntities[i] = FacesEntity(g, is->readWString());
+		facesEntities[i] = FacesEntity(g, is->readString());
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
-			auto materialIt = g->getModel()->getMaterials()->find(is->readWString());
+			auto materialIt = g->getModel()->getMaterials()->find(is->readString());
 			if (materialIt != g->getModel()->getMaterials()->end()) {
 				material = materialIt->second;
 			}
@@ -260,7 +260,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	array<float, 16> matrixArray;
-	Joint joint(is->readWString());
+	Joint joint(is->readString());
 	is->readFloatArray(&matrixArray);
 	joint.getBindMatrix().set(matrixArray);
 	return joint;
@@ -268,7 +268,10 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOExc
 
 JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
 {
-	return JointWeight(is->readInt(), is->readInt());
+
+	int32_t jointIndex = is->readInt();
+	int32_t weightIndex = is->readInt();
+	return JointWeight(jointIndex, weightIndex);
 }
 
 void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
@@ -306,7 +309,10 @@ void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* paren
 
 Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException)
 {
-	auto group = new Group(model, parentGroup, is->readWString(), is->readWString());
+
+	auto groupId = is->readString();
+	auto groupName = is->readString();
+	auto group = new Group(model, parentGroup, groupId, groupName);
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(&matrixArray);
