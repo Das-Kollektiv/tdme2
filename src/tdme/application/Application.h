@@ -146,4 +146,13 @@ private:
 	 */
 	static void glutOnMouseButton(int button, int state, int x, int y);
 
+	/**
+	 * On mouse wheel
+	 * @param button
+	 * @param direction
+	 * @param x
+	 * @param y
+	 */
+	static void glutOnMouseWheel(int button, int direction, int x, int y);
+
 };

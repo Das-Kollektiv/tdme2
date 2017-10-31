@@ -378,7 +378,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 
 	if (isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
 		if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
-			childrenRenderOffsetX -= event->getWheelX();
+			childrenRenderOffsetX -= event->getWheelX() * 10.0f;
 			float elementWidth = this->computedConstraints->width;
 			float contentWidth = this->getContentWidth();
 			auto scrollableWidth = contentWidth - elementWidth;
@@ -392,7 +392,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 			return;
 		}
 		if (event->getWheelY() != 0.0f && overflowY == GUIParentNode_Overflow::SCROLL) {
-			childrenRenderOffsetY -= event->getWheelY();
+			childrenRenderOffsetY -= event->getWheelY() * 10.0f;
 			float elementHeight = this->computedConstraints->height;
 			float contentHeight = this->getContentHeight();
 			auto scrollableHeight = contentHeight - elementHeight;

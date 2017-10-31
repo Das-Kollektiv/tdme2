@@ -90,4 +90,13 @@ public:
 	 */
 	virtual void onMouseButton(int button, int state, int x, int y) = 0;
 
+	/**
+	 * On mouse wheen
+	 * @param button
+	 * @param direction
+	 * @param x
+	 * @param y
+	 */
+	virtual void onMouseWheel(int button, int direction, int x, int y) = 0;
+
 };

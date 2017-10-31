@@ -377,3 +377,6 @@ void PhysicsTest3::onMouseMoved(int x, int y) {
 
 void PhysicsTest3::onMouseButton(int button, int state, int x, int y) {
 }
+
+void PhysicsTest3::onMouseWheel(int button, int direction, int x, int y) {
+}

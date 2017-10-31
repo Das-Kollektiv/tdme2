@@ -286,6 +286,15 @@ public:
 	 */
 	void onMouseButton(int button, int state, int x, int y) override;
 
+	/**
+	 * On mouse wheel
+	 * @param button
+	 * @param direction
+	 * @param x
+	 * @param y
+	 */
+	void onMouseWheel(int button, int direction, int x, int y) override;
+
 	/** 
 	 * Handle screen events
 	 */

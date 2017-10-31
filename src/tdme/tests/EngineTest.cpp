@@ -458,3 +458,6 @@ void EngineTest::onMouseButton(int button, int state, int x, int y) {
 		mouseClickedXY[1] = y;
 	}
 }
+
+void EngineTest::onMouseWheel(int button, int direction, int x, int y) {
+}

@@ -1,6 +1,6 @@
 #include <tdme/gui/GUI.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
 #endif
 
@@ -581,11 +581,9 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
-	/*
-	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
-	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
-	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
-	*/
+	guiMouseEvent->setWheelX(0.0f);
+	guiMouseEvent->setWheelY(0.0f);
+	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
@@ -601,11 +599,9 @@ void GUI::onMouseMoved(int x, int y) {
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(0);
-	/*
-	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
-	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
-	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
-	*/
+	guiMouseEvent->setWheelX(0.0f);
+	guiMouseEvent->setWheelY(0.0f);
+	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
@@ -622,34 +618,32 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent->setX(x);
 	guiMouseEvent->setY(y);
 	guiMouseEvent->setButton(mouseButtonLast);
-	/*
-	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
-	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
-	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
-	*/
+	guiMouseEvent->setWheelX(0.0f);
+	guiMouseEvent->setWheelY(0.0f);
+	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
 
-/*
-void GUI::mouseWheelMoved(MouseEvent* event)
-{
+void GUI::onMouseWheel(int button, int direction, int x, int y) {
+	fakeKeyboardModifierEvent();
+
 	lockEvents();
-	auto guiMouseEvent = java_cast< GUIMouseEvent* >(mouseEventsPool->allocate());
+	mouseButtonLast = button + 1;
+	auto guiMouseEvent = mouseEventsPool->allocate();
 	guiMouseEvent->setTime(Time::getCurrentMillis());
 	guiMouseEvent->setType(GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED);
-	guiMouseEvent->setX(event->getX());
-	guiMouseEvent->setY(event->getY());
-	guiMouseEvent->setButton(0);
-	guiMouseEvent->setWheelX((*event->getRotation())[0] * event->getRotationScale());
-	guiMouseEvent->setWheelY((*event->getRotation())[1] * event->getRotationScale());
-	guiMouseEvent->setWheelZ((*event->getRotation())[2] * event->getRotationScale());
+	guiMouseEvent->setX(x);
+	guiMouseEvent->setY(y);
+	guiMouseEvent->setButton(mouseButtonLast);
+	guiMouseEvent->setWheelX(0.0f);
+	guiMouseEvent->setWheelY(direction * 1.0f);
+	guiMouseEvent->setWheelZ(0.0f);
 	guiMouseEvent->setProcessed(false);
-	mouseEvents->add(guiMouseEvent);
+	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
 }
-*/
 
 void GUI::fakeMouseMovedEvent()
 {
@@ -672,12 +666,11 @@ void GUI::fakeKeyboardModifierEvent() {
 	bool isControlDown = false;
 	bool isAltDown = false;
 	bool isShiftDown = false;
-	#ifdef __linux__
-		// TODO: check if this works with FreeGlut
+	#if defined(__linux__) || defined(_WIN32)
 		isControlDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL;
 		isAltDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT;
 		isShiftDown = (ApplicationInputEventsHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT;
-	#elif __APPLE__
+	#elif defined(__APPLE__)
 		KeyMap keys;
 		GetKeys(keys);
 		#define IS_KEY_DOWN(key, var) \
