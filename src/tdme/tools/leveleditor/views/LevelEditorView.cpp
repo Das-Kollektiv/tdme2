@@ -461,7 +461,7 @@ void LevelEditorView::handleInputEvents()
 		}
 		auto mouseWheel = event->getWheelY();
 		if (mouseWheel != 0) {
-			camScale += -mouseWheel * 0.05f;
+			camScale += -mouseWheel * 0.1f;
 			if (camScale < camScaleMin)
 				camScale = camScaleMin;
 

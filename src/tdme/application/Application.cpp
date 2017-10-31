@@ -84,6 +84,9 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutMotionFunc(Application::glutOnMouseDragged);
 	glutPassiveMotionFunc(Application::glutOnMouseMoved);
 	glutMouseFunc(Application::glutOnMouseButton);
+#if defined(_WIN32)
+	glutMouseWheelFunc(Application::glutOnMouseWheel);
+#endif
 	glutMainLoop();
 }
 
@@ -144,4 +147,9 @@ void Application::glutOnMouseMoved(int x, int y) {
 void Application::glutOnMouseButton(int button, int state, int x, int y) {
 	if (Application::inputEventHandler == nullptr) return;
 	Application::inputEventHandler->onMouseButton(button, state, x, y);
+}
+
+void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
+	if (Application::inputEventHandler == nullptr) return;
+	Application::inputEventHandler->onMouseWheel(button, direction, x, y);
 }

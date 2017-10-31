@@ -118,7 +118,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		}
 		auto mouseWheel = event->getWheelY();
 		if (mouseWheel != 0) {
-			scale += mouseWheel * 0.05f;
+			scale += mouseWheel * 0.1f;
 			if (scale < 0.05f)
 				scale = 0.05f;
 

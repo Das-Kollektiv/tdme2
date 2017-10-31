@@ -110,6 +110,7 @@ public:
 	void onMouseDragged(int x, int y) override;
 	void onMouseMoved(int x, int y) override;
 	void onMouseButton(int button, int state, int x, int y) override;
+	void onMouseWheel(int button, int direction, int x, int y) override;
 
 	/**
 	 * Engine test
