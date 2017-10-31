@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 
 using std::string;

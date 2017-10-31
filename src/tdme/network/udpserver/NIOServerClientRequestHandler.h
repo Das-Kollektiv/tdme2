@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 
 #include <string>
 

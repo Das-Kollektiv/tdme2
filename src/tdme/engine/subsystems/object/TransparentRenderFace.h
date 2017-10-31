@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
 using tdme::engine::subsystems::object::Object3DGroup;

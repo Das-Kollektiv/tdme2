@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;

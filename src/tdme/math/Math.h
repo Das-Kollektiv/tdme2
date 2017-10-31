@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
 /** 

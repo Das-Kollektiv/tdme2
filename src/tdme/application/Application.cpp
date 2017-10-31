@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 
 #include <tdme/utils/Time.h>
 #include <tdme/os/threading/Thread.h>

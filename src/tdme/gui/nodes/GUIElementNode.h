@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>

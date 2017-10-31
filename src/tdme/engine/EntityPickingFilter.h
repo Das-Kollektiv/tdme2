@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 
 using tdme::engine::Entity;

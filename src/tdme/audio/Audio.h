@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>

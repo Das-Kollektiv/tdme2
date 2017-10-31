@@ -3,7 +3,7 @@
 #include <array>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>

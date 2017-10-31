@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>

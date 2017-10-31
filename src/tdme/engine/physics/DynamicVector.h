@@ -28,7 +28,7 @@
 
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 
 using std::vector;

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>

@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 

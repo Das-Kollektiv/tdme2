@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>

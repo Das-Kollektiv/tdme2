@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>
 
 using std::vector;

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/application/ApplicationInputEventsHandler.h>

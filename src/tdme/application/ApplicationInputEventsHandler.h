@@ -6,7 +6,7 @@
 	#include <GLUT/glut.h>
 #endif
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 
 #define KEYBOARD_MODIFIER_SHIFT	GLUT_ACTIVE_SHIFT

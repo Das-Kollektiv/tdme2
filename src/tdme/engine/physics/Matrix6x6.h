@@ -28,7 +28,7 @@
 
 #include <array>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/Vector6.h>
 #include <tdme/math/fwd-tdme.h>

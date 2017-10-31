@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/engine/subsystems/object/fwd-tdme.h>

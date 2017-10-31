@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>

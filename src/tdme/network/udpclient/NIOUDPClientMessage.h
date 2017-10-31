@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
 
 using std::string;

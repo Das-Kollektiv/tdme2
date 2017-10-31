@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::string;

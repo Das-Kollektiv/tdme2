@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/NIOServerClientRequestHandler.h>
 #include <tdme/network/udpserver/NIOServerClientRequestHandlerHubException.h>
 

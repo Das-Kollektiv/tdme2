@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
 

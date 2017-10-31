@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>

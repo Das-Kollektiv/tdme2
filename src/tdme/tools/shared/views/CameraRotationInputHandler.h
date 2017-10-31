@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>

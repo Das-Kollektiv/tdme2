@@ -31,7 +31,7 @@
 #include <vector>
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/ConstraintsEntity.h>
 #include <tdme/engine/physics/ContactCache.h>

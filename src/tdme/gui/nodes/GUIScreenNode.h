@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>

@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>

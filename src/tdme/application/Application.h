@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include <tdme.h>
+#include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/application/ApplicationInputEventsHandler.h>
 
