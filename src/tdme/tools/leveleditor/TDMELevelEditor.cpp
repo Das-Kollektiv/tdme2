@@ -44,7 +44,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utils::Console;
 
-string TDMELevelEditor::VERSION = "0.9.9";
+string TDMELevelEditor::VERSION = "1.9.9";
 
 TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 

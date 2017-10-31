@@ -27,7 +27,7 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::shared::views::View;
 using tdme::utils::Console;
 
-string TDMEViewer::VERSION = "0.9.9";
+string TDMEViewer::VERSION = "1.9.9";
 
 TDMEViewer* TDMEViewer::instance = nullptr;
 

@@ -27,7 +27,7 @@ using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::shared::views::View;
 using tdme::utils::Console;
 
-string TDMEParticleSystem::VERSION = "0.9.9";
+string TDMEParticleSystem::VERSION = "1.9.9";
 
 TDMEParticleSystem* TDMEParticleSystem::instance = nullptr;
 
