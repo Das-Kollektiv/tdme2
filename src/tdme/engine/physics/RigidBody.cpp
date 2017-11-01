@@ -44,7 +44,7 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 	this->enabled = enabled;
 	this->typeId = typeId;
 	this->collisionTypeIds = TYPEIDS_ALL;
-	this->transformations = transformations;
+	this->transformations = new Transformations();
 	this->inverseInertia.set(inverseInertia);
 	this->restitution = restitution;
 	this->friction = friction;
