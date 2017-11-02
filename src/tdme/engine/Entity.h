@@ -57,6 +57,17 @@ struct tdme::engine::Entity
 	 */
 	virtual void setEnabled(bool enabled) = 0;
 
+	/**
+	 * @return if frustum culling is enabled
+	 */
+	virtual bool isFrustumCulling() = 0;
+
+	/**
+	 * Set frustum culling
+	 * @param frustum culling
+	 */
+	virtual void setFrustumCulling(bool frustumCulling) = 0;
+
 	/** 
 	 * @return if object is pickable
 	 */

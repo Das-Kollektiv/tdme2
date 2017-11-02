@@ -28,34 +28,41 @@ void Object3D::setRenderer(GLRenderer* renderer)
 void Object3D::fromTransformations(Transformations* transformations)
 {
 	Object3DInternal::fromTransformations(transformations);
-	if (engine != nullptr && enabled == true)
-		engine->partition->updateEntity(this);
-
+	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3D::update()
 {
 	Object3DInternal::update();
-	if (engine != nullptr && enabled == true)
-		engine->partition->updateEntity(this);
-
+	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3D::setEnabled(bool enabled)
 {
-	if (this->enabled == enabled)
-		return;
-
-	if (enabled == true) {
-		if (engine != nullptr)
-			engine->partition->addEntity(this);
-
-	} else {
-		if (engine != nullptr)
-			engine->partition->removeEntity(this);
-
+	if (this->enabled == enabled) return;
+	if (frustumCulling == true) {
+		if (enabled == true) {
+			if (engine != nullptr) engine->partition->addEntity(this);
+		} else {
+			if (engine != nullptr) engine->partition->removeEntity(this);
+		}
 	}
 	Object3DInternal::setEnabled(enabled);
+}
+
+bool Object3D::isFrustumCulling() {
+	return frustumCulling;
+}
+
+void Object3D::setFrustumCulling(bool frustumCulling) {
+	if (enabled == true && engine != nullptr) {
+		if (this->frustumCulling == true) {
+			if (frustumCulling == false) engine->partition->removeEntity(this);
+		} else {
+			if (frustumCulling == true) engine->partition->addEntity(this);
+		}
+	}
+	this->frustumCulling = frustumCulling;
 }
 
 void Object3D::dispose()

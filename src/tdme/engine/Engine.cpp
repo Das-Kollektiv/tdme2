@@ -309,13 +309,13 @@ void Engine::addEntity(Entity* entity)
 	auto oldEntity = getEntity(entity->getId());
 	if (oldEntity != nullptr) {
 		oldEntity->dispose();
-		if (oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
+		if (oldEntity->isFrustumCulling() == true && oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
 	}
 	entity->setEngine(this);
 	entity->setRenderer(renderer);
 	entity->initialize();
 	entitiesById[entity->getId()] = entity;
-	if (entity->isEnabled() == true) partition->addEntity(entity);
+	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->addEntity(entity);
 }
 
 void Engine::removeEntity(const string& id)
@@ -327,7 +327,7 @@ void Engine::removeEntity(const string& id)
 		entitiesById.erase(entityByIdIt);
 	}
 	if (entity != nullptr) {
-		if (entity->isEnabled() == true) partition->removeEntity(entity);
+		if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
 		entity->dispose();
 		entity->setEngine(nullptr);
 		entity->setRenderer(nullptr);
@@ -483,9 +483,24 @@ void Engine::computeTransformations()
 
 	for (auto it: entitiesById) {
 		Entity* entity = it.second;
-		if (entity->isEnabled() == false)
-			continue;
-
+		if (entity->isEnabled() == false) continue;
+		if (entity->isFrustumCulling() == false) {
+			if (dynamic_cast< Object3D* >(entity) != nullptr) {
+				auto object = dynamic_cast< Object3D* >(entity);
+				visibleObjects.push_back(object);
+			} else
+			if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+				auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
+				for (auto object3D: *opse->getEnabledObjects()) {
+					visibleObjects.push_back(object3D);
+				}
+				visibleOpses.push_back(opse);
+			} else
+			if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
+				auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
+				visiblePpses.push_back(ppse);
+			}
+		}
 		if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
 			auto pse = dynamic_cast< ParticleSystemEntity* >(entity);
 			if (pse->isAutoEmit() == true) {

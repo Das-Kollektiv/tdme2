@@ -37,13 +37,16 @@ class tdme::engine::Object3D final
 {
 
 private:
-	Engine* engine {  };
+	Engine* engine { nullptr };
+	bool frustumCulling { true };
 public:
 	void setEngine(Engine* engine) override;
 	void setRenderer(GLRenderer* renderer) override;
 	void fromTransformations(Transformations* transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
 
 	/**
 	 * Public constructor

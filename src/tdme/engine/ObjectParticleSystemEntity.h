@@ -40,6 +40,9 @@ class tdme::engine::ObjectParticleSystemEntity final
 	: public ObjectParticleSystemEntityInternal
 	, public Entity
 {
+private:
+	bool frustumCulling { true };
+
 public:
 	void initialize() override;
 	BoundingBox* getBoundingBox() override;
@@ -53,6 +56,8 @@ public:
 	void update() override;
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
 
 	/**
 	 * Public constructor

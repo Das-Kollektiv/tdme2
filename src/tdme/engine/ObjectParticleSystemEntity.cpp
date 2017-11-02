@@ -42,32 +42,24 @@ const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
 void ObjectParticleSystemEntity::fromTransformations(Transformations* transformations)
 {
 	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
-	if (engine != nullptr && enabled == true)
-		engine->partition->updateEntity(this);
-
+	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::update()
 {
 	ObjectParticleSystemEntityInternal::update();
-	if (engine != nullptr && enabled == true)
-		engine->partition->updateEntity(this);
-
+	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::setEnabled(bool enabled)
 {
-	if (this->enabled == enabled)
-		return;
-
-	if (enabled == true) {
-		if (engine != nullptr)
-			engine->partition->addEntity(this);
-
-	} else {
-		if (engine != nullptr)
-			engine->partition->removeEntity(this);
-
+	if (this->enabled == enabled) return;
+	if (frustumCulling == true) {
+		if (enabled == true) {
+			if (engine != nullptr) engine->partition->addEntity(this);
+		} else {
+			if (engine != nullptr) engine->partition->removeEntity(this);
+		}
 	}
 	ObjectParticleSystemEntityInternal::setEnabled(enabled);
 }
@@ -75,9 +67,22 @@ void ObjectParticleSystemEntity::setEnabled(bool enabled)
 void ObjectParticleSystemEntity::updateParticles()
 {
 	ObjectParticleSystemEntityInternal::updateParticles();
-	if (engine != nullptr && enabled == true)
-		engine->partition->updateEntity(this);
+	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+}
 
+bool ObjectParticleSystemEntity::isFrustumCulling() {
+	return frustumCulling;
+}
+
+void ObjectParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
+	if (enabled == true && engine != nullptr) {
+		if (this->frustumCulling == true) {
+			if (frustumCulling == false) engine->partition->removeEntity(this);
+		} else {
+			if (frustumCulling == true) engine->partition->addEntity(this);
+		}
+	}
+	this->frustumCulling = frustumCulling;
 }
 
 void ObjectParticleSystemEntity::dispose()
