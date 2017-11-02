@@ -2,6 +2,7 @@
 	#include <GL/freeglut.h>
 #elif defined(__APPLE__)
 	#include <GLUT/glut.h>
+	#include <Carbon/Carbon.h>
 #elif defined(_WIN32)
 	#include <GL/glew.h>
 	#include <GL/freeglut.h>
@@ -50,7 +51,15 @@ void Application::setMouseCursor(int mouseCursor) {
 }
 
 void Application::setMousePosition(int x, int y) {
-	glutWarpPointer(x, y);
+	#if defined(__APPLE__)
+		CGPoint point;
+		point.x = glutGet((GLenum)GLUT_WINDOW_X) + x;
+		point.y = glutGet((GLenum)GLUT_WINDOW_X) + y;
+		CGWarpMouseCursorPosition(point);
+		CGAssociateMouseAndMouseCursorPosition(true);
+	#else
+		glutWarpPointer(x, y);
+	#endif
 }
 
 void Application::run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler) {
