@@ -6,6 +6,9 @@
 	#include <GLUT/glut.h>
 #endif
 
+#define MOUSE_CURSOR_DISABLED GLUT_CURSOR_NONE
+#define MOUSE_CURSOR_ENABLED GLUT_CURSOR_INHERIT
+
 #include <string>
 
 #include <tdme/tdme.h>
@@ -43,6 +46,19 @@ public:
 	void setInputEventHandler(ApplicationInputEventsHandler* inputEventHandler);
 
 	/**
+	 * Set mouse cursor
+	 * @param mouse cursor, see MOUSE_CURSOR_*
+	 */
+	void setMouseCursor(int mouseCursor);
+
+	/**
+	 * Set mouse position
+	 * @param x
+	 * @param y
+	 */
+	void setMousePosition(int x, int y);
+
+	/**
 	 * Run this application
 	 * @param argument count
 	 * @param argument values
@@ -69,7 +85,7 @@ public:
 	virtual void display() = 0;
 
 	/**
-	 * Disposes this frame buffer
+	 * Disposes
 	 */
 	virtual void dispose() = 0;
 
@@ -121,7 +137,7 @@ private:
 	 * @param x
 	 * @param y
 	 */
-	static void glutOnSpecialKeyUp(int, int x, int y);
+	static void glutOnSpecialKeyUp(int key, int x, int y);
 
 	/**
 	 * GLUT on mouse dragged

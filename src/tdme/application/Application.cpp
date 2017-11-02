@@ -7,7 +7,6 @@
 	#include <GL/freeglut.h>
 #endif
 
-
 #include <stdlib.h>
 
 #include <string>
@@ -44,6 +43,14 @@ Application::~Application() {
 
 void Application::setInputEventHandler(ApplicationInputEventsHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
+}
+
+void Application::setMouseCursor(int mouseCursor) {
+	glutSetCursor(mouseCursor);
+}
+
+void Application::setMousePosition(int x, int y) {
+	glutWarpPointer(x, y);
 }
 
 void Application::run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler) {
@@ -84,7 +91,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutMotionFunc(Application::glutOnMouseDragged);
 	glutPassiveMotionFunc(Application::glutOnMouseMoved);
 	glutMouseFunc(Application::glutOnMouseButton);
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__linux__)
 	glutMouseWheelFunc(Application::glutOnMouseWheel);
 #endif
 	glutMainLoop();
