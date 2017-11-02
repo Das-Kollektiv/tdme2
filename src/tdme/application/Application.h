@@ -49,14 +49,14 @@ public:
 	 * Set mouse cursor
 	 * @param mouse cursor, see MOUSE_CURSOR_*
 	 */
-	void setMouseCursor(int mouseCursor);
+	static void setMouseCursor(int mouseCursor);
 
 	/**
 	 * Set mouse position
 	 * @param x
 	 * @param y
 	 */
-	void setMousePosition(int x, int y);
+	static void setMousePosition(int x, int y);
 
 	/**
 	 * Run this application
