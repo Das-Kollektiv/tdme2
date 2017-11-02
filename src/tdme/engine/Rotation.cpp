@@ -25,9 +25,9 @@ Rotation::Rotation(float angle, const Vector3& axis)
 
 Vector3 Rotation::X_AXIS(1.0f, 0.0f, 0.0f);
 
-Vector3 Rotation::Y_AXIS(1.0f, 0.0f, 0.0f);
+Vector3 Rotation::Y_AXIS(0.0f, 1.0f, 0.0f);
 
-Vector3 Rotation::Z_AXIS(1.0f, 0.0f, 0.0f);
+Vector3 Rotation::Z_AXIS(0.0f, 0.0f, 1.0f);
 
 float Rotation::getAngle()
 {
