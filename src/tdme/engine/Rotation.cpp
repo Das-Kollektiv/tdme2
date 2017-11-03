@@ -39,7 +39,7 @@ void Rotation::setAngle(float angle)
 	this->angle = angle;
 }
 
-Vector3& Rotation::getAxix()
+Vector3& Rotation::getAxis()
 {
 	return axis;
 }

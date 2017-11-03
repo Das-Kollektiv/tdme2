@@ -42,7 +42,7 @@ public:
 	/** 
 	 * @return axis
 	 */
-	Vector3& getAxix();
+	Vector3& getAxis();
 
 	/** 
 	 * @return quaternion

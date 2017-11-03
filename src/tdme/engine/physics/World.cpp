@@ -268,7 +268,7 @@ void World::update(float deltaTime)
 			rotations->add(new Rotation());
 		}
 		rotations->get(0)->fromQuaternion(rigidBody->orientation);
-		rotations->get(0)->getAxix().getArray()[1] *= -1.0f;
+		rotations->get(0)->getAxis().getArray()[1] *= -1.0f;
 		auto transformations = rigidBody->transformations;
 		transformations->getTranslation().set(rigidBody->position);
 		transformations->update();
