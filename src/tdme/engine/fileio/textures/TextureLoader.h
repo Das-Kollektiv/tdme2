@@ -77,10 +77,9 @@ public:
 	 * Loads a texture
 	 * @param path
 	 * @param fileName
-	 * @throws FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(const string& path, const string& fileName) throw (FileSystemException);
+	static Texture* loadTexture(const string& path, const string& fileName);
 
 private:
 	/**

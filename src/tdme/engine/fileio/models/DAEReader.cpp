@@ -1113,6 +1113,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 	}
 	auto material = new Material(xmlNodeId);
 	string xmlDiffuseTextureId;
+	string xmlTransparencyTextureId;
 	string xmlSpecularTextureId;
 	string xmlBumpTextureId;
 	auto xmlLibraryEffects = getChildrenByTagName(xmlRoot, "library_effects").at(0);
@@ -1136,6 +1137,27 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 			}
 			for (auto xmlTechnique: getChildrenByTagName(xmlProfile, "technique")) {
 				for (auto xmlTechniqueNode: getChildren(xmlTechnique)) {
+					for (auto xmlDiffuse: getChildrenByTagName(xmlTechniqueNode, "transparent")) {
+						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
+							xmlTransparencyTextureId = string(AVOID_NULLPTR_STRING(xmlTexture->Attribute("texture")));
+
+							auto sample2SurfaceIt = samplerSurfaceMapping.find(xmlTransparencyTextureId);
+							string sample2Surface;
+							if (sample2SurfaceIt != samplerSurfaceMapping.end()) {
+								sample2Surface = sample2SurfaceIt->second;
+							}
+							if (sample2Surface.length() == 0) continue;
+
+							string surface2Image;
+							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface);
+							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+								surface2Image = surface2ImageIt->second;
+							}
+							if (surface2Image.length() > 0) {
+								xmlTransparencyTextureId = surface2Image;
+							}
+						}
+					}
 					for (auto xmlDiffuse: getChildrenByTagName(xmlTechniqueNode, "diffuse")) {
 						for (auto xmlColor: getChildrenByTagName(xmlDiffuse, "color")) {
 							StringTokenizer t;
@@ -1256,12 +1278,20 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 		}
 	}
 
+	string xmlTransparencyTextureFilename;
+	if (xmlDiffuseTextureId.length() > 0) {
+		xmlTransparencyTextureFilename = getTextureFileNameById(xmlRoot, xmlTransparencyTextureId);
+		if (xmlTransparencyTextureFilename.length() > 0) {
+			xmlTransparencyTextureFilename = makeFileNameRelative(xmlTransparencyTextureFilename);
+		}
+	}
+
 	string xmlDiffuseTextureFilename;
 	if (xmlDiffuseTextureId.length() > 0) {
 		xmlDiffuseTextureFilename = getTextureFileNameById(xmlRoot, xmlDiffuseTextureId);
 		if (xmlDiffuseTextureFilename.length() > 0) {
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
-			material->setDiffuseTexture(pathName, xmlDiffuseTextureFilename);
+			material->setDiffuseTexture(pathName, xmlDiffuseTextureFilename, pathName, xmlTransparencyTextureFilename);
 		}
 	}
 

@@ -84,6 +84,8 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 	os->writeFloat(m->getShininess());
 	os->writeString(m->getDiffuseTexturePathName());
 	os->writeString(m->getDiffuseTextureFileName());
+	os->writeString(m->getDiffuseTransparencyTexturePathName());
+	os->writeString(m->getDiffuseTransparencyTextureFileName());
 	os->writeString(m->getSpecularTexturePathName());
 	os->writeString(m->getSpecularTextureFileName());
 	os->writeString(m->getNormalTexturePathName());

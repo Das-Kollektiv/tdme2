@@ -127,8 +127,10 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	m->setShininess(is->readFloat());
 	auto diffuseTexturePathName = is->readString();
 	auto diffuseTextureFileName = is->readString();
+	auto diffuseTransparencyTexturePathName = is->readString();
+	auto diffuseTransparencyTextureFileName = is->readString();
 	if (diffuseTextureFileName.size() != 0) {
-		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName);
+		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName, diffuseTransparencyTexturePathName, diffuseTransparencyTextureFileName);
 	}
 	auto specularTexturePathName = is->readString();
 	auto specularTextureFileName = is->readString();

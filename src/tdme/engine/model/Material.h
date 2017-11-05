@@ -39,6 +39,8 @@ private:
 	float shininess {  };
 	string diffuseTexturePathName {  };
 	string diffuseTextureFileName {  };
+	string diffuseTransparencyTexturePathName {  };
+	string diffuseTransparencyTextureFileName {  };
 	Texture* diffuseTexture {  };
 	bool diffuseTextureTransparency {  };
 	string specularTexturePathName {  };
@@ -100,14 +102,25 @@ public:
 	const string& getDiffuseTextureFileName();
 
 	/** 
+	 * @return diffuse transparency texture path name
+	 */
+	const string& getDiffuseTransparencyTexturePathName();
+
+	/**
+	 * @return diffuse transparency texture file name
+	 */
+	const string& getDiffuseTransparencyTextureFileName();
+
+	/**
 	 * Set up a diffuse texture
 	 * @param path name
 	 * @param file name
-	 * @throws IOException
+	 * @param transparency path name
+	 * @param transparency file name
 	 */
-	void setDiffuseTexture(const string& pathName, const string& fileName);
+	void setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName = "", const string& transparencyFileName = "");
 
-	/** 
+	/**
 	 * @return if material has a diffuse texture
 	 */
 	bool hasDiffuseTexture();
@@ -145,7 +158,6 @@ public:
 	 * Set up a specular texture
 	 * @param path name
 	 * @param file name
-	 * @throws IOException
 	 */
 	void setSpecularTexture(const string& pathName, const string& fileName);
 
@@ -173,7 +185,6 @@ public:
 	 * Set up a normal texture
 	 * @param path name
 	 * @param file name
-	 * @throws IOException
 	 */
 	void setNormalTexture(const string& pathName, const string& fileName);
 
@@ -201,7 +212,6 @@ public:
 	 * Set up a displacement texture
 	 * @param path name
 	 * @param file name
-	 * @throws IOException
 	 */
 	void setDisplacementTexture(const string& pathName, const string& fileName);
 

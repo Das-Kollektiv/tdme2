@@ -30,7 +30,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
-Texture* TextureLoader::loadTexture(const string& path, const string& fileName) throw (FileSystemException)
+Texture* TextureLoader::loadTexture(const string& path, const string& fileName)
 {
 	try {
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) {
@@ -117,15 +117,15 @@ Texture* TextureLoader::loadPNG(const string& path, const string& fileName) thro
 				break;
 			}
 	    case PNG_COLOR_TYPE_GRAY_ALPHA:
-	    	{
-	    		bytesPerPixel = 4;
+	    		{
+	    			bytesPerPixel = 4;
 		        png_set_gray_to_rgb(png);
 		        break;
-	    	}
+	    		}
 	    case PNG_COLOR_TYPE_PALETTE:
-	    	{
+	    		{
 				// if transparency, convert it to alpha
-	    		// does not seem to work though
+	    			// does not seem to work though
 				bool alpha = false;
 				if (png_get_valid(png, info, PNG_INFO_tRNS)) {
 					alpha = true;
@@ -134,23 +134,23 @@ Texture* TextureLoader::loadPNG(const string& path, const string& fileName) thro
 				bytesPerPixel = alpha?4:3;
 				png_set_expand(png);
 				break;
-	    	}
+	    		}
 	    case PNG_COLOR_TYPE_RGB:
-	    	{
-	    		bytesPerPixel = 3;
-	    		break;
-	    	}
+			{
+				bytesPerPixel = 3;
+				break;
+			}
 	    case PNG_COLOR_TYPE_RGBA:
-	    	{
-	    		bytesPerPixel = 4;
-	    		break;
-	    	}
+			{
+				bytesPerPixel = 4;
+				break;
+			}
 	    default:
-	    	{
-	    		png_destroy_read_struct(&png, &info, nullptr);
-	    		delete pngInputStream;
-	    		return nullptr;
-	    	}
+	    		{
+	    			png_destroy_read_struct(&png, &info, nullptr);
+	    			delete pngInputStream;
+	    			return nullptr;
+	    		}
 	}
 
 	// bytes per row

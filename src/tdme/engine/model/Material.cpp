@@ -2,20 +2,20 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/MathTools.h>
+#include <tdme/utils/ByteBuffer.h>
 
 using std::string;
 
 using tdme::engine::model::Material;
-using tdme::utils::ByteBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::model::Color4;
 using tdme::math::MathTools;
+using tdme::utils::ByteBuffer;
 
 Material::Material(const string& id)
 {
@@ -89,11 +89,67 @@ const string& Material::getDiffuseTextureFileName()
 	return diffuseTextureFileName;
 }
 
-void Material::setDiffuseTexture(const string& pathName, const string& fileName)
+const string& Material::getDiffuseTransparencyTexturePathName()
 {
+	return diffuseTransparencyTexturePathName;
+}
+
+const string& Material::getDiffuseTransparencyTextureFileName()
+{
+	return diffuseTransparencyTextureFileName;
+}
+
+void Material::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
+{
+	// load diffuse texture
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
 	diffuseTexture = TextureLoader::loadTexture(pathName, fileName);
+	// check if we have a additional transparency texture
+	if (transparencyFileName.length() != 0) {
+		diffuseTransparencyTexturePathName = transparencyPathName;
+		diffuseTransparencyTextureFileName = transparencyFileName;
+		// yep
+		auto transparencyTexture = TextureLoader::loadTexture(transparencyPathName, transparencyFileName);
+		// laoded?
+		if (transparencyTexture != nullptr) {
+			// same dimensions and supported pixel depth?
+			if (diffuseTexture->getDepth() == 24 &&
+				transparencyTexture->getDepth() == 24 &&
+				diffuseTexture->getWidth() == transparencyTexture->getWidth() &&
+				diffuseTexture->getHeight() == transparencyTexture->getHeight()) {
+				// yep, combine diffuse map + diffuse transparency map
+				int width = diffuseTexture->getWidth();
+				int height = diffuseTexture->getHeight();
+				ByteBuffer* pixelByteBuffer = new ByteBuffer(diffuseTexture->getWidth() * diffuseTexture->getHeight() * 4);
+				auto diffuseTextureWithTransparency = new Texture(
+					diffuseTexture->getId() + "+transparency",
+					32,
+					diffuseTexture->getWidth(),
+					diffuseTexture->getHeight(),
+					diffuseTexture->getTextureWidth(),
+					diffuseTexture->getTextureHeight(),
+					pixelByteBuffer
+				);
+				for (int x = 0; x < width; x++)
+				for (int y = 0; y < height; y++) {
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 0));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 1));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 2));
+					pixelByteBuffer->put(
+						(uint8_t)((
+							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 0) +
+							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 1) +
+							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 2)
+						) * 0.33f)
+					);
+				}
+				delete diffuseTexture;
+				delete transparencyTexture;
+				diffuseTexture = diffuseTextureWithTransparency;
+			}
+		}
+	}
 	checkDiffuseTextureTransparency();
 }
 
