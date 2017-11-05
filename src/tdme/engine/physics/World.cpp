@@ -445,11 +445,11 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	}
 }
 
-const vector<RigidBody*> World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume)
+bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies)
 {
 	Vector3 nullMovement;
 	CollisionResponse collision;
-	vector<RigidBody*> collidedRigidBodies;
+	rigidBodies.clear();
 	for (auto _i = partition->getObjectsNearTo(boundingVolume)->iterator(); _i->hasNext(); ) {
 		RigidBody* rigidBody = _i->next();
 		{
@@ -457,11 +457,11 @@ const vector<RigidBody*> World::doesCollideWith(int32_t typeIds, BoundingVolume*
 				continue;
 
 			if (rigidBody->cbv->doesCollideWith(boundingVolume, nullMovement, &collision) == true && collision.hasPenetration() == true) {
-				collidedRigidBodies.push_back(rigidBody);
+				rigidBodies.push_back(rigidBody);
 			}
 		}
 	}
-	return collidedRigidBodies;
+	return rigidBodies.size() > 0;
 }
 
 World* World::clone()

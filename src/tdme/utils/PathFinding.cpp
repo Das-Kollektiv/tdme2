@@ -98,12 +98,8 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	actorCbv->fromBoundingVolumeWithTransformations(actorObv, &actorTransformations);
 
 	// check if collides with world
-	for (auto rigidBody: world->doesCollideWith(collisionRigidBodyTypes, actorCbv)) {
-		return false;
-	}
-
-	// nope, no collision
-	return true;
+	vector<RigidBody*> collidedRigidBodies;
+	return world->doesCollideWith(collisionRigidBodyTypes, actorCbv, collidedRigidBodies) == false;
 }
 
 void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {

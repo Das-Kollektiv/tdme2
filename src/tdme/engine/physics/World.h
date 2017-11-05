@@ -173,9 +173,10 @@ public:
 	 * Check if world collides with given bounding volume
 	 * @param type ids
 	 * @param bounding volume
-	 * @return collided rigid bodies
+	 * @param rigid bodies that collide with bounding volume
+	 * @return if collision happpened or not
 	 */
-	const vector<RigidBody*> doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume);
+	bool doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies);
 
 	/** 
 	 * Clone this world
