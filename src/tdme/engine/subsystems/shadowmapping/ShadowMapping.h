@@ -122,7 +122,20 @@ public:
 	/** 
 	 * Update model view and projection matrix
 	 */
-	void updateMVPMatrices(GLRenderer* renderer);
+	void updateMatrices(GLRenderer* renderer);
+
+	/**
+	 * Update material
+	 * @param renderer
+	 */
+	void updateMaterial(GLRenderer* renderer);
+
+	/**
+	 * Bind texture
+	 * @param renderer
+	 * @param texture id
+	 */
+	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/** 
 	 * Update depth bias mvp matrix with given matrix

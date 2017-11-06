@@ -6,6 +6,13 @@ layout (location = 2) in vec2 inTextureUV;
 
 uniform mat4 mvpMatrix;
 
+// will be passed to fragment shader
+out vec2 vsFragTextureUV;
+
 void main(){
+	// pass texture uv to fragment shader
+	vsFragTextureUV = inTextureUV;
+
+	// position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 }

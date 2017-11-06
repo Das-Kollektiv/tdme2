@@ -241,6 +241,16 @@ void ModelHelper::prepareForIndexedRendering(Skinning* skinning, vector<int32_t>
 	skinning->setVerticesJointsWeights(&verticesJointsWeights);
 }
 
+void ModelHelper::setDiffuseMaskedTransparency(Model* model) {
+	auto materials = model->getMaterials();
+	for (auto it = materials->begin(); it != materials->end(); ++it) {
+		auto material = it->second;
+		if (material->hasDiffuseTextureTransparency() == true) {
+			material->setDiffuseTextureMaskedTransparency(true);
+		}
+	}
+}
+
 void ModelHelper::setupJoints(Model* model)
 {
 	auto groups = model->getGroups();

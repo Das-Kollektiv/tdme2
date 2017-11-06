@@ -34,6 +34,7 @@ private:
 	int32_t renderLightingVertexShaderId {  };
 	int32_t uniformDiffuseTextureUnit {  };
 	int32_t uniformDiffuseTextureAvailable {  };
+	int32_t uniformDiffuseTextureMaskedTransparency {  };
 	int32_t uniformSpecularTextureUnit {  };
 	int32_t uniformSpecularTextureAvailable {  };
 	int32_t uniformNormalTextureUnit {  };

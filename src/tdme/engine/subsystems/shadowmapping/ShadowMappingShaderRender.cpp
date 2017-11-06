@@ -1,13 +1,15 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 
 #include <tdme/math/Math.h>
+#include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
-using tdme::math::Math;
+using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -81,6 +83,18 @@ void ShadowMappingShaderRender::initialize()
 	if (renderUniformNormalMatrix == -1)
 		return;
 
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureUnit");
+	if (uniformDiffuseTextureUnit == -1)
+		return;
+
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureAvailable");
+	if (uniformDiffuseTextureAvailable == -1)
+		return;
+
+	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparency");
+	if (uniformDiffuseTextureMaskedTransparency == -1)
+		return;
+
 	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, "lightDirection");
 	if (renderUniformLightDirection == -1)
 		return;
@@ -147,6 +161,20 @@ void ShadowMappingShaderRender::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
 void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMatrix)
 {
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
+}
+
+void ShadowMappingShaderRender::updateMaterial(GLRenderer* renderer)
+{
+	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+}
+
+void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textureId)
+{
+	switch (renderer->getTextureUnit()) {
+		case LightingShader::TEXTUREUNIT_DIFFUSE:
+			renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			break;
+	}
 }
 
 void ShadowMappingShaderRender::setProgramLightPosition(const Vector3& lightPosition)

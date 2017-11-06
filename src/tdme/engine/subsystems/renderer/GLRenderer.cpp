@@ -177,3 +177,8 @@ void GLRenderer::setMaterialShininess(float shininess)
 {
 	material.shininess = shininess;
 }
+
+void GLRenderer::setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency)
+{
+	material.diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparency == true?1:0;
+}

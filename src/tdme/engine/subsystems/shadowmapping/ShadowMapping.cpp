@@ -195,7 +195,7 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
-void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
+void ShadowMapping::updateMatrices(GLRenderer* renderer)
 {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
@@ -229,6 +229,48 @@ void ShadowMapping::updateMVPMatrices(GLRenderer* renderer)
 		end_switch0:;
 	}
 
+}
+
+void ShadowMapping::updateMaterial(GLRenderer* renderer) {
+	if (runState == ShadowMapping_RunState::NONE)
+		return;
+	{
+		auto v = runState;
+		if (v == ShadowMapping_RunState::PRE) {
+			{
+				Engine::getShadowMappingShaderPre()->updateMaterial(renderer);
+				goto end_switch0;;
+			}
+		}
+		if (v == ShadowMapping_RunState::RENDER) {
+			{
+				Engine::getShadowMappingShaderRender()->updateMaterial(renderer);
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
+	}
+}
+
+void ShadowMapping::bindTexture(GLRenderer* renderer, int32_t textureId) {
+	if (runState == ShadowMapping_RunState::NONE)
+		return;
+	{
+		auto v = runState;
+		if (v == ShadowMapping_RunState::PRE) {
+			{
+				Engine::getShadowMappingShaderPre()->bindTexture(renderer, textureId);
+				goto end_switch0;;
+			}
+		}
+		if (v == ShadowMapping_RunState::RENDER) {
+			{
+				Engine::getShadowMappingShaderRender()->bindTexture(renderer, textureId);
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
+	}
 }
 
 void ShadowMapping::updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)

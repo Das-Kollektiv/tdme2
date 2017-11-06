@@ -80,6 +80,10 @@ void LightingShader::initialize()
 	if (uniformDiffuseTextureAvailable == -1)
 		return;
 
+	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
+	if (uniformDiffuseTextureMaskedTransparency == -1)
+		return;
+
 	if (renderer->isDisplacementMappingAvailable() == true) {
 		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureUnit");
 		if (uniformDisplacementTextureUnit == -1)
@@ -253,6 +257,7 @@ void LightingShader::updateMaterial(GLRenderer* renderer)
 	copy(begin(renderer->material.emission), end(renderer->material.emission), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, tmpColor4);
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
+	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 }
 
 void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
@@ -294,27 +299,27 @@ void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
 		return;
 
 	switch (renderer->getTextureUnit()) {
-	case TEXTUREUNIT_DIFFUSE:
-		renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
-		break;
-	case TEXTUREUNIT_SPECULAR:
-		if (renderer->isSpecularMappingAvailable() == false)
+		case TEXTUREUNIT_DIFFUSE:
+			renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case TEXTUREUNIT_SPECULAR:
+			if (renderer->isSpecularMappingAvailable() == false)
+				break;
 
-		renderer->setProgramUniformInteger(uniformSpecularTextureAvailable, textureId == 0 ? 0 : 1);
-		break;
-	case TEXTUREUNIT_NORMAL:
-		if (renderer->isNormalMappingAvailable() == false)
+			renderer->setProgramUniformInteger(uniformSpecularTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case TEXTUREUNIT_NORMAL:
+			if (renderer->isNormalMappingAvailable() == false)
+				break;
 
-		renderer->setProgramUniformInteger(uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
-		break;
-	case TEXTUREUNIT_DISPLACEMENT:
-		if (renderer->isDisplacementMappingAvailable() == false)
+			renderer->setProgramUniformInteger(uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case TEXTUREUNIT_DISPLACEMENT:
+			if (renderer->isDisplacementMappingAvailable() == false)
+				break;
 
-		renderer->setProgramUniformInteger(uniformDisplacementTextureAvailable, textureId == 0 ? 0 : 1);
-		break;
+			renderer->setProgramUniformInteger(uniformDisplacementTextureAvailable, textureId == 0 ? 0 : 1);
+			break;
 	}
 
 }

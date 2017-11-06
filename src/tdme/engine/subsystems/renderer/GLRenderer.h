@@ -1,6 +1,4 @@
-
 #pragma once
-
 
 #include <array>
 #include <vector>
@@ -712,6 +710,11 @@ public:
 	 * @param shininess
 	 */
 	virtual void setMaterialShininess(float shininess);
+
+	/**
+	 * Set material diffuse texture masked transparency
+	 */
+	virtual void setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency);
 
 	/** 
 	 * Update material

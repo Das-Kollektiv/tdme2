@@ -31,6 +31,9 @@ private:
 	int32_t renderUniformMVMatrix {  };
 	int32_t renderUniformMVPMatrix {  };
 	int32_t renderUniformNormalMatrix {  };
+	int32_t uniformDiffuseTextureUnit {  };
+	int32_t uniformDiffuseTextureAvailable {  };
+	int32_t uniformDiffuseTextureMaskedTransparency {  };
 	int32_t renderUniformLightPosition {  };
 	int32_t renderUniformLightDirection {  };
 	int32_t renderUniformLightSpotExponent {  };
@@ -90,6 +93,19 @@ public:
 	 * @param normal matrix
 	 */
 	void setProgramNormalMatrix(const Matrix4x4& normalMatrix);
+
+	/**
+	 * Update material
+	 * @param renderer
+	 */
+	void updateMaterial(GLRenderer* renderer);
+
+	/**
+	 * Bind texture
+	 * @param renderer
+	 * @param texture id
+	 */
+	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/** 
 	 * Set up program light position

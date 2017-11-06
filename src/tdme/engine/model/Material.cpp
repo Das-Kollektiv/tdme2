@@ -27,6 +27,7 @@ Material::Material(const string& id)
 	shininess = 0.0f;
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
+	diffuseTextureMaskedTransparency = false;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
 	displacementTexture = nullptr;
@@ -131,16 +132,16 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 					diffuseTexture->getTextureHeight(),
 					pixelByteBuffer
 				);
-				for (int x = 0; x < width; x++)
-				for (int y = 0; y < height; y++) {
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 0));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 1));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get(y * width * 3 + x * 3 + 2));
+				for (int y = 0; y < height; y++)
+				for (int x = 0; x < width; x++) {
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 0));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 1));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 2));
 					pixelByteBuffer->put(
 						(uint8_t)((
-							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 0) +
-							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 1) +
-							transparencyTexture->getTextureData()->get(y * width * 3 + x * 3 + 2)
+							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 0) +
+							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 1) +
+							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 2)
 						) * 0.33f)
 					);
 				}
@@ -168,8 +169,17 @@ bool Material::hasDiffuseTextureTransparency()
 	return diffuseTextureTransparency;
 }
 
+bool Material::hasDiffuseTextureMaskedTransparency() {
+	return diffuseTextureMaskedTransparency;
+}
+
+void Material::setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
+	diffuseTextureMaskedTransparency = maskedTransparency;
+}
+
 void Material::checkDiffuseTextureTransparency()
 {
+	// TODO: check if masked transparency is used
 	diffuseTextureTransparency = false;
 	if (diffuseTexture != nullptr && diffuseTexture->getDepth() == 32) {
 		auto textureData = diffuseTexture->getTextureData();
@@ -264,9 +274,14 @@ Texture* Material::getDisplacementTexture()
 	return displacementTexture;
 }
 
-bool Material::hasTransparency()
+bool Material::hasColorTransparency()
 {
-	return diffuseColor.getAlpha() < 1.0f - MathTools::EPSILON || diffuseTextureTransparency;
+	return diffuseColor.getAlpha() < 1.0f - MathTools::EPSILON;
+}
+
+bool Material::hasTextureTransparency()
+{
+	return diffuseTextureTransparency == true && diffuseTextureMaskedTransparency == false;
 }
 
 string Material::defaultMaterialId = "tdme.default_material";

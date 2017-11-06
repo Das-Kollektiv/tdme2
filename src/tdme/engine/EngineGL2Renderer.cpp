@@ -25,7 +25,7 @@ void EngineGL2Renderer::onUpdateProjectionMatrix()
 		Engine::particlesShader->updateMatrices(this);
 
 	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMVPMatrices(this);
+		engine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -38,7 +38,7 @@ void EngineGL2Renderer::onUpdateCameraMatrix()
 		Engine::particlesShader->updateMatrices(this);
 
 	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMVPMatrices(this);
+		engine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -51,7 +51,7 @@ void EngineGL2Renderer::onUpdateModelViewMatrix()
 		Engine::particlesShader->updateMatrices(this);
 
 	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMVPMatrices(this);
+		engine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -63,6 +63,8 @@ void EngineGL2Renderer::onBindTexture(int32_t textureId)
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->bindTexture(this, textureId);
 
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->bindTexture(this, textureId);
 }
 
 void EngineGL2Renderer::onUpdateTextureMatrix()
@@ -94,4 +96,6 @@ void EngineGL2Renderer::onUpdateMaterial()
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(this);
 
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateMaterial(this);
 }

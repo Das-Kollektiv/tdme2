@@ -42,6 +42,7 @@ private:
 	string diffuseTransparencyTexturePathName {  };
 	string diffuseTransparencyTextureFileName {  };
 	Texture* diffuseTexture {  };
+	bool diffuseTextureMaskedTransparency { };
 	bool diffuseTextureTransparency {  };
 	string specularTexturePathName {  };
 	string specularTextureFileName {  };
@@ -131,9 +132,20 @@ public:
 	Texture* getDiffuseTexture();
 
 	/** 
-	 * @return texture has transparent pixels
+	 * @return diffuse texture has transparent pixels
 	 */
 	bool hasDiffuseTextureTransparency();
+
+	/**
+	 * @return diffuse texture has masked transparency, means pixel are eighter opaque or not visible
+	 */
+	bool hasDiffuseTextureMaskedTransparency();
+
+	/**
+	 * Set if diffuse texture uses masked transparency(means pixel are eighter opaque or not visible)
+	 * @param masked transparency
+	 */
+	void setDiffuseTextureMaskedTransparency(bool maskedTransparency);
 
 private:
 
@@ -226,9 +238,14 @@ public:
 	Texture* getDisplacementTexture();
 
 	/** 
-	 * @return if material is transparent
+	 * @return if color is transparent
 	 */
-	bool hasTransparency();
+	bool hasColorTransparency();
+
+	/**
+	 * @return if texture has transparency with masked transparency disabled
+	 */
+	bool hasTextureTransparency();
 
 	/**
 	 * Public constructor

@@ -74,6 +74,7 @@ uniform vec4 effectColorMul;
 
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
+uniform int diffuseTextureMaskedTransparency;
 
 uniform sampler2D specularTextureUnit;
 uniform int specularTextureAvailable;
@@ -142,6 +143,20 @@ void computeLights(in vec3 normal, in vec3 position) {
 }
 
 void main (void) {
+	// retrieve diffuse texture color value
+	vec4 diffuseTextureColor;
+	if (diffuseTextureAvailable == 1) {
+		// fetch from texture
+		diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
+		// check if to handle diffuse texture masked transparency
+		if (diffuseTextureMaskedTransparency == 1) {
+			// discard if beeing transparent
+			if (diffuseTextureColor.a < 0.1) discard;
+			// set to opqaue
+			diffuseTextureColor.a = 1.0;
+		}
+	}
+
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	fragColor+= clamp(sceneColor, 0.0, 1.0);
@@ -177,7 +192,7 @@ void main (void) {
 
 	//
 	if (diffuseTextureAvailable == 1) {
-		outColor = clamp((effectColorAdd + (texture(diffuseTextureUnit, vsFragTextureUV)) * fragColor), 0.0, 1.0);
+		outColor = clamp((effectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
 	} else {
 		outColor = clamp(effectColorAdd + fragColor, 0.0, 1.0);
 	}

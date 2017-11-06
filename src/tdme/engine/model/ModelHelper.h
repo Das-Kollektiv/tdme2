@@ -66,6 +66,11 @@ public:
 	 */
 	static void prepareForIndexedRendering(Model* model);
 
+	/**
+	 * Set diffuse masked transparency for given model
+	 * @param model
+	 */
+	static void setDiffuseMaskedTransparency(Model* model);
 private:
 
 	/** 

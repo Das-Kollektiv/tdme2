@@ -130,7 +130,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 			auto material = facesEntity.getMaterial();
 			auto transparentFacesEntity = false;
 			if (material != nullptr) {
-				if (material->hasTransparency() == true)
+				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true)
 					transparentFacesEntity = true;
 
 			}

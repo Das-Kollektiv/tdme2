@@ -290,9 +290,10 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 			auto material = facesEntity->getMaterial();
 			auto transparentFacesEntity = false;
 			if (material != nullptr) {
-				if (material->hasTransparency() == true)
-					transparentFacesEntity = true;
-
+				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
+				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+					renderer->disableCulling();
+				}
 			}
 			if (transparentFacesEntity == true) {
 				auto objectCount = objects.size();
@@ -395,6 +396,11 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				}
 			}
 			faceIdx += faces;
+			if (material != nullptr) {
+				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+					renderer->enableCulling();
+				}
+			}
 		}
 	}
 	renderer->unbindBufferObjects();
@@ -414,6 +420,7 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 	renderer->setMaterialSpecular(material->getSpecularColor().getArray());
 	renderer->setMaterialEmission(material->getEmissionColor().getArray());
 	renderer->setMaterialShininess(material->getShininess());
+	renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
 	renderer->onUpdateMaterial();
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 	renderer->bindTexture(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx]);

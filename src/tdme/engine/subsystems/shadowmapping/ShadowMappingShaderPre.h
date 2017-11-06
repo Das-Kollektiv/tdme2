@@ -18,10 +18,13 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre
 {
 private:
 	GLRenderer* renderer {  };
-	int32_t preVertexShaderGlId {  };
-	int32_t preFragmentShaderGlId {  };
-	int32_t preUniformMVPMatrix {  };
-	int32_t preProgramGlId {  };
+	int32_t vertexShaderGlId {  };
+	int32_t fragmentShaderGlId {  };
+	int32_t programGlId {  };
+	int32_t uniformMVPMatrix {  };
+	int32_t uniformDiffuseTextureUnit {  };
+	int32_t uniformDiffuseTextureAvailable {  };
+	int32_t uniformDiffuseTextureMaskedTransparency {  };
 	bool initialized {  };
 
 public:
@@ -51,6 +54,19 @@ public:
 	 * @param mvp matrix
 	 */
 	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
+
+	/**
+	 * Update material
+	 * @param renderer
+	 */
+	virtual void updateMaterial(GLRenderer* renderer);
+
+	/**
+	 * Bind texture
+	 * @param renderer
+	 * @param texture id
+	 */
+	virtual void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/**
 	 * Constructor
