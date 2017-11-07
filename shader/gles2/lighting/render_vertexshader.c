@@ -82,8 +82,8 @@ uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
 // will be passed to fragment shader
-varying vec2 fragTextureUV;
-varying vec4 fragColor;
+varying vec2 vsFragTextureUV;
+varying vec4 vsFragColor;
 
 void computeLight(in int i, in vec3 normal, in vec3 position) {
 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
@@ -112,7 +112,7 @@ void computeLight(in int i, in vec3 normal, in vec3 position) {
 	lightAttenuation *= lightSpotAttenuation;
 
 	// add color components to fragment color
-	fragColor+=
+	vsFragColor+=
 		clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
 		clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
 		clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * material.shininess) * lightAttenuation, 0.0, 1.0);
@@ -132,12 +132,12 @@ void computeLights(in vec3 normal, in vec3 position) {
  
 void main(void) {
 	// pass texture uv to fragment shader
-	fragTextureUV = inTextureUV;
+	vsFragTextureUV = inTextureUV;
 
 	//
-	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
-	fragColor+= clamp(sceneColor, 0.0, 1.0);
-	fragColor+= clamp(material.emission, 0.0, 1.0);
+	vsFragColor = vec4(0.0, 0.0, 0.0, 0.0);
+	vsFragColor+= clamp(sceneColor, 0.0, 1.0);
+	vsFragColor+= clamp(material.emission, 0.0, 1.0);
 
 	// compute gl position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
@@ -153,6 +153,6 @@ void main(void) {
 	computeLights(normal, position);
 
 	// take effect colors into account
-	fragColor = fragColor * effectColorMul;
-	fragColor.a = material.diffuse.a * effectColorMul.a;
+	vsFragColor = vsFragColor * effectColorMul;
+	vsFragColor.a = material.diffuse.a * effectColorMul.a;
 }

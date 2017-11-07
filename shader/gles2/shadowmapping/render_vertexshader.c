@@ -14,11 +14,16 @@ uniform mat4 mvMatrix;
 uniform mat4 normalMatrix;
 uniform vec3 lightDirection;
 
+// will be passed to fragment shader
+varying vec2 vsFragTextureUV;
 varying vec4 vsShadowCoord;
 varying float vsShadowIntensity;
 varying vec3 vsPosition;
 
 void main() {
+	// pass texture uv to fragment shader
+	vsFragTextureUV = inTextureUV;
+
 	// shadow coord
 	vsShadowCoord = depthBiasMVPMatrix * vec4(inVertex, 1.0);
 	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;
