@@ -13,7 +13,13 @@ varying vec4 vsShadowCoord;
 varying float vsShadowIntensity;
 varying vec3 vsPosition;
 
+// will be passed to fragment shader
+varying vec2 vsFragTextureUV;
+
 void main() {
+	// pass texture uv to fragment shader
+	vsFragTextureUV = vec2(gl_MultiTexCoord0);
+
 	// shadow coord
 	vsShadowCoord = depthBiasMVPMatrix * gl_Vertex;
 	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;

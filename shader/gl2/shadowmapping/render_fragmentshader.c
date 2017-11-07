@@ -8,6 +8,10 @@ uniform sampler2D textureUnit;
 uniform float texturePixelWidth;
 uniform float texturePixelHeight;
 
+uniform sampler2D diffuseTextureUnit;
+uniform int diffuseTextureAvailable;
+uniform int diffuseTextureMaskedTransparency;
+
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 uniform float lightSpotExponent;
@@ -16,11 +20,24 @@ uniform float lightConstantAttenuation;
 uniform float lightLinearAttenuation;
 uniform float lightQuadraticAttenuation;
 
+// passed from vertex shader
+varying vec2 vsFragTextureUV;
 varying vec3 vsPosition;
 varying vec4 vsShadowCoord;
 varying float vsShadowIntensity;
 
 void main() {
+	// retrieve diffuse texture color value
+	if (diffuseTextureAvailable == 1) {
+		// fetch from texture
+		vec4 diffuseTextureColor = texture2D(diffuseTextureUnit, vsFragTextureUV);
+		// check if to handle diffuse texture masked transparency
+		if (diffuseTextureMaskedTransparency == 1) {
+			// discard if beeing transparent
+			if (diffuseTextureColor.a < 0.1) discard;
+		}
+	}
+
 	// do not process samples out of frustum
 	if (vsShadowCoord.w == 0.0) {
 		// return color to be blended with framebuffer

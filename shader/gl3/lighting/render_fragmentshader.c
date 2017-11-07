@@ -71,6 +71,7 @@ uniform Light lights[MAX_LIGHTS];
 
 uniform vec4 sceneColor;
 uniform vec4 effectColorMul;
+uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
@@ -81,8 +82,6 @@ uniform int specularTextureAvailable;
 
 uniform sampler2D normalTextureUnit;
 uniform int normalTextureAvailable;
-
-uniform vec4 effectColorAdd;
 
 // material shininess
 float materialShininess;

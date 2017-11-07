@@ -71,16 +71,16 @@ uniform Light lights[MAX_LIGHTS];
 
 uniform vec4 sceneColor;
 uniform vec4 effectColorMul;
+uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
-uniform vec4 effectColorAdd;
+uniform int diffuseTextureMaskedTransparency;
 
 // passed from vertex shader
 varying vec2 vsFragTextureUV;
 varying vec3 vsPosition;
 varying vec3 vsNormal;
-
 
 vec4 fragColor;
 
@@ -129,6 +129,20 @@ void computeLights(in vec3 normal, in vec3 position) {
 }
 
 void main (void) {
+	// retrieve diffuse texture color value
+	vec4 diffuseTextureColor;
+	if (diffuseTextureAvailable == 1) {
+		// fetch from texture
+		diffuseTextureColor = texture2D(diffuseTextureUnit, vsFragTextureUV);
+		// check if to handle diffuse texture masked transparency
+		if (diffuseTextureMaskedTransparency == 1) {
+			// discard if beeing transparent
+			if (diffuseTextureColor.a < 0.1) discard;
+			// set to opqaue
+			diffuseTextureColor.a = 1.0;
+		}
+	}
+
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	fragColor+= clamp(sceneColor, 0.0, 1.0);
@@ -143,7 +157,7 @@ void main (void) {
 
 	//
 	if (diffuseTextureAvailable == 1) {
-		gl_FragColor = clamp((effectColorAdd + (texture2D(diffuseTextureUnit, vsFragTextureUV)) * fragColor), 0.0, 1.0);
+		gl_FragColor = clamp((effectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
 	} else {
 		gl_FragColor = clamp(effectColorAdd + fragColor, 0.0, 1.0);
 	}
