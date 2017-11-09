@@ -13,6 +13,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -412,8 +413,10 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			}
 			end_switch1:;
 		}
-
 	}
+	levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
+	levelEditorEntity->getModelSettings()->setMaskedTransparency(jEntityRoot["mt"].getBoolean());
+	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
 	return levelEditorEntity;
 }
 

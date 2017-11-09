@@ -342,6 +342,7 @@ SRCS = \
 	src/tdme/tools/shared/files/ModelMetaDataFileImport.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntity.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityModel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.cpp \

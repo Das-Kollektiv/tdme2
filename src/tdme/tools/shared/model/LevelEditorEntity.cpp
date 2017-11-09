@@ -6,6 +6,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 
 using std::vector;
@@ -15,6 +16,7 @@ using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
@@ -32,11 +34,17 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->pivot.set(pivot);
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->particleSystem = new LevelEditorEntityParticleSystem();
+	} else
+	if (this->type == LevelEditorEntity_EntityType::MODEL) {
+		this->modelSettings = new LevelEditorEntityModel(this);
 	}
+	dynamicShadowing = true;
 }
 
 LevelEditorEntity::~LevelEditorEntity() {
 	if (model != nullptr) delete model;
+	if (particleSystem != nullptr) delete particleSystem;
+	if (modelSettings != nullptr) delete modelSettings;
 }
 
 int32_t LevelEditorEntity::getId()
@@ -134,4 +142,16 @@ void LevelEditorEntity::setDefaultBoundingVolumes()
 LevelEditorEntityParticleSystem* LevelEditorEntity::getParticleSystem()
 {
 	return particleSystem;
+}
+
+LevelEditorEntityModel* LevelEditorEntity::getModelSettings() {
+	return modelSettings;
+}
+
+bool LevelEditorEntity::isDynamicShadowing() {
+	return dynamicShadowing;
+}
+
+void LevelEditorEntity::setDynamicShadowing(bool dynamicShadowing) {
+	this->dynamicShadowing = dynamicShadowing;
 }

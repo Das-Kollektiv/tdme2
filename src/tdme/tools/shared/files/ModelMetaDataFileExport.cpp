@@ -19,6 +19,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
@@ -117,7 +118,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 		*/
 	}
-	jEntityRoot["version"] = "0.99";
+	jEntityRoot["version"] = "1.99";
 	jEntityRoot["type"] = (entity->getType()->getName());
 	jEntityRoot["name"] = (entity->getName());
 	jEntityRoot["descr"] = (entity->getDescription());
@@ -467,6 +468,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		jModelProperties.push_back(jObjectProperty);
 	}
 	jEntityRoot["properties"] = jModelProperties;
-
+	jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
+	jEntityRoot["mt"] = entity->getModelSettings()->isMaskedTransparency();
+	jEntityRoot["ds"] = entity->isDynamicShadowing();
 	return jEntityRoot;
 }

@@ -178,7 +178,7 @@ void PathFindingTest::initialize()
 	engine->initialize();
 	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", &level);
 	Level::setLight(engine, &level, Vector3());
-	Level::addLevel(engine, &level, false, false, true, false, Vector3(0.0f, 0.0f, 0.0f));
+	Level::addLevel(engine, &level, false, false, false, Vector3(0.0f, 0.0f, 0.0f));
 	Level::enableLevel(engine, &level, Vector3(0.0f, 0.0f, 0.0f));
 	vector<RigidBody*> rigidBodies;
 	Level::addLevel(world, &level, rigidBodies, Vector3(0.0f, 0.0f, 0.0f));
@@ -199,7 +199,7 @@ void PathFindingTest::initialize()
 	// playerObject->getTranslation().set(-2.5f, 0.25f, -4.5f);
 	playerObject->update();
 	playerObject->setAnimation("walk");
-	playerObject->setDynamicShadowingEnabled(true);
+	playerObject->setDynamicShadowingEnabled(playerModelEntity->isDynamicShadowing());
 	engine->addEntity(playerObject);
 	pathIdx = 0;
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, -4.5f));

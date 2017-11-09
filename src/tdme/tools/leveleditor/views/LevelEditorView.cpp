@@ -797,7 +797,7 @@ void LevelEditorView::loadLevel()
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	Level::setLight(engine, level, Vector3());
-	Level::addLevel(engine, level, true, true, false, true, Vector3());
+	Level::addLevel(engine, level, true, true, true, Vector3());
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();
@@ -1322,7 +1322,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 	selectedEntity = nullptr;
 	try {
 		string tlFile = file;
-		if (StringUtils::startsWith(StringUtils::toLowerCase(file), ".dae") == true) {
+		if (StringUtils::endsWith(StringUtils::toLowerCase(file), ".dae") == true) {
 			auto daeLevel = DAEReader::readLevel(path, file);
 			tlFile = file + ".tl";
 		}

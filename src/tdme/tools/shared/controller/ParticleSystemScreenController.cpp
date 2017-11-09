@@ -117,7 +117,7 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ParticleSystemScreenController_ParticleSystemScreenController_1(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
-	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), particleSystemPath);
+	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
 	this->value = new MutableString();
 }
 

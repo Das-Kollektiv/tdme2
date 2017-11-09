@@ -64,6 +64,10 @@ private:
 	GUIElementNode* statsOpaqueFaces {  };
 	GUIElementNode* statsTransparentFaces {  };
 	GUIElementNode* statsMaterialCount {  };
+	GUIElementNode* renderingMaskedTransparency {  };
+	GUIElementNode* renderingDynamicShadowing {  };
+	GUIElementNode* renderingApply {  };
+
 	MutableString* value {  };
 	FileDialogPath* modelPath {  };
 
@@ -129,6 +133,17 @@ public:
 	 */
 	void unsetPivot();
 
+	/**
+	 * Set renering options
+	 * @param entity
+	 */
+	void setRendering(LevelEditorEntity* entity);
+
+	/**
+	 * Unset rendering
+	 */
+	void unsetRendering();
+
 	/** 
 	 * Set up model statistics
 	 * @param stats opaque faces
@@ -161,14 +176,42 @@ public:
 	 * On pivot apply
 	 */
 	void onPivotApply();
+
+	/**
+	 * On rendering apply
+	 */
+	void onRenderingApply();
+
+	/**
+	 * Save file
+	 * @param path name
+	 * @param file name
+	 */
 	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+
+	/**
+	 * Load file
+	 * @param path name
+	 * @param file name
+	 */
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/** 
 	 * Shows the error pop up
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On value changed
+	 * @param node
+	 */
 	void onValueChanged(GUIElementNode* node) override;
+
+	/**
+	 * On action performed
+	 * @param type
+	 * @param node
+	 */
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
 	/**

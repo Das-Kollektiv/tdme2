@@ -69,8 +69,9 @@ public:
 	/**
 	 * Set diffuse masked transparency for given model
 	 * @param model
+	 * @param masked transparency
 	 */
-	static void setDiffuseMaskedTransparency(Model* model);
+	static void setDiffuseMaskedTransparency(Model* model, bool maskedTransparency);
 private:
 
 	/** 

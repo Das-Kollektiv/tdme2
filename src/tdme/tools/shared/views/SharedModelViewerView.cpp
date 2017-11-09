@@ -183,12 +183,16 @@ void SharedModelViewerView::updateGUIElements()
 		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelViewerScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
+		entityBoundingVolumeView->setTerrainMesh(entity);
+		modelViewerScreenController->setRendering(entity);
 	} else {
 		modelViewerScreenController->setScreenCaption("Model Viewer - no entity loaded");
 		modelViewerScreenController->unsetEntityProperties();
 		modelViewerScreenController->unsetEntityData();
 		modelViewerScreenController->unsetPivot();
 		entityBoundingVolumeView->unsetBoundingVolumes();
+		entityBoundingVolumeView->unsetTerrainMesh();
+		modelViewerScreenController->unsetRendering();
 	}
 }
 

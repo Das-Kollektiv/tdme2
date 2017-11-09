@@ -66,11 +66,10 @@ public:
 	 * @param level
 	 * @param add empties
 	 * @param add trigger
-	 * @param dynamic shadowing 
 	 * @param pickable
 	 * @param translation
 	 */
-	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation);
+	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation);
 
 	/** 
 	 * Add level to engine
@@ -78,12 +77,11 @@ public:
 	 * @param level
 	 * @param add empties
 	 * @param add trigger
-	 * @param dynamic shadowing 
 	 * @param pickable
 	 * @param translation
 	 * @param enable
 	 */
-	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation, bool enable);
+	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation, bool enable);
 
 	/** 
 	 * Add level to physics world

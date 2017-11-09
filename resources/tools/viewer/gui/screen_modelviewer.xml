@@ -12,6 +12,7 @@
 					<tab id="tab_properties_model_properties" text="Properties" />
 					<tab id="tab_properties_pivot" text="Pivot" />
 					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
+					<tab id="tab_properties_rendering" text="Rendering" /> 
 					<tab id="tab_properties_stats" text="Statistics" />
 				</tabs-header>
 				<tabs-content>
@@ -121,7 +122,7 @@
 								<button id="button_pivot_apply" name="button_pivot_apply" text="Apply" />
 							</layout>
 						</layout>
-					</tab-content>
+					</tab-content> 
 					<tab-content tab-id="tab_properties_boundingvolume" vertical-align="top">
 						<tabs alignment="vertical" width="100%" height="100%">
 							<tabs-header>
@@ -133,6 +134,7 @@
 								<tab id="tab_properties_boundingvolume_5" text="BV 5" />
 								<tab id="tab_properties_boundingvolume_6" text="BV 6" />
 								<tab id="tab_properties_boundingvolume_7" text="BV 7" />
+								<tab id="tab_properties_terrain" text="Terrain" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_boundingvolume_0">
@@ -1017,8 +1019,40 @@
 										</element>
 									</layout>
 								</tab-content>
+								<tab-content tab-id="tab_properties_terrain">
+									<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
+										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+											<checkbox id="terrain_mesh" name="terrain_mesh" value="1" />
+											<space width="5" />
+											<text font="resources/gui/fonts/Foo_20.fnt" text="Treat as terrain mesh" width="auto" height="auto"/>
+										</layout>
+										<space height="20" />
+										<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+											<button id="button_terrain_mesh_apply" name="button_terrain_mesh_apply" text="Apply" />
+										</layout>
+									</layout>
+								</tab-content>
 							</tabs-content>
 						</tabs>	
+					</tab-content>
+					<tab-content tab-id="tab_properties_rendering"> 
+						<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<checkbox id="rendering_masked_transparency" name="rendering_masked_transparency" value="1" />
+								<space width="5" />
+								<text font="resources/gui/fonts/Foo_20.fnt" text="Use masked transparency" width="200" height="auto"/>
+							</layout> 
+							<space height="10" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<checkbox id="rendering_dynamic_shadowing" name="rendering_dynamic_shadowing" value="1" />
+								<space width="5" />
+								<text font="resources/gui/fonts/Foo_20.fnt" text="Use dynamic shadowing" width="200" height="auto"/>
+							</layout>
+							<space height="20" />
+							<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />
+							</layout>
+						</layout>
 					</tab-content>
 					<tab-content tab-id="tab_properties_stats" vertical-align="center">
 						<layout width="auto" height="auto" alignment="vertical">

@@ -20,6 +20,7 @@ using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 /** 
@@ -48,7 +49,8 @@ public: /* protected */
 	Vector3 pivot {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
-
+	LevelEditorEntityModel* modelSettings;
+	bool dynamicShadowing;
 public:
 
 	/** 
@@ -145,6 +147,23 @@ public:
 	 * @return level editor entity particle system
 	 */
 	LevelEditorEntityParticleSystem* getParticleSystem();
+
+	/**
+	 * @return model settings
+	 */
+	LevelEditorEntityModel* getModelSettings();
+
+	/**
+	 * Is dynamic shadowing
+	 * @return dynamic shadowing enabled
+	 */
+	bool isDynamicShadowing();
+
+	/**
+	 * Set dynamic shadowing
+	 * @param dynamic shadowing enabled
+	 */
+	void setDynamicShadowing(bool dynamicShadowing);
 
 	/**
 	 * Creates a level editor model

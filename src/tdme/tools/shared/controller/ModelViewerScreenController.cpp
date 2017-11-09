@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -22,6 +21,7 @@
 #include <tdme/tools/shared/controller/ModelViewerScreenController_onModelLoad_2.h>
 #include <tdme/tools/shared/controller/ModelViewerScreenController_onModelSave_3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
@@ -75,7 +75,7 @@ ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* 
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelViewerScreenController_ModelViewerScreenController_1(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
-	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), modelPath);
+	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), modelPath, true);
 }
 
 ModelViewerScreenController::~ModelViewerScreenController() {
@@ -124,6 +124,9 @@ void ModelViewerScreenController::initialize()
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
+		renderingMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_masked_transparency"));
+		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
+		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -188,6 +191,24 @@ void ModelViewerScreenController::unsetPivot()
 	pivotZ->getController()->setDisabled(true);
 	pivotZ->getController()->getValue()->set(TEXT_EMPTY);
 	pivotApply->getController()->setDisabled(true);
+}
+
+void ModelViewerScreenController::setRendering(LevelEditorEntity* entity)
+{
+	renderingMaskedTransparency->getController()->setDisabled(false);
+	renderingMaskedTransparency->getController()->getValue()->set(value->set(entity->getModelSettings()->isMaskedTransparency() == true?"1":""));
+	renderingDynamicShadowing->getController()->setDisabled(false);
+	renderingDynamicShadowing->getController()->getValue()->set(value->set(entity->isDynamicShadowing() == true?"1":""));
+	renderingApply->getController()->setDisabled(false);
+}
+
+void ModelViewerScreenController::unsetRendering()
+{
+	renderingMaskedTransparency->getController()->setDisabled(true);
+	renderingMaskedTransparency->getController()->getValue()->set(TEXT_EMPTY);
+	renderingDynamicShadowing->getController()->setDisabled(true);
+	renderingDynamicShadowing->getController()->getValue()->set(value->set("1"));
+	renderingApply->getController()->setDisabled(true);
 }
 
 void ModelViewerScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
@@ -262,6 +283,13 @@ void ModelViewerScreenController::onPivotApply()
 	}
 }
 
+void ModelViewerScreenController::onRenderingApply()
+{
+	if (view->getEntity() == nullptr) return;
+	view->getEntity()->getModelSettings()->setMaskedTransparency(renderingMaskedTransparency->getController()->getValue()->equals("1"));
+	view->getEntity()->setDynamicShadowing(renderingMaskedTransparency->getController()->getValue()->equals("1"));
+}
+
 void ModelViewerScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
@@ -293,12 +321,18 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 			{
 				if (node->getId().compare("button_model_load") == 0) {
 					onModelLoad();
-				} else if (node->getId().compare("button_model_reload") == 0) {
+				} else
+				if (node->getId().compare("button_model_reload") == 0) {
 					onModelReload();
-				} else if (node->getId().compare("button_model_save") == 0) {
+				} else
+				if (node->getId().compare("button_model_save") == 0) {
 					onModelSave();
-				} else if (node->getId().compare("button_pivot_apply") == 0) {
+				} else
+				if (node->getId().compare("button_pivot_apply") == 0) {
 					onPivotApply();
+				} else
+				if (node->getId().compare("button_rendering_apply") == 0) {
+					onRenderingApply();
 				} else {
 					Console::println(
 						string(

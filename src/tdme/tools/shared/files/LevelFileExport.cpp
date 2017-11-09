@@ -53,7 +53,7 @@ void LevelFileExport::export_(const string& pathName, const string& fileName, Le
 	level->setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();
 	tdme::ext::jsonbox::Object jRoot;
-	jRoot["version"] = "0.99";
+	jRoot["version"] = "1.99";
 	jRoot["ro"] = (level->getRotationOrder()->getName());
 	tdme::ext::jsonbox::Array jLights;
 	for (auto i = 0; i < level->getLightCount(); i++) {

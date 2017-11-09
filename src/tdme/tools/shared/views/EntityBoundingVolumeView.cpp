@@ -266,3 +266,14 @@ void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* 
 	);
 	updateModelBoundingVolume(entity, idx);
 }
+
+void EntityBoundingVolumeView::setTerrainMesh(LevelEditorEntity* entity) {
+	if (entity == nullptr)
+		return;
+
+	modelViewerScreenController->setTerrainMesh(entity);
+}
+
+void EntityBoundingVolumeView::unsetTerrainMesh() {
+	modelViewerScreenController->unsetTerrainMesh();
+}

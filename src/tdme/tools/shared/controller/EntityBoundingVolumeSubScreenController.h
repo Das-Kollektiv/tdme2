@@ -64,6 +64,9 @@ private:
 	array<GUIElementNode*, 8> boundingvolumeObbRotationY {  };
 	array<GUIElementNode*, 8> boundingvolumeObbRotationZ {  };
 	array<GUIElementNode*, 8> boundingvolumeConvexMeshFile {  };
+	bool supportTerrainMesh;
+	GUIElementNode* terrainMesh {  };
+	GUIElementNode* terrainMeshApply {  };
 	MutableString* value {  };
 
 public:
@@ -209,6 +212,23 @@ public:
 	virtual void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
+	 * Set terrain mesh
+	 * @param entity
+	 */
+	virtual void setTerrainMesh(LevelEditorEntity* entity);
+
+	/**
+	 * Shows the error pop up
+	 * @param entity
+	 */
+	virtual void onSetTerrainMesh(LevelEditorEntity* entity);
+
+	/**
+	 * Unset terrain mesh
+	 */
+	virtual void unsetTerrainMesh();
+
+	/**
 	 * Shows the error pop up
 	 */
 	virtual void showErrorPopUp(const string& caption, const string& message);
@@ -225,8 +245,9 @@ public:
 	 * Public constructor
 	 * @param pop ups
 	 * @param model viewer screen controller
+	 * @param support terrain mesh
 	 */
-	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath);
+	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool supportTerrainMesh);
 
 	/**
 	 * Destructor

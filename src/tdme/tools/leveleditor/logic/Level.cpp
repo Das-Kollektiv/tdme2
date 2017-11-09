@@ -221,12 +221,12 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation)
 {
-	addLevel(engine, level, addEmpties, addTrigger, dynamicShadowing, pickable, translation, true);
+	addLevel(engine, level, addEmpties, addTrigger, pickable, translation, true);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool dynamicShadowing, bool pickable, const Vector3& translation, bool enable)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation, bool enable)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -252,7 +252,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty("shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
-		entity->setDynamicShadowingEnabled(omitShadowing == true ? false : dynamicShadowing);
+		entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
 		}

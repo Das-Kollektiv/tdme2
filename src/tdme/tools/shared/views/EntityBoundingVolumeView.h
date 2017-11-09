@@ -67,6 +67,17 @@ public:
 	 */
 	virtual void selectBoundingVolumeType(int32_t idx, int32_t bvTypeId);
 
+	/**
+	 * Set terrain mesh
+	 * @param entity
+	 */
+	virtual void setTerrainMesh(LevelEditorEntity* entity);
+
+	/**
+	 * Unset terrain mesh
+	 */
+	virtual void unsetTerrainMesh();
+
 private:
 
 	/** 
