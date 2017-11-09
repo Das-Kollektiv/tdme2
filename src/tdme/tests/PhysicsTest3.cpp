@@ -142,7 +142,7 @@ void PhysicsTest3::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
-	cam->getLookFrom().set(0.0f, 4.0f * 2.5f, -6.0f * 2.5f);
+	cam->getLookFrom().set(0.0f, 4.0f * 6.0f, -6.0f * 6.0f);
 	cam->getLookAt().set(0.0f, 0.0f, 0.0f);
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
 	auto light0 = engine->getLightAt(0);
@@ -255,7 +255,7 @@ void PhysicsTest3::initialize()
 	engine->addEntity(entity);
 	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
 	try {
-		auto _terrainModel = DAEReader::read("resources/tests/environment/terrain_test", "terrain_test.dae");
+		auto _terrainModel = DAEReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae");
 		_terrainModel->getImportTransformationsMatrix().scale(1.5f);
 		entity = new Object3D("terrain", _terrainModel);
 		entity->getTranslation().setY(-4.0f);

@@ -61,11 +61,39 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 	model->getFaceTriangles(&faceTriangles);
 	for (auto i = 0; i < faceTriangles.size(); i++) {
 		vector<Triangle> convexMeshTriangles;
+
+		// add triangle on top
 		convexMeshTriangles.push_back(faceTriangles[i]);
+
+		// add triangle on bottom
 		convexMeshTriangles.push_back(faceTriangles[i]);
 		(*convexMeshTriangles[1].getVertices())[0].addY(-height);
 		(*convexMeshTriangles[1].getVertices())[1].addY(-height);
 		(*convexMeshTriangles[1].getVertices())[2].addY(-height);
+
+		// add triangle vertices
+		Vector3 triangleVertex0Bottom;
+		Vector3 triangleVertex1Bottom;
+		Vector3 triangleVertex2Bottom;
+		Vector3& triangleVertex0Top = (*faceTriangles[i].getVertices())[0];
+		Vector3& triangleVertex1Top = (*faceTriangles[i].getVertices())[1];
+		Vector3& triangleVertex2Top = (*faceTriangles[i].getVertices())[2];
+		triangleVertex0Bottom.set(triangleVertex0Top).addY(-height);
+		triangleVertex1Bottom.set(triangleVertex1Top).addY(-height);
+		triangleVertex2Bottom.set(triangleVertex2Top).addY(-height);
+
+		// add bottom top triangles
+		//	vertices 0, 2
+		convexMeshTriangles.push_back(Triangle(triangleVertex0Top, triangleVertex2Top, triangleVertex0Bottom));
+		convexMeshTriangles.push_back(Triangle(triangleVertex0Bottom, triangleVertex2Top, triangleVertex2Bottom));
+		//	vertices 0, 1
+		convexMeshTriangles.push_back(Triangle(triangleVertex0Top, triangleVertex1Top, triangleVertex0Bottom));
+		convexMeshTriangles.push_back(Triangle(triangleVertex0Bottom, triangleVertex1Top, triangleVertex1Bottom));
+		//	vertices 1, 2
+		convexMeshTriangles.push_back(Triangle(triangleVertex1Top, triangleVertex2Top, triangleVertex1Bottom));
+		convexMeshTriangles.push_back(Triangle(triangleVertex1Bottom, triangleVertex2Top, triangleVertex2Bottom));
+
+		// add to convex meshes
 		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles));
 	}
 }

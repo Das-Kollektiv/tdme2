@@ -86,9 +86,11 @@ bool CollisionDetection::doCollide(Capsule* capsule, BoundingBox* aabb, const Ve
 
 bool CollisionDetection::doCollide(Sphere* s1, Sphere* s2, const Vector3& movement, CollisionResponse* collision)
 {
+	collision->reset();
+	if (doBroadTest(s1, s2) == false) return false;
+
 	Vector3 axis;
 	Vector3 hitPoint;
-	collision->reset();
 	axis.set(s2->getCenter()).sub(s1->getCenter());
 	if (checkMovementFallback(axis, movement, collision) == true) {
 		auto collisionEntity = collision->getEntityAt(0);
@@ -112,7 +114,9 @@ bool CollisionDetection::doCollide(Sphere* s1, Sphere* s2, const Vector3& moveme
 
 bool CollisionDetection::doCollide(Capsule* c1, Capsule* c2, const Vector3& movement, CollisionResponse* collision)
 {
+	collision->reset();
 	if (doBroadTest(c1, c2) == false) return false;
+
 	Vector3 closestPointOnCapsule1;
 	Vector3 closestPointOnCapsule2;
 	Sphere sphere1;
@@ -155,8 +159,7 @@ bool CollisionDetection::doCollide(Capsule* c, Sphere* s, const Vector3& movemen
 bool CollisionDetection::doCollide(Sphere* s, Capsule* c, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(s, c) == false)
-		return false;
+	if (doBroadTest(s, c) == false) return false;
 
 	Vector3 closestPoint;
 	Vector3 axis;
@@ -187,8 +190,7 @@ bool CollisionDetection::doCollide(Sphere* s, Capsule* c, const Vector3& movemen
 bool CollisionDetection::doCollide(OrientedBoundingBox* obb1, OrientedBoundingBox* obb2, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(obb1, obb2) == false)
-		return false;
+	if (doBroadTest(obb1, obb2) == false) return false;
 
 	// SAT best fit
 	bool satHaveBestFit = false;
@@ -267,8 +269,7 @@ bool CollisionDetection::doCollide(BoundingBox* aabb, OrientedBoundingBox* obb, 
 bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Sphere* sphere, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(obb, sphere) == false)
-		return false;
+	if (doBroadTest(obb, sphere) == false) return false;
 
 	Vector3 closestPoint;
 	Vector3 axis;
@@ -304,8 +305,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Sphere* sphere, con
 bool CollisionDetection::doCollide(Sphere* sphere, OrientedBoundingBox* obb, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(sphere, obb) == false)
-		return false;
+	if (doBroadTest(sphere, obb) == false) return false;
 
 	Vector3 closestPoint;
 	Vector3 axis;
@@ -341,8 +341,7 @@ bool CollisionDetection::doCollide(Sphere* sphere, OrientedBoundingBox* obb, con
 bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Capsule* capsule, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(obb, capsule) == false)
-		return false;
+	if (doBroadTest(obb, capsule) == false) return false;
 
 	OrientedBoundingBox obbExtended;
 	Vector3 contactMin;
@@ -391,6 +390,7 @@ bool CollisionDetection::doCollide(Capsule* capsule, OrientedBoundingBox* obb, c
 bool CollisionDetection::doCollide(Triangle* triangle, Sphere* sphere, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
+	if (doBroadTest(triangle, sphere) == false) return false;
 
 	Vector3 closestPoint;
 	Vector3 axis;
@@ -418,6 +418,7 @@ bool CollisionDetection::doCollide(Triangle* triangle, Sphere* sphere, const Vec
 bool CollisionDetection::doCollide(Sphere* sphere, Triangle* triangle, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
+	if (doBroadTest(sphere, triangle) == false) return false;
 
 	Vector3 closestPoint;
 	Vector3 axis;
@@ -445,11 +446,11 @@ bool CollisionDetection::doCollide(Sphere* sphere, Triangle* triangle, const Vec
 bool CollisionDetection::doCollide(Sphere* sphere, ConvexMesh* mesh, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-
 	if (doBroadTest(mesh, sphere) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle : *mesh->getTriangles()) {
+		if (doBroadTest(sphere, &triangle) == false) continue;
 		if (doCollide(sphere, &triangle, movement, &collision1) == true) {
 			collision->mergeResponse(&collision1);
 		}
@@ -461,11 +462,11 @@ bool CollisionDetection::doCollide(Sphere* sphere, ConvexMesh* mesh, const Vecto
 bool CollisionDetection::doCollide(ConvexMesh* mesh, Sphere* sphere, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-
 	if (doBroadTest(mesh, sphere) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle : *mesh->getTriangles()) {
+		if (doBroadTest(&triangle, sphere) == false) continue;
 		if (doCollide(&triangle, sphere, movement, &collision1) == true) {
 			collision->mergeResponse(&collision1);
 		}
@@ -491,8 +492,7 @@ bool CollisionDetection::doCollide(BoundingBox* aabb, Triangle* triangle, const 
 bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(triangle, obb) == false)
-		return false;
+	if (doBroadTest(triangle, obb) == false) return false;
 
 	// SAT best fit
 	bool satHaveBestFit = false;
@@ -584,8 +584,7 @@ bool CollisionDetection::doCollide(BoundingBox* aabb, ConvexMesh* mesh, const Ve
 bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(mesh, obb) == false)
-		return false;
+	if (doBroadTest(mesh, obb) == false) return false;
 
 	// SAT best fit
 	bool satHaveBestFit = false;
@@ -681,8 +680,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, ConvexMesh* mesh, c
 bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(triangle1, triangle2) == false)
-		return false;
+	if (doBroadTest(triangle1, triangle2) == false) return false;
 
 	Vector3 triangle1Edge1;
 	Vector3 triangle1Edge2;
@@ -757,8 +755,7 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, con
 bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(mesh1, mesh2) == false)
-		return false;
+	if (doBroadTest(mesh1, mesh2) == false) return false;
 
 	Vector3 triangle1Edge1;
 	Vector3 triangle1Edge2;
@@ -844,8 +841,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 bool CollisionDetection::doCollide(Triangle* triangle, ConvexMesh* mesh, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(triangle, mesh) == false)
-		return false;
+	if (doBroadTest(triangle, mesh) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle2 : *mesh->getTriangles()) {
@@ -861,8 +857,7 @@ bool CollisionDetection::doCollide(Triangle* triangle, ConvexMesh* mesh, const V
 bool CollisionDetection::doCollide(ConvexMesh* mesh, Triangle* triangle, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(triangle, mesh) == false)
-		return false;
+	if (doBroadTest(triangle, mesh) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle2 : *mesh->getTriangles()) {
@@ -877,8 +872,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, Triangle* triangle, const V
 
 bool CollisionDetection::doCollide(Triangle* triangle, Capsule* capsule, const Vector3& movement, CollisionResponse* collision)
 {
-	if (doBroadTest(triangle, capsule) == false)
-		return false;
+	collision->reset();
+	if (doBroadTest(triangle, capsule) == false) return false;
 
 	array<Vector3, 5> closestPointsOnCapsuleSegment;
 	array<Vector3, 5> closestPointsOnTriangleSegments;
@@ -918,11 +913,11 @@ bool CollisionDetection::doCollide(Capsule* capsule, Triangle* triangle, const V
 bool CollisionDetection::doCollide(Capsule* capsule, ConvexMesh* mesh, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(capsule, mesh) == false)
-		return false;
+	if (doBroadTest(capsule, mesh) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle : *mesh->getTriangles()) {
+		if (doBroadTest(capsule, &triangle) == false) continue;
 		if (doCollide(capsule, &triangle, movement, &collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1.getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(&collision1);
@@ -935,11 +930,11 @@ bool CollisionDetection::doCollide(Capsule* capsule, ConvexMesh* mesh, const Vec
 bool CollisionDetection::doCollide(ConvexMesh* mesh, Capsule* capsule, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	if (doBroadTest(mesh, capsule) == false)
-		return false;
+	if (doBroadTest(mesh, capsule) == false) return false;
 
 	CollisionResponse collision1;
 	for (auto& triangle : *mesh->getTriangles()) {
+		if (doBroadTest(&triangle, capsule) == false) continue;
 		if (doCollide(&triangle, capsule, movement, &collision1) == true) {
 			if (collision->hasEntitySelected() == false || collision1.getPenetration() > collision->getPenetration()) {
 				collision->fromResponse(&collision1);
