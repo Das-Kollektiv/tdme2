@@ -174,40 +174,40 @@ void ModelViewerScreenController::unsetEntityProperties()
 void ModelViewerScreenController::setPivot(const Vector3& pivot)
 {
 	pivotX->getController()->setDisabled(false);
-	pivotX->getController()->getValue()->set(Tools::formatFloat(pivot.getX()));
+	pivotX->getController()->setValue(value->set(Tools::formatFloat(pivot.getX())));
 	pivotY->getController()->setDisabled(false);
-	pivotY->getController()->getValue()->set(Tools::formatFloat(pivot.getY()));
+	pivotY->getController()->setValue(value->set(Tools::formatFloat(pivot.getY())));
 	pivotZ->getController()->setDisabled(false);
-	pivotZ->getController()->getValue()->set(Tools::formatFloat(pivot.getZ()));
+	pivotZ->getController()->setValue(value->set(Tools::formatFloat(pivot.getZ())));
 	pivotApply->getController()->setDisabled(false);
 }
 
 void ModelViewerScreenController::unsetPivot()
 {
 	pivotX->getController()->setDisabled(true);
-	pivotX->getController()->getValue()->set(TEXT_EMPTY);
+	pivotX->getController()->setValue(value->set(TEXT_EMPTY));
 	pivotY->getController()->setDisabled(true);
-	pivotY->getController()->getValue()->set(TEXT_EMPTY);
+	pivotY->getController()->setValue(value->set(TEXT_EMPTY));
 	pivotZ->getController()->setDisabled(true);
-	pivotZ->getController()->getValue()->set(TEXT_EMPTY);
+	pivotZ->getController()->setValue(value->set(TEXT_EMPTY));
 	pivotApply->getController()->setDisabled(true);
 }
 
 void ModelViewerScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingMaskedTransparency->getController()->setDisabled(false);
-	renderingMaskedTransparency->getController()->getValue()->set(value->set(entity->getModelSettings()->isMaskedTransparency() == true?"1":""));
+	renderingMaskedTransparency->getController()->setValue(value->set(entity->getModelSettings()->isMaskedTransparency() == true?"1":""));
 	renderingDynamicShadowing->getController()->setDisabled(false);
-	renderingDynamicShadowing->getController()->getValue()->set(value->set(entity->isDynamicShadowing() == true?"1":""));
+	renderingDynamicShadowing->getController()->setValue(value->set(entity->isDynamicShadowing() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
 void ModelViewerScreenController::unsetRendering()
 {
 	renderingMaskedTransparency->getController()->setDisabled(true);
-	renderingMaskedTransparency->getController()->getValue()->set(TEXT_EMPTY);
+	renderingMaskedTransparency->getController()->setValue(value->set(TEXT_EMPTY));
 	renderingDynamicShadowing->getController()->setDisabled(true);
-	renderingDynamicShadowing->getController()->getValue()->set(value->set("1"));
+	renderingDynamicShadowing->getController()->setValue(value->set("1"));
 	renderingApply->getController()->setDisabled(true);
 }
 
