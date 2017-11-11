@@ -128,6 +128,7 @@ SRCS = \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
 	src/tdme/engine/primitives/PrimitiveModel.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \
+	src/tdme/engine/primitives/SphereInternal.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \

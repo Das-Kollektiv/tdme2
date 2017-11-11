@@ -8,6 +8,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/ConvexMesh.h>
 
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
@@ -25,7 +26,14 @@ class tdme::engine::primitives::Sphere final
 private:
 	Vector3 center {  };
 	float radius {  };
+	ConvexMesh convexMesh {  };
+	Vector3 convexMeshCenter {  };
+	float convexMeshRadius {  };
 
+	/**
+	 * Create convex mesh
+	 */
+	void createConvexMesh();
 public:
 	void fromBoundingVolume(BoundingVolume* original) override;
 	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
@@ -62,6 +70,14 @@ public:
 	float computeDimensionOnAxis(const Vector3& axis) const override;
 	void update() override;
 	BoundingVolume* clone() const override;
+
+	/**
+	 * Returns convex mesh representation of sphere
+	 * @return convex mesh
+	 */
+	inline ConvexMesh* getConvexMesh() {
+		return &convexMesh;
+	}
 
 	/**
 	 * Public constructor

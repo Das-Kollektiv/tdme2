@@ -14,6 +14,7 @@ namespace primitives {
 			class Plane;
 			class PrimitiveModel;
 			class Sphere;
+			class SphereInternal;
 			class Triangle;
 }  // namespace primitives
 }  // namespace engine

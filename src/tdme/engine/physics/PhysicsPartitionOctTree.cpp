@@ -102,7 +102,7 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	}
 	auto cbv = rigidBody->cbv;
 	auto& center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(sideVector) + 0.2f, cbv->computeDimensionOnAxis(upVector) + 0.2f, cbv->computeDimensionOnAxis(forwardVector) + 0.2f).scale(0.5f);
+	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
 	boundingBox.getMin().set(center);
 	boundingBox.getMin().sub(halfExtension);
 	boundingBox.getMax().set(center);
@@ -255,7 +255,7 @@ VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(Bo
 
 VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(const Vector3& center)
 {
-	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
+	halfExtension.set(0.1f, 0.1f, 0.1f);
 	boundingBox.getMin().set(center);
 	boundingBox.getMin().sub(halfExtension);
 	boundingBox.getMax().set(center);

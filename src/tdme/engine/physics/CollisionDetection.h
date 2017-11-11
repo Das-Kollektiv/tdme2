@@ -22,6 +22,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
+using tdme::engine::primitives::SphereInternal;
 using tdme::engine::primitives::Triangle;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
@@ -66,6 +67,36 @@ public:
 	}
 
 	/** 
+	 * Checks if 2 spheres internal are colliding
+	 * @param sphere internal 1
+	 * @param sphere internal 2
+	 * @param movement
+	 * @param collision
+	 * @return collision
+	 */
+	static bool doCollide(SphereInternal* s1, SphereInternal* s2, const Vector3& movement, CollisionResponse* collision);
+
+	/**
+	 * Checks if oriented bounding box collides with sphere
+	 * @param oriented bounding box
+	 * @param sphere internal
+	 * @param movement
+	 * @param collision
+	 * @return collision
+	 */
+	static bool doCollide(OrientedBoundingBox* obb, SphereInternal* sphere, const Vector3& movement, CollisionResponse* collision);
+
+	/**
+	 * Checks if triangle collides with sphere
+	 * @param triangle
+	 * @param sphere internal
+	 * @param movement
+	 * @param collision
+	 * @return collision
+	 */
+	static bool doCollide(Triangle* triangle, SphereInternal* sphere, const Vector3& movement, CollisionResponse* collision);
+
+	/**
 	 * Returns if axis aligned bounding boxes do collide
 	 * @param axis aligned bounding box 1
 	 * @param axis aligned bounding box 2

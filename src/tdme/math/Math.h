@@ -23,7 +23,7 @@ public:
 	 * @return absolute value
 	 */
 	inline static int32_t abs(int32_t value) {
-		return ::abs(value);
+		return std::abs(value);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public:
 	 * @return absolute value
 	 */
 	inline static float abs(float value) {
-		return ::fabs(value);
+		return std::fabs(value);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public:
 	 * @return arc cosine
 	 */
 	inline static float acos(float value) {
-		return ::acos(value);
+		return std::acos(value);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public:
 	 * @return arc sine
 	 */
 	inline static float asin(float value) {
-		return ::asin(value);
+		return std::asin(value);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public:
 	 * @return arc tangent
 	 */
 	inline static float atan(float value) {
-		return ::atan(value);
+		return std::atan(value);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public:
 	 *
 	 */
 	inline static float atan2(float y, float x) {
-		return ::atan2(y, x);
+		return std::atan2(y, x);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public:
 	 * @return higher integer
 	 */
 	inline static float ceil(float value) {
-		return ::ceil(value);
+		return std::ceil(value);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public:
 	 * @return cosine
 	 */
 	inline static float cos(float value) {
-		return ::cos(value);
+		return std::cos(value);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public:
 	 * @return sine
 	 */
 	inline static float sin(float value) {
-		return ::sin(value);
+		return std::sin(value);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public:
 	 * @return squaere
 	 */
 	inline static float sqrt(float value) {
-		return ::sqrt(value);
+		return std::sqrt(value);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public:
 	 * @return tangent
 	 */
 	inline static float tan(float value) {
-		return ::tan(value);
+		return std::tan(value);
 	}
 
 };

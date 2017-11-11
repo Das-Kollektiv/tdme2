@@ -3,6 +3,7 @@
 
 #include <tdme/utils/fwd-tdme.h>
 
+#include <cmath>
 #include <limits>
 #include <string>
 
@@ -38,5 +39,8 @@ public:
 	 * Check if float is nane
 	 * @param float value
 	 */
-	static bool isNaN(float value);
+	inline static bool isNaN(float value) {
+		return isnan(value);
+	}
+
 };

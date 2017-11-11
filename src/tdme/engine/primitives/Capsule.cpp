@@ -1,6 +1,7 @@
 #include <tdme/engine/primitives/Capsule.h>
 
 #include <tdme/math/Math.h>
+#include <tdme/math/MathTools.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -13,7 +14,10 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Capsule;
+
 using tdme::math::Math;
+using tdme::math::MathTools;
+using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
@@ -30,7 +34,76 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
+	this->convexMeshA.set(a);
+	this->convexMeshB.set(b);
+	this->convexMeshRadius = radius;
+	createConvexMesh();
 	update();
+}
+
+void Capsule::createConvexMesh() {
+	int segmentsX = 5;
+	int segmentsY = 5;
+	vector<Triangle> triangles;
+	vector<Vector3> vertices;
+	Quaternion rotationQuaternion;
+	rotationQuaternion.identity();
+	Vector3 yAxis(0.0f, -1.0f, 0.0f);
+	Vector3 abNormalized = a.clone().sub(b).normalize();
+	auto& abNormalizedVectorXYZ = abNormalized.getArray();
+	Vector3 rotationAxis;
+	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
+		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
+	} else {
+		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
+	}
+	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
+	rotationQuaternion.rotate(angle, rotationAxis);
+	vertices.resize((segmentsY + 2) * segmentsX);
+	for (auto ySegment = segmentsY / 2; ySegment <= segmentsY; ySegment++)
+	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
+		auto vertex = Vector3();
+		rotationQuaternion.multiply(
+			Vector3(
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+				((Math::cos(Math::PI * ySegment / segmentsY))),
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+			),
+			vertex
+		);
+		vertex.scale(radius);
+		vertex.add(a);
+		vertices[ySegment * segmentsX + xSegment] = vertex;
+	}
+	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++)
+	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
+		auto vertex = Vector3();
+		rotationQuaternion.multiply(
+			Vector3(
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+				((Math::cos(Math::PI * ySegment / segmentsY))),
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+			),
+			vertex
+		);
+		vertex.scale(radius);
+		vertex.add(b);
+		vertices[ySegment * segmentsX + xSegment] = vertex;
+	}
+	int vi0, vi1, vi2;
+	for (auto y = 0; y <= segmentsY + 1; y++) {
+		for (auto x = 0; x < segmentsX; x++) {
+			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			triangles.push_back(Triangle(vertices[vi0], vertices[vi1], vertices[vi2]));
+			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			triangles.push_back(Triangle(vertices[vi0], vertices[vi1], vertices[vi2]));
+		}
+	}
+	convexMesh = ConvexMesh(&triangles);
 }
 
 float Capsule::getRadius() const
@@ -63,6 +136,10 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 	b.set(capsule->b);
 	center.set(capsule->center);
 	radius = capsule->radius;
+	convexMesh = capsule->convexMesh;
+	convexMeshA.set(capsule->a);
+	convexMeshB.set(capsule->b);
+	convexMeshRadius = capsule->radius;
 }
 
 void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
@@ -78,11 +155,23 @@ void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tr
 	side.set(capsule->a).addX(capsule->radius);
 	transformationsMatrix.multiply(side, side);
 	radius = side.sub(a).computeLength();
+	convexMeshA.set(a);
+	convexMeshB.set(b);
+	convexMeshRadius = radius;
+	convexMesh.fromBoundingVolumeWithTransformations(&capsule->convexMesh, transformations);
 	update();
 }
 
 void Capsule::update()
 {
+	if (convexMeshA.equals(a) == false ||
+		convexMeshB.equals(b) == false ||
+		Math::abs(convexMeshRadius - radius) > MathTools::EPSILON) {
+		convexMeshA.set(a);
+		convexMeshB.set(b);
+		convexMeshRadius = radius;
+		createConvexMesh();
+	}
 	Vector3 baSub;
 	baSub.set(b).sub(a);
 	auto baSubLength = baSub.computeLength();

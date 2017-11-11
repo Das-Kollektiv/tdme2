@@ -150,12 +150,7 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 		return;
 	}
 	for (auto i = 0; i < triangles.size(); i++) {
-		auto meshTriangleVertices = mesh->triangles[i].getVertices();
-		auto triangleVertices = triangles[i].getVertices();
-		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[0], (*triangleVertices)[0]);
-		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[1], (*triangleVertices)[1]);
-		transformations->getTransformationsMatrix().multiply((*meshTriangleVertices)[2], (*triangleVertices)[2]);
-		triangles[i].update();
+		triangles[i].fromBoundingVolumeWithTransformations(&mesh->triangles[i], transformations);
 	}
 	update();
 }
@@ -252,12 +247,9 @@ void ConvexMesh::update()
 	}
 	center.set(0.0f, 0.0f, 0.0f);
 	for (auto i = 0; i < triangles.size(); i++) {
-		auto triangleVertices = triangles[i].getVertices();
-		center.add((*triangleVertices)[0]);
-		center.add((*triangleVertices)[1]);
-		center.add((*triangleVertices)[2]);
+		center.add(triangles[i].getCenter());
 	}
-	center.scale(1.0f / (triangles.size() * 3.0f));
+	center.scale(1.0f / triangles.size());
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();

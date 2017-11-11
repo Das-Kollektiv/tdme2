@@ -8,6 +8,7 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Float.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
@@ -18,6 +19,7 @@ using tdme::math::Math;
 using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::utils::Float;
+using tdme::utils::Console;
 
 /** 
  * Separated axis test
@@ -100,17 +102,15 @@ public:
 	 * @param vertices 2
 	 * @param axis test
 	 * @param axis penetration
-	 * @return penetration or negative / -1 if none
+	 * @return if axes overlap
 	 */
 	inline static bool doSpanIntersect(const vector<Vector3>* vertices1, const vector<Vector3>* vertices2, Vector3& axisTest, float& satPenetration) {
-		Vector3 axis;
-		axis.set(axisTest).normalize();
 		float min1;
 		float max1;
 		float min2;
 		float max2;
-		doCalculateInterval(vertices1, axis, min1, max1);
-		doCalculateInterval(vertices2, axis, min2, max2);
+		doCalculateInterval(vertices1, axisTest, min1, max1);
+		doCalculateInterval(vertices2, axisTest, min2, max2);
 		auto len1 = max1 - min1;
 		auto len2 = max2 - min2;
 		auto min = Math::min(min1, min2);

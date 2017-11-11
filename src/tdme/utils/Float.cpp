@@ -1,6 +1,5 @@
 #include <tdme/utils/Float.h>
 
-#include <cmath>
 #include <string>
 
 using std::string;
@@ -23,9 +22,4 @@ constexpr int32_t tdme::utils::Float::SIZE;
 float Float::parseFloat(const string& str) {
 	if (str.length() == 0) return 0.0f;
 	return stof(str);
-}
-
-bool Float::isNaN(float value)
-{
-	return isnan(value);
 }

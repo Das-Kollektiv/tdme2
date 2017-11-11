@@ -53,7 +53,7 @@ public:
 	 * @param convex meshes
 	 * @param height
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height = 1.0f);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height = 0.5f);
 
 	/** 
 	 * @return triangles

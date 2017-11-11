@@ -27,12 +27,50 @@ Sphere::Sphere()
 {
 	this->center.set(0.0f, 0.0f, 0.0f);
 	this->radius = 0.0f;
+	this->convexMeshCenter.set(center);
+	this->convexMeshRadius = radius;
+	createConvexMesh();
 }
 
 Sphere::Sphere(const Vector3& center, float radius)
 {
 	this->center.set(center);
 	this->radius = radius;
+	this->convexMeshCenter.set(center);
+	this->convexMeshRadius = radius;
+	createConvexMesh();
+}
+
+void Sphere::createConvexMesh() {
+	int segmentsX = 5;
+	int segmentsY = 5;
+	vector<Triangle> triangles;
+	vector<Vector3> vertices;
+	vertices.resize((segmentsY + 1) * segmentsX);
+	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++)
+	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
+		auto vertex = (
+			Vector3(
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+				((Math::cos(Math::PI * ySegment / segmentsY))),
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX))))
+			).scale(radius).add(center);
+		vertices[ySegment * segmentsX + xSegment] = vertex;
+	}
+	int ti, vi0, vi1, vi2;
+	for (auto y = 0; y <= segmentsY; y++) {
+		for (auto x = 0; x < segmentsX; x++) {
+			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			triangles.push_back(Triangle(vertices[vi0], vertices[vi1], vertices[vi2]));
+			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
+			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
+			triangles.push_back(Triangle(vertices[vi0], vertices[vi1], vertices[vi2]));
+		}
+	}
+	convexMesh = ConvexMesh(&triangles);
 }
 
 void Sphere::fromBoundingVolume(BoundingVolume* original)
@@ -43,6 +81,9 @@ void Sphere::fromBoundingVolume(BoundingVolume* original)
 	auto sphere = dynamic_cast< Sphere* >(original);
 	center.set(sphere->center);
 	radius = sphere->radius;
+	convexMesh = sphere->convexMesh;
+	convexMeshCenter.set(sphere->center);
+	convexMeshRadius = sphere->radius;
 }
 
 void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
@@ -57,6 +98,9 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	axis.set(sphere->center).addX(sphere->radius);
 	transformationsMatrix.multiply(axis, axis);
 	radius = axis.sub(center).computeLength();
+	convexMeshCenter.set(center);
+	convexMeshRadius = radius;
+	convexMesh.fromBoundingVolumeWithTransformations(&sphere->convexMesh, transformations);
 }
 
 float Sphere::getRadius() const
@@ -124,6 +168,12 @@ float Sphere::computeDimensionOnAxis(const Vector3& axis) const
 
 void Sphere::update()
 {
+	if (convexMeshCenter.equals(center) == false ||
+		Math::abs(convexMeshRadius - radius) > MathTools::EPSILON) {
+		convexMeshCenter.set(center);
+		convexMeshRadius = radius;
+		createConvexMesh();
+	}
 }
 
 BoundingVolume* Sphere::clone() const
