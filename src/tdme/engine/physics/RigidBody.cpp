@@ -64,7 +64,8 @@ RigidBody::~RigidBody() {
 
 constexpr int32_t RigidBody::TYPEIDS_ALL;
 
-constexpr float RigidBody::VELOCITY_SLEEPTOLERANCE;
+constexpr float RigidBody::LINEARVELOCITY_SLEEPTOLERANCE;
+constexpr float RigidBody::ANGULARVELOCITY_SLEEPTOLERANCE;
 
 constexpr int32_t RigidBody::SLEEPING_FRAMES;
 
@@ -292,7 +293,7 @@ void RigidBody::update(float deltaTime)
 	if (isSleeping_ == true)
 		return;
 
-	if (linearVelocity.computeLength() < VELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < VELOCITY_SLEEPTOLERANCE) {
+	if (linearVelocity.computeLength() < LINEARVELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < ANGULARVELOCITY_SLEEPTOLERANCE) {
 		sleepingFrameCount++;
 		if (sleepingFrameCount >= SLEEPING_FRAMES) {
 			sleep();
@@ -329,10 +330,10 @@ bool RigidBody::checkVelocityChange()
 {
 	Vector3 tmpVector3;
 
-	if (tmpVector3.set(linearVelocity).sub(linearVelocityLast).computeLength() > VELOCITY_SLEEPTOLERANCE)
+	if (tmpVector3.set(linearVelocity).sub(linearVelocityLast).computeLength() > LINEARVELOCITY_SLEEPTOLERANCE)
 		return true;
 
-	if (tmpVector3.set(angularVelocity).sub(angularVelocityLast).computeLength() > VELOCITY_SLEEPTOLERANCE)
+	if (tmpVector3.set(angularVelocity).sub(angularVelocityLast).computeLength() > ANGULARVELOCITY_SLEEPTOLERANCE)
 		return true;
 
 	return false;

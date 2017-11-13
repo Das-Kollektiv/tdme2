@@ -39,17 +39,20 @@ ConvexMesh::ConvexMesh()
 {
 	createVertices();
 	update();
+	terrain = false;
 }
 
-ConvexMesh::ConvexMesh(const vector<Triangle>* triangles)
+ConvexMesh::ConvexMesh(const vector<Triangle>* triangles, bool terrain)
 {
 	this->triangles = *triangles;
+	this->terrain = terrain;
 	createVertices();
 	update();
 }
 
-ConvexMesh::ConvexMesh(Object3DModel* model) 
+ConvexMesh::ConvexMesh(Object3DModel* model, bool terrain)
 {
+	this->terrain = terrain;
 	model->getFaceTriangles(&triangles);
 	createVertices();
 	update();
@@ -67,9 +70,10 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 
 		// add triangle on bottom
 		convexMeshTriangles.push_back(faceTriangles[i]);
-		(*convexMeshTriangles[1].getVertices())[0].addY(-height);
-		(*convexMeshTriangles[1].getVertices())[1].addY(-height);
-		(*convexMeshTriangles[1].getVertices())[2].addY(-height);
+		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[0].addY(-height);
+		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[1].addY(-height);
+		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[2].addY(-height);
+		convexMeshTriangles[convexMeshTriangles.size() - 1].update();
 
 		// add triangle vertices
 		Vector3 triangleVertex0Bottom;
@@ -94,7 +98,7 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 		convexMeshTriangles.push_back(Triangle(triangleVertex1Bottom, triangleVertex2Top, triangleVertex2Bottom));
 
 		// add to convex meshes
-		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles));
+		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles, true));
 	}
 }
 
@@ -116,6 +120,10 @@ void ConvexMesh::createVertices()
 			}
 		}
 	}
+}
+
+bool ConvexMesh::isTerrain() {
+	return terrain;
 }
 
 vector<Triangle>* ConvexMesh::getTriangles()
@@ -263,5 +271,5 @@ void ConvexMesh::update()
 
 BoundingVolume* ConvexMesh::clone() const
 {
-	return new ConvexMesh(&triangles);
+	return new ConvexMesh(&triangles, terrain);
 }

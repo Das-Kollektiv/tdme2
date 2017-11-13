@@ -72,6 +72,14 @@ public:
 	static Model* createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
+	 * Creates a model from convex mesh
+	 * @param convex mesh
+	 * @param id
+	 * @return model
+	 */
+	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
+
+	/**
 	 * Set up a convex mesh model
 	 * @param model
 	 */

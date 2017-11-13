@@ -353,6 +353,64 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	return model;
 }
 
+Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
+	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto material = new Material("tdme.primitive.material");
+	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
+	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
+	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	(*model->getMaterials())[material->getId()] = material;
+	auto group = new Group(model, nullptr, "group", "group");
+	vector<Vector3> vertices;
+	vector<Vector3> normals;
+	vector<Face> faces;
+	int vertexIndex = -1;
+	int normalIndex = -1;
+	for (Triangle& triangle: *mesh->getTriangles()) {
+		vertexIndex = vertices.size();
+		vertices.push_back((*triangle.getVertices())[0]);
+		vertices.push_back((*triangle.getVertices())[1]);
+		vertices.push_back((*triangle.getVertices())[2]);
+		normalIndex = normals.size();
+		{
+			array<Vector3, 3> faceVertices = {
+				vertices.at(vertexIndex + 0),
+				vertices.at(vertexIndex + 1),
+				vertices.at(vertexIndex + 2)
+			};
+			array<Vector3, 3> faceNormals;
+			ModelHelper::computeNormals(&faceVertices, &faceNormals);
+			for (auto& normal : faceNormals) {
+				normals.push_back(normal);
+			}
+		}
+		faces.push_back(
+			Face(
+				group,
+				vertexIndex + 0,
+				vertexIndex + 1,
+				vertexIndex + 2,
+				normalIndex + 0,
+				normalIndex + 1,
+				normalIndex + 2
+			)
+		);
+	}
+	FacesEntity groupFacesEntity(group, "faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
+	group->determineFeatures();
+	(*model->getGroups())["group"] = group;
+	(*model->getSubGroups())["group"] = group;
+	ModelHelper::prepareForIndexedRendering(model);
+	return model;
+}
+
 void PrimitiveModel::setupConvexMeshModel(Model* model)
 {
 	auto material = new Material("tdme.primitive.material");

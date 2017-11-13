@@ -66,7 +66,8 @@ public:
 	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
 
 private:
-	static constexpr float VELOCITY_SLEEPTOLERANCE { 1.0f };
+	static constexpr float LINEARVELOCITY_SLEEPTOLERANCE { 1.0f };
+	static constexpr float ANGULARVELOCITY_SLEEPTOLERANCE { 2.0f };
 	static constexpr int32_t SLEEPING_FRAMES { 300 };
 
 public: /* protected */

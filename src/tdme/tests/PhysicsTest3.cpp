@@ -266,7 +266,15 @@ void PhysicsTest3::initialize()
 		{
 			int i = 0;
 			for (auto convexMesh: groundConvexMeshes) {
-				world->addStaticRigidBody("ground" + to_string(i++), true, RIGID_TYPEID_STANDARD, entity, &convexMesh, 0.5f);
+				/*
+				 auto convexMeshModel = PrimitiveModel::createConvexMeshModel(&convexMesh, "ground" + to_string(i));
+				auto entity = new Object3D("ground" + to_string(i), convexMeshModel);
+				entity->getTranslation().setY(-4.0f);
+				entity->update();
+				engine->addEntity(entity);
+				*/
+				world->addStaticRigidBody("ground" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, &convexMesh, 0.5f);
+				i++;
 			}
 		}
 		auto _barrel = DAEReader::read("resources/tests/models/barrel", "barrel.dae");

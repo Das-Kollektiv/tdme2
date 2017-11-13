@@ -42,7 +42,6 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ConstraintsEntity;
 using tdme::engine::physics::ConstraintsSolver;
 using tdme::engine::physics::PhysicsPartition;
-using tdme::engine::physics::PhysicsPartitionOctTree;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -171,58 +170,57 @@ void World::update(float deltaTime)
 			auto nearObjects = 0;
 			for (auto _i = partition->getObjectsNearTo(rigidBody1->cbv)->iterator(); _i->hasNext(); ) {
 				RigidBody* rigidBody2 = _i->next();
-				{
-					if (rigidBody2->enabled == false) {
-						continue;
-					}
-					if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == true)
+				if (rigidBody2->enabled == false)
+					continue;
+
+				if (rigidBody1 == rigidBody2)
+					continue;
+
+				if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == true)
+					continue;
+
+				if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == false && rigidBody2->isSleeping_ == true) {
+					continue;
+				}
+				if (rigidBody2->isStatic_ == true && rigidBody1->isStatic_ == false && rigidBody1->isSleeping_ == true) {
+					continue;
+				}
+
+				if (((rigidBody1->typeId & rigidBody2->collisionTypeIds) == rigidBody1->typeId) == false) {
+					continue;
+				}
+				if (((rigidBody2->typeId & rigidBody1->collisionTypeIds) == rigidBody2->typeId) == false) {
+					continue;
+				}
+				nearObjects++;
+				string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
+				if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) {
+					continue;
+				}
+				RigidBodyCollisionStruct rigidBodyCollisionStruct;
+				rigidBodyCollisionStruct.rigidBody1Idx = rigidBody1->idx;
+				rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
+				rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
+				collisionsTests++;
+				collisionMovement.set(rigidBody1->movement);
+				if (collisionMovement.computeLength() < MathTools::EPSILON) {
+					collisionMovement.set(rigidBody2->movement);
+					collisionMovement.scale(-1.0f);
+				}
+				if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true) {
+					if (collision.getHitPointsCount() == 0)
 						continue;
 
-					if (rigidBody1 == rigidBody2)
-						continue;
-
-					if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == false && rigidBody2->isSleeping_ == true) {
-						continue;
+					rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
+					if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end()) {
+						rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
 					}
-					if (rigidBody2->isStatic_ == true && rigidBody1->isStatic_ == false && rigidBody1->isSleeping_ == true) {
-						continue;
+					rigidBody1->fireOnCollision(rigidBody2, &collision);
+					if (rigidBody1->isStatic_ == false && rigidBody2->isStatic_ == false) {
+						rigidBody1->awake(true);
+						rigidBody2->awake(true);
 					}
-					if (((rigidBody1->typeId & rigidBody2->collisionTypeIds) == rigidBody1->typeId) == false) {
-						continue;
-					}
-					if (((rigidBody2->typeId & rigidBody1->collisionTypeIds) == rigidBody2->typeId) == false) {
-						continue;
-					}
-					nearObjects++;
-					string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
-					if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) {
-						continue;
-					}
-					RigidBodyCollisionStruct rigidBodyCollisionStruct;
-					rigidBodyCollisionStruct.rigidBody1Idx = rigidBody1->idx;
-					rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
-					rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
-					collisionsTests++;
-					collisionMovement.set(rigidBody1->movement);
-					if (collisionMovement.computeLength() < MathTools::EPSILON) {
-						collisionMovement.set(rigidBody2->movement);
-						collisionMovement.scale(-1.0f);
-					}
-					if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true) {
-						if (collision.getHitPointsCount() == 0)
-							continue;
-
-						rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
-						if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end()) {
-							rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
-						}
-						rigidBody1->fireOnCollision(rigidBody2, &collision);
-						if (rigidBody1->isStatic_ == false && rigidBody2->isStatic_ == false) {
-							rigidBody1->awake(true);
-							rigidBody2->awake(true);
-						}
-						constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, &collision);
-					}
+					constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, &collision);
 				}
 			}
 		}

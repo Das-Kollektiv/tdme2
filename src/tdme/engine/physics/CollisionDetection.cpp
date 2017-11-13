@@ -854,9 +854,13 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 	float satPenetrationBestFit = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
+	bool terrain = mesh1->isTerrain() == true || mesh2->isTerrain() == true;
 
+	// for terrain expect at least 0.02 - 0.05 on normal y axis
 	#define SAT_DETERMINE_BESTFIT() \
-		if (Float::isNaN(satPenetration) == false &&  \
+		if (Float::isNaN(satPenetration) == false && \
+			(terrain == false || \
+			Math::abs(satAxis.getY()) > 0.2f) && \
 			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
 			satHaveBestFit = true;  \
 			satAxisBestFit.set(satAxis);  \

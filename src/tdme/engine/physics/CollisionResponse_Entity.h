@@ -65,8 +65,7 @@ public:
 	 */
 	inline void addHitPoint(const Vector3& hitPoint) {
 		for (auto i = 0; i < hitPoints.size(); i++) {
-			if (hitPoints.at(i).equals(hitPoint, 0.1f))
-				return;
+			if (hitPoints.at(i).equals(hitPoint, 0.1f)) return;
 		}
 		hitPoints.push_back(hitPoint);
 	}
