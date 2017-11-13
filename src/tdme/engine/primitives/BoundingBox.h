@@ -53,12 +53,16 @@ public:
 	/** 
 	 * @return min x,y,z vertex
 	 */
-	Vector3& getMin();
+	inline Vector3& getMin() {
+		return min;
+	}
 
 	/** 
 	 * @return max x,y,z vertex
 	 */
-	Vector3& getMax();
+	inline Vector3& getMax() {
+		return max;
+	}
 
 	/** 
 	 * Returns bounding box vertices

@@ -163,7 +163,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	GRID_DIMENSION_Y = 20;
 	camLookRotationX = new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f));
 	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
-	camScaleMax = 3.0f;
+	camScaleMax = 15.0f;
 	camScaleMin = 0.05f;
 	mouseDownLastX = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
@@ -696,8 +696,6 @@ void LevelEditorView::loadSettings()
 
 void LevelEditorView::initialize()
 {
-	engine->reset();
-	engine->setPartition(new PartitionOctTree());
 	try {
 		levelEditorScreenController = new LevelEditorScreenController(this);
 		levelEditorScreenController->initialize();
@@ -728,6 +726,8 @@ void LevelEditorView::initialize()
 
 void LevelEditorView::activate()
 {
+	engine->reset();
+	engine->setPartition(new PartitionOctTree());
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(levelEditorScreenController->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());

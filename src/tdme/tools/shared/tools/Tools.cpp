@@ -349,7 +349,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
 {
-	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
+	auto newFileName = StringUtils::replace(fileName, '\\', '/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
 		cutFileNameIdx = fileName.rfind("/resources/");
@@ -368,7 +368,7 @@ const string Tools::getRelativeResourcesFileName(const string& gameRoot, const s
 
 const string Tools::getGameRootPath(const string& fileName)
 {
-	auto newFileName = StringUtils::replace(fileName, L'\\', L'/');
+	auto newFileName = StringUtils::replace(fileName, '\\', '/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName.rfind("/resources/");

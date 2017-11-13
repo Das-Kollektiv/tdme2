@@ -45,7 +45,7 @@ void StandardFileSystem::list(const string& pathName, vector<string>* files, Fil
 	DIR *dir;
 	struct dirent *dirent;
 	if ((dir = opendir(pathName.c_str())) == NULL) {
-		throw FileSystemException("Unable to list path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to list path(" + to_string(errno) + "): " + pathName);
 	}
 	while ((dirent = readdir(dir)) != NULL) {
 		string fileName = (dirent->d_name);
@@ -60,7 +60,7 @@ bool StandardFileSystem::isPath(const string& pathName) throw (FileSystemExcepti
 	if (stat(pathName.c_str(), &s) == 0) {
 		return (s.st_mode & S_IFDIR) == S_IFDIR;
 	} else {
-		throw FileSystemException("Unable to check if path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to check if path(" + to_string(errno) + "): " + pathName);
 	}
 }
 
@@ -72,7 +72,7 @@ bool StandardFileSystem::fileExists(const string& fileName) throw (FileSystemExc
 const string StandardFileSystem::getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if (ifs.is_open() == false) {
-		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 	stringstream stringStream;
 	stringStream << ifs.rdbuf();
@@ -83,7 +83,7 @@ const string StandardFileSystem::getContentAsString(const string& pathName, cons
 void StandardFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if (ofs.is_open() == false) {
-		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 	ofs << (content);
 	ofs.close();
@@ -94,7 +94,7 @@ void StandardFileSystem::getContent(const string& pathName, const string& fileNa
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
-		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 	ifs.seekg( 0, ios::end );
 	size_t size = ifs.tellg();
@@ -107,7 +107,7 @@ void StandardFileSystem::getContent(const string& pathName, const string& fileNa
 void StandardFileSystem::setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if (ofs.is_open() == false) {
-		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 	ofs.write((char*)content->data(), content->size());
 	ofs.close();
@@ -117,7 +117,7 @@ void StandardFileSystem::getContentAsStringArray(const string& pathName, const s
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if(ifs.is_open() == false) {
-		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 
 	string line;
@@ -132,7 +132,7 @@ void StandardFileSystem::setContentFromStringArray(const string& pathName, const
 {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if(ofs.is_open() == false) {
-		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 
 	for (int i = 0; i < content->size(); i++) {
@@ -232,7 +232,7 @@ void StandardFileSystem::createPath(const string& pathName) throw (FileSystemExc
 		int32_t status = mkdir(pathName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	#endif
 	if (status == -1) {
-		throw FileSystemException("Unable to create path(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to create path(" + to_string(errno) + "): " + pathName);
 	}
 }
 
@@ -254,7 +254,7 @@ void StandardFileSystem::removePath(const string& pathName) throw (FileSystemExc
 	Console::println(string("StandardFileSystem::removePath(): Removing ") + pathName);
 	int32_t status = rmdir(pathName.c_str());
 	if (status == -1) {
-		throw FileSystemException("Unable to delete folder(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to delete folder(" + to_string(errno) + "): " + pathName);
 	}
 }
 
@@ -262,6 +262,6 @@ void StandardFileSystem::removeFile(const string& pathName, const string& fileNa
 	Console::println(string("StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
 	int32_t status = unlink(getFileName(pathName, fileName).c_str());
 	if (status == -1) {
-		throw FileSystemException("Unable to delete file(" + to_string(errno) + ")");
+		throw FileSystemException("Unable to delete file(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 }

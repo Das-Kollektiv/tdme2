@@ -73,16 +73,6 @@ BoundingBox::BoundingBox(const Vector3& min, const Vector3& max)
 	update();
 }
 
-Vector3& BoundingBox::getMin()
-{
-	return min;
-}
-
-Vector3& BoundingBox::getMax()
-{
-	return max;
-}
-
 void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 {
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {

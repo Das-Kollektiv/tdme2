@@ -63,7 +63,7 @@ void PartitionOctTree::reset()
 	this->treeRoot.parent = nullptr;
 }
 
-PartitionOctTree_PartitionTreeNode* PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
+void PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
 {
 	PartitionOctTree_PartitionTreeNode node;
 	node.partitionSize = partitionSize;
@@ -117,7 +117,7 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
 		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
-			auto node = createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
 	}
 

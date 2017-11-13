@@ -53,9 +53,9 @@ private:
 	PartitionOctTree_PartitionTreeNode treeRoot {  };
 
 public:
-	static constexpr float PARTITION_SIZE_MIN { 4.0f };
-	static constexpr float PARTITION_SIZE_MID { 8.0f };
-	static constexpr float PARTITION_SIZE_MAX { 16.0f };
+	static constexpr float PARTITION_SIZE_MIN { 16.0f };
+	static constexpr float PARTITION_SIZE_MID { 32.0f };
+	static constexpr float PARTITION_SIZE_MAX { 64.0f };
 
 public: /* protected */
 	void reset() override;
@@ -69,9 +69,8 @@ public:
 	 * @param y
 	 * @param z
 	 * @param partition size
-	 * @return partition tree node
 	 */
-	PartitionOctTree_PartitionTreeNode* createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
+	void createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
 
 public: /* protected */
 	void addEntity(Entity* entity) override;
