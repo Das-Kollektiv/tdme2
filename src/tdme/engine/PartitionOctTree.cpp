@@ -280,6 +280,7 @@ int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_Par
 		}
 		return lookUps;
 	}
+	return 0;
 }
 
 VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
