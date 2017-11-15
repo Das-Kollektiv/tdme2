@@ -1,0 +1,59 @@
+#pragma once
+
+#include <fbxsdk.h>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fileio/models/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+
+using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::model::Group;
+using tdme::engine::model::Model;
+using tdme::os::filesystem::FileSystemException;
+
+/** 
+ * FBX reader
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class tdme::engine::fileio::models::FBXReader final
+{
+public:
+
+	/** 
+	 * Reads FBX file
+	 * @param path name
+	 * @param file name
+	 * @throws model file IO exception
+	 * @throws file system exception
+	 * @return model instance
+	 */
+	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
+
+private:
+	/**
+	 * Process FBX scene
+	 * @param FBX scene
+	 * @param model
+	 */
+	static void processScene(FbxScene* fbxScene, Model* model);
+
+	/**
+	 * Process FBX node
+	 * @param FBX scene
+	 * @param model
+	 * @param parent group
+	 */
+	static void processNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+
+	/**
+	 * Process FBX mesh node
+	 * @param FBX node
+	 * @param model
+	 * @param parent group
+	 */
+	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+};
