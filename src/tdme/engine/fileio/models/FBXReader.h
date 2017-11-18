@@ -12,6 +12,8 @@
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
+using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::RotationOrder;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
@@ -34,6 +36,32 @@ public:
 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
 private:
+
+	/**
+	 * Get scene up vector
+	 * @param fbx scene
+	 */
+	static Model_UpVector* getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException);
+
+	/**
+	 * Get scene rotation order
+	 * @param fbx scene
+	 */
+	static RotationOrder* getSceneRotationOrder(FbxScene* fbxScene) throw (ModelFileIOException);
+
+	/**
+	 * Set up model import rotation maxtrix
+	 * @param model
+	 */
+	static void setupModelImportRotationMatrix(Model* model);
+
+	/**
+	 * Set up model import scale maxtrix
+	 * @param fbx scene
+	 * @param model
+	 */
+	static void setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model);
+
 	/**
 	 * Process FBX scene
 	 * @param FBX scene

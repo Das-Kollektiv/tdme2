@@ -71,14 +71,22 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName + " into scene");
 	}
 
+	// triangulate
+	FbxGeometryConverter fbxGeometryConverter(fbxManager);
+	fbxGeometryConverter.Triangulate(fbxScene, true);
+
 	// create model
 	auto model = new Model(
 		FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
 		fileName,
-		Model_UpVector::Y_UP,
-		RotationOrder::ZYX,
+		getSceneUpVector(fbxScene),
+		getSceneRotationOrder(fbxScene),
 		nullptr
 	);
+
+	// set up model import matrix
+	setupModelImportRotationMatrix(model);
+	setupModelScaleRotationMatrix(fbxScene, model);
 
 	// process nodes
 	processScene(fbxScene, model);
@@ -98,8 +106,60 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	return model;
 }
 
+RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) throw (ModelFileIOException) {
+	auto upVector = getSceneUpVector(fbxScene);
+
+	// take rotation order from root node now
+	FbxNode* fbxNode = fbxScene->GetRootNode();
+	EFbxRotationOrder fbxRotationOrder;
+	fbxNode->GetRotationOrder(FbxNode::eSourcePivot, fbxRotationOrder);
+	if (fbxRotationOrder == eEulerXYZ) {
+		if (upVector == Model_UpVector::Y_UP) {
+			return RotationOrder::ZYX;
+		} else
+		if (upVector == Model_UpVector::Z_UP) {
+			return RotationOrder::YZX;
+		} else {
+			throw ModelFileIOException("Unknown Up vector");
+		}
+	} else {
+		throw ModelFileIOException("Not supported rotation order(" + to_string(fbxRotationOrder) + ")");
+	}
+}
+
+Model_UpVector* FBXReader::getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException) {
+	int fbxUpVectorSign;
+	auto fbxUpVector = fbxScene->GetGlobalSettings().GetAxisSystem().GetUpVector(fbxUpVectorSign);
+	switch (fbxUpVector) {
+		case FbxAxisSystem::eXAxis:
+			throw ModelFileIOException("X-Up is not supported");
+		case FbxAxisSystem::eYAxis:
+			return Model_UpVector::Y_UP;
+		case FbxAxisSystem::eZAxis:
+			return Model_UpVector::Z_UP;
+		default:
+			throw ModelFileIOException("Unknown Up vector");
+	}
+	return Model_UpVector::Y_UP;
+}
+
+void FBXReader::setupModelImportRotationMatrix(Model* model) {
+	if (model->getUpVector() == Model_UpVector::Y_UP) {
+		// no op
+	} else
+	if (model->getUpVector() == Model_UpVector::Z_UP) {
+		model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
+	}
+}
+
+void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) {
+	FbxSystemUnit fbxSceneSystemUnit = fbxScene->GetGlobalSettings().GetSystemUnit();
+	model->getImportTransformationsMatrix().scale(
+		static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))
+	);
+}
+
 void FBXReader::processScene(FbxScene* fbxScene, Model* model) {
-	Console::println("FBXReader::processScene()");
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
@@ -108,30 +168,47 @@ void FBXReader::processScene(FbxScene* fbxScene, Model* model) {
 }
 
 void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
-	Console::println("FBXReader::processNode()");
 	Group* group = nullptr;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
 		switch (fbxAttributeType) {
 			case FbxNodeAttribute::eMesh:
 				{
-					auto group = processMeshNode(fbxNode, model, parentGroup);
-					if (parentGroup == nullptr) {
-						(*model->getSubGroups())[group->getId()] = group;
-					} else {
-						(*parentGroup->getSubGroups())[group->getId()] = group;
-					}
-					(*model->getGroups())[group->getId()] = group;
-					parentGroup = group;
-					break;
-				}
-			default:
-				{
-					Console::println("FBXReader::processNode(): unsupported node with attribute type " + to_string(fbxAttributeType));
+					group = processMeshNode(fbxNode, model, parentGroup);
 					break;
 				}
 		}
 	}
+	if (group == nullptr) {
+		auto fbxGroupName = fbxNode->GetName();
+		group = new Group(model, parentGroup, fbxGroupName, fbxGroupName);
+	}
+	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
+	group->getTransformationsMatrix().set(
+		fbxNodeLocalTransform.Get(0,0),
+		fbxNodeLocalTransform.Get(0,1),
+		fbxNodeLocalTransform.Get(0,2),
+		fbxNodeLocalTransform.Get(0,3),
+		fbxNodeLocalTransform.Get(1,0),
+		fbxNodeLocalTransform.Get(1,1),
+		fbxNodeLocalTransform.Get(1,2),
+		fbxNodeLocalTransform.Get(1,3),
+		fbxNodeLocalTransform.Get(2,0),
+		fbxNodeLocalTransform.Get(2,1),
+		fbxNodeLocalTransform.Get(2,2),
+		fbxNodeLocalTransform.Get(2,3),
+		fbxNodeLocalTransform.Get(3,0),
+		fbxNodeLocalTransform.Get(3,1),
+		fbxNodeLocalTransform.Get(3,2),
+		fbxNodeLocalTransform.Get(3,3)
+	);
+	if (parentGroup == nullptr) {
+		(*model->getSubGroups())[group->getId()] = group;
+	} else {
+		(*parentGroup->getSubGroups())[group->getId()] = group;
+	}
+	(*model->getGroups())[group->getId()] = group;
+	parentGroup = group;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processNode(fbxNode->GetChild(i), model, parentGroup);
 	}
@@ -140,7 +217,6 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) 
 
 Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
 	auto fbxGroupName = fbxNode->GetName();
-	Console::println(string("FBXReader::processNode(): Have mesh node: ") + string(fbxGroupName));
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
 	auto group = new Group(model, parentGroup, fbxGroupName, fbxGroupName);
