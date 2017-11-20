@@ -22,6 +22,7 @@ using std::getline;
 using std::ifstream;
 using std::ios;
 using std::ofstream;
+using std::sort;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -52,6 +53,7 @@ void StandardFileSystem::list(const string& pathName, vector<string>* files, Fil
 		if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
 		files->push_back(fileName);
 	}
+	sort(files->begin(), files->end());
 	closedir(dir);
 }
 
