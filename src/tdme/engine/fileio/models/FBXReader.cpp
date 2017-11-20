@@ -8,6 +8,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/Model_UpVector.h>
@@ -25,6 +26,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::FBXReader;
 using tdme::engine::model::Group;
+using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Model_UpVector;
@@ -61,9 +63,6 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	bool fbxImportStatus = fbxImporter->Initialize((pathName + "/" + fileName).c_str(), -1, fbxManager->GetIOSettings());
 	if (fbxImportStatus == false) {
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName);
-	}
-	if (fbxImporter->IsFBX() == false) {
-		throw ModelFileIOException("FBXReader::read(): Error: This is not a FBX file '" + pathName + "/" + fileName);
 	}
 	// import the scene
 	fbxImportStatus = fbxImporter->Import(fbxScene);
@@ -244,21 +243,176 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 				break;
 			}
 		}
-		if (fbxPolyGroupId >= facesEntities.size()) {
-			facesEntities.push_back(FacesEntity(group, "facesentity-" + to_string(fbxPolyGroupId)));
+		FbxSurfaceMaterial* fbxMaterial = nullptr;
+		int fbxMaterialId = -1;
+		for (auto l = 0; l < fbxMesh->GetElementMaterialCount() & l < 1; l++) {
+			FbxGeometryElementMaterial* fbxMaterialElement = fbxMesh->GetElementMaterial(l);
+			if (fbxMaterialElement->GetMappingMode() == FbxGeometryElement::eAllSame) {
+				fbxMaterial = fbxMesh->GetNode()->GetMaterial(fbxMaterialElement->GetIndexArray().GetAt(0));
+				fbxMaterialId = fbxMaterialElement->GetIndexArray().GetAt(0);
+			} else {
+				fbxMaterial = fbxMesh->GetNode()->GetMaterial(fbxMaterialElement->GetIndexArray().GetAt(i));
+				fbxMaterialId = fbxMaterialElement->GetIndexArray().GetAt(i);
+			}
 		}
-		auto& facesEntity = facesEntities[fbxPolyGroupId];
-		vector<Face> faces = *facesEntity.getFaces();
+		Material* material = nullptr;
+		if (fbxMaterial == nullptr) {
+			material = (*model->getMaterials())["tdme.nomaterial"];
+			if (material == nullptr) {
+				material = new Material("tdme.nomaterial");
+				(*model->getMaterials())[material->getId()] = material;
+			}
+		} else {
+			string fbxMaterialName = fbxMaterial->GetName();
+			material = (*model->getMaterials())[fbxMaterialName];
+			if (material == nullptr) {
+				material = new Material(fbxMaterialName);
+				if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId)) {
+					FbxPropertyT<FbxDouble3> fbxDouble3;
+					FbxPropertyT<FbxDouble> fbxDouble;
+					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
+					material->getAmbientColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f
+					);
+					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
+					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Diffuse;
+					material->getDiffuseColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f - static_cast<float>(fbxDouble)
+					);
+					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
+					material->getSpecularColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f
+					);
+					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
+					material->getEmissionColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f
+					);
+					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
+					material->setShininess(
+						static_cast<float>(fbxDouble)
+					);
+					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->ReflectionFactor;
+				} else
+				if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
+					FbxPropertyT<FbxDouble3> fbxDouble3;
+					FbxPropertyT<FbxDouble> fbxDouble;
+					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Ambient;
+					material->getAmbientColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f
+					);
+					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Diffuse;
+					fbxDouble = ((FbxSurfaceLambert*)fbxMaterial)->TransparencyFactor;
+					material->getDiffuseColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f - static_cast<float>(fbxDouble)
+					);
+					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
+					material->getEmissionColor().set(
+						static_cast<float>(fbxDouble3.Get()[0]),
+						static_cast<float>(fbxDouble3.Get()[1]),
+						static_cast<float>(fbxDouble3.Get()[2]),
+						1.0f
+					);
+				}
+				FbxProperty fbxProperty;
+				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+				string diffuseTextureFileName =
+					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+						(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+							FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+							""
+						):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sTransparentColor);
+				string diffuseTransparencyTextureFileName =
+					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+						(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+							FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+							""
+						):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				if (diffuseTextureFileName.length() > 0) {
+					material->setDiffuseTexture(
+						FileSystem::getInstance()->getPathName(diffuseTextureFileName),
+						FileSystem::getInstance()->getFileName(diffuseTextureFileName),
+						FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
+						FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName)
+					);
+				}
+				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
+				string normalTextureFileName =
+					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+						(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+							FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+							""
+						):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				if (normalTextureFileName.length() > 0) {
+					material->setNormalTexture(
+						FileSystem::getInstance()->getPathName(normalTextureFileName),
+						FileSystem::getInstance()->getFileName(normalTextureFileName)
+					);
+				}
+				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sSpecular);
+				string specularTextureFileName =
+					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+						(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+							FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+							""
+						):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				if (specularTextureFileName.length() > 0) {
+					material->setSpecularTexture(
+						FileSystem::getInstance()->getPathName(specularTextureFileName),
+						FileSystem::getInstance()->getFileName(specularTextureFileName)
+					);
+				}
+				(*model->getMaterials())[material->getId()] = material;
+			}
+		}
+		auto foundFacesEntity = false;
+		string facesEntityName = "facesentity-" + material->getId();
+		FacesEntity* facesEntity = nullptr;
+		for (auto &facesEntityLookUp: facesEntities) {
+			if (facesEntityLookUp.getId() == facesEntityName) {
+				facesEntity = &facesEntityLookUp;
+				foundFacesEntity = true;
+				break;
+			}
+		}
+		if (foundFacesEntity == false) {
+			facesEntities.push_back(FacesEntity(group, facesEntityName));
+			facesEntity = &facesEntities[facesEntities.size() - 1];
+			facesEntity->setMaterial(material);
+		}
+		auto faces = *facesEntity->getFaces();
 		auto fbxPolygonSize = fbxMesh->GetPolygonSize(i);
 		auto verticesOffset = vertices.size();
 		auto normalsOffset = normals.size();
 		auto textureCoordinatesOffset = textureCoordinates.size();
 		auto tangentsOffset = tangents.size();
 		auto bitangentsOffset = bitangents.size();
-		bool haveUV = true;
-		bool haveNormal = true;
-		bool haveTangent = true;
-		bool haveBitangent = true;
+		auto haveUV = true;
+		auto haveNormal = true;
+		auto haveTangent = true;
+		auto haveBitangent = true;
 		if (fbxPolygonSize != 3) throw ModelFileIOException("we only support triangles in '" + group->getName() + "'");
 		for (auto j = 0; j < fbxPolygonSize; j++) {
 			int fbxControlPointIndex = fbxMesh->GetPolygonVertex(i, j);
@@ -397,9 +551,20 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 				textureCoordinatesOffset + 2
 			);
 		}
-		// TODO: tangents, bitangents
+		if (haveTangent == true && haveBitangent == true) {
+			f.setTangentIndices(
+				tangentsOffset + 0,
+				tangentsOffset + 1,
+				tangentsOffset + 2
+			);
+			f.setBitangentIndices(
+				bitangentsOffset + 0,
+				bitangentsOffset + 1,
+				bitangentsOffset + 2
+			);
+		}
 		faces.push_back(f);
-		facesEntity.setFaces(&faces);
+		facesEntity->setFaces(&faces);
 	}
 
 	group->setVertices(&vertices);
