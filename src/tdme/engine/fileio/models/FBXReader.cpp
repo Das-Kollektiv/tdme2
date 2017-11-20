@@ -225,24 +225,15 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	vector<Vector3> tangents;
 	vector<Vector3> bitangents;
 	vector<FacesEntity> facesEntities;
+	vector<Face> faces;
 
 	int fbxVertexId = 0;
 	int fbxPolygonCount = fbxMesh->GetPolygonCount();
+
+	FacesEntity* facesEntity = nullptr;
+
 	FbxVector4* fbxControlPoints = fbxMesh->GetControlPoints();
-	int fbxPolyGroupId = 0;
 	for (auto i = 0; i < fbxPolygonCount; i++) {
-		for (auto l = 0; l < fbxMesh->GetElementPolygonGroupCount(); l++) {
-			FbxGeometryElementPolygonGroup* fbxPolygonGroup = fbxMesh->GetElementPolygonGroup(l);
-			switch (fbxPolygonGroup->GetMappingMode()) {
-			case FbxGeometryElement::eByPolygon:
-				if (fbxPolygonGroup->GetReferenceMode() == FbxGeometryElement::eIndex) {
-					fbxPolyGroupId = fbxPolygonGroup->GetIndexArray().GetAt(i);
-				}
-				break;
-			default:
-				break;
-			}
-		}
 		FbxSurfaceMaterial* fbxMaterial = nullptr;
 		int fbxMaterialId = -1;
 		for (auto l = 0; l < fbxMesh->GetElementMaterialCount() & l < 1; l++) {
@@ -389,20 +380,28 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		}
 		auto foundFacesEntity = false;
 		string facesEntityName = "facesentity-" + material->getId();
-		FacesEntity* facesEntity = nullptr;
-		for (auto &facesEntityLookUp: facesEntities) {
+		for (auto& facesEntityLookUp: facesEntities) {
 			if (facesEntityLookUp.getId() == facesEntityName) {
-				facesEntity = &facesEntityLookUp;
+				if (&facesEntityLookUp != facesEntity) {
+					if (facesEntity != nullptr) {
+						facesEntity->setFaces(&faces);
+					}
+					faces = *facesEntityLookUp.getFaces();
+					facesEntity = &facesEntityLookUp;
+				}
 				foundFacesEntity = true;
 				break;
 			}
 		}
 		if (foundFacesEntity == false) {
+			if (facesEntity != nullptr) {
+				facesEntity->setFaces(&faces);
+				faces.clear();
+			}
 			facesEntities.push_back(FacesEntity(group, facesEntityName));
 			facesEntity = &facesEntities[facesEntities.size() - 1];
 			facesEntity->setMaterial(material);
 		}
-		auto faces = *facesEntity->getFaces();
 		auto fbxPolygonSize = fbxMesh->GetPolygonSize(i);
 		auto verticesOffset = vertices.size();
 		auto normalsOffset = normals.size();
@@ -564,6 +563,8 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			);
 		}
 		faces.push_back(f);
+	}
+	if (facesEntity != nullptr) {
 		facesEntity->setFaces(&faces);
 	}
 
