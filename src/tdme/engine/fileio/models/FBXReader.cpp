@@ -226,13 +226,45 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	vector<Vector3> bitangents;
 	vector<FacesEntity> facesEntities;
 	vector<Face> faces;
+	FacesEntity* facesEntity = nullptr;
 
 	int fbxVertexId = 0;
 	int fbxPolygonCount = fbxMesh->GetPolygonCount();
 
-	FacesEntity* facesEntity = nullptr;
-
 	FbxVector4* fbxControlPoints = fbxMesh->GetControlPoints();
+	for (auto i = 0; i < fbxMesh->GetControlPointsCount(); i++) {
+		auto fbxControlPoint = fbxControlPoints[i];
+		vertices.push_back(Vector3(fbxControlPoint[0], fbxControlPoint[1], fbxControlPoint[2]));
+	}
+	for (auto l = 0; l < fbxMesh->GetElementUVCount() && l < 1; ++l) {
+		auto fbxUV = fbxMesh->GetElementUV(l);
+		for (int i = 0; i < fbxUV->GetDirectArray().GetCount(); i++) {
+			auto fbxUVArray = fbxUV->GetDirectArray().GetAt(i);
+			textureCoordinates.push_back(TextureCoordinate(fbxUVArray[0], fbxUVArray[1]));
+		}
+	}
+	for (auto l = 0; l < fbxMesh->GetElementNormalCount() && l < 1; ++l) {
+		auto fbxNormal = fbxMesh->GetElementNormal(l);
+		for (int i = 0; i < fbxNormal->GetDirectArray().GetCount(); i++) {
+			auto fbxNormalArray = fbxNormal->GetDirectArray().GetAt(i);
+			normals.push_back(Vector3(fbxNormalArray[0], fbxNormalArray[1], fbxNormalArray[2]));
+		}
+	}
+	for (auto l = 0; l < fbxMesh->GetElementTangentCount() && l < 1; ++l) {
+		auto fbxTangent = fbxMesh->GetElementTangent(l);
+		for (int i = 0; i < fbxTangent->GetDirectArray().GetCount(); i++) {
+			auto fbxTangentArray = fbxTangent->GetDirectArray().GetAt(i);
+			tangents.push_back(Vector3(fbxTangentArray[0], fbxTangentArray[1], fbxTangentArray[2]));
+		}
+	}
+	for (auto l = 0; l < fbxMesh->GetElementBinormalCount() && l < 1; ++l) {
+		auto fbxBinormal = fbxMesh->GetElementBinormal(l);
+		for (int i = 0; i < fbxBinormal->GetDirectArray().GetCount(); i++) {
+			auto fbxBinormalArray = fbxBinormal->GetDirectArray().GetAt(i);
+			bitangents.push_back(Vector3(fbxBinormalArray[0], fbxBinormalArray[1], fbxBinormalArray[2]));
+		}
+	}
+
 	for (auto i = 0; i < fbxPolygonCount; i++) {
 		FbxSurfaceMaterial* fbxMaterial = nullptr;
 		int fbxMaterialId = -1;
@@ -403,20 +435,20 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			facesEntity->setMaterial(material);
 		}
 		auto fbxPolygonSize = fbxMesh->GetPolygonSize(i);
-		auto verticesOffset = vertices.size();
-		auto normalsOffset = normals.size();
-		auto textureCoordinatesOffset = textureCoordinates.size();
-		auto tangentsOffset = tangents.size();
-		auto bitangentsOffset = bitangents.size();
-		auto haveUV = true;
-		auto haveNormal = true;
-		auto haveTangent = true;
-		auto haveBitangent = true;
 		if (fbxPolygonSize != 3) throw ModelFileIOException("we only support triangles in '" + group->getName() + "'");
+		int controlPointIndicesIdx = 0;
+		array<int, 3> controlPointIndices;
+		int textureCoordinateIndicesIdx = 0;
+		array<int, 3> textureCoordinateIndices;
+		int normalIndicesIdx = 0;
+		array<int, 3> normalIndices;
+		int tangentIndicesIdx = 0;
+		array<int, 3> tangentIndices;
+		int binormalIndicesIdx = 0;
+		array<int, 3> binormalIndices;
 		for (auto j = 0; j < fbxPolygonSize; j++) {
 			int fbxControlPointIndex = fbxMesh->GetPolygonVertex(i, j);
-			auto fbxControlPoint = fbxControlPoints[fbxControlPointIndex];
-			vertices.push_back(Vector3(fbxControlPoint[0], fbxControlPoint[1], fbxControlPoint[2]));
+			controlPointIndices[controlPointIndicesIdx++] = fbxControlPointIndex;
 			for (auto l = 0; l < fbxMesh->GetElementUVCount() && l < 1; ++l) {
 				FbxGeometryElementUV* fbxUV = fbxMesh->GetElementUV(l);
 				switch (fbxUV->GetMappingMode()) {
@@ -424,18 +456,15 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						switch (fbxUV->GetReferenceMode()) {
 							case FbxGeometryElement::eDirect:
 								{
-									auto fbxUVArray = fbxUV->GetDirectArray().GetAt(fbxControlPointIndex);
-									textureCoordinates.push_back(TextureCoordinate(fbxUVArray[0], fbxUVArray[1]));
+									textureCoordinateIndices[textureCoordinateIndicesIdx++] = fbxControlPointIndex;
 									break;
 								}
 							case FbxGeometryElement::eIndexToDirect:
 								{
-									auto fbxUVArray = fbxUV->GetDirectArray().GetAt(fbxUV->GetIndexArray().GetAt(fbxControlPointIndex));
-									textureCoordinates.push_back(TextureCoordinate(fbxUVArray[0], fbxUVArray[1]));
+									textureCoordinateIndices[textureCoordinateIndicesIdx++] = fbxUV->GetIndexArray().GetAt(fbxControlPointIndex);
 									break;
 								}
 							default:
-								haveUV = false;
 								break;
 						}
 						break;
@@ -445,18 +474,15 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 								case FbxGeometryElement::eDirect:
 								case FbxGeometryElement::eIndexToDirect:
 									{
-										auto fbxUVArray = fbxUV->GetDirectArray().GetAt(fbxMesh->GetTextureUVIndex(i, j));
-										textureCoordinates.push_back(TextureCoordinate(fbxUVArray[0], fbxUVArray[1]));
+										textureCoordinateIndices[textureCoordinateIndicesIdx++] = fbxMesh->GetTextureUVIndex(i, j);
 										break;
 									}
 								default:
-									haveUV = false;
 									break;
 							}
 							break;
 						}
 						default:
-							haveUV = false;
 							break;
 				}
 			}
@@ -466,22 +492,18 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					switch (fbxNormal->GetReferenceMode()) {
 						case FbxGeometryElement::eDirect:
 							{
-								auto fbxNormalArray = fbxNormal->GetDirectArray().GetAt(fbxVertexId);
-								normals.push_back(Vector3(fbxNormalArray[0], fbxNormalArray[1], fbxNormalArray[2]));
+								normalIndices[normalIndicesIdx++] = fbxVertexId;
+								break;
 							}
-							break;
 						case FbxGeometryElement::eIndexToDirect:
 							{
-								auto fbxNormalArray = fbxNormal->GetDirectArray().GetAt(fbxNormal->GetIndexArray().GetAt(fbxVertexId));
-								normals.push_back(Vector3(fbxNormalArray[0], fbxNormalArray[1], fbxNormalArray[2]));
+								normalIndices[normalIndicesIdx++] = fbxNormal->GetIndexArray().GetAt(fbxVertexId);
 								break;
 							}
 						default:
-							haveNormal = false;
 							break;
 					}
 				} else {
-					haveNormal = false;
 				}
 			}
 			for (auto l = 0; l < fbxMesh->GetElementTangentCount() && l < 1; ++l) {
@@ -490,22 +512,17 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					switch (fbxTangent->GetReferenceMode()) {
 						case FbxGeometryElement::eDirect:
 							{
-								auto fbxTangentArray = fbxTangent->GetDirectArray().GetAt(fbxVertexId);
-								tangents.push_back(Vector3(fbxTangentArray[0], fbxTangentArray[1], fbxTangentArray[2]));
+								tangentIndices[tangentIndicesIdx++] = fbxVertexId;
+								break;
 							}
-							break;
 						case FbxGeometryElement::eIndexToDirect:
 							{
-								auto fbxTangentArray = fbxTangent->GetDirectArray().GetAt(fbxTangent->GetIndexArray().GetAt(fbxVertexId));
-								tangents.push_back(Vector3(fbxTangentArray[0], fbxTangentArray[1], fbxTangentArray[2]));
+								tangentIndices[tangentIndicesIdx++] = fbxTangent->GetIndexArray().GetAt(fbxVertexId);
 								break;
 							}
 						default:
-							haveTangent = false;
 							break;
 					}
-				} else {
-					haveTangent = false;
 				}
 			}
 			for (auto l = 0; l < fbxMesh->GetElementBinormalCount() && l < 1; ++l) {
@@ -514,52 +531,47 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					switch (fbxBinormal->GetReferenceMode()) {
 						case FbxGeometryElement::eDirect:
 							{
-								auto fbxBinormalArray = fbxBinormal->GetDirectArray().GetAt(fbxVertexId);
-								bitangents.push_back(Vector3(fbxBinormalArray[0], fbxBinormalArray[1], fbxBinormalArray[2]));
+								binormalIndices[binormalIndicesIdx++] = fbxVertexId;
+								break;
 							}
-							break;
 						case FbxGeometryElement::eIndexToDirect:
 							{
-								auto fbxBinormalArray = fbxBinormal->GetDirectArray().GetAt(fbxBinormal->GetIndexArray().GetAt(fbxVertexId));
-								bitangents.push_back(Vector3(fbxBinormalArray[0], fbxBinormalArray[1], fbxBinormalArray[2]));
+								binormalIndices[binormalIndicesIdx++] = fbxBinormal->GetIndexArray().GetAt(fbxVertexId);
 								break;
 							}
 						default:
-							haveBitangent = false;
 							break;
 					}
-				} else {
-					haveBitangent = false;
 				}
 			}
 			fbxVertexId++;
 		}
 		Face f(
 			group,
-			verticesOffset + 0,
-			verticesOffset + 1,
-			verticesOffset + 2,
-			normalsOffset + 0,
-			normalsOffset + 1,
-			normalsOffset + 2
+			controlPointIndices[0],
+			controlPointIndices[1],
+			controlPointIndices[2],
+			normalIndices[0],
+			normalIndices[1],
+			normalIndices[2]
 		);
-		if (haveUV == true) {
+		if (textureCoordinateIndicesIdx == 3) {
 			f.setTextureCoordinateIndices(
-				textureCoordinatesOffset + 0,
-				textureCoordinatesOffset + 1,
-				textureCoordinatesOffset + 2
+				textureCoordinateIndices[0],
+				textureCoordinateIndices[1],
+				textureCoordinateIndices[2]
 			);
 		}
-		if (haveTangent == true && haveBitangent == true) {
+		if (tangentIndicesIdx == 3 && binormalIndicesIdx == 3) {
 			f.setTangentIndices(
-				tangentsOffset + 0,
-				tangentsOffset + 1,
-				tangentsOffset + 2
+				tangentIndices[0],
+				tangentIndices[1],
+				tangentIndices[2]
 			);
 			f.setBitangentIndices(
-				bitangentsOffset + 0,
-				bitangentsOffset + 1,
-				bitangentsOffset + 2
+				binormalIndices[0],
+				binormalIndices[1],
+				binormalIndices[2]
 			);
 		}
 		faces.push_back(f);
