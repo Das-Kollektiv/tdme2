@@ -84,4 +84,15 @@ private:
 	 * @param parent group
 	 */
 	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+
+	/**
+	 * Process animation
+	 * @param FBX node
+	 * @param FBX animation layer
+	 * @param FBX animation index
+	 * @param FBX start frame
+	 * @param FBX end frame
+	 * @param model
+	 */
+	static void processAnimation(FbxNode* fbxNode, FbxAnimLayer* fbxAnimLayer, int fbxAnimIndex, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model);
 };
