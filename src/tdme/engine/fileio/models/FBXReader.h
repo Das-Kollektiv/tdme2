@@ -86,6 +86,14 @@ private:
 	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
 
 	/**
+	 * Process FBX skeleton node
+	 * @param FBX node
+	 * @param model
+	 * @param parent group
+	 */
+	static Group* processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+
+	/**
 	 * Process animation
 	 * @param FBX node
 	 * @param FBX animation layer

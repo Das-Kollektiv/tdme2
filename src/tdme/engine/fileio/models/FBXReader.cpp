@@ -2,6 +2,7 @@
 
 #include <fbxsdk.h>
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -10,11 +11,14 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Joint.h>
+#include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/Model_UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -23,6 +27,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
 
+using std::map;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -31,11 +36,14 @@ using tdme::engine::fileio::models::FBXReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
+using tdme::engine::model::Joint;
+using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Model_UpVector;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -215,32 +223,7 @@ void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) 
 void FBXReader::processScene(FbxScene* fbxScene, Model* model) {
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
-	auto fbxGroupName = fbxNode->GetName();
-	auto group = new Group(model, nullptr, fbxGroupName, fbxGroupName);
-	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
-	group->getTransformationsMatrix().set(
-		fbxNodeLocalTransform.Get(0,0),
-		fbxNodeLocalTransform.Get(0,1),
-		fbxNodeLocalTransform.Get(0,2),
-		fbxNodeLocalTransform.Get(0,3),
-		fbxNodeLocalTransform.Get(1,0),
-		fbxNodeLocalTransform.Get(1,1),
-		fbxNodeLocalTransform.Get(1,2),
-		fbxNodeLocalTransform.Get(1,3),
-		fbxNodeLocalTransform.Get(2,0),
-		fbxNodeLocalTransform.Get(2,1),
-		fbxNodeLocalTransform.Get(2,2),
-		fbxNodeLocalTransform.Get(2,3),
-		fbxNodeLocalTransform.Get(3,0),
-		fbxNodeLocalTransform.Get(3,1),
-		fbxNodeLocalTransform.Get(3,2),
-		fbxNodeLocalTransform.Get(3,3)
-	);
-	(*model->getSubGroups())[group->getId()] = group;
-	(*model->getGroups())[group->getId()] = group;
-	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, group);
-	}
+	processNode(fbxNode, model, nullptr);
 }
 
 void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
@@ -251,6 +234,11 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) 
 			case FbxNodeAttribute::eMesh:
 				{
 					group = processMeshNode(fbxNode, model, parentGroup);
+					break;
+				}
+			case FbxNodeAttribute::eSkeleton:
+				{
+					group = processSkeletonNode(fbxNode, model, parentGroup);
 					break;
 				}
 		}
@@ -289,7 +277,6 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) 
 		processNode(fbxNode->GetChild(i), model, parentGroup);
 	}
 }
-
 
 Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
 	auto fbxGroupName = fbxNode->GetName();
@@ -667,6 +654,102 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	group->setFacesEntities(&facesEntities);
 	group->determineFeatures();
 
+	int fbxSkinCount = fbxNode->GetMesh()->GetDeformerCount(FbxDeformer::eSkin);
+	if (fbxSkinCount == 0) {
+		// no op
+	} else
+	if (fbxSkinCount == 1) {
+		FbxSkin* fbxSkinDeformer = (FbxSkin*)fbxNode->GetMesh()->GetDeformer(0, FbxDeformer::eSkin);
+		int fbxClusterCount = fbxSkinDeformer->GetClusterCount();
+		auto skinning = group->createSkinning();
+		vector<Joint> joints;
+		vector<float> weights;
+		map<int, vector<JointWeight>> jointWeightsByVertices;
+		for (auto fbxClusterIndex = 0; fbxClusterIndex < fbxClusterCount; fbxClusterIndex++) {
+			FbxCluster* fbxCluster = fbxSkinDeformer->GetCluster(fbxClusterIndex);
+			if (fbxCluster->GetLink() == nullptr) continue;
+			auto fbxJointName = fbxCluster->GetLink()->GetName();
+			auto jointIndex = joints.size();
+			FbxAMatrix transformMatrix;
+			FbxAMatrix transformLinkMatrix;
+			fbxCluster->GetTransformMatrix(transformMatrix);
+			fbxCluster->GetTransformLinkMatrix(transformLinkMatrix);
+			Matrix4x4 bindShapeMatrixArray;
+			Joint joint(fbxJointName);
+			joint.getBindMatrix().multiply(
+				Matrix4x4(
+					transformMatrix.Get(0,0),
+					transformMatrix.Get(0,1),
+					transformMatrix.Get(0,2),
+					transformMatrix.Get(0,3),
+					transformMatrix.Get(1,0),
+					transformMatrix.Get(1,1),
+					transformMatrix.Get(1,2),
+					transformMatrix.Get(1,3),
+					transformMatrix.Get(2,0),
+					transformMatrix.Get(2,1),
+					transformMatrix.Get(2,2),
+					transformMatrix.Get(2,3),
+					transformMatrix.Get(3,0),
+					transformMatrix.Get(3,1),
+					transformMatrix.Get(3,2),
+					transformMatrix.Get(3,3)
+				)
+			);
+			joint.getBindMatrix().multiply(
+				Matrix4x4(
+					transformLinkMatrix.Get(0,0),
+					transformLinkMatrix.Get(0,1),
+					transformLinkMatrix.Get(0,2),
+					transformLinkMatrix.Get(0,3),
+					transformLinkMatrix.Get(1,0),
+					transformLinkMatrix.Get(1,1),
+					transformLinkMatrix.Get(1,2),
+					transformLinkMatrix.Get(1,3),
+					transformLinkMatrix.Get(2,0),
+					transformLinkMatrix.Get(2,1),
+					transformLinkMatrix.Get(2,2),
+					transformLinkMatrix.Get(2,3),
+					transformLinkMatrix.Get(3,0),
+					transformLinkMatrix.Get(3,1),
+					transformLinkMatrix.Get(3,2),
+					transformLinkMatrix.Get(3,3)
+				).invert()
+			);
+			joints.push_back(joint);
+			auto fbxClusterControlPointIndexCount = fbxCluster->GetControlPointIndicesCount();
+			auto fbxClusterControlPointIndices = fbxCluster->GetControlPointIndices();
+			for (auto fbxClusterControlPointIndex = 0; fbxClusterControlPointIndex < fbxClusterControlPointIndexCount; fbxClusterControlPointIndex++) {
+				int fbxControlPointIndex = fbxClusterControlPointIndices[fbxClusterControlPointIndex];
+				auto weightIndex = weights.size();
+				weights.push_back(fbxCluster->GetControlPointWeights()[fbxClusterControlPointIndex]);
+				jointWeightsByVertices[fbxControlPointIndex].push_back(JointWeight(jointIndex, weightIndex));
+			}
+		}
+		skinning->setJoints(&joints);
+		skinning->setWeights(weights);
+		vector<vector<JointWeight>> verticesJointsWeights;
+		for (auto vertexIndex = 0; vertexIndex < vertices.size(); vertexIndex++) {
+			verticesJointsWeights.push_back(vector<JointWeight>());
+			auto jointWeightsByVerticesIt = jointWeightsByVertices.find(vertexIndex);
+			if (jointWeightsByVerticesIt != jointWeightsByVertices.end()) {
+				for (auto jointWeight: jointWeightsByVerticesIt->second) {
+					verticesJointsWeights[verticesJointsWeights.size() - 1].push_back(jointWeight);
+				}
+			}
+		}
+		skinning->setVerticesJointsWeights(&verticesJointsWeights);
+	} else {
+		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
+	}
+
+	return group;
+}
+
+Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
+	auto fbxGroupName = fbxNode->GetName();
+	FbxSkeleton* fbxSkeleton = (FbxSkeleton*)fbxNode->GetNodeAttribute();
+	auto group = new Group(model, parentGroup, fbxGroupName, fbxGroupName);
 	return group;
 }
 
