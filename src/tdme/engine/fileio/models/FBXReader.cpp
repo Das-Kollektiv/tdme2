@@ -125,7 +125,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	model->addAnimationSetup(
 		Model::ANIMATIONSETUP_DEFAULT,
 		0,
-		(int)Math::ceil(fbxMaxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)),
+		(int)Math::ceil(fbxMaxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1,
 		true
 	);
 	for(auto i = 0; i < fbxAnimStackNameArray.GetCount(); i++ ) {
@@ -144,7 +144,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		model->addAnimationSetup(
 			string(fbxAnimStackNameArray[i]->Buffer()),
 			(int)Math::ceil(fbxStartTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)),
-			(int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)),
+			(int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1,
 			false
 		);
         auto currentFbxAnimationLayer = fbxCurrentAnimationStack->GetMember<FbxAnimLayer>();
