@@ -14,7 +14,7 @@
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/DAEReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -60,7 +60,7 @@ using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::DAEReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -293,7 +293,7 @@ void EngineTest::initialize()
 	light2->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition().getX(), light2->getPosition().getY(), light2->getPosition().getZ()));
 	light2->setEnabled(true);
 	try {
-		auto _barrel = DAEReader::read("resources/tests/models/barrel", "barrel.dae");
+		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrel = new Object3D("barrel", _barrel);
 		barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		barrel->getTranslation().set(1.5f, 0.35f, -2.0f);
@@ -307,13 +307,13 @@ void EngineTest::initialize()
 		auto farPlane = new Object3D("wall", _farPlane);
 		farPlane->bindDiffuseTexture("wall", "wall", osEngine->getFrameBuffer());
 		engine->addEntity(farPlane);
-		auto _grass = DAEReader::read("resources/tests/models/grass", "grass.dae");
+		auto _grass = ModelReader::read("resources/tests/models/grass", "grass.dae");
 		auto grass = new Object3D("ground", _grass);
 		grass->setEnabled(true);
 		grass->getScale().set(8.0f, 1.0f, 8.0f);
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = DAEReader::read("resources/tests/models/dummy", "testDummy_textured.DAE");
+		auto _player = ModelReader::read("resources/tests/models/dummy", "testDummy_textured.DAE");
 		_player->addAnimationSetup("still", 3, 3, true);
 		_player->addAnimationSetup("walk", 0, 18, true);
 		playerBoundingVolume = new Capsule(Vector3(0, 30.0f / 130.0f, 0), Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
@@ -352,7 +352,7 @@ void EngineTest::initialize()
 		player2BoundingVolume->fromTransformations(player2);
 		player2BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
-		auto _cube = DAEReader::read("resources/tests/models/test", "cube.dae");
+		auto _cube = ModelReader::read("resources/tests/models/test", "cube.dae");
 		cube = new Object3D("cube", _cube);
 		cube->getTranslation().add(Vector3(0.0f, 0.0f, 0.0f));
 		cube->getScale().set(2.0f, 2.0f, 2.0f);
@@ -369,7 +369,7 @@ void EngineTest::initialize()
 		cubeBoundingVolumeObject3D->fromTransformations(cube);
 		cubeBoundingVolumeObject3D->setEnabled(true);
 		engine->addEntity(cubeBoundingVolumeObject3D);
-		auto _wall = DAEReader::read("resources/tests/models/wall", "wall.dae");
+		auto _wall = ModelReader::read("resources/tests/models/wall", "wall.dae");
 		auto wall0 = new Object3D("wall0", _wall);
 		wall0->getTranslation().add(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();

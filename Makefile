@@ -7,14 +7,19 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
+	INCLUDES := $(INCLUDES) -Iext/fbx/include
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-	EXTRA_LIBS ?= -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/FBXReader.cpp \
+			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+	EXTRA_LIBS ?= -Lext/fbx/lib/ -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), Linux)
-	SRC_PLATFORM:= $(SRC_PLATFORM) src/tdme/os/network/platform/linux/KernelEventMechanism.cpp
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
+		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
+		src/tdme/engine/fileio/models/ModelReader.cpp
 	ifeq ($(ARCH), aarch64)
 		# Linux, ARM64
 		SRC_PLATFORM:= $(SRC_PLATFORM) \
@@ -33,14 +38,15 @@ else
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
 	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -O3 -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
 CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 

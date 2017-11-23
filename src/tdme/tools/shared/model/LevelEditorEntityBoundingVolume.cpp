@@ -3,8 +3,7 @@
 #include <string>
 
 #include <tdme/engine/Object3DModel.h>
-#include <tdme/engine/fileio/models/DAEReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -27,8 +26,7 @@ using std::to_string;
 
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::engine::Object3DModel;
-using tdme::engine::fileio::models::DAEReader;
-using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -167,19 +165,10 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 {
 	modelMeshFile = fileName;
 	try {
-		Model* convexMeshModel = nullptr;
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
-			convexMeshModel = DAEReader::read(
-				pathName,
-				fileName
-			);
-		} else
-			if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
-			convexMeshModel = TMReader::read(
-				pathName,
-				fileName
-			);
-		}
+		Model* convexMeshModel = ModelReader::read(
+			pathName,
+			fileName
+		);
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
 		convexMeshModel->getImportTransformationsMatrix().scale(1.01f);
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);

@@ -10,6 +10,7 @@ namespace models {
 				class DAEReader_AuthoringTool;
 				class DAEReader_determineDisplacementFilename_1;
 				class ModelFileIOException;
+				class ModelReader;
 				class FBXReader;
 				class TMReader;
 				class TMWriter;

@@ -5,8 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/PartitionNone.h>
-#include <tdme/engine/fileio/models/DAEReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
@@ -42,8 +41,7 @@ using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
 using tdme::engine::PartitionNone;
-using tdme::engine::fileio::models::DAEReader;
-using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::ModelStatistics;
@@ -297,8 +295,16 @@ void SharedModelViewerView::loadModel()
 
 LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
-		auto model = DAEReader::read(
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
+		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
+			LevelEditorEntity::ID_NONE,
+			pathName,
+			fileName
+		);
+		levelEditorEntity->setDefaultBoundingVolumes();
+		return levelEditorEntity;
+	} else {
+		auto model = ModelReader::read(
 			pathName,
 			fileName
 		);
@@ -315,34 +321,7 @@ LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const st
 			);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
-	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
-		auto model = TMReader::read(
-			pathName,
-			fileName
-		);
-		auto levelEditorEntity = new LevelEditorEntity(
-			LevelEditorEntity::ID_NONE,
-			LevelEditorEntity_EntityType::MODEL,
-			name,
-			description,
-			"",
-			pathName + "/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-			model,
-			pivot
-		);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
-	} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
-			LevelEditorEntity::ID_NONE,
-			pathName,
-			fileName
-		);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
+
 	}
 	return nullptr;
 }

@@ -3,8 +3,7 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/fileio/models/DAEReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
@@ -39,8 +38,7 @@ using std::string;
 
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::fileio::models::DAEReader;
-using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
@@ -114,27 +112,17 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
 		auto modelPath = (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 		auto modelFile = Tools::getFileName(modelRelativeFileName);
-		if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), ".dae") == true) {
-			model = DAEReader::read(
-				modelPath,
-				modelFile
-			);
-		} else
-			if (StringUtils::endsWith(StringUtils::toLowerCase(modelRelativeFileName), ".tm") == true) {
-			model = TMReader::read(
-				modelPath,
-				modelFile
-			);
-		} else {
-			throw ModelFileIOException(string("Unsupported mode file: ") + (modelFile));
-		}
+		model = ModelReader::read(
+			modelPath,
+			modelFile
+		);
 		if (model == nullptr) {
 			Console::println("ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + "/" + modelFile + "'");
 			return nullptr;
 		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
-		model = DAEReader::read("resources/tools/leveleditor/models", "arrow.dae");
+		model = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
 	}
 
 	levelEditorEntity = new LevelEditorEntity(

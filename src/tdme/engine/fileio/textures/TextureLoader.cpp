@@ -30,15 +30,14 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
-Texture* TextureLoader::loadTexture(const string& path, const string& fileName)
+Texture* TextureLoader::loadTexture(const string& pathName, const string& fileName)
 {
 	try {
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) {
-			Texture* texture = TextureLoader::loadPNG(path, fileName);
-			return texture;
+			return TextureLoader::loadPNG(pathName, fileName);
 		}
 	} catch (Exception& exception) {
-		Console::println("TextureLoader::loadTexture(): Could not load texture: " + path + "/" + fileName + ": " + (exception.what()));
+		Console::println("TextureLoader::loadTexture(): Could not load texture: " + pathName + "/" + fileName + ": " + (exception.what()));
 	}
 	return nullptr;
 }
@@ -51,15 +50,15 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureLoader::loadPNG(const string& path, const string& fileName) throw (FileSystemException) {
+Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) throw (FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id
-	auto canonicalFileName = FileSystem::getInstance()->getCanonicalPath(path, fileName);
+	auto canonicalFileName = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
 
 	// create PNG input stream
 	vector<uint8_t> content;
-	FileSystem::getInstance()->getContent(path, fileName, &content);
+	FileSystem::getInstance()->getContent(pathName, fileName, &content);
 	PNGInputStream* pngInputStream = new PNGInputStream(&content);
 
 	// check that the PNG signature is in the file header

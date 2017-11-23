@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -42,6 +43,7 @@ using std::to_string;
 
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -413,10 +415,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(Lev
 {
 	auto const idxFinal = idx;
 	auto const entityFinal = entity;
-	vector<string> extensions = {
-		"dae",
-		"tm"
-	};
+	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",

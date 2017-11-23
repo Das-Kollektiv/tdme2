@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/fileio/models/DAEReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
@@ -27,8 +26,7 @@ using std::vector;
 using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::engine::fileio::models::DAEReader;
-using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
@@ -74,49 +72,24 @@ int32_t LevelEditorEntityLibrary::allocateEntityId()
 LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
-		auto model = DAEReader::read(
-			pathName,
-			fileName
-		);
-		levelEditorEntity = new LevelEditorEntity(
-			id == ID_ALLOCATE ? allocateEntityId() : id,
-			LevelEditorEntity_EntityType::MODEL,
-			name,
-			description,
-			"",
-			pathName + "/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-			model,
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
-		auto model = TMReader::read(
-			pathName,
-			fileName
-		);
-		levelEditorEntity = new LevelEditorEntity(
-			id == ID_ALLOCATE ? allocateEntityId() : id,
-			LevelEditorEntity_EntityType::MODEL,
-			name,
-			description,
-			"",
-			pathName + "/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-			model,
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-	} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
+	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
-		throw ExceptionBase(
-			(pathName) +
-			"/" +
-			(pathName) +
-			string(": Unknown model file format")
-		 );
+		auto model = ModelReader::read(
+			pathName,
+			fileName
+		);
+		levelEditorEntity = new LevelEditorEntity(
+			id == ID_ALLOCATE ? allocateEntityId() : id,
+			LevelEditorEntity_EntityType::MODEL,
+			name,
+			description,
+			"",
+			pathName + "/" + fileName,
+			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+			model,
+			Vector3(0.0f, 0.0f, 0.0f)
+		);
 	}
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
@@ -150,7 +123,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& 
 {
 	auto cacheId = "leveleditor.empty";
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	auto model = DAEReader::read("resources/tools/leveleditor/models", "arrow.dae");
+	auto model = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::EMPTY,

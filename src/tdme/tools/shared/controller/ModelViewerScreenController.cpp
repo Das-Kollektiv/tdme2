@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -37,7 +38,7 @@ using std::string;
 
 using tdme::tools::shared::controller::ModelViewerScreenController;
 
-
+using tdme::engine::fileio::models::ModelReader;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -230,11 +231,8 @@ void ModelViewerScreenController::onModelLoad()
 		fileName = view->getFileName();
 	}
 	fileName = Tools::getFileName(fileName);
-	vector<string> extensions = {
-		"tmm",
-		"dae",
-		"tm"
-	};
+	vector<string> extensions = ModelReader::getModelExtensions();
+	extensions.push_back("tmm");
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -53,6 +54,7 @@ using std::vector;
 using std::string;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -881,10 +883,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					onParticleSystemEmitterDataApply();
 				} else
 				if (node->getId().compare("button_ops_model_file") == 0) {
-					vector<string> extensions = {
-						"dae",
-						"tm"
-					};
+					vector<string> extensions = ModelReader::getModelExtensions();
 					view->getPopUpsViews()->getFileDialogScreenController()->show(
 						modelPath->getPath(),
 						"Load from: ",

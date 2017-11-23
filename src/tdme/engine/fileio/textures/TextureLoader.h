@@ -66,7 +66,7 @@ private:
 };
 
 /** 
- * ImageLoader loader class
+ * Texture loader class
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -75,11 +75,11 @@ class tdme::engine::fileio::textures::TextureLoader final
 public:
 	/** 
 	 * Loads a texture
-	 * @param path
-	 * @param fileName
+	 * @param path name
+	 * @param file name
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(const string& path, const string& fileName);
+	static Texture* loadTexture(const string& pathName, const string& fileName);
 
 private:
 	/**

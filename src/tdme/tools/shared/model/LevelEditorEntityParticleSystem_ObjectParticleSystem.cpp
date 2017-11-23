@@ -2,8 +2,7 @@
 
 #include <string>
 
-#include <tdme/engine/fileio/models/DAEReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -13,8 +12,7 @@
 using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::engine::fileio::models::DAEReader;
-using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
@@ -77,22 +75,9 @@ const string& LevelEditorEntityParticleSystem_ObjectParticleSystem::getModelFile
 void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName) /* throws(Exception) */
 {
 	this->modelFileName = modelFileName;
-	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), ".tm") == true) {
-		model = TMReader::read(
-			Tools::getPath(modelFileName),
-			Tools::getFileName(modelFileName)
-		);
-	} else
-	if (StringUtils::endsWith(StringUtils::toLowerCase(modelFileName), ".dae") == true) {
-		model = DAEReader::read(
-			Tools::getPath(modelFileName),
-			Tools::getFileName(modelFileName)
-		);
-	} else {
-		throw new ExceptionBase(
-			string("LevelEditorEntityParticleSystem::ObjectParticleSystem::setModelFileName(): unsupported model '") +
-			(modelFileName)
-		);
-	}
+	model = ModelReader::read(
+		Tools::getPath(modelFileName),
+		Tools::getFileName(modelFileName)
+	);
 }
 

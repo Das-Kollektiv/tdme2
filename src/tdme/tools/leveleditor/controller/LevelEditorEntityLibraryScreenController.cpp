@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -33,6 +34,7 @@ using std::string;
 using std::to_string;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -247,11 +249,8 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue()->getString() == "create_model") {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-			vector<string> extensions = {
-				"tmm",
-				"dae",
-				"tm"
-			};
+			vector<string> extensions = ModelReader::getModelExtensions();
+			extensions.push_back("tmm");
 			popUps->getFileDialogScreenController()->show(
 				modelPath,
 				"Load from: ",
