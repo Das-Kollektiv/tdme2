@@ -11,6 +11,7 @@ TDME2
                 - DAE parsing with skinned meshes and animations
                     - group names/ids must not have whitespace characters
                     - requires baked matrices
+                - FBX via FBX SDK
                 - TDME Model file format
                     - this is a much more efficient model file format for TDME
                     - can be read and written
