@@ -96,11 +96,10 @@ private:
 	/**
 	 * Process animation
 	 * @param FBX node
-	 * @param FBX animation layer
-	 * @param FBX animation index
 	 * @param FBX start frame
 	 * @param FBX end frame
 	 * @param model
+	 * @param frame offset
 	 */
-	static void processAnimation(FbxNode* fbxNode, FbxAnimLayer* fbxAnimLayer, int fbxAnimIndex, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model);
+	static void processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset);
 };
