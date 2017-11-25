@@ -108,6 +108,10 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 		(*model->getMaterials())[material->getId()] = material;
 	}
 	readSubGroups(&is, model, nullptr, model->getSubGroups());
+	auto animationSetupCount = is.readInt();
+	for (auto i = 0; i < animationSetupCount; i++) {
+		readAnimationSetup(&is, model);
+	}
 	return model;
 }
 
@@ -148,6 +152,19 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
 	}
 	return m;
+}
+
+void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model) throw (ModelFileIOException) {
+	auto id = is->readString();
+	auto overlayFromGroupId = is->readString();
+	auto startFrame = is->readInt();
+	auto endFrame = is->readInt();
+	auto loop = is->readBoolean();
+	if (overlayFromGroupId.length() == 0) {
+		model->addAnimationSetup(id, startFrame, endFrame, loop);
+	} else {
+		model->addOverlayAnimationSetup(id, overlayFromGroupId, startFrame, endFrame, loop);
+	}
 }
 
 const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
@@ -205,7 +222,6 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 			is->readFloatArray(&matrixArray);
 			(*g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
 		}
-		ModelHelper::createDefaultAnimation(g->getModel(), g->getAnimation()->getTransformationsMatrices()->size());
 		return g->getAnimation();
 	}
 }

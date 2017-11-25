@@ -235,6 +235,14 @@ private:
 	 */
 	static Material* readMaterial(TMReaderInputStream* is) throw (ModelFileIOException);
 
+	/**
+	 * Read animation setup
+	 * @param input stream
+	 * @param model
+	 * @throw model file io exception
+	 */
+	static void readAnimationSetup(TMReaderInputStream* is, Model* model) throw (ModelFileIOException);
+
 	/** 
 	 * Read vertices from input stream
 	 * @param input stream

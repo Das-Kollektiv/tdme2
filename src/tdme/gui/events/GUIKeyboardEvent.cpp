@@ -11,8 +11,13 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 		case(25): return KEYCODE_TAB_SHIFT;
 		case(27): return KEYCODE_ESCAPE;
 		case(32): return KEYCODE_SPACE;
-		case(127): return KEYCODE_DELETE;
-		case(8): return KEYCODE_BACKSPACE;
+		#if defined(__APPLE__)
+			case(8): return KEYCODE_DELETE;
+			case(127): return KEYCODE_BACKSPACE;
+		#else
+			case(127): return KEYCODE_DELETE;
+			case(8): return KEYCODE_BACKSPACE;
+		#endif
 		default: return -1;
 	}
 }

@@ -23,6 +23,7 @@ using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
+using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
@@ -218,13 +219,21 @@ public:
 
 private:
 
-	/** 
-	 * Write material 
+	/**
+	 * Write material
 	 * @param output stream
 	 * @param material
 	 * @throws model file IO exception
 	 */
 	static void writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException);
+
+	/** 
+	 * Write animation setup
+	 * @param output stream
+	 * @param animation setup
+	 * @throws model file IO exception
+	 */
+	static void writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) throw (ModelFileIOException);
 
 	/** 
 	 * Write vertices to output stream

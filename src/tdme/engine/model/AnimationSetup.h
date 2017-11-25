@@ -43,10 +43,22 @@ public:
 	 */
 	int32_t getStartFrame();
 
+	/**
+	 * Set start frame
+	 * @param start frame
+	 */
+	void setStartFrame(int32_t startFrame);
+
 	/** 
 	 * @return end frame
 	 */
 	int32_t getEndFrame();
+
+	/**
+	 * Set end frame
+	 * @param end frame
+	 */
+	void setEndFrame(int32_t endFrame);
 
 	/** 
 	 * @return frames
@@ -59,10 +71,22 @@ public:
 	bool isLoop();
 
 	/** 
+	 * Set loop
+	 * @param loop
+	 */
+	bool setLoop(bool loop);
+
+	/**
 	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy
 	 * @return group id from which the animation will start in the hierarchy
 	 */
 	const string& getOverlayFromGroupId();
+
+	/**
+	 * Set overlay from group id
+	 * @param overlay from group id
+	 */
+	void setOverlayFromGroupId(const string& overlayFromGroupId);
 
 	/** 
 	 * @return animation duration in milliseconds

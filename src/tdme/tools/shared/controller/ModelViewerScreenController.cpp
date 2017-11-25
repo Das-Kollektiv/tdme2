@@ -4,6 +4,9 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/model/AnimationSetup.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Group.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -28,6 +31,7 @@
 #include <tdme/tools/shared/views/SharedModelViewerView.h>
 #include <tdme/tools/viewer/TDMEViewer.h>
 #include <tdme/utils/Float.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -62,6 +66,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::tools::viewer::TDMEViewer;
 using tdme::utils::Float;
+using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
@@ -128,6 +133,13 @@ void ModelViewerScreenController::initialize()
 		renderingMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_masked_transparency"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
+		animationsDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown"));
+		animationsDropDownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_apply"));
+		animationsAnimationStartFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_startframe"));
+		animationsAnimationEndFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_endframe"));
+		animationsAnimationOverlayFromGroupIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromgroupidanimations_dropdown"));
+		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
+		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -210,6 +222,136 @@ void ModelViewerScreenController::unsetRendering()
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(value->set("1"));
 	renderingApply->getController()->setDisabled(true);
+}
+
+void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
+
+	auto model = entity->getModel();
+
+	{
+		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner")));
+		auto idx = 0;
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML =
+			animationsDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			animationsDropDown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		for (auto it: *model->getAnimationSetups()) {
+			auto animationSetupId = it.second->getId();
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelViewerScreenController::setAnimations(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
+		animationsDropDown->getScreenNode()->layout(animationsDropDown);
+	}
+
+	{
+		auto animationsAnimationOverlayFromGroupIdDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->getNodeById(animationsAnimationOverlayFromGroupIdDropDown->getId() + "_inner")));
+		auto idx = 0;
+		string animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = "";
+		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			animationsAnimationOverlayFromGroupIdDropDown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"70\">\n";
+		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+			"<dropdown-option text=\"\" value=\"\"" +
+			(idx == 0 ? "selected=\"true\" " : "") +
+			" />\n";
+		for (auto it: *model->getGroups()) {
+			auto groupId = it.second->getId();
+			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
+				animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+				"<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(groupId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(groupId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			animationsAnimationOverlayFromGroupIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelViewerScreenController::setAnimations(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
+		// animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->layout(animationsAnimationOverlayFromGroupIdDropDown);
+	}
+
+	// select default animation
+	animationsDropDown->getController()->setValue(value->set(Model::ANIMATIONSETUP_DEFAULT));
+
+	// apply
+	onAnimationDropDownApply();
+}
+
+void ModelViewerScreenController::onAnimationDropDownApply() {
+	auto entity = view->getEntity();
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto defaultAnimation = animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
+	animationsDropDown->getController()->setDisabled(false);
+	animationsDropDownApply->getController()->setDisabled(false);
+	animationsAnimationStartFrame->getController()->setValue(value->set(animationSetup->getStartFrame()));
+	animationsAnimationStartFrame->getController()->setDisabled(defaultAnimation);
+	animationsAnimationEndFrame->getController()->setValue(value->set(animationSetup->getEndFrame()));
+	animationsAnimationEndFrame->getController()->setDisabled(defaultAnimation);
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(value->set(animationSetup->getOverlayFromGroupId()));
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
+	animationsAnimationLoop->getController()->setValue(value->set(animationSetup->isLoop() == true?"1":""));
+	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
+	animationsAnimationApply->getController()->setDisabled(defaultAnimation);
+	view->playAnimation(animationSetup->getId());
+}
+
+void ModelViewerScreenController::onAnimationApply() {
+	auto entity = view->getEntity();
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	try {
+		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue()->getString()));
+		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue()->getString()));
+		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue()->getString());
+		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue()->getString() == "1");
+		view->playAnimation(animationSetup->getId());
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelViewerScreenController::unsetAnimations() {
+
+	dynamic_cast<GUIParentNode*>(animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner"))->clearSubNodes();
+	animationsDropDown->getController()->setValue(value->set(""));
+	animationsDropDown->getController()->setDisabled(true);
+	animationsDropDownApply->getController()->setDisabled(true);
+	animationsAnimationStartFrame->getController()->setValue(value->set(""));
+	animationsAnimationStartFrame->getController()->setDisabled(true);
+	animationsAnimationEndFrame->getController()->setValue(value->set(""));
+	animationsAnimationEndFrame->getController()->setDisabled(true);
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(value->set(""));
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
+	animationsAnimationLoop->getController()->setValue(value->set(""));
+	animationsAnimationLoop->getController()->setDisabled(true);
+	animationsAnimationApply->getController()->setDisabled(true);
 }
 
 void ModelViewerScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
@@ -331,6 +473,12 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else
 				if (node->getId().compare("button_rendering_apply") == 0) {
 					onRenderingApply();
+				} else
+				if (node->getId().compare("animations_dropdown_apply") == 0) {
+					onAnimationDropDownApply();
+				} else
+				if (node->getId().compare("button_animations_animation_apply") == 0){
+					onAnimationApply();
 				} else {
 					Console::println(
 						string(

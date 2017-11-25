@@ -382,7 +382,7 @@ const string Tools::getGameRootPath(const string& fileName)
 			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
 
 	}
-	return newFileName;
+	return "";
 }
 
 const string Tools::getPath(const string& fileName)

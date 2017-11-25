@@ -5,6 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -40,6 +41,7 @@ using std::string;
 using tdme::tools::shared::views::SharedModelViewerView;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
+using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
@@ -183,6 +185,7 @@ void SharedModelViewerView::updateGUIElements()
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 		entityBoundingVolumeView->setTerrainMesh(entity);
 		modelViewerScreenController->setRendering(entity);
+		modelViewerScreenController->setAnimations(entity);
 	} else {
 		modelViewerScreenController->setScreenCaption("Model Viewer - no entity loaded");
 		modelViewerScreenController->unsetEntityProperties();
@@ -191,6 +194,7 @@ void SharedModelViewerView::updateGUIElements()
 		entityBoundingVolumeView->unsetBoundingVolumes();
 		entityBoundingVolumeView->unsetTerrainMesh();
 		modelViewerScreenController->unsetRendering();
+		modelViewerScreenController->unsetAnimations();
 	}
 }
 
@@ -324,6 +328,10 @@ LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const st
 
 	}
 	return nullptr;
+}
+
+void SharedModelViewerView::playAnimation(const string& animationId) {
+	dynamic_cast<Object3D*>(engine->getEntity("model"))->setAnimation(animationId);
 }
 
 void SharedModelViewerView::onSetEntityData()

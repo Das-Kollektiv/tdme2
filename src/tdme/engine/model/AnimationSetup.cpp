@@ -31,9 +31,17 @@ int32_t AnimationSetup::getStartFrame()
 	return startFrame;
 }
 
+void AnimationSetup::setStartFrame(int32_t startFrame) {
+	this->startFrame = startFrame;
+}
+
 int32_t AnimationSetup::getEndFrame()
 {
 	return endFrame;
+}
+
+void AnimationSetup::setEndFrame(int32_t endFrame) {
+	this->endFrame = endFrame;
 }
 
 int32_t AnimationSetup::getFrames()
@@ -46,9 +54,17 @@ bool AnimationSetup::isLoop()
 	return loop;
 }
 
+bool AnimationSetup::setLoop(bool loop) {
+	this->loop = loop;
+}
+
 const string& AnimationSetup::getOverlayFromGroupId()
 {
 	return overlayFromGroupId;
+}
+
+void AnimationSetup::setOverlayFromGroupId(const string& overlayFromGroupId) {
+	this->overlayFromGroupId = overlayFromGroupId;
 }
 
 int64_t AnimationSetup::computeDuration()

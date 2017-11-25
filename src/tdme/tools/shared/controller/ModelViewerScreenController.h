@@ -67,6 +67,13 @@ private:
 	GUIElementNode* renderingMaskedTransparency {  };
 	GUIElementNode* renderingDynamicShadowing {  };
 	GUIElementNode* renderingApply {  };
+	GUIElementNode* animationsDropDown {  };
+	GUIElementNode* animationsDropDownApply {  };
+	GUIElementNode* animationsAnimationStartFrame {  };
+	GUIElementNode* animationsAnimationEndFrame {  };
+	GUIElementNode* animationsAnimationOverlayFromGroupIdDropDown {  };
+	GUIElementNode* animationsAnimationLoop {  };
+	GUIElementNode* animationsAnimationApply {  };
 
 	MutableString* value {  };
 	FileDialogPath* modelPath {  };
@@ -143,6 +150,26 @@ public:
 	 * Unset rendering
 	 */
 	void unsetRendering();
+
+	/**
+	 * Set animations
+	 */
+	void setAnimations(LevelEditorEntity* entity);
+
+	/**
+	 * On animation drop down apply
+	 */
+	void onAnimationDropDownApply();
+
+	/**
+	 * On animation apply
+	 */
+	void onAnimationApply();
+
+	/**
+	 * Unset animations
+	 */
+	void unsetAnimations();
 
 	/** 
 	 * Set up model statistics

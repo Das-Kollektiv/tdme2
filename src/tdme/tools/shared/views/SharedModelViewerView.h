@@ -176,6 +176,11 @@ public:
 	virtual void onSetEntityData();
 
 	/**
+	 * Play animation
+	 */
+	virtual void playAnimation(const string& animationId);
+
+	/**
 	 * Public constructor
 	 * @param pop ups
 	 */

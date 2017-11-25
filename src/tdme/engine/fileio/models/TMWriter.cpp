@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/engine/model/Animation.h>
+#include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -32,6 +33,7 @@ using std::string;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
+using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -71,6 +73,11 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 		writeMaterial(&os, material);
 	}
 	writeSubGroups(&os, model->getSubGroups());
+	os.writeInt(model->getAnimationSetups()->size());
+	for (auto it: *model->getAnimationSetups()) {
+		AnimationSetup* animationSetup = it.second;
+		writeAnimationSetup(&os, animationSetup);
+	}
 	FileSystem::getInstance()->setContent(pathName, fileName, os.getData());
 }
 
@@ -92,6 +99,14 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 	os->writeString(m->getNormalTextureFileName());
 	os->writeString(m->getDisplacementTexturePathName());
 	os->writeString(m->getDisplacementTextureFileName());
+}
+
+void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) throw (ModelFileIOException) {
+	os->writeString(animationSetup->getId());
+	os->writeString(animationSetup->getOverlayFromGroupId());
+	os->writeInt(animationSetup->getStartFrame());
+	os->writeInt(animationSetup->getEndFrame());
+	os->writeBoolean(animationSetup->isLoop());
 }
 
 void TMWriter::writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException)
