@@ -147,6 +147,7 @@ TDME2
             - tinyxml
             - pthreads
             - (collision resolving of) ReactPhysics3D
+            - FBXSDK
         - targeted platforms and its current state
             - Windows/MINGW(port completed)
             - Linux(port is WIP)
