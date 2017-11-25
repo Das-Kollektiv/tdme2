@@ -123,13 +123,13 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 			fbxEndTime = fbxTimeLineTimeSpan.GetStop();
 		}
 		int startFrame = (int)Math::ceil(fbxStartTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
-		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
+		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1;
 		framesTotal+= endFrame - startFrame + 1;
 	}
 	model->addAnimationSetup(
 		Model::ANIMATIONSETUP_DEFAULT,
 		0,
-		framesTotal,
+		framesTotal - 1,
 		true
 	);
 	int frameOffset = 0;
@@ -147,7 +147,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 			fbxEndTime = fbxTimeLineTimeSpan.GetStop();
 		}
 		int startFrame = (int)Math::ceil(fbxStartTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
-		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
+		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1;
 		auto animationSetup = model->addAnimationSetup(
 			string(fbxAnimStackNameArray[i]->Buffer()),
 			frameOffset + startFrame,
