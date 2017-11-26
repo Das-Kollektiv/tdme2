@@ -5,7 +5,7 @@
 namespace tdme {
 namespace tools {
 namespace viewer {
-			class TDMEViewer;
+			class TDMEModelEditor;
 }  // namespace viewer
 }  // namespace tools
 }  // namespace tdme

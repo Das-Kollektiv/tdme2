@@ -321,7 +321,7 @@ SRCS = \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView_LevelEditorView_1.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.cpp \
-	src/tdme/tools/leveleditor/views/ModelViewerView.cpp \
+	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/ParticleSystemView.cpp \
 	src/tdme/tools/leveleditor/views/TriggerView.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
@@ -334,10 +334,10 @@ SRCS = \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.cpp \
 	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \
-	src/tdme/tools/shared/controller/ModelViewerScreenController.cpp \
-	src/tdme/tools/shared/controller/ModelViewerScreenController_ModelViewerScreenController_1.cpp \
-	src/tdme/tools/shared/controller/ModelViewerScreenController_onModelLoad_2.cpp \
-	src/tdme/tools/shared/controller/ModelViewerScreenController_onModelSave_3.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_ModelEditorScreenController_1.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
@@ -374,9 +374,9 @@ SRCS = \
 	src/tdme/tools/shared/views/EntityBoundingVolumeView.cpp \
 	src/tdme/tools/shared/views/EntityDisplayView.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
-	src/tdme/tools/shared/views/SharedModelViewerView.cpp \
+	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
-	src/tdme/tools/viewer/TDMEViewer.cpp \
+	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
@@ -492,7 +492,7 @@ MAIN_SRCS = \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
-	src/tdme/tools/viewer/TDMEViewer-main.cpp \
+	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)

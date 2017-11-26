@@ -10,7 +10,7 @@ namespace views {
 				class LevelEditorView;
 				class LevelEditorView_LevelEditorView_1;
 				class LevelEditorView_ObjectColor;
-				class ModelViewerView;
+				class ModelEditorView;
 				class ParticleSystemView;
 				class TriggerView;
 }  // namespace views

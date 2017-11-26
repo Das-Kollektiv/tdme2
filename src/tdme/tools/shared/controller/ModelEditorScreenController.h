@@ -30,29 +30,29 @@ using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utils::MutableString;
 
 /** 
- * Model viewer screen controller
+ * Model editor screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::ModelViewerScreenController final
+class tdme::tools::shared::controller::ModelEditorScreenController final
 	: public ScreenController
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-	friend class ModelViewerScreenController_ModelViewerScreenController_1;
-	friend class ModelViewerScreenController_onModelLoad_2;
-	friend class ModelViewerScreenController_onModelSave_3;
+	friend class ModelEditorScreenController_ModelEditorScreenController_1;
+	friend class ModelEditorScreenController_onModelLoad_2;
+	friend class ModelEditorScreenController_onModelSave_3;
 
 private:
 	static MutableString* TEXT_EMPTY;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };
-	SharedModelViewerView* view {  };
+	SharedModelEditorView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
 	GUIElementNode* modelReload {  };
@@ -257,10 +257,10 @@ public:
 	 * Public constructor
 	 * @param view
 	 */
-	ModelViewerScreenController(SharedModelViewerView* view);
+	ModelEditorScreenController(SharedModelEditorView* view);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~ModelViewerScreenController();
+	virtual ~ModelEditorScreenController();
 };

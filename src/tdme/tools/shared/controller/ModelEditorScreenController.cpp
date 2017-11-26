@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/ModelViewerScreenController.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController.h>
 
 #include <string>
 #include <vector>
@@ -21,15 +21,15 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/controller/ModelViewerScreenController_ModelViewerScreenController_1.h>
-#include <tdme/tools/shared/controller/ModelViewerScreenController_onModelLoad_2.h>
-#include <tdme/tools/shared/controller/ModelViewerScreenController_onModelSave_3.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_ModelEditorScreenController_1.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/shared/views/SharedModelViewerView.h>
-#include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
+#include <tdme/tools/modeleditor/TDMEModelEditor.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
@@ -41,7 +41,7 @@
 using std::vector;
 using std::string;
 
-using tdme::tools::shared::controller::ModelViewerScreenController;
+using tdme::tools::shared::controller::ModelEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::gui::GUIParser;
@@ -58,14 +58,14 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::controller::ModelViewerScreenController_ModelViewerScreenController_1;
-using tdme::tools::shared::controller::ModelViewerScreenController_onModelLoad_2;
-using tdme::tools::shared::controller::ModelViewerScreenController_onModelSave_3;
+using tdme::tools::shared::controller::ModelEditorScreenController_ModelEditorScreenController_1;
+using tdme::tools::shared::controller::ModelEditorScreenController_onModelLoad_2;
+using tdme::tools::shared::controller::ModelEditorScreenController_onModelSave_3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::SharedModelViewerView;
-using tdme::tools::viewer::TDMEViewer;
+using tdme::tools::shared::views::SharedModelEditorView;
+using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utils::Float;
 using tdme::utils::Integer;
 using tdme::utils::MutableString;
@@ -74,49 +74,49 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::ExceptionBase;
 
-MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString("");
+MutableString* ModelEditorScreenController::TEXT_EMPTY = new MutableString("");
 
-ModelViewerScreenController::ModelViewerScreenController(SharedModelViewerView* view) 
+ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view) 
 {
 	this->modelPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelViewerScreenController_ModelViewerScreenController_1(this, finalView));
+	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelEditorScreenController_ModelEditorScreenController_1(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
 	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), modelPath, true);
 }
 
-ModelViewerScreenController::~ModelViewerScreenController() {
+ModelEditorScreenController::~ModelEditorScreenController() {
 	delete modelPath;
 	delete entityBaseSubScreenController;
 	delete entityDisplaySubScreenController;
 	delete entityBoundingVolumeSubScreenController;
 }
 
-EntityDisplaySubScreenController* ModelViewerScreenController::getEntityDisplaySubScreenController()
+EntityDisplaySubScreenController* ModelEditorScreenController::getEntityDisplaySubScreenController()
 {
 	return entityDisplaySubScreenController;
 }
 
-EntityBoundingVolumeSubScreenController* ModelViewerScreenController::getEntityBoundingVolumeSubScreenController()
+EntityBoundingVolumeSubScreenController* ModelEditorScreenController::getEntityBoundingVolumeSubScreenController()
 {
 	return entityBoundingVolumeSubScreenController;
 }
 
-GUIScreenNode* ModelViewerScreenController::getScreenNode()
+GUIScreenNode* ModelEditorScreenController::getScreenNode()
 {
 	return screenNode;
 }
 
-FileDialogPath* ModelViewerScreenController::getModelPath()
+FileDialogPath* ModelEditorScreenController::getModelPath()
 {
 	return modelPath;
 }
 
-void ModelViewerScreenController::initialize()
+void ModelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/viewer/gui", "screen_modelviewer.xml");
+		screenNode = GUIParser::parse("resources/tools/modeleditor/gui", "screen_modelviewer.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
@@ -145,7 +145,7 @@ void ModelViewerScreenController::initialize()
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 	} catch (Exception& exception) {
-		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
+		Console::print(string("ModelEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
@@ -154,41 +154,41 @@ void ModelViewerScreenController::initialize()
 	value = new MutableString();
 }
 
-void ModelViewerScreenController::dispose()
+void ModelEditorScreenController::dispose()
 {
 }
 
-void ModelViewerScreenController::setScreenCaption(const string& text)
+void ModelEditorScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->getText()->set(text);
 	screenNode->layout(screenCaption);
 }
 
-void ModelViewerScreenController::setEntityData(const string& name, const string& description)
+void ModelEditorScreenController::setEntityData(const string& name, const string& description)
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 	modelReload->getController()->setDisabled(false);
 	modelSave->getController()->setDisabled(false);
 }
 
-void ModelViewerScreenController::unsetEntityData()
+void ModelEditorScreenController::unsetEntityData()
 {
 	entityBaseSubScreenController->unsetEntityData();
 	modelReload->getController()->setDisabled(true);
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
+void ModelEditorScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
 
-void ModelViewerScreenController::unsetEntityProperties()
+void ModelEditorScreenController::unsetEntityProperties()
 {
 	entityBaseSubScreenController->unsetEntityProperties();
 }
 
-void ModelViewerScreenController::setPivot(const Vector3& pivot)
+void ModelEditorScreenController::setPivot(const Vector3& pivot)
 {
 	pivotX->getController()->setDisabled(false);
 	pivotX->getController()->setValue(value->set(Tools::formatFloat(pivot.getX())));
@@ -199,7 +199,7 @@ void ModelViewerScreenController::setPivot(const Vector3& pivot)
 	pivotApply->getController()->setDisabled(false);
 }
 
-void ModelViewerScreenController::unsetPivot()
+void ModelEditorScreenController::unsetPivot()
 {
 	pivotX->getController()->setDisabled(true);
 	pivotX->getController()->setValue(value->set(TEXT_EMPTY));
@@ -210,7 +210,7 @@ void ModelViewerScreenController::unsetPivot()
 	pivotApply->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setRendering(LevelEditorEntity* entity)
+void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingMaskedTransparency->getController()->setDisabled(false);
 	renderingMaskedTransparency->getController()->setValue(value->set(entity->getModelSettings()->isMaskedTransparency() == true?"1":""));
@@ -219,7 +219,7 @@ void ModelViewerScreenController::setRendering(LevelEditorEntity* entity)
 	renderingApply->getController()->setDisabled(false);
 }
 
-void ModelViewerScreenController::unsetRendering()
+void ModelEditorScreenController::unsetRendering()
 {
 	renderingMaskedTransparency->getController()->setDisabled(true);
 	renderingMaskedTransparency->getController()->setValue(value->set(TEXT_EMPTY));
@@ -228,7 +228,7 @@ void ModelViewerScreenController::unsetRendering()
 	renderingApply->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
+void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 
 	auto model = entity->getModel();
 
@@ -258,7 +258,7 @@ void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
 		try {
 			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("ModelViewerScreenController::setAnimations(): An error occurred: "));
+			Console::print(string("ModelEditorScreenController::setAnimations(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
@@ -296,7 +296,7 @@ void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
 		try {
 			animationsAnimationOverlayFromGroupIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("ModelViewerScreenController::setAnimations(): An error occurred: "));
+			Console::print(string("ModelEditorScreenController::setAnimations(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
@@ -310,14 +310,14 @@ void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
 	onAnimationDropDownApply();
 }
 
-void ModelViewerScreenController::onAnimationDropDownValueChanged() {
+void ModelEditorScreenController::onAnimationDropDownValueChanged() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == nullptr);
 }
 
-void ModelViewerScreenController::onAnimationDropDownApply() {
+void ModelEditorScreenController::onAnimationDropDownApply() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
 	AnimationSetup newAnimationSetup(
@@ -347,7 +347,7 @@ void ModelViewerScreenController::onAnimationDropDownApply() {
 	if (animationSetup != &newAnimationSetup) view->playAnimation(animationSetup->getId());
 }
 
-void ModelViewerScreenController::onAnimationDropDownDelete() {
+void ModelEditorScreenController::onAnimationDropDownDelete() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
 	auto it = entity->getModel()->getAnimationSetups()->find(animationSetup->getId());
@@ -357,7 +357,7 @@ void ModelViewerScreenController::onAnimationDropDownDelete() {
 	onAnimationDropDownApply();
 }
 
-void ModelViewerScreenController::onAnimationApply() {
+void ModelEditorScreenController::onAnimationApply() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
 	try {
@@ -397,7 +397,7 @@ void ModelViewerScreenController::onAnimationApply() {
 	}
 }
 
-void ModelViewerScreenController::unsetAnimations() {
+void ModelEditorScreenController::unsetAnimations() {
 
 	dynamic_cast<GUIParentNode*>(animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner"))->clearSubNodes();
 	animationsDropDown->getController()->setValue(value->set(""));
@@ -417,19 +417,19 @@ void ModelViewerScreenController::unsetAnimations() {
 	animationsAnimationApply->getController()->setDisabled(true);
 }
 
-void ModelViewerScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
+void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
 {
 	this->statsOpaqueFaces->getController()->setValue(value->set(statsOpaqueFaces));
 	this->statsTransparentFaces->getController()->setValue(value->set(statsTransparentFaces));
 	this->statsMaterialCount->getController()->setValue(value->set(statsMaterialCount));
 }
 
-void ModelViewerScreenController::onQuit()
+void ModelEditorScreenController::onQuit()
 {
-	TDMEViewer::getInstance()->quit();
+	TDMEModelEditor::getInstance()->quit();
 }
 
-void ModelViewerScreenController::onModelLoad()
+void ModelEditorScreenController::onModelLoad()
 {
 	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
 	if (fileName.length() == 0) {
@@ -443,11 +443,11 @@ void ModelViewerScreenController::onModelLoad()
 		"Load from: ",
 		&extensions,
 		view->getFileName(),
-		new ModelViewerScreenController_onModelLoad_2(this)
+		new ModelEditorScreenController_onModelLoad_2(this)
 	);
 }
 
-void ModelViewerScreenController::onModelSave()
+void ModelEditorScreenController::onModelSave()
 {
 	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
 	if (fileName.length() == 0) {
@@ -465,16 +465,16 @@ void ModelViewerScreenController::onModelSave()
 		"Save from: ",
 		&extensions,
 		fileName,
-		new ModelViewerScreenController_onModelSave_3(this)
+		new ModelEditorScreenController_onModelSave_3(this)
 	);
 }
 
-void ModelViewerScreenController::onModelReload()
+void ModelEditorScreenController::onModelReload()
 {
 	view->reloadFile();
 }
 
-void ModelViewerScreenController::onPivotApply()
+void ModelEditorScreenController::onPivotApply()
 {
 	try {
 		auto x = Float::parseFloat(pivotX->getController()->getValue()->getString());
@@ -486,29 +486,29 @@ void ModelViewerScreenController::onPivotApply()
 	}
 }
 
-void ModelViewerScreenController::onRenderingApply()
+void ModelEditorScreenController::onRenderingApply()
 {
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->getModelSettings()->setMaskedTransparency(renderingMaskedTransparency->getController()->getValue()->equals("1"));
 	view->getEntity()->setDynamicShadowing(renderingMaskedTransparency->getController()->getValue()->equals("1"));
 }
 
-void ModelViewerScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ModelEditorScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->loadFile(pathName, fileName);
 }
 
-void ModelViewerScreenController::showErrorPopUp(const string& caption, const string& message)
+void ModelEditorScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void ModelViewerScreenController::onValueChanged(GUIElementNode* node)
+void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "animations_dropdown") {
 		onAnimationDropDownValueChanged();
@@ -517,7 +517,7 @@ void ModelViewerScreenController::onValueChanged(GUIElementNode* node)
 	}
 }
 
-void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
@@ -552,7 +552,7 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else {
 					Console::println(
 						string(
-							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
 							"', id = '" +
 							node->getId() +

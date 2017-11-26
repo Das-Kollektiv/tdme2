@@ -45,7 +45,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
-#include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/tools/modeleditor/TDMEModelEditor.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -96,7 +96,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
-using tdme::tools::viewer::TDMEViewer;
+using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utils::MutableString;
 using tdme::utils::Exception;
 using tdme::utils::Console;
@@ -349,7 +349,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<stri
 
 void ParticleSystemScreenController::onQuit()
 {
-	TDMEViewer::getInstance()->quit();
+	TDMEModelEditor::getInstance()->quit();
 }
 
 void ParticleSystemScreenController::setParticleSystemType()
@@ -894,7 +894,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				} else {
 					Console::println(
 						string(
-							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
 							"', id = '" +
 							node->getId() +

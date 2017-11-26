@@ -15,7 +15,7 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/tools/modeleditor/TDMEModelEditor.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
@@ -37,7 +37,7 @@ using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::viewer::TDMEViewer;
+using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
@@ -129,7 +129,7 @@ void TriggerScreenController::unsetTrigger()
 
 void TriggerScreenController::onQuit()
 {
-	TDMEViewer::getInstance()->quit();
+	TDMEModelEditor::getInstance()->quit();
 }
 
 void TriggerScreenController::onTriggerApply()

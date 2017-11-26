@@ -11,7 +11,7 @@
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/viewer/TDMEViewer.h>
+#include <tdme/tools/modeleditor/TDMEModelEditor.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -28,7 +28,7 @@ using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::viewer::TDMEViewer;
+using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -93,7 +93,7 @@ void EmptyScreenController::unsetEntityProperties()
 
 void EmptyScreenController::onQuit()
 {
-	TDMEViewer::getInstance()->quit();
+	TDMEModelEditor::getInstance()->quit();
 }
 
 void EmptyScreenController::showErrorPopUp(const string& caption, const string& message)

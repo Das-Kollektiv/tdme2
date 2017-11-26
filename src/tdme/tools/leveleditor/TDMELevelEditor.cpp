@@ -11,7 +11,7 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
-#include <tdme/tools/leveleditor/views/ModelViewerView.h>
+#include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
@@ -33,7 +33,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::LevelEditorView;
-using tdme::tools::leveleditor::views::ModelViewerView;
+using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
@@ -158,7 +158,7 @@ void TDMELevelEditor::initialize()
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
-	modelViewerView = new ModelViewerView(popUps);
+	modelViewerView = new ModelEditorView(popUps);
 	modelViewerView->initialize();
 	triggerView = new TriggerView(popUps);
 	triggerView->initialize();
@@ -179,7 +179,7 @@ void TDMELevelEditor::switchToLevelEditor()
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::switchToModelViewer()
+void TDMELevelEditor::switchToModelEditor()
 {
 	setView(modelViewerView);
 }

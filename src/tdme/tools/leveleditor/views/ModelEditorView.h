@@ -6,11 +6,11 @@
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/tools/shared/views/SharedModelViewerView.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
 
 using std::string;
 
-using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
@@ -20,8 +20,8 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$ 
  */
-class tdme::tools::leveleditor::views::ModelViewerView
-	: public SharedModelViewerView
+class tdme::tools::leveleditor::views::ModelEditorView
+	: public SharedModelEditorView
 {
 public:
 	void onSetEntityData() override;
@@ -36,5 +36,5 @@ public:
 	 * Public constructor
 	 * @param pop ups view
 	 */
-	ModelViewerView(PopUps* popUps);
+	ModelEditorView(PopUps* popUps);
 };

@@ -15,10 +15,10 @@ namespace controller {
 				class FileDialogScreenController;
 				class FileDialogScreenController_setupFileDialogListBox_1;
 				class InfoDialogScreenController;
-				class ModelViewerScreenController;
-				class ModelViewerScreenController_ModelViewerScreenController_1;
-				class ModelViewerScreenController_onModelLoad_2;
-				class ModelViewerScreenController_onModelSave_3;
+				class ModelEditorScreenController;
+				class ModelEditorScreenController_ModelEditorScreenController_1;
+				class ModelEditorScreenController_onModelLoad_2;
+				class ModelEditorScreenController_onModelSave_3;
 				class ParticleSystemScreenController;
 				class ParticleSystemScreenController_ParticleSystemScreenController_1;
 				class ParticleSystemScreenController_onActionPerformed_4;

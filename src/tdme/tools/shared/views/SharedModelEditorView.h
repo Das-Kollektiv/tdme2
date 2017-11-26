@@ -17,7 +17,7 @@ using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::ModelViewerScreenController;
+using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
@@ -25,11 +25,11 @@ using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * TDME Model Viewer View
+ * TDME model editor view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::SharedModelViewerView
+class tdme::tools::shared::views::SharedModelEditorView
 	: public virtual View
 	, public virtual GUIInputEventHandler
 {
@@ -38,7 +38,7 @@ public: /* protected */
 
 private:
 	PopUps* popUps {  };
-	ModelViewerScreenController* modelViewerScreenController {  };
+	ModelEditorScreenController* modelViewerScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
 	EntityBoundingVolumeView* entityBoundingVolumeView {  };
 	LevelEditorEntity* entity {  };
@@ -184,10 +184,10 @@ public:
 	 * Public constructor
 	 * @param pop ups
 	 */
-	SharedModelViewerView(PopUps* popUps);
+	SharedModelEditorView(PopUps* popUps);
 
 	/**
 	 * Destructor
 	 */
-	~SharedModelViewerView();
+	~SharedModelEditorView();
 };

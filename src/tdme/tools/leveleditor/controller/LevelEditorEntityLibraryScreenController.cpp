@@ -14,7 +14,7 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
-#include <tdme/tools/leveleditor/views/ModelViewerView.h>
+#include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -46,7 +46,7 @@ using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::LevelEditorView;
-using tdme::tools::leveleditor::views::ModelViewerView;
+using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -169,10 +169,10 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	{
 		auto v = entity->getType();
 		if ((v == LevelEditorEntity_EntityType::MODEL)) {
-			if (dynamic_cast< ModelViewerView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
-				TDMELevelEditor::getInstance()->switchToModelViewer();
+			if (dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
+				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
-			(dynamic_cast< ModelViewerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 			goto end_switch0;;
 		}
 		if ((v == LevelEditorEntity_EntityType::TRIGGER)) {

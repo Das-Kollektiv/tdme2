@@ -1,26 +1,26 @@
-#include <tdme/tools/shared/controller/ModelViewerScreenController_onModelLoad_2.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.h>
 
 
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
-#include <tdme/tools/shared/controller/ModelViewerScreenController.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/shared/views/SharedModelViewerView.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
 
 
-using tdme::tools::shared::controller::ModelViewerScreenController_onModelLoad_2;
+using tdme::tools::shared::controller::ModelEditorScreenController_onModelLoad_2;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
-using tdme::tools::shared::controller::ModelViewerScreenController;
+using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::tools::shared::views::SharedModelEditorView;
 
-ModelViewerScreenController_onModelLoad_2::ModelViewerScreenController_onModelLoad_2(ModelViewerScreenController* modelViewerScreenController)
+ModelEditorScreenController_onModelLoad_2::ModelEditorScreenController_onModelLoad_2(ModelEditorScreenController* modelViewerScreenController)
 	: modelViewerScreenController(modelViewerScreenController)
 {
 }
 
-void ModelViewerScreenController_onModelLoad_2::performAction()
+void ModelEditorScreenController_onModelLoad_2::performAction()
 {
 	modelViewerScreenController->view->loadFile(
 		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),

@@ -11,7 +11,7 @@ namespace views {
 				class EntityBoundingVolumeView;
 				class EntityDisplayView;
 				class PopUps;
-				class SharedModelViewerView;
+				class SharedModelEditorView;
 				class SharedParticleSystemView;
 				struct View;
 }  // namespace views

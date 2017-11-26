@@ -20,7 +20,7 @@ using tdme::engine::Engine;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::LevelEditorView;
-using tdme::tools::leveleditor::views::ModelViewerView;
+using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
@@ -46,7 +46,7 @@ private:
 	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController {  };
 	PopUps* popUps {  };
 	LevelEditorView* levelEditorView {  };
-	ModelViewerView* modelViewerView {  };
+	ModelEditorView* modelViewerView {  };
 	TriggerView* triggerView {  };
 	EmptyView* emptyView {  };
 	ParticleSystemView* particleSystemView {  };
@@ -126,7 +126,7 @@ public:
 	/** 
 	 * Switch to model viewer
 	 */
-	void switchToModelViewer();
+	void switchToModelEditor();
 
 	/** 
 	 * Switch to trigger view

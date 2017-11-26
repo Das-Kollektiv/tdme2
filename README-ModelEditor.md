@@ -1,12 +1,12 @@
-TDMEViewer
-==========
+TDMEModelEditor
+===============
 
     - What is it?
-        - TDME based 3D model asset viewer 
+        - TDME based 3D model asset viewer/editor 
 
     - What is already working
         - model loading
-            - DAE, Wavefront OBJ, TM model files and TMM meta data files
+            - DAE, Wavefront OBJ, FBX, TM model files and TMM meta data files
         - model meta data file saving 
             - TMM
                 - stores its model as TM file additionally

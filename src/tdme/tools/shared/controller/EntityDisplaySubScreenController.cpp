@@ -91,7 +91,7 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 				} else {
 					Console::println(
 						string(
-							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
 							"', id = '" +
 							node->getId() +

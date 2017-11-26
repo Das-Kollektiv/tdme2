@@ -182,7 +182,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			view->selectBoundingVolumeType(idx, 5);
 		} else {
-			Console::println(string("ModelViewerScreenController::onTabSelected(): invalid bounding volume@" + to_string(idx)));
+			Console::println(string("ModelEditorScreenController::onTabSelected(): invalid bounding volume@" + to_string(idx)));
 		}
 	}
 }
@@ -473,7 +473,7 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 				} else {
 					Console::println(
 						string(
-							"ModelViewerScreenController::onActionPerformed()::unknown, type='" +
+							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
 							type->getName() +
 							"', id = '" +
 							node->getId() +

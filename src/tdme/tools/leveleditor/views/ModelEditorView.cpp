@@ -1,4 +1,4 @@
-#include <tdme/tools/leveleditor/views/ModelViewerView.h>
+#include <tdme/tools/leveleditor/views/ModelEditorView.h>
 
 #include <string>
 
@@ -13,7 +13,7 @@
 
 using std::string;
 
-using tdme::tools::leveleditor::views::ModelViewerView;
+using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
@@ -23,29 +23,29 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLevel;
 
-ModelViewerView::ModelViewerView(PopUps* popUps)
-	: SharedModelViewerView(popUps)
+ModelEditorView::ModelEditorView(PopUps* popUps)
+	: SharedModelEditorView(popUps)
 {
 }
 
-void ModelViewerView::onSetEntityData()
+void ModelEditorView::onSetEntityData()
 {
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
-void ModelViewerView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
+void ModelEditorView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
 	TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldEntity->getId(), entity->getId());
 	TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
-void ModelViewerView::onInitAdditionalScreens()
+void ModelEditorView::onInitAdditionalScreens()
 {
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 }
 
-LevelEditorEntity* ModelViewerView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* ModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(
 		LevelEditorEntityLibrary::ID_ALLOCATE,

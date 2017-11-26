@@ -7,8 +7,8 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/tools/shared/views/SharedModelViewerView.h>
-#include <tdme/tools/viewer/fwd-tdme.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
+#include <tdme/tools/modeleditor/fwd-tdme.h>
 
 using std::string;
 
@@ -16,27 +16,27 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::tools::shared::views::SharedModelEditorView;
 
 /** 
  * TDME Level Editor
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tools::viewer::TDMEViewer final
+class tdme::tools::viewer::TDMEModelEditor final
 	: public Application
 {
 
 private:
 	static string VERSION;
-	static TDMEViewer* instance;
+	static TDMEModelEditor* instance;
 	Engine* engine {  };
 	View* view {  };
 	bool viewInitialized {  };
 	View* viewNew {  };
 	bool quitRequested {  };
 	PopUps* popUps {  };
-	SharedModelViewerView* modelViewerView;
+	SharedModelEditorView* modelViewerView;
 
 public:
 	/** 
@@ -50,7 +50,7 @@ public:
 	/** 
 	 * @return level editor instance
 	 */
-	static TDMEViewer* getInstance();
+	static TDMEModelEditor* getInstance();
 
 	/**
 	 * Set up new view
@@ -93,10 +93,10 @@ public:
 	/**
 	 * Public constructor
 	 */
-	TDMEViewer();
+	TDMEModelEditor();
 
 	/**
 	 * Destructor
 	 */
-	~TDMEViewer();
+	~TDMEModelEditor();
 };

@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/views/SharedModelViewerView.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
 
 #include <string>
 
@@ -19,7 +19,7 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/controller/ModelViewerScreenController.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -38,7 +38,7 @@
 
 using std::string;
 
-using tdme::tools::shared::views::SharedModelViewerView;
+using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Object3D;
@@ -57,7 +57,7 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::controller::ModelViewerScreenController;
+using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -73,7 +73,7 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-SharedModelViewerView::SharedModelViewerView(PopUps* popUps) 
+SharedModelEditorView::SharedModelEditorView(PopUps* popUps) 
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();
@@ -86,29 +86,29 @@ SharedModelViewerView::SharedModelViewerView(PopUps* popUps)
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
-SharedModelViewerView::~SharedModelViewerView() {
+SharedModelEditorView::~SharedModelEditorView() {
 	delete modelViewerScreenController;
 	delete cameraRotationInputHandler;
 }
 
-PopUps* SharedModelViewerView::getPopUpsViews()
+PopUps* SharedModelEditorView::getPopUpsViews()
 {
 	return popUps;
 }
 
-LevelEditorEntity* SharedModelViewerView::getEntity()
+LevelEditorEntity* SharedModelEditorView::getEntity()
 {
 	return entity;
 }
 
-void SharedModelViewerView::setEntity(LevelEditorEntity* entity)
+void SharedModelEditorView::setEntity(LevelEditorEntity* entity)
 {
 	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
 }
 
-void SharedModelViewerView::initModel()
+void SharedModelEditorView::initModel()
 {
 	if (entity == nullptr)
 		return;
@@ -123,28 +123,28 @@ void SharedModelViewerView::initModel()
 	updateGUIElements();
 }
 
-const string& SharedModelViewerView::getFileName()
+const string& SharedModelEditorView::getFileName()
 {
 	return modelFile;
 }
 
-void SharedModelViewerView::loadFile(const string& pathName, const string& fileName)
+void SharedModelEditorView::loadFile(const string& pathName, const string& fileName)
 {
 	loadModelRequested = true;
 	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
 }
 
-void SharedModelViewerView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void SharedModelEditorView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	ModelMetaDataFileExport::export_(pathName, fileName, entity);
 }
 
-void SharedModelViewerView::reloadFile()
+void SharedModelEditorView::reloadFile()
 {
 	loadModelRequested = true;
 }
 
-void SharedModelViewerView::pivotApply(float x, float y, float z)
+void SharedModelEditorView::pivotApply(float x, float y, float z)
 {
 	if (entity == nullptr)
 		return;
@@ -152,12 +152,12 @@ void SharedModelViewerView::pivotApply(float x, float y, float z)
 	entity->getPivot().set(x, y, z);
 }
 
-void SharedModelViewerView::handleInputEvents()
+void SharedModelEditorView::handleInputEvents()
 {
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void SharedModelViewerView::display()
+void SharedModelEditorView::display()
 {
 	if (loadModelRequested == true) {
 		initModelRequested = true;
@@ -174,7 +174,7 @@ void SharedModelViewerView::display()
 	engine->getGUI()->handleEvents();
 }
 
-void SharedModelViewerView::updateGUIElements()
+void SharedModelEditorView::updateGUIElements()
 {
 	if (entity != nullptr) {
 		modelViewerScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
@@ -198,11 +198,11 @@ void SharedModelViewerView::updateGUIElements()
 	}
 }
 
-void SharedModelViewerView::onInitAdditionalScreens()
+void SharedModelEditorView::onInitAdditionalScreens()
 {
 }
 
-void SharedModelViewerView::loadSettings()
+void SharedModelEditorView::loadSettings()
 {
 	try {
 		Properties settings;
@@ -212,22 +212,22 @@ void SharedModelViewerView::loadSettings()
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
 		modelViewerScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
-		Console::print(string("SharedModelViewerView::loadSettings(): An error occurred: "));
+		Console::print(string("SharedModelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void SharedModelViewerView::initialize()
+void SharedModelEditorView::initialize()
 {
 	try {
-		modelViewerScreenController = new ModelViewerScreenController(this);
+		modelViewerScreenController = new ModelEditorScreenController(this);
 		modelViewerScreenController->initialize();
 		entityDisplayView = modelViewerScreenController->getEntityDisplaySubScreenController()->getView();
 		entityBoundingVolumeView = modelViewerScreenController->getEntityBoundingVolumeSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelViewerScreenController->getScreenNode()->getId(), modelViewerScreenController->getScreenNode());
 		modelViewerScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
-		Console::print(string("SharedModelViewerView::initialize(): An error occurred: "));
+		Console::print(string("SharedModelEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
@@ -236,7 +236,7 @@ void SharedModelViewerView::initialize()
 	updateGUIElements();
 }
 
-void SharedModelViewerView::activate()
+void SharedModelEditorView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
@@ -247,7 +247,7 @@ void SharedModelViewerView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
-void SharedModelViewerView::storeSettings()
+void SharedModelEditorView::storeSettings()
 {
 	try {
 		Properties settings;
@@ -257,27 +257,27 @@ void SharedModelViewerView::storeSettings()
 		settings.put("model.path", modelViewerScreenController->getModelPath()->getPath());
 		settings.store("settings", "modelviewer.properties");
 	} catch (Exception& exception) {
-		Console::print(string("SharedModelViewerView::storeSettings(): An error occurred: "));
+		Console::print(string("SharedModelEditorView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void SharedModelViewerView::deactivate()
+void SharedModelEditorView::deactivate()
 {
 }
 
-void SharedModelViewerView::dispose()
+void SharedModelEditorView::dispose()
 {
 	storeSettings();
 	Engine::getInstance()->reset();
 }
 
-void SharedModelViewerView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
+void SharedModelEditorView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
 	delete oldEntity;
 }
 
-void SharedModelViewerView::loadModel()
+void SharedModelEditorView::loadModel()
 {
 	Console::println(string("Model file: " + modelFile));
 	try {
@@ -297,7 +297,7 @@ void SharedModelViewerView::loadModel()
 	}
 }
 
-LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
@@ -330,11 +330,11 @@ LevelEditorEntity* SharedModelViewerView::loadModel(const string& name, const st
 	return nullptr;
 }
 
-void SharedModelViewerView::playAnimation(const string& animationId) {
+void SharedModelEditorView::playAnimation(const string& animationId) {
 	dynamic_cast<Object3D*>(engine->getEntity("model"))->setAnimation(animationId);
 }
 
-void SharedModelViewerView::onSetEntityData()
+void SharedModelEditorView::onSetEntityData()
 {
 }
 
