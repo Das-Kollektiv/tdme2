@@ -11,7 +11,7 @@ TDMELevelEditor
                     - key, value map for what ever reason
             - models
                 - model loading
-                    - DAE, Wavefront OBJ, TM, TMM meta data files
+                    - DAE, FBX, Wavefront OBJ, TM, TMM meta data files
                 - setup name, description
                 - render with generated ground, shadowing, bounding volume
                 - setting up the model pivot
@@ -45,6 +45,7 @@ TDMELevelEditor
 
     - What is WIP
         - set up arbitrary lights as entities
+        - import maps from model files(not only DAE)
 
     - Technology
         - uses TDME2
