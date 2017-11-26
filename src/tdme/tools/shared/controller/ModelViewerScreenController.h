@@ -69,10 +69,12 @@ private:
 	GUIElementNode* renderingApply {  };
 	GUIElementNode* animationsDropDown {  };
 	GUIElementNode* animationsDropDownApply {  };
+	GUIElementNode* animationsDropDownDelete {  };
 	GUIElementNode* animationsAnimationStartFrame {  };
 	GUIElementNode* animationsAnimationEndFrame {  };
 	GUIElementNode* animationsAnimationOverlayFromGroupIdDropDown {  };
 	GUIElementNode* animationsAnimationLoop {  };
+	GUIElementNode* animationsAnimationName {  };
 	GUIElementNode* animationsAnimationApply {  };
 
 	MutableString* value {  };
@@ -157,9 +159,19 @@ public:
 	void setAnimations(LevelEditorEntity* entity);
 
 	/**
+	 * On animation drop down value changed
+	 */
+	void onAnimationDropDownValueChanged();
+
+	/**
 	 * On animation drop down apply
 	 */
 	void onAnimationDropDownApply();
+
+	/**
+	 * On animation drop down delete
+	 */
+	void onAnimationDropDownDelete();
 
 	/**
 	 * On animation apply

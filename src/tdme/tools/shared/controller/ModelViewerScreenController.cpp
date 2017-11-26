@@ -36,6 +36,7 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/ExceptionBase.h>
 
 using std::vector;
 using std::string;
@@ -71,6 +72,7 @@ using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::ExceptionBase;
 
 MutableString* ModelViewerScreenController::TEXT_EMPTY = new MutableString("");
 
@@ -135,10 +137,12 @@ void ModelViewerScreenController::initialize()
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 		animationsDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown"));
 		animationsDropDownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_apply"));
+		animationsDropDownDelete = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_delete"));
 		animationsAnimationStartFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_startframe"));
 		animationsAnimationEndFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_endframe"));
 		animationsAnimationOverlayFromGroupIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromgroupidanimations_dropdown"));
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
+		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("ModelViewerScreenController::initialize(): An error occurred: "));
@@ -237,6 +241,7 @@ void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
 			"<scrollarea-vertical id=\"" +
 			animationsDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
 		for (auto it: *model->getAnimationSetups()) {
 			auto animationSetupId = it.second->getId();
 			animationsDropDownInnerNodeSubNodesXML =
@@ -305,12 +310,29 @@ void ModelViewerScreenController::setAnimations(LevelEditorEntity* entity) {
 	onAnimationDropDownApply();
 }
 
+void ModelViewerScreenController::onAnimationDropDownValueChanged() {
+	auto entity = view->getEntity();
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
+	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == nullptr);
+}
+
 void ModelViewerScreenController::onAnimationDropDownApply() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	AnimationSetup newAnimationSetup(
+		entity->getModel(),
+		"New animation",
+		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getStartFrame(),
+		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getEndFrame(),
+		true,
+		""
+	);
+	if (animationSetup == nullptr) animationSetup = &newAnimationSetup;
 	auto defaultAnimation = animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 	animationsDropDown->getController()->setDisabled(false);
 	animationsDropDownApply->getController()->setDisabled(false);
+	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == &newAnimationSetup);
 	animationsAnimationStartFrame->getController()->setValue(value->set(animationSetup->getStartFrame()));
 	animationsAnimationStartFrame->getController()->setDisabled(defaultAnimation);
 	animationsAnimationEndFrame->getController()->setValue(value->set(animationSetup->getEndFrame()));
@@ -319,18 +341,56 @@ void ModelViewerScreenController::onAnimationDropDownApply() {
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
 	animationsAnimationLoop->getController()->setValue(value->set(animationSetup->isLoop() == true?"1":""));
 	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
+	animationsAnimationName->getController()->setValue(value->set(animationSetup->getId()));
+	animationsAnimationName->getController()->setDisabled(defaultAnimation);
 	animationsAnimationApply->getController()->setDisabled(defaultAnimation);
-	view->playAnimation(animationSetup->getId());
+	if (animationSetup != &newAnimationSetup) view->playAnimation(animationSetup->getId());
+}
+
+void ModelViewerScreenController::onAnimationDropDownDelete() {
+	auto entity = view->getEntity();
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto it = entity->getModel()->getAnimationSetups()->find(animationSetup->getId());
+	it = entity->getModel()->getAnimationSetups()->erase(it);
+	setAnimations(entity);
+	animationsDropDown->getController()->setValue(value->set(it->second->getId()));
+	onAnimationDropDownApply();
 }
 
 void ModelViewerScreenController::onAnimationApply() {
 	auto entity = view->getEntity();
 	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
 	try {
+		if (animationSetup == nullptr) {
+			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue()->getString()) != nullptr) {
+				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue()->getString() + "' already in use");
+			}
+			animationSetup = entity->getModel()->addAnimationSetup(
+				animationsAnimationName->getController()->getValue()->getString(),
+				0,
+				0,
+				false
+			);
+		} else
+		if (animationSetup->getId() != animationsAnimationName->getController()->getValue()->getString()) {
+			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue()->getString()) != nullptr) {
+				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue()->getString() + "' already in use");
+			}
+			(*entity->getModel()->getAnimationSetups()).erase(animationSetup->getId());
+			animationSetup = entity->getModel()->addAnimationSetup(
+				animationsAnimationName->getController()->getValue()->getString(),
+				0,
+				0,
+				false
+			);
+		}
 		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue()->getString()));
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue()->getString()));
 		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue()->getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue()->getString() == "1");
+		setAnimations(entity);
+		animationsDropDown->getController()->setValue(value->set(animationSetup->getId()));
+		onAnimationDropDownApply();
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -343,6 +403,7 @@ void ModelViewerScreenController::unsetAnimations() {
 	animationsDropDown->getController()->setValue(value->set(""));
 	animationsDropDown->getController()->setDisabled(true);
 	animationsDropDownApply->getController()->setDisabled(true);
+	animationsDropDownDelete->getController()->setDisabled(true);
 	animationsAnimationStartFrame->getController()->setValue(value->set(""));
 	animationsAnimationStartFrame->getController()->setDisabled(true);
 	animationsAnimationEndFrame->getController()->setValue(value->set(""));
@@ -351,6 +412,8 @@ void ModelViewerScreenController::unsetAnimations() {
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
 	animationsAnimationLoop->getController()->setValue(value->set(""));
 	animationsAnimationLoop->getController()->setDisabled(true);
+	animationsAnimationName->getController()->setValue(value->set(""));
+	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
 }
 
@@ -447,7 +510,11 @@ void ModelViewerScreenController::showErrorPopUp(const string& caption, const st
 
 void ModelViewerScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+	if (node->getId() == "animations_dropdown") {
+		onAnimationDropDownValueChanged();
+	} else {
+		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+	}
 }
 
 void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
@@ -476,6 +543,9 @@ void ModelViewerScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else
 				if (node->getId().compare("animations_dropdown_apply") == 0) {
 					onAnimationDropDownApply();
+				} else
+				if (node->getId().compare("animations_dropdown_delete") == 0) {
+					onAnimationDropDownDelete();
 				} else
 				if (node->getId().compare("button_animations_animation_apply") == 0){
 					onAnimationApply();

@@ -27,6 +27,7 @@ TDMEParticleSystem
             - bounding box
             - oriented bounding box
             - convex mesh
+            - concave terrain mesh
 
     - Technology
         - uses TDME2

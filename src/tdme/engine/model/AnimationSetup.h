@@ -99,6 +99,14 @@ public:
 	 */
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);
 
-	// Generated
+	/**
+	 * Public constructor
+	 * @param model
+	 * @param id
+	 * @param start frame
+	 * @param end frame
+	 * @param loop
+	 * @param overlay from group id
+	 */
 	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId);
 };

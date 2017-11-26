@@ -22,6 +22,16 @@ TDMEViewer
             - bounding box
             - oriented bounding box
             - convex mesh
+            - concave terrain mesh
+        - set up animations
+            - name
+            - start frame
+            - end frame
+            - loop
+            - overlay group
+        - set up rendering options
+            - use masked transparency
+            - use dynamic shadowing
         - see statistics
             - opaque faces
             - transparent faces

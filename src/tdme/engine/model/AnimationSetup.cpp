@@ -33,6 +33,8 @@ int32_t AnimationSetup::getStartFrame()
 
 void AnimationSetup::setStartFrame(int32_t startFrame) {
 	this->startFrame = startFrame;
+	this->frames = (endFrame - startFrame) + 1;
+	if (this->frames < 0) this->frames = 0;
 }
 
 int32_t AnimationSetup::getEndFrame()
@@ -42,6 +44,8 @@ int32_t AnimationSetup::getEndFrame()
 
 void AnimationSetup::setEndFrame(int32_t endFrame) {
 	this->endFrame = endFrame;
+	this->frames = (endFrame - startFrame) + 1;
+	if (this->frames < 0) this->frames = 0;
 }
 
 int32_t AnimationSetup::getFrames()
