@@ -19,7 +19,7 @@ using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::SharedModelEditorView;
 
 /** 
- * TDME Level Editor
+ * TDME model editor
  * @author andreas.drewke
  * @version $Id$
  */
