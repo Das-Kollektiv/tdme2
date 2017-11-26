@@ -47,7 +47,7 @@ TDME2
             - camera control
               - set up look from, look at, up vector can be computed
               - frustum culling
-                - oct tree like partitioning from 16mx16mx16m up to 4mx4mx4m
+                - oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
             - object picking
             - supports offscreen instances
                 - rendering can be captured as screenshot
@@ -156,7 +156,7 @@ TDME2
             - iOS(port pending)
 
     - Tools
-        - TDME Model Viewer, see README-Viewer.md
+        - TDME Model Editor, see README-ModelEditor.md
         - TDME Particle System Editor, see README-ParticleSystemEditor.md
         - TDME Level Editor, see README-LevelEditor.md
 
