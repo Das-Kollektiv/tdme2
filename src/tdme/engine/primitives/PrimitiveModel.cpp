@@ -10,7 +10,7 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -35,7 +35,7 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
@@ -59,7 +59,7 @@ constexpr int32_t PrimitiveModel::CAPSULE_SEGMENTS_Y;
 
 Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const string& id)
 {
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -108,7 +108,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 
 Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id)
 {
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -160,7 +160,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 {
 	auto radius = sphere->getRadius();
 	auto& center = sphere->getCenter();
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -256,7 +256,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion.rotate(angle, rotationAxis);
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
@@ -354,7 +354,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 }
 
 Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
-	auto model = new Model(id, id, Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);

@@ -20,7 +20,7 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -89,7 +89,7 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
@@ -883,7 +883,7 @@ void LevelEditorView::removeGrid()
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model("leveleditor.ground", "leveleditor.ground", Model_UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
+	auto groundPlate = new Model("leveleditor.ground", "leveleditor.ground", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
 	auto groundPlateMaterial = new Material("ground");
 	groundPlateMaterial->getDiffuseColor().setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseTexture("resources/tools/leveleditor/textures", "groundplate.png");

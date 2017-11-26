@@ -26,7 +26,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -85,7 +85,7 @@ private:
 	 * @return up vector
 	 * @throws ModelFileIOException
 	 */
-	static Model_UpVector* getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException);
+	static UpVector* getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException);
 
 	/** 
 	 * Set up model import rotation matrix

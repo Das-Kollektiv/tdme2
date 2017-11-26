@@ -16,7 +16,7 @@ using std::string;
 using std::string;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
@@ -36,7 +36,7 @@ public:
 private:
 	string id {  };
 	string name {  };
-	Model_UpVector* upVector {  };
+	UpVector* upVector {  };
 	RotationOrder* rotationOrder {  };
 	map<string, Material*> materials {  };
 	map<string, Group*> groups {  };
@@ -67,7 +67,7 @@ public:
 	/** 
 	 * @return up vector
 	 */
-	Model_UpVector* getUpVector();
+	UpVector* getUpVector();
 
 	/** 
 	 * @return rotation order
@@ -198,7 +198,7 @@ public: /* protected */
 	 * @param rotation order
 	 * @param bounding box
 	 */
-	Model(const string& id, const string& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
 
 	/**
 	 * Deconstructor

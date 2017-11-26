@@ -20,7 +20,7 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -66,7 +66,7 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
@@ -114,7 +114,7 @@ void EngineTest::main(int argc, char** argv)
 
 Model* EngineTest::createWallModel()
 {
-	auto wall = new Model("wall", "wall", Model_UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto wall = new Model("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto wallMaterial = new Material("wall");
 	wallMaterial->getAmbientColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	wallMaterial->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);

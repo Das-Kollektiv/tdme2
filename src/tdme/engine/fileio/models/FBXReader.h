@@ -12,7 +12,7 @@
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::os::filesystem::FileSystemException;
 
@@ -41,7 +41,7 @@ private:
 	 * Get scene up vector
 	 * @param fbx scene
 	 */
-	static Model_UpVector* getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException);
+	static UpVector* getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException);
 
 	/**
 	 * Get scene rotation order

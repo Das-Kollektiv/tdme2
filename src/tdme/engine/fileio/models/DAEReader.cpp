@@ -24,7 +24,7 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -80,7 +80,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
@@ -132,10 +132,10 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 	RotationOrder* rotationOrder = nullptr;
 	{
 		auto v = upVector;
-		if (v == Model_UpVector::Y_UP) {
+		if (v == UpVector::Y_UP) {
 			rotationOrder = RotationOrder::ZYX;
 		} else
-		if (v == Model_UpVector::Z_UP) {
+		if (v == UpVector::Z_UP) {
 			rotationOrder = RotationOrder::YZX;
 		}
 	}
@@ -210,10 +210,10 @@ LevelEditorLevel* DAEReader::readLevel(const string& pathName, const string& fil
 	RotationOrder* rotationOrder = nullptr;
 	{
 		auto v = upVector;
-		if (v == Model_UpVector::Y_UP) {
+		if (v == UpVector::Y_UP) {
 			rotationOrder = RotationOrder::ZYX;
 		} else
-		if (v == Model_UpVector::Z_UP) {
+		if (v == UpVector::Z_UP) {
 			rotationOrder = RotationOrder::YZX;
 		}
 	}
@@ -322,8 +322,8 @@ LevelEditorLevel* DAEReader::readLevel(const string& pathName, const string& fil
 				yAxis.normalize();
 				zAxis.normalize();
 				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-				if ((upVector == Model_UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
-					(upVector == Model_UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
+				if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
+					(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
 					xAxis.scale(-1.0f);
 					yAxis.scale(-1.0f);
 					zAxis.scale(-1.0f);
@@ -427,16 +427,16 @@ DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 	return DAEReader_AuthoringTool::UNKNOWN;
 }
 
-Model_UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
+UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
 {
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = string(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText()));
 			if (StringUtils::equalsIgnoreCase(upAxis, "Y_UP") == true) {
-				return Model_UpVector::Y_UP;
+				return UpVector::Y_UP;
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				return Model_UpVector::Z_UP;
+				return UpVector::Z_UP;
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, "X_UP") == true) {
 				throw ModelFileIOException("X-Up is not supported");

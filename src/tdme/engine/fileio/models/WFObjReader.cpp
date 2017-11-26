@@ -11,7 +11,7 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -39,7 +39,7 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
@@ -75,7 +75,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 	auto model = new Model(
 		pathName + "/" + fileName,
 		fileName,
-		Model_UpVector::Y_UP,
+		UpVector::Y_UP,
 		RotationOrder::XYZ,
 		nullptr
 	);

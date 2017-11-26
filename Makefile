@@ -117,7 +117,7 @@ SRCS = \
 	src/tdme/engine/model/Model.cpp \
 	src/tdme/engine/model/ModelHelper.cpp \
 	src/tdme/engine/model/ModelHelper_VertexOrder.cpp \
-	src/tdme/engine/model/Model_UpVector.cpp \
+	src/tdme/engine/model/UpVector.cpp \
 	src/tdme/engine/model/RotationOrder.cpp \
 	src/tdme/engine/model/Skinning.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \

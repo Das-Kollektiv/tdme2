@@ -16,7 +16,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -41,7 +41,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
@@ -183,10 +183,10 @@ RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) throw (Model
 	EFbxRotationOrder fbxRotationOrder;
 	fbxNode->GetRotationOrder(FbxNode::eSourcePivot, fbxRotationOrder);
 	if (fbxRotationOrder == eEulerXYZ) {
-		if (upVector == Model_UpVector::Y_UP) {
+		if (upVector == UpVector::Y_UP) {
 			return RotationOrder::ZYX;
 		} else
-		if (upVector == Model_UpVector::Z_UP) {
+		if (upVector == UpVector::Z_UP) {
 			return RotationOrder::YZX;
 		} else {
 			throw ModelFileIOException("Unknown Up vector");
@@ -196,27 +196,27 @@ RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) throw (Model
 	}
 }
 
-Model_UpVector* FBXReader::getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException) {
+UpVector* FBXReader::getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException) {
 	int fbxUpVectorSign;
 	auto fbxUpVector = fbxScene->GetGlobalSettings().GetAxisSystem().GetUpVector(fbxUpVectorSign);
 	switch (fbxUpVector) {
 		case FbxAxisSystem::eXAxis:
 			throw ModelFileIOException("X-Up is not supported");
 		case FbxAxisSystem::eYAxis:
-			return Model_UpVector::Y_UP;
+			return UpVector::Y_UP;
 		case FbxAxisSystem::eZAxis:
-			return Model_UpVector::Z_UP;
+			return UpVector::Z_UP;
 		default:
 			throw ModelFileIOException("Unknown Up vector");
 	}
-	return Model_UpVector::Y_UP;
+	return UpVector::Y_UP;
 }
 
 void FBXReader::setupModelImportRotationMatrix(Model* model) {
-	if (model->getUpVector() == Model_UpVector::Y_UP) {
+	if (model->getUpVector() == UpVector::Y_UP) {
 		// no op
 	} else
-	if (model->getUpVector() == Model_UpVector::Z_UP) {
+	if (model->getUpVector() == UpVector::Z_UP) {
 		model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
 	}
 }

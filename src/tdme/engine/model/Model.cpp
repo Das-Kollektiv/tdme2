@@ -9,7 +9,7 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model_UpVector.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/object/Object3DModelInternal.h>
@@ -25,7 +25,7 @@ using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::Model_UpVector;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::object::Object3DModelInternal;
@@ -35,7 +35,7 @@ string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";
 
 constexpr float Model::FPS_DEFAULT;
 
-Model::Model(const string& id, const string& name, Model_UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
+Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
 {
 	this->id = id;
 	this->name = name;
@@ -75,7 +75,7 @@ const string& Model::getName()
 	return name;
 }
 
-Model_UpVector* Model::getUpVector()
+UpVector* Model::getUpVector()
 {
 	return upVector;
 }

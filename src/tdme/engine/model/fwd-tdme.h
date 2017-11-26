@@ -18,7 +18,7 @@ namespace model {
 			class Model;
 			class ModelHelper;
 			class ModelHelper_VertexOrder;
-			class Model_UpVector;
+			class UpVector;
 			class RotationOrder;
 			class Skinning;
 			class TextureCoordinate;
