@@ -163,7 +163,10 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, pathName, jBv));
 		}
 	}
-
+	if (modelType == LevelEditorEntity_EntityType::MODEL) {
+		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
+		levelEditorEntity->getModelSettings()->setMaskedTransparency(jEntityRoot["mt"].getBoolean());
+	} else
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();
 		auto& jParticleSystem = jEntityRoot["ps"];
@@ -402,8 +405,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			end_switch1:;
 		}
 	}
-	levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
-	levelEditorEntity->getModelSettings()->setMaskedTransparency(jEntityRoot["mt"].getBoolean());
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
 	return levelEditorEntity;
 }

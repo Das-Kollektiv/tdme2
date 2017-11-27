@@ -117,6 +117,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			Console::println(exception.what());
 		}
 		*/
+		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
+		jEntityRoot["mt"] = entity->getModelSettings()->isMaskedTransparency();
 	}
 	jEntityRoot["version"] = "1.99";
 	jEntityRoot["type"] = (entity->getType()->getName());
@@ -468,8 +470,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		jModelProperties.push_back(jObjectProperty);
 	}
 	jEntityRoot["properties"] = jModelProperties;
-	jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
-	jEntityRoot["mt"] = entity->getModelSettings()->isMaskedTransparency();
 	jEntityRoot["ds"] = entity->isDynamicShadowing();
 	return jEntityRoot;
 }

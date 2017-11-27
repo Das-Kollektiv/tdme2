@@ -129,4 +129,19 @@ public:
 	 * @param frames
 	 */
 	static void createDefaultAnimation(Model* model, int32_t frames);
+
+	/**
+	 * Clone material
+	 * @param material
+	 * @return material
+	 */
+	static Material* cloneMaterial(Material* material);
+
+	/**
+	 * Create model from source sub groups into target sub groups
+	 * @param source group
+	 * @param target model
+	 * @param target parent group
+	 */
+	static void cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup = nullptr);
 };

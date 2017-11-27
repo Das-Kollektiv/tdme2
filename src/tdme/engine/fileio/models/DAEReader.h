@@ -60,16 +60,6 @@ public:
 	 */
 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
-	/** 
-	 * Reads Collada DAE file level
-	 * @param path name
-	 * @param file name
-	 * @throws model file IO exception
-	 * @throws file system exception
-	 * @return model instance
-	 */
-	static LevelEditorLevel* readLevel(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
-
 private:
 
 	/** 

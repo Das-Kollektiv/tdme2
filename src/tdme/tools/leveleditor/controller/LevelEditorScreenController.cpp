@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -44,6 +45,7 @@ using std::to_string;
 
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
@@ -666,10 +668,8 @@ void LevelEditorScreenController::onObjectCenter()
 
 void LevelEditorScreenController::onMapLoad()
 {
-	vector<string> extensions = {
-		"tl",
-		"dae"
-	};
+	vector<string> extensions = ModelReader::getModelExtensions();
+	extensions.push_back("dae");
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		"Load from: ",

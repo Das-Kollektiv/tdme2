@@ -28,7 +28,6 @@ public:
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
-	 * @param game root
 	 * @param path name
 	 * @param file name
 	 * @param level
@@ -49,4 +48,16 @@ public:
 	 * @throws model file io exception
 	 */
 	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException);
+
+	/**
+	 * Imports a level from a model file to Level Editor
+	 * @param path name
+	 * @param file name
+	 * @param level
+	 * @throws file system exception
+	 * @throws json exception
+	 * @throws model file io exception
+	 */
+	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
+
 };

@@ -36,12 +36,6 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
@@ -92,13 +86,6 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::files::LevelFileExport;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::utils::Float;
 using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
@@ -186,233 +173,6 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 	return model;
 }
 
-LevelEditorLevel* DAEReader::readLevel(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException)
-{
-	string modelPathName = pathName + "/" + fileName + "-models";
-	if (FileSystem::getInstance()->fileExists(modelPathName)) {
-		FileSystem::getInstance()->removePath(modelPathName);
-	}
-	FileSystem::getInstance()->createPath(modelPathName);
-
-	auto levelEditorLevel = new LevelEditorLevel();
-	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
-	TiXmlDocument xmlDocument;
-	xmlDocument.Parse((xmlContent).c_str());
-	if (xmlDocument.Error() == true) {
-		throw ModelFileIOException(
-			string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
-		);
-	}
-	TiXmlElement* xmlRoot = xmlDocument.RootElement();
-
-	auto authoringTool = getAuthoringTool(xmlRoot);
-	auto upVector = getUpVector(xmlRoot);
-	RotationOrder* rotationOrder = nullptr;
-	{
-		auto v = upVector;
-		if (v == UpVector::Y_UP) {
-			rotationOrder = RotationOrder::ZYX;
-		} else
-		if (v == UpVector::Z_UP) {
-			rotationOrder = RotationOrder::YZX;
-		}
-	}
-
-	levelEditorLevel->setRotationOrder(rotationOrder);
-
-	string xmlSceneId;
-	auto xmlScene = getChildrenByTagName(xmlRoot, "scene").at(0);
-	for (auto xmlInstanceVisualscene: getChildrenByTagName(xmlScene, "instance_visual_scene")) {
-		xmlSceneId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url"))), 1);
-	}
-	auto xmlLibraryVisualScenes = getChildrenByTagName(xmlRoot, "library_visual_scenes").at(0);
-	for (auto xmlLibraryVisualScene: getChildrenByTagName(xmlLibraryVisualScenes, "visual_scene")) {
-		auto xmlVisualSceneId = string(AVOID_NULLPTR_STRING(xmlLibraryVisualScene->Attribute("id")));
-		if (xmlVisualSceneId == xmlSceneId) {
-			auto fps = 30.0f;
-			auto xmlExtraNodes = getChildrenByTagName(xmlLibraryVisualScene,"extra");
-			if (xmlExtraNodes.empty() == false) {
-				auto xmlExtraNode = xmlExtraNodes.at(0);
-				for (auto xmlTechnique: getChildrenByTagName(xmlExtraNode, "technique")) {
-					auto xmlFrameRateNodes = getChildrenByTagName(xmlTechnique, "frame_rate");
-					if (xmlFrameRateNodes.empty() == false) {
-						fps = Float::parseFloat(string(AVOID_NULLPTR_STRING(xmlFrameRateNodes.at(0)->GetText())));
-						break;
-					}
-				}
-			}
-			auto entityLibrary = levelEditorLevel->getEntityLibrary();
-			LevelEditorEntity* emptyEntity = nullptr;
-			auto nodeIdx = 0;
-			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto nodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
-				auto modelName = nodeId;
-				modelName = StringUtils::replaceAll(modelName, "[-_]{1}[0-9]+$", "");
-				modelName = StringUtils::replaceAll(modelName, "[0-9]+$", "");
-				auto haveName = entityLibrary->getEntityCount() == 0;
-				if (haveName == false) {
-					for (auto i = 0; i < 10000; i++) {
-						haveName = true;
-						auto modelNameTry = modelName;
-						if (i > 0) modelNameTry+= to_string(i);
-						for (auto entityIdx = 0; entityIdx < entityLibrary->getEntityCount(); entityIdx++) {
-							auto entity = entityLibrary->getEntityAt(entityIdx);
-							if (entity->getName() == modelNameTry) {
-								haveName = false;
-								break;
-							}
-						}
-						if (haveName == true) {
-							modelName = modelNameTry;
-							break;
-						}
-					}
-				}
-				if (haveName == false) {
-					Console::println(
-						string(
-							"DAEReader::readLevel(): Skipping model '" +
-							modelName +
-							"' as no name could be created for it."
-						)
-					 );
-					continue;
-				}
-				// FIXME: use canonical path
-				auto model = new Model(
-					modelPathName,
-					fileName + "-" + modelName,
-					upVector,
-					rotationOrder,
-					nullptr
-				);
-				setupModelImportRotationMatrix(xmlRoot, model);
-				Matrix4x4 modelImportRotationMatrix;
-				modelImportRotationMatrix.set(model->getImportTransformationsMatrix());
-				setupModelImportScaleMatrix(xmlRoot, model);
-				Vector3 translation;
-				Vector3 scale;
-				Vector3 rotation;
-				Vector3 xAxis;
-				Vector3 yAxis;
-				Vector3 zAxis;
-				Vector3 tmpAxis;
-				Matrix4x4 nodeTransformationsMatrix;
-				auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
-				if (xmlMatrixElements.empty() == false) {
-					auto xmlMatrix = string(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText()));
-					StringTokenizer t;
-					t.tokenize(xmlMatrix, " \n\r");
-					array<float, 16> nodeTransformationsMatrixArray;
-					for (auto i = 0; i < nodeTransformationsMatrixArray.size(); i++) {
-						nodeTransformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
-					}
-					nodeTransformationsMatrix.set(nodeTransformationsMatrixArray).transpose();
-				} else {
-					throw ModelFileIOException(
-						"missing node transformations matrix for node '" +
-						(nodeId) +
-						"'"
-					);
-				}
-				nodeTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
-				nodeTransformationsMatrix.getTranslation(translation);
-				nodeTransformationsMatrix.getScale(scale);
-				xAxis.normalize();
-				yAxis.normalize();
-				zAxis.normalize();
-				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-				if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
-					(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
-					xAxis.scale(-1.0f);
-					yAxis.scale(-1.0f);
-					zAxis.scale(-1.0f);
-					nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-					scale.scale(-1.0f);
-				}
-				nodeTransformationsMatrix.computeEulerAngles(rotation);
-				modelImportRotationMatrix.multiply(scale, scale);
-				modelImportRotationMatrix.multiply(rotation, rotation);
-				model->getImportTransformationsMatrix().multiply(translation, translation);
-				model->setFPS(fps);
-				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
-				if (group != nullptr) {
-					group->getTransformationsMatrix().identity();
-					(*model->getSubGroups())[group->getId()] = group;
-					(*model->getGroups())[group->getId()] = group;
-				}
-				ModelHelper::setupJoints(model);
-				ModelHelper::fixAnimationLength(model);
-				ModelHelper::prepareForIndexedRendering(model);
-				auto entityType = LevelEditorEntity_EntityType::MODEL;
-				ModelStatistics modelStatistics;
-				ModelUtilities::computeModelStatistics(model, &modelStatistics);
-				if (modelStatistics.opaqueFaceCount == 0 && modelStatistics.transparentFaceCount == 0) {
-					entityType = LevelEditorEntity_EntityType::EMPTY;
-				}
-				LevelEditorEntity* levelEditorEntity = nullptr;
-				if (entityType == LevelEditorEntity_EntityType::MODEL) {
-					for (auto i = 0; i < levelEditorLevel->getEntityLibrary()->getEntityCount(); i++) {
-						auto levelEditorEntityCompare = levelEditorLevel->getEntityLibrary()->getEntityAt(i);
-						if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
-							continue;
-
-						if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
-							levelEditorEntity = levelEditorEntityCompare;
-							break;
-						}
-					}
-					if (levelEditorEntity == nullptr) {
-						auto modelFileName = modelName + ".tm";
-						TMWriter::write(
-							model,
-							modelPathName,
-							modelFileName
-						  );
-						levelEditorEntity = entityLibrary->addModel(
-							nodeIdx++,
-							modelName,
-							modelName,
-							modelPathName,
-							modelFileName,
-							Vector3()
-						);
-					}
-				} else
-				if (entityType == LevelEditorEntity_EntityType::EMPTY) {
-					if (emptyEntity == nullptr) {
-						emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
-					}
-					levelEditorEntity = emptyEntity;
-				} else {
-					Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
-					continue;
-				}
-				auto levelEditorObjectTransformations = new Transformations();
-				levelEditorObjectTransformations->getTranslation().set(translation);
-				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
-				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
-				levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
-				levelEditorObjectTransformations->getScale().set(scale);
-				levelEditorObjectTransformations->update();
-				auto object = new LevelEditorObject(
-					nodeId,
-					nodeId,
-					levelEditorObjectTransformations,
-					levelEditorEntity
-				);
-				levelEditorLevel->addObject(object);
-			}
-		}
-	}
-	LevelFileExport::export_(
-		pathName,
-		fileName + ".tl",
-		levelEditorLevel
-	);
-	return levelEditorLevel;
-}
-
 DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 {
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
@@ -473,7 +233,8 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 		for (auto xmlAssetUnit: getChildrenByTagName(xmlAsset, "unit")) {
 			string tmp;
 			if ((tmp = string(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter")))).length() > 0) {
-				model->getImportTransformationsMatrix().scale(Float::parseFloat(tmp));
+				float scaleFactor = Float::parseFloat(tmp);
+				model->getImportTransformationsMatrix().scale(scaleFactor);
 			}
 		}
 	}

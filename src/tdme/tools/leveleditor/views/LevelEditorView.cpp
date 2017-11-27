@@ -14,7 +14,7 @@
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/DAEReader.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -83,7 +83,7 @@ using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::DAEReader;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -1321,12 +1321,18 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 	engine->reset();
 	selectedEntity = nullptr;
 	try {
-		string tlFile = file;
-		if (StringUtils::endsWith(StringUtils::toLowerCase(file), ".dae") == true) {
-			auto daeLevel = DAEReader::readLevel(path, file);
-			tlFile = file + ".tl";
+		bool haveModelFile = false;
+		for (auto &modelExtension: ModelReader::getModelExtensions()) {
+			if (StringUtils::endsWith(StringUtils::toLowerCase(file), "." + modelExtension) == true) {
+				haveModelFile = true;
+				break;
+			}
 		}
-		LevelFileImport::doImport(path, tlFile, level);
+		if (haveModelFile == true) {
+			LevelFileImport::doImportFromModel(path, file, level);
+		} else {
+			LevelFileImport::doImport(path, file, level);
+		}
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}

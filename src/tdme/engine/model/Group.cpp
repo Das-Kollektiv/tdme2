@@ -36,6 +36,7 @@ Group::Group(Model* model, Group* parentGroup, const string& id, const string& n
 	this->transformationsMatrix.identity();
 	this->animation = nullptr;
 	this->skinning = nullptr;
+	this->isJoint_ = false;
 }
 
 Group::~Group() {

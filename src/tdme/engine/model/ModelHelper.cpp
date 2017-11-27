@@ -321,3 +321,75 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 	}
 }
 
+Material* ModelHelper::cloneMaterial(Material* material) {
+	auto clonedMaterial = new Material(material->getId());
+	clonedMaterial->getAmbientColor().set(material->getAmbientColor());
+	clonedMaterial->getDiffuseColor().set(material->getDiffuseColor());
+	clonedMaterial->getEmissionColor().set(material->getEmissionColor());
+	clonedMaterial->getSpecularColor().set(material->getSpecularColor());
+	clonedMaterial->setShininess(material->getShininess());
+	clonedMaterial->setDiffuseTextureMaskedTransparency(material->hasDiffuseTextureTransparency());
+	if (material->getDiffuseTextureFileName().length() != 0) {
+		clonedMaterial->setDiffuseTexture(
+			material->getDiffuseTexturePathName(),
+			material->getDiffuseTextureFileName(),
+			material->getDiffuseTransparencyTextureFileName(),
+			material->getDiffuseTransparencyTexturePathName()
+		);
+	}
+	if (material->getNormalTextureFileName().length() != 0) {
+		clonedMaterial->setNormalTexture(
+			material->getNormalTexturePathName(),
+			material->getNormalTextureFileName()
+		);
+	}
+	if (material->getSpecularTextureFileName().length() != 0) {
+		clonedMaterial->setSpecularTexture(
+			material->getSpecularTexturePathName(),
+			material->getSpecularTextureFileName()
+		);
+	}
+	if (material->getDisplacementTextureFileName().length() != 0) {
+		clonedMaterial->setDisplacementTexture(
+			material->getDisplacementTexturePathName(),
+			material->getDisplacementTextureFileName()
+		);
+	}
+	return clonedMaterial;
+}
+
+void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup) {
+	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
+	clonedGroup->setVertices(sourceGroup->getVertices());
+	clonedGroup->setNormals(sourceGroup->getNormals());
+	clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
+	clonedGroup->setTangents(sourceGroup->getTangents());
+	clonedGroup->setBitangents(sourceGroup->getBitangents());
+	clonedGroup->setFacesEntities(sourceGroup->getFacesEntities());
+	clonedGroup->setJoint(false);
+	clonedGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
+	for (auto& facesEntity: *clonedGroup->getFacesEntities()) {
+		if (facesEntity.getMaterial() == nullptr) continue;
+		Material* material = nullptr;
+		auto materialIt = (*targetModel->getMaterials()).find(facesEntity.getMaterial()->getId());
+		if (materialIt == (*targetModel->getMaterials()).end()) {
+			material = cloneMaterial(facesEntity.getMaterial());
+			(*targetModel->getMaterials())[material->getId()] = material;
+		} else {
+			material = materialIt->second;
+		}
+		facesEntity.setMaterial(material);
+	}
+	clonedGroup->determineFeatures();
+	(*targetModel->getGroups())[clonedGroup->getId()] = clonedGroup;
+	if (targetParentGroup == nullptr) {
+		(*targetModel->getSubGroups())[clonedGroup->getId()] = clonedGroup;
+	} else {
+		(*targetParentGroup->getSubGroups())[clonedGroup->getId()] = clonedGroup;
+	}
+	for (auto sourceSubGroupIt: *sourceGroup->getSubGroups()) {
+		auto subGroup = sourceSubGroupIt.second;
+		cloneGroup(subGroup, targetModel, clonedGroup);
+	}
+}
+
