@@ -133,7 +133,6 @@ void ModelEditorScreenController::initialize()
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
-		renderingMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_masked_transparency"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 		materialsDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_dropdown"));
@@ -227,8 +226,6 @@ void ModelEditorScreenController::unsetPivot()
 
 void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
-	renderingMaskedTransparency->getController()->setDisabled(false);
-	renderingMaskedTransparency->getController()->setValue(value->set(entity->getModelSettings()->isMaskedTransparency() == true?"1":""));
 	renderingDynamicShadowing->getController()->setDisabled(false);
 	renderingDynamicShadowing->getController()->setValue(value->set(entity->isDynamicShadowing() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
@@ -236,8 +233,6 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 
 void ModelEditorScreenController::unsetRendering()
 {
-	renderingMaskedTransparency->getController()->setDisabled(true);
-	renderingMaskedTransparency->getController()->setValue(value->set(TEXT_EMPTY));
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(value->set("1"));
 	renderingApply->getController()->setDisabled(true);
@@ -627,8 +622,7 @@ void ModelEditorScreenController::onPivotApply()
 void ModelEditorScreenController::onRenderingApply()
 {
 	if (view->getEntity() == nullptr) return;
-	view->getEntity()->getModelSettings()->setMaskedTransparency(renderingMaskedTransparency->getController()->getValue()->equals("1"));
-	view->getEntity()->setDynamicShadowing(renderingMaskedTransparency->getController()->getValue()->equals("1"));
+	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue()->equals("1"));
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */

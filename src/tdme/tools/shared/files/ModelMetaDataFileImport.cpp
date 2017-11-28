@@ -165,7 +165,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
-		levelEditorEntity->getModelSettings()->setMaskedTransparency(jEntityRoot["mt"].getBoolean());
 	} else
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();

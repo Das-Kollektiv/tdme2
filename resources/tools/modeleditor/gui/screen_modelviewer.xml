@@ -9,12 +9,12 @@
 				<tabs-header>
 					<tab id="tab_properties_display" text="Display" />
 					<tab id="tab_properties_model" text="Model" />
-					<tab id="tab_properties_model_properties" text="Properties" />
 					<tab id="tab_properties_pivot" text="Pivot" />
-					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
-					<tab id="tab_properties_rendering" text="Rendering" />
 					<tab id="tab_properties_materials" text="Materials" /> 
 					<tab id="tab_properties_animations" text="Animations" />
+					<tab id="tab_properties_rendering" text="Rendering" />
+					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
+					<tab id="tab_properties_model_properties" text="Properties" />
 					<tab id="tab_properties_stats" text="Statistics" />
 				</tabs-header>
 				<tabs-content>
@@ -1038,12 +1038,6 @@
 					</tab-content>
 					<tab-content tab-id="tab_properties_rendering"> 
 						<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
-							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<checkbox id="rendering_masked_transparency" name="rendering_masked_transparency" value="1" />
-								<space width="5" />
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Use masked transparency" width="200" height="auto"/>
-							</layout> 
-							<space height="10" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 								<checkbox id="rendering_dynamic_shadowing" name="rendering_dynamic_shadowing" value="1" />
 								<space width="5" />

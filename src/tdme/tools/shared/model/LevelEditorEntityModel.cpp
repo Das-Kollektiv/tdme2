@@ -10,7 +10,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 LevelEditorEntityModel::LevelEditorEntityModel(LevelEditorEntity* entity) {
 	this->entity = entity;
 	this->terrainMesh = false;
-	this->maskedTransparency = false;
 }
 
 LevelEditorEntityModel::~LevelEditorEntityModel() {
@@ -26,13 +25,4 @@ bool LevelEditorEntityModel::isTerrainMesh() {
 
 void LevelEditorEntityModel::setTerrainMesh(bool terrainMesh) {
 	this->terrainMesh = terrainMesh;
-}
-
-bool LevelEditorEntityModel::isMaskedTransparency() {
-	return maskedTransparency;
-}
-
-void LevelEditorEntityModel::setMaskedTransparency(bool maskedTransparency) {
-	this->maskedTransparency = maskedTransparency;
-	ModelHelper::setDiffuseMaskedTransparency(entity->getModel(), maskedTransparency);
 }

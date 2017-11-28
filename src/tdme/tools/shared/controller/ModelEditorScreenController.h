@@ -64,7 +64,6 @@ private:
 	GUIElementNode* statsOpaqueFaces {  };
 	GUIElementNode* statsTransparentFaces {  };
 	GUIElementNode* statsMaterialCount {  };
-	GUIElementNode* renderingMaskedTransparency {  };
 	GUIElementNode* renderingDynamicShadowing {  };
 	GUIElementNode* renderingApply {  };
 	GUIElementNode* materialsDropdown {  };

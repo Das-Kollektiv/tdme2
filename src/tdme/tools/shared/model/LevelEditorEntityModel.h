@@ -20,7 +20,6 @@ class tdme::tools::shared::model::LevelEditorEntityModel
 private:
 	LevelEditorEntity* entity;
 	bool terrainMesh;
-	bool maskedTransparency;
 
 public:
 
@@ -39,18 +38,6 @@ public:
 	 * Set terrain mesh
 	 */
 	void setTerrainMesh(bool terrainMesh);
-
-	/**
-	 * Is masked transparency
-	 * @return masked transparency
-	 */
-	bool isMaskedTransparency();
-
-	/**
-	 * Set masked transparency
-	 * @param dynamic shadowing enabled
-	 */
-	void setMaskedTransparency(bool maskedTransparency);
 
 	/**
 	 * Public constructor

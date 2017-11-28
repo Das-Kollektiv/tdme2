@@ -118,7 +118,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 		*/
 		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
-		jEntityRoot["mt"] = entity->getModelSettings()->isMaskedTransparency();
 	}
 	jEntityRoot["version"] = "1.99";
 	jEntityRoot["type"] = (entity->getType()->getName());
