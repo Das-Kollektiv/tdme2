@@ -67,6 +67,20 @@ private:
 	GUIElementNode* renderingMaskedTransparency {  };
 	GUIElementNode* renderingDynamicShadowing {  };
 	GUIElementNode* renderingApply {  };
+	GUIElementNode* materialsDropdown {  };
+	GUIElementNode* materialsDropdownApply {  };
+	GUIElementNode* materialsMaterialName {  };
+	GUIElementNode* materialsMaterialAmbient {  };
+	GUIElementNode* materialsMaterialDiffuse {  };
+	GUIElementNode* materialsMaterialSpecular {  };
+	GUIElementNode* materialsMaterialEmission {  };
+	GUIElementNode* materialsMaterialShininess {  };
+	GUIElementNode* materialsMaterialDiffuseTexture {  };
+	GUIElementNode* materialsMaterialDiffuseTransparencyTexture {  };
+	GUIElementNode* materialsMaterialNormalTexture {  };
+	GUIElementNode* materialsMaterialSpecularTexture {  };
+	GUIElementNode* materialsMaterialUseMaskedTransparency {  };
+	GUIElementNode* materialsMaterialApply {  };
 	GUIElementNode* animationsDropDown {  };
 	GUIElementNode* animationsDropDownApply {  };
 	GUIElementNode* animationsDropDownDelete {  };
@@ -152,6 +166,27 @@ public:
 	 * Unset rendering
 	 */
 	void unsetRendering();
+
+	/**
+	 * Set materials
+	 * @param entity
+	 */
+	void setMaterials(LevelEditorEntity* entity);
+
+	/**
+	 * Unset materials
+	 */
+	void unsetMaterials();
+
+	/**
+	 * On material drop down apply
+	 */
+	void onMaterialDropDownApply();
+
+	/**
+	 * On material apply
+	 */
+	void onMaterialApply();
 
 	/**
 	 * Set animations

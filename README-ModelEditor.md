@@ -23,6 +23,8 @@ TDMEModelEditor
             - oriented bounding box
             - convex mesh
             - concave terrain mesh
+        - material editor
+            - adjust colors, ...
         - set up animations
             - name
             - start frame

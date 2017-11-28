@@ -12,7 +12,8 @@
 					<tab id="tab_properties_model_properties" text="Properties" />
 					<tab id="tab_properties_pivot" text="Pivot" />
 					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
-					<tab id="tab_properties_rendering" text="Rendering" /> 
+					<tab id="tab_properties_rendering" text="Rendering" />
+					<tab id="tab_properties_materials" text="Materials" /> 
 					<tab id="tab_properties_animations" text="Animations" />
 					<tab id="tab_properties_stats" text="Statistics" />
 				</tabs-header>
@@ -1053,6 +1054,114 @@
 								<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />
 							</layout>
 						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_materials">
+						<scrollarea-vertical width="100%" height="100%">
+							<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="horizontal">
+									<dropdown id="materials_dropdown" name="materials_dropdown" width="530" height="auto" text="Test">
+										<dropdown-option text="None" value="" />
+									</dropdown>
+									<space width="10" />
+									<button id="button_materials_dropdown_apply" name="button_materials_dropdown_apply" text="Apply" width="80" />
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Name" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_name" name="materials_material_name" width="450" height="auto" text="Name" disabled="true" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Ambient color" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_ambient" name="materials_material_ambient" width="450" height="auto" text="Ambient" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Diffuse color" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_diffuse" name="materials_material_diffuse" width="450" height="auto" text="Diffuse" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Specular color" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_specular" name="materials_material_specular" width="450" height="auto" text="Specular" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Emission color" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_emission" name="materials_material_emission" width="450" height="auto" text="Emission" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Shininess" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_shininess" name="materials_material_shininess" width="450" height="auto" text="Shininess" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Diffuse texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_diffuse_texture" name="materials_material_diffuse_texture" width="450" height="auto" text="Diffuse texture" disabled="true" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Trans. texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_diffuse_transparency_texture" name="materials_material_diffuse_transparency_texture" width="450" height="auto" text="Diffuse transparency texture" disabled="true" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Normal texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_normal_texture" name="materials_material_normal_texture" width="450" height="auto" text="Normal texture" disabled="true" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Specular texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_specular_texture" name="materials_material_specular_texture" width="450" height="auto" text="Specular texture" disabled="true" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="602" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Masked transp." width="145" height="auto"/>
+										<space width="5" />
+										<checkbox id="materials_material_use_masked_transparency" name="materials_material_use_masked_transparency" width="auto" height="auto" value="1" />
+										<space width="*" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+									<button id="button_materials_material_apply" name="button_materials_material_apply" text="Apply" />
+								</layout>
+								<space height="20" />
+							</layout>
+						</scrollarea-vertical>
 					</tab-content>
 					<tab-content tab-id="tab_properties_animations">
 						<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">

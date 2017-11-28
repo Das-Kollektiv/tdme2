@@ -185,6 +185,7 @@ void SharedModelEditorView::updateGUIElements()
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 		entityBoundingVolumeView->setTerrainMesh(entity);
 		modelViewerScreenController->setRendering(entity);
+		modelViewerScreenController->setMaterials(entity);
 		modelViewerScreenController->setAnimations(entity);
 	} else {
 		modelViewerScreenController->setScreenCaption("Model Viewer - no entity loaded");
@@ -194,6 +195,7 @@ void SharedModelEditorView::updateGUIElements()
 		entityBoundingVolumeView->unsetBoundingVolumes();
 		entityBoundingVolumeView->unsetTerrainMesh();
 		modelViewerScreenController->unsetRendering();
+		modelViewerScreenController->unsetMaterials();
 		modelViewerScreenController->unsetAnimations();
 	}
 }

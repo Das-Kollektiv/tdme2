@@ -5,6 +5,7 @@
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
+#include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/gui/GUIParser.h>
@@ -135,6 +136,20 @@ void ModelEditorScreenController::initialize()
 		renderingMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_masked_transparency"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
+		materialsDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_dropdown"));
+		materialsDropdownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_dropdown_apply"));
+		materialsMaterialName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_name"));
+		materialsMaterialAmbient = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_ambient"));
+		materialsMaterialDiffuse = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse"));
+		materialsMaterialSpecular= dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_specular"));
+		materialsMaterialEmission = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_emission"));
+		materialsMaterialShininess = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_shininess"));
+		materialsMaterialDiffuseTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse_texture"));
+		materialsMaterialDiffuseTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse_transparency_texture"));
+		materialsMaterialNormalTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_normal_texture"));
+		materialsMaterialSpecularTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_specular_texture"));
+		materialsMaterialUseMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_use_masked_transparency"));;
+		materialsMaterialApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_apply"));
 		animationsDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown"));
 		animationsDropDownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_apply"));
 		animationsDropDownDelete = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_delete"));
@@ -226,6 +241,129 @@ void ModelEditorScreenController::unsetRendering()
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(value->set("1"));
 	renderingApply->getController()->setDisabled(true);
+}
+
+void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
+	auto model = entity->getModel();
+
+	{
+		auto materialsDropDownInnerNode = dynamic_cast< GUIParentNode* >((materialsDropdown->getScreenNode()->getNodeById(materialsDropdown->getId() + "_inner")));
+		auto idx = 0;
+		string materialsDropDownInnerNodeSubNodesXML = "";
+		materialsDropDownInnerNodeSubNodesXML =
+				materialsDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			materialsDropdown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		// materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
+		for (auto it: *model->getMaterials()) {
+			auto materialId = it.second->getId();
+			materialsDropDownInnerNodeSubNodesXML =
+					materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(materialId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(materialId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setMaterials(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	//
+	materialsDropdown->getController()->setDisabled(false);
+	materialsDropdownApply->getController()->setDisabled(false);
+	materialsMaterialAmbient->getController()->setDisabled(false);
+	materialsMaterialDiffuse->getController()->setDisabled(false);
+	materialsMaterialSpecular->getController()->setDisabled(false);
+	materialsMaterialEmission->getController()->setDisabled(false);
+	materialsMaterialShininess->getController()->setDisabled(false);
+	materialsMaterialUseMaskedTransparency->getController()->setDisabled(false);
+	materialsMaterialApply->getController()->setDisabled(false);
+	onMaterialDropDownApply();
+}
+
+void ModelEditorScreenController::unsetMaterials() {
+	{
+		auto materialsDropDownInnerNode = dynamic_cast< GUIParentNode* >((materialsDropdown->getScreenNode()->getNodeById(materialsDropdown->getId() + "_inner")));
+		auto idx = 0;
+		string materialsDropDownInnerNodeSubNodesXML = "";
+		materialsDropDownInnerNodeSubNodesXML =
+				materialsDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			materialsDropdown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" />";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setMaterials(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	materialsDropdown->getController()->setValue(value->set(""));
+	materialsDropdown->getController()->setDisabled(true);
+	materialsDropdownApply->getController()->setDisabled(true);
+	materialsMaterialName->getController()->setValue(value->set(""));
+	materialsMaterialAmbient->getController()->setDisabled(true);
+	materialsMaterialAmbient->getController()->setValue(value->set(""));
+	materialsMaterialDiffuse->getController()->setDisabled(true);
+	materialsMaterialDiffuse->getController()->setValue(value->set(""));
+	materialsMaterialSpecular->getController()->setDisabled(true);
+	materialsMaterialSpecular->getController()->setValue(value->set(""));
+	materialsMaterialEmission->getController()->setDisabled(true);
+	materialsMaterialEmission->getController()->setValue(value->set(""));
+	materialsMaterialShininess->getController()->setDisabled(true);
+	materialsMaterialShininess->getController()->setValue(value->set(""));
+	materialsMaterialApply->getController()->setDisabled(true);
+	materialsMaterialDiffuseTexture->getController()->setValue(value->set(""));
+	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(value->set(""));
+	materialsMaterialNormalTexture->getController()->setValue(value->set(""));
+	materialsMaterialSpecularTexture->getController()->setValue(value->set(""));
+	materialsMaterialShininess->getController()->setValue(value->set(""));
+	materialsMaterialUseMaskedTransparency->getController()->setValue(value->set(""));
+	materialsMaterialUseMaskedTransparency->getController()->setDisabled(true);
+
+}
+
+void ModelEditorScreenController::onMaterialDropDownApply() {
+	auto entity = view->getEntity();
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	materialsMaterialName->getController()->setValue(value->set(material->getId()));
+	materialsMaterialAmbient->getController()->setValue(value->set(Tools::formatColor4(material->getAmbientColor())));
+	materialsMaterialDiffuse->getController()->setValue(value->set(Tools::formatColor4(material->getDiffuseColor())));
+	materialsMaterialSpecular->getController()->setValue(value->set(Tools::formatColor4(material->getSpecularColor())));
+	materialsMaterialEmission->getController()->setValue(value->set(Tools::formatColor4(material->getEmissionColor())));
+	materialsMaterialShininess->getController()->setValue(value->set(Tools::formatFloat(material->getShininess())));
+	materialsMaterialDiffuseTexture->getController()->setValue(value->set(material->getDiffuseTextureFileName()));
+	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(value->set(material->getDiffuseTransparencyTextureFileName()));
+	materialsMaterialNormalTexture->getController()->setValue(value->set(material->getNormalTextureFileName()));
+	materialsMaterialSpecularTexture->getController()->setValue(value->set(material->getSpecularTextureFileName()));
+	materialsMaterialUseMaskedTransparency->getController()->setValue(value->set(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+}
+
+void ModelEditorScreenController::onMaterialApply() {
+	auto entity = view->getEntity();
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	try {
+		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue()->getString()));
+		material->getDiffuseColor().set(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue()->getString()));
+		material->getSpecularColor().set(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue()->getString()));
+		material->getEmissionColor().set(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue()->getString()));
+		material->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue()->getString()));
+		material->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue()->getString() == "1"?true:false);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
@@ -540,6 +678,12 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else
 				if (node->getId().compare("button_rendering_apply") == 0) {
 					onRenderingApply();
+				} else
+				if (node->getId().compare("button_materials_dropdown_apply") == 0) {
+					onMaterialDropDownApply();
+				} else
+				if (node->getId().compare("button_materials_material_apply") == 0) {
+					onMaterialApply();
 				} else
 				if (node->getId().compare("animations_dropdown_apply") == 0) {
 					onAnimationDropDownApply();
