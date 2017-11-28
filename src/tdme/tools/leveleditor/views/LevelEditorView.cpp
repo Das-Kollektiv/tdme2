@@ -624,7 +624,7 @@ void LevelEditorView::unselectObjects()
 
 void LevelEditorView::updateGUIElements()
 {
-	levelEditorScreenController->setScreenCaption("Level Editor - " + level->getFileName());
+	levelEditorScreenController->setScreenCaption("Level Editor - " + Tools::getFileName(level->getFileName()));
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));

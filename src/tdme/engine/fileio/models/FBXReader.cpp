@@ -155,7 +155,11 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 			false
 		);
         fbxScene->SetCurrentAnimationStack(fbxCurrentAnimationStack);
-        processAnimation(fbxScene->GetRootNode(), fbxStartTime, fbxEndTime, model, frameOffset);
+		FbxNode* fbxNode = fbxScene->GetRootNode();
+		if (fbxNode == nullptr) continue;
+		for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
+			processAnimation(fbxNode->GetChild(i), fbxStartTime, fbxEndTime, model, frameOffset);
+		}
         frameOffset+= endFrame - startFrame + 1;
 	}
 	FbxArrayDelete(fbxAnimStackNameArray);
@@ -231,7 +235,9 @@ void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) 
 void FBXReader::processScene(FbxScene* fbxScene, Model* model) {
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
-	processNode(fbxNode, model, nullptr);
+	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
+		processNode(fbxNode->GetChild(i), model, nullptr);
+	}
 }
 
 void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
