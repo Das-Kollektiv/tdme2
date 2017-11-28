@@ -321,6 +321,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
 			model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
 		}
+		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 		ModelHelper::prepareForIndexedRendering(model);
 		auto entityType = LevelEditorEntity_EntityType::MODEL;
 		ModelStatistics modelStatistics;
