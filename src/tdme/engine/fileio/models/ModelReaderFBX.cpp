@@ -54,7 +54,7 @@ Model* ModelReader::read(const string& pathName, const string& fileName) throw (
 		}
 	} catch (Exception& exception) {
 		Console::println("ModelReaderFBX::read(): Could not load model: " + pathName + "/" + fileName + ": " + (exception.what()));
-		throw exception;
+		throw;
 	}
 	return nullptr;
 }

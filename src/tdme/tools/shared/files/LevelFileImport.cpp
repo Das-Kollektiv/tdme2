@@ -338,6 +338,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 
 				if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
 					levelEditorEntity = levelEditorEntityCompare;
+					delete model;
 					break;
 				}
 			}

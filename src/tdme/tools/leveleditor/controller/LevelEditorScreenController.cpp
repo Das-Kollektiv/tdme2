@@ -669,7 +669,7 @@ void LevelEditorScreenController::onObjectCenter()
 void LevelEditorScreenController::onMapLoad()
 {
 	vector<string> extensions = ModelReader::getModelExtensions();
-	extensions.push_back("dae");
+	extensions.push_back("tl");
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		"Load from: ",

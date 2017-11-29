@@ -66,32 +66,36 @@ private:
 	 * Process FBX scene
 	 * @param FBX scene
 	 * @param model
+	 * @param path name
 	 */
-	static void processScene(FbxScene* fbxScene, Model* model);
+	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName);
 
 	/**
 	 * Process FBX node
 	 * @param FBX scene
 	 * @param model
 	 * @param parent group
+	 * @param path name
 	 */
-	static void processNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+	static void processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process FBX mesh node
 	 * @param FBX node
 	 * @param model
 	 * @param parent group
+	 * @param path name
 	 */
-	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process FBX skeleton node
 	 * @param FBX node
 	 * @param model
 	 * @param parent group
+	 * @param path name
 	 */
-	static Group* processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup);
+	static Group* processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process animation

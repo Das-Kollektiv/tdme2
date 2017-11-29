@@ -102,7 +102,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	setupModelScaleRotationMatrix(fbxScene, model);
 
 	// process nodes
-	processScene(fbxScene, model);
+	processScene(fbxScene, model, pathName);
 
 	// parse animations stacks
 	FbxTime::SetGlobalTimeMode(FbxTime::eCustom, 30.0);
@@ -232,27 +232,27 @@ void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) 
 	);
 }
 
-void FBXReader::processScene(FbxScene* fbxScene, Model* model) {
+void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName) {
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, nullptr);
+		processNode(fbxNode->GetChild(i), model, nullptr, pathName);
 	}
 }
 
-void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
+void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
 	Group* group = nullptr;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
 		switch (fbxAttributeType) {
 			case FbxNodeAttribute::eMesh:
 				{
-					group = processMeshNode(fbxNode, model, parentGroup);
+					group = processMeshNode(fbxNode, model, parentGroup, pathName);
 					break;
 				}
 			case FbxNodeAttribute::eSkeleton:
 				{
-					group = processSkeletonNode(fbxNode, model, parentGroup);
+					group = processSkeletonNode(fbxNode, model, parentGroup, pathName);
 					break;
 				}
 		}
@@ -288,11 +288,11 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup) 
 	(*model->getGroups())[group->getId()] = group;
 	parentGroup = group;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, parentGroup);
+		processNode(fbxNode->GetChild(i), model, parentGroup, pathName);
 	}
 }
 
-Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
+Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
 	auto fbxNodeName = fbxNode->GetName();
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
@@ -451,9 +451,13 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (diffuseTextureFileName.length() > 0) {
 					material->setDiffuseTexture(
-						FileSystem::getInstance()->getPathName(diffuseTextureFileName),
+						FileSystem::getInstance()->fileExists(
+							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(diffuseTextureFileName))
+						)?pathName:FileSystem::getInstance()->getPathName(diffuseTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTextureFileName),
-						FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
+						FileSystem::getInstance()->fileExists(
+							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName))
+						)?pathName:FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName)
 					);
 				}
@@ -467,7 +471,9 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (normalTextureFileName.length() > 0) {
 					material->setNormalTexture(
-						FileSystem::getInstance()->getPathName(normalTextureFileName),
+						FileSystem::getInstance()->fileExists(
+							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(normalTextureFileName))
+						)?pathName:FileSystem::getInstance()->getPathName(normalTextureFileName),
 						FileSystem::getInstance()->getFileName(normalTextureFileName)
 					);
 				}
@@ -481,7 +487,9 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (specularTextureFileName.length() > 0) {
 					material->setSpecularTexture(
-						FileSystem::getInstance()->getPathName(specularTextureFileName),
+						FileSystem::getInstance()->fileExists(
+							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(specularTextureFileName))
+						)?pathName:FileSystem::getInstance()->getPathName(specularTextureFileName),
 						FileSystem::getInstance()->getFileName(specularTextureFileName)
 					);
 				}
@@ -760,7 +768,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	return group;
 }
 
-Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup) {
+Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
 	auto fbxNodeName = fbxNode->GetName();
 	FbxSkeleton* fbxSkeleton = (FbxSkeleton*)fbxNode->GetNodeAttribute();
 	auto group = new Group(model, parentGroup, fbxNodeName, fbxNodeName);
