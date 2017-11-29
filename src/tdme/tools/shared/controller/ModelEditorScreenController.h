@@ -82,6 +82,10 @@ private:
 	GUIElementNode* materialsMaterialDiffuseTransparencyTextureLoad {  };
 	GUIElementNode* materialsMaterialNormalTextureLoad {  };
 	GUIElementNode* materialsMaterialSpecularTextureLoad {  };
+	GUIElementNode* materialsMaterialDiffuseTextureClear {  };
+	GUIElementNode* materialsMaterialDiffuseTransparencyTextureClear {  };
+	GUIElementNode* materialsMaterialNormalTextureClear {  };
+	GUIElementNode* materialsMaterialSpecularTextureClear {  };
 	GUIElementNode* materialsMaterialUseMaskedTransparency {  };
 	GUIElementNode* materialsMaterialApply {  };
 	GUIElementNode* animationsDropDown {  };
@@ -215,6 +219,11 @@ public:
 	 * On material load specular texture
 	 */
 	void onMaterialLoadSpecularTexture();
+
+	/**
+	 * On material clear texture
+	 */
+	void onMaterialClearTexture(GUIElementNode* guiElementNode);
 
 	/**
 	 * Set animations

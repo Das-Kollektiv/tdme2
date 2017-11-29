@@ -159,6 +159,10 @@ void ModelEditorScreenController::initialize()
 		materialsMaterialDiffuseTransparencyTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_diffuse_transparency_texture_load"));;
 		materialsMaterialNormalTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_normal_texture_load"));;
 		materialsMaterialSpecularTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_specular_texture_load"));;
+		materialsMaterialDiffuseTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_diffuse_texture_clear"));;
+		materialsMaterialDiffuseTransparencyTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_diffuse_transparency_texture_clear"));;
+		materialsMaterialNormalTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_normal_texture_clear"));;
+		materialsMaterialSpecularTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_specular_texture_clear"));;
 		materialsMaterialUseMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_use_masked_transparency"));;
 		materialsMaterialApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_apply"));
 		animationsDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown"));
@@ -294,12 +298,16 @@ void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
 	materialsMaterialShininess->getController()->setDisabled(false);
 	materialsMaterialDiffuseTexture->getController()->setDisabled(false);
 	materialsMaterialDiffuseTextureLoad->getController()->setDisabled(false);
+	materialsMaterialDiffuseTextureClear->getController()->setDisabled(false);
 	materialsMaterialDiffuseTransparencyTexture->getController()->setDisabled(false);
 	materialsMaterialDiffuseTransparencyTextureLoad->getController()->setDisabled(false);
+	materialsMaterialDiffuseTransparencyTextureClear->getController()->setDisabled(false);
 	materialsMaterialNormalTexture->getController()->setDisabled(false);
 	materialsMaterialNormalTextureLoad->getController()->setDisabled(false);
+	materialsMaterialNormalTextureClear->getController()->setDisabled(false);
 	materialsMaterialSpecularTexture->getController()->setDisabled(false);
 	materialsMaterialSpecularTextureLoad->getController()->setDisabled(false);
+	materialsMaterialSpecularTextureClear->getController()->setDisabled(false);
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(false);
 	materialsMaterialApply->getController()->setDisabled(false);
 	onMaterialDropDownApply();
@@ -342,12 +350,16 @@ void ModelEditorScreenController::unsetMaterials() {
 	materialsMaterialApply->getController()->setDisabled(true);
 	materialsMaterialDiffuseTexture->getController()->setValue(value->set(""));
 	materialsMaterialDiffuseTextureLoad->getController()->setDisabled(true);
+	materialsMaterialDiffuseTextureClear->getController()->setDisabled(true);
 	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(value->set(""));
 	materialsMaterialDiffuseTransparencyTextureLoad->getController()->setDisabled(true);
+	materialsMaterialDiffuseTransparencyTextureClear->getController()->setDisabled(true);
 	materialsMaterialNormalTexture->getController()->setValue(value->set(""));
 	materialsMaterialNormalTextureLoad->getController()->setDisabled(true);
+	materialsMaterialNormalTextureClear->getController()->setDisabled(true);
 	materialsMaterialSpecularTexture->getController()->setValue(value->set(""));
 	materialsMaterialSpecularTextureLoad->getController()->setDisabled(true);
+	materialsMaterialSpecularTextureClear->getController()->setDisabled(true);
 	materialsMaterialShininess->getController()->setValue(value->set(""));
 	materialsMaterialUseMaskedTransparency->getController()->setValue(value->set(""));
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(true);
@@ -458,6 +470,10 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 		material->getDiffuseTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialNormalTexture)
 	);
+}
+
+void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElementNode) {
+	guiElementNode->getController()->setValue(value->set(""));
 }
 
 void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
@@ -789,7 +805,19 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 				} else
 				if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
 					onMaterialLoadSpecularTexture();
-				} else
+				} else
+				if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
+					onMaterialClearTexture(materialsMaterialDiffuseTexture);
+				} else
+				if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
+					onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
+				} else
+				if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
+					onMaterialClearTexture(materialsMaterialNormalTexture);
+				} else
+				if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
+					onMaterialClearTexture(materialsMaterialSpecularTexture);
+				} else
 				if (node->getId().compare("animations_dropdown_apply") == 0) {
 					onAnimationDropDownApply();
 				} else
