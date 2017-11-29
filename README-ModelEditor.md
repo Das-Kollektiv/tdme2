@@ -15,7 +15,7 @@ TDMEModelEditor
         - setting up model properties
             - key, value map for what ever reason
         - setting up the model pivot
-        - setting up up to 8  bounding volumes (WIP)
+        - setting up up to 8 bounding volumes (WIP)
             - none
             - sphere
             - capsule
@@ -24,15 +24,10 @@ TDMEModelEditor
             - convex mesh
             - concave terrain mesh
         - material editor
-            - adjust colors, ...
+            - adjust colors, textures, masked transparency
         - set up animations
-            - name
-            - start frame
-            - end frame
-            - loop
-            - overlay group
+            - create, edit and delete animations
         - set up rendering options
-            - use masked transparency
             - use dynamic shadowing
         - see statistics
             - opaque faces

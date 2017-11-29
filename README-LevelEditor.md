@@ -10,19 +10,15 @@ TDMELevelEditor
                 - setting up entity properties
                     - key, value map for what ever reason
             - models
-                - model loading
-                    - DAE, FBX, Wavefront OBJ, TM, TMM meta data files
-                - setup name, description
-                - render with generated ground, shadowing, bounding volume
-                - setting up the model pivot
-                - see statistics
+                - see model editor
             - particle systems
+                - see particle system editor
             - empties
             - trigger
         - level editor
             - setting up a grid where to place objects on
             - load, save maps, showing level dimension
-            - import maps from DAE files, which
+            - import maps from model files, which
                 - takes first level model groups as objects by converting them to .TM files, ...
             - setting up map properties
                 - key, value map for what ever reason
@@ -45,7 +41,6 @@ TDMELevelEditor
 
     - What is WIP
         - set up arbitrary lights as entities
-        - import maps from model files(not only DAE)
 
     - Technology
         - uses TDME2
