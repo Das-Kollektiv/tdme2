@@ -208,7 +208,7 @@ void SharedModelEditorView::loadSettings()
 {
 	try {
 		Properties settings;
-		settings.load("settings", "modelviewer.properties");
+		settings.load("settings", "modeleditor.properties");
 		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
@@ -257,7 +257,7 @@ void SharedModelEditorView::storeSettings()
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
-		settings.store("settings", "modelviewer.properties");
+		settings.store("settings", "modeleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));

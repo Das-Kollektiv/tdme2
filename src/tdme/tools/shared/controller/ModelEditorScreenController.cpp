@@ -125,7 +125,7 @@ FileDialogPath* ModelEditorScreenController::getModelPath()
 void ModelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/modeleditor/gui", "screen_modelviewer.xml");
+		screenNode = GUIParser::parse("resources/tools/modeleditor/gui", "screen_modeleditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
