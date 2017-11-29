@@ -30,8 +30,11 @@ void ModelEditorScreenController_onMaterialLoadTexture::performAction()
 			append("/")->
 			append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
 	);
+	/*
+	// TODO: use texure path maybe?
 	modelEditorScreenController->getModelPath()->setPath(
 		modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
 	);
+	*/
 	modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
 }

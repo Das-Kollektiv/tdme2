@@ -372,15 +372,11 @@ const string Tools::getGameRootPath(const string& fileName)
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName.rfind("/resources/");
-		if (filesRootIdx != -1)
-			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
-
+		if (filesRootIdx != -1) return StringUtils::substring(fileName, 0, filesRootIdx);
 	}
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName.rfind("resources/");
-		if (filesRootIdx != -1)
-			newFileName = StringUtils::substring(fileName, 0, filesRootIdx);
-
+		if (filesRootIdx != -1) return StringUtils::substring(fileName, 0, filesRootIdx);
 	}
 	return "";
 }

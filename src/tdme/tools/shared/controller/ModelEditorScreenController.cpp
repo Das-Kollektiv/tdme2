@@ -438,10 +438,10 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto extensions = TextureLoader::getTextureExtensions();
 	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
+		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		&extensions,
-		material->getDiffuseTextureFileName(),
+		material->getDiffuseTransparencyTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialDiffuseTransparencyTexture)
 	);
 }
@@ -451,10 +451,10 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	auto extensions = TextureLoader::getTextureExtensions();
 	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
+		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		&extensions,
-		material->getDiffuseTextureFileName(),
+		material->getNormalTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialNormalTexture)
 	);
 }
@@ -464,10 +464,10 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	auto extensions = TextureLoader::getTextureExtensions();
 	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
+		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		&extensions,
-		material->getDiffuseTextureFileName(),
+		material->getSpecularTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialNormalTexture)
 	);
 }
