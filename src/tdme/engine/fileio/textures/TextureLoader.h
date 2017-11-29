@@ -73,6 +73,11 @@ private:
 class tdme::engine::fileio::textures::TextureLoader final
 {
 public:
+	/**
+	 * @return texture extensions
+	 */
+	static const vector<string>& getTextureExtensions();
+
 	/** 
 	 * Loads a texture
 	 * @param path name
@@ -96,4 +101,7 @@ private:
 	 * @param file name
 	 */
 	static Texture* loadPNG(const string& path, const string& fileName) throw (FileSystemException);
+
+	//
+	static vector<string> extensions;
 };

@@ -336,6 +336,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_ModelEditorScreenController_1.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \

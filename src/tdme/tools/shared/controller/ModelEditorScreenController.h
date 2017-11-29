@@ -78,6 +78,10 @@ private:
 	GUIElementNode* materialsMaterialDiffuseTransparencyTexture {  };
 	GUIElementNode* materialsMaterialNormalTexture {  };
 	GUIElementNode* materialsMaterialSpecularTexture {  };
+	GUIElementNode* materialsMaterialDiffuseTextureLoad {  };
+	GUIElementNode* materialsMaterialDiffuseTransparencyTextureLoad {  };
+	GUIElementNode* materialsMaterialNormalTextureLoad {  };
+	GUIElementNode* materialsMaterialSpecularTextureLoad {  };
 	GUIElementNode* materialsMaterialUseMaskedTransparency {  };
 	GUIElementNode* materialsMaterialApply {  };
 	GUIElementNode* animationsDropDown {  };
@@ -94,6 +98,11 @@ private:
 	FileDialogPath* modelPath {  };
 
 public:
+
+	/**
+	 * Get view
+	 */
+	SharedModelEditorView* getView();
 
 	/** 
 	 * @return entity display sub screen controller
@@ -186,6 +195,26 @@ public:
 	 * On material apply
 	 */
 	void onMaterialApply();
+
+	/**
+	 * On material load diffuse texture
+	 */
+	void onMaterialLoadDiffuseTexture();
+
+	/**
+	 * On material load diffuse transparency texture
+	 */
+	void onMaterialLoadDiffuseTransparencyTexture();
+
+	/**
+	 * On material load normal texture
+	 */
+	void onMaterialLoadNormalTexture();
+
+	/**
+	 * On material load specular texture
+	 */
+	void onMaterialLoadSpecularTexture();
 
 	/**
 	 * Set animations

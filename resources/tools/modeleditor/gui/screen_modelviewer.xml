@@ -1113,7 +1113,9 @@
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="resources/gui/fonts/Foo_20.fnt" text="Diffuse texture" width="145" height="auto"/>
 										<space width="5" />
-										<input id="materials_material_diffuse_texture" name="materials_material_diffuse_texture" width="450" height="auto" text="Diffuse texture" disabled="true" />
+										<input id="materials_material_diffuse_texture" name="materials_material_diffuse_texture" width="376" height="auto" text="Diffuse texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_diffuse_texture_load" name="button_materials_material_diffuse_texture_load" text="Load" width="60" height="auto" />
 									</layout>
 								</layout>
 								<space height="5" />
@@ -1121,7 +1123,9 @@
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="resources/gui/fonts/Foo_20.fnt" text="Trans. texture" width="145" height="auto"/>
 										<space width="5" />
-										<input id="materials_material_diffuse_transparency_texture" name="materials_material_diffuse_transparency_texture" width="450" height="auto" text="Diffuse transparency texture" disabled="true" />
+										<input id="materials_material_diffuse_transparency_texture" name="materials_material_diffuse_transparency_texture" width="376" height="auto" text="Diffuse transparency texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_diffuse_transparency_texture_load" name="button_materials_material_diffuse_transparency_texture_load" text="Load" width="60" height="auto" />
 									</layout>
 								</layout>
 								<space height="5" />
@@ -1129,7 +1133,9 @@
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="resources/gui/fonts/Foo_20.fnt" text="Normal texture" width="145" height="auto"/>
 										<space width="5" />
-										<input id="materials_material_normal_texture" name="materials_material_normal_texture" width="450" height="auto" text="Normal texture" disabled="true" />
+										<input id="materials_material_normal_texture" name="materials_material_normal_texture" width="376" height="auto" text="Normal texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_normal_texture_load" name="button_materials_material_normal_texture_load" text="Load" width="60" height="auto" />
 									</layout>
 								</layout>
 								<space height="5" />
@@ -1137,7 +1143,9 @@
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="resources/gui/fonts/Foo_20.fnt" text="Specular texture" width="145" height="auto"/>
 										<space width="5" />
-										<input id="materials_material_specular_texture" name="materials_material_specular_texture" width="450" height="auto" text="Specular texture" disabled="true" />
+										<input id="materials_material_specular_texture" name="materials_material_specular_texture" width="376" height="auto" text="Specular texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_specular_texture_load" name="button_materials_material_specular_texture_load" text="Load" width="60" height="auto" />
 									</layout>
 								</layout>
 								<space height="20" />

@@ -17,6 +17,7 @@ namespace controller {
 				class InfoDialogScreenController;
 				class ModelEditorScreenController;
 				class ModelEditorScreenController_ModelEditorScreenController_1;
+				class ModelEditorScreenController_onMaterialLoadTexture;
 				class ModelEditorScreenController_onModelLoad_2;
 				class ModelEditorScreenController_onModelSave_3;
 				class ParticleSystemScreenController;
