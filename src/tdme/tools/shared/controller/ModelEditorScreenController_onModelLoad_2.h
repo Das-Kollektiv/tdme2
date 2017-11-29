@@ -19,8 +19,8 @@ public:
 	void performAction() override;
 
 	// Generated
-	ModelEditorScreenController_onModelLoad_2(ModelEditorScreenController* modelViewerScreenController);
+	ModelEditorScreenController_onModelLoad_2(ModelEditorScreenController* modelEditorScreenController);
 
 private:
-	ModelEditorScreenController *modelViewerScreenController;
+	ModelEditorScreenController *modelEditorScreenController;
 };

@@ -21,9 +21,9 @@ public:
 	void performAction() override;
 
 	// Generated
-	ModelEditorScreenController_ModelEditorScreenController_1(ModelEditorScreenController* modelViewerScreenController, SharedModelEditorView* finalView);
+	ModelEditorScreenController_ModelEditorScreenController_1(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView);
 
 private:
-	ModelEditorScreenController* modelViewerScreenController;
+	ModelEditorScreenController* modelEditorScreenController;
 	SharedModelEditorView* finalView;
 };

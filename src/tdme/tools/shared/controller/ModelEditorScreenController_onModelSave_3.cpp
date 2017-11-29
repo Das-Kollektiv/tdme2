@@ -17,23 +17,23 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utils::Exception;
 
-ModelEditorScreenController_onModelSave_3::ModelEditorScreenController_onModelSave_3(ModelEditorScreenController* modelViewerScreenController)
-	: modelViewerScreenController(modelViewerScreenController)
+ModelEditorScreenController_onModelSave_3::ModelEditorScreenController_onModelSave_3(ModelEditorScreenController* modelEditorScreenController)
+	: modelEditorScreenController(modelEditorScreenController)
 {
 }
 
 void ModelEditorScreenController_onModelSave_3::performAction()
 {
 	try {
-		modelViewerScreenController->view->saveFile(
-			modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-			modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+		modelEditorScreenController->view->saveFile(
+			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
+			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
 		);
-		modelViewerScreenController->modelPath->setPath(
-			modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+		modelEditorScreenController->modelPath->setPath(
+			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
 		);
-		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 	} catch (Exception& exception) {
-		modelViewerScreenController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
 	}
 }

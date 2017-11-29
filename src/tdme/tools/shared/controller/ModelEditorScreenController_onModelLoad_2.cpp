@@ -15,20 +15,20 @@ using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 
-ModelEditorScreenController_onModelLoad_2::ModelEditorScreenController_onModelLoad_2(ModelEditorScreenController* modelViewerScreenController)
-	: modelViewerScreenController(modelViewerScreenController)
+ModelEditorScreenController_onModelLoad_2::ModelEditorScreenController_onModelLoad_2(ModelEditorScreenController* modelEditorScreenController)
+	: modelEditorScreenController(modelEditorScreenController)
 {
 }
 
 void ModelEditorScreenController_onModelLoad_2::performAction()
 {
-	modelViewerScreenController->view->loadFile(
-		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+	modelEditorScreenController->view->loadFile(
+		modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
+		modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
 	);
-	modelViewerScreenController->modelPath->setPath(
-		modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+	modelEditorScreenController->modelPath->setPath(
+		modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
 	);
-	modelViewerScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+	modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 }
 

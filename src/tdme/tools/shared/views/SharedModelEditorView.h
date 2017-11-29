@@ -37,7 +37,7 @@ public: /* protected */
 
 private:
 	PopUps* popUps {  };
-	ModelEditorScreenController* modelViewerScreenController {  };
+	ModelEditorScreenController* modelEditorScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
 	EntityBoundingVolumeView* entityBoundingVolumeView {  };
 	LevelEditorEntity* entity {  };

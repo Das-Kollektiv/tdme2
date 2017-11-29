@@ -7,8 +7,8 @@ using tdme::tools::shared::controller::ModelEditorScreenController_ModelEditorSc
 using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::views::SharedModelEditorView;
 
-ModelEditorScreenController_ModelEditorScreenController_1::ModelEditorScreenController_ModelEditorScreenController_1(ModelEditorScreenController* modelViewerScreenController, SharedModelEditorView* finalView)
-	: modelViewerScreenController(modelViewerScreenController)
+ModelEditorScreenController_ModelEditorScreenController_1::ModelEditorScreenController_ModelEditorScreenController_1(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView)
+	: modelEditorScreenController(modelEditorScreenController)
 	, finalView(finalView)
 {
 }

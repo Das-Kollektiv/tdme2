@@ -36,7 +36,7 @@ private:
 	View* viewNew {  };
 	bool quitRequested {  };
 	PopUps* popUps {  };
-	SharedModelEditorView* modelViewerView;
+	SharedModelEditorView* modelEditorView;
 
 public:
 	/** 

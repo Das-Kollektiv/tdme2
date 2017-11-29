@@ -18,8 +18,8 @@ public:
 	void performAction() override;
 
 	// Generated
-	ModelEditorScreenController_onModelSave_3(ModelEditorScreenController* modelViewerScreenController);
+	ModelEditorScreenController_onModelSave_3(ModelEditorScreenController* modelEditorScreenController);
 
 private:
-	ModelEditorScreenController* modelViewerScreenController;
+	ModelEditorScreenController* modelEditorScreenController;
 };

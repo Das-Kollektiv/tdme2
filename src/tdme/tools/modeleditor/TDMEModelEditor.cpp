@@ -39,12 +39,12 @@ TDMEModelEditor::TDMEModelEditor()
 	viewInitialized = false;
 	viewNew = nullptr;
 	popUps = new PopUps();
-	modelViewerView = nullptr;
+	modelEditorView = nullptr;
 	quitRequested = false;
 }
 
 TDMEModelEditor::~TDMEModelEditor() {
-	delete modelViewerView;
+	delete modelEditorView;
 	delete popUps;
 }
 
@@ -126,7 +126,7 @@ void TDMEModelEditor::initialize()
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(modelViewerView = new SharedModelEditorView(popUps));
+	setView(modelEditorView = new SharedModelEditorView(popUps));
 }
 
 void TDMEModelEditor::reshape(int32_t width, int32_t height)

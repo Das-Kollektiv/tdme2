@@ -46,7 +46,7 @@ private:
 	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController {  };
 	PopUps* popUps {  };
 	LevelEditorView* levelEditorView {  };
-	ModelEditorView* modelViewerView {  };
+	ModelEditorView* modelEditorView {  };
 	TriggerView* triggerView {  };
 	EmptyView* emptyView {  };
 	ParticleSystemView* particleSystemView {  };

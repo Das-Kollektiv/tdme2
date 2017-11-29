@@ -77,7 +77,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();
-	modelViewerScreenController = nullptr;
+	modelEditorScreenController = nullptr;
 	entityDisplayView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
@@ -87,7 +87,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 }
 
 SharedModelEditorView::~SharedModelEditorView() {
-	delete modelViewerScreenController;
+	delete modelEditorScreenController;
 	delete cameraRotationInputHandler;
 }
 
@@ -119,7 +119,7 @@ void SharedModelEditorView::initModel()
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	ModelStatistics modelStatistics;
 	ModelUtilities::computeModelStatistics(entity->getModel(), &modelStatistics);
-	modelViewerScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
 	updateGUIElements();
 }
 
@@ -177,26 +177,26 @@ void SharedModelEditorView::display()
 void SharedModelEditorView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelViewerScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
+		modelEditorScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
 		auto preset = entity->getProperty("preset");
-		modelViewerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
-		modelViewerScreenController->setEntityData(entity->getName(), entity->getDescription());
-		modelViewerScreenController->setPivot(entity->getPivot());
+		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
+		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
+		modelEditorScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 		entityBoundingVolumeView->setTerrainMesh(entity);
-		modelViewerScreenController->setRendering(entity);
-		modelViewerScreenController->setMaterials(entity);
-		modelViewerScreenController->setAnimations(entity);
+		modelEditorScreenController->setRendering(entity);
+		modelEditorScreenController->setMaterials(entity);
+		modelEditorScreenController->setAnimations(entity);
 	} else {
-		modelViewerScreenController->setScreenCaption("Model Viewer - no entity loaded");
-		modelViewerScreenController->unsetEntityProperties();
-		modelViewerScreenController->unsetEntityData();
-		modelViewerScreenController->unsetPivot();
+		modelEditorScreenController->setScreenCaption("Model Viewer - no entity loaded");
+		modelEditorScreenController->unsetEntityProperties();
+		modelEditorScreenController->unsetEntityData();
+		modelEditorScreenController->unsetPivot();
 		entityBoundingVolumeView->unsetBoundingVolumes();
 		entityBoundingVolumeView->unsetTerrainMesh();
-		modelViewerScreenController->unsetRendering();
-		modelViewerScreenController->unsetMaterials();
-		modelViewerScreenController->unsetAnimations();
+		modelEditorScreenController->unsetRendering();
+		modelEditorScreenController->unsetMaterials();
+		modelEditorScreenController->unsetAnimations();
 	}
 }
 
@@ -212,7 +212,7 @@ void SharedModelEditorView::loadSettings()
 		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
-		modelViewerScreenController->getModelPath()->setPath(settings.get("model.path", "."));
+		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -222,18 +222,18 @@ void SharedModelEditorView::loadSettings()
 void SharedModelEditorView::initialize()
 {
 	try {
-		modelViewerScreenController = new ModelEditorScreenController(this);
-		modelViewerScreenController->initialize();
-		entityDisplayView = modelViewerScreenController->getEntityDisplaySubScreenController()->getView();
-		entityBoundingVolumeView = modelViewerScreenController->getEntityBoundingVolumeSubScreenController()->getView();
-		engine->getGUI()->addScreen(modelViewerScreenController->getScreenNode()->getId(), modelViewerScreenController->getScreenNode());
-		modelViewerScreenController->getScreenNode()->setInputEventHandler(this);
+		modelEditorScreenController = new ModelEditorScreenController(this);
+		modelEditorScreenController->initialize();
+		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
+		entityBoundingVolumeView = modelEditorScreenController->getEntityBoundingVolumeSubScreenController()->getView();
+		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
+		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
-	modelViewerScreenController->getEntityDisplaySubScreenController()->setupDisplay();
+	modelEditorScreenController->getEntityDisplaySubScreenController()->setupDisplay();
 	entityBoundingVolumeView->initialize();
 	updateGUIElements();
 }
@@ -243,7 +243,7 @@ void SharedModelEditorView::activate()
 	engine->reset();
 	engine->setPartition(new PartitionNone());
 	engine->getGUI()->resetRenderScreens();
-	engine->getGUI()->addRenderScreen(modelViewerScreenController->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(modelEditorScreenController->getScreenNode()->getId());
 	onInitAdditionalScreens();
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
@@ -256,7 +256,7 @@ void SharedModelEditorView::storeSettings()
 		settings.put("display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
-		settings.put("model.path", modelViewerScreenController->getModelPath()->getPath());
+		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
 		settings.store("settings", "modelviewer.properties");
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::storeSettings(): An error occurred: "));

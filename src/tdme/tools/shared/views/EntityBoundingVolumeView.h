@@ -27,7 +27,7 @@ class tdme::tools::shared::views::EntityBoundingVolumeView
 {
 private:
 	Engine* engine {  };
-	EntityBoundingVolumeSubScreenController* modelViewerScreenController {  };
+	EntityBoundingVolumeSubScreenController* modelEditorScreenController {  };
 	PopUps* popUps {  };
 
 public:
@@ -149,5 +149,5 @@ public:
 	 * @param pop ups
 	 * @param model viewer screen controller
 	 */
-	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelViewerScreenController, PopUps* popUps);
+	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelEditorScreenController, PopUps* popUps);
 };

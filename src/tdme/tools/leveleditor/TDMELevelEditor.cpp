@@ -70,7 +70,7 @@ TDMELevelEditor::TDMELevelEditor()
 
 TDMELevelEditor::~TDMELevelEditor() {
 	delete levelEditorView;
-	delete modelViewerView;
+	delete modelEditorView;
 	delete triggerView;
 	delete emptyView;
 	delete particleSystemView;
@@ -139,7 +139,7 @@ void TDMELevelEditor::dispose()
 		view->deactivate();
 
 	levelEditorView->dispose();
-	modelViewerView->dispose();
+	modelEditorView->dispose();
 	triggerView->dispose();
 	emptyView->dispose();
 	particleSystemView->dispose();
@@ -158,8 +158,8 @@ void TDMELevelEditor::initialize()
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
-	modelViewerView = new ModelEditorView(popUps);
-	modelViewerView->initialize();
+	modelEditorView = new ModelEditorView(popUps);
+	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);
 	triggerView->initialize();
 	emptyView = new EmptyView(popUps);
@@ -181,7 +181,7 @@ void TDMELevelEditor::switchToLevelEditor()
 
 void TDMELevelEditor::switchToModelEditor()
 {
-	setView(modelViewerView);
+	setView(modelEditorView);
 }
 
 void TDMELevelEditor::switchToTriggerView()
