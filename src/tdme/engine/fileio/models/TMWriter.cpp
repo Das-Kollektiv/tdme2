@@ -99,6 +99,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 	os->writeString(m->getNormalTextureFileName());
 	os->writeString(m->getDisplacementTexturePathName());
 	os->writeString(m->getDisplacementTextureFileName());
+	os->writeBoolean(m->hasDiffuseTextureMaskedTransparency());
 }
 
 void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) throw (ModelFileIOException) {

@@ -151,6 +151,7 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	if (displacementTextureFileName.size() != 0) {
 		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
 	}
+	m->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	return m;
 }
 

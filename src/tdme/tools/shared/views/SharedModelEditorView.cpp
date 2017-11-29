@@ -81,6 +81,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	entityDisplayView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
+	initModelRequestedReset = false;
 	entity = nullptr;
 	modelFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
@@ -106,6 +107,14 @@ void SharedModelEditorView::setEntity(LevelEditorEntity* entity)
 	engine->reset();
 	this->entity = entity;
 	initModelRequested = true;
+	initModelRequestedReset = false;
+}
+
+void SharedModelEditorView::resetEntity()
+{
+	engine->reset();
+	initModelRequested = true;
+	initModelRequestedReset = true;
 }
 
 void SharedModelEditorView::initModel()
@@ -120,7 +129,7 @@ void SharedModelEditorView::initModel()
 	ModelStatistics modelStatistics;
 	ModelUtilities::computeModelStatistics(entity->getModel(), &modelStatistics);
 	modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
-	updateGUIElements();
+	if (initModelRequestedReset == false) updateGUIElements();
 }
 
 const string& SharedModelEditorView::getFileName()
@@ -161,6 +170,7 @@ void SharedModelEditorView::display()
 {
 	if (loadModelRequested == true) {
 		initModelRequested = true;
+		initModelRequestedReset = false;
 		loadModelRequested = false;
 		loadModel();
 		cameraRotationInputHandler->reset();
@@ -168,6 +178,7 @@ void SharedModelEditorView::display()
 	if (initModelRequested == true) {
 		initModel();
 		initModelRequested = false;
+		initModelRequestedReset = false;
 	}
 	entityDisplayView->display(entity);
 	engine->getGUI()->render();

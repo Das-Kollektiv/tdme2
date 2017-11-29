@@ -394,7 +394,7 @@ void ModelEditorScreenController::onMaterialApply() {
 	auto entity = view->getEntity();
 	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
 	try {
-		view->setEntity(entity);
+		view->resetEntity();
 		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue()->getString()));
 		material->getDiffuseColor().set(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue()->getString()));
 		material->getSpecularColor().set(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue()->getString()));

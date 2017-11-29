@@ -43,6 +43,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };
 	bool initModelRequested {  };
+	bool initModelRequestedReset {  };
 	string modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
@@ -62,6 +63,11 @@ public:
 	 * Set entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
+
+	/**
+	 * Reset entity
+	 */
+	virtual void resetEntity();
 
 public: /* protected */
 

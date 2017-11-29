@@ -115,9 +115,7 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 		// laoded?
 		if (transparencyTexture != nullptr) {
 			// same dimensions and supported pixel depth?
-			if (diffuseTexture->getDepth() == 24 &&
-				transparencyTexture->getDepth() == 24 &&
-				diffuseTexture->getWidth() == transparencyTexture->getWidth() &&
+			if (diffuseTexture->getWidth() == transparencyTexture->getWidth() &&
 				diffuseTexture->getHeight() == transparencyTexture->getHeight()) {
 				// yep, combine diffuse map + diffuse transparency map
 				int width = diffuseTexture->getWidth();
@@ -132,16 +130,18 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 					diffuseTexture->getTextureHeight(),
 					pixelByteBuffer
 				);
+				int diffuseTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
+				int transparencyTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
 				for (int y = 0; y < height; y++)
 				for (int x = 0; x < width; x++) {
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 0));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 1));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * 3) + (x * 3) + 2));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 1));
+					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 2));
 					pixelByteBuffer->put(
 						(uint8_t)((
-							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 0) +
-							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 1) +
-							transparencyTexture->getTextureData()->get((y * width * 3) + (x * 3) + 2)
+							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0) +
+							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1) +
+							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2)
 						) * 0.33f)
 					);
 				}
