@@ -305,6 +305,10 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 	}
 }
 
+bool ModelHelper::hasDefaultAnimation(Model* model) {
+	return model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) != nullptr;
+}
+
 void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 {
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);

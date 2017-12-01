@@ -23,7 +23,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -66,7 +65,6 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::BoundingVolume;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -235,10 +233,10 @@ void Tools::oseThumbnail(LevelEditorEntity* model)
 	osEngine->reset();
 }
 
-float Tools::computeMaxAxisDimension(BoundingVolume* modelBoundingVolume)
+float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 {
 	auto maxAxisDimension = 0.0f;
-	auto dimension = Vector3(modelBoundingVolume->computeDimensionOnAxis(Vector3(1.0f, 0.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)), modelBoundingVolume->computeDimensionOnAxis(Vector3(0.0f, 0.0f, 1.0f)));
+	Vector3 dimension = boundingBox->getMax().clone().sub(boundingBox->getMin());
 	if (dimension.getX() > maxAxisDimension) maxAxisDimension = dimension.getX();
 	if (dimension.getY() > maxAxisDimension) maxAxisDimension = dimension.getY();
 	if (dimension.getZ() > maxAxisDimension) maxAxisDimension = dimension.getZ();
@@ -287,19 +285,24 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	if (entity == nullptr)
 		return;
 
+	// create engine entity
 	BoundingBox* entityBoundingBox = nullptr;
+	Entity* modelEntity = nullptr;
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
-		auto particleSystemObject = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
-		if (particleSystemObject != nullptr) {
-			engine->addEntity(particleSystemObject);
+		modelEntity = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
+		if (modelEntity != nullptr) {
+			engine->addEntity(modelEntity);
 		}
 	} else {
 		entityBoundingBox = entity->getModel()->getBoundingBox();
-		auto modelObject = new Object3D("model", entity->getModel());
-		modelObject->setDynamicShadowingEnabled(true);
-		engine->addEntity(modelObject);
+		modelEntity = new Object3D("model", entity->getModel());
+		modelEntity->setDynamicShadowingEnabled(true);
+		engine->addEntity(modelEntity);
 	}
+	float maxAxisDimension = Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox());
+	modelEntity->getScale().scale(1.0f / maxAxisDimension);
+	modelEntity->update();
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - MathTools::EPSILON);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
@@ -309,18 +312,26 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		if (boundingVolume->getModel() == nullptr)
 			continue;
 
-		auto modelBoundingVolumeObject = new Object3D(
+		auto modelBoundingVolumeEntity = new Object3D(
 			"model_bv." + to_string(i),
 			boundingVolume->getModel());
-		modelBoundingVolumeObject->setEnabled(false);
-		engine->addEntity(modelBoundingVolumeObject);
+		modelBoundingVolumeEntity->setEnabled(false);
+		modelBoundingVolumeEntity->getScale().set(modelEntity->getScale());
+		modelBoundingVolumeEntity->update();
+		engine->addEntity(modelBoundingVolumeEntity);
 	}
+
+	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
 	light0->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getPosition().set(entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f), entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f), -entityBoundingBox->getMin().getZ() * 4.0f, 1.0f);
+	light0->getPosition().set(
+		entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f),
+		entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f),
+		-entityBoundingBox->getMin().getZ() * 4.0f, 1.0f
+	);
 	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
@@ -328,22 +339,26 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto dimension = entityBoundingBox->getMax().clone().sub(entityBoundingBox->getMin());
-	auto maxAxisDimension = computeMaxAxisDimension(entityBoundingBox);
+
+	// cam
 	auto cam = engine->getCamera();
-	cam->setZNear(maxAxisDimension / 5000.0f);
-	cam->setZFar(maxAxisDimension);
-	auto lookAt = entityBoundingBox->getMin().clone().add(dimension.clone().scale(0.5f));
-	cam->getLookAt().set(lookAt);
-	Vector3 lookAtToFromVector(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
-	Vector3 lookAtToFromVectorTransformed;
-	Vector3 lookAtToFromVectorScaled;
+	cam->setZNear(0.1f);
+	cam->setZFar(100.0f);
+	auto lookAt = cam->getLookAt();
+	auto model = engine->getEntity("model");
+	if (model != nullptr) {
+		lookAt.set(model->getBoundingBoxTransformed()->getCenter());
+	} else {
+		lookAt.set(0.0f, 0.0f, 0.0f);
+	}
+	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
+	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
-	lookFromRotations->getTransformationsMatrix().multiply(lookAtToFromVector, lookAtToFromVectorTransformed);
-	lookAtToFromVectorScaled.set(lookAtToFromVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector);
-	auto lookFrom = lookAt.clone().add(lookAtToFromVectorScaled);
+	lookFromRotations->getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
+	cam->getLookAt().set(lookAt);
 	cam->getUpVector().set(upVector);
 }
 

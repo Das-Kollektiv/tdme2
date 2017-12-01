@@ -190,7 +190,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	mouseDragging = false;
 	mouseDraggingLastObject = nullptr;
 	haveGridCenterLast = false;
-	gridEnabled = true;
+	gridEnabled = false;
 	gridY = 0.0f;
 	objectColors["red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
 	objectColors["green"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
@@ -684,7 +684,7 @@ void LevelEditorView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "leveleditor.properties");
-		gridEnabled = settings.get("grid.enabled", "true") == "true";
+		gridEnabled = settings.get("grid.enabled", "false") == "true";
 		gridY = Float::parseFloat(settings.get("grid.y", "0.0"));
 		levelEditorScreenController->getMapPath()->setPath(settings.get("map.path", "."));
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get("model.path", "."));

@@ -20,7 +20,7 @@ using tdme::engine::Light;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
-using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -146,11 +146,11 @@ public:
 	static void oseThumbnail(LevelEditorEntity* model);
 
 	/** 
-	 * Compute max axis dimension b given bounding box
-	 * @param model bounding box
+	 * Compute max axis dimension for given bounding box
+	 * @param bounding box
 	 * @return max axis dimension
 	 */
-	static float computeMaxAxisDimension(BoundingVolume* modelBoundingVolume);
+	static float computeMaxAxisDimension(BoundingBox* boundingBox);
 
 	/** 
 	 * Creates a ground plate

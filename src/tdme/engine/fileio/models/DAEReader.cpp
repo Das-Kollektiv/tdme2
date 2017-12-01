@@ -167,6 +167,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 			}
 		}
 	}
+	if (ModelHelper::hasDefaultAnimation(model) == false) ModelHelper::createDefaultAnimation(model, 0);
 	ModelHelper::setupJoints(model);
 	ModelHelper::fixAnimationLength(model);
 	ModelHelper::prepareForIndexedRendering(model);

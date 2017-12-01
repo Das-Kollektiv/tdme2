@@ -131,23 +131,28 @@ void EntityBoundingVolumeView::setBoundingVolumes(LevelEditorEntity* entity)
 		if (bv == nullptr) {
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE);
 			continue;
-		} else if (dynamic_cast< Sphere* >(bv->getBoundingVolume()) != nullptr) {
+		} else
+		if (dynamic_cast< Sphere* >(bv->getBoundingVolume()) != nullptr) {
 			auto sphere = dynamic_cast< Sphere* >(bv->getBoundingVolume());
 			modelEditorScreenController->setupSphere(i, sphere->getCenter(), sphere->getRadius());
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
-		} else if (dynamic_cast< Capsule* >(bv->getBoundingVolume()) != nullptr) {
+		} else
+		if (dynamic_cast< Capsule* >(bv->getBoundingVolume()) != nullptr) {
 			auto capsule = dynamic_cast< Capsule* >(bv->getBoundingVolume());
 			modelEditorScreenController->setupCapsule(i, capsule->getA(), capsule->getB(), capsule->getRadius());
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
-		} else if (dynamic_cast< BoundingBox* >(bv->getBoundingVolume()) != nullptr) {
+		} else
+		if (dynamic_cast< BoundingBox* >(bv->getBoundingVolume()) != nullptr) {
 			auto aabb = dynamic_cast< BoundingBox* >(bv->getBoundingVolume());
 			modelEditorScreenController->setupBoundingBox(i, aabb->getMin(), aabb->getMax());
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
-		} else if (dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume()) != nullptr) {
+		} else
+		if (dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume()) != nullptr) {
 			auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
 			modelEditorScreenController->setupOrientedBoundingBox(i, obb->getCenter(), (*obb->getAxes())[0], (*obb->getAxes())[1], (*obb->getAxes())[2], obb->getHalfExtension());
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
-		} else if (dynamic_cast< ConvexMesh* >(bv->getBoundingVolume()) != nullptr) {
+		} else
+		if (dynamic_cast< ConvexMesh* >(bv->getBoundingVolume()) != nullptr) {
 			modelEditorScreenController->setupConvexMesh(i, bv->getModelMeshFile());
 			modelEditorScreenController->selectBoundingVolume(i, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH);
 		}
@@ -191,17 +196,22 @@ void EntityBoundingVolumeView::selectBoundingVolumeType(int32_t idx, int32_t bvT
 void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
-	auto id = EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
-	auto modelBoundingVolumeObject = engine->getEntity(id);
-	if (modelBoundingVolumeObject != nullptr) {
-		engine->removeEntity(id);
+	auto modelBoundingVolumeEntityId = EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
+	auto modelEntity = engine->getEntity("model");
+	auto modelBoundingVolumeEntity = engine->getEntity(modelBoundingVolumeEntityId);
+	if (modelBoundingVolumeEntity != nullptr) {
+		engine->removeEntity(modelBoundingVolumeEntityId);
 	}
 	if (entityBoundingVolume->getModel() == nullptr)
 		return;
 
-	modelBoundingVolumeObject = new Object3D(id, entityBoundingVolume->getModel());
-	modelBoundingVolumeObject->setEnabled(false);
-	engine->addEntity(modelBoundingVolumeObject);
+	modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
+	modelBoundingVolumeEntity->setEnabled(false);
+	if (modelEntity != nullptr) {
+		modelBoundingVolumeEntity->getScale().set(modelEntity->getScale());
+		modelBoundingVolumeEntity->update();
+	}
+	engine->addEntity(modelBoundingVolumeEntity);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeNone(LevelEditorEntity* entity, int32_t idx)

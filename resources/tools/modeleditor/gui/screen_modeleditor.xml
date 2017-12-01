@@ -33,7 +33,7 @@
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 								<checkbox id="display_boundingvolume" name="display_boundingvolume" value="1" />
 								<space width="5" />
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Bounding Volume" width="auto" height="auto"/>
+								<text font="resources/gui/fonts/Foo_20.fnt" text="Bounding Volumes" width="auto" height="auto"/>
 							</layout>
 							<space height="20" />
 							<layout width="100%" height="auto" alignment="none" horizontal-align="center">

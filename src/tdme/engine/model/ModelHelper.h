@@ -124,6 +124,13 @@ private:
 public:
 
 	/** 
+	 * Check default animation
+	 * @param model
+	 * @return if animation exists
+	 */
+	static bool hasDefaultAnimation(Model* model);
+
+	/**
 	 * Create default animation
 	 * @param model
 	 * @param frames

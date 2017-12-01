@@ -1,10 +1,14 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
+#include <string>
+
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -195,15 +199,20 @@ void CameraRotationInputHandler::handleInputEvents()
 		resetRequested = false;
 	}
 	auto cam = engine->getCamera();
-	auto& lookAt = cam->getLookAt();
-	Vector3 lookAtToFromVector(0.0f, 0.0f, +(maxAxisDimension * 1.2f));
-	Vector3 lookAtToFromVectorTransformed;
-	Vector3 lookAtToFromVectorScaled;
+	auto lookAt = cam->getLookAt();
+	auto model = engine->getEntity("model");
+	if (model != nullptr) {
+		lookAt.set(model->getBoundingBoxTransformed()->getCenter());
+	} else {
+		lookAt.set(0.0f, 0.0f, 0.0f);
+	}
+	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
+	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
-	lookFromRotations->getTransformationsMatrix().multiply(lookAtToFromVector, lookAtToFromVectorTransformed);
-	lookAtToFromVectorScaled.set(lookAtToFromVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector);
-	auto lookFrom = lookAt.clone().add(lookAtToFromVectorScaled);
+	lookFromRotations->getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
+	cam->getLookAt().set(lookAt);
 	cam->getUpVector().set(upVector);
 }
