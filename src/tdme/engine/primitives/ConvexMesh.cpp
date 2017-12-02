@@ -40,25 +40,28 @@ ConvexMesh::ConvexMesh()
 	createVertices();
 	update();
 	terrain = false;
+	terrainHeight = 0.0f;
 }
 
-ConvexMesh::ConvexMesh(const vector<Triangle>* triangles, bool terrain)
+ConvexMesh::ConvexMesh(const vector<Triangle>* triangles, bool terrain, float terrainHeight)
 {
 	this->triangles = *triangles;
 	this->terrain = terrain;
+	this->terrainHeight = terrainHeight;
 	createVertices();
 	update();
 }
 
-ConvexMesh::ConvexMesh(Object3DModel* model, bool terrain)
+ConvexMesh::ConvexMesh(Object3DModel* model, bool terrain, float terrainHeight)
 {
 	this->terrain = terrain;
+	this->terrainHeight = terrainHeight;
 	model->getFaceTriangles(&triangles);
 	createVertices();
 	update();
 }
 
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height)
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight)
 {
 	vector<Triangle> faceTriangles;
 	model->getFaceTriangles(&faceTriangles);
@@ -70,40 +73,26 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 
 		// add triangle on bottom
 		convexMeshTriangles.push_back(faceTriangles[i]);
-		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[0].addY(-height);
-		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[1].addY(-height);
-		(*convexMeshTriangles[convexMeshTriangles.size() - 1].getVertices())[2].addY(-height);
-		convexMeshTriangles[convexMeshTriangles.size() - 1].update();
-
-		// add triangle vertices
-		Vector3 triangleVertex0Bottom;
-		Vector3 triangleVertex1Bottom;
-		Vector3 triangleVertex2Bottom;
-		Vector3& triangleVertex0Top = (*faceTriangles[i].getVertices())[0];
-		Vector3& triangleVertex1Top = (*faceTriangles[i].getVertices())[1];
-		Vector3& triangleVertex2Top = (*faceTriangles[i].getVertices())[2];
-		triangleVertex0Bottom.set(triangleVertex0Top).addY(-height);
-		triangleVertex1Bottom.set(triangleVertex1Top).addY(-height);
-		triangleVertex2Bottom.set(triangleVertex2Top).addY(-height);
 
 		// add bottom top triangles
 		//	vertices 0, 2
-		convexMeshTriangles.push_back(Triangle(triangleVertex0Top, triangleVertex2Top, triangleVertex0Bottom));
-		convexMeshTriangles.push_back(Triangle(triangleVertex0Bottom, triangleVertex2Top, triangleVertex2Bottom));
+		convexMeshTriangles.push_back(faceTriangles[i]);
+		convexMeshTriangles.push_back(faceTriangles[i]);
 		//	vertices 0, 1
-		convexMeshTriangles.push_back(Triangle(triangleVertex0Top, triangleVertex1Top, triangleVertex0Bottom));
-		convexMeshTriangles.push_back(Triangle(triangleVertex0Bottom, triangleVertex1Top, triangleVertex1Bottom));
+		convexMeshTriangles.push_back(faceTriangles[i]);
+		convexMeshTriangles.push_back(faceTriangles[i]);
 		//	vertices 1, 2
-		convexMeshTriangles.push_back(Triangle(triangleVertex1Top, triangleVertex2Top, triangleVertex1Bottom));
-		convexMeshTriangles.push_back(Triangle(triangleVertex1Bottom, triangleVertex2Top, triangleVertex2Bottom));
+		convexMeshTriangles.push_back(faceTriangles[i]);
+		convexMeshTriangles.push_back(faceTriangles[i]);
 
 		// add to convex meshes
-		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles, true));
+		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles, true, terrainHeight));
 	}
 }
 
 void ConvexMesh::createVertices()
 {
+	vertexReferences.clear();
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();
 		for (auto j = 0; j < triangleVertices->size(); j++) {
@@ -140,7 +129,7 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 	if (mesh->triangles.size() != triangles.size()) {
 		return;
 	}
-	for (auto i = 0; i < triangles.size(); i++) {
+	for (auto i = 0; i < (terrain == true?Math::min(1, triangles.size()):triangles.size()); i++) {
 		triangles[i].fromBoundingVolume(&mesh->triangles[i]);
 	}
 	center.set(mesh->center);
@@ -157,7 +146,7 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 	if (mesh->triangles.size() != triangles.size()) {
 		return;
 	}
-	for (auto i = 0; i < triangles.size(); i++) {
+	for (auto i = 0; i < (terrain == true?Math::min(1, triangles.size()):triangles.size()); i++) {
 		triangles[i].fromBoundingVolumeWithTransformations(&mesh->triangles[i], transformations);
 	}
 	update();
@@ -250,6 +239,60 @@ float ConvexMesh::computeDimensionOnAxis(const Vector3& axis) const
 void ConvexMesh::update()
 {
 	Vector3 tmp;
+	if (terrain == true) {
+		int triangleIdx = 1;
+
+		// add triangle vertices
+		Vector3 triangleVertex0Bottom;
+		Vector3 triangleVertex1Bottom;
+		Vector3 triangleVertex2Bottom;
+		Vector3& triangleVertex0Top = (*triangles[0].getVertices())[0];
+		Vector3& triangleVertex1Top = (*triangles[0].getVertices())[1];
+		Vector3& triangleVertex2Top = (*triangles[0].getVertices())[2];
+		triangleVertex0Bottom.set(triangleVertex0Top).addY(-terrainHeight);
+		triangleVertex1Bottom.set(triangleVertex1Top).addY(-terrainHeight);
+		triangleVertex2Bottom.set(triangleVertex2Top).addY(-terrainHeight);
+
+		// set up triangle on bottom
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex0Top).addY(-terrainHeight);
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Top).addY(-terrainHeight);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Top).addY(-terrainHeight);
+		triangles[triangleIdx++].update();
+
+		// add bottom top triangles
+		//	vertices 0, 2
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex0Top);
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex2Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex0Bottom);
+		triangles[triangleIdx++].update();
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Bottom);
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Bottom);
+		triangles[triangleIdx++].update();
+
+		//	vertices 0, 1
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Top);
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex1Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex0Bottom);
+		triangles[triangleIdx++].update();
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Bottom);
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex1Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex1Bottom);
+		triangles[triangleIdx++].update();
+
+		//	vertices 1, 2
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Top);
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex1Bottom);
+		triangles[triangleIdx++].update();
+		(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Bottom);
+		(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
+		(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Bottom);
+		triangles[triangleIdx++].update();
+
+		//
+		createVertices();
+	}
 	for (auto i = 0; i < vertexReferences.size(); i++) {
 		vertices[i].set((*triangles[vertexReferences[i][0]].getVertices())[vertexReferences[i][1]]);
 	}
@@ -271,5 +314,5 @@ void ConvexMesh::update()
 
 BoundingVolume* ConvexMesh::clone() const
 {
-	return new ConvexMesh(&triangles, terrain);
+	return new ConvexMesh(&triangles, terrain, terrainHeight);
 }

@@ -74,6 +74,18 @@ private:
 	ConstraintsSolver* constraintsSolver { nullptr };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
 	bool updateRigidBodyIndices {  };
+
+	/**
+	 * Do collision test between rigid bodies
+	 * @param rigid body 1
+	 * @param rigid body 1
+	 * @param rigid body tested collisions
+	 * @param rigid body collisions current frame
+	 * @param collision movement
+	 * @param collision
+	 * @param use and invert collision
+	 */
+	inline void doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision);
 public:
 
 	/** 
@@ -184,6 +196,7 @@ public:
 	World* clone();
 
 private:
+
 
 	/** 
 	 * Synch into cloned rigid body from rigid body

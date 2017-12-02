@@ -69,7 +69,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 	mesh->animationProcessingTarget = animationProcessingTarget;
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
-	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
+		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		mesh->transformedVertices.resize(groupVertices->size());
 		mesh->vertices = &mesh->transformedVertices;
 		for (auto j = 0; j < mesh->vertices->size(); j++) {
@@ -119,7 +120,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 	}
 	mesh->textureCoordinates = groupTextureCoordinates;
 	mesh->recreatedBuffers = false;
-	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU ||
+		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		auto transformationMatrixIt = transformationMatrices->find(group->getId());
 		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
 	}
@@ -211,7 +213,8 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 			}
 			recreateBuffers();
 		}
-	} else if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+	} else
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
 			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply((*groupVertices)[vertexIndex], tmpVector3));
 		}

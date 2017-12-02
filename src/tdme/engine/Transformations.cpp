@@ -61,7 +61,7 @@ void Transformations::fromTransformations(Transformations* transformations)
 	auto rotationIdx = 0;
 	for (; rotationIdx < transformations->rotations.size(); rotationIdx++) {
 		auto rotation = transformations->rotations.get(rotationIdx);
-		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : static_cast< Rotation* >(nullptr);
+		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : nullptr;
 		if (_rotation == nullptr) {
 			_rotation = new Rotation();
 			rotations.add(_rotation);
@@ -71,9 +71,13 @@ void Transformations::fromTransformations(Transformations* transformations)
 	while (rotationIdx < rotations.size()) {
 		rotations.remove(rotations.size() - 1);
 	}
+	transformationsMatrix.set(transformations->transformationsMatrix);
 	translationMatrix.set(transformations->translationMatrix);
 	scaleMatrix.set(transformations->scaleMatrix);
-	transformationsMatrix.set(transformations->transformationsMatrix);
+	rotationsMatrix.set(transformations->rotationsMatrix);
+	rotationsPivot.set(transformations->rotationsPivot);
+	rotations.quaternion.set(transformations->rotations.quaternion);
+	rotationsQuaternionMatrix.set(transformations->rotationsQuaternionMatrix);
 }
 
 void Transformations::update()

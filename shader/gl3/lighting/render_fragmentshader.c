@@ -41,6 +41,10 @@
 
 #version 330
 
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
 #define FALSE		0
 #define MAX_LIGHTS	8
 

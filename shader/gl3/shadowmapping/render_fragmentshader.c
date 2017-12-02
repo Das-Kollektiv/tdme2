@@ -1,5 +1,9 @@
 #version 330
 
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
 // based on http://fabiensanglard.net/shadowmapping/index.php, modified by me
 
 #define SHADOWMAP_LOOKUPS	4

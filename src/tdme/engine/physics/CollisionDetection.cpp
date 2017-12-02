@@ -850,23 +850,29 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 
 	// SAT best fit
 	bool satHaveBestFit = false;
+	bool satHaveBestFitTerrain = false;
 	Vector3 satAxisBestFit;
+	Vector3 satAxisBestFitTerrain;
 	float satPenetrationBestFit = 0.0f;
+	float satPenetrationBestFitTerrain = 0.0f;
 	Vector3 satAxis;
 	float satPenetration;
 	bool terrain = mesh1->isTerrain() == true || mesh2->isTerrain() == true;
 
-	// for terrain expect at least 0.02 - 0.05 on normal y axis
 	#define SAT_DETERMINE_BESTFIT() \
-		if (Float::isNaN(satPenetration) == false && \
-			(terrain == false || \
-			Math::abs(satAxis.getY()) > 0.2f) && \
-			(satHaveBestFit == false || -satPenetration > satPenetrationBestFit)) {  \
-			satHaveBestFit = true;  \
-			satAxisBestFit.set(satAxis);  \
-			satPenetrationBestFit = -satPenetration;  \
+		if (Float::isNaN(satPenetration) == false) { \
+			if (terrain == true && Math::abs(satAxis.getY()) > 0.2f && \
+				(satHaveBestFitTerrain == false || -satPenetration > satPenetrationBestFitTerrain)) { \
+				satHaveBestFitTerrain = true; \
+				satAxisBestFitTerrain.set(satAxis); \
+				satPenetrationBestFitTerrain = -satPenetration; \
+			} else \
+			if (satHaveBestFit == false || -satPenetration > satPenetrationBestFit) { \
+				satHaveBestFit = true; \
+				satAxisBestFit.set(satAxis); \
+				satPenetrationBestFit = -satPenetration; \
+			} \
 		}
-	//
 
 	vector<Triangle*> testTriangles;
 
@@ -875,8 +881,6 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 
 	for (auto& triangle1 : *mesh1->getTriangles()) {
 		for (auto& triangle2 : *mesh2->getTriangles()) {
-			if (doBroadTest(&triangle1, &triangle2) == false) continue;
-
 			auto triangle1Vertices = triangle1.getVertices();
 			triangle1Edge1.set((*triangle1Vertices)[1]).sub((*triangle1Vertices)[0]).normalize();
 			triangle1Edge2.set((*triangle1Vertices)[2]).sub((*triangle1Vertices)[1]).normalize();
@@ -916,14 +920,24 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 		}
 	}
 
-	if (satHaveBestFit == false) return false;
-
-	auto entity = collision->addResponse(satPenetrationBestFit);
-	entity->getNormal().set(satAxisBestFit);
-	for (auto i = 0; i < testTriangles.size() / 2; i++) {
-		computeHitPoints(testTriangles[i * 2 + 0], testTriangles[i * 2 + 1], entity);
+	if (terrain == true && satHaveBestFitTerrain == true) {
+		auto entity = collision->addResponse(satPenetrationBestFitTerrain);
+		entity->getNormal().set(satAxisBestFitTerrain);
+		for (auto i = 0; i < testTriangles.size() / 2; i++) {
+			computeHitPoints(testTriangles[i * 2 + 0], testTriangles[i * 2 + 1], entity);
+		}
+		return true;
 	}
-	return true;
+	if (satHaveBestFit == true) {
+		auto entity = collision->addResponse(satPenetrationBestFit);
+		entity->getNormal().set(satAxisBestFit);
+		for (auto i = 0; i < testTriangles.size() / 2; i++) {
+			computeHitPoints(testTriangles[i * 2 + 0], testTriangles[i * 2 + 1], entity);
+		}
+		return true;
+	}
+
+	return false;
 }
 
 bool CollisionDetection::doCollide(Triangle* triangle, ConvexMesh* mesh, const Vector3& movement, CollisionResponse* collision)

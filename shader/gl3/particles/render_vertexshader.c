@@ -1,5 +1,9 @@
 #version 330
 
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
 // layout
 layout (location = 0) in vec3 inVertex;
 layout (location = 3) in vec4 inColor;

@@ -121,6 +121,38 @@ RigidBody* World::getRigidBody(const string& id)
 	return nullptr;
 }
 
+void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision) {
+	string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
+	if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) return;
+	RigidBodyCollisionStruct rigidBodyCollisionStruct;
+	rigidBodyCollisionStruct.rigidBody1Idx = rigidBody1->idx;
+	rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
+	rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
+	if (useAndInvertCollision == false) {
+		collisionMovement.set(rigidBody1->movement);
+		if (collisionMovement.computeLength() < MathTools::EPSILON) {
+			collisionMovement.set(rigidBody2->movement);
+			collisionMovement.scale(-1.0f);
+		}
+	} else {
+		collision.invertNormals();
+	}
+	if (useAndInvertCollision == true || (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true)) {
+		if (collision.getHitPointsCount() == 0) return;
+
+		rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
+		if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end()) {
+			rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
+		}
+		rigidBody1->fireOnCollision(rigidBody2, &collision);
+		if (rigidBody1->isStatic_ == false && rigidBody2->isStatic_ == false) {
+			rigidBody1->awake(true);
+			rigidBody2->awake(true);
+		}
+		constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, &collision);
+	}
+}
+
 void World::update(float deltaTime)
 {
 	if (updateRigidBodyIndices == true) {
@@ -157,19 +189,19 @@ void World::update(float deltaTime)
 		}
 	}
 	{
-		auto collisionsTests = 0;
+		auto collisionTests = 0;
 		Vector3 collisionMovement;
 		CollisionResponse collision;
 		map<string, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
 		map<string, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
 		for (auto i = 0; i < rigidBodies.size(); i++) {
 			auto rigidBody1 = rigidBodies.at(i);
-			if (rigidBody1->enabled == false) {
-				continue;
-			}
+			if (rigidBody1->enabled == false) continue;
+			if (rigidBody1->isStatic_ == true) continue;
 			auto nearObjects = 0;
 			for (auto _i = partition->getObjectsNearTo(rigidBody1->cbv)->iterator(); _i->hasNext(); ) {
 				RigidBody* rigidBody2 = _i->next();
+
 				if (rigidBody2->enabled == false)
 					continue;
 
@@ -193,35 +225,9 @@ void World::update(float deltaTime)
 					continue;
 				}
 				nearObjects++;
-				string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
-				if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) {
-					continue;
-				}
-				RigidBodyCollisionStruct rigidBodyCollisionStruct;
-				rigidBodyCollisionStruct.rigidBody1Idx = rigidBody1->idx;
-				rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
-				rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
-				collisionsTests++;
-				collisionMovement.set(rigidBody1->movement);
-				if (collisionMovement.computeLength() < MathTools::EPSILON) {
-					collisionMovement.set(rigidBody2->movement);
-					collisionMovement.scale(-1.0f);
-				}
-				if (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true) {
-					if (collision.getHitPointsCount() == 0)
-						continue;
-
-					rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
-					if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end()) {
-						rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
-					}
-					rigidBody1->fireOnCollision(rigidBody2, &collision);
-					if (rigidBody1->isStatic_ == false && rigidBody2->isStatic_ == false) {
-						rigidBody1->awake(true);
-						rigidBody2->awake(true);
-					}
-					constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, &collision);
-				}
+				collisionTests++;
+				doCollisionTest(rigidBody1, rigidBody2, rigidBodyTestedCollisions, rigidBodyCollisionsCurrentFrame, collisionMovement, collision, false);
+				doCollisionTest(rigidBody2, rigidBody1, rigidBodyTestedCollisions, rigidBodyCollisionsCurrentFrame, collisionMovement, collision, true);
 			}
 		}
 

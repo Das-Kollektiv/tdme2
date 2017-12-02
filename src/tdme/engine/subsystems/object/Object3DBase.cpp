@@ -24,10 +24,12 @@
 #include <tdme/engine/subsystems/object/Object3DGroupMesh.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::object::Object3DBase;
 using tdme::math::Math;
@@ -48,6 +50,7 @@ using tdme::engine::subsystems::object::AnimationState;
 using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::object::Object3DGroup;
 using tdme::engine::subsystems::object::Object3DGroupMesh;
+using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -329,8 +332,8 @@ void Object3DBase::computeTransformations()
 void Object3DBase::getFaceTriangles(vector<Triangle>* faceTriangles)
 {
 	for (auto object3DGroup : object3dGroups) {
-		auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-		for (auto facesEntity : *object3DGroup->group->getFacesEntities()) 
+		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
+		for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
 		for (auto& face : *facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
 			faceTriangles->push_back(

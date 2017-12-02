@@ -1,5 +1,9 @@
 #version 330
 
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
 uniform int diffuseTextureMaskedTransparency;

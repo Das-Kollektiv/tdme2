@@ -1,21 +1,27 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 
 #include <vector>
+#include <map>
 #include <string>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/Rotations.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
@@ -28,6 +34,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -47,6 +54,7 @@
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 
+using std::map;
 using std::vector;
 using std::string;
 using std::to_string;
@@ -56,6 +64,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DModel;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Transformations;
@@ -64,7 +73,9 @@ using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
@@ -77,6 +88,7 @@ using tdme::math::Vector4;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -269,6 +281,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation, bool enable)
 {
+	map<int32_t, vector<ConvexMesh>> modelTerrainConvexMeshesCache;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY)
@@ -280,16 +293,36 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM)
 			continue;
 
-		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
-			auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
-			string worldId = object->getId() + ".bv." + to_string(j);
-			auto transformations = new Transformations();
-			transformations->fromTransformations(object->getTransformations());
-			transformations->getTranslation().add(translation);
-			transformations->update();
-			auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
-			rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
-			rigidBodies.push_back(rigidBody);
+		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
+			object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
+			auto modelTerrainConvexMeshesCacheIt = modelTerrainConvexMeshesCache.find(object->getEntity()->getId());
+			if (modelTerrainConvexMeshesCacheIt == modelTerrainConvexMeshesCache.end()) {
+				Object3DModel object3DModel(object->getEntity()->getModel());
+				ConvexMesh::createTerrainConvexMeshes(&object3DModel, &modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
+			}
+			{
+				Transformations transformations;
+				transformations.fromTransformations(object->getTransformations());
+				transformations.getTranslation().add(translation);
+				transformations.update();
+				int i = 0;
+				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
+					world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, &transformations, &convexMesh, 1.0f);
+					i++;
+				}
+			}
+		} else {
+			for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
+				auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
+				string worldId = object->getId() + ".bv." + to_string(j);
+				Transformations transformations;
+				transformations.fromTransformations(object->getTransformations());
+				transformations.getTranslation().add(translation);
+				transformations.update();
+				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, &transformations, entityBv->getBoundingVolume(), 1.0f);
+				rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
+				rigidBodies.push_back(rigidBody);
+			}
 		}
 	}
 }

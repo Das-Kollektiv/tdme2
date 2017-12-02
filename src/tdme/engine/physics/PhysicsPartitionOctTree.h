@@ -51,8 +51,8 @@ private:
 	PhysicsPartitionOctTree_PartitionTreeNode treeRoot {  };
 
 public:
-	static constexpr float PARTITION_SIZE_MIN { 4.0f };
-	static constexpr float PARTITION_SIZE_MAX { 16.0f };
+	static constexpr float PARTITION_SIZE_MIN { 16.0f };
+	static constexpr float PARTITION_SIZE_MAX { 64.0f };
 
 public: /* protected */
 

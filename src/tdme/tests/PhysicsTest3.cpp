@@ -256,7 +256,6 @@ void PhysicsTest3::initialize()
 	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae");
-		_terrainModel->getImportTransformationsMatrix().scale(1.5f);
 		entity = new Object3D("terrain", _terrainModel);
 		entity->getTranslation().setY(-4.0f);
 		entity->update();
@@ -265,13 +264,12 @@ void PhysicsTest3::initialize()
 		ConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), &groundConvexMeshes);
 		{
 			int i = 0;
-			for (auto convexMesh: groundConvexMeshes) {
+			for (auto& convexMesh: groundConvexMeshes) {
 				/*
-				 auto convexMeshModel = PrimitiveModel::createConvexMeshModel(&convexMesh, "ground" + to_string(i));
-				auto entity = new Object3D("ground" + to_string(i), convexMeshModel);
-				entity->getTranslation().setY(-4.0f);
-				entity->update();
-				engine->addEntity(entity);
+				auto convexMeshModel = PrimitiveModel::createConvexMeshModel(&convexMesh, "ground" + to_string(i));
+				auto groundEntity = new Object3D("ground" + to_string(i), convexMeshModel);
+				groundEntity->fromTransformations(entity);
+				engine->addEntity(groundEntity);
 				*/
 				world->addStaticRigidBody("ground" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, &convexMesh, 0.5f);
 				i++;

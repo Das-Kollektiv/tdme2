@@ -54,7 +54,6 @@ private:
 
 public:
 	static constexpr float PARTITION_SIZE_MIN { 16.0f };
-	static constexpr float PARTITION_SIZE_MID { 32.0f };
 	static constexpr float PARTITION_SIZE_MAX { 64.0f };
 
 public: /* protected */

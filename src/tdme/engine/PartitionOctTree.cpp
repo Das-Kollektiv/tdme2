@@ -40,8 +40,6 @@ using tdme::utils::Console;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
 
-constexpr float PartitionOctTree::PARTITION_SIZE_MID;
-
 constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
 
 PartitionOctTree::PartitionOctTree() 

@@ -39,6 +39,7 @@ private:
 	Vector3 center {  };
 	float sphereRadius {  };
 	bool terrain {  };
+	float terrainHeight {  };
 private:
 
 	/** 
@@ -54,7 +55,7 @@ public:
 	 * @param convex meshes
 	 * @param height
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float height = 0.75f);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight = 0.75f);
 
 	/**
 	 * @return is terrain
@@ -101,12 +102,12 @@ public:
 	 * @param triangles
 	 * @param is terrain
 	 */
-	ConvexMesh(const vector<Triangle>* triangles, bool terrain = false);
+	ConvexMesh(const vector<Triangle>* triangles, bool terrain = false, float terrainHeight = 0.0f);
 
 	/**
 	 * Public constructor
 	 * @param model
 	 * @param is terrain
 	 */
-	ConvexMesh(Object3DModel* model, bool terrain = false);
+	ConvexMesh(Object3DModel* model, bool terrain = false, float terrainHeight = 0.0f);
 };

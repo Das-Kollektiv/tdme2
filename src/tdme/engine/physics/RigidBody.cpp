@@ -1,5 +1,6 @@
 #include <tdme/engine/physics/RigidBody.h>
 
+#include <string>
 #include <vector>
 
 #include <tdme/math/Math.h>
@@ -17,6 +18,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
+using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::RigidBody;
@@ -250,15 +253,9 @@ void RigidBody::computeWorldInverseInertiaMatrix()
 void RigidBody::synch(Transformations* transformations)
 {
 	this->transformations->fromTransformations(transformations);
-	if (this->cbv != nullptr)
-		this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
-
-	this->position.set(this->transformations->getTranslation());
-	this->orientation.identity();
-	for (auto i = 0; i < this->transformations->getRotations()->size(); i++) {
-		auto r = this->transformations->getRotations()->get(i);
-		this->orientation.multiply(r->getQuaternion());
-	}
+	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
+	this->transformations->getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
+	this->orientation.set(transformations->getRotations()->quaternion);
 	this->orientation.getArray()[1] *= -1.0f;
 	this->orientation.normalize();
 	this->awake(true);
