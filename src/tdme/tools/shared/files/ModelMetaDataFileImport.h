@@ -55,6 +55,14 @@ public:
 
 private:
 
+	/**
+	 * Get model path name
+	 * @param path name
+	 * @param file name
+	 * @return model path name
+	 */
+	static const string getModelPathName(const string& pathName, const string& fileName);
+
 	/** 
 	 * Parse bounding volume
 	 * @param idx

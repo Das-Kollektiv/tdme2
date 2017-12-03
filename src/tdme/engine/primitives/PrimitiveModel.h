@@ -79,19 +79,6 @@ public:
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
 
-	/**
-	 * Set up a convex mesh model
-	 * @param model
-	 */
-	static void setupConvexMeshModel(Model* model);
-
-private:
-	/** 
-	 * Set up convex mesh material
-	 * @param groups
-	 */
-	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
-
 public:
 	/** 
 	 * Creates a model from bounding volume

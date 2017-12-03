@@ -95,7 +95,9 @@ void LevelEditorEntityBoundingVolume::setupNone()
 
 void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float radius)
 {
+	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new Sphere(center, radius);
+	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
@@ -112,7 +114,9 @@ void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float r
 
 void LevelEditorEntityBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, float radius)
 {
+	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new Capsule(a, b, radius);
+	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
@@ -129,7 +133,9 @@ void LevelEditorEntityBoundingVolume::setupCapsule(const Vector3& a, const Vecto
 
 void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
+	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
+	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
@@ -146,7 +152,9 @@ void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vect
 
 void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 {
+	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new BoundingBox(min, max);
+	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
 		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
@@ -163,16 +171,27 @@ void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector
 
 void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
 {
-	modelMeshFile = fileName;
+	if (boundingVolume != nullptr) delete boundingVolume;
+	boundingVolume = new ConvexMesh();
+	if (model != nullptr) delete model;
+	model = nullptr;
+	modelMeshFile = pathName + "/" + fileName;
 	try {
 		Model* convexMeshModel = ModelReader::read(
 			pathName,
 			fileName
 		);
 		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
-		convexMeshModel->getImportTransformationsMatrix().scale(1.01f);
-		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
-		model = convexMeshModel;
+		model = PrimitiveModel::createModel(
+			boundingVolume,
+			string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+				string(",") +
+				to_string(levelEditorEntity->getId()) +
+				string("_model_bv.") +
+				to_string(id) +
+				string(".") +
+				to_string(staticIdx++)
+		);
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));

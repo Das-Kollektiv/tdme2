@@ -411,26 +411,6 @@ Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id)
 	return model;
 }
 
-void PrimitiveModel::setupConvexMeshModel(Model* model)
-{
-	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()] = material;
-	setupConvexMeshMaterial(model->getSubGroups(), material);
-}
-
-void PrimitiveModel::setupConvexMeshMaterial(map<string, Group*>* groups, Material* material)
-{
-	for (auto it: *groups) {
-		Group* group = it.second;
-		for (auto& faceEntity : *group->getFacesEntities()) {
-			faceEntity.setMaterial(material);
-		}
-	}
-}
-
 Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string& id)
 {
 	if (dynamic_cast< BoundingBox* >(boundingVolume) != nullptr) {
@@ -444,6 +424,9 @@ Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string&
 	} else
 	if (dynamic_cast< Capsule* >(boundingVolume) != nullptr) {
 		return PrimitiveModel::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
+	} else
+	if (dynamic_cast< ConvexMesh* >(boundingVolume) != nullptr) {
+		return PrimitiveModel::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
 	} else {
 		Console::println(string("PrimitiveModel::createModel(): unsupported bounding volume"));
 		return nullptr;

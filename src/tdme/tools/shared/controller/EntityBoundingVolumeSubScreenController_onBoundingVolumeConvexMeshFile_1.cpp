@@ -32,7 +32,13 @@ EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::Entity
 
 void EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::performAction()
 {
-	entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile[idxFinal]->getController()->setValue(entityBoundingVolumeSubScreenController->value->set(entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+	entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile[idxFinal]->getController()->setValue(
+		entityBoundingVolumeSubScreenController->value->set(
+			entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+			"/" +
+			entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+		)
+	);
 	entityBoundingVolumeSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, idxFinal);
 	entityBoundingVolumeSubScreenController->modelPath->setPath(entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
 	entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();

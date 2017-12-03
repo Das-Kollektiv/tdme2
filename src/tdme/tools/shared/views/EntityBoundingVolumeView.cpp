@@ -211,6 +211,7 @@ void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* enti
 		modelBoundingVolumeEntity->getScale().set(modelEntity->getScale());
 		modelBoundingVolumeEntity->update();
 	}
+	modelBoundingVolumeEntity->getScale().scale(1.1f);
 	engine->addEntity(modelBoundingVolumeEntity);
 }
 

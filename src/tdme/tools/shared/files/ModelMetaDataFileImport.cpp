@@ -90,36 +90,21 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		static_cast< float >(jEntityRoot["pz"].getDouble())
 	);
 	auto modelType = LevelEditorEntity_EntityType::valueOf((jEntityRoot["type"].getString()));
-	string modelFile = "";
-	if (jEntityRoot["file"].isNull() == false) {
-		auto modelFileString = (jEntityRoot["file"].getString());
-		modelFile = FileSystem::getInstance()->getCanonicalPath(
-			(
-				StringUtils::startsWith(FileSystem::getInstance()->getPathName(modelFileString), "/") == true?
-					FileSystem::getInstance()->getPathName(modelFileString):
-					pathName + "/" +  FileSystem::getInstance()->getPathName(modelFileString)
-			 ),
-			FileSystem::getInstance()->getFileName(modelFileString)
-		);
-	}
 	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? (jEntityRoot["thumbnail"].getString()) : "";
 	auto name = (jEntityRoot["name"].getString());
 	auto description = (jEntityRoot["descr"].getString());
+	string modelFileName = "";
+	string modelPathName = "";
+	if (jEntityRoot["file"].isNull() == false) {
+		modelFileName = (jEntityRoot["file"].getString());
+	}
 	Model* model = nullptr;
-	auto gameRoot = Tools::getGameRootPath(pathName);
-	string modelRelativeFileName = "";
-	if (modelFile.length() > 0) {
-		modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
-		auto modelPath = (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
-		auto modelFile = Tools::getFileName(modelRelativeFileName);
+	if (modelFileName.length() > 0) {
+		modelPathName = getModelPathName(pathName, modelFileName);
 		model = ModelReader::read(
-			modelPath,
-			modelFile
+			modelPathName,
+			FileSystem::getInstance()->getFileName(modelFileName)
 		);
-		if (model == nullptr) {
-			Console::println("ModelMetaDataFileImport::doImportFromJSON(): Could not read model from '" + modelPath + "/" + modelFile + "'");
-			return nullptr;
-		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
 		model = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
@@ -131,7 +116,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		name,
 		description,
 		"",
-		modelFile.length() > 0 ? FileSystem::getInstance()->getCanonicalPath(gameRoot, modelRelativeFileName) : "",
+		modelFileName.length() > 0 ? modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName) : "",
 		modelThumbnail,
 		model,
 		pivot
@@ -187,9 +172,10 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 					objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
 					try {
 						auto particleModelFile = (jObjectParticleSystem["mf"].getString());
-						auto particleModelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, particleModelFile);
-						auto particleModelPath = (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(particleModelRelativeFileName);
-						objectParticleSystem->setModelFile(particleModelPath + "/" + Tools::getFileName(particleModelRelativeFileName));
+						auto particleModelPath = getModelPathName(pathName, particleModelFile);
+						objectParticleSystem->setModelFile(
+							particleModelPath + "/" + Tools::getFileName(particleModelFile)
+						);
 					} catch (Exception& exception) {
 						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
 						Console::println(string(exception.what()));
@@ -408,6 +394,20 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	return levelEditorEntity;
 }
 
+const string ModelMetaDataFileImport::getModelPathName(const string& pathName, const string& fileName) {
+	string modelFile = FileSystem::getInstance()->getCanonicalPath(
+		(
+			StringUtils::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
+				FileSystem::getInstance()->getPathName(fileName):
+				pathName + "/" +  FileSystem::getInstance()->getPathName(fileName)
+		 ),
+		FileSystem::getInstance()->getFileName(fileName)
+	);
+	auto gameRoot = Tools::getGameRootPath(pathName);
+	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
+	return (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
+}
+
 LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
@@ -486,7 +486,11 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			entityBoundingVolume->setupConvexMesh(pathName, (jBv["file"].getString()));
+			string fileName = jBv["file"].getString();
+			entityBoundingVolume->setupConvexMesh(
+				getModelPathName(pathName, fileName),
+				Tools::getFileName(fileName)
+			);
 		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));
