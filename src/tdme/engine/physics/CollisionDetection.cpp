@@ -881,6 +881,8 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 
 	for (auto& triangle1 : *mesh1->getTriangles()) {
 		for (auto& triangle2 : *mesh2->getTriangles()) {
+			if (doBroadTest(&triangle1, &triangle2) == false) continue;
+
 			auto triangle1Vertices = triangle1.getVertices();
 			triangle1Edge1.set((*triangle1Vertices)[1]).sub((*triangle1Vertices)[0]).normalize();
 			triangle1Edge2.set((*triangle1Vertices)[2]).sub((*triangle1Vertices)[1]).normalize();
