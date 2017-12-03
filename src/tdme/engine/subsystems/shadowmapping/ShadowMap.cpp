@@ -125,7 +125,12 @@ void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
 		}
 	}
 	computeDepthBiasMVPMatrix();
-	shadowMapping->object3DVBORenderer->render(visibleObjects, false);
+	shadowMapping->object3DVBORenderer->render(
+		visibleObjects,
+		false,
+		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+	);
 }
 
 void ShadowMap::computeDepthBiasMVPMatrix()

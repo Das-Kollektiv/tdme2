@@ -146,7 +146,7 @@ void Object3DVBORenderer::reset()
 	visibleObjectsByModels.clear();
 }
 
-void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces)
+void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
@@ -159,7 +159,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	for (auto& objectsByModelIt: visibleObjectsByModels) {
 		auto& objectsByModel = objectsByModelIt.second;
 		if (objectsByModel.size() > 0) {
-			renderObjectsOfSameType(objectsByModel, renderTransparentFaces);
+			renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
 			objectsByModel.clear();
 		}
 	}
@@ -261,7 +261,7 @@ void Object3DVBORenderer::releaseTransparentFacesGroups()
 	transparentRenderFacesGroups.clear();
 }
 
-void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces)
+void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
 	for (auto object: objects) {
 		for (auto j = 0; j < object->object3dGroups.size(); j++) {
@@ -333,7 +333,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				auto object = objects.at(objectIdx);
 				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 				if (objectIdx == 0) {
-					setupMaterial(_object3DGroup, faceEntityIdx);
+					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes);
 				} else {
 					Object3DGroup::setupTextures(renderer, _object3DGroup, faceEntityIdx);
 				}
@@ -354,15 +354,18 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 				auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
 				if (boundVBOBaseIds != currentVBOGlIds) {
 					boundVBOBaseIds = currentVBOGlIds;
-					if (isTextureCoordinatesAvailable == true) {
+					if (isTextureCoordinatesAvailable == true &&
+						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
+						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
 						renderer->bindTextureCoordinatesBufferObject((*currentVBOGlIds)[3]);
 					}
-					renderer->bindVerticesBufferObject((*currentVBOGlIds)[1]);
-					renderer->bindNormalsBufferObject((*currentVBOGlIds)[2]);
 					renderer->bindIndicesBufferObject((*currentVBOGlIds)[0]);
+					renderer->bindVerticesBufferObject((*currentVBOGlIds)[1]);
+					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject((*currentVBOGlIds)[2]);
 				}
 				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
-				if (renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
+				if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
+					renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
 					renderer->bindTangentsBufferObject((*currentVBOTangentBitangentIds)[0]);
 					renderer->bindBitangentsBufferObject((*currentVBOTangentBitangentIds)[1]);
 				}
@@ -380,10 +383,13 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					renderer->setFrontFace(objectFrontFace);
 					currentFrontFace = objectFrontFace;
 				}
-				renderer->setEffectColorMul(object->effectColorMul.getArray());
-				renderer->setEffectColorAdd(object->effectColorAdd.getArray());
-				renderer->onUpdateEffect();
-				if (shadowMapping != nullptr) {
+				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+					renderer->setEffectColorMul(object->effectColorMul.getArray());
+					renderer->setEffectColorAdd(object->effectColorAdd.getArray());
+					renderer->onUpdateEffect();
+				}
+				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
+					shadowMapping != nullptr) {
 					shadowMapping->startObjectTransformations(
 						(_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
@@ -391,7 +397,8 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 						).multiply(object->getTransformationsMatrix()));
 				}
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
-				if (shadowMapping != nullptr) {
+				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
+					shadowMapping != nullptr) {
 					shadowMapping->endObjectTransformations();
 				}
 			}
@@ -407,7 +414,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 	renderer->getModelViewMatrix().set(modelViewMatrixBackup);
 }
 
-void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx)
+void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
@@ -415,28 +422,40 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 		material = Material::getDefaultMaterial();
 
 	Object3DGroup::setupTextures(renderer, object3DGroup, facesEntityIdx);
-	renderer->setMaterialAmbient(material->getAmbientColor().getArray());
-	renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
-	renderer->setMaterialSpecular(material->getSpecularColor().getArray());
-	renderer->setMaterialEmission(material->getEmissionColor().getArray());
-	renderer->setMaterialShininess(material->getShininess());
-	renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
-	renderer->onUpdateMaterial();
-	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
-	renderer->bindTexture(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx]);
-	if (renderer->isSpecularMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
-		renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
+	if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
+		renderer->setMaterialAmbient(material->getAmbientColor().getArray());
+		renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
+		renderer->setMaterialSpecular(material->getSpecularColor().getArray());
+		renderer->setMaterialEmission(material->getEmissionColor().getArray());
+		renderer->setMaterialShininess(material->getShininess());
+		renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
+		renderer->onUpdateMaterial();
 	}
-	if (renderer->isDisplacementMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
-		renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
+	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
+		renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
+		renderer->onUpdateMaterial();
+		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+			material->hasDiffuseTextureMaskedTransparency() == true) {
+			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+			renderer->bindTexture(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx]);
+		}
 	}
-	if (renderer->isNormalMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
-		renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
+	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
+		if (renderer->isSpecularMappingAvailable() == true) {
+			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
+			renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
+		}
+		if (renderer->isDisplacementMappingAvailable() == true) {
+			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
+			renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
+		}
+		if (renderer->isNormalMappingAvailable() == true) {
+			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
+			renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
+		}
+		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 	}
-	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
 
 void Object3DVBORenderer::clearMaterial()

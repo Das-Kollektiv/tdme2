@@ -56,6 +56,17 @@ private:
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
 public:
+	static constexpr int32_t RENDERTYPE_NORMALS { 1 };
+	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS { 2 };
+	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY { 4 };
+	static constexpr int32_t RENDERTYPE_EFFECTCOLORS { 8 };
+	static constexpr int32_t RENDERTYPE_MATERIALS { 16 };
+	static constexpr int32_t RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY { 32 };
+	static constexpr int32_t RENDERTYPE_TEXTURES { 64 };
+	static constexpr int32_t RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY { 128 };
+	static constexpr int32_t RENDERTYPE_LIGHTS { 256 };
+	static constexpr int32_t RENDERTYPE_SHADOWMAPPING { 512 };
+	static constexpr int32_t RENDERTYPE_ALL { 1023 };
 
 	/** 
 	 * Init
@@ -80,9 +91,10 @@ public:
 	/** 
 	 * Renders all given objects
 	 * @param objects
-	 * @param render transparent faces  
+	 * @param render transparent faces
+	 * @param render types
 	 */
-	void render(const vector<Object3D*>& objects, bool renderTransparentFaces);
+	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 public: /* protected */
 
@@ -111,16 +123,17 @@ public: /* protected */
 	 * @param engine
 	 * @param objects of same type/ with same models
 	 * @param collect render faces
-	 * @param skinning shader
+	 * @param render types
 	 */
-	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces);
+	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/** 
 	 * Set ups a material for rendering
 	 * @param object 3d group
 	 * @param faces entity idx
+	 * @param render types
 	 */
-	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx);
+	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes);
 
 	/** 
 	 * Clear material for rendering

@@ -151,7 +151,14 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		shadowMap->bindDepthBufferTexture();
 		renderer->setTextureUnit(textureUnit);
 		renderer->enableBlending();
-		object3DVBORenderer->render(visibleObjects, false);
+		object3DVBORenderer->render(
+			visibleObjects,
+			false,
+			Object3DVBORenderer::RENDERTYPE_NORMALS |
+			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DVBORenderer::RENDERTYPE_SHADOWMAPPING
+		);
 		renderer->disableBlending();
 	}
 	auto textureUnit = renderer->getTextureUnit();

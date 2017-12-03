@@ -558,7 +558,19 @@ void Engine::display()
 	for (auto j = 0; j < lights.size(); j++) {
 		lights[j].update();
 	}
-	object3DVBORenderer->render(visibleObjects, true);
+	object3DVBORenderer->render(
+		visibleObjects,
+		true,
+		Object3DVBORenderer::RENDERTYPE_NORMALS |
+		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS |
+		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DVBORenderer::RENDERTYPE_EFFECTCOLORS |
+		Object3DVBORenderer::RENDERTYPE_MATERIALS |
+		Object3DVBORenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DVBORenderer::RENDERTYPE_TEXTURES |
+		Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DVBORenderer::RENDERTYPE_LIGHTS
+	);
 	if (lightingShader != nullptr) {
 		lightingShader->unUseProgram();
 	}
