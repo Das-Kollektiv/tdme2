@@ -34,8 +34,10 @@ void main() {
 		}
 	}
 
-	// do not process samples out of frustum
-	if (vsShadowCoord.w == 0.0) {
+	// do not process samples out of frustum, or out of shadow map
+	if (vsShadowCoord.w == 0.0 ||
+		vsShadowCoord.x < 0.0 || vsShadowCoord.x > 1.0 ||
+		vsShadowCoord.y < 0.0 || vsShadowCoord.y > 1.0) {
 		// return color to be blended with framebuffer
 		gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	} else {
@@ -44,8 +46,8 @@ void main() {
 
 		// determine visibility
 		float visibility = 0.0;
-		for (float y = (-SHADOWMAP_LOOKUPS + 0.5) / 2.0; y <= (+SHADOWMAP_LOOKUPS - 0.5) / 2.0; y+=1.0)
-		for (float x = (-SHADOWMAP_LOOKUPS + 0.5) / 2.0; x <= (+SHADOWMAP_LOOKUPS - 0.5) / 2.0; x+=1.0) {
+		for (float y = -SHADOWMAP_LOOKUPS / 2.0; y <= SHADOWMAP_LOOKUPS / 2.0; y+=1.0)
+		for (float x = -SHADOWMAP_LOOKUPS / 2.0; x <= SHADOWMAP_LOOKUPS / 2.0; x+=1.0) {
 			visibility+= texture2D(textureUnit, vsShadowCoord.xy + vec2(x * texturePixelWidth, y * texturePixelHeight)).z < vsShadowCoord.z + depthBias?0.40:0.0;
 		}
 		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
