@@ -93,6 +93,7 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 void ConvexMesh::createVertices()
 {
 	vertexReferences.clear();
+	vertices.clear();
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();
 		for (auto j = 0; j < triangleVertices->size(); j++) {
