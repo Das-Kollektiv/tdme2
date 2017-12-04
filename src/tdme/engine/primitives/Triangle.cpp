@@ -149,7 +149,7 @@ bool Triangle::containsPoint(const Vector3& point) const
 {
 	Vector3 closestPoint;
 	computeClosestPointOnBoundingVolume(point, closestPoint);
-	return closestPoint.equals(point);
+	return closestPoint.equals(point, 0.1f);
 }
 
 bool Triangle::doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision)
