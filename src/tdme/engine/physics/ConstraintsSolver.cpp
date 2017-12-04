@@ -14,6 +14,7 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using std::vector;
 
@@ -30,6 +31,7 @@ using tdme::engine::physics::Vector6;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodies)
 {
@@ -80,9 +82,23 @@ void ConstraintsSolver::initialize(float dt)
 	constraintsCount = 0;
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto& constraintedBody = constraintsEntities[i];
+		constraintedBody.rb1->idx = -1;
+		constraintedBody.rb2->idx = -1;
+	}
+	int rigidBodyCount = 0;
+	for (auto i = 0; i < constraintsEntityCount; i++) {
+		auto& constraintedBody = constraintsEntities[i];
+		if (rigidBodyCount >= BODIES_MAX) {
+			Console::println("ConstraintsSolver::initialize(): Too many rigid bodies. Fixme!");
+		}
+		if (constraintedBody.rb1->idx == -1) constraintedBody.rb1->idx = rigidBodyCount++;
+		if (constraintedBody.rb2->idx == -1) constraintedBody.rb2->idx = rigidBodyCount++;
 		constrainedBodies[constraintedBody.rb1->id] = constraintedBody.rb1;
 		constrainedBodies[constraintedBody.rb2->id] = constraintedBody.rb2;
 		constraintsCount += constraintedBody.collision.getHitPointsCount() * 3;
+		if (constraintsCount >= CONSTRAINTS_MAX) {
+			Console::println("ConstraintsSolver::initialize(): Too many constraints. Fixme!");
+		}
 	}
 	auto currentConstraint = 0;
 	for (auto i = 0; i < constraintsEntityCount; i++) {

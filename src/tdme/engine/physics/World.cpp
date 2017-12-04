@@ -26,6 +26,7 @@
 #include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::map;
 using std::string;
@@ -54,11 +55,11 @@ using tdme::math::Vector3;
 using tdme::utils::VectorIteratorMultiple;
 using tdme::utils::Pool;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 World::World() 
 {
 	partition = new PhysicsPartitionOctTree();
-	updateRigidBodyIndices = true;
 }
 
 World::~World()
@@ -77,7 +78,6 @@ void World::reset()
 	rigidBodiesDynamic.clear();
 	rigidBodiesById.clear();
 	partition->reset();
-	updateRigidBodyIndices = true;
 }
 
 PhysicsPartition* World::getPartition()
@@ -98,7 +98,6 @@ RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, T
 	rigidBodiesDynamic.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
 	if (enabled == true) partition->addRigidBody(rigidBody);
-	updateRigidBodyIndices = true;
 	return rigidBody;
 }
 
@@ -108,7 +107,6 @@ RigidBody* World::addStaticRigidBody(const string& id, bool enabled, int32_t typ
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
 	if (enabled == true) partition->addRigidBody(rigidBody);
-	updateRigidBodyIndices = true;
 	return rigidBody;
 }
 
@@ -122,11 +120,11 @@ RigidBody* World::getRigidBody(const string& id)
 }
 
 void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision) {
-	string rigidBodyKey = to_string(rigidBody1->idx) + "," + to_string(rigidBody2->idx);
+	string rigidBodyKey = rigidBody1->id + "," + rigidBody2->id;
 	if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) return;
 	RigidBodyCollisionStruct rigidBodyCollisionStruct;
-	rigidBodyCollisionStruct.rigidBody1Idx = rigidBody1->idx;
-	rigidBodyCollisionStruct.rigidBody2Idx = rigidBody2->idx;
+	rigidBodyCollisionStruct.rigidBody1Id = rigidBody1->id;
+	rigidBodyCollisionStruct.rigidBody2Id = rigidBody2->id;
 	rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
 	if (useAndInvertCollision == false) {
 		collisionMovement.set(rigidBody1->movement);
@@ -155,13 +153,6 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 
 void World::update(float deltaTime)
 {
-	if (updateRigidBodyIndices == true) {
-		int rigidBodyIdx = 0;
-		for (auto rigidBody: rigidBodies) {
-			rigidBody->idx = rigidBodyIdx++;
-		}
-		updateRigidBodyIndices = false;
-	}
 	if (constraintsSolver == nullptr) {
 		constraintsSolver = new ConstraintsSolver(&rigidBodies);
 	}
@@ -234,19 +225,19 @@ void World::update(float deltaTime)
 		for (auto it: rigidBodyCollisionsLastFrame) {
 			RigidBodyCollisionStruct* rigidBodyCollisionStruct = &it.second;
 			{
-				string rigidBodyKey = to_string(rigidBodyCollisionStruct->rigidBody1Idx) + "," + to_string(rigidBodyCollisionStruct->rigidBody2Idx);
+				string rigidBodyKey = rigidBodyCollisionStruct->rigidBody1Id + "," + rigidBodyCollisionStruct->rigidBody2Id;
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
 
 			{
-				string rigidBodyKey = to_string(rigidBodyCollisionStruct->rigidBody2Idx) + "," + to_string(rigidBodyCollisionStruct->rigidBody1Idx);
+				string rigidBodyKey = rigidBodyCollisionStruct->rigidBody2Id + "," + rigidBodyCollisionStruct->rigidBody1Id;
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
 
-			auto rigidBody1 = rigidBodies.at(rigidBodyCollisionStruct->rigidBody1Idx);
-			auto rigidBody2 = rigidBodies.at(rigidBodyCollisionStruct->rigidBody2Idx);
+			auto rigidBody1 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody1Id];
+			auto rigidBody2 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody2Id];
 			rigidBody1->fireOnCollisionEnd(rigidBody2);
 		}
 

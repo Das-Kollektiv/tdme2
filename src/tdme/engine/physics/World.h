@@ -64,8 +64,8 @@ public: /* protected */
 
 private:
 	struct RigidBodyCollisionStruct {
-		int32_t rigidBody1Idx;
-		int32_t rigidBody2Idx;
+		string rigidBody1Id;
+		string rigidBody2Id;
 	};
 
 	vector<RigidBody*> rigidBodies {  };
@@ -73,7 +73,6 @@ private:
 	map<string, RigidBody*> rigidBodiesById {  };
 	ConstraintsSolver* constraintsSolver { nullptr };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
-	bool updateRigidBodyIndices {  };
 
 	/**
 	 * Do collision test between rigid bodies
