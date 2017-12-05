@@ -22,6 +22,7 @@
 #include <tdme/utils/Console.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::engine::physics::CollisionDetection;
 using tdme::math::Math;
@@ -1159,23 +1160,12 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 				goto end_switch2;;
 			}
 			if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
-				auto _triangle1Vertices = triangle1->getVertices();
-				auto _triangle2Vertices = triangle2->getVertices();
-				(*_triangle1Vertices)[0].set((*triangle1Vertices)[0]);
-				(*_triangle1Vertices)[1].set((*triangle1Vertices)[1]);
-				(*_triangle1Vertices)[2].set((*triangle1Vertices)[2]);
-				triangle1->update();
-				(*_triangle2Vertices)[0].set((*triangle2Vertices)[0]);
-				(*_triangle2Vertices)[1].set((*triangle2Vertices)[1]);
-				(*_triangle2Vertices)[2].set((*triangle2Vertices)[2]);
-				triangle2->update();
 				computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 				goto end_switch2;;
 			}
 			end_switch2:;
 		}
 	}
-
 }
 
 void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, Triangle* triangle2, CollisionResponse_Entity* collisionEntity)
@@ -1183,22 +1173,19 @@ void CollisionDetection::computeCoplanarTrianglesHitPoints(Triangle* triangle1, 
 	Vector3 hitPoint;
 	auto triangle1Vertices = triangle1->getVertices();
 	auto triangle2Vertices = triangle2->getVertices();
-	auto lineSegmentsIntersections = 0;
 	for (auto i = 0; i < LINESEGMENTSTRIANGLEINDICES.size(); i += 2)
-		for (auto j = 0; j < LINESEGMENTSTRIANGLEINDICES.size(); j += 2) {
-			if (LineSegment::doesLineSegmentsCollide(
-					(*triangle1Vertices)[LINESEGMENTSTRIANGLEINDICES[i + 0]],
-					(*triangle1Vertices)[LINESEGMENTSTRIANGLEINDICES[i + 1]],
-					(*triangle2Vertices)[LINESEGMENTSTRIANGLEINDICES[j + 0]],
-					(*triangle2Vertices)[LINESEGMENTSTRIANGLEINDICES[j + 1]],
-					hitPoint
-				) == true) {
-				lineSegmentsIntersections++;
-				collisionEntity->addHitPoint(hitPoint);
-			}
+	for (auto j = 0; j < LINESEGMENTSTRIANGLEINDICES.size(); j += 2) {
+		if (LineSegment::doesLineSegmentsCollide(
+				(*triangle1Vertices)[LINESEGMENTSTRIANGLEINDICES[i + 0]],
+				(*triangle1Vertices)[LINESEGMENTSTRIANGLEINDICES[i + 1]],
+				(*triangle2Vertices)[LINESEGMENTSTRIANGLEINDICES[j + 0]],
+				(*triangle2Vertices)[LINESEGMENTSTRIANGLEINDICES[j + 1]],
+				hitPoint
+			) == true) {
+			collisionEntity->addHitPoint(hitPoint);
 		}
-
-	if (lineSegmentsIntersections == 0) {
+	}
+	if (collisionEntity->getHitPointsCount() == 0) {
 		for (auto i = 0; i < triangle1Vertices->size(); i++) {
 			if (triangle2->containsPoint((*triangle1Vertices)[i]) == true) {
 				collisionEntity->addHitPoint((*triangle1Vertices)[i]);
