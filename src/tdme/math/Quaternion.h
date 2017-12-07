@@ -66,6 +66,74 @@ public:
 		return *this;
 	}
 
+	/**
+	 * @return x
+	 */
+	inline float getX() const {
+		return data[0];
+	}
+
+	/**
+	 * Set X
+	 * @param x
+	 * @return this quaternion
+	 */
+	inline Quaternion& setX(float x) {
+		data[0] = x;
+		return *this;
+	}
+
+	/**
+	 * @return y
+	 */
+	inline float getY() const {
+		return data[1];
+	}
+
+	/**
+	 * Set Y
+	 * @param y
+	 * @return this quaternion
+	 */
+	inline Quaternion& setY(float y) {
+		data[1] = y;
+		return *this;
+	}
+
+	/**
+	 * @return z
+	 */
+	inline float getZ() const {
+		return data[2];
+	}
+
+	/**
+	 * Set Z
+	 * @param z
+	 * @return this quaternion
+	 */
+	inline Quaternion& setZ(float z) {
+		data[2] = z;
+		return *this;
+	}
+
+	/**
+	 * @return w
+	 */
+	inline float getW() const {
+		return data[3];
+	}
+
+	/**
+	 * Set W
+	 * @param w
+	 * @return this quaternion
+	 */
+	inline Quaternion& setW(float w) {
+		data[3] = w;
+		return *this;
+	}
+
 	/** 
 	 * Set up quaternion identity
 	 * @return this quaternion

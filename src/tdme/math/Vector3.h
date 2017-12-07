@@ -80,7 +80,7 @@ public:
 	}
 
 	/** 
-	 * add to x component
+	 * Add to x component
 	 * @param x
 	 * @return this vector
 	 */
@@ -90,7 +90,7 @@ public:
 	}
 
 	/** 
-	 * sub from x component
+	 * Sub from x component
 	 * @param x
 	 * @return this vector
 	 */
@@ -117,7 +117,7 @@ public:
 	}
 
 	/** 
-	 * add to y component
+	 * Add to y component
 	 * @param y
 	 * @return this vector
 	 */
@@ -127,7 +127,7 @@ public:
 	}
 
 	/** 
-	 * sub from y component
+	 * Sub from y component
 	 * @param y
 	 * @return this vector
 	 */
@@ -154,7 +154,7 @@ public:
 	}
 
 	/** 
-	 * add to z component
+	 * Add to z component
 	 * @param z
 	 * @return this vector
 	 */
@@ -164,7 +164,7 @@ public:
 	}
 
 	/** 
-	 * sub from z component
+	 * Sub from z component
 	 * @param z
 	 * @return this vector
 	 */
