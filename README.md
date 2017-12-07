@@ -65,7 +65,7 @@ TDME2
                 - convex mesh
             - rigid body simulator
               - broadphase collision detection
-                  - uses oct tree like partitioning from 16mx16mx16m up to 4mx4mx4m
+                  - uses oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
                   - additionally sphere <> sphere test
               - narrowphase collision detection
               - collision filtering by type
