@@ -58,7 +58,7 @@ bool AnimationSetup::isLoop()
 	return loop;
 }
 
-bool AnimationSetup::setLoop(bool loop) {
+void AnimationSetup::setLoop(bool loop) {
 	this->loop = loop;
 }
 

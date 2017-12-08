@@ -290,7 +290,7 @@ public:
 	 * Synchronizes this rigid body with transformations
 	 * @param transformations
 	 */
-	void synch(Transformations* transformations);
+	void fromTransformations(Transformations* transformations);
 
 	/** 
 	 * Add force

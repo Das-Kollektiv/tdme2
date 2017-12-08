@@ -74,7 +74,7 @@ public:
 	 * Set loop
 	 * @param loop
 	 */
-	bool setLoop(bool loop);
+	void setLoop(bool loop);
 
 	/**
 	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy

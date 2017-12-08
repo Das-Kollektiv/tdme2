@@ -380,7 +380,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 				transformations->fromTransformations(object->getTransformations());
 				transformations->getTranslation().add(translation);
 				transformations->update();
-				rigidBody->synch(transformations);
+				rigidBody->fromTransformations(transformations);
 				rigidBody->setEnabled(true);
 			}
 		}

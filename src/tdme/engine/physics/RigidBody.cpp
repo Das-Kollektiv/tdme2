@@ -55,7 +55,7 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 	this->sleepingFrameCount = 0;
 	setBoundingVolume(obv);
 	setMass(mass);
-	synch(transformations);
+	fromTransformations(transformations);
 	computeWorldInverseInertiaMatrix();
 }
 
@@ -250,7 +250,7 @@ void RigidBody::computeWorldInverseInertiaMatrix()
 	worldInverseInertia.set(orientationMatrix).transpose().multiply(inverseInertia).multiply(orientationMatrix);
 }
 
-void RigidBody::synch(Transformations* transformations)
+void RigidBody::fromTransformations(Transformations* transformations)
 {
 	this->transformations->fromTransformations(transformations);
 	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
