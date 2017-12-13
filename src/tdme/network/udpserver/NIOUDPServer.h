@@ -95,7 +95,7 @@ protected:
 	 * @param frame
 	 * @throws NIONetworkServerException
 	 */
-	virtual void writeHeader(stringstream* frame) throw (NIONetworkServerException);
+	static void writeHeader(stringstream* frame) throw (NIONetworkServerException);
 
 	/**
 	 * Writes a message header to message

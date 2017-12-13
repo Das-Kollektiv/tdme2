@@ -80,7 +80,7 @@ public:
 	 * @brief Creates a frame to be used with send
 	 * @return frame to be send
 	 */
-	stringstream* createFrame();
+	static stringstream* createFrame();
 
 	/**
 	 * @brief Sends a frame to client, takes over ownership of frame

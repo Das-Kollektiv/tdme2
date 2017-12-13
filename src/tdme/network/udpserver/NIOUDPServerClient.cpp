@@ -72,7 +72,7 @@ const bool NIOUDPServerClient::setKey(const string &key) {
 
 stringstream* NIOUDPServerClient::createFrame() {
 	stringstream* frame = new stringstream();
-	server->writeHeader(frame);
+	NIOUDPServer::writeHeader(frame);
 	return frame;
 }
 
