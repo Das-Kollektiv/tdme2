@@ -66,6 +66,14 @@ bool NIOUDPClient::isConnected() {
 	return connected;
 }
 
+const string& NIOUDPClient::getIp() {
+	return ip;
+}
+
+const unsigned int NIOUDPClient::getPort() {
+	return port;
+}
+
 void NIOUDPClient::run() {
 	Console::println("NIOUDPClient::run(): start");
 
