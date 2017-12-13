@@ -150,11 +150,12 @@ private:
 	 * @param client
 	 * @param frame to be send
 	 * @param safe, requires ack and retransmission
+	 * @param delete frame
 	 * @param message type
 	 * @param message id (only for MESSAGETYPE_MESSAGE)
 	 * @throws NIONetworkServerException
 	 */
-	void sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE) throw (NIONetworkServerException);
+	void sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE) throw (NIONetworkServerException);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

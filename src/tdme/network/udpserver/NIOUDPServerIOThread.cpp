@@ -277,7 +277,7 @@ void NIOUDPServerIOThread::run() {
 	Console::println("NIOUDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
-void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe) throw (NIONetworkServerException) {
+void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) throw (NIONetworkServerException) {
 	// FIXME:
 	//	We could use lock free queues here
 	//	For now, we will go with plain mutexes
@@ -300,7 +300,7 @@ void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const u
 	if (message.bytes > 512) message.bytes = 512;
 	frame->read(message.message, message.bytes);
 
-	delete frame;
+	if (deleteFrame == true) delete frame;
 
 	// requires ack and retransmission ?
 	if (safe == true) {

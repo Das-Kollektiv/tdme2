@@ -74,9 +74,10 @@ private:
 	 * @param message id
 	 * @param frame to be send
 	 * @param safe, requires ack and retransmission
+	 * @param delete frame
 	 * @throws NIONetworkServerException
 	 */
-	void sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe) throw (NIONetworkServerException);
+	void sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) throw (NIONetworkServerException);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

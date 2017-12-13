@@ -76,7 +76,7 @@ stringstream* NIOUDPServerClient::createFrame() {
 	return frame;
 }
 
-void NIOUDPServerClient::send(stringstream* frame, bool safe) {
+void NIOUDPServerClient::send(stringstream* frame, bool safe, bool deleteFrame) {
 	try {
 		// seek writing to end of stream
 		frame->seekp(0, ios_base::end);
@@ -87,7 +87,7 @@ void NIOUDPServerClient::send(stringstream* frame, bool safe) {
 			throw NIONetworkServerException("message too big");
 		}
 
-		server->sendMessage(this, frame, safe, NIOUDPServer::MESSAGETYPE_MESSAGE);
+		server->sendMessage(this, frame, safe, deleteFrame, NIOUDPServer::MESSAGETYPE_MESSAGE);
 	} catch (NIONetworkServerException &exception) {
 		// shut down client
 		shutdown();
@@ -134,7 +134,7 @@ bool NIOUDPServerClient::processSafeMessage(const uint32_t messageId) {
 	// always send acknowlegdement to client
 	stringstream* frame = createFrame();
 	try {
-		server->sendMessage(this, frame, false, NIOUDPServer::MESSAGETYPE_ACKNOWLEDGEMENT, messageId);
+		server->sendMessage(this, frame, false, true, NIOUDPServer::MESSAGETYPE_ACKNOWLEDGEMENT, messageId);
 	} catch (NIONetworkServerException &exception) {
 		// shut down client
 		shutdown();
@@ -157,7 +157,7 @@ bool NIOUDPServerClient::processSafeMessage(const uint32_t messageId) {
 void NIOUDPServerClient::sendConnected() {
 	stringstream* frame = createFrame();
 	try {
-		server->sendMessage(this, frame, true, NIOUDPServer::MESSAGETYPE_CONNECT);
+		server->sendMessage(this, frame, true, true, NIOUDPServer::MESSAGETYPE_CONNECT);
 	} catch (NIONetworkServerException &exception) {
 		// shut down client
 		shutdown();

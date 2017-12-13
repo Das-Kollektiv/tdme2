@@ -86,8 +86,9 @@ public:
 	 * @brief Sends a frame to client, takes over ownership of frame
 	 * @param frame data
 	 * @param safe, requires ack and retransmission
+	 * @param delete frame
 	 */
-	void send(stringstream* frame, bool safe = true);
+	void send(stringstream* frame, bool safe = true, bool deleteFrame = true);
 
 	/**
 	 * @brief Checks if message has already been processed and sends an acknowlegdement to client / safe client messages

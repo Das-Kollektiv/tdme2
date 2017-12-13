@@ -406,7 +406,7 @@ void NIOUDPServer::cleanUpClients() {
 	}
 }
 
-void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const MessageType messageType, const uint32_t messageId) throw (NIONetworkServerException) {
+void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) throw (NIONetworkServerException) {
 	// determine message id by message type
 	uint32_t _messageId;
 	switch(messageType) {
@@ -424,7 +424,7 @@ void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* f
 
 	unsigned int threadIdx = _messageId % ioThreadCount;
 	writeHeader(frame, messageType, client->clientId, _messageId, 0);
-	ioThreads[threadIdx]->sendMessage(client, (uint8_t)messageType, _messageId, frame, safe);
+	ioThreads[threadIdx]->sendMessage(client, (uint8_t)messageType, _messageId, frame, safe, deleteFrame);
 }
 
 void NIOUDPServer::processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) throw (NIONetworkServerException) {
