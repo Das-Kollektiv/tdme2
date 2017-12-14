@@ -48,8 +48,6 @@ NIOUDPClientMessage* NIOUDPClientMessage::parse(const char message[512], const s
 	if (bytes > 14) {
 		frame = new stringstream();
 		frame->write(&message[14], bytes - 14);
-		frame->seekp(0, ios_base::beg);
-
 	}
 	return new NIOUDPClientMessage(messageType, clientId, messageId, retries, frame);
 }
