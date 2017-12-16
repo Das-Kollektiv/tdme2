@@ -147,10 +147,6 @@ void NIOUDPClient::run() {
 
 					// receive datagrams as long as its size > 0 and read would not block
 					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
-						for (auto i = 0; i < bytesReceived; i++) {
-							std::cout << (char)message[i];
-						}
-						std::cout << std::endl;
 						NIOUDPClientMessage* clientMessage = NIOUDPClientMessage::parse(message, bytesReceived);
 						try {
 							switch(clientMessage->getMessageType()) {
