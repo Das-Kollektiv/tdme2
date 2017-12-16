@@ -62,7 +62,9 @@ const string& NIOUDPServerClient::getKey() const {
 }
 
 const bool NIOUDPServerClient::setKey(const string &key) {
-	if (server->setClientKey(this, key) == true) {
+	if (key.size() > 0 &&
+		key.size() < 256 &&
+		server->setClientKey(this, key) == true) {
 		this->key = key;
 		return true;
 	} else {
@@ -157,6 +159,9 @@ bool NIOUDPServerClient::processSafeMessage(const uint32_t messageId) {
 void NIOUDPServerClient::sendConnected() {
 	stringstream* frame = createFrame();
 	try {
+		char keySize = key.size();
+		frame->write(&keySize, 1);
+		frame->write(key.data(), keySize);
 		server->sendMessage(this, frame, true, true, NIOUDPServer::MESSAGETYPE_CONNECT);
 	} catch (NIONetworkServerException &exception) {
 		// shut down client

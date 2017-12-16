@@ -74,6 +74,14 @@ const unsigned int NIOUDPClient::getPort() {
 	return port;
 }
 
+const string& NIOUDPClient::getClientKey() {
+	return clientKey;
+}
+
+void NIOUDPClient::setClientKey(const string& clientKey) {
+	this->clientKey = clientKey;
+}
+
 void NIOUDPClient::run() {
 	Console::println("NIOUDPClient::run(): start");
 
@@ -139,40 +147,63 @@ void NIOUDPClient::run() {
 
 					// receive datagrams as long as its size > 0 and read would not block
 					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
+						for (auto i = 0; i < bytesReceived; i++) {
+							std::cout << (char)message[i];
+						}
+						std::cout << std::endl;
 						NIOUDPClientMessage* clientMessage = NIOUDPClientMessage::parse(message, bytesReceived);
 						try {
 							switch(clientMessage->getMessageType()) {
 								case NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
-									processAckReceived(clientMessage->getMessageId());
-									delete clientMessage;
-									break;
-								case NIOUDPClientMessage::MESSAGETYPE_CONNECT:
-									sendMessage(
-										new NIOUDPClientMessage(
-											NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT,
-											clientMessage->getClientId(),
-											clientMessage->getMessageId(),
-											clientMessage->getRetryCount() + 1,
-											nullptr
-										),
-										false
-									);
-									clientId = clientMessage->getClientId();
-									connected = true;
-									delete clientMessage;
-									break;
-								case NIOUDPClientMessage::MESSAGETYPE_MESSAGE:
-									//	check if message queue is full
-									recvMessageQueueMutex.lock();
-									if (recvMessageQueue.size() > 20) {
-										recvMessageQueueMutex.unlock();
-										throw NIOClientException("recv message queue overflow");
+									{
+										processAckReceived(clientMessage->getMessageId());
+										delete clientMessage;
+										break;
 									}
-									recvMessageQueue.push(clientMessage);
-									recvMessageQueueMutex.unlock();
-									break;
+								case NIOUDPClientMessage::MESSAGETYPE_CONNECT:
+									{
+										sendMessage(
+											new NIOUDPClientMessage(
+												NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT,
+												clientMessage->getClientId(),
+												clientMessage->getMessageId(),
+												clientMessage->getRetryCount() + 1,
+												nullptr
+											),
+											false
+										);
+										clientId = clientMessage->getClientId();
+										// read client key
+										auto frame = clientMessage->getFrame();
+										clientKey = "";
+										uint8_t clientKeySize;
+										char c;
+										frame->read((char*)&clientKeySize, 1);
+										for (uint8_t i = 0; i < clientKeySize; i++) {
+											frame->read(&c, 1);
+											clientKey+= c;
+										}
+										delete clientMessage;
+										// we are connected
+										connected = true;
+										break;
+									}
+								case NIOUDPClientMessage::MESSAGETYPE_MESSAGE:
+									{
+										//	check if message queue is full
+										recvMessageQueueMutex.lock();
+										if (recvMessageQueue.size() > 20) {
+											recvMessageQueueMutex.unlock();
+											throw NIOClientException("recv message queue overflow");
+										}
+										recvMessageQueue.push(clientMessage);
+										recvMessageQueueMutex.unlock();
+										break;
+									}
 								case NIOUDPClientMessage::MESSAGETYPE_NONE:
-									break;
+									{
+										break;
+									}
 							}
 						} catch (Exception &exception) {
 							if (clientMessage != nullptr) delete clientMessage;

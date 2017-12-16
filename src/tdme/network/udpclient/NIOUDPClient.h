@@ -66,6 +66,17 @@ public:
 	const unsigned int getPort();
 
 	/**
+	 * @return client key
+	 */
+	const string& getClientKey();
+
+	/**
+	 * Set client key
+	 * @param client key
+	 */
+	void setClientKey(const string& clientKey);
+
+	/**
 	 * Run thread program
 	 */
 	virtual void run();
@@ -119,6 +130,7 @@ private:
 	uint32_t port;
 	uint32_t clientId;
 	uint32_t messageCount;
+	string clientKey;
 
 	const static int MESSAGEACK_RESENDTIMES_TRIES = 7;
 	const static uint64_t MESSAGEACK_RESENDTIMES[MESSAGEACK_RESENDTIMES_TRIES];
