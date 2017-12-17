@@ -153,6 +153,11 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 
 void World::update(float deltaTime)
 {
+	if (deltaTime < MathTools::EPSILON) {
+		Console::println("World::update(): deltaTime = 0.0, returning");
+		return;
+	}
+
 	if (constraintsSolver == nullptr) {
 		constraintsSolver = new ConstraintsSolver(&rigidBodies);
 	}

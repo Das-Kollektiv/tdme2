@@ -1,5 +1,6 @@
 #include <tdme/engine/physics/ConstraintsSolver.h>
 
+#include <string>
 #include <vector>
 
 #include <tdme/math/Math.h>
@@ -16,6 +17,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
+using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::ConstraintsSolver;
@@ -52,7 +54,7 @@ ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodies)
 	lowerBounds.setSize(CONSTRAINTS_MAX);
 	upperBounds.setSize(CONSTRAINTS_MAX);
 	d.resize(CONSTRAINTS_MAX);
-	constraintsEntities.resize(BODIES_MAX);
+	constraintsEntities.resize(CONSTRAINTS_MAX);
 	invInertiaMatrices.resize(BODIES_MAX);
 	velocityVectors.resize(BODIES_MAX);
 	constrainedVelocityVectors.resize(BODIES_MAX);
@@ -74,6 +76,9 @@ void ConstraintsSolver::reset()
 
 ConstraintsEntity* ConstraintsSolver::allocateConstraintsEntity()
 {
+	if (constraintsEntityCount >= CONSTRAINTS_MAX) {
+		Console::println("ConstraintsSolver::allocateConstraintsEntity(): Too many constraints. Fixme!");
+	}
 	return &constraintsEntities[constraintsEntityCount++];
 }
 
@@ -451,6 +456,7 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 		if (constrainedBodies.find(body->id) != constrainedBodies.end()) {
 			getConstrainedVelocity(body, newLinearVelocity, newAngularVelocity);
 		}
+
 		force.set(body->force).scale(body->inverseMass * deltaTime);
 		body->worldInverseInertia.multiply(body->torque, torque).scale(deltaTime);
 		newLinearVelocity.add(force);
