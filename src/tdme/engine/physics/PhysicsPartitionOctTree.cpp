@@ -240,7 +240,7 @@ VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(Ri
 	rigidBodyIterator.clear();
 	auto rigidBodyPartitionNodesIt = rigidBodyPartitionNodes.find(rigidBody->getId());
 	if (rigidBodyPartitionNodesIt != rigidBodyPartitionNodes.end()) {
-		for (auto partitionTreeNode: rigidBodyPartitionNodesIt->second) {
+		for (auto& partitionTreeNode: rigidBodyPartitionNodesIt->second) {
 			rigidBodyIterator.addVector(&partitionTreeNode->partitionRidigBodies);
 		}
 	}
