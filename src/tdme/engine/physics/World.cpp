@@ -153,23 +153,17 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 
 void World::update(float deltaTime)
 {
-	if (deltaTime < MathTools::EPSILON) {
-		Console::println("World::update(): deltaTime = 0.0, returning");
-		return;
-	}
+	if (deltaTime < MathTools::EPSILON) return;
 
 	if (constraintsSolver == nullptr) {
-		constraintsSolver = new ConstraintsSolver(&rigidBodies);
+		constraintsSolver = new ConstraintsSolver(&rigidBodiesDynamic);
 	}
 	{
 		Vector3 worldPosForce;
 		Vector3 gravityForce;
-		for (auto i = 0; i < rigidBodies.size(); i++) {
-			auto rigidBody = rigidBodies.at(i);
+		for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
+			auto rigidBody = rigidBodiesDynamic.at(i);
 			if (rigidBody->enabled == false) {
-				continue;
-			}
-			if (rigidBody->isStatic_ == true) {
 				continue;
 			}
 			if (rigidBody->checkVelocityChange() == true) {
@@ -190,12 +184,11 @@ void World::update(float deltaTime)
 		CollisionResponse collision;
 		map<string, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
 		map<string, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
-		for (auto i = 0; i < rigidBodies.size(); i++) {
-			auto rigidBody1 = rigidBodies.at(i);
+		for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
+			auto rigidBody1 = rigidBodiesDynamic.at(i);
 			if (rigidBody1->enabled == false) continue;
-			if (rigidBody1->isStatic_ == true) continue;
 			auto nearObjects = 0;
-			for (auto _i = partition->getObjectsNearTo(rigidBody1->cbv)->iterator(); _i->hasNext(); ) {
+			for (auto _i = partition->getObjectsNearTo(rigidBody1)->iterator(); _i->hasNext(); ) {
 				RigidBody* rigidBody2 = _i->next();
 
 				if (rigidBody2->enabled == false)

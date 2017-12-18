@@ -46,6 +46,13 @@ struct tdme::engine::physics::PhysicsPartition
 	virtual void removeRigidBody(RigidBody* rigidBody) = 0;
 
 	/** 
+	 * Get objects near to rigid body
+	 * @param cbv
+	 * @return objects near to cbv
+	 */
+	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(RigidBody* rigidBody) = 0;
+
+	/**
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv

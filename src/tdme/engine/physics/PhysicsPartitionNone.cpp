@@ -39,6 +39,10 @@ void PhysicsPartitionNone::removeRigidBody(RigidBody* rigidBody)
 	bodies.erase(remove(bodies.begin(), bodies.end(), rigidBody), bodies.end());
 }
 
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(RigidBody* rigidBody) {
+	return &arrayListIteratorMultiple;
+}
+
 VectorIteratorMultiple<RigidBody*>* PhysicsPartitionNone::getObjectsNearTo(BoundingVolume* cbv)
 {
 	return &arrayListIteratorMultiple;

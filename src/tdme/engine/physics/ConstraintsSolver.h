@@ -72,7 +72,7 @@ public: /* protected */
 private:
 	int32_t constraintsEntityCount {  };
 	int32_t constraintsCount {  };
-	vector<RigidBody*>* rigidBodies {  };
+	vector<RigidBody*>* rigidBodiesDynamic {  };
 	map<string, RigidBody*> constrainedBodies {  };
 	ContactCache contactCache {  };
 	vector<array<int32_t, 2>> constraintsBodyIdxMap {  };
@@ -209,6 +209,7 @@ public: /* protected */
 	/**
 	 * Protected constructor
 	 * @param rigid bodies
+	 * @param rigid bodies dynamic
 	 */
-	ConstraintsSolver(vector<RigidBody*>* rigidBodies);
+	ConstraintsSolver(vector<RigidBody*>* rigidBodiesDynamic);
 };

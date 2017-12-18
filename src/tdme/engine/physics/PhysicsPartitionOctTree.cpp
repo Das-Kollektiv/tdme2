@@ -236,6 +236,17 @@ int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartit
 	}
 }
 
+VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(RigidBody* rigidBody) {
+	rigidBodyIterator.clear();
+	auto rigidBodyPartitionNodesIt = rigidBodyPartitionNodes.find(rigidBody->getId());
+	if (rigidBodyPartitionNodesIt != rigidBodyPartitionNodes.end()) {
+		for (auto partitionTreeNode: rigidBodyPartitionNodesIt->second) {
+			rigidBodyIterator.addVector(&partitionTreeNode->partitionRidigBodies);
+		}
+	}
+	return &rigidBodyIterator;
+}
+
 VectorIteratorMultiple<RigidBody*>* PhysicsPartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
 	auto& center = cbv->getCenter();

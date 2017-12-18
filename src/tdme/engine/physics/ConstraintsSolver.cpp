@@ -35,7 +35,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodies)
+ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodiesDynamic)
 {
 	constraintsEntityCount = 0;
 	constraintsBodyIdxMap.resize(CONSTRAINTS_MAX);
@@ -60,7 +60,7 @@ ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodies)
 	constrainedVelocityVectors.resize(BODIES_MAX);
 	forcesVectors.resize(BODIES_MAX);
 	a.resize(BODIES_MAX);
-	this->rigidBodies = rigidBodies;
+	this->rigidBodiesDynamic = rigidBodiesDynamic;
 }
 
 constexpr int32_t ConstraintsSolver::BODIES_MAX;
@@ -374,8 +374,8 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 
 void ConstraintsSolver::checkVelocityConstraint()
 {
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto rigidBodyVelocityChange = rigidBodies->at(i);
+	for (auto i = 0; i < rigidBodiesDynamic->size(); i++) {
+		auto rigidBodyVelocityChange = rigidBodiesDynamic->at(i);
 		if (rigidBodyVelocityChange->enabled == false)
 			continue;
 
@@ -445,8 +445,8 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 	Vector3 newAngularVelocity;
 	Vector3 force;
 	Vector3 torque;
-	for (auto i = 0; i < rigidBodies->size(); i++) {
-		auto body = rigidBodies->at(i);
+	for (auto i = 0; i < rigidBodiesDynamic->size(); i++) {
+		auto body = rigidBodiesDynamic->at(i);
 		if (body->isStatic_ == true || body->isSleeping_ == true || body->enabled == false) {
 			continue;
 		}

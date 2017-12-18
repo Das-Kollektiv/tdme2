@@ -58,6 +58,13 @@ public: /* protected */
 public:
 
 	/** 
+	 * Get objects near to rigid body
+	 * @param cbv
+	 * @return objects near to cbv
+	 */
+	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(RigidBody* rigidBody) override;
+
+	/**
 	 * Get objects near to
 	 * @param cbv
 	 * @return objects near to cbv

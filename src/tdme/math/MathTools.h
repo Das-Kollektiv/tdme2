@@ -15,7 +15,7 @@ class tdme::math::MathTools final
 {
 
 public:
-	static constexpr float EPSILON { 0.0000001 };
+	static constexpr float EPSILON { 0.0000001f };
 	static constexpr float DEG2RAD { 0.017453294f };
 	static constexpr float g { 9.80665f };
 
