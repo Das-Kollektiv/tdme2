@@ -98,7 +98,7 @@ int KernelEventMechanism::doKernelEventMechanism()  throw (NIOKEMException) {
 
 	while (true == true) {
 		//
-		int events = epoll_wait(psd->ep, psd->epEventList, psd->epEventListMax, 100);
+		int events = epoll_wait(psd->ep, psd->epEventList, psd->epEventListMax, 5);
 
 		// check for error
 		if (events == -1) {
