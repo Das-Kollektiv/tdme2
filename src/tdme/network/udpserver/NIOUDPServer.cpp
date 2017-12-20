@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include <sstream>
+#include <string>
 #include <typeinfo>
 #include <exception>
 
@@ -18,8 +19,10 @@
 #include <tdme/utils/RTTI.h>
 #include <tdme/utils/Time.h>
 
-using std::stringstream;
 using std::ios_base;
+using std::string;
+using std::stringstream;
+using std::to_string;
 
 using tdme::network::udpserver::NIOUDPServer;
 using tdme::network::udpserver::NIOUDPServerIOThread;
@@ -34,7 +37,8 @@ using tdme::utils::Time;
 NIOUDPServer::NIOUDPServer(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU) :
 	NIOServer<NIOUDPServerClient, NIOUDPServerGroup>(name, host, port, maxCCU),
 	Thread("nioudpserver"),
-	clientIdMapReadWriteLock("nioudpserver_clientmap"),
+	clientIdMapReadWriteLock("nioudpserver_clientidmap"),
+	clientIpMapReadWriteLock("nioudpserver_clientipmap"),
 	ioThreadCurrent(0),
 	ioThreads(NULL),
 	workerThreadPool(NULL),
@@ -272,7 +276,6 @@ void NIOUDPServer::writeHeader(stringstream* frame, MessageType messageType, con
 }
 
 void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServerException) {
-	ClientIdMap::iterator it;
 	uint32_t clientId = client->clientId;
 
 	// prepare client struct for map
@@ -293,8 +296,8 @@ void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServer
 	}
 
 	// check if client id was mapped already?
-	it = clientIdMap.find(clientId);
-	if (it != clientIdMap.end()) {
+	ClientIdMap::iterator clientIdMapIt = clientIdMap.find(clientId);
+	if (clientIdMapIt != clientIdMap.end()) {
 		// should actually never happen
 		clientIdMapReadWriteLock.unlock();
 
@@ -305,6 +308,27 @@ void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServer
 	// put to map
 	clientIdMap[clientId] = _client;
 
+	// put to client ip set
+	clientIpMapReadWriteLock.writeLock();
+
+	// check if ip exists already?
+	string clientIp = client->getIp() + ":" + to_string(client->getPort());
+	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	if (clientIpMapIt != clientIpMap.end()) {
+		// should actually never happen
+		clientIpMapReadWriteLock.unlock();
+		clientIdMapReadWriteLock.unlock();
+
+		// failure
+		throw NIONetworkServerException("client ip is already registered");
+	}
+
+	// put to map
+	clientIpMap[clientIp] = client;
+
+	///
+	clientIpMapReadWriteLock.unlock();
+
 	// reference counter +1
 	client->acquireReference();
 
@@ -313,15 +337,14 @@ void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServer
 }
 
 void NIOUDPServer::removeClient(NIOUDPServerClient* client) throw (NIONetworkServerException) {
-	ClientIdMap::iterator it;
 	uint32_t clientId = client->clientId;
 
 	//
 	clientIdMapReadWriteLock.writeLock();
 
 	// check if client id was mapped already?
-	it = clientIdMap.find(clientId);
-	if (it == clientIdMap.end()) {
+	ClientIdMap::iterator clientIdMapit = clientIdMap.find(clientId);
+	if (clientIdMapit == clientIdMap.end()) {
 		// should actually never happen
 		clientIdMapReadWriteLock.unlock();
 
@@ -330,7 +353,28 @@ void NIOUDPServer::removeClient(NIOUDPServerClient* client) throw (NIONetworkSer
 	}
 
 	// remove from map
-	clientIdMap.erase(it);
+	clientIdMap.erase(clientIdMapit);
+
+	// remove from client ip set
+	clientIpMapReadWriteLock.writeLock();
+
+	// check if ip exists already?
+	string clientIp = client->getIp() + ":" + to_string(client->getPort());
+	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	if (clientIpMapIt == clientIpMap.end()) {
+		// should actually never happen
+		clientIpMapReadWriteLock.unlock();
+		clientIdMapReadWriteLock.unlock();
+
+		// failure
+		throw NIONetworkServerException("client ip is not registered");
+	}
+
+	// put to map
+	clientIpMap.erase(clientIpMapIt);
+
+	//
+	clientIpMapReadWriteLock.unlock();
 
 	// reference counter -1
 	client->releaseReference();
@@ -370,6 +414,19 @@ NIOUDPServerClient* NIOUDPServer::lookupClient(const uint32_t clientId) throw (N
 	clientIdMapReadWriteLock.unlock();
 
 	//
+	return client;
+}
+
+NIOUDPServerClient* NIOUDPServer::getClientByIp(const string& ip, const unsigned int port) {
+	NIOUDPServerClient* client = NULL;
+	clientIpMapReadWriteLock.readLock();
+	string clientIp = ip + ":" + to_string(port);
+	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	if (clientIpMapIt != clientIpMap.end()) {
+		client = clientIpMapIt->second;
+		client->acquireReference();
+	}
+	clientIpMapReadWriteLock.unlock();
 	return client;
 }
 

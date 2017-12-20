@@ -115,6 +115,7 @@ private:
 		uint64_t time;
 	};
 	typedef std::map<uint32_t, Client> ClientIdMap;
+	typedef std::map<string, NIOUDPServerClient*> ClientIpMap;
 	typedef std::set<NIOUDPServerClient*> ClientSet;
 	static const uint32_t MESSAGE_ID_NONE = 0;
 
@@ -139,6 +140,14 @@ private:
 	 * @return client
 	 */
 	NIOUDPServerClient* lookupClient(const uint32_t clientId) throw (NIONetworkServerException);
+
+	/**
+	 * @brief Returns client by host name and port
+	 * @param ip
+	 * @param port
+	 * @return client
+	 */
+	NIOUDPServerClient* getClientByIp(const string& ip, const unsigned int port);
 
 	/**
 	 * @brief Clean up clients that have been idle for some time or are flagged to be shut down
@@ -173,6 +182,9 @@ private:
 	//
 	ClientIdMap clientIdMap;
 	ReadWriteLock clientIdMapReadWriteLock;
+
+	ClientIpMap clientIpMap;
+	ReadWriteLock clientIpMapReadWriteLock;
 
 	unsigned int ioThreadCurrent;
 	NIOUDPServerIOThread** ioThreads;

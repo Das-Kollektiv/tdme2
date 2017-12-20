@@ -120,58 +120,76 @@ void NIOUDPServerIOThread::run() {
 							// process message depending on messageType
 							switch(messageType) {
 								case(NIOUDPServer::MESSAGETYPE_CONNECT):
-									// create client
-									clientNew = server->accept(
-										server->allocateClientId(),
-										ip,
-										port
-									);
+									{
+										// check if client is connected already
+										client = server->getClientByIp(ip, port);
+										if (client != NULL) {
+											// delete frame
+											delete frame;
+											frame = NULL;
+											client->sendConnected();
+											client->releaseReference();
+											// we are done
+											break;
+										}
 
-									// assign server
-									clientNew->server = server;
+										// create client
+										clientNew = server->accept(
+											server->allocateClientId(),
+											ip,
+											port
+										);
 
-									// add client to server
-									server->addClient(clientNew);
+										// assign server
+										clientNew->server = server;
 
-									// delete frame
-									delete frame;
-									frame = NULL;
+										// add client to server
+										server->addClient(clientNew);
 
-									// switch from client new to client
-									client = clientNew;
-									clientNew = NULL;
+										// delete frame
+										delete frame;
+										frame = NULL;
 
-									// send connected ack
-									client->sendConnected();
+										// switch from client new to client
+										client = clientNew;
+										clientNew = NULL;
 
-									// set/register client in NIOServer
-									if (client->setKey(client->getKey()) == false) {
-										throw NIONetworkServerException("Client key is already in use");
+										// send connected ack
+										client->sendConnected();
+
+										// set/register client in NIOServer
+										if (client->setKey(client->getKey()) == false) {
+											throw NIONetworkServerException("Client key is already in use");
+										}
+
+										// fire on init
+										client->init();
+
+										// we are done
+										break;
 									}
-
-									// fire on init
-									client->init();
-
-									// we are done
-									break;
 								case(NIOUDPServer::MESSAGETYPE_MESSAGE):
-									// look up client
-									client = server->lookupClient(clientId);
-									// check if client ip, port matches datagram ip and prt
-									if (client->ip != ip || client->port != port) {
-										//
-										client->releaseReference();
-										throw NIONetworkServerException("message invalid");
+									{
+										// look up client
+										client = server->lookupClient(clientId);
+										// check if client ip, port matches datagram ip and prt
+										if (client->ip != ip || client->port != port) {
+											//
+											client->releaseReference();
+											throw NIONetworkServerException("message invalid");
+										}
+										// delegate
+										client->onFrameReceived(frame, messageId, retries);
+										break;
 									}
-									// delegate
-									client->onFrameReceived(frame, messageId, retries);
-									break;
 								case(NIOUDPServer::MESSAGETYPE_ACKNOWLEDGEMENT):
-									client = server->lookupClient(clientId);
-									server->processAckReceived(client, messageId);
-									delete frame;
-									frame = NULL;
-									break;
+									{
+										client = server->lookupClient(clientId);
+										server->processAckReceived(client, messageId);
+										delete frame;
+										frame = NULL;
+										break;
+									}
 								default:
 									throw NIONetworkServerException("Invalid message type");
 							}
