@@ -1,5 +1,6 @@
 #include <tdme/os/filesystem/StandardFileSystem.h>
 
+#include <algorithm>
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>

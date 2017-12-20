@@ -7,6 +7,7 @@
 #include <limits>
 #include <string>
 
+using std::isnan;
 using std::numeric_limits;
 using std::string;
 

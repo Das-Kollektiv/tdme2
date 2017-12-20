@@ -30,7 +30,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
-vector<string> TextureLoader::extensions = {{"png"}};
+vector<string> TextureLoader::extensions = {"png"};
 
 const vector<string>& TextureLoader::getTextureExtensions() {
 	return extensions;

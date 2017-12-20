@@ -27,7 +27,7 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-vector<string> ModelReader::extensions = {{"dae", "tm"}};
+vector<string> ModelReader::extensions = {"dae", "tm"};
 
 const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
