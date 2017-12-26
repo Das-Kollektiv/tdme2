@@ -1,5 +1,9 @@
 #include <tdme/engine/Engine.h>
 
+#if defined(__linux__)
+        #include <GL/glew.h>
+#endif
+
 #include <string>
 
 #include <tdme/utils/ByteBuffer.h>
@@ -370,10 +374,15 @@ void Engine::initialize(bool debug)
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
-	// GL2
+	// GL2 or GL3
 	{
-		renderer = new EngineGL2Renderer(this);
-		Console::println(string("TDME::Using GL2"));
+		if (glewIsSupported("GL_VERSION_3_2") == true) {
+			Console::println(string("TDME::Using GL3"));
+			renderer = new EngineGL3Renderer(this);
+		} else {
+			Console::println(string("TDME::Using GL2"));
+			renderer = new EngineGL2Renderer(this);
+		}
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;

@@ -30,8 +30,10 @@ else ifeq ($(OS), Linux)
 		# Linux, any other
 		SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGL -lglut -lopenal -pthread
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 else
 	# Windows via MINGW
