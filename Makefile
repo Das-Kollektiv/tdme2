@@ -39,7 +39,9 @@ else
 	# Windows via MINGW
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
