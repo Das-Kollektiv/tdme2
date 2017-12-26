@@ -2,11 +2,7 @@
 
 #if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif defined(__linux__)
-        #define GL_GLEXT_PROTOTYPES
-        #include <GL/gl.h>
-        #include <GL/glext.h>
-#elif defined(_WIN32)
+#elif defined(_WIN32) or defined(__linux__)
 	#include <GL/glew.h>
 #endif
 
