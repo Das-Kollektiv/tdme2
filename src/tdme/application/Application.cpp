@@ -68,7 +68,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInit(&argc, argv);
 #if defined(__APPLE__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
+#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	if (glewIsSupported("GL_VERSION_3_2") == true) {
 		glutInitContextVersion(3,2);
@@ -79,10 +79,6 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 #elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitContextVersion(2,0);
-#elif defined(_WIN32)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion(3,2);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
 #endif
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);

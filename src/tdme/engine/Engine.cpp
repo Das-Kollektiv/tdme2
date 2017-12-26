@@ -1,6 +1,6 @@
 #include <tdme/engine/Engine.h>
 
-#if defined(__linux__)
+#if defined(__linux__) or defined(_WIN32)
         #include <GL/glew.h>
 #endif
 
@@ -363,8 +363,8 @@ void Engine::initialize(bool debug)
 	if (initialized == true)
 		return;
 
-	// GL3
-	#if defined(__APPLE__) or defined(_WIN32)
+	// MacOSX, currently GL3 only
+	#if defined(__APPLE__)
 	{
 		renderer = new EngineGL3Renderer(this);
 		Console::println(string("TDME::Using GL3"));
@@ -373,8 +373,8 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	#elif defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)
-	// GL2 or GL3
+	// Linux/Win32, GL2 or GL3 via GLEW
+	#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	{
 		if (glewIsSupported("GL_VERSION_3_2") == true) {
 			Console::println(string("TDME::Using GL3"));
@@ -388,8 +388,8 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
+	// GLES2 on Linux
 	#elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
-	// GLES2
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(string("TDME::Using GLES2"));
