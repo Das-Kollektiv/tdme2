@@ -55,7 +55,7 @@ public:
 	GLRenderer_Material material;
 	array<GLRenderer_Light, 8> lights;
 
-public: /* protected */
+protected:
 	int32_t viewPortX {  };
 	int32_t viewPortY {  };
 	int32_t viewPortWidth {  };
@@ -69,8 +69,6 @@ public: /* protected */
 public:
 	bool renderingTexturingClientState {  };
 	float pointSize {  };
-
-public:
 
 	/** 
 	 * Initialize renderer
