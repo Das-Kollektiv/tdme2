@@ -150,7 +150,7 @@ TDME2
             - FBXSDK
         - targeted platforms and its current state
             - Windows/MINGW(port completed)
-            - Linux(port is WIP)
+            - Linux(port completed)
             - Mac Os X(port completed)
             - Android(port pending)
             - iOS(port pending)
