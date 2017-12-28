@@ -11,6 +11,8 @@
  */
 class tdme::engine::Timing final
 {
+	friend class Engine;
+
 public:
 	static constexpr int64_t UNDEFINED { -1LL };
 
@@ -21,12 +23,15 @@ private:
 	int64_t currentFrameAtTime {  };
 	float currentFPS {  };
 
-public: /* protected */
-
 	/** 
 	 * Updates timing
 	 */
 	void updateTiming();
+
+	/**
+	 * Public constructor
+	 */
+	Timing();
 
 public:
 
@@ -65,10 +70,4 @@ public:
 	 * @return average fps
 	 */
 	float getAverageFPS();
-
-public: /* protected */
-	/**
-	 * Public constructor
-	 */
-	Timing();
 };
