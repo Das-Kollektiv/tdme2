@@ -29,28 +29,26 @@ using tdme::math::Vector4;
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 {
+	friend class ShadowMap;
+
 private:
 	enum ShadowMapping_RunState {NONE, PRE, RENDER};
 
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 
-public: /* protected */
 	GLRenderer* renderer {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 	float lightEyeDistanceScale {  };
 
-private:
 	Matrix4x4 shadowTransformationsMatrix {  };
 	Matrix4x4 depthBiasMVPMatrix {  };
 	Matrix4x4 mvMatrix {  };
 	Matrix4x4 mvpMatrix {  };
 	Matrix4x4 normalMatrix {  };
 
-public: /* package */
 	Engine* engine {  };
 
-private:
 	vector<ShadowMap*> shadowMaps {  };
 	int32_t width {  };
 	int32_t height {  };
@@ -64,7 +62,6 @@ public:
 	 * @param height
 	 */
 	static void setShadowMapSize(int32_t width, int32_t height);
-public:
 
 	/** 
 	 * @return engine

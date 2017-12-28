@@ -27,29 +27,17 @@ using tdme::math::Vector3;
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMap final
 {
-public: /* protected */
-	static constexpr int32_t TEXTUREUNIT { 4 };
+	friend class ShadowMapping;
 
 private:
+	static constexpr int32_t TEXTUREUNIT { 4 };
+
 	vector<Object3D*> visibleObjects {  };
 	ShadowMapping* shadowMapping {  };
 	Camera* lightCamera {  };
 	FrameBuffer* frameBuffer {  };
 	Matrix4x4 biasMatrix {  };
 	Matrix4x4 depthBiasMVPMatrix {  };
-public:
-
-	/** 
-	 * @return width
-	 */
-	int32_t getWidth();
-
-	/** 
-	 * @return height
-	 */
-	int32_t getHeight();
-
-public: /* protected */
 
 	/** 
 	 * Init frame buffer
@@ -101,6 +89,17 @@ public: /* protected */
 	void updateDepthBiasMVPMatrix();
 
 public:
+
+	/**
+	 * @return width
+	 */
+	int32_t getWidth();
+
+	/**
+	 * @return height
+	 */
+	int32_t getHeight();
+
 	/** 
 	 * Public constructor
 	 * @param shadow mapping
