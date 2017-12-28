@@ -104,7 +104,7 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	model->getImportTransformationsMatrix().set(importTransformationsMatrixArray);
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(&is);
+		auto material = readMaterial(pathName, &is);
 		(*model->getMaterials())[material->getId()] = material;
 	}
 	readSubGroups(&is, model, nullptr, model->getSubGroups());
@@ -115,7 +115,21 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	return model;
 }
 
-Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOException)
+const string TMReader::getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName) {
+	if (FileSystem::getInstance()->fileExists(texturePathName + "/" + textureFileName) == true) {
+		return texturePathName;
+	} else
+	if (FileSystem::getInstance()->fileExists(modelPathName + "/" + textureFileName) == true) {
+		return modelPathName;
+	} else
+	if (FileSystem::getInstance()->fileExists(FileSystem::getInstance()->getPathName(modelPathName) + "/" + textureFileName) == true) {
+		return FileSystem::getInstance()->getPathName(modelPathName);
+	} else {
+		return texturePathName;
+	}
+}
+
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is) throw (ModelFileIOException)
 {
 	auto id = is->readString();
 	auto m = new Material(id);
@@ -134,22 +148,36 @@ Material* TMReader::readMaterial(TMReaderInputStream* is) throw (ModelFileIOExce
 	auto diffuseTransparencyTexturePathName = is->readString();
 	auto diffuseTransparencyTextureFileName = is->readString();
 	if (diffuseTextureFileName.size() != 0) {
-		m->setDiffuseTexture(diffuseTexturePathName, diffuseTextureFileName, diffuseTransparencyTexturePathName, diffuseTransparencyTextureFileName);
+		m->setDiffuseTexture(
+			getTexturePath(pathName, diffuseTexturePathName, diffuseTextureFileName),
+			diffuseTextureFileName,
+			getTexturePath(pathName, diffuseTransparencyTexturePathName, diffuseTransparencyTextureFileName),
+			diffuseTransparencyTextureFileName
+		);
 	}
 	auto specularTexturePathName = is->readString();
 	auto specularTextureFileName = is->readString();
 	if (specularTextureFileName.size() != 0) {
-		m->setSpecularTexture(specularTexturePathName, specularTextureFileName);
+		m->setSpecularTexture(
+			getTexturePath(pathName, specularTexturePathName, specularTextureFileName),
+			specularTextureFileName
+		);
 	}
 	auto normalTexturePathName = is->readString();
 	auto normalTextureFileName = is->readString();
 	if (normalTextureFileName.size() != 0) {
-		m->setNormalTexture(normalTexturePathName, normalTextureFileName);
+		m->setNormalTexture(
+			getTexturePath(pathName, normalTexturePathName, normalTextureFileName),
+			normalTextureFileName
+		);
 	}
 	auto displacementTexturePathName = is->readString();
 	auto displacementTextureFileName = is->readString();
 	if (displacementTextureFileName.size() != 0) {
-		m->setDisplacementTexture(displacementTexturePathName, displacementTextureFileName);
+		m->setDisplacementTexture(
+			getTexturePath(pathName, displacementTexturePathName, displacementTextureFileName),
+			displacementTextureFileName
+		);
 	}
 	m->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	return m;

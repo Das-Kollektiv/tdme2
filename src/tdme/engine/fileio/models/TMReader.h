@@ -225,15 +225,22 @@ public:
 	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
 
 private:
+	/**
+	 * Get texture path
+	 * @param model path name
+	 * @param texture path name
+	 * @param texture file name
+	 */
+	static const string getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName);
 
 	/** 
 	 * Read material
+	 * @param path name
 	 * @param input stream
-	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return material
 	 */
-	static Material* readMaterial(TMReaderInputStream* is) throw (ModelFileIOException);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is) throw (ModelFileIOException);
 
 	/**
 	 * Read animation setup
