@@ -29,7 +29,15 @@ using tdme::math::Vector3;
 
 class tdme::engine::subsystems::object::Object3DGroupMesh final
 {
-public: /* protected */
+	friend class ModelUtilitiesInternal;
+	friend class Object3DBase;
+	friend class Object3DBase_TransformedFacesIterator;
+	friend class Object3DGroup;
+	friend class Object3DGroupVBORenderer;
+	friend class Object3DVBORenderer;
+	friend class TransparentRenderFacesPool;
+
+private:
 	Group* group {  };
 	int32_t faceCount {  };
 	vector<int16_t> indices {  };
@@ -44,24 +52,19 @@ public: /* protected */
 	vector<Vector3> transformedBitangents;
 	Engine::AnimationProcessingTarget animationProcessingTarget {  };
 
-private:
 	int32_t cSkinningMaxVertexWeights {  };
 	vector<vector<float>> cSkinningJointWeight {  };
 
-public: /* protected */
 	Matrix4x4* cGroupTransformationsMatrix {  };
 
-private:
 	vector<vector<Matrix4x4*>> cSkinningJointTransformationsMatrices {  };
 
-public: /* protected */
 	bool skinning {  };
 	int32_t skinningJoints {  };
 
-private:
 	bool recreatedBuffers {  };
 
-public: /* protected */
+private:
 
 	/** 
 	 * Creates a object3d group mesh from group

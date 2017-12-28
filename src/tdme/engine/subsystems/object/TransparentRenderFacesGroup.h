@@ -37,6 +37,9 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::object::TransparentRenderFacesGroup final
 {
+	friend class Object3DVBORenderer;
+	friend class Object3DVBORenderer_TransparentRenderFacesGroupPool;
+
 private:
 	Object3DVBORenderer* object3DVBORenderer {  };
 	vector<BatchVBORendererTriangles*> batchVBORenderers {  };
@@ -44,15 +47,11 @@ private:
 	Object3DGroup* object3DGroup {  };
 	int32_t facesEntityIdx {  };
 
-public: /* protected */
 	Color4 effectColorAdd {  };
 	Color4 effectColorMul {  };
 
-private:
 	Material* material {  };
 	bool textureCoordinates {  };
-
-public: /* protected */
 
 	/** 
 	 * Set transparent render faces group
@@ -115,9 +114,9 @@ public: /* protected */
 	 */
 	void render(GLRenderer* renderer);
 
-public: /* protected */
 	/**
 	 * Public constructor
 	 */
 	TransparentRenderFacesGroup();
+
 };

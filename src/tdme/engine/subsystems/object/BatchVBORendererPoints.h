@@ -22,6 +22,8 @@ using tdme::engine::subsystems::renderer::GLRenderer;
  */
 class tdme::engine::subsystems::object::BatchVBORendererPoints final
 {
+	friend class Object3DVBORenderer;
+
 private:
 	static constexpr int32_t VERTEX_COUNT { 32768 };
 	GLRenderer* renderer {  };
@@ -32,6 +34,32 @@ private:
 	FloatBuffer fbVertices {  };
 	ByteBuffer* fbColorsByteBuffer;
 	FloatBuffer fbColors {  };
+
+	/**
+	 * Render
+	 */
+	void render();
+
+	/**
+	 * Clears this batch vbo renderer
+	 */
+	void clear();
+
+	/**
+	 * Adds a transparent render point to this transparent render points
+	 * @param transparent render point
+	 */
+	void addPoint(TransparentRenderPoint* point);
+
+	/**
+	 * Public constructor
+	 */
+	BatchVBORendererPoints(GLRenderer* renderer, int32_t id);
+
+	/**
+	 * Destructor
+	 */
+	~BatchVBORendererPoints();
 
 public:
 
@@ -55,40 +83,8 @@ public:
 	 */
 	void initialize();
 
-public: /* protected */
-
-	/** 
-	 * Render 
-	 */
-	void render();
-
-public:
-
 	/** 
 	 * Dispose
 	 */
 	void dispose();
-
-public: /* protected */
-
-	/** 
-	 * Clears this batch vbo renderer
-	 */
-	void clear();
-
-	/** 
-	 * Adds a transparent render point to this transparent render points
-	 * @param transparent render point
-	 */
-	void addPoint(TransparentRenderPoint* point);
-
-	/**
-	 * Public constructor
-	 */
-	BatchVBORendererPoints(GLRenderer* renderer, int32_t id);
-
-	/**
-	 * Destructor
-	 */
-	~BatchVBORendererPoints();
 };

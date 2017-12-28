@@ -42,12 +42,12 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::object::TransparentRenderFacesPool final
 {
+	friend class Object3DVBORenderer;
+
 private:
 	static constexpr int32_t FACES_MAX { 16384 };
 	vector<TransparentRenderFace*> transparentRenderFaces {  };
 	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool {  };
-
-public: /* protected */
 
 	/** 
 	 * Creates an array of transparent render faces from
@@ -88,15 +88,6 @@ public: /* protected */
 		}
 	}
 
-public:
-
-	/** 
-	 * @return allocated faces
-	 */
-	int32_t size();
-
-public: /* protected */
-
 	/** 
 	 * Reset
 	 */
@@ -111,4 +102,11 @@ public: /* protected */
 	 * Public constructor
 	 */
 	TransparentRenderFacesPool();
+
+public:
+
+	/**
+	 * @return allocated faces
+	 */
+	int32_t size();
 };

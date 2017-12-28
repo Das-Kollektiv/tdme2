@@ -33,12 +33,21 @@ using tdme::engine::subsystems::object::Object3DGroup;
  */
 class tdme::engine::subsystems::object::Object3DGroup final
 {
+	friend class ModelUtilitiesInternal;
+	friend class Object3DBase;
+	friend class Object3DBase_TransformedFacesIterator;
+	friend class Object3DGroupVBORenderer;
+	friend class Object3DInternal;
+	friend class Object3DVBORenderer;
+	friend class TransparentRenderFacesPool;
+	friend class TransparentRenderFacesGroup;
+
 private:
 	static int64_t counter;
 
-public: /* protected */
 	static constexpr int32_t GLTEXTUREID_NONE { -1 };
 	static constexpr int32_t GLTEXTUREID_NOTUSED { 0 };
+
 	string id {  };
 	Object3DBase* object {  };
 	Group* group {  };
@@ -62,21 +71,6 @@ public: /* protected */
 	 */
 	static void createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
-private:
-
-	/** 
-	 * Creates a object 3d groups recursively for given group and it sub groups
-	 * @param object 3D base
-	 * @param groups
-	 * @param animated
-	 * @param use mesh manager
-	 * @param animation processing target
-	 * @param object 3D groups
-	 */
-	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
-
-public: /* protected */
-
 	/** 
 	 * Applies transformations to meshes for given object 3d groups
 	 * @param group render data list
@@ -90,6 +84,17 @@ public: /* protected */
 	 * @param faces entity idx
 	 */
 	static void setupTextures(GLRenderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
+
+	/**
+	 * Creates a object 3d groups recursively for given group and it sub groups
+	 * @param object 3D base
+	 * @param groups
+	 * @param animated
+	 * @param use mesh manager
+	 * @param animation processing target
+	 * @param object 3D groups
+	 */
+	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 	/** 
 	 * Dispose

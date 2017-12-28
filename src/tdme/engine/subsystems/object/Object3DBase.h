@@ -38,8 +38,37 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::object::Object3DBase
 	: public Transformations
 {
+	friend class Object3DGroup;
+	friend class Object3DBase_TransformedFacesIterator;
+	friend class ModelUtilitiesInternal;
 
-public: /* protected */
+private:
+	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
+
+	/**
+	 * Determine skinned group count
+	 * @param groups
+	 * @param current count
+	 */
+	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
+
+	/**
+	 * Determine skinned group count
+	 * @param groups
+	 * @param current count
+	 */
+	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count);
+
+	/**
+	 * Determine skinned groups
+	 * @param groups
+	 * @param skinning groups
+	 * @param idx
+	 */
+	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
+
+
+protected:
 	Model* model {  };
 	map<string, Matrix4x4*> transformationsMatrices {  };
 	bool hasSkinning {  };
@@ -53,8 +82,41 @@ public: /* protected */
 	bool usesMeshManager {  };
 	Engine::AnimationProcessingTarget animationProcessingTarget {  };
 
-private:
-	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
+	/**
+	 * Creates all groups transformation matrices
+	 * @param matrices
+	 * @param groups
+	 */
+	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups);
+
+	/**
+	 * Calculates all groups transformation matrices
+	 * @param groups
+	 * @param parent transformations matrix
+	 * @param animation state
+	 * @param depth
+	 */
+	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
+
+	/**
+	 * Get skinning groups matrices
+	 * @param group
+	 * @return matrices
+	 */
+	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
+
+	/**
+	 * Public constructor
+	 * @param model
+	 * @param use mesh manager
+	 * @param animation processing target
+	 */
+	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Object3DBase();
 
 public:
 
@@ -123,26 +185,6 @@ public:
 	 */
 	virtual Matrix4x4* getTransformationsMatrix(const string& id);
 
-public: /* protected */
-
-	/** 
-	 * Creates all groups transformation matrices
-	 * @param matrices
-	 * @param groups
-	 */
-	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups);
-
-	/** 
-	 * Calculates all groups transformation matrices
-	 * @param groups
-	 * @param parent transformations matrix
-	 * @param animation state
-	 * @param depth
-	 */
-	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
-
-public:
-
 	/** 
 	 * Pre render step, computes transformations
 	 */
@@ -169,41 +211,6 @@ public:
 	 */
 	virtual Object3DGroupMesh* getMesh(const string& groupId);
 
-private:
-
-	/** 
-	 * Determine skinned group count
-	 * @param groups
-	 * @param current count
-	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
-
-	/** 
-	 * Determine skinned group count
-	 * @param groups
-	 * @param current count
-	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count);
-
-	/** 
-	 * Determine skinned groups
-	 * @param groups
-	 * @param skinning groups
-	 * @param idx
-	 */
-	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
-
-public: /* protected */
-
-	/** 
-	 * Get skinning groups matrices
-	 * @param group
-	 * @return matrices
-	 */
-	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
-
-public:
-
 	/** 
 	 * Initiates this object3d 
 	 */
@@ -214,25 +221,6 @@ public:
 	 */
 	virtual void dispose();
 
-	// Generated
-
-public: /* protected */
-	/**
-	 * Public constructor
-	 * @param model
-	 * @param use mesh manager
-	 * @param animation processing target
-	 */
-	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Object3DBase();
-
-public:
+	// overriden methods
 	virtual Matrix4x4& getTransformationsMatrix();
-
-private:
-	friend class Object3DBase_TransformedFacesIterator;
 };

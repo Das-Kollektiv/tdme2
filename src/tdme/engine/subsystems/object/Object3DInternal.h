@@ -27,7 +27,9 @@ using tdme::engine::primitives::BoundingBox;
 class tdme::engine::subsystems::object::Object3DInternal
 	: public Object3DBase
 {
-public: /* protected */
+	friend class Object3DVBORenderer;
+
+protected:
 	string id {  };
 	bool enabled {  };
 	bool pickable {  };
@@ -36,8 +38,16 @@ public: /* protected */
 	Color4 effectColorAdd {  };
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
-public:
 
+	/**
+	 * Bind a texture to a group and faces entity
+	 * @param group id
+	 * @param faces entity id or null if texture should be bound to all faces entities
+	 * @param texture id
+	 */
+	void setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId);
+
+public:
 	/** 
 	 * @return object id
 	 */
@@ -140,18 +150,6 @@ public:
 	 * @param faces entity id
 	 */
 	virtual void unbindDiffuseTexture(const string& groupId, const string& facesEntityId);
-
-private:
-
-	/** 
-	 * Bind a texture to a group and faces entity
-	 * @param group id
-	 * @param faces entity id or null if texture should be bound to all faces entities
-	 * @param texture id
-	 */
-	void setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId);
-
-public:
 
 	/** 
 	 * Initiates this object3d 

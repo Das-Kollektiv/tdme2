@@ -29,6 +29,8 @@ using tdme::math::Vector3;
  */
 class tdme::engine::subsystems::object::BatchVBORendererTriangles final
 {
+	friend class TransparentRenderFacesGroup;
+
 private:
 	static constexpr int32_t VERTEX_COUNT { 1024 * 3 };
 	GLRenderer* renderer {  };
@@ -43,6 +45,38 @@ private:
 	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
 	FloatBuffer fbTextureCoordinates {  };
 	static array<float, 2> TEXTURECOORDINATE_NONE;
+
+	/**
+	 * Clears this batch vbo renderer
+	 */
+	void clear();
+
+	/**
+	 * Render
+	 */
+	void render();
+
+	/**
+	 * Adds a vertex to this transparent render faces group
+	 * @param vertex
+	 * @param normal
+	 * @param texture coordinate
+	 * @return success
+	 */
+	inline bool addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+		if (vertices == VERTEX_COUNT)
+			return false;
+
+		fbVertices.put(vertex.getArray());
+		fbNormals.put(normal.getArray());
+		if (textureCoordinate != nullptr) {
+			fbTextureCoordinates.put(textureCoordinate->getArray());
+		} else {
+			fbTextureCoordinates.put(&TEXTURECOORDINATE_NONE);
+		}
+		vertices++;
+		return true;
+	}
 
 public:
 
@@ -66,48 +100,10 @@ public:
 	 */
 	void initialize();
 
-public: /* protected */
-	/**
-	 * Clears this batch vbo renderer
-	 */
-	void clear();
-
-	/** 
-	 * Render 
-	 */
-	void render();
-
-public:
-
 	/** 
 	 * Dispose
 	 */
 	void dispose();
-
-public: /* protected */
-	/** 
-	 * Adds a vertex to this transparent render faces group
-	 * @param vertex
-	 * @param normal
-	 * @param texture coordinate
-	 * @return success
-	 */
-	inline bool addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
-		if (vertices == VERTEX_COUNT)
-			return false;
-
-		fbVertices.put(vertex.getArray());
-		fbNormals.put(normal.getArray());
-		if (textureCoordinate != nullptr) {
-			fbTextureCoordinates.put(textureCoordinate->getArray());
-		} else {
-			fbTextureCoordinates.put(&TEXTURECOORDINATE_NONE);
-		}
-		vertices++;
-		return true;
-	}
-
-public:
 	/**
 	 * Public constructor
 	 * @param renderer

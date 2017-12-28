@@ -38,14 +38,15 @@ using tdme::utils::Pool;
  * @version $Id$
  */
 class tdme::engine::subsystems::object::Object3DVBORenderer final {
+	friend class Object3DGroupVBORenderer;
+	friend class TransparentRenderFacesGroup;
+
 private:
 	static constexpr int32_t BATCHVBORENDERER_MAX { 256 };
 
-public: /* protected */
 	Engine* engine {  };
 	GLRenderer* renderer {  };
 
-private:
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
@@ -55,48 +56,6 @@ private:
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
-public:
-	static constexpr int32_t RENDERTYPE_NORMALS { 1 };
-	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS { 2 };
-	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY { 4 };
-	static constexpr int32_t RENDERTYPE_EFFECTCOLORS { 8 };
-	static constexpr int32_t RENDERTYPE_MATERIALS { 16 };
-	static constexpr int32_t RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY { 32 };
-	static constexpr int32_t RENDERTYPE_TEXTURES { 64 };
-	static constexpr int32_t RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY { 128 };
-	static constexpr int32_t RENDERTYPE_LIGHTS { 256 };
-	static constexpr int32_t RENDERTYPE_SHADOWMAPPING { 512 };
-	static constexpr int32_t RENDERTYPE_ALL { 1023 };
-
-	/** 
-	 * Init
-	 */
-	void initialize();
-
-	/** 
-	 * Dispose
-	 */
-	void dispose();
-
-	/** 
-	 * @return batch vbo renderer for triangles
-	 */
-	BatchVBORendererTriangles* acquireTrianglesBatchVBORenderer();
-
-	/** 
-	 * Resets the object 3d vbo renderer
-	 */
-	void reset();
-
-	/** 
-	 * Renders all given objects
-	 * @param objects
-	 * @param render transparent faces
-	 * @param render types
-	 */
-	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
-
-public: /* protected */
 
 	/** 
 	 * Renders transparent faces
@@ -142,8 +101,6 @@ public: /* protected */
 	 */
 	void clearMaterial();
 
-private:
-
 	/** 
 	 * Creates a particle system entity key
 	 * @param effect color add
@@ -154,6 +111,45 @@ private:
 	static const string createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort);
 
 public:
+	static constexpr int32_t RENDERTYPE_NORMALS { 1 };
+	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS { 2 };
+	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY { 4 };
+	static constexpr int32_t RENDERTYPE_EFFECTCOLORS { 8 };
+	static constexpr int32_t RENDERTYPE_MATERIALS { 16 };
+	static constexpr int32_t RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY { 32 };
+	static constexpr int32_t RENDERTYPE_TEXTURES { 64 };
+	static constexpr int32_t RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY { 128 };
+	static constexpr int32_t RENDERTYPE_LIGHTS { 256 };
+	static constexpr int32_t RENDERTYPE_SHADOWMAPPING { 512 };
+	static constexpr int32_t RENDERTYPE_ALL { 1023 };
+
+	/**
+	 * Init
+	 */
+	void initialize();
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
+
+	/**
+	 * @return batch vbo renderer for triangles
+	 */
+	BatchVBORendererTriangles* acquireTrianglesBatchVBORenderer();
+
+	/**
+	 * Resets the object 3d vbo renderer
+	 */
+	void reset();
+
+	/**
+	 * Renders all given objects
+	 * @param objects
+	 * @param render transparent faces
+	 * @param render types
+	 */
+	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/** 
 	 * Render batch VBO renderer points entities

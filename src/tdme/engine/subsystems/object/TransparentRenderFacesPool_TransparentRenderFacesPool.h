@@ -11,7 +11,7 @@ using tdme::engine::subsystems::object::TransparentRenderFacesPool;
 class tdme::engine::subsystems::object::TransparentRenderFacesPool_TransparentRenderFacesPool
 	: public Pool<TransparentRenderFace*>
 {
-public: /* protected */
+protected:
 	inline TransparentRenderFace* instantiate() override {
 		return new TransparentRenderFace();
 	}

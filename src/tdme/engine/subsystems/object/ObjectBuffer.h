@@ -14,10 +14,10 @@ using tdme::utils::ByteBuffer;
  */
 class tdme::engine::subsystems::object::ObjectBuffer
 {
+	friend class Object3DGroupMesh;
+
 private:
 	static ByteBuffer* byteBuffer;
-
-public: /* protected */
 
 	/** 
 	 * Get byte buffer
