@@ -28,6 +28,7 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::model::Model final
 {
+	friend class Group;
 
 public:
 	static string ANIMATIONSETUP_DEFAULT;
@@ -52,6 +53,23 @@ private:
 	 * @param sub groups
 	 */
 	void deleteSubGroups(map<string, Group*>* subGroups);
+
+	/**
+	 * Set up if model has skinning
+	 * @param has skinning
+	 */
+	void setHasSkinning(bool hasSkinning);
+
+	/**
+	 * Computes a transformations matrix at a given frame for a given group id recursivly
+	 * @param groups
+	 * @param parent transformations matrix
+	 * @param frame
+	 * @param group id
+	 * @return group transformations matrix or null
+	 */
+	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
+
 public:
 
 	/** 
@@ -111,16 +129,6 @@ public:
 	 */
 	bool hasSkinning();
 
-public: /* protected */
-
-	/** 
-	 * Set up if model has skinning
-	 * @param has skinning
-	 */
-	void setHasSkinning(bool hasSkinning);
-
-public:
-
 	/** 
 	 * @return frames per seconds
 	 */
@@ -177,18 +185,6 @@ public:
 	 * @return bounding box
 	 */
 	BoundingBox* getBoundingBox();
-
-public: /* protected */
-
-	/** 
-	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param groups
-	 * @param parent transformations matrix
-	 * @param frame
-	 * @param group id
-	 * @return group transformations matrix or null
-	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 	/**
 	 * Public constructor

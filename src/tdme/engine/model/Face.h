@@ -16,6 +16,8 @@ using tdme::engine::model::Group;
  */
 class tdme::engine::model::Face final
 {
+	friend class ModelHelper;
+
 private:
 	Group* group {  };
 	array<int32_t, 3> vertexIndices {  };
@@ -23,8 +25,16 @@ private:
 	array<int32_t, 3> textureCoordinateIndices {  };
 	array<int32_t, 3> tangentIndices {  };
 	array<int32_t, 3> bitangentIndices {  };
-public:
 
+	/**
+	 * Prepared this face for indexed rendering
+	 * @param index 0
+	 * @param index 1
+	 * @param index 2
+	 */
+	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
+
+public:
 	/**
 	 * Init
 	 */
@@ -83,18 +93,6 @@ public:
 	 * @return bi tangent indices
 	 */
 	array<int32_t, 3>* getBitangentIndices();
-
-public: /* protected */
-
-	/** 
-	 * Prepared this face for indexed rendering
-	 * @param index 0
-	 * @param index 1
-	 * @param index 2
-	 */
-	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
-
-public:
 
 	/**
 	 * Public constructor

@@ -14,8 +14,7 @@ using std::array;
  */
 class tdme::engine::model::Color4Base
 {
-
-public: /* protected */
+protected:
 	array<float, 4> data {  };
 
 public:
