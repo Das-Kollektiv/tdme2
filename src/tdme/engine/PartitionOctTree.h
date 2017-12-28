@@ -42,6 +42,9 @@ class tdme::engine::PartitionOctTree final
 	friend class PartitionOctTree_PartitionTreeNode;
 
 private:
+	static constexpr float PARTITION_SIZE_MIN { 16.0f };
+	static constexpr float PARTITION_SIZE_MAX { 64.0f };
+
 	VectorIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox boundingBox {  };
 	Vector3 halfExtension {  };
@@ -52,14 +55,10 @@ private:
 	vector<Entity*> visibleEntities {  };
 	PartitionOctTree_PartitionTreeNode treeRoot {  };
 
-public:
-	static constexpr float PARTITION_SIZE_MIN { 16.0f };
-	static constexpr float PARTITION_SIZE_MAX { 64.0f };
-
-public: /* protected */
 	void reset() override;
-
-public:
+	void addEntity(Entity* entity) override;
+	void updateEntity(Entity* entity) override;
+	void removeEntity(Entity* entity) override;
 
 	/** 
 	 * Creates a partition
@@ -70,13 +69,6 @@ public:
 	 * @param partition size
 	 */
 	void createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
-
-public: /* protected */
-	void addEntity(Entity* entity) override;
-	void updateEntity(Entity* entity) override;
-	void removeEntity(Entity* entity) override;
-
-private:
 
 	/** 
 	 * Is partition empty
@@ -100,11 +92,6 @@ private:
 	 */
 	int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities);
 
-public:
-	vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
-
-private:
-
 	/** 
 	 * Do partition tree lookup
 	 * @param node
@@ -127,6 +114,7 @@ private:
 	int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<Entity*>& entityIterator);
 
 public:
+	vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
 	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
 	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
 

@@ -32,7 +32,7 @@ private:
 	vector<Entity*> entities;
 	VectorIteratorMultiple<Entity*> arrayListIteratorMultiple;
 
-public: /* protected */
+private:
 	void reset() override;
 	void addEntity(Entity* entity) override;
 	void updateEntity(Entity* entity) override;
