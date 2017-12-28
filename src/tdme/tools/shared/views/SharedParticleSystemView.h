@@ -32,7 +32,7 @@ class tdme::tools::shared::views::SharedParticleSystemView
 	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-public: /* protected */
+protected:
 	Engine* engine {  };
 
 private:
@@ -46,7 +46,38 @@ private:
 	string particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
+
+	/**
+	 * Store settings
+	 */
+	void storeSettings();
+
+	/**
+	 * Load a particle system
+	 */
+	void loadParticleSystem();
+
+	/**
+	 * Load particle system
+	 * @param name
+	 * @param description
+	 * @param path name
+	 * @param file name
+	 * @return level editor entity
+	 * @throws Exception
+	 */
+	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
+
 public:
+
+	/**
+	 * Request init particle system
+	 */
+	virtual void initParticleSystemRequest();
 
 	/** 
 	 * @return pop up views
@@ -67,15 +98,6 @@ public:
 	 * Init particle system
 	 */
 	virtual void initParticleSystem();
-
-public: /* protected */
-
-	/** 
-	 * Request init particle system
-	 */
-	virtual void initParticleSystemRequest();
-
-public:
 
 	/** 
 	 * @return current particle system file name
@@ -114,25 +136,8 @@ public:
 	 */
 	virtual void onInitAdditionalScreens();
 
-private:
-
-	/** 
-	 * Load settings
-	 */
-	void loadSettings();
-
-public:
 	void initialize() override;
 	void activate() override;
-
-private:
-
-	/** 
-	 * Store settings
-	 */
-	void storeSettings();
-
-public:
 	void dispose() override;
 	void deactivate() override;
 
@@ -142,28 +147,6 @@ public:
 	 * @oaram entity
 	 */
 	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
-
-private:
-
-	/** 
-	 * Load a particle system
-	 */
-	void loadParticleSystem();
-
-public: /* protected */
-
-	/** 
-	 * Load particle system
-	 * @param name
-	 * @param description
-	 * @param path name
-	 * @param file name
-	 * @return level editor entity
-	 * @throws Exception
-	 */
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
-
-public:
 
 	/** 
 	 * On set entity data hook

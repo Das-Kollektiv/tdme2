@@ -27,15 +27,19 @@ class tdme::tools::leveleditor::views::EmptyView
 	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-public: /* protected */
+private:
 	Engine* engine {  };
 
-private:
 	PopUps* popUps {  };
 	EmptyScreenController* emptyScreenController {  };
 	LevelEditorEntity* entity {  };
 	bool initModelRequested {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+
+	/**
+	 * Init entity
+	 */
+	virtual void initModel();
 
 public:
 
@@ -54,14 +58,6 @@ public:
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
 
-public: /* protected */
-
-	/** 
-	 * Init entity
-	 */
-	virtual void initModel();
-
-public:
 	void handleInputEvents() override;
 
 	/** 

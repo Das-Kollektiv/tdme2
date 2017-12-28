@@ -26,7 +26,7 @@ public:
 	void onSetEntityData() override;
 	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
-public: /* protected */
+private:
 	LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */ override;
 
 public:

@@ -26,15 +26,18 @@ class tdme::tools::leveleditor::views::TriggerView
 	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-public: /* protected */
-	Engine* engine {  };
-
 private:
+	Engine* engine {  };
 	PopUps* popUps {  };
 	TriggerScreenController* triggerScreenController {  };
 	LevelEditorEntity* entity {  };
 	bool initModelRequested {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+
+	/**
+	 * Init entity
+	 */
+	virtual void initModel();
 
 public:
 
@@ -53,14 +56,6 @@ public:
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
 
-public: /* protected */
-
-	/** 
-	 * Init entity
-	 */
-	virtual void initModel();
-
-public:
 	void handleInputEvents() override;
 
 	/** 

@@ -32,7 +32,7 @@ class tdme::tools::shared::views::SharedModelEditorView
 	: public virtual View
 	, public virtual GUIInputEventHandler
 {
-public: /* protected */
+protected:
 	Engine* engine {  };
 
 private:
@@ -46,6 +46,38 @@ private:
 	bool initModelRequestedReset {  };
 	string modelFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+
+	/**
+	 * Init model
+	 */
+	virtual void initModel();
+
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
+
+	/**
+	 * Store settings
+	 */
+	void storeSettings();
+
+	/**
+	 * Load a model
+	 */
+	void loadModel();
+
+	/**
+	 * Load model
+	 * @param name
+	 * @param description
+	 * @param path name
+	 * @param file name
+	 * @param pivot
+	 * @return level editor entity
+	 * @throws Exception
+	 */
+	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
 
 public:
 
@@ -68,15 +100,6 @@ public:
 	 * Reset entity
 	 */
 	virtual void resetEntity();
-
-public: /* protected */
-
-	/** 
-	 * Init model
-	 */
-	virtual void initModel();
-
-public:
 
 	/** 
 	 * @return current model file name
@@ -123,25 +146,8 @@ public:
 	 */
 	virtual void onInitAdditionalScreens();
 
-private:
-
-	/** 
-	 * Load settings
-	 */
-	void loadSettings();
-
-public:
 	void initialize() override;
 	void activate() override;
-
-private:
-
-	/** 
-	 * Store settings
-	 */
-	void storeSettings();
-
-public:
 	void deactivate() override;
 	void dispose() override;
 
@@ -151,29 +157,6 @@ public:
 	 * @oaram entity
 	 */
 	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
-
-private:
-
-	/** 
-	 * Load a model
-	 */
-	void loadModel();
-
-public: /* protected */
-
-	/** 
-	 * Load model
-	 * @param name
-	 * @param description
-	 * @param path name
-	 * @param file name
-	 * @param pivot
-	 * @return level editor entity
-	 * @throws Exception
-	 */
-	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
-
-public:
 
 	/** 
 	 * On set entity data hook
