@@ -31,8 +31,6 @@ class tdme::engine::Frustum final
 {
 private:
 	GLRenderer* renderer {  };
-
-public: /* protected */
 	static constexpr int32_t PLANE_RIGHT { 0 };
 	static constexpr int32_t PLANE_LEFT { 1 };
 	static constexpr int32_t PLANE_BOTTOM { 2 };
@@ -40,12 +38,10 @@ public: /* protected */
 	static constexpr int32_t PLANE_FAR { 4 };
 	static constexpr int32_t PLANE_NEAR { 5 };
 
-public: /* package */
 	Matrix4x4 projectionMatrixTransposed {  };
 	Matrix4x4 modelViewMatrixTransposed {  };
 	Matrix4x4 frustumMatrix {  };
 
-private:
 	array<Plane, 6> planes {  };
 
 public:
