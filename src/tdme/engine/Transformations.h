@@ -16,7 +16,7 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::Transformations {
-public: /* protected */
+private:
 	Vector3 translation {  };
 	Matrix4x4 translationMatrix {  };
 	Vector3 scale {  };
@@ -28,6 +28,7 @@ public: /* protected */
 	Matrix4x4 rotationsTranslationsMatrix {  };
 	Vector3 pivot {  };
 	Matrix4x4 transformationsMatrix {  };
+
 public:
 
 	/** 
