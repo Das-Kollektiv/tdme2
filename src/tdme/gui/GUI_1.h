@@ -13,10 +13,8 @@ class tdme::gui::GUI_1
 	: public Pool<GUIMouseEvent*>
 {
 
-public: /* protected */
-	GUIMouseEvent* instantiate() override;
-
 public:
+	GUIMouseEvent* instantiate() override;
 	GUI_1(GUI *GUI_this);
 	GUI *GUI_this;
 

@@ -26,6 +26,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUISelectBoxMultipleOptionController final
 	: public GUINodeController
 {
+	friend class GUISelectBoxMultipleOption;
+	friend class GUISelectBoxMultipleController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -37,12 +39,6 @@ private:
 	GUIParentNode* selectBoxMultipleNode {  };
 	bool selected {  };
 	bool focussed {  };
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-
-public: /* protected */
 
 	/** 
 	 * @return is selected
@@ -65,14 +61,6 @@ public: /* protected */
 	 */
 	void toggle();
 
-public:
-
-	/** 
-	 * @return is focussed
-	 */
-	bool isFocussed();
-
-public: /* protected */
 
 	/** 
 	 * Focus
@@ -85,7 +73,22 @@ public: /* protected */
 	 */
 	void unfocus();
 
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUISelectBoxMultipleOptionController(GUINode* node);
+
 public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+
+	/**
+	 * @return is focussed
+	 */
+	bool isFocussed();
+
+	// overriden methods
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
@@ -97,8 +100,5 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUISelectBoxMultipleOptionController(GUINode* node);
 
 };

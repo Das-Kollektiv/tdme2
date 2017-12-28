@@ -30,6 +30,7 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUIRadioButtonController final
 	: public GUINodeController
 {
+	friend class GUIRadioButton;
 
 private:
 	static string CONDITION_SELECTED;
@@ -41,8 +42,6 @@ private:
 	static map<string, vector<GUIElementNode*>> radioButtonGroupNodesByName;
 	MutableString* value {  };
 
-public: /* protected */
-
 	/** 
 	 * @return is checked
 	 */
@@ -53,6 +52,12 @@ public: /* protected */
 	 * @param checked
 	 */
 	void select();
+
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUIRadioButtonController(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -68,9 +73,6 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUIRadioButtonController(GUINode* node);
 
 private:
 	void init();

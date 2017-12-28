@@ -27,6 +27,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUISelectBoxMultipleController final
 	: public GUINodeController
 {
+	friend class GUISelectBoxMultiple;
+	friend class GUISelectBoxMultipleOptionController;
 
 private:
 	static string CONDITION_DISABLED;
@@ -50,8 +52,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-public: /* protected */
-
+private:
 	/** 
 	 * Unselect all nodes
 	 */
@@ -62,8 +63,6 @@ public: /* protected */
 	 */
 	void unfocus();
 
-private:
-
 	/** 
 	 * Determine select box option controllers
 	 */
@@ -73,8 +72,6 @@ private:
 	 * Get focussed option idx
 	 */
 	int32_t getFocussedOptionIdx();
-
-public: /* protected */
 
 	/** 
 	 * Select current options
@@ -106,9 +103,15 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
+private:
+	/**
+	 * Private constructor
+	 * @param node
+	 */
 	GUISelectBoxMultipleController(GUINode* node);
 
-private:
+	/**
+	 * Init
+	 */
 	void init();
 };

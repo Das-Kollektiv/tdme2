@@ -15,7 +15,8 @@ using tdme::gui::nodes::GUINode;
 class tdme::gui::elements::GUIButtonController final
 	: public GUIElementController
 {
+	friend class GUIButton;
 
-public: /* protected */
+private:
 	GUIButtonController(GUINode* node);
 };

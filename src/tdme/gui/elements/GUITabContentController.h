@@ -25,17 +25,13 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUITabContentController final
 	: public GUINodeController
 {
+	friend class GUITabContent;
+	friend class GUITabsController;
 
 private:
 	string CONDITION_SELECTED {  };
 	string CONDITION_UNSELECTED {  };
 	bool selected {  };
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-
-public: /* protected */
 
 	/** 
 	 * @return is checked
@@ -48,7 +44,17 @@ public: /* protected */
 	 */
 	void setSelected(bool selected);
 
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUITabContentController(GUINode* node);
+
 public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+
+	// overridden methods
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
@@ -61,6 +67,4 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
-	GUITabContentController(GUINode* node);
 };

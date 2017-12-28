@@ -21,6 +21,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUIScrollAreaHorizontalController
 	: public GUINodeController
 {
+	friend class GUIScrollAreaHorizontal;
+	friend class GUIScrollAreaHorizontalController_initialize_1;
 
 public:
 	bool isDisabled() override;
@@ -37,9 +39,10 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
-	GUIScrollAreaHorizontalController(GUINode* node);
-
 private:
-	friend class GUIScrollAreaHorizontalController_initialize_1;
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUIScrollAreaHorizontalController(GUINode* node);
 };

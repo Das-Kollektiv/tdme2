@@ -26,6 +26,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUIDropDownOptionController final
 	: public GUINodeController
 {
+	friend class GUIDropDownOption;
+	friend class GUIDropDownController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -33,18 +35,10 @@ private:
 	GUIParentNode* dropDownNode {  };
 	bool selected {  };
 
-public: /* protected */
-
 	/** 
 	 * @return is selected
 	 */
 	bool isSelected();
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-
-public: /* protected */
 
 	/** 
 	 * Select
@@ -56,6 +50,16 @@ public: /* protected */
 	 * @param checked
 	 */
 	void unselect();
+
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUIDropDownOptionController(GUINode* node);
+
+public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 
 public:
 	void initialize() override;
@@ -69,8 +73,5 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUIDropDownOptionController(GUINode* node);
 
 };

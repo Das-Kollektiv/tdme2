@@ -26,6 +26,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUITabController final
 	: public GUINodeController
 {
+	friend class GUITabsController;
+	friend class GUITabsHeaderController;
 
 private:
 	static string CONDITION_DISABLED;
@@ -41,12 +43,6 @@ private:
 	GUIColor* unfocussedNodeBorderBottomColor {  };
 	bool disabled {  };
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-
-public: /* protected */
-
 	/** 
 	 * @return is checked
 	 */
@@ -57,6 +53,10 @@ public: /* protected */
 	 * @param selected
 	 */
 	void setSelected(bool selected);
+
+public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 
 public:
 	void initialize() override;
@@ -76,7 +76,7 @@ public:
 	 */
 	void selectTab();
 
-public: /* protected */
+public:
 	GUITabController(GUINode* node);
 
 };

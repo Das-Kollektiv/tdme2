@@ -46,14 +46,10 @@ public:
 		return element;
 	}
 
-public: /* protected */
-
 	/** 
 	 * Instantiate element
 	 */
 	virtual T instantiate() = 0;
-
-public:
 
 	/** 
 	 * Release element in pool for being reused
@@ -99,7 +95,7 @@ public:
 	Pool() {
 	}
 
-	~Pool() {
+	virtual ~Pool() {
 		for (auto element: usedElements) {
 			delete element;
 		}

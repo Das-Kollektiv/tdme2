@@ -27,19 +27,13 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUITabsController final
 	: public GUINodeController
 {
+	friend class GUITabs;
+	friend class GUITabController;
+	friend class GUITabsHeaderController;
 
 private:
 	vector<GUINode*> childControllerNodes {  };
 	MutableString* tabContentNodeId {  };
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
-public: /* protected */
 
 	/** 
 	 * Unselect all tab nodes
@@ -53,6 +47,13 @@ public: /* protected */
 	void setTabContentSelected(const string& id);
 
 public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
+
+public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -62,9 +63,15 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
+private:
+	/**
+	 * Private constructor
+	 * @param node
+	 */
 	GUITabsController(GUINode* node);
 
-private:
+	/**
+	 * Init
+	 */
 	void init();
 };

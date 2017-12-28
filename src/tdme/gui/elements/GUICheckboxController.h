@@ -25,6 +25,7 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUICheckboxController final
 	: public GUINodeController
 {
+	friend class GUICheckbox;
 
 private:
 	static string CONDITION_CHECKED;
@@ -34,8 +35,6 @@ private:
 	bool checked {  };
 	bool disabled {  };
 	MutableString* value {  };
-
-public: /* protected */
 
 	/** 
 	 * @return is checked
@@ -47,6 +46,12 @@ public: /* protected */
 	 * @param checked
 	 */
 	void setChecked(bool checked);
+
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUICheckboxController(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -62,8 +67,5 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUICheckboxController(GUINode* node);
 
 };

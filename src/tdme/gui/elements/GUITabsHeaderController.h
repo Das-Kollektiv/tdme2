@@ -25,6 +25,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUITabsHeaderController final
 	: public GUINodeController
 {
+	friend class GUITabsHeader;
+	friend class GUITabController;
 
 private:
 	GUINode* tabsNode {  };
@@ -39,8 +41,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-public: /* protected */
-
+private:
 	/** 
 	 * @return has focus
 	 */
@@ -50,8 +51,6 @@ public: /* protected */
 	 * Unselect all nodes
 	 */
 	void unselect();
-
-private:
 
 	/** 
 	 * Determine select box option controllers
@@ -78,6 +77,12 @@ private:
 	 */
 	void selectCurrent();
 
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUITabsHeaderController(GUINode* node);
+
 public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
@@ -88,6 +93,4 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
-	GUITabsHeaderController(GUINode* node);
 };

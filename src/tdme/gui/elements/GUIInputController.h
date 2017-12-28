@@ -26,12 +26,19 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUIInputController final
 	: public GUINodeController
 {
+	friend class GUIInput;
 
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
 	GUIInputInternalNode* textInputNode {  };
 	bool disabled {  };
+
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUIInputController(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -47,8 +54,5 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUIInputController(GUINode* node);
 
 };

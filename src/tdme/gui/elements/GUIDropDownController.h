@@ -29,6 +29,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUIDropDownController final
 	: public GUINodeController
 {
+	friend class GUIDropDown;
+	friend class GUIDropDownOptionController;
 
 private:
 	static string CONDITION_DISABLED;
@@ -51,7 +53,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-public: /* protected */
+private:
 
 	/** 
 	 * @return drop down open state
@@ -67,8 +69,6 @@ public: /* protected */
 	 * Toggle open state
 	 */
 	void toggleOpenState();
-
-private:
 
 	/** 
 	 * Determine drop down option controllers
@@ -90,6 +90,12 @@ private:
 	 */
 	void selectPrevious();
 
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUIDropDownController(GUINode* node);
+
 public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
@@ -99,9 +105,6 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUIDropDownController(GUINode* node);
 
 private:
 	void init();

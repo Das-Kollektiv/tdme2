@@ -26,6 +26,8 @@ using tdme::utils::MutableString;
 class tdme::gui::elements::GUISelectBoxOptionController final
 	: public GUINodeController
 {
+	friend class GUISelectBoxOption;
+	friend class GUISelectBoxController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -35,27 +37,31 @@ private:
 	GUIParentNode* selectBoxNode {  };
 	bool selected {  };
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-
-public: /* protected */
-
-	/** 
+	/**
 	 * @return is selected
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * Select
 	 */
 	void select();
 
-	/** 
+	/**
 	 * Unselect
 	 * @param checked
 	 */
 	void unselect();
+
+	/**
+	 * Private constructor
+	 * @param node
+	 */
+	GUISelectBoxOptionController(GUINode* node);
+
+public:
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 
 public:
 	void initialize() override;
@@ -69,7 +75,4 @@ public:
 	bool hasValue() override;
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
-
-public: /* protected */
-	GUISelectBoxOptionController(GUINode* node);
 };
