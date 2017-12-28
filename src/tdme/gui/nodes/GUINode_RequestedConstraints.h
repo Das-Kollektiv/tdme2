@@ -18,10 +18,8 @@ using tdme::gui::nodes::GUINode;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUINode_RequestedConstraints
+struct tdme::gui::nodes::GUINode_RequestedConstraints
 {
-
-public: /* protected */
 	GUINode_RequestedConstraints_RequestedConstraintsType* leftType {  };
 	int32_t left {  };
 	GUINode_RequestedConstraints_RequestedConstraintsType* topType {  };
@@ -30,18 +28,4 @@ public: /* protected */
 	int32_t width {  };
 	GUINode_RequestedConstraints_RequestedConstraintsType* heightType {  };
 	int32_t height {  };
-
-public:
-	GUINode_RequestedConstraints();
-
-private:
-	friend class GUINode;
-	friend class GUINode_Flow;
-	friend class GUINode_AlignmentHorizontal;
-	friend class GUINode_AlignmentVertical;
-	friend class GUINode_Alignments;
-	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
-	friend class GUINode_ComputedConstraints;
-	friend class GUINode_Padding;
-	friend class GUINode_Border;
 };

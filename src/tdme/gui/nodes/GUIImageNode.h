@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -34,6 +35,7 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::nodes::GUIImageNode final
 	: public GUINode
 {
+	friend class tdme::gui::GUIParser;
 
 private:
 	Texture* texture {  };
@@ -42,21 +44,19 @@ private:
 	GUIColor* effectColorMul {  };
 	GUIColor* effectColorAdd {  };
 
-public: /* protected */
-
+protected:
 	/** 
 	 * @return node type
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
+	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
 
 public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
-
-	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& src, GUIColor* effectColorMul, GUIColor* effectColorAdd);
 
 private:
 	void init();

@@ -16,8 +16,9 @@ using std::string;
  */
 class tdme::gui::nodes::GUINodeConditions final
 {
+	friend class GUINode;
 
-public: /* protected */
+private:
 	vector<string> conditions {  };
 
 public:
@@ -44,5 +45,8 @@ public:
 	 */
 	void removeAll();
 
+	/**
+	 * Public constructor
+	 */
 	GUINodeConditions();
 };

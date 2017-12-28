@@ -22,6 +22,8 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIVerticalScrollbarInternalController
 	: public GUINodeController
 {
+	friend class GUIVerticalScrollbarInternalNode;
+	friend class GUIVerticalScrollbarInternalController_State;
 
 private:
 	GUILayoutNode* contentNode {  };
@@ -40,7 +42,7 @@ public:
 	 */
 	virtual GUIVerticalScrollbarInternalController_State* getState();
 
-public: /* protected */
+private:
 
 	/** 
 	 * @return bar height
@@ -68,10 +70,16 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
+private:
+	/**
+	 * Private constructor
+	 * @param node
+	 */
 	GUIVerticalScrollbarInternalController(GUINode* node);
 
-private:
+	/**
+	 * Init
+	 */
 	void init();
-	friend class GUIVerticalScrollbarInternalController_State;
+
 };

@@ -16,7 +16,7 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::effects::GUIEffect
 {
 
-public: /* protected */
+protected:
 	bool active {  };
 	float timeTotal {  };
 	float timeLeft {  };
@@ -69,5 +69,8 @@ public:
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;
 
+	/**
+	 * Public constructor
+	 */
 	GUIEffect();
 };

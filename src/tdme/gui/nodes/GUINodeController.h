@@ -18,8 +18,13 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUINodeController
 {
 
-public: /* protected */
+protected:
 	GUINode* node {  };
+
+	/**
+	 * Private constructor
+	 */
+	GUINodeController(GUINode* node);
 
 public:
 
@@ -99,6 +104,4 @@ public:
 	 */
 	virtual void setDisabled(bool disabled) = 0;
 
-public: /* protected */
-	GUINodeController(GUINode* node);
 };

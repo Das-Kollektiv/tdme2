@@ -36,7 +36,7 @@ private:
 	GUIColor* barColorMouseOver {  };
 	GUIColor* barColorDragging {  };
 
-public: /* protected */
+protected:
 	const string getNodeType() override;
 	bool isContentNode() override;
 

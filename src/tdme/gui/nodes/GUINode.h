@@ -39,8 +39,24 @@ using tdme::gui::renderer::GUIRenderer;
  */
 class tdme::gui::nodes::GUINode
 {
+	friend class GUIElementNode;
+	friend class GUILayoutNode;
+	friend class GUIParentNode;
+	friend class GUIScreenNode;
+	friend class GUIHorizontalScrollbarInternalController;
+	friend class GUIVerticalScrollbarInternalController;
+	friend class GUIInputInternalController;
+	friend class GUINode_Flow;
+	friend class GUINode_AlignmentHorizontal;
+	friend class GUINode_AlignmentVertical;
+	friend class GUINode_Alignments;
+	friend class GUINode_RequestedConstraints;
+	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
+	friend class GUINode_ComputedConstraints;
+	friend class GUINode_Padding;
+	friend class GUINode_Border;
 
-public: /* protected */
+protected:
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
 	string id {  };
@@ -56,12 +72,114 @@ public: /* protected */
 	GUINodeController* controller {  };
 	bool conditionsMet {  };
 
-public: /* protected */
-
 	/** 
 	 * @return node type
 	 */
 	virtual const string getNodeType() = 0;
+
+	/**
+	 * @return is content node
+	 */
+	virtual bool isContentNode() = 0;
+
+	/**
+	 * @return requested constraints
+	 */
+	virtual GUINode_RequestedConstraints* getRequestsConstraints();
+
+	/**
+	 * Set computed left
+	 * @param left
+	 */
+	virtual void setLeft(int32_t left);
+
+	/**
+	 * Set computed top
+	 * @param top
+	 */
+	virtual void setTop(int32_t top);
+
+	/**
+	 * Layout
+	 */
+	virtual void layout();
+
+	/**
+	 * Do content alignment
+	 */
+	virtual void computeContentAlignment();
+
+	/**
+	 * Layout constraint
+	 * @param type
+	 * @param auto value
+	 * @param parent value
+	 * @param value
+	 * @return pixel
+	 */
+	virtual int32_t layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value);
+
+	/**
+	 * Get requested constraints type
+	 * @param constraint
+	 * @param default constraints type
+	 * @return requested constraints type
+	 */
+	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const string& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
+
+	/**
+	 * Get requested constraints value
+	 * @param constraint
+	 * @param default constraints value
+	 * @return requested constraints value
+	 */
+	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
+
+	/**
+	 * Get requested pixel value
+	 * @param value
+	 * @param default value
+	 * @return value
+	 */
+	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
+
+	/**
+	 * @return conditions met
+	 */
+	virtual bool checkConditions();
+
+	/**
+	 * @return compute parent children render offset X total
+	 */
+	virtual float computeParentChildrenRenderOffsetXTotal();
+
+	/**
+	 * @return compute children render offset Y total
+	 */
+	virtual float computeParentChildrenRenderOffsetYTotal();
+
+	/**
+	 * Compute indent string
+	 * @param ident
+	 * @return indented string
+	 */
+	virtual const string indent(int32_t indent);
+
+	/**
+	 * Public constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 */
+	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 public:
 
@@ -79,15 +197,6 @@ public:
 	 * @return id
 	 */
 	virtual const string& getId();
-
-public: /* protected */
-
-	/** 
-	 * @return is content node
-	 */
-	virtual bool isContentNode() = 0;
-
-public:
 
 	/** 
 	 * @return content width including border, margin
@@ -114,55 +223,10 @@ public:
 	 */
 	virtual GUINode_Border* getBorder();
 
-public: /* protected */
-
-	/** 
-	 * @return requested constraints
-	 */
-	virtual GUINode_RequestedConstraints* getRequestsConstraints();
-
-public:
-
-	/** 
+	/**
 	 * @return computed constraints
 	 */
 	virtual GUINode_ComputedConstraints* getComputedConstraints();
-
-public: /* protected */
-
-	/** 
-	 * Set computed left
-	 * @param left
-	 */
-	virtual void setLeft(int32_t left);
-
-	/** 
-	 * Set computed top
-	 * @param top
-	 */
-	virtual void setTop(int32_t top);
-
-	/** 
-	 * Layout
-	 */
-	virtual void layout();
-
-	/** 
-	 * Do content alignment
-	 */
-	virtual void computeContentAlignment();
-
-	/** 
-	 * Layout constraint
-	 * @param type
-	 * @param auto value
-	 * @param parent value
-	 * @param value
-	 * @return pixel
-	 */
-	virtual int32_t layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value);
-
-public:
 
 	/** 
 	 * Create alignments
@@ -181,34 +245,6 @@ public:
 	 * @return requested constraints
 	 */
 	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
-
-public: /* protected */
-
-	/** 
-	 * Get requested constraints type
-	 * @param constraint
-	 * @param default constraints type
-	 * @return requested constraints type
-	 */
-	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const string& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
-
-	/** 
-	 * Get requested constraints value
-	 * @param constraint
-	 * @param default constraints value
-	 * @return requested constraints value
-	 */
-	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
-
-	/** 
-	 * Get requested pixel value
-	 * @param value
-	 * @param default value
-	 * @return value
-	 */
-	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
-
-public:
 
 	/** 
 	 * Get color
@@ -258,15 +294,6 @@ public:
 	 */
 	static GUINodeConditions* createConditions(const string& conditions);
 
-public: /* protected */
-
-	/** 
-	 * @return conditions met
-	 */
-	virtual bool checkConditions();
-
-public:
-
 	/** 
 	 * Dispose node
 	 */
@@ -283,20 +310,6 @@ public:
 	 * @param floating nodes
 	 */
 	virtual void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
-
-public: /* protected */
-
-	/** 
-	 * @return compute parent children render offset X total
-	 */
-	virtual float computeParentChildrenRenderOffsetXTotal();
-
-	/** 
-	 * @return compute children render offset Y total
-	 */
-	virtual float computeParentChildrenRenderOffsetYTotal();
-
-public:
 
 	/** 
 	 * Is event belonging to node
@@ -376,27 +389,4 @@ public:
 	 */
 	virtual void scrollToNodeX(GUIParentNode* toNode);
 
-public: /* protected */
-
-	/** 
-	 * Compute indent string
-	 * @param ident
-	 * @return indented string
-	 */
-	virtual const string indent(int32_t indent);
-
-public: /* protected */
-
-	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
-
-private:
-	friend class GUINode_Flow;
-	friend class GUINode_AlignmentHorizontal;
-	friend class GUINode_AlignmentVertical;
-	friend class GUINode_Alignments;
-	friend class GUINode_RequestedConstraints;
-	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
-	friend class GUINode_ComputedConstraints;
-	friend class GUINode_Padding;
-	friend class GUINode_Border;
 };

@@ -23,12 +23,12 @@ namespace nodes {
 			class GUINodeController;
 			class GUINode_AlignmentHorizontal;
 			class GUINode_AlignmentVertical;
-			class GUINode_Alignments;
+			struct GUINode_Alignments;
 			class GUINode_Border;
 			class GUINode_ComputedConstraints;
 			class GUINode_Flow;
 			class GUINode_Padding;
-			class GUINode_RequestedConstraints;
+			struct GUINode_RequestedConstraints;
 			class GUINode_RequestedConstraints_RequestedConstraintsType;
 			class GUIPanelNode;
 			class GUIParentNode;

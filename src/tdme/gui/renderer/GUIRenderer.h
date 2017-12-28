@@ -30,6 +30,7 @@ using tdme::gui::nodes::GUIScreenNode;
  */
 class tdme::gui::renderer::GUIRenderer final
 {
+	friend class GUIFont_CharacterDefinition;
 
 private:
 	static constexpr int32_t QUAD_COUNT { 1024 };
@@ -38,10 +39,8 @@ private:
 	static constexpr float SCREEN_RIGHT { 1.0f };
 	static constexpr float SCREEN_BOTTOM { -1.0f };
 
-public: /* protected */
-	GUI* gui {  };
-
 private:
+	GUI* gui {  };
 	GLRenderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t quadCount {  };

@@ -24,6 +24,7 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIElementController
 	: public GUINodeController
 {
+	friend class GUIElementNode;
 
 private:
 	static string CONDITION_DISABLED;
@@ -46,6 +47,6 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
+protected:
 	GUIElementController(GUINode* node);
 };

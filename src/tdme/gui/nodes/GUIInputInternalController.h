@@ -26,6 +26,8 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIInputInternalController final
 	: public GUINodeController
 {
+	friend class GUIInputInternalNode;
+	friend class GUIInputInternalController_CursorMode;
 
 private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
@@ -46,7 +48,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-public: /* protected */
+private:
 
 	/** 
 	 * @return index
@@ -87,10 +89,15 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
+private:
+	/**
+	 * Private constructor
+	 * @param node
+	 */
 	GUIInputInternalController(GUINode* node);
 
-private:
+	/**
+	 * Init
+	 */
 	void init();
-	friend class GUIInputInternalController_CursorMode;
 };

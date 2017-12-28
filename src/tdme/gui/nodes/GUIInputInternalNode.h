@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -32,6 +33,7 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIInputInternalNode final
 	: public GUINode
 {
+	friend class tdme::gui::GUIParser;
 
 public:
 
@@ -49,13 +51,14 @@ private:
 	MutableString* text {  };
 	int32_t maxLength {  };
 
-public: /* protected */
+protected:
 
 	/** 
 	 * @return node type
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
+	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, const string& colorDisabled, MutableString* text, int32_t maxLength);
 
 public:
 	int32_t getContentWidth() override;
@@ -78,5 +81,4 @@ public:
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 
-	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, const string& colorDisabled, MutableString* text, int32_t maxLength);
 };

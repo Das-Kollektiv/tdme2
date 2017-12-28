@@ -47,6 +47,10 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIScreenNode final
 	: public GUIParentNode
 {
+	friend class tdme::gui::GUIParser;
+	friend class GUIElementNode;
+	friend class GUINode;
+	friend class GUIParentNode;
 
 private:
 	GUI* gui {  };
@@ -60,7 +64,7 @@ private:
 	GUIInputEventHandler* inputEventHandler {  };
 	vector<GUINode*> childControllerNodes {  };
 
-public: /* protected */
+private:
 	bool mouseEventProcessedByFloatingNode {  };
 	bool visible {  };
 	bool popUp {  };
@@ -142,8 +146,30 @@ public:
 	 */
 	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
 
-public: /* protected */
+protected:
 	bool isContentNode() override;
+
+	/**
+	 * @return node type
+	 */
+	const string getNodeType() override;
+
+	GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);
+
+private:
+	/**
+	 * Add node
+	 * @param node
+	 * @return success
+	 */
+	bool addNode(GUINode* node);
+
+	/**
+	 * Add node
+	 * @param node
+	 * @return success
+	 */
+	bool removeNode(GUINode* node);
 
 public:
 
@@ -176,15 +202,6 @@ public:
 	 */
 	void setScreenSize(int32_t width, int32_t height);
 
-public: /* protected */
-
-	/** 
-	 * @return node type
-	 */
-	const string getNodeType() override;
-
-public:
-
 	/** 
 	 * Get GUI node by id
 	 * @param nodeId
@@ -197,24 +214,6 @@ public:
 	 * @return node id
 	 */
 	const string allocateNodeId();
-
-public: /* protected */
-
-	/** 
-	 * Add node
-	 * @param node
-	 * @return success
-	 */
-	bool addNode(GUINode* node);
-
-	/** 
-	 * Add node
-	 * @param node
-	 * @return success
-	 */
-	bool removeNode(GUINode* node);
-
-public:
 
 	/** 
 	 * Render screen
@@ -317,8 +316,6 @@ public:
 	 * @return success
 	 */
 	bool removeEffect(const string& id);
-
-	GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp);
 
 private:
 	void init();

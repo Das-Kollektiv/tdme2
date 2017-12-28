@@ -14,8 +14,8 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont *GUIFont_this)
-	: GUIFont_this(GUIFont_this)
+GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont* font)
+	: font(font)
 {
 }
 
@@ -27,8 +27,8 @@ void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int32_t x, int3
 	float top = y + yOffset;
 	float width = this->width;
 	float height = this->height;
-	float textureWidth = GUIFont_this->texture->getTextureWidth();
-	float textureHeight = GUIFont_this->texture->getTextureHeight();
+	float textureWidth = font->texture->getTextureWidth();
+	float textureHeight = font->texture->getTextureHeight();
 	float textureCharLeft = this->x;
 	float textureCharTop = this->y;
 	float textureCharWidth = this->width;

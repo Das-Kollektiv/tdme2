@@ -14,7 +14,7 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::renderer::GUIFont_CharacterDefinition final
 {
 
-public: /* protected */
+private:
 
 	/** 
 	 * The id of the character 
@@ -56,8 +56,6 @@ public: /* protected */
 	 */
 	int32_t xAdvance {  };
 
-public: /* protected */
-
 	/** 
 	 * Draw character
 	 * @param gui renderer
@@ -67,10 +65,10 @@ public: /* protected */
 	void draw(GUIRenderer* guiRenderer, int32_t x, int32_t y);
 
 public:
-	GUIFont_CharacterDefinition(GUIFont *GUIFont_this);
+	GUIFont_CharacterDefinition(GUIFont* font);
 
 public:
-	GUIFont *GUIFont_this;
+	GUIFont *font;
 
 private:
 	friend class GUIFont;

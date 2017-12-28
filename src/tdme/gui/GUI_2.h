@@ -13,7 +13,7 @@ class tdme::gui::GUI_2
 	: public Pool<GUIKeyboardEvent*>
 {
 
-public: /* protected */
+protected:
 	GUIKeyboardEvent* instantiate() override;
 
 public:

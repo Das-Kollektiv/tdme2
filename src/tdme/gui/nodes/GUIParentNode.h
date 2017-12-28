@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -37,13 +38,43 @@ using tdme::gui::GUIParserException;
 class tdme::gui::nodes::GUIParentNode
 	: public GUINode
 {
+	friend class tdme::gui::GUIParser;
+	friend class GUIElementNode;
+	friend class GUILayoutNode;
+	friend class GUINode;
+	friend class GUIScreenNode;
+	friend class GUIHorizontalScrollbarInternalController;
+	friend class GUIVerticalScrollbarInternalController;
+	friend class GUIParentNode_Overflow;
 
-public: /* protected */
+protected:
 	vector<GUINode*> subNodes {  };
 	GUIParentNode_Overflow* overflowX {  };
 	GUIParentNode_Overflow* overflowY {  };
 	float childrenRenderOffsetX {  };
 	float childrenRenderOffsetY {  };
+
+	/**
+	 * Layout
+	 */
+	void layout() override;
+
+	/**
+	 * Layout sub nodes
+	 */
+	virtual void layoutSubNodes();
+
+	/**
+	 * Compute horizontal children alignment
+	 */
+	virtual void computeHorizontalChildrenAlignment();
+
+	/**
+	 * Compute vertical children alignment
+	 */
+	virtual void computeVerticalChildrenAlignment();
+
+	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
 
 public:
 
@@ -115,38 +146,6 @@ public:
 	 */
 	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
-public: /* protected */
-
-	/** 
-	 * Layout
-	 */
-	void layout() override;
-
-	/** 
-	 * Layout sub nodes
-	 */
-	virtual void layoutSubNodes();
-
-	/** 
-	 * Compute horizontal children alignment
-	 */
-	virtual void computeHorizontalChildrenAlignment();
-
-	/** 
-	 * Compute vertical children alignment
-	 */
-	virtual void computeVerticalChildrenAlignment();
-
-private:
-
-	/** 
-	 * Get child controller nodes internal
-	 * @param child controller nodes
-	 */
-	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
-
-public:
-
 	/** 
 	 * Get child controller nodes
 	 * @param child controller nodes
@@ -159,9 +158,10 @@ public:
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;
 
-public: /* protected */
-	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
-
 private:
-	friend class GUIParentNode_Overflow;
+	/**
+	 * Get child controller nodes internal
+	 * @param child controller nodes
+	 */
+	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
 };

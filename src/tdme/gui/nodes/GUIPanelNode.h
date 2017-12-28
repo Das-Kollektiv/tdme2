@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
@@ -31,13 +32,14 @@ using tdme::gui::nodes::GUIScreenNode;
 class tdme::gui::nodes::GUIPanelNode
 	: public GUILayoutNode
 {
+	friend class tdme::gui::GUIParser;
 
-public: /* protected */
+protected:
 	const string getNodeType() override;
+	GUIPanelNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);
 
 public:
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
-	GUIPanelNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUILayoutNode_Alignment* alignment);
 };

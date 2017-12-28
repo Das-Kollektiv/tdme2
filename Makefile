@@ -247,12 +247,10 @@ SRCS = \
 	src/tdme/gui/nodes/GUINodeController.cpp \
 	src/tdme/gui/nodes/GUINode_AlignmentHorizontal.cpp \
 	src/tdme/gui/nodes/GUINode_AlignmentVertical.cpp \
-	src/tdme/gui/nodes/GUINode_Alignments.cpp \
 	src/tdme/gui/nodes/GUINode_Border.cpp \
 	src/tdme/gui/nodes/GUINode_ComputedConstraints.cpp \
 	src/tdme/gui/nodes/GUINode_Flow.cpp \
 	src/tdme/gui/nodes/GUINode_Padding.cpp \
-	src/tdme/gui/nodes/GUINode_RequestedConstraints.cpp \
 	src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp \
 	src/tdme/gui/nodes/GUIPanelNode.cpp \
 	src/tdme/gui/nodes/GUIParentNode.cpp \

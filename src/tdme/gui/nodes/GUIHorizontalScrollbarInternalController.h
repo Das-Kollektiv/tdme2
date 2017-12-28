@@ -22,11 +22,16 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIHorizontalScrollbarInternalController
 	: public GUINodeController
 {
+	friend class GUIHorizontalScrollbarInternalNode;
+	friend class GUIHorizontalScrollbarInternalController_State;
 
 private:
 	GUILayoutNode* contentNode {  };
 	GUIHorizontalScrollbarInternalController_State* state {  };
 	int32_t mouseXOffset {  };
+
+protected:
+	GUIHorizontalScrollbarInternalController(GUINode* node);
 
 public:
 	bool isDisabled() override;
@@ -40,7 +45,7 @@ public:
 	 */
 	virtual GUIHorizontalScrollbarInternalController_State* getState();
 
-public: /* protected */
+private:
 
 	/** 
 	 * @return bar width
@@ -68,10 +73,7 @@ public:
 	MutableString* getValue() override;
 	void setValue(MutableString* value) override;
 
-public: /* protected */
-	GUIHorizontalScrollbarInternalController(GUINode* node);
-
 private:
 	void init();
-	friend class GUIHorizontalScrollbarInternalController_State;
+
 };

@@ -28,6 +28,13 @@ class Pool
 private:
 	vector<T> freeElements;
 	vector<T> usedElements;
+
+protected:
+	/**
+	 * Instantiate element
+	 */
+	virtual T instantiate() = 0;
+
 public:
 
 	/** 
@@ -45,11 +52,6 @@ public:
 		usedElements.push_back(element);
 		return element;
 	}
-
-	/** 
-	 * Instantiate element
-	 */
-	virtual T instantiate() = 0;
 
 	/** 
 	 * Release element in pool for being reused
