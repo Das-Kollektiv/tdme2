@@ -255,7 +255,7 @@ void RigidBody::fromTransformations(Transformations* transformations)
 	this->transformations->fromTransformations(transformations);
 	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
 	this->transformations->getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
-	this->orientation.set(transformations->getRotations()->quaternion);
+	this->orientation.set(transformations->getRotations()->getQuaternion());
 	this->orientation.getArray()[1] *= -1.0f;
 	this->orientation.normalize();
 	this->awake(true);

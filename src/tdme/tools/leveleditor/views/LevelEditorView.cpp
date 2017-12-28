@@ -413,9 +413,9 @@ void LevelEditorView::handleInputEvents()
 					levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
 				}
 			}
-			auto selectedEntity = engine->getObjectByMousePosition(event->getX(), event->getY(), entityPickingFilterNoGrid);
+			auto selectedEntity = engine->getEntityByMousePosition(event->getX(), event->getY(), entityPickingFilterNoGrid);
 			if (selectedEntity == nullptr) {
-				selectedEntity = engine->getObjectByMousePosition(event->getX(), event->getY());
+				selectedEntity = engine->getEntityByMousePosition(event->getX(), event->getY());
 			}
 			if (selectedEntity != nullptr) {
 				if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {

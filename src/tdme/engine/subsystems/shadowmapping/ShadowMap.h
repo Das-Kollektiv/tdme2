@@ -72,10 +72,9 @@ private:
 
 	/** 
 	 * Renders given objects to shadow map
-	 * @param gl
-	 * @param objects
+	 * @param light
 	 */
-	void render(Light* light, const vector<Object3D*>& objects);
+	void render(Light* light);
 
 	/** 
 	 * Computes shadow texture matrix and stores it

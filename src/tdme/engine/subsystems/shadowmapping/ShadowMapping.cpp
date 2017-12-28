@@ -86,7 +86,7 @@ void ShadowMapping::reshape(int32_t width, int32_t height)
 {
 }
 
-void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
+void ShadowMapping::createShadowMaps()
 {
 	runState = ShadowMapping_RunState::PRE;
 	renderer->setColorMask(false, false, false, false);
@@ -100,7 +100,7 @@ void ShadowMapping::createShadowMaps(const vector<Object3D*>& objects)
 				shadowMap->initialize();
 				shadowMaps[i] = shadowMap;
 			}
-			shadowMaps[i]->render(light, objects);
+			shadowMaps[i]->render(light);
 		} else {
 			if (shadowMaps[i] != nullptr) {
 				shadowMaps[i]->dispose();

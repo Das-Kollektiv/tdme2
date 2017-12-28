@@ -6,6 +6,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
@@ -20,7 +21,9 @@ using tdme::math::Quaternion;
  */
 class tdme::engine::Rotations final
 {
-public: /* protected */
+	friend class Transformations;
+
+private:
 	Quaternion quaternion {  };
 	vector<Rotation*> rotations {  };
 

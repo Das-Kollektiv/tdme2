@@ -48,17 +48,16 @@ string TDMELevelEditor::VERSION = "1.9.9";
 
 TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
-void TDMELevelEditor::main(int argc, char** argv)
-{
+void TDMELevelEditor::main(int argc, char** argv) {
 	Console::println(string("TDMELevelEditor " + VERSION));
-	Console::println(string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println(
+			string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
 	Console::println();
 	TDMELevelEditor tdmeLevelEditor;
 	tdmeLevelEditor.run(argc, argv, "TDMELevelEditor");
 }
 
-TDMELevelEditor::TDMELevelEditor()
-{
+TDMELevelEditor::TDMELevelEditor() {
 	TDMELevelEditor::instance = this;
 	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(&level);
 	engine = Engine::getInstance();
@@ -78,28 +77,23 @@ TDMELevelEditor::~TDMELevelEditor() {
 	delete levelEditorEntityLibraryScreenController;
 }
 
-TDMELevelEditor* TDMELevelEditor::getInstance()
-{
+TDMELevelEditor* TDMELevelEditor::getInstance() {
 	return instance;
 }
 
-LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityLibraryScreenController()
-{
+LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityLibraryScreenController() {
 	return levelEditorEntityLibraryScreenController;
 }
 
-LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary()
-{
+LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary() {
 	return level.getEntityLibrary();
 }
 
-LevelEditorLevel* TDMELevelEditor::getLevel()
-{
+LevelEditorLevel* TDMELevelEditor::getLevel() {
 	return &level;
 }
 
-void TDMELevelEditor::setView(View* view)
-{
+void TDMELevelEditor::setView(View* view) {
 	if (this->view != nullptr)
 		this->view->deactivate();
 
@@ -109,32 +103,25 @@ void TDMELevelEditor::setView(View* view)
 
 }
 
-View* TDMELevelEditor::getView()
-{
+View* TDMELevelEditor::getView() {
 	return view;
 }
 
-void TDMELevelEditor::quit()
-{
+void TDMELevelEditor::quit() {
 	quitRequested = true;
 }
 
-void TDMELevelEditor::display()
-{
+void TDMELevelEditor::display() {
 	engine->display();
-	Engine::getInstance()->initGUIMode();
 	if (view != nullptr)
 		view->display();
-
-	Engine::getInstance()->doneGUIMode();
 	if (quitRequested == true) {
 		dispose();
 		exit(0);
 	}
 }
 
-void TDMELevelEditor::dispose()
-{
+void TDMELevelEditor::dispose() {
 	if (view != nullptr)
 		view->deactivate();
 
@@ -147,14 +134,16 @@ void TDMELevelEditor::dispose()
 	Tools::oseDispose();
 }
 
-void TDMELevelEditor::initialize()
-{
+void TDMELevelEditor::initialize() {
 	engine->initialize();
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
-	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
+	levelEditorEntityLibraryScreenController =
+			new LevelEditorEntityLibraryScreenController(popUps);
 	levelEditorEntityLibraryScreenController->initialize();
-	engine->getGUI()->addScreen(levelEditorEntityLibraryScreenController->getScreenNode()->getId(), levelEditorEntityLibraryScreenController->getScreenNode());
+	engine->getGUI()->addScreen(
+			levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
+			levelEditorEntityLibraryScreenController->getScreenNode());
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
@@ -169,33 +158,27 @@ void TDMELevelEditor::initialize()
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(int32_t width, int32_t height)
-{
+void TDMELevelEditor::reshape(int32_t width, int32_t height) {
 	engine->reshape(0, 0, width, height);
 }
 
-void TDMELevelEditor::switchToLevelEditor()
-{
+void TDMELevelEditor::switchToLevelEditor() {
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::switchToModelEditor()
-{
+void TDMELevelEditor::switchToModelEditor() {
 	setView(modelEditorView);
 }
 
-void TDMELevelEditor::switchToTriggerView()
-{
+void TDMELevelEditor::switchToTriggerView() {
 	setView(triggerView);
 }
 
-void TDMELevelEditor::switchToEmptyView()
-{
+void TDMELevelEditor::switchToEmptyView() {
 	setView(emptyView);
 }
 
-void TDMELevelEditor::switchToParticleSystemView()
-{
+void TDMELevelEditor::switchToParticleSystemView() {
 	setView(particleSystemView);
 }
 

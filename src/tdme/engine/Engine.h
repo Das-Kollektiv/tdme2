@@ -18,6 +18,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -60,75 +61,154 @@ using tdme::math::Vector3;
  */
 class tdme::engine::Engine final
 {
+	friend class EngineGL3Renderer;
+	friend class EngineGL2Renderer;
+	friend class EngineGLES2Renderer;
+	friend class FrameBuffer;
+	friend class Object3D;
+	friend class ObjectParticleSystemEntity;
+	friend class PointsParticleSystemEntity;
+	friend class tdme::engine::subsystems::object::BatchVBORendererPoints;
+	friend class tdme::engine::subsystems::object::BatchVBORendererTriangles;
+	friend class tdme::engine::subsystems::object::Object3DBase;
+	friend class tdme::engine::subsystems::object::Object3DGroup;
+	friend class tdme::engine::subsystems::object::Object3DGroupVBORenderer;
+	friend class tdme::engine::subsystems::object::Object3DVBORenderer;
+	friend class tdme::engine::subsystems::object::Object3DInternal;
+	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
+	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
+	friend class tdme::gui::GUI;
+	friend class tdme::gui::nodes::GUIImageNode;
+	friend class tdme::gui::renderer::GUIRenderer;
+	friend class tdme::gui::renderer::GUIFont;
 
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING};
 
-public: /* protected */
+private:
 	static Engine* instance;
 	static GLRenderer* renderer;
 
-private:
 	static TextureManager* textureManager;
 	static VBOManager* vboManager;
 	static MeshManager* meshManager;
 	static GUIRenderer* guiRenderer;
 
-public:
 	static AnimationProcessingTarget animationProcessingTarget;
 
-public: /* protected */
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
 	static GUIShader* guiShader;
 
-private:
 	int32_t width {  };
 	int32_t height {  };
 	GUI* gui {  };
 	Timing* timing {  };
 	Camera* camera {  };
 
-public: /* protected */
 	Partition* partition {  };
 
-private:
 	array<Light, 8> lights {  };
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
 	map<string, Entity*> entitiesById {  };
 
-public: /* protected */
-	vector<Object3D*> objects {  };
-
-private:
 	vector<Object3D*> visibleObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
-
-public: /* protected */
 	vector<PointsParticleSystemEntity*> ppses {  };
-
-private:
 	vector<PointsParticleSystemEntity*> visiblePpses {  };
-
-public: /* protected */
 	Object3DVBORenderer* object3DVBORenderer {  };
 
-private:
 	bool shadowMappingEnabled {  };
 	bool renderingInitiated {  };
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 projectionMatrix {  };
 
-public: /* protected */
 	bool initialized {  };
 
-public:
+	/**
+	 * @return texture manager
+	 */
+	TextureManager* getTextureManager();
 
+	/**
+	 * @return vertex buffer object manager
+	 */
+	VBOManager* getVBOManager();
+
+	/**
+	 * @return mesh manager
+	 */
+	MeshManager* getMeshManager();
+
+	/**
+	 * @return shadow mapping shader
+	 */
+	static ShadowMappingShaderPre* getShadowMappingShaderPre();
+
+	/**
+	 * @return shadow mapping shader
+	 */
+	static ShadowMappingShaderRender* getShadowMappingShaderRender();
+
+	/**
+	 * @return lighting shader
+	 */
+	static LightingShader* getLightingShader();
+
+	/**
+	 * @return particles shader
+	 */
+	static ParticlesShader* getParticlesShader();
+
+	/**
+	 * @return GUI shader
+	 */
+	static GUIShader* getGUIShader();
+
+	/**
+	 * @return object 3d vbo renderer
+	 */
+	Object3DVBORenderer* getObject3DVBORenderer();
+
+	/**
+	 * @return shadow mapping or null if disabled
+	 */
+	ShadowMapping* getShadowMapping();
+
+	/**
+	 * Computes visibility and transformations
+	 */
+	void computeTransformations();
+
+	/**
+	 * Set up GUI mode rendering
+	 * @param drawable
+	 */
+	void initGUIMode();
+
+	/**
+	 * Set up GUI mode rendering
+	 * @param drawable
+	 */
+	void doneGUIMode();
+
+	/**
+	 * Initiates the rendering process
+	 * updates timing, updates camera
+	 */
+	void initRendering();
+
+	/**
+	 * Private constructor
+	 */
+	Engine();
+
+public:
 	/** 
 	 * Returns engine instance
 	 * @return
@@ -146,8 +226,6 @@ public:
 	 */
 	static Engine* createOffScreenInstance(int32_t width, int32_t height);
 
-public:
-
 	/** 
 	 * @return if initialized and ready to be used
 	 */
@@ -162,11 +240,6 @@ public:
 	 * @return height
 	 */
 	int32_t getHeight();
-
-	/** 
-	 * @return shadow mapping or null if disabled
-	 */
-	ShadowMapping* getShadowMapping();
 
 	/** 
 	 * @return GUI
@@ -210,51 +283,6 @@ public:
 	 * @return Light
 	 */
 	Light* getLightAt(int32_t idx);
-
-	/** 
-	 * @return texture manager
-	 */
-	TextureManager* getTextureManager();
-
-	/** 
-	 * @return vertex buffer object manager
-	 */
-	VBOManager* getVBOManager();
-
-	/** 
-	 * @return mesh manager
-	 */
-	MeshManager* getMeshManager();
-
-	/** 
-	 * @return shadow mapping shader
-	 */
-	static ShadowMappingShaderPre* getShadowMappingShaderPre();
-
-	/** 
-	 * @return shadow mapping shader
-	 */
-	static ShadowMappingShaderRender* getShadowMappingShaderRender();
-
-	/** 
-	 * @return lighting shader
-	 */
-	static LightingShader* getLightingShader();
-
-	/** 
-	 * @return particles shader
-	 */
-	static ParticlesShader* getParticlesShader();
-
-	/** 
-	 * @return GUI shader
-	 */
-	static GUIShader* getGUIShader();
-
-	/** 
-	 * @return object 3d vbo renderer
-	 */
-	Object3DVBORenderer* getObject3DVBORenderer();
 
 	/** 
 	 * @return scene / background color
@@ -310,21 +338,6 @@ public:
 	 */
 	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
 
-private:
-
-	/** 
-	 * Initiates the rendering process
-	 * updates timing, updates camera
-	 */
-	void initRendering();
-
-public:
-
-	/** 
-	 * Computes visibility and transformations
-	 */
-	void computeTransformations();
-
 	/** 
 	 * Renders the scene
 	 */
@@ -355,7 +368,7 @@ public:
 	 * @param mouse y
 	 * @return entity or null
 	 */
-	Entity* getObjectByMousePosition(int32_t mouseX, int32_t mouseY);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY);
 
 	/** 
 	 * Retrieves object by mouse position
@@ -364,7 +377,7 @@ public:
 	 * @param filter
 	 * @return entity or null
 	 */
-	Entity* getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
 	/** 
 	 * Convert screen coordinate by world coordinate
@@ -377,18 +390,6 @@ public:
 	 * Shutdown the engine
 	 */
 	void dispose();
-
-	/** 
-	 * Set up GUI mode rendering
-	 * @param drawable
-	 */
-	void initGUIMode();
-
-	/** 
-	 * Set up GUI mode rendering
-	 * @param drawable
-	 */
-	void doneGUIMode();
 
 	/** 
 	 * Creates a PNG file from current screen
@@ -405,14 +406,4 @@ public:
 	 */
 	~Engine();
 
-private:
-	/**
-	 * Constructor
-	 */
-	Engine();
-
-private:
-	friend class EngineGL3Renderer;
-	friend class EngineGL2Renderer;
-	friend class EngineGLES2Renderer;
 };

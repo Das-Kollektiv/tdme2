@@ -83,7 +83,7 @@ Camera* ShadowMap::getCamera()
 	return lightCamera;
 }
 
-void ShadowMap::render(Light* light, const vector<Object3D*>& objects)
+void ShadowMap::render(Light* light)
 {
 	visibleObjects.clear();
 	auto camera = shadowMapping->engine->getCamera();

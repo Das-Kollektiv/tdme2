@@ -88,9 +88,8 @@ public:
 
 	/** 
 	 * Create shadow maps
-	 * @param objects
 	 */
-	void createShadowMaps(const vector<Object3D*>& objects);
+	void createShadowMaps();
 
 	/** 
 	 * Render shadow maps

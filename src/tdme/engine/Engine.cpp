@@ -478,7 +478,6 @@ void Engine::initRendering()
 {
 	timing->updateTiming();
 	camera->update(width, height);
-	objects.clear();
 	ppses.clear();
 	visibleObjects.clear();
 	visibleOpses.clear();
@@ -550,7 +549,7 @@ void Engine::display()
 	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_NORMAL_ARRAY);
 	camera->update(width, height);
 	if (shadowMapping != nullptr)
-		shadowMapping->createShadowMaps(objects);
+		shadowMapping->createShadowMaps();
 
 	if (frameBuffer != nullptr) {
 		frameBuffer->enableFrameBuffer();
@@ -641,12 +640,12 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate);
 }
 
-Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY)
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY)
 {
-	return getObjectByMousePosition(mouseX, mouseY, nullptr);
+	return getEntityByMousePosition(mouseX, mouseY, nullptr);
 }
 
-Entity* Engine::getObjectByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter)
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter)
 {
 	Vector3 tmpVector3a;
 	Vector3 tmpVector3b;
