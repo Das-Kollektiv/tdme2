@@ -140,6 +140,7 @@ TDME2
             - GLUT
             - OpenGL
             - OpenAL
+            - glew
             - Vorbis/OGG,
             - JsonBox
             - zlib
