@@ -19,11 +19,11 @@ using tdme::audio::AudioBufferManager_AudioBufferManaged;
 class tdme::audio::AudioBufferManager final
 {
 	friend class AudioBufferManager_AudioBufferManaged;
+	friend class Audio;
+	friend class Sound;
 
 private:
 	map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
-
-public: /* protected */
 
 	/** 
 	 * Adds a audio buffer to manager / open al stack
@@ -40,7 +40,7 @@ public: /* protected */
 	bool removeAudioBuffer(const string& id);
 
 	/**
-	 * Protected constructor
+	 * Private constructor
 	 */
 	AudioBufferManager();
 };

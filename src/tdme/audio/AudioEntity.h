@@ -18,7 +18,9 @@ using tdme::math::Vector3;
  */
 class tdme::audio::AudioEntity
 {
-public: /* protected */
+	friend class Audio;
+
+protected:
 	string id {  };
 	bool looping {  };
 	bool fixed {  };
@@ -118,7 +120,7 @@ public:
 	 */
 	virtual void stop() = 0;
 
-public: /* protected */
+protected:
 
 	/** 
 	 * Initiates this OpenAL entity to OpenAl

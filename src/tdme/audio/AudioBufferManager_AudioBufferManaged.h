@@ -16,13 +16,12 @@ using tdme::audio::AudioBufferManager;
 class tdme::audio::AudioBufferManager_AudioBufferManaged
 {
 	friend class AudioBufferManager;
+	friend class Sound;
 
-public: /* package */
+private:
 	string id {  };
 	int32_t alId {  };
 	int32_t referenceCounter {  };
-
-public: /* protected */
 
 	/** 
 	 * @return audio buffer id
@@ -45,7 +44,6 @@ public: /* protected */
 	 */
 	virtual int32_t getReferenceCounter();
 
-private:
 	/** 
 	 * decrement reference counter
 	 * @return if reference counter = 0
@@ -66,6 +64,6 @@ private:
 	 */
 	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
 
-private:
+	// variables
 	AudioBufferManager* audioBufferManager;
 };

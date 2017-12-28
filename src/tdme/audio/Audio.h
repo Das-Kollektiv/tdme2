@@ -23,28 +23,34 @@ using tdme::math::Vector3;
  */
 class tdme::audio::Audio final
 {
-public: /* protected */
+	friend class Audio;
+	friend class AudioBufferManager;
+	friend class AudioStream;
+	friend class Sound;
+
+private:
 	static constexpr int32_t ALBUFFERID_NONE { -1 };
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
 	static Audio* instance;
 
-private:
 	map<string, AudioEntity*> audioEntities;
 
-public: /* protected */
 	AudioBufferManager audioBufferManager {  };
 	Vector3 listenerPosition {  };
 	Vector3 listenerVelocity {  };
 	Vector3 listenerOrientationAt {  };
 	Vector3 listenerOrientationUp {  };
 
+	/**
+	 * Private constructor
+	 */
+	Audio();
+
 public:
 	/** 
 	 * @return audio singleton instance
 	 */
 	static Audio* getInstance();
-
-public:
 
 	/** 
 	 * @return listener position
@@ -114,11 +120,4 @@ public:
 	 */
 	void update();
 
-	// Generated
-
-private:
-	/**
-	 * Private constructor
-	 */
-	Audio();
 };

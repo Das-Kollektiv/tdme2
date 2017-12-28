@@ -26,6 +26,8 @@ using tdme::audio::decoder::VorbisDecoder;
 class tdme::audio::AudioStream final
 	: public AudioEntity
 {
+	friend class Audio;
+
 private:
 	static constexpr int32_t BUFFER_COUNT { 3 };
 	static constexpr int32_t BUFFER_SIZE { 32768 };
@@ -46,7 +48,7 @@ public:
 	void pause() override;
 	void stop() override;
 
-public: /* protected */
+protected:
 	bool initialize() override;
 	void update() override;
 
@@ -57,7 +59,7 @@ private:
 	 */
 	void updateProperties();
 
-public: /* protected */
+protected:
 	void dispose() override;
 
 	/**

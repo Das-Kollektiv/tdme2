@@ -29,7 +29,7 @@ public:
 	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
 	static constexpr int32_t SAMPLES_NONE { -1 };
 
-public: /* protected */
+protected:
 	int32_t channels {  };
 	int32_t sampleRate {  };
 	int32_t bitsPerSample {  };

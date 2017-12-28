@@ -18,6 +18,8 @@ using tdme::audio::AudioEntity;
 class tdme::audio::Sound final
 	: public AudioEntity
 {
+	friend class Audio;
+
 private:
 	bool initiated {  };
 	string pathName {  };
@@ -33,7 +35,7 @@ public:
 	void pause() override;
 	void stop() override;
 
-public: /* protected */
+protected:
 	bool initialize() override;
 	void update() override;
 	void dispose() override;
