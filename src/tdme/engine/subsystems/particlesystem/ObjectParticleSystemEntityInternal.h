@@ -44,7 +44,7 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityIntern
 	: public Transformations
 	, public virtual ParticleSystemEntity
 {
-public: /* protected */
+protected:
 	Engine* engine {  };
 	string id {  };
 	bool enabled {  };
@@ -62,6 +62,7 @@ public: /* protected */
 	Color4 effectColorMul {  };
 	Color4 effectColorAdd {  };
 	float particlesToSpawnRemainder {  };
+
 public:
 	const string& getId() override;
 	virtual void setEngine(Engine* engine);

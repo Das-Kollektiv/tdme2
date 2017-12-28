@@ -42,7 +42,7 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityIntern
 	, public virtual ParticleSystemEntity
 {
 
-public: /* protected */
+protected:
 	string id {  };
 	Engine* engine {  };
 	GLRenderer* renderer {  };
@@ -55,7 +55,6 @@ public: /* protected */
 	int32_t maxPoints {  };
 	TransparentRenderPointsPool* pointsRenderPool {  };
 
-public: /* protected */
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
 	Transformations inverseTransformation {  };
@@ -63,6 +62,7 @@ public: /* protected */
 	Color4 effectColorAdd {  };
 	bool pickable {  };
 	float particlesToSpawnRemainder {  };
+
 public:
 	const string& getId() override;
 	virtual void setRenderer(GLRenderer* renderer);
