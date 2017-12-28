@@ -30,8 +30,6 @@ private:
 	vector<RigidBody*> bodies {  };
 	VectorIteratorMultiple<RigidBody*> arrayListIteratorMultiple {  };
 
-public: /* protected */
-
 	/** 
 	 * Reset
 	 */

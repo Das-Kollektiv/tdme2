@@ -29,11 +29,22 @@ using tdme::utils::Console;
 class tdme::engine::physics::CollisionResponse final
 {
 	friend class CollisionResponse_Entity;
+	friend class CollisionDetection;
+	friend class World;
 
-public: /* protected */
+private:
 	static constexpr int32_t HITPOINT_COUNT { 30 };
 	vector<CollisionResponse_Entity> entities {  };
 	CollisionResponse_Entity* selectedEntity {  };
+
+	/**
+	 * Invert normals
+	 */
+	inline void invertNormals() {
+		for (auto i = 0; i < entities.size(); i++) {
+			entities.at(i).getNormal().scale(-1.0f);
+		}
+	}
 
 public:
 
@@ -144,19 +155,6 @@ public:
 		if (selectedEntity == nullptr) return nullptr;
 		return &selectedEntity->hitPoints.at(i);
 	}
-
-public: /* protected */
-
-	/** 
-	 * Invert normals
-	 */
-	inline void invertNormals() {
-		for (auto i = 0; i < entities.size(); i++) {
-			entities.at(i).getNormal().scale(-1.0f);
-		}
-	}
-
-public:
 
 	/** 
 	 * Set up response from given collision response

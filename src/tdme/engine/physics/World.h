@@ -59,10 +59,11 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::World final
 {
-public: /* protected */
-	PhysicsPartition* partition {  };
+	friend class RigidBody;
 
 private:
+	PhysicsPartition* partition {  };
+
 	struct RigidBodyCollisionStruct {
 		string rigidBody1Id;
 		string rigidBody2Id;

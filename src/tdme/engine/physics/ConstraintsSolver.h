@@ -65,11 +65,12 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::ConstraintsSolver final
 {
-public: /* protected */
+	friend class World;
+
+private:
 	static constexpr int32_t BODIES_MAX { 1024 };
 	static constexpr int32_t CONSTRAINTS_MAX { 1024 * 3 };
 
-private:
 	int32_t constraintsEntityCount {  };
 	int32_t constraintsCount {  };
 	vector<RigidBody*>* rigidBodiesDynamic {  };
@@ -96,7 +97,7 @@ private:
 	vector<RigidBody*> rigidBodiesChainsResult {  };
 	vector<float> tmpLamdaValues {  };
 
-public: /* protected */
+private:
 
 	/** 
 	 * Reset
@@ -107,8 +108,6 @@ public: /* protected */
 	 * @return constraints entity
 	 */
 	ConstraintsEntity* allocateConstraintsEntity();
-
-private:
 
 	/** 
 	 * Init method
@@ -165,8 +164,6 @@ private:
 	 */
 	void checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* normalLast, vector<RigidBody*>& rigidBodiesCurrentChain);
 
-public: /* protected */
-
 	/** 
 	 * Process rigid body chain
 	 * @param idx
@@ -189,16 +186,12 @@ public: /* protected */
 	 */
 	void compute(float dt);
 
-private:
-
 	/** 
 	 * Set constrained linear and angular velocity for given body into dest vector
 	 * @param body
 	 * @param dest
 	 */
 	void getConstrainedVelocity(RigidBody* body, Vector3& linearVelocity, Vector3& angularVelocity);
-
-public: /* protected */
 
 	/** 
 	 * Updates all bodies 

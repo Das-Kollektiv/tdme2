@@ -53,12 +53,11 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::ContactCache final
 {
+	friend class ConstraintsSolver;
 	friend class ContactCache_ContactCacheInfo;
 
 private:
 	map<string, ContactCache_ContactCacheInfo> contactCache {  };
-
-public: /* protected */
 
 	/** 
 	 * Clear contact cache

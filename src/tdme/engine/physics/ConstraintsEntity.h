@@ -61,19 +61,18 @@ using tdme::utils::Float;
  */
 class tdme::engine::physics::ConstraintsEntity final
 {
+	friend class ConstraintsSolver;
+	friend class World;
+
 private:
 	static constexpr float HITPOINT_TOLERANCE { 0.3f };
 
-public: /* protected */
 	RigidBody* rb1 {  };
 	RigidBody* rb2 {  };
 	CollisionResponse collision;
 
-private:
 	array<Vector3, 2> frictionVectors { };
 	float muMg {  };
-
-public: /* protected */
 
 	/** 
 	 * Protected constructor
@@ -193,10 +192,11 @@ public: /* protected */
 		}
 	}
 
-public: /* protected */
+public:
 	/**
 	 * Protected constructor
 	 */
 	inline ConstraintsEntity() {
 	}
+
 };

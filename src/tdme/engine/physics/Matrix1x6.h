@@ -53,10 +53,10 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::physics::Matrix1x6 final {
-public: /* protected */
+private:
 	array<float, 6> data {  };
 
-public: /* protected */
+public:
 
 	/** 
 	 * Set up matrix values
@@ -136,7 +136,6 @@ public: /* protected */
 		copy(begin(data), end(data), begin(dest.data));
 		return dest;
 	}
-public:
 
 	/**
 	 * Public constructor

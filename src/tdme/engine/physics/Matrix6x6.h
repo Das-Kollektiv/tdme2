@@ -46,10 +46,10 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::Matrix6x6 final
 {
-public: /* protected */
+private:
 	array<float, 36> data {  };
 
-public: /* protected */
+public:
 
 	/** 
 	 * Fills the Vector with given value
@@ -117,7 +117,6 @@ public: /* protected */
 		return dest;
 	}
 
-public: /* protected */
 	/**
 	 * Public constructor
 	 */

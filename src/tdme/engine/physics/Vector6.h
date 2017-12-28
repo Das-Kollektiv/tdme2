@@ -50,10 +50,14 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::Vector6 final
 {
-public: /* protected */
+	friend class ConstraintsSolver;
+	friend class Matrix1x6;
+	friend class Matrix6x6;
+
+private:
 	array<float, 6> data {  };
 
-public: /* protected */
+public:
 
 	/** 
 	 * Fills the Vector with given value

@@ -40,10 +40,10 @@ using std::vector;
  */
 class tdme::engine::physics::DynamicVector final
 {
-public: /* protected */
+private:
 	vector<float> data {  };
 
-public: /* protected */
+public:
 
 	/** 
 	 * Change size

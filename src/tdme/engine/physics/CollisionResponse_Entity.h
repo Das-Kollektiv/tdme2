@@ -23,7 +23,9 @@ using tdme::utils::Console;
  */
 class tdme::engine::physics::CollisionResponse_Entity final
 {
-public: /* protected */
+	friend class CollisionResponse;
+
+private:
 	float distance {  };
 	Vector3 normal {  };
 	vector<Vector3> hitPoints {  };

@@ -41,6 +41,9 @@ class tdme::engine::physics::PhysicsPartitionOctTree final
 	friend class PhysicsPartitionOctTree_PartitionTreeNode;
 
 private:
+	static constexpr float PARTITION_SIZE_MIN { 16.0f };
+	static constexpr float PARTITION_SIZE_MAX { 64.0f };
+
 	VectorIteratorMultiple<RigidBody*> rigidBodyIterator {  };
 	BoundingBox boundingBox {  };
 	Vector3 halfExtension {  };
@@ -50,50 +53,10 @@ private:
 	map<string, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode treeRoot {  };
 
-public:
-	static constexpr float PARTITION_SIZE_MIN { 16.0f };
-	static constexpr float PARTITION_SIZE_MAX { 64.0f };
-
-public: /* protected */
-
 	/** 
 	 * Reset
 	 */
 	void reset() override;
-
-public:
-
-	/** 
-	 * Creates a partition
-	 * @param parent
-	 * @param x
-	 * @param z
-	 * @param partition size
-	 * @return partition tree node
-	 */
-	PhysicsPartitionOctTree_PartitionTreeNode* createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
-
-public: /* protected */
-
-	/** 
-	 * Adds a object
-	 * @param rigidBody
-	 */
-	void addRigidBody(RigidBody* rigidBody) override;
-
-	/** 
-	 * Updates a object
-	 * @param rigidBody
-	 */
-	void updateRigidBody(RigidBody* rigidBody) override;
-
-	/** 
-	 * Removes a rigid body
-	 * @param rigid body
-	 */
-	void removeRigidBody(RigidBody* rigidBody) override;
-
-private:
 
 	/** 
 	 * Is partition empty
@@ -129,9 +92,37 @@ private:
 	 */
 	int32_t doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<RigidBody*>& rigidBodyIterator);
 
+	/**
+	 * Adds a object
+	 * @param rigidBody
+	 */
+	void addRigidBody(RigidBody* rigidBody) override;
+
+	/**
+	 * Updates a object
+	 * @param rigidBody
+	 */
+	void updateRigidBody(RigidBody* rigidBody) override;
+
+	/**
+	 * Removes a rigid body
+	 * @param rigid body
+	 */
+	void removeRigidBody(RigidBody* rigidBody) override;
+
 public:
 
-	/** 
+	/**
+	 * Creates a partition
+	 * @param parent
+	 * @param x
+	 * @param z
+	 * @param partition size
+	 * @return partition tree node
+	 */
+	PhysicsPartitionOctTree_PartitionTreeNode* createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
+
+	/**
 	 * Get objects near to rigid body
 	 * @param cbv
 	 * @return objects near to cbv

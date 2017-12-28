@@ -62,6 +62,12 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::RigidBody final
 {
+	friend class ConstraintsSolver;
+	friend class ContactCache;
+	friend class ConstraintsEntity;
+	friend class PhysicsPartitionOctTree;
+	friend class World;
+
 public:
 	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
 
@@ -70,7 +76,6 @@ private:
 	static constexpr float ANGULARVELOCITY_SLEEPTOLERANCE { 2.0f };
 	static constexpr int32_t SLEEPING_FRAMES { 300 };
 
-public: /* protected */
 	World* world {  };
 	int32_t idx {  };
 	string id {  };
@@ -80,10 +85,8 @@ public: /* protected */
 	bool isStatic_ {  };
 	bool isSleeping_ {  };
 
-private:
 	int32_t sleepingFrameCount {  };
 
-public: /* protected */
 	Transformations* transformations {  };
 	BoundingVolume* obv {  };
 	BoundingVolume* cbv {  };
@@ -101,15 +104,69 @@ public: /* protected */
 	Vector3 angularVelocityLast {  };
 	Vector3 torque {  };
 	Matrix4x4 inverseInertia {  };
-
-private:
 	Matrix4x4 orientationMatrix {  };
-
-public: /* protected */
 	Matrix4x4 worldInverseInertia {  };
-
-private:
 	vector<CollisionListener*> collisionListener {  };
+
+	/**
+	 * Wake up
+	 */
+	void awake(bool resetFrameCount);
+
+	/**
+	 * Compute world inverse inertia
+	 */
+	void computeWorldInverseInertiaMatrix();
+
+	/**
+	 * Updates this rigid body / integrates it
+	 * @param delta time
+	 */
+	void update(float deltaTime);
+
+	/**
+	 * @return if velocity has been changed
+	 */
+	bool checkVelocityChange();
+
+	/**
+	 * Fire on collision
+	 * @param other
+	 * @param collision response
+	 */
+	void fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse);
+
+	/**
+	 * Fire on collision begin
+	 * @param other
+	 * @param collision response
+	 */
+	void fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse);
+
+	/**
+	 * Fire on collision end
+	 * @param other
+	 * @param collision response
+	 */
+	void fireOnCollisionEnd(RigidBody* other);
+
+	/**
+	 * Protected constructor
+	 * @param partition
+	 * @param id
+	 * @param enabled
+	 * @param type id
+	 * @param original bounding volume
+	 * @param transformations
+	 * @param restitution
+	 * @param mass in kg
+	 */
+	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
+
+	/**
+	 * Destructor
+	 */
+	~RigidBody();
 
 public:
 
@@ -128,8 +185,6 @@ public:
 	 * @return inertia matrix
 	 */
 	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
-
-public:
 
 	/** 
 	 * Set up index in rigid body array list
@@ -263,28 +318,10 @@ public:
 	 */
 	Vector3& getForce();
 
-public: /* protected */
-
-	/** 
-	 * Wake up
-	 */
-	void awake(bool resetFrameCount);
-
-public:
-
 	/** 
 	 * Put rigid body to sleep
 	 */
 	void sleep();
-
-private:
-
-	/** 
-	 * Compute world inverse inertia
-	 */
-	void computeWorldInverseInertiaMatrix();
-
-public:
 
 	/** 
 	 * Synchronizes this rigid body with transformations
@@ -299,21 +336,6 @@ public:
 	 */
 	void addForce(const Vector3& forceOrigin, const Vector3& force);
 
-public: /* protected */
-
-	/** 
-	 * Updates this rigid body / integrates it
-	 * @param delta time
-	 */
-	void update(float deltaTime);
-
-	/** 
-	 * @return if velocity has been changed
-	 */
-	bool checkVelocityChange();
-
-public:
-
 	/** 
 	 * Add a collision listener to this rigid body
 	 * @param listener
@@ -326,45 +348,4 @@ public:
 	 */
 	void removeCollisionListener(CollisionListener* listener);
 
-public: /* protected */
-
-	/** 
-	 * Fire on collision 
-	 * @param other
-	 * @param collision response
-	 */
-	void fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse);
-
-	/** 
-	 * Fire on collision begin
-	 * @param other
-	 * @param collision response
-	 */
-	void fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse);
-
-	/** 
-	 * Fire on collision end
-	 * @param other
-	 * @param collision response
-	 */
-	void fireOnCollisionEnd(RigidBody* other);
-
-public: /* protected */
-	/**
-	 * Protected constructor
-	 * @param partition
-	 * @param id
-	 * @param enabled
-	 * @param type id
-	 * @param original bounding volume
-	 * @param transformations
-	 * @param restitution
-	 * @param mass in kg
-	 */
-	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
-
-	/**
-	 * Destructor
-	 */
-	~RigidBody();
 };
