@@ -34,10 +34,9 @@ class tdme::tools::shared::model::LevelEditorEntity final
 	friend class LevelEditorEntity_EntityType;
 
 public:
-	typedef ModelProperties super;
 	static constexpr int32_t ID_NONE { -1 };
 
-public: /* protected */
+private:
 	int32_t id {  };
 	LevelEditorEntity_EntityType* type {  };
 	string name {  };
@@ -111,9 +110,13 @@ public:
 	 */
 	Model* getModel();
 
-public:
-
 	/** 
+	 * Set model
+	 * @param model
+	 */
+	void setModel(Model* model);
+
+	/**
 	 * @return pivot
 	 */
 	Vector3& getPivot();

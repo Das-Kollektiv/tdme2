@@ -201,7 +201,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 
 void LevelEditorEntityBoundingVolume::updateLevelEditorEntity()
 {
-	if (levelEditorEntity->type == LevelEditorEntity_EntityType::TRIGGER)
-		levelEditorEntity->model = model;
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER)
+		levelEditorEntity->setModel(model);
 
 }

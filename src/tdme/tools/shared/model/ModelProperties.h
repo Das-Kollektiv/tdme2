@@ -22,7 +22,7 @@ using tdme::tools::shared::model::PropertyModelClass;
  */
 class tdme::tools::shared::model::ModelProperties
 {
-public: /* protected */
+private:
 	map<string, PropertyModelClass*> propertiesByName {  };
 	vector<PropertyModelClass*> properties {  };
 

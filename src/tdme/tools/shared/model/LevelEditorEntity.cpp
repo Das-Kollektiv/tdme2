@@ -104,6 +104,11 @@ Model* LevelEditorEntity::getModel()
 	return model;
 }
 
+void LevelEditorEntity::setModel(Model* model) {
+	if (this->model != nullptr) delete this->model;
+	this->model = model;
+}
+
 Vector3& LevelEditorEntity::getPivot()
 {
 	return pivot;
