@@ -77,12 +77,14 @@ void AudioStream::play()
 	if (isPlaying() == true)
 		stop();
 
+	// update AL properties
 	updateProperties();
 	ALsizei buffersToPlay = 0;
 	for (auto i = 0; i < alBufferIds.size(); i++) {
 		data->clear();
 		try {
 			auto bytesDecoded = decoder.readFromStream(data);
+			// skip if no more data is available
 			if (bytesDecoded == 0) break;
 		} catch (FileSystemException &fse) {
 			Console::println(string("Audio stream: '" + (id) + "': " + fse.what()));
@@ -126,11 +128,13 @@ void AudioStream::stop()
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("Audio sound: '" + id + "': Could not stop"));
 	}
+	// determine queued buffers
 	ALint queuedBuffers;
 	alGetSourcei(alSourceId, AL_BUFFERS_QUEUED, &queuedBuffers);
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("Audio stream: '" + id + "': Could not determine queued buffers"));
 	}
+	// unqueue buffers
 	if (queuedBuffers > 0) {
 		vector<uint32_t> removedBuffers;
 		removedBuffers.resize(queuedBuffers);
@@ -143,6 +147,7 @@ void AudioStream::stop()
 
 bool AudioStream::initialize()
 {
+	// decode audio stream
 	try {
 		// decode ogg vorbis
 		decoder.openFile(pathName, fileName);
@@ -183,12 +188,14 @@ bool AudioStream::initialize()
 		Console::println(string("Audio stream: '" + id + "': Could not generate buffer"));
 		return false;
 	}
+	// create source
 	alGenSources(1, &alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("Audio stream: '" + id + "': Could not generate source"));
 		dispose();
 		return false;
 	}
+	// initiate sound properties
 	updateProperties();
 	data = ByteBuffer::allocate(BUFFER_SIZE);
 	initiated = true;
@@ -200,6 +207,7 @@ void AudioStream::update()
 	if (initiated == false)
 		return;
 
+	// determine processed buffers
 	int32_t processedBuffers;
 	alGetSourcei(alSourceId, AL_BUFFERS_PROCESSED, &processedBuffers);
 	if (alGetError() != AL_NO_ERROR) {
@@ -207,11 +215,13 @@ void AudioStream::update()
 	}
 	if (processedBuffers > 0) {
 		while (processedBuffers > 0) {
+			// get a processed buffer id and unqueue it
 			uint32_t processedBufferId;
 			alSourceUnqueueBuffers(alSourceId, 1, &processedBufferId);
 			if (alGetError() != AL_NO_ERROR) {
 				Console::println(string("Audio stream: '" + id + "': Could not unqueue buffers"));
 			}
+			// fill processed buffer again
 			data->clear();
 			auto bytesDecoded = 0;
 			try {
@@ -225,24 +235,30 @@ void AudioStream::update()
 			} catch (AudioDecoderException& ade) {
 				Console::println(string("Audio stream: '" + (id) + "': " + ade.what()));
 			}
+			// new buffer if we have any data left
 			if (bytesDecoded > 0) {
+				// upload buffer data
 				alBufferData(processedBufferId, format, data->getBuffer(), data->getPosition(), frequency);
 				if (alGetError() != AL_NO_ERROR) {
 					Console::println(string("Audio stream: '" + id + "': Could not upload buffer"));
 				}
+				// queue it
 				alSourceQueueBuffers(alSourceId, 1, &processedBufferId);
 				if (alGetError() != AL_NO_ERROR) {
 					Console::println(string("Audio stream: '" + id + "': Could not queue buffer"));
 				}
 			}
+			// processed it
 			processedBuffers--;
 		}
 	}
+	// update AL properties
 	updateProperties();
 }
 
 void AudioStream::updateProperties()
 {
+	// update sound properties
 	alSourcef(alSourceId, AL_PITCH, pitch);
 	alSourcef(alSourceId, AL_GAIN, gain);
 	alSourcefv(alSourceId, AL_POSITION, sourcePosition.getArray().data());

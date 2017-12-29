@@ -67,8 +67,9 @@ void Sound::play()
 {
 	if (initiated == false)
 		return;
-
+	// update
 	update();
+	// play
 	alSourcePlay(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("Audio sound: '" + id + "': Could not play"));
@@ -99,18 +100,22 @@ void Sound::stop()
 
 bool Sound::initialize()
 {
+	// check if we already have this buffer
 	auto audioBufferManaged = Audio::instance->audioBufferManager.addAudioBuffer(bufferId);
 	if (audioBufferManaged->alId == Audio::ALBUFFERID_NONE) {
+		// nope, generate al buffer
 		int alError;
 		alGenBuffers(1, &alBufferId);
 		if (alGetError() != AL_NO_ERROR) {
 			Console::println(string("Audio sound: '" + id + "': Could not generate buffer"));
 			return false;
 		}
+		// set up al id in audio buffer managed
 		audioBufferManaged->setAlId(alBufferId);
 		auto format = -1;
 		auto frequency = -1;
 
+		// decode audio sound
 		VorbisDecoder decoder;
 		ByteBuffer* data = nullptr;
 		try {
@@ -162,11 +167,13 @@ bool Sound::initialize()
 			return false;
 		}
 		decoder.close();
+		// check for valid format and frequency
 		if (format == -1 || frequency == -1) {
 			Console::println(string("Audio sound: '" + id + "': Format or frequency invalid"));
 			dispose();
 			return false;
 		}
+		// upload to al
 		alBufferData(alBufferId, format, data->getBuffer(), data->getPosition(), frequency);
 		if (alGetError() != AL_NO_ERROR) {
 			Console::println(string("Audio sound: '" + id + "': Could not upload buffer data"));
@@ -177,20 +184,27 @@ bool Sound::initialize()
 	} else {
 		alBufferId = audioBufferManaged->alId;
 	}
+
+	// create source
 	alGenSources(1, &alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("Audio sound: '" + id + "': Could not generate source"));
 		dispose();
 		return false;
 	}
+
+	// initiate sound properties
 	alSourcei(alSourceId, AL_BUFFER, alBufferId);
 	update();
+
+	//
 	initiated = true;
 	return true;
 }
 
 void Sound::update()
 {
+	// update sound properties
 	alSourcef(alSourceId, AL_PITCH, pitch);
 	alSourcef(alSourceId, AL_GAIN, gain);
 	alSourcefv(alSourceId, AL_POSITION, sourcePosition.getArray().data());
