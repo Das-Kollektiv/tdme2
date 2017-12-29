@@ -55,26 +55,34 @@ Quaternion& Rotations::getQuaternion()
 
 void Rotations::fromRotations(Rotations* transformations)
 {
+	// rotations
 	auto rotationIdx = 0;
 	for (; rotationIdx < transformations->size(); rotationIdx++) {
+		// do we have a rotation to reuse?
 		auto rotation = transformations->get(rotationIdx);
 		auto _rotation = rotationIdx < rotations.size() ? rotations.at(rotationIdx) : nullptr;
+		//	nope?
 		if (_rotation == nullptr) {
+			// add it
 			_rotation = new Rotation();
 			rotations.push_back(_rotation);
 		}
+		// copy
 		_rotation->fromRotation(rotation);
 	}
+	// remove unused rotations
 	while (rotationIdx < rotations.size()) {
 		Rotation* rotation = rotations[rotations.size() - 1];
 		auto _rotation = rotations.erase(rotations.begin() + rotations.size() - 1);
 		delete rotation;
 	}
+	// update quaternion
 	this->quaternion.set(transformations->quaternion);
 }
 
 void Rotations::update()
 {
+	// create and multiply rotations
 	quaternion.identity();
 	for (auto rotation: rotations) {
 		rotation->update();

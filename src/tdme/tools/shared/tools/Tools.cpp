@@ -300,9 +300,11 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 		modelEntity->setDynamicShadowingEnabled(true);
 		engine->addEntity(modelEntity);
 	}
-	float maxAxisDimension = Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox());
-	modelEntity->getScale().scale(1.0f / maxAxisDimension);
-	modelEntity->update();
+	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
+	if (modelEntity != nullptr) {
+		modelEntity->getScale().scale(1.0f / maxAxisDimension);
+		modelEntity->update();
+	}
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - MathTools::EPSILON);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);

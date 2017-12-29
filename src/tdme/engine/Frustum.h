@@ -31,6 +31,8 @@ class tdme::engine::Frustum final
 {
 private:
 	GLRenderer* renderer {  };
+
+	// right, left, bottom, top, far, near
 	static constexpr int32_t PLANE_RIGHT { 0 };
 	static constexpr int32_t PLANE_LEFT { 1 };
 	static constexpr int32_t PLANE_BOTTOM { 2 };
@@ -47,7 +49,6 @@ private:
 public:
 	/** 
 	 * Setups frustum, should be called if frustum did change 
-	 * @param gl
 	 */
 	void updateFrustum();
 

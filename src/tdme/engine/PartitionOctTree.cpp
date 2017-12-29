@@ -72,12 +72,15 @@ void PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* paren
 	node.bv.getMin().set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node.bv.getMax().set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node.bv.update();
+	// register in parent sub nodes
 	parent->subNodes.push_back(node);
 	PartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
+	// register in parent sub nodes by coordinate, if root node
 	if (parent == &treeRoot) {
 		string key = to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z);
 		parent->subNodesByCoordinate[key] = storedNode;
 	}
+	// create sub nodes
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
 		for (auto _x = 0; _x < 2; _x++)
@@ -95,6 +98,7 @@ void PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* paren
 
 void PartitionOctTree::addEntity(Entity* entity)
 {
+	// update if already exists
 	vector<PartitionOctTree_PartitionTreeNode*>* thisEntityPartitions = nullptr;
 	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId());
 	if (thisEntityPartitionsIt != entityPartitionNodes.end()) {
@@ -103,7 +107,9 @@ void PartitionOctTree::addEntity(Entity* entity)
 	if (thisEntityPartitions != nullptr && thisEntityPartitions->empty() == false) {
 		removeEntity(entity);
 	}
+	// frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
+	// find, create root nodes if not exists
 	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getX() / PARTITION_SIZE_MAX));
 	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getY() / PARTITION_SIZE_MAX));
 	auto minZPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getZ() / PARTITION_SIZE_MAX));
@@ -113,12 +119,13 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
+		// check if first level node has been created already
 		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
 			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
 	}
-
+	// add entity to tree
 	addToPartitionTree(entity, boundingBox);
 }
 
@@ -129,6 +136,7 @@ void PartitionOctTree::updateEntity(Entity* entity)
 
 void PartitionOctTree::removeEntity(Entity* entity)
 {
+	// check if we have entity in oct tree
 	vector<PartitionOctTree_PartitionTreeNode*>* objectPartitionsVector = nullptr;
 	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId());
 	if (objectPartitionsVectorIt != entityPartitionNodes.end()) {
@@ -142,6 +150,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		);
 		return;
 	}
+	// remove object from assigned partitions
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
 		auto partitionTreeNode = objectPartitionsVector->at(lastIdx);
@@ -150,7 +159,9 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);
 		if (partitionObjects.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
+			// check if whole top level partition is empty
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
+				// yep, remove it
 				removePartitionNode(rootPartitionTreeNode);
 				for (auto treeRootSubNodeIt = treeRoot.subNodes.begin(); treeRootSubNodeIt != treeRoot.subNodes.end(); ++treeRootSubNodeIt) {
 					if ((void*)&treeRootSubNodeIt == (void*)rootPartitionTreeNode) {
@@ -168,6 +179,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 
 bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* node)
 {
+	// lowest level node has objects attached?
 	if (node->partitionEntities.size() > 0) {
 		return false;
 	} else {
@@ -182,10 +194,12 @@ bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* 
 
 void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* node)
 {
+	// lowest level node has objects attached?
 	if (node->partitionEntities.size() > 0) {
 		Console::println("PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
 		node->partitionEntities.clear();
 	} else {
+		// otherwise check top level node sub nodes
 		for (auto& subNode: node->subNodes) {
 			removePartitionNode(&subNode);
 		}
@@ -196,9 +210,11 @@ void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* n
 int32_t PartitionOctTree::doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities)
 {
 	auto lookUps = 1;
+	// check if given cbv collides with partition node bv
 	if (frustum->isVisible(&node->bv) == false) {
 		return lookUps;
 	}
+	// if this node already has the partition cbvs add it to the iterator
 	if (node->partitionEntities.size() > 0) {
 		for (auto i = 0; i < node->partitionEntities.size(); i++) {
 			auto entity = node->partitionEntities.at(i);
@@ -220,6 +236,7 @@ int32_t PartitionOctTree::doPartitionTreeLookUpVisibleObjects(Frustum* frustum, 
 		}
 		return lookUps;
 	} else
+	// otherwise check sub nodes
 	if (node->subNodes.size() > 0) {
 		for (auto& subNode: node->subNodes) {
 			lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode, visibleEntities);
@@ -244,10 +261,12 @@ void PartitionOctTree::addToPartitionTree(PartitionOctTree_PartitionTreeNode* no
 	if (CollisionDetection::doCollideAABBvsAABBFast(&node->bv, cbv) == false) {
 		return;
 	}
+	// if this node already has the partition cbvs add it to the iterator
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionEntities.push_back(entity);
 		entityPartitionNodes[entity->getId()].push_back(node);
 	} else
+		// otherwise check sub nodes
 	if (node->subNodes.size() > 0) {
 		for (auto& subNode: node->subNodes) {
 			addToPartitionTree(&subNode, entity, cbv);
@@ -264,13 +283,16 @@ void PartitionOctTree::addToPartitionTree(Entity* entity, BoundingBox* cbv)
 
 int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<Entity*>& entityIterator)
 {
+	// check if given cbv collides with partition node bv
 	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
 		return 1;
 	}
+	// if this node already has the partition cbvs add it to the iterator
 	if (node->partitionEntities.size() > 0) {
 		entityIterator.addVector(&node->partitionEntities);
 		return 1;
 	} else
+	// otherwise check sub nodes
 	if (node->subNodes.size() > 0) {
 		auto lookUps = 1;
 		for (auto& subNode: node->subNodes) {

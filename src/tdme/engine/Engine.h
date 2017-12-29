@@ -118,7 +118,6 @@ private:
 
 	vector<Object3D*> visibleObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
-	vector<PointsParticleSystemEntity*> ppses {  };
 	vector<PointsParticleSystemEntity*> visiblePpses {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 

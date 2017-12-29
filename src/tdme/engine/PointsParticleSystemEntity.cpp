@@ -46,14 +46,18 @@ void PointsParticleSystemEntity::update()
 
 void PointsParticleSystemEntity::setEnabled(bool enabled)
 {
+	// return if enable state has not changed
 	if (this->enabled == enabled) return;
+	// frustum culling enabled?
 	if (frustumCulling == true) {
+		// yeo, add or remove from partition
 		if (enabled == true) {
 			if (engine != nullptr) engine->partition->addEntity(this);
 		} else {
 			if (engine != nullptr) engine->partition->removeEntity(this);
 		}
 	}
+	// call parent class::setEnabled()
 	PointsParticleSystemEntityInternal::setEnabled(enabled);
 }
 
@@ -68,10 +72,14 @@ bool PointsParticleSystemEntity::isFrustumCulling() {
 }
 
 void PointsParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
+	// check if enabled and engine attached
 	if (enabled == true && engine != nullptr) {
+		// had frustum culling
 		if (this->frustumCulling == true) {
+			// yep, remove if set to false now
 			if (frustumCulling == false) engine->partition->removeEntity(this);
 		} else {
+			// yep, add if set to true now
 			if (frustumCulling == true) engine->partition->addEntity(this);
 		}
 	}

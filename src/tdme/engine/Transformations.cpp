@@ -55,22 +55,32 @@ Matrix4x4& Transformations::getTransformationsMatrix()
 void Transformations::fromTransformations(Transformations* transformations)
 {
 	if (this == transformations) return;
+	// translation
 	translation.set(transformations->translation);
+	// scale
 	scale.set(transformations->scale);
+	// pivot
 	pivot.set(transformations->pivot);
+	// rotations
 	auto rotationIdx = 0;
 	for (; rotationIdx < transformations->rotations.size(); rotationIdx++) {
 		auto rotation = transformations->rotations.get(rotationIdx);
+		// do we have a rotation to reuse?
 		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : nullptr;
+		//	nope?
 		if (_rotation == nullptr) {
+			// add it
 			_rotation = new Rotation();
 			rotations.add(_rotation);
 		}
+		// copy
 		_rotation->fromRotation(rotation);
 	}
+	// remove unused rotations
 	while (rotationIdx < rotations.size()) {
 		rotations.remove(rotations.size() - 1);
 	}
+	// copy matrices and such
 	transformationsMatrix.set(transformations->transformationsMatrix);
 	translationMatrix.set(transformations->translationMatrix);
 	scaleMatrix.set(transformations->scaleMatrix);
@@ -82,17 +92,26 @@ void Transformations::fromTransformations(Transformations* transformations)
 
 void Transformations::update()
 {
+	// transformation matrix identity
 	transformationsMatrix.identity();
+	// set up translation matrix
 	translationMatrix.identity().translate(translation);
+	// set up scale matrix
 	scaleMatrix.identity().scale(scale);
+	// create and multiply rotations
 	rotations.update();
+	// apply rotations
 	rotationsMatrix.identity();
+	//	pivot
 	rotationsPivot.set(pivot).scale(-1.0f);
 	rotationsMatrix.translate(rotationsPivot);
+	//	rotatations
 	rotations.quaternion.computeMatrix(rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);
+	//	pivot
 	rotationsTranslationsMatrix.identity().translate(pivot);
 	rotationsMatrix.multiply(rotationsTranslationsMatrix);
+	// apply to transformation matrix
 	transformationsMatrix.multiply(scaleMatrix);
 	transformationsMatrix.multiply(rotationsMatrix);
 	transformationsMatrix.multiply(translationMatrix);

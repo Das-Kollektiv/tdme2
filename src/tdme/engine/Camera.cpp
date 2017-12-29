@@ -172,6 +172,7 @@ Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3
 
 void Camera::update(int32_t width, int32_t height)
 {
+	// setup new view port if required
 	if (this->width != width || this->height != height) {
 		if (height <= 0)
 			height = 1;
@@ -183,12 +184,16 @@ void Camera::update(int32_t width, int32_t height)
 	} else {
 		aspect = static_cast< float >(width) / static_cast< float >(height);
 	}
+
+	// setup projection and model view and such
 	renderer->getProjectionMatrix().set(computeProjectionMatrix(fovY, aspect, zNear, zFar));
 	renderer->onUpdateProjectionMatrix();
 	renderer->getModelViewMatrix().set(computeModelViewMatrix(lookFrom, lookAt, upVector));
 	renderer->onUpdateModelViewMatrix();
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
 	renderer->onUpdateCameraMatrix();
+
+	// update frustum
 	frustum->updateFrustum();
 }
 
