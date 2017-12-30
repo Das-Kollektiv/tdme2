@@ -175,11 +175,6 @@ private:
 	Object3DVBORenderer* getObject3DVBORenderer();
 
 	/**
-	 * @return shadow mapping or null if disabled
-	 */
-	ShadowMapping* getShadowMapping();
-
-	/**
 	 * Computes visibility and transformations
 	 */
 	void computeTransformations();
@@ -239,6 +234,11 @@ public:
 	 * @return height
 	 */
 	int32_t getHeight();
+
+	/**
+	 * @return shadow mapping or null if disabled
+	 */
+	ShadowMapping* getShadowMapping();
 
 	/** 
 	 * @return GUI

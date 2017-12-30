@@ -78,7 +78,12 @@ void GL3Renderer::initialize()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
+	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
+	#if defined(_WIN32) or defined(__linux__)
+		glEnable(GL_POINT_SPRITE);
+	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
+
 	setTextureUnit(0);
 	glGenVertexArrays(1, &engineVAO);
 	glBindVertexArray(engineVAO);
