@@ -72,6 +72,7 @@ template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 
 Model* WFObjReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
 {
+	// create model
 	auto model = new Model(
 		pathName + "/" + fileName,
 		fileName,
@@ -84,12 +85,17 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 	map<string, Material*> materials;
 	auto subGroups = model->getSubGroups();
 	auto groups = model->getGroups();
+	// current group
 	Group* group = nullptr;
+	// model vertices -> group vertices mapping
 	map<int32_t, int32_t> modelGroupVerticesMapping;
+	// model texture coordinates -> group texture coordinates mapping
 	map<int32_t, int32_t> modelGroupTextureCoordinatesMapping;
+	// current group data
 	vector<Face> groupFacesEntityFaces;
 	vector<Vector3> groupVertices;
 	vector<Vector3> groupNormals;
+	// current group's faces entity
 	vector<TextureCoordinate> groupTextureCoordinates;
 	vector<FacesEntity> groupFacesEntities;
 	FacesEntity* groupFacesEntity = nullptr;
@@ -105,13 +111,18 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 			string line;
 			for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 				line = StringUtils::trim(lines[lineIdx]);
+				// skip on comments
 				if (StringUtils::startsWith(line, "#")) {
 					continue;
 				}
+				// determine index of first ' ' which will separate command from arguments
 				auto commandEndIdx = line.find(L' ');
 				if (commandEndIdx == -1) commandEndIdx = line.size();
+				// determine command
 				auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
+				// determine arguments if any exist
 				auto arguments = command.size() + 1 > line.length() ? "" : StringUtils::substring(line, command.length() + 1);
+				// parse
 				if (command == "mtllib") {
 					auto materialFileName = arguments;
 					WFObjReader::readMaterials(pathName, materialFileName, &materials);
@@ -121,6 +132,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					auto x = Float::parseFloat(t.nextToken());
 					auto y = Float::parseFloat(t.nextToken());
 					auto z = Float::parseFloat(t.nextToken());
+					// add vertex
 					vertices.push_back(Vector3(x, y, z));
 				} else
 				if (command == "vt") {
@@ -137,25 +149,30 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					auto vt0 = -1;
 					auto vt1 = -1;
 					auto vt2 = -1;
+					// parse vertex index 0, vertex texture index 0
 					t2.tokenize(t.nextToken(), "/");
 					v0 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt0 = Integer::parseInt(t2.nextToken()) - 1;
 					}
+					// parse vertex index 1, vertex texture index 1
 					t2.tokenize(t.nextToken(), "/");
 					v1 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt1 = Integer::parseInt(t2.nextToken()) - 1;
 					}
+					// parse vertex index 2, vertex texture index 2
 					t2.tokenize(t.nextToken(), "/");
 					v2 = Integer::parseInt(t2.nextToken()) - 1;
 					if (t2.hasMoreTokens()) {
 						vt2 = Integer::parseInt(t2.nextToken()) - 1;
 					}
+					// check if triangulated
 					if (t.hasMoreTokens()) {
 						throw ModelFileIOException("We only support triangulated meshes");
 					}
 					{
+						// map v0 to group
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v0);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
 							groupVertices.push_back(vertices.at(v0));
@@ -165,6 +182,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						}
 					}
 					{
+						// map v1 to group
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v1);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
 							groupVertices.push_back(vertices.at(v1));
@@ -174,6 +192,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						}
 					}
 					{
+						// map v2 to group
 						auto mappedVertexIt = modelGroupVerticesMapping.find(v2);
 						if (mappedVertexIt == modelGroupVerticesMapping.end()) {
 							groupVertices.push_back(vertices.at(v2));
@@ -183,6 +202,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						}
 					}
 					{
+						// map vt0 to group
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt0);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
 							groupTextureCoordinates.push_back(textureCoordinates.at(vt0));
@@ -192,6 +212,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						}
 					}
 					{
+						// map vt1 to group
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt1);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
 							groupTextureCoordinates.push_back(textureCoordinates.at(vt1));
@@ -201,6 +222,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						}
 					}
 					{
+						// map vt2 to group
 						auto mappedTextureCoordinateIt = modelGroupTextureCoordinatesMapping.find(vt2);
 						if (mappedTextureCoordinateIt == modelGroupTextureCoordinatesMapping.end()) {
 							groupTextureCoordinates.push_back(textureCoordinates.at(vt2));
@@ -214,29 +236,36 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						groupVertices.at(v1),
 						groupVertices.at(v2)
 					};
+					// compute vertex normal
 					array<Vector3, 3> faceVertexNormals;
 					ModelHelper::computeNormals(
 						&faceVertices,
 						&faceVertexNormals
 					);
+					// store group normals
 					auto n0 = groupNormals.size();
 					groupNormals.push_back(faceVertexNormals[0]);
 					auto n1 = groupNormals.size();
 					groupNormals.push_back(faceVertexNormals[1]);
 					auto n2 = groupNormals.size();
 					groupNormals.push_back(faceVertexNormals[2]);
+					// create face with vertex indices
+					//	we only support triangulated faces
 					Face face(group, v0, v1, v2, n0, n1, n2);
 					if (vt0 != -1 && vt1 != -1 && vt2 != -1) {
+						// set optional texture coordinate index
 						face.setTextureCoordinateIndices(vt0, vt1, vt2);
 					}
 					groupFacesEntityFaces.push_back(face);
 				} else
 				if (command == "g") {
 					if (group != nullptr) {
+						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
+						// group
 						group->setVertices(&groupVertices);
 						group->setNormals(&groupNormals);
 						group->setTextureCoordinates(&groupTextureCoordinates);
@@ -259,10 +288,12 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 				} else
 				if (command == "usemtl") {
 					if (group != nullptr) {
+						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
 							groupFacesEntity->setFaces(&groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
+						// set up new one
 						groupFacesEntity = new FacesEntity(
 							group,
 							"#" + to_string(groupFacesEntities.size())
@@ -276,13 +307,17 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 						groupFacesEntity->setMaterial(material);
 					}
 				} else {
+					// not supported
 				}
 			}
+			// finish last group
 			if (group != nullptr) {
+				// current faces entity
 				if (groupFacesEntityFaces.empty() == false) {
 					groupFacesEntity->setFaces(&groupFacesEntityFaces);
 					groupFacesEntities.push_back(*groupFacesEntity);
 				}
+				// group
 				group->setVertices(&groupVertices);
 				group->setNormals(&groupNormals);
 				if (groupTextureCoordinates.size() > 0) {
@@ -294,7 +329,10 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 		}
 	}
 
+	// prepare for indexed rendering
 	ModelHelper::prepareForIndexedRendering(model);
+
+	//
 	return model;
 }
 
@@ -311,13 +349,18 @@ void WFObjReader::readMaterials(const string& pathName, const string& fileName, 
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 		for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 			auto line = StringUtils::trim(lines[lineIdx]);
+			// skip on comments
 			if (StringUtils::startsWith(line, "#") == true) {
 				continue;
 			}
+			// determine index of first ' ' which will separate command from arguments
 			auto commandEndIdx = line.find(L' ');
 			if (commandEndIdx == -1) commandEndIdx = line.length();
+			// determine command
 			auto command = StringUtils::toLowerCase(StringUtils::trim(StringUtils::substring(line, 0, commandEndIdx)));
+			// determine arguments if any exist
 			auto arguments = command.length() + 1 > line.length() ? "" : StringUtils::substring(line, command.length() + 1);
+			// parse
 			if (command == "newmtl") {
 				auto name = arguments;
 				current = new Material(name);
