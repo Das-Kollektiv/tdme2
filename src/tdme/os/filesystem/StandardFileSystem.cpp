@@ -108,7 +108,7 @@ void StandardFileSystem::getContent(const string& pathName, const string& fileNa
 }
 
 void StandardFileSystem::setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) {
-	ofstream ofs(getFileName(pathName, fileName).c_str());
+	ofstream ofs(getFileName(pathName, fileName).c_str(), ofstream::binary);
 	if (ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
