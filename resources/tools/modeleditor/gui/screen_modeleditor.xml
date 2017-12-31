@@ -135,8 +135,8 @@
 								<tab id="tab_properties_boundingvolume_5" text="BV 5" />
 								<tab id="tab_properties_boundingvolume_6" text="BV 6" />
 								<tab id="tab_properties_boundingvolume_7" text="BV 7" />
-								<tab id="tab_properties_convexmeshes" text="Convex Meshes" />
 								<tab id="tab_properties_terrain" text="Terrain" />
+								<tab id="tab_properties_convexmeshes" text="Generate" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_boundingvolume_0">
@@ -1022,15 +1022,105 @@
 									</layout>
 								</tab-content>
 								<tab-content tab-id="tab_properties_convexmeshes">
-									<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
-										<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-											<space width="5" />
-											<input id="boundingvolume_convexmeshes_file" name="boundingvolume_convexmeshes_file" width="*" height="auto" text="./model.tm" />
-											<space width="10" />
-											<button id="button_boundingvolume_convexmeshes_file" name="button_boundingvolume_convexmeshes_file" text="Load" width="60" height="auto" />
+									<scrollarea-vertical width="100%" height="100%">
+										<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
+											<space height="20" />
+											<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+												<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
+												<space width="5" />
+												<input id="boundingvolume_convexmeshes_file" name="boundingvolume_convexmeshes_file" width="*" height="auto" text="./model.tm" />
+												<space width="10" />
+												<button id="button_boundingvolume_convexmeshes_file" name="button_boundingvolume_convexmeshes_file" text="Load" width="60" height="auto" />
+											</layout>
+											<space height="20" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Resolution" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_resolution" name="boundingvolume_convexmeshes_resolution" width="455" height="auto" text="Resolution" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Depth" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_depth" name="boundingvolume_convexmeshes_depth" width="455" height="auto" text="Depth" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Concavity" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_concavity" name="boundingvolume_convexmeshes_concavity" width="455" height="auto" text="Concavity" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="P down sampling" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_planedownsampling" name="boundingvolume_convexmeshes_planedownsampling" width="455" height="auto" text="P down sampling" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="CH down sampling" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_convexhullownsampling" name="boundingvolume_convexmeshes_convexhulldownsampling" width="455" height="auto" text="CH down sampling" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Alpha" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_alpha" name="boundingvolume_convexmeshes_alpha" width="455" height="auto" text="Alpha" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Beta" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_beta" name="boundingvolume_convexmeshes_beta" width="455" height="auto" text="Beta" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Max vertices / CH" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_maxverticesperch" name="boundingvolume_convexmeshes_maxverticesperch" width="455" height="auto" text="Max vertices / CH" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="Min volume / CH" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_minvolumeperch" name="minvolumeperch" width="455" height="auto" text="Min volume / CH" disabled="true" />
+												</layout>
+											</layout>
+											<space height="10" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+													<text font="resources/gui/fonts/Foo_20.fnt" text="PCA" width="140" height="auto"/>
+													<space width="5" />
+													<input id="boundingvolume_convexmeshes_pca" name="boundingvolume_convexmeshes_pca" width="455" height="auto" text="PCA" disabled="true" />
+												</layout>
+											</layout>
+											<space height="20" />
+											<layout alignment="horizontal" width="auto" height="auto">
+												<button id="button_boundingvolume_convexmeshes_remove" name="button_boundingvolume_convexmeshes_remove" text="Remove generated" width="auto" height="auto" />
+												<space width="20" />
+												<button id="button_boundingvolume_convexmeshes_generate" name="button_boundingvolume_convexmeshes_generate" text="Generate" width="auto" height="auto" />
+											</layout>
+											<space height="20" />
 										</layout>
-									</layout>
+									</scrollarea-vertical>
 								</tab-content>
 								<tab-content tab-id="tab_properties_terrain">
 									<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">

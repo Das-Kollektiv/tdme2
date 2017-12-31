@@ -293,6 +293,6 @@ void EntityBoundingVolumeView::unsetConvexMeshes() {
 	boundingVolumeSubScreenController->unsetConvexMeshes();
 }
 
-void EntityBoundingVolumeView::setConvexMeshes() {
-	boundingVolumeSubScreenController->setConvexMeshes();
+void EntityBoundingVolumeView::setConvexMeshes(LevelEditorEntity* entity) {
+	boundingVolumeSubScreenController->setConvexMeshes(entity);
 }

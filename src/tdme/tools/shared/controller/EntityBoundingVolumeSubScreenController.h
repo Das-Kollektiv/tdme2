@@ -39,6 +39,7 @@ using tdme::utils::MutableString;
 class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
 {
 	friend class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+	friend class EntityBoundingVolumeSubScreenController_GenerateConvexMeshes;
 	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
 	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 
@@ -70,6 +71,18 @@ private:
 	GUIElementNode* terrainMeshApply {  };
 	GUIElementNode* convexMeshesFile {  };
 	GUIElementNode* convexMeshesLoad {  };
+	GUIElementNode* convexMeshesResolution {  };
+	GUIElementNode* convexMeshesDepth {  };
+	GUIElementNode* convexMeshesConcavity {  };
+	GUIElementNode* convexMeshesPlaneDownSampling {  };
+	GUIElementNode* convexMeshesConvexHullDownSampling {  };
+	GUIElementNode* convexMeshesAlpha {  };
+	GUIElementNode* convexMeshesBeta {  };
+	GUIElementNode* convexMeshesMaxVerticesPerConvexHull {  };
+	GUIElementNode* convexMeshesMinVolumePerConvexHull {  };
+	GUIElementNode* convexMeshesPCA {  };
+	GUIElementNode* convexMeshesRemove {  };
+	GUIElementNode* convexMeshesGenerate {  };
 	MutableString* value {  };
 
 public:
@@ -217,9 +230,20 @@ public:
 	/** 
 	 * On bounding volume convex meshes file
 	 * @param entity
-	 * @param idx
 	 */
 	virtual void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
+
+	/**
+	 * On bounding volume convex meshes remove
+	 * @param entity
+	 */
+	virtual void onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity);
+
+	/**
+	 * On bounding volume convex meshes generate
+	 * @param entity
+	 */
+	virtual void onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity);
 
 	/**
 	 * Set terrain mesh
@@ -240,8 +264,9 @@ public:
 
 	/**
 	 * Set convex meshes
+	 * @param entity
 	 */
-	virtual void setConvexMeshes();
+	virtual void setConvexMeshes(LevelEditorEntity* entity);
 
 	/**
 	 * Unset convex meshes

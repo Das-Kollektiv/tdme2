@@ -22,6 +22,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_GenerateConvexMeshes.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.h>
@@ -64,6 +65,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_GenerateConvexMeshes;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
@@ -137,6 +139,18 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			terrainMeshApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_mesh_apply"));
 			convexMeshesFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_file"));
 			convexMeshesLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_file"));
+			convexMeshesResolution = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_resolution"));
+			convexMeshesDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_depth"));
+			convexMeshesConcavity = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_concavity"));
+			convexMeshesPlaneDownSampling = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_planedownsampling"));
+			convexMeshesConvexHullDownSampling = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_convexhullownsampling"));
+			convexMeshesAlpha = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_alpha"));
+			convexMeshesBeta = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_beta"));
+			convexMeshesMaxVerticesPerConvexHull = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_maxverticesperch"));
+			convexMeshesMinVolumePerConvexHull = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_minvolumeperch"));
+			convexMeshesPCA = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_pca"));
+			convexMeshesRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_remove"));
+			convexMeshesGenerate = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_generate"));
 		}
 	} catch (Exception& exception) {
 		Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
@@ -434,11 +448,27 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesFile(L
 	auto const entityFinal = entity;
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		modelPath->getPath(),
+		Tools::getPath(convexMeshesFile->getController()->getValue()->getString()),
 		"Load from: ",
 		&extensions,
-		"",
+		Tools::getFileName(convexMeshesFile->getController()->getValue()->getString()),
 		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
+	);
+}
+
+void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity)
+{
+	EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::removeConvexMeshes(
+		this,
+		entity
+	);
+}
+
+void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity)
+{
+	EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConvexMeshes(
+		this,
+		entity
 	);
 }
 
@@ -461,11 +491,56 @@ void EntityBoundingVolumeSubScreenController::unsetTerrainMesh() {
 void EntityBoundingVolumeSubScreenController::unsetConvexMeshes() {
 	convexMeshesFile->getController()->setDisabled(true);
 	convexMeshesLoad->getController()->setDisabled(true);
+	convexMeshesResolution->getController()->setDisabled(true);
+	convexMeshesResolution->getController()->setValue(value->set("1000000"));
+	convexMeshesDepth->getController()->setDisabled(true);
+	convexMeshesDepth->getController()->setValue(value->set("20"));
+	convexMeshesConcavity->getController()->setDisabled(true);
+	convexMeshesConcavity->getController()->setValue(value->set("0.0025"));
+	convexMeshesPlaneDownSampling->getController()->setDisabled(true);
+	convexMeshesPlaneDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesConvexHullDownSampling->getController()->setDisabled(true);
+	convexMeshesConvexHullDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesAlpha->getController()->setDisabled(true);
+	convexMeshesAlpha->getController()->setValue(value->set("0.05"));
+	convexMeshesBeta->getController()->setDisabled(true);
+	convexMeshesBeta->getController()->setValue(value->set("0.05"));
+	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(true);
+	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(value->set("256"));
+	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(true);
+	convexMeshesMinVolumePerConvexHull->getController()->setValue(value->set("0.0001"));
+	convexMeshesPCA->getController()->setDisabled(true);
+	convexMeshesPCA->getController()->setValue(value->set("0"));
+	convexMeshesRemove->getController()->setDisabled(true);
+	convexMeshesGenerate->getController()->setDisabled(true);
 }
 
-void EntityBoundingVolumeSubScreenController::setConvexMeshes() {
+void EntityBoundingVolumeSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
+	convexMeshesFile->getController()->setValue(value->set(entity->getFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
+	convexMeshesResolution->getController()->setDisabled(false);
+	convexMeshesResolution->getController()->setValue(value->set("1000000"));
+	convexMeshesDepth->getController()->setDisabled(false);
+	convexMeshesDepth->getController()->setValue(value->set("20"));
+	convexMeshesConcavity->getController()->setDisabled(false);
+	convexMeshesConcavity->getController()->setValue(value->set("0.0025"));
+	convexMeshesPlaneDownSampling->getController()->setDisabled(false);
+	convexMeshesPlaneDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesConvexHullDownSampling->getController()->setDisabled(false);
+	convexMeshesConvexHullDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesAlpha->getController()->setDisabled(false);
+	convexMeshesAlpha->getController()->setValue(value->set("0.05f"));
+	convexMeshesBeta->getController()->setDisabled(false);
+	convexMeshesBeta->getController()->setValue(value->set("0.05f"));
+	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(false);
+	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(value->set("256"));
+	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(false);
+	convexMeshesMinVolumePerConvexHull->getController()->setValue(value->set("0.0001"));
+	convexMeshesPCA->getController()->setDisabled(false);
+	convexMeshesPCA->getController()->setValue(value->set("0"));
+	convexMeshesRemove->getController()->setDisabled(false);
+	convexMeshesGenerate->getController()->setDisabled(false);
 }
 
 void EntityBoundingVolumeSubScreenController::showErrorPopUp(const string& caption, const string& message)
@@ -500,6 +575,12 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 				} else
 				if (node->getId() == "button_boundingvolume_convexmeshes_file") {
 					onBoundingVolumeConvexMeshesFile(entity);
+				} else
+				if (node->getId() == "button_boundingvolume_convexmeshes_remove") {
+					onBoundingVolumeConvexMeshesRemove(entity);
+				} else
+				if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
+					onBoundingVolumeConvexMeshesGenerate(entity);
 				} else {
 					Console::println(
 						string(

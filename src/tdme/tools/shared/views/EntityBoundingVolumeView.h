@@ -80,8 +80,9 @@ public:
 
 	/**
 	 * Set convex meshes
+	 * @param entity
 	 */
-	virtual void setConvexMeshes();
+	virtual void setConvexMeshes(LevelEditorEntity* entity);
 
 	/**
 	 * Unset convex meshes

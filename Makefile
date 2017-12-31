@@ -331,6 +331,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/EntityBaseSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.cpp \
+	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_GenerateConvexMeshes.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.cpp \
 	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \

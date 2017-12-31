@@ -152,7 +152,7 @@ MutableString* MutableString::insert(int32_t idx, float f, int32_t decimals)
 		auto integerDecimal = static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i + 1))) - (10 * static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i))));
 		insert(idx + i, integerDecimal);
 	}
-	insert(idx, u'.');
+	insert(idx, '.');
 	insert(idx, integer);
 	return this;
 }
