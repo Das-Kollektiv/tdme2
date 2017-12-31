@@ -335,6 +335,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	auto renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
 	auto renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
 	auto renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
+	// TODO: fix me, sub render area is wrong with floating nodes within scrollable
 	guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 	guiRenderer->setSubRenderAreaTop(renderAreaTop);
 	guiRenderer->setSubRenderAreaRight(renderAreaRight);
@@ -352,6 +353,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 		guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
 		guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 		guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
+		// TODO: fix me, sub render area is wrong with floating nodes within scrollable
 		guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 		guiRenderer->setSubRenderAreaTop(renderAreaTop);
 		guiRenderer->setSubRenderAreaRight(renderAreaRight);
