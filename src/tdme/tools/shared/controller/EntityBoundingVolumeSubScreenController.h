@@ -39,6 +39,7 @@ using tdme::utils::MutableString;
 class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
 {
 	friend class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
 	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 
 public:
@@ -64,9 +65,11 @@ private:
 	array<GUIElementNode*, 8> boundingvolumeObbRotationY {  };
 	array<GUIElementNode*, 8> boundingvolumeObbRotationZ {  };
 	array<GUIElementNode*, 8> boundingvolumeConvexMeshFile {  };
-	bool supportTerrainMesh;
+	bool isModelBoundingVolumes;
 	GUIElementNode* terrainMesh {  };
 	GUIElementNode* terrainMeshApply {  };
+	GUIElementNode* convexMeshesFile {  };
+	GUIElementNode* convexMeshesLoad {  };
 	MutableString* value {  };
 
 public:
@@ -212,6 +215,13 @@ public:
 	virtual void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
+	 * On bounding volume convex meshes file
+	 * @param entity
+	 * @param idx
+	 */
+	virtual void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
+
+	/**
 	 * Set terrain mesh
 	 * @param entity
 	 */
@@ -227,6 +237,16 @@ public:
 	 * Unset terrain mesh
 	 */
 	virtual void unsetTerrainMesh();
+
+	/**
+	 * Set convex meshes
+	 */
+	virtual void setConvexMeshes();
+
+	/**
+	 * Unset convex meshes
+	 */
+	virtual void unsetConvexMeshes();
 
 	/**
 	 * Shows the error pop up
@@ -245,9 +265,9 @@ public:
 	 * Public constructor
 	 * @param pop ups
 	 * @param model viewer screen controller
-	 * @param support terrain mesh
+	 * @param is model bounding volumes
 	 */
-	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool supportTerrainMesh);
+	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
 
 	/**
 	 * Destructor

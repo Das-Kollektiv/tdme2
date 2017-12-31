@@ -195,6 +195,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
 		entityBoundingVolumeView->setTerrainMesh(entity);
+		entityBoundingVolumeView->setConvexMeshes();
 		modelEditorScreenController->setRendering(entity);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
@@ -205,6 +206,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetPivot();
 		entityBoundingVolumeView->unsetBoundingVolumes();
 		entityBoundingVolumeView->unsetTerrainMesh();
+		entityBoundingVolumeView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();

@@ -149,6 +149,7 @@ TDME2
             - pthreads
             - (collision resolving of) ReactPhysics3D
             - FBXSDK
+            - V-HACD
         - targeted platforms and its current state
             - Windows/MINGW(port completed)
             - Linux(port completed)

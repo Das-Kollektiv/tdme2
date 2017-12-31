@@ -22,6 +22,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.h>
 #include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -63,6 +64,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -91,11 +93,11 @@ vector<string> EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS
 	"model_bv.7"
 };
 
-EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool supportTerrainMesh)
+EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
 {
 	this->modelPath = modelPath;
 	this->view = new EntityBoundingVolumeView(this, popUps);
-	this->supportTerrainMesh = supportTerrainMesh;
+	this->isModelBoundingVolumes = isModelBoundingVolumes;
 }
 
 EntityBoundingVolumeSubScreenController::~EntityBoundingVolumeSubScreenController() {
@@ -130,9 +132,11 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			boundingvolumeObbRotationZ[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_obb_rotation_z_" + to_string(i)));
 			boundingvolumeConvexMeshFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmesh_file_" + to_string(i)));
 		}
-		if (supportTerrainMesh == true) {
+		if (isModelBoundingVolumes == true) {
 			terrainMesh = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_mesh"));
 			terrainMeshApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_mesh_apply"));
+			convexMeshesFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_file"));
+			convexMeshesLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_file"));
 		}
 	} catch (Exception& exception) {
 		Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
@@ -425,6 +429,19 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(Lev
 	);
 }
 
+void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity)
+{
+	auto const entityFinal = entity;
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		modelPath->getPath(),
+		"Load from: ",
+		&extensions,
+		"",
+		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
+	);
+}
+
 void EntityBoundingVolumeSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
 	terrainMesh->getController()->setValue(value->set(entity->getModelSettings()->isTerrainMesh() == true?"1":""));
 	terrainMesh->getController()->setDisabled(false);
@@ -439,6 +456,16 @@ void EntityBoundingVolumeSubScreenController::unsetTerrainMesh() {
 	terrainMesh->getController()->setValue(value->set(""));
 	terrainMesh->getController()->setDisabled(true);
 	terrainMeshApply->getController()->setDisabled(true);
+}
+
+void EntityBoundingVolumeSubScreenController::unsetConvexMeshes() {
+	convexMeshesFile->getController()->setDisabled(true);
+	convexMeshesLoad->getController()->setDisabled(true);
+}
+
+void EntityBoundingVolumeSubScreenController::setConvexMeshes() {
+	convexMeshesFile->getController()->setDisabled(false);
+	convexMeshesLoad->getController()->setDisabled(false);
 }
 
 void EntityBoundingVolumeSubScreenController::showErrorPopUp(const string& caption, const string& message)
@@ -470,6 +497,9 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 				} else
 				if (node->getId() == "button_terrain_mesh_apply") {
 					onSetTerrainMesh(entity);
+				} else
+				if (node->getId() == "button_boundingvolume_convexmeshes_file") {
+					onBoundingVolumeConvexMeshesFile(entity);
 				} else {
 					Console::println(
 						string(

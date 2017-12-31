@@ -27,7 +27,7 @@ class tdme::tools::shared::views::EntityBoundingVolumeView
 {
 private:
 	Engine* engine {  };
-	EntityBoundingVolumeSubScreenController* modelEditorScreenController {  };
+	EntityBoundingVolumeSubScreenController* boundingVolumeSubScreenController {  };
 	PopUps* popUps {  };
 
 public:
@@ -77,6 +77,16 @@ public:
 	 * Unset terrain mesh
 	 */
 	virtual void unsetTerrainMesh();
+
+	/**
+	 * Set convex meshes
+	 */
+	virtual void setConvexMeshes();
+
+	/**
+	 * Unset convex meshes
+	 */
+	virtual void unsetConvexMeshes();
 
 private:
 

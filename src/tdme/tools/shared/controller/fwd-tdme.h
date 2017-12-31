@@ -9,6 +9,7 @@ namespace controller {
 				class EntityBaseSubScreenController;
 				class EntityBoundingVolumeSubScreenController;
 				class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+				class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
 				class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
 				class EntityDisplaySubScreenController;
 				class FileDialogPath;

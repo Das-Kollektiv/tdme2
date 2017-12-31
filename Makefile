@@ -1,6 +1,6 @@
 STACKFLAGS =
 SRC_PLATFORM =
-INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I./
+INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -71,6 +71,7 @@ ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
+VHACD = v-hacd
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -330,6 +331,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/EntityBaseSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.cpp \
+	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.cpp \
 	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.cpp \
 	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
@@ -480,6 +482,18 @@ EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c \
 
+EXT_VHACD_SRCS = \
+	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/VHACD-ASYNC.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/VHACD.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/btAlignedAllocator.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/btConvexHullComputer.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdICHull.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp \
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -508,6 +522,7 @@ EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
+EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -545,6 +560,9 @@ $(EXT_VORBIS_OBJS):$(OBJ)/%.o: ext/$(VORBIS)/%.c | print-opts
 $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 	$(c-command)
 
+$(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -553,7 +571,7 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 
 $(BIN)/$(LIB): $(OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

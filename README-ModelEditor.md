@@ -22,6 +22,7 @@ TDMEModelEditor
             - bounding box
             - oriented bounding box
             - convex mesh
+            	- multiple convex meshes can be automatically generated from any mesh using V-HACD
             - concave terrain mesh
         - material editor
             - adjust colors, textures, masked transparency

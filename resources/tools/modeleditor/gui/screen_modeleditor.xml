@@ -135,6 +135,7 @@
 								<tab id="tab_properties_boundingvolume_5" text="BV 5" />
 								<tab id="tab_properties_boundingvolume_6" text="BV 6" />
 								<tab id="tab_properties_boundingvolume_7" text="BV 7" />
+								<tab id="tab_properties_convexmeshes" text="Convex Meshes" />
 								<tab id="tab_properties_terrain" text="Terrain" />
 							</tabs-header>
 							<tabs-content>
@@ -1018,6 +1019,17 @@
 												<button id="button_boundingvolume_convexmesh_apply_7" name="button_boundingvolume_convexmesh_apply_7" text="Apply" width="auto" height="auto" />
 											</layout> 
 										</element>
+									</layout>
+								</tab-content>
+								<tab-content tab-id="tab_properties_convexmeshes">
+									<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
+										<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+											<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
+											<space width="5" />
+											<input id="boundingvolume_convexmeshes_file" name="boundingvolume_convexmeshes_file" width="*" height="auto" text="./model.tm" />
+											<space width="10" />
+											<button id="button_boundingvolume_convexmeshes_file" name="button_boundingvolume_convexmeshes_file" text="Load" width="60" height="auto" />
+										</layout>
 									</layout>
 								</tab-content>
 								<tab-content tab-id="tab_properties_terrain">
