@@ -59,6 +59,7 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* ver
 
 void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3& normal)
 {
+	// face normal
 	Vector3::computeCrossProduct(
 		(*vertices)[1].clone().sub((*vertices)[0]),
 		(*vertices)[2].clone().sub((*vertices)[0]),
@@ -68,8 +69,11 @@ void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3& normal)
 
 void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* normals)
 {
+	// face normal
 	Vector3 normal;
 	computeNormal(vertices, normal);
+
+	// compute vertex normal
 	for (auto i = 0; i < vertices->size(); i++) {
 		(*normals)[i].set(normal);
 	}
@@ -77,8 +81,10 @@ void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* n
 
 void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 {
+	// what we need
 	vector<Vector3> tangentsArrayList;
 	vector<Vector3> bitangentsArrayList;
+	// temporary variables
 	Vector2 uv0;
 	Vector2 uv1;
 	Vector2 uv2;
@@ -87,44 +93,55 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 	Vector2 deltaUV1;
 	Vector2 deltaUV2;
 	Vector3 tmpVector3;
+	// create it
 	auto vertices = group->getVertices();
 	auto normals = group->getNormals();
 	auto textureCoordinates = group->getTextureCoordinates();
 	for (auto& faceEntity : *group->getFacesEntities())
-		if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
-			for (auto& face : *faceEntity.getFaces()) {
-				auto verticesIndexes = face.getVertexIndices();
-				auto v0 = &(*vertices)[(*verticesIndexes)[0]];
-				auto v1 = &(*vertices)[(*verticesIndexes)[1]];
-				auto v2 = &(*vertices)[(*verticesIndexes)[2]];
-				auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
-				uv0.set((*textureCoordinates)[(*textureCoordinatesIndexes)[0]].getArray());
-				uv0.setY(1.0f - uv0.getY());
-				uv1.set((*textureCoordinates)[(*textureCoordinatesIndexes)[1]].getArray());
-				uv1.setY(1.0f - uv1.getY());
-				uv2.set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
-				uv2.setY(1.0f - uv2.getY());
-				deltaPos1.set(*v1).sub(*v0);
-				deltaPos2.set(*v2).sub(*v0);
-				deltaUV1.set(uv1).sub(uv0);
-				deltaUV2.set(uv2).sub(uv0);
-				auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
-				auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(tmpVector3.set(deltaPos2).scale(deltaUV1.getY())).scale(r);
-				auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(tmpVector3.set(deltaPos1).scale(deltaUV2.getX())).scale(r);
-				face.setTangentIndices(tangentsArrayList.size() + 0, tangentsArrayList.size() + 1, tangentsArrayList.size() + 2);
-				face.setBitangentIndices(bitangentsArrayList.size() + 0, bitangentsArrayList.size() + 1, bitangentsArrayList.size() + 2);
-				tangentsArrayList.push_back(tangent);
-				tangentsArrayList.push_back(tangent);
-				tangentsArrayList.push_back(tangent);
-				bitangentsArrayList.push_back(bitangent);
-				bitangentsArrayList.push_back(bitangent);
-				bitangentsArrayList.push_back(bitangent);
-			}
+	if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
+		for (auto& face : *faceEntity.getFaces()) {
+			// Shortcuts for vertices
+			auto verticesIndexes = face.getVertexIndices();
+			auto v0 = &(*vertices)[(*verticesIndexes)[0]];
+			auto v1 = &(*vertices)[(*verticesIndexes)[1]];
+			auto v2 = &(*vertices)[(*verticesIndexes)[2]];
+			// shortcuts for UVs
+			auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
+			uv0.set((*textureCoordinates)[(*textureCoordinatesIndexes)[0]].getArray());
+			uv0.setY(1.0f - uv0.getY());
+			uv1.set((*textureCoordinates)[(*textureCoordinatesIndexes)[1]].getArray());
+			uv1.setY(1.0f - uv1.getY());
+			uv2.set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
+			uv2.setY(1.0f - uv2.getY());
+			// edges of the triangle : position delta
+			deltaPos1.set(*v1).sub(*v0);
+			deltaPos2.set(*v2).sub(*v0);
+			// UV delta
+			deltaUV1.set(uv1).sub(uv0);
+			deltaUV2.set(uv2).sub(uv0);
+			// compute tangent and bitangent
+			auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
+			auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(tmpVector3.set(deltaPos2).scale(deltaUV1.getY())).scale(r);
+			auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(tmpVector3.set(deltaPos1).scale(deltaUV2.getX())).scale(r);
+			// set up tangent face indices
+			face.setTangentIndices(tangentsArrayList.size() + 0, tangentsArrayList.size() + 1, tangentsArrayList.size() + 2);
+			// set up bitangent face indices
+			face.setBitangentIndices(bitangentsArrayList.size() + 0, bitangentsArrayList.size() + 1, bitangentsArrayList.size() + 2);
+			// add to group tangents, bitangents
+			tangentsArrayList.push_back(tangent);
+			tangentsArrayList.push_back(tangent);
+			tangentsArrayList.push_back(tangent);
+			bitangentsArrayList.push_back(bitangent);
+			bitangentsArrayList.push_back(bitangent);
+			bitangentsArrayList.push_back(bitangent);
 		}
+	}
 
+	// set up tangents and bitangents if we have any
 	if (tangentsArrayList.size() > 0 && bitangentsArrayList.size() > 0) {
 		group->setTangents(&tangentsArrayList);
 		group->setBitangents(&bitangentsArrayList);
+		// going further
 		auto tangents = group->getTangents();
 		auto bitangents = group->getBitangents();
 		for (auto& faceEntity : *group->getFacesEntities())
@@ -151,6 +168,7 @@ void ModelHelper::prepareForIndexedRendering(Model* model)
 
 void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 {
+	// we need to prepare the group for indexed rendering
 	for (auto it: *groups) {
 		Group* group = it.second;
 		auto groupVertices = group->getVertices();
@@ -165,6 +183,7 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 		vector<TextureCoordinate> indexedTextureCoordinates;
 		vector<Vector3> indexedTangents;
 		vector<Vector3> indexedBitangents;
+		// construct indexed vertex data suitable for GL
 		auto preparedIndices = 0;
 		for (auto& facesEntity : *group->getFacesEntities()) {
 			for (auto& face : *facesEntity.getFaces()) {
@@ -209,6 +228,7 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 				face.setIndexedRenderingIndices(&indexedFaceVertexIndices);
 			}
 		}
+		// remap skinning
 		auto skinning = group->getSkinning();
 		if (skinning != nullptr) {
 			prepareForIndexedRendering(skinning, &vertexMapping, preparedIndices);
@@ -222,6 +242,7 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 			group->setTangents(&indexedTangents);
 			group->setBitangents(&indexedBitangents);
 		}
+		// process sub groups
 		prepareForIndexedRendering(group->getSubGroups());
 	}
 }
@@ -253,11 +274,14 @@ void ModelHelper::setDiffuseMaskedTransparency(Model* model, bool maskedTranspar
 
 void ModelHelper::setupJoints(Model* model)
 {
+	// determine joints and mark them as joints
 	auto groups = model->getGroups();
 	for (auto it: *model->getSubGroups()) {
 		Group* group = it.second;
 		auto skinning = group->getSkinning();
+		// do we have a skinning
 		if (skinning != nullptr) {
+			// yep
 			for (auto& joint : *skinning->getJoints()) {
 				auto jointGroupIt = groups->find(joint.getGroupId());
 				if (jointGroupIt != groups->end()) {
@@ -279,6 +303,7 @@ void ModelHelper::setJoint(Group* root)
 
 void ModelHelper::fixAnimationLength(Model* model)
 {
+	// fix animation length
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	if (defaultAnimation != nullptr) {
 		for (auto it: *model->getSubGroups()) {
@@ -311,10 +336,12 @@ bool ModelHelper::hasDefaultAnimation(Model* model) {
 
 void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 {
+	// add default model animation setup if not yet done
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	if (defaultAnimation == nullptr) {
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, frames - 1, true);
 	} else {
+		// check default animation setup
 		if (defaultAnimation->getStartFrame() != 0 || defaultAnimation->getEndFrame() != frames - 1) {
 			Console::println(string("Warning: default animation mismatch"));
 		}

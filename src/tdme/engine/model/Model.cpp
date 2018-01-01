@@ -187,19 +187,25 @@ BoundingBox* Model::getBoundingBox()
 
 bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
+	// iterate through groups
 	for (auto it: *groups) {
 		Group* group = it.second;
+		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			transformationsMatrix.set((*animationMatrices)[frame % animationMatrices->size()]);
 			transformationsMatrix.multiply(group->getTransformationsMatrix());
 		} else {
+			// no animation matrix, set up local transformation matrix up as group matrix
 			transformationsMatrix.set(group->getTransformationsMatrix());
 		}
+		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
+		// return matrix if group matches
 		if (group->getId() == groupId) return true;
 
+		// calculate sub groups
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
 			Matrix4x4 parentTransformationsMatrix = transformationsMatrix;
@@ -208,5 +214,6 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4&
 		}
 	}
 
+	//
 	return false;
 }
