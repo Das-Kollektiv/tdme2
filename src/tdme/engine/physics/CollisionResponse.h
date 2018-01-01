@@ -65,6 +65,7 @@ public:
 		entities.push_back(CollisionResponse_Entity());
 		auto& entity = entities.at(entities.size() - 1);
 		entity.distance = distance;
+		// select entity with smallest penetration by default
 		if (selectedEntity == nullptr || distance > selectedEntity->distance) {
 			selectedEntity = &entity;
 		}
@@ -161,8 +162,10 @@ public:
 	 * @param response
 	 */
 	inline CollisionResponse* fromResponse(CollisionResponse* response) {
+		// copy reponse
 		selectedEntity = nullptr;
 		entities = response->entities;
+		// determine selected entity
 		if (response->selectedEntity != nullptr)
 		for (auto i = 0; i < response->entities.size(); i++) {
 			if (&response->entities.at(i) == response->selectedEntity) {
@@ -170,6 +173,7 @@ public:
 				return this;
 			}
 		}
+		// done
 		return this;
 	}
 
@@ -178,6 +182,7 @@ public:
 	 * @param response
 	 */
 	inline CollisionResponse* mergeResponse(CollisionResponse* response) {
+		// TODO: This does not seem to be used, remove it then!
 		for (auto i = 0; i < response->entities.size(); i++) {
 			auto& srcEntity = response->entities.at(i);
 			CollisionResponse_Entity* dstEntity = nullptr;

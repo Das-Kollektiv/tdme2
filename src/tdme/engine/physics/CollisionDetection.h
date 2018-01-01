@@ -53,16 +53,19 @@ public:
 	 * @return collision 
 	 */
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {
+		// see
+		//	http://www.gamedev.net/topic/567310-platform-game-collision-detection/
 		auto& b1MinXYZ = b1->getMin().getArray();
 		auto& b1MaxXYZ = b1->getMax().getArray();
 		auto& b2MinXYZ = b2->getMin().getArray();
 		auto& b2MaxXYZ = b2->getMax().getArray();
-		if (b2MaxXYZ[0] - b1MinXYZ[0] < 0.0f) return false;
-		if (b1MaxXYZ[0] - b2MinXYZ[0] < 0.0f) return false;
-		if (b2MaxXYZ[1] - b1MinXYZ[1] < 0.0f) return false;
-		if (b1MaxXYZ[1] - b2MinXYZ[1] < 0.0f) return false;
-		if (b2MaxXYZ[2] - b1MinXYZ[2] < 0.0f) return false;
-		if (b1MaxXYZ[2] - b2MinXYZ[2] < 0.0f) return false;
+		// face distances
+		if (b2MaxXYZ[0] - b1MinXYZ[0] < 0.0f) return false; // b2 collides into b1 on x
+		if (b1MaxXYZ[0] - b2MinXYZ[0] < 0.0f) return false; // b1 collides into b2 on x
+		if (b2MaxXYZ[1] - b1MinXYZ[1] < 0.0f) return false; // b2 collides into b1 on y
+		if (b1MaxXYZ[1] - b2MinXYZ[1] < 0.0f) return false; // b1 collides into b2 on y
+		if (b2MaxXYZ[2] - b1MinXYZ[2] < 0.0f) return false; // b2 collides into b1 on z
+		if (b1MaxXYZ[2] - b2MinXYZ[2] < 0.0f) return false; // b1 collides into b2 on z
 		return true;
 	}
 
@@ -501,6 +504,7 @@ public:
 	 * @return
 	 */
 	inline static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2) {
+		// do a root sphere <> sphere broad test
 		Vector3 axis;
 		return axis.set(bv1->getCenter()).sub(bv2->getCenter()).computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
 	}
@@ -515,17 +519,20 @@ private:
 	 * @return collision
 	 */
 	inline static bool checkMovementFallback(const Vector3& normalCandidate, const Vector3& movement, CollisionResponse* collision) {
+		// check if movement is valid
 		if (movement.computeLength() < MathTools::EPSILON) {
 			if (VERBOSE) {
-				Console::println(string("checkMovementFallback::fallback::movement = 0.0, 0.0, 0.0"));
+				Console::println(string("CollisionDetection::checkMovementFallback(): fallback movement = 0.0, 0.0, 0.0"));
 				// TODO: print stack trace
 			}
 			return false;
 		}
+		// check if normal candidate is valid
 		Vector3 zeroVector(0.0f, 0.0f, 0.0f);
 		if (normalCandidate.equals(zeroVector) == true) {
+			// nope, use movement to generate normal
 			if (VERBOSE) {
-				Console::println(string("checkMovementFallback::fallback"));
+				Console::println(string("CollisionDetection::checkMovementFallback(): using fallback"));
 				// TODO: print stack trace
 			}
 			collision->reset();
@@ -539,5 +546,10 @@ private:
 	 * Check collision validity
 	 * @param collision
 	 */
-	static void checkCollision(CollisionResponse* collision);
+	inline static void checkCollision(CollisionResponse* collision) {
+		auto& normalXYZ = collision->getNormal()->getArray();
+		if (Float::isNaN(normalXYZ[0]) == true || Float::isNaN(normalXYZ[1]) == true || Float::isNaN(normalXYZ[2]) == true) {
+			Console::println(string("CollisionDetection::checkCollision(): BROKEN NORMAL"));
+		}
+	}
 };

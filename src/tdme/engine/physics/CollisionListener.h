@@ -16,8 +16,8 @@ struct tdme::engine::physics::CollisionListener
 	/** 
 	 * On collision
 	 * Note: 
-	 * The collision response will only live while calling this method. 
-	 * If you need it somewhere else you need to clone it
+	 * 	The collision response will only live while calling this method.
+	 * 	If you need it somewhere else you need to clone it
 	 * @param rigid body 1
 	 * @param rigid body 2
 	 * @param collision response
@@ -27,8 +27,8 @@ struct tdme::engine::physics::CollisionListener
 	/** 
 	 * On collision begin
 	 * Note: 
-	 * The collision response will only live while calling this method. 
-	 * If you need it somewhere else you need to clone it
+	 * 	The collision response will only live while calling this method.
+	 * 	If you need it somewhere else you need to clone it
 	 * @param rigid body 1
 	 * @param rigid body 2
 	 * @param collision response

@@ -84,9 +84,13 @@ private:
 		this->collision.fromResponse(collision);
 		this->rb1 = rb1;
 		this->rb2 = rb2;
+		//	see http://en.wikipedia.org/wiki/Friction#Coefficient_of_friction
 		muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * MathTools::g;
+		// our collision normal is the vector object a collides with object b
 		this->collision.getNormal()->scale(-1.0f);
+		// compute first friction vector
 		this->collision.getNormal()->computeOrthogonalVector(this->frictionVectors[0]);
+		// compute second friction vector
 		Vector3::computeCrossProduct(*this->collision.getNormal(), this->frictionVectors[0], this->frictionVectors[1]);
 	}
 
@@ -155,9 +159,9 @@ private:
 	inline void computeLowerBound(int32_t constraintIdx, DynamicVector* lowerBounds) {
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
-			lowerBounds->setValue(currentConstraintIdx++, 0.0f);
-			lowerBounds->setValue(currentConstraintIdx++, -muMg);
-			lowerBounds->setValue(currentConstraintIdx++, -muMg);
+			lowerBounds->setValue(currentConstraintIdx++, 0.0f); // Lower bound for the contact constraint
+			lowerBounds->setValue(currentConstraintIdx++, -muMg); // Lower bound for the first friction constraint
+			lowerBounds->setValue(currentConstraintIdx++, -muMg); // Lower bound for the second friction constraint
 		}
 	}
 
@@ -169,9 +173,9 @@ private:
 	inline void computeUpperBound(int32_t constraintIdx, DynamicVector* upperBounds) {
 		auto currentConstraintIdx = constraintIdx;
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
-			upperBounds->setValue(currentConstraintIdx++, Float::POSITIVE_INFINITY);
-			upperBounds->setValue(currentConstraintIdx++, +muMg);
-			upperBounds->setValue(currentConstraintIdx++, +muMg);
+			upperBounds->setValue(currentConstraintIdx++, Float::POSITIVE_INFINITY); // Upper bound for the contact constraint
+			upperBounds->setValue(currentConstraintIdx++, +muMg); // Upper bound for the first friction constraint
+			upperBounds->setValue(currentConstraintIdx++, +muMg); // Upper bound for the second friction constraint
 		}
 	}
 
@@ -186,9 +190,9 @@ private:
 		auto penetration = collision.getPenetration();
 		auto errorValue = Math::abs(restitutionCoeff * (Vector3::computeDotProduct(*collision.getNormal(), rb1->angularVelocity) - Vector3::computeDotProduct(*collision.getNormal(), rb2->angularVelocity))) + (0.4f * penetration);
 		for (auto hitPointIdx = 0; hitPointIdx < collision.getHitPointsCount(); hitPointIdx++) {
-			errorValues->setValue(currentConstraintIdx++, errorValue);
-			errorValues->setValue(currentConstraintIdx++, 0.0f);
-			errorValues->setValue(currentConstraintIdx++, 0.0f);
+			errorValues->setValue(currentConstraintIdx++, errorValue); // Error value for contact constraint
+			errorValues->setValue(currentConstraintIdx++, 0.0f); // Error value for friction constraint
+			errorValues->setValue(currentConstraintIdx++, 0.0f); // Error value for friction constraint
 		}
 	}
 

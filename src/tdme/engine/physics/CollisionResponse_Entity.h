@@ -66,6 +66,7 @@ public:
 	 * @param hit point
 	 */
 	inline void addHitPoint(const Vector3& hitPoint) {
+		// check if we already have this hit point
 		for (auto i = 0; i < hitPoints.size(); i++) {
 			if (hitPoints.at(i).equals(hitPoint, 0.1f)) return;
 		}

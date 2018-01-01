@@ -38,6 +38,7 @@ using tdme::utils::Console;
 ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodiesDynamic)
 {
 	constraintsEntityCount = 0;
+	// constraints related initialization
 	constraintsBodyIdxMap.resize(CONSTRAINTS_MAX);
 	jacobianMatrices.resize(CONSTRAINTS_MAX);
 	bVectors.resize(CONSTRAINTS_MAX);
@@ -55,6 +56,7 @@ ConstraintsSolver::ConstraintsSolver(vector<RigidBody*>* rigidBodiesDynamic)
 	upperBounds.setSize(CONSTRAINTS_MAX);
 	d.resize(CONSTRAINTS_MAX);
 	constraintsEntities.resize(CONSTRAINTS_MAX);
+	// body related initialization
 	invInertiaMatrices.resize(BODIES_MAX);
 	velocityVectors.resize(BODIES_MAX);
 	constrainedVelocityVectors.resize(BODIES_MAX);
