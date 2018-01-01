@@ -174,7 +174,9 @@ void ConstraintsSolver::computeVectorB(float dt)
 	for (auto i = 0; i < constraintsCount; i++) {
 		auto body1Idx = constraintsBodyIdxMap[i][0];
 		auto body2Idx = constraintsBodyIdxMap[i][1];
+		// 1.0 / dt * J * V
 		auto t1 = jacobianMatrices[i][0].multiply(velocityVectors[body1Idx]) + jacobianMatrices[i][1].multiply(velocityVectors[body2Idx]) * oneOverDT;
+		// J*M^-1*F_ext
 		auto t2 = jacobianMatrices[i][0].multiply(invInertiaMatrices[body1Idx], tmpMatrix1x6).multiply(forcesVectors[body1Idx]) + jacobianMatrices[i][1].multiply(invInertiaMatrices[body2Idx], tmpMatrix1x6).multiply(forcesVectors[body2Idx]);
 		auto result = b.getValue(i) + t1 + t2;
 		b.setValue(i, result);
@@ -215,6 +217,7 @@ void ConstraintsSolver::PGLCP()
 	}
 	computeVectorA();
 	for (auto i = 0; i < constraintsCount; i++) {
+		// d[i] = (J_sp[i][0] * B_sp[0][i] + J_sp[i][1] * B_sp[1][i]);
 		d[i] = jacobianMatrices[i][0].multiply(bVectors[i][0]) + jacobianMatrices[i][1].multiply(bVectors[i][1]);
 	}
 	for (auto iteration = 0; iteration < 20; iteration++) {
@@ -265,7 +268,9 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 	rigidBodiesCurrentChain.push_back(rigidBodySrc);
 	for (auto i = 0; i < constraintsEntityCount; i++) {
 		auto& constraintEntity = constraintsEntities[i];
+		// rigid body to check
 		RigidBody* rigidBodyCheck = nullptr;
+		// check if rigid body is another rigid body velocity change rigid
 		if (constraintEntity.rb1 == rigidBodySrc) {
 			rigidBodyCheck = constraintEntity.rb2;
 		} else if (constraintEntity.rb2 == rigidBodySrc) {
@@ -273,12 +278,14 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 		} else {
 			continue;
 		}
+		// do not check static rigids
 		if (rigidBodyCheck->isStatic_ == true) {
 			continue;
 		}
+		// skip on disabled rigid bodies
 		if (rigidBodyCheck->enabled == false)
 			continue;
-
+		// check if we checked this node already
 		auto haveRigidBodyCheck = false;
 		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
 			if (rigidBodiesCurrentChain.at(j) == rigidBodyCheck) {
@@ -289,21 +296,25 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 		if (haveRigidBodyCheck == true) {
 			continue;
 		}
+		// check if normal have same direction
 		auto normalCurrent = constraintEntity.collision.getNormal();
 		if (normalLast != nullptr) {
 			if (Math::abs(Vector3::computeDotProduct(*normalLast, *normalCurrent)) < 0.75f) {
 				continue;
 			}
 		}
+		// check next
 		checkChainSuccessor(rigidBodyCheck, normalCurrent, rigidBodiesCurrentChain);
 	}
 }
 
 int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<RigidBody*>& rigidBodiesCurrentChain)
 {
+	// compute speed of A
 	auto rigidBodyAIdx = -1;
 	for (auto j = idx; j < rigidBodiesCurrentChain.size(); j++) {
 		auto rigidBody = rigidBodiesCurrentChain.at(j);
+		// check if rigid body had a velocity change
 		auto isVelocityChangeRigidBody = false;
 		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
 			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
@@ -319,15 +330,19 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 			continue;
 		}
 	}
+	// skip if we have no rigid body A
 	if (rigidBodyAIdx == -1)
 		return -1;
 
+	// get rigid body A, speed
 	auto rigidBodyA = rigidBodiesCurrentChain.at(rigidBodyAIdx);
 	auto rigidBodyASpeed = rigidBodyA->linearVelocity.computeLength();
+	// compute max speed of B in chain
 	auto rigidBodyBIdx = -1;
 	auto rigidBodyBSpeed = 0.0f;
 	for (auto j = idx + 1; j < rigidBodiesCurrentChain.size(); j++) {
 		auto rigidBody = rigidBodiesCurrentChain.at(j);
+		// check if rigid body had a velocity change
 		auto isVelocityChangeRigidBody = false;
 		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
 			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
@@ -338,26 +353,31 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		}
 		if (isVelocityChangeRigidBody == false)
 			continue;
-
+		// determine a on b
 		auto ab = Vector3::computeDotProduct(rigidBodiesCurrentChain.at(rigidBodyAIdx)->linearVelocity, rigidBodiesCurrentChain.at(j)->linearVelocity);
+		// skip if A has same direction like B
 		if (ab > 0.0f)
 			continue;
-
+		// otherwise compute speed
 		auto _speed = rigidBody->linearVelocity.computeLength();
+		// we have a candidate
 		if (_speed > rigidBodyBSpeed) {
 			rigidBodyBIdx = j;
 			rigidBodyBSpeed = _speed;
 		}
 	}
+	// get out if we have no B
 	if (rigidBodyBIdx == -1) {
 		return -1;
 	}
+	// set up rigid body A
 	if (rigidBodyA->linearVelocity.computeLength() > MathTools::EPSILON) {
 		auto y = rigidBodyA->linearVelocity.getY();
 		rigidBodyA->linearVelocity.normalize();
 		rigidBodyA->linearVelocity.scale(rigidBodyASpeed - rigidBodyBSpeed > 0.0f ? rigidBodyASpeed - rigidBodyBSpeed : 0.0f);
 		rigidBodyA->linearVelocity.setY(y);
 	}
+	// set up rigid body B
 	auto rigidBodyB = rigidBodiesCurrentChain.at(rigidBodyBIdx);
 	if (rigidBodyB->linearVelocity.computeLength() > MathTools::EPSILON) {
 		auto y = rigidBodyB->linearVelocity.getY();
@@ -365,6 +385,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		rigidBodyB->linearVelocity.scale(rigidBodyBSpeed - rigidBodyASpeed > 0.0f ? rigidBodyBSpeed - rigidBodyASpeed : 0.0f);
 		rigidBodyB->linearVelocity.setY(y);
 	}
+	// set up rigid bodies between A and B
 	for (auto rigidBodyIdx = rigidBodyAIdx + 1; rigidBodyIdx < rigidBodyBIdx; rigidBodyIdx++) {
 		auto rigidBody = rigidBodiesCurrentChain.at(rigidBodyIdx);
 		auto y = rigidBody->linearVelocity.getY();
@@ -380,13 +401,14 @@ void ConstraintsSolver::checkVelocityConstraint()
 		auto rigidBodyVelocityChange = rigidBodiesDynamic->at(i);
 		if (rigidBodyVelocityChange->enabled == false)
 			continue;
-
 		if (rigidBodyVelocityChange->checkVelocityChange() == true) {
 			rigidBodiesVelocityChange.push_back(rigidBodyVelocityChange);
 		}
 	}
+	// determine rigid bodies with velocity change
 	for (auto i = 0; i < rigidBodiesVelocityChange.size(); i++) {
 		auto rigidBodySrc = rigidBodiesVelocityChange.at(i);
+		// skip on rigid bodies that have been processed
 		auto rigidBodyProcessed = false;
 		for (auto j = 0; j < rigidBodiesChainsResult.size(); j++) {
 			if (rigidBodiesChainsResult.at(j) == rigidBodySrc) {
@@ -397,15 +419,19 @@ void ConstraintsSolver::checkVelocityConstraint()
 		if (rigidBodyProcessed == true)
 			continue;
 
+		// yep, we have a rigid with velocity change, find a path to another one
 		checkChainSuccessor(rigidBodySrc, nullptr, rigidBodiesCurrentChain);
+		// mark as processed
 		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
 			auto rigidBody = rigidBodiesCurrentChain.at(j);
 			rigidBodiesChainsResult.push_back(rigidBody);
 		}
+		// skip if we have no chain
 		if (rigidBodiesCurrentChain.size() < 2) {
 			rigidBodiesCurrentChain.clear();
 			continue;
 		}
+		// process rigid body chain
 		auto idx = 0;
 		while (true == true) {
 			idx = processRigidBodyChain(idx, rigidBodiesCurrentChain);
@@ -413,8 +439,10 @@ void ConstraintsSolver::checkVelocityConstraint()
 				break;
 
 		}
+		// clean up
 		rigidBodiesCurrentChain.clear();
 	}
+	// clean up
 	rigidBodiesChainsResult.clear();
 	rigidBodiesVelocityChange.clear();
 }
@@ -449,24 +477,29 @@ void ConstraintsSolver::updateAllBodies(float deltaTime)
 	Vector3 torque;
 	for (auto i = 0; i < rigidBodiesDynamic->size(); i++) {
 		auto body = rigidBodiesDynamic->at(i);
+		// skip on static or sleeping or disabled
 		if (body->isStatic_ == true || body->isSleeping_ == true || body->enabled == false) {
 			continue;
 		}
 		newLinearVelocity.set(0.0f, 0.0f, 0.0f);
 		newAngularVelocity.set(0.0f, 0.0f, 0.0f);
-
+		// if constrained retrieve constrained velocities
 		if (constrainedBodies.find(body->id) != constrainedBodies.end()) {
 			getConstrainedVelocity(body, newLinearVelocity, newAngularVelocity);
 		}
 
+		//
 		force.set(body->force).scale(body->inverseMass * deltaTime);
 		body->worldInverseInertia.multiply(body->torque, torque).scale(deltaTime);
+		// add forces, old velocities
 		newLinearVelocity.add(force);
 		newAngularVelocity.add(torque);
 		newLinearVelocity.add(body->linearVelocity);
 		newAngularVelocity.add(body->angularVelocity);
+		// set up new velocities
 		body->linearVelocity.set(newLinearVelocity);
 		body->angularVelocity.set(newAngularVelocity);
+		// update rigid body
 		body->update(deltaTime);
 	}
 }

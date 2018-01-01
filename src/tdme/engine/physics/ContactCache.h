@@ -73,6 +73,7 @@ private:
 	 * @param lamdaValues
 	 */
 	inline void add(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision, vector<float>* lamdaValues) {
+		// construct contact cache and put it into cache
 		ContactCache_ContactCacheInfo contactCacheInfo;
 		contactCacheInfo.rb1 = rb1;
 		contactCacheInfo.rb2 = rb2;
@@ -90,6 +91,7 @@ private:
 	 * @return contact cache info
 	 */
 	inline ContactCache_ContactCacheInfo* get(RigidBody* rb1, RigidBody* rb2, CollisionResponse* collision) {
+		// retrieve
 		string key = rb1->id + "," + rb2->id;
 		ContactCache_ContactCacheInfo* contactCacheInfo = nullptr;
 		auto contactCacheInfoIt = contactCache.find(key);
@@ -97,7 +99,10 @@ private:
 			contactCacheInfo = &contactCacheInfoIt->second;
 		}
 		if (contactCacheInfo != nullptr) {
+			// validate
+			//	hit point count
 			if (collision->getHitPointsCount() != contactCacheInfo->hitPoints.size()) return nullptr;
+			// hit points
 			Vector3 tmpVector3;
 			for (auto i = 0; i < contactCacheInfo->hitPoints.size(); i++) {
 				tmpVector3.set(*collision->getHitPointAt(i)).sub(contactCacheInfo->hitPoints[i]);
