@@ -128,9 +128,11 @@ bool RigidBody::isEnabled()
 
 void RigidBody::setEnabled(bool enabled)
 {
+	// return if enable state has not changed
 	if (this->enabled == enabled)
 		return;
 
+	//
 	if (enabled == true) {
 		world->partition->addRigidBody(this);
 	} else {
@@ -263,14 +265,21 @@ void RigidBody::fromTransformations(Transformations* transformations)
 
 void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 {
+	// skip on static objects
 	if (isStatic_ == true)
 		return;
 
+	// check if we have any force to apply
 	if (force.computeLength() < MathTools::EPSILON)
 		return;
 
+	// unset sleeping
 	awake(false);
+
+	// linear
 	this->force.add(force);
+
+	// angular
 	Vector3 distance;
 	Vector3 tmp;
 	distance.set(forceOrigin).sub(position);
@@ -290,6 +299,7 @@ void RigidBody::update(float deltaTime)
 	if (isSleeping_ == true)
 		return;
 
+	// check if to put object into sleep
 	if (linearVelocity.computeLength() < LINEARVELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < ANGULARVELOCITY_SLEEPTOLERANCE) {
 		sleepingFrameCount++;
 		if (sleepingFrameCount >= SLEEPING_FRAMES) {
@@ -298,11 +308,13 @@ void RigidBody::update(float deltaTime)
 	} else {
 		awake(true);
 	}
+	// unset velocity if sleeping
 	if (isSleeping_ == true) {
 		linearVelocity.set(0.0f, 0.0f, 0.0f);
 		angularVelocity.set(0.0f, 0.0f, 0.0f);
 		return;
 	}
+	// linear
 	Vector3 tmpVector3;
 	Quaternion tmpQuaternion1;
 	Quaternion tmpQuaternion2;
@@ -310,14 +322,17 @@ void RigidBody::update(float deltaTime)
 	position.add(tmpVector3.set(linearVelocity).scale(deltaTime));
 	movement.sub(position);
 	movement.scale(-1.0f);
+	// angular
 	auto& angularVelocityXYZ = angularVelocity.getArray();
 	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f).scale(0.5f * deltaTime);
 	tmpQuaternion1.set(orientation);
 	tmpQuaternion1.multiply(tmpQuaternion2);
 	orientation.add(tmpQuaternion1);
 	orientation.normalize();
+	//
 	force.set(0.0f, 0.0f, 0.0f);
 	torque.set(0.0f, 0.0f, 0.0f);
+	// store last velocities
 	linearVelocityLast.set(linearVelocity);
 	angularVelocityLast.set(angularVelocity);
 	computeWorldInverseInertiaMatrix();

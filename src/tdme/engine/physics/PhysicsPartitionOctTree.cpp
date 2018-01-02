@@ -69,11 +69,14 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 	node.bv.getMin().set(x * partitionSize, y * partitionSize, z * partitionSize);
 	node.bv.getMax().set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
 	node.bv.update();
+	// register in parent sub nodes
 	parent->subNodes.push_back(node);
 	PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
+	// register in parent sub nodes by coordinate, if root node
 	if (parent == &treeRoot) {
 		parent->subNodesByCoordinate[to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z)] = storedNode;
 	}
+	// create sub nodes
 	if (partitionSize > PARTITION_SIZE_MIN) {
 		for (auto _y = 0; _y < 2; _y++) 
 		for (auto _x = 0; _x < 2; _x++)
@@ -92,6 +95,7 @@ PhysicsPartitionOctTree_PartitionTreeNode* PhysicsPartitionOctTree::createPartit
 
 void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 {
+	// update if already exists
 	vector<PhysicsPartitionOctTree_PartitionTreeNode*>* thisRigidBodyPartitions = nullptr;
 	auto rigidBodyPartitionNodesIt = rigidBodyPartitionNodes.find(rigidBody->getId());
 	if (rigidBodyPartitionNodesIt != rigidBodyPartitionNodes.end()) {
@@ -100,6 +104,8 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	if (thisRigidBodyPartitions != nullptr && thisRigidBodyPartitions->empty() == false) {
 		removeRigidBody(rigidBody);
 	}
+	// determine max first level partition dimension
+	// convert to aabb for fast collision tests
 	auto cbv = rigidBody->cbv;
 	auto& center = cbv->getCenter();
 	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
@@ -108,6 +114,7 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	boundingBox.getMax().set(center);
 	boundingBox.getMax().add(halfExtension);
 	boundingBox.update();
+	// find, create root nodes if not exists
 	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getX() / PARTITION_SIZE_MAX));
 	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getY() / PARTITION_SIZE_MAX));
 	auto minZPartition = static_cast< int32_t >(Math::floor(boundingBox.getMin().getZ() / PARTITION_SIZE_MAX));
@@ -117,12 +124,13 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
+		// check if first level node has been created already
 		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
 		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
 			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
 		}
 	}
-
+	// add rigid body to tree
 	addToPartitionTree(rigidBody, &boundingBox);
 }
 
@@ -147,11 +155,13 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 		return;
 	}
 	while (rigidBodyPartitionsVector->size() > 0) {
+		// remove object from assigned partitions
 		auto lastIdx = rigidBodyPartitionsVector->size() - 1;
 		auto partitionTreeNode = rigidBodyPartitionsVector->at(lastIdx);
 		auto& partitionRigidBody = partitionTreeNode->partitionRidigBodies;
 		partitionRigidBody.erase(remove(partitionRigidBody.begin(), partitionRigidBody.end(), rigidBody), partitionRigidBody.end());
 		rigidBodyPartitionsVector->erase(rigidBodyPartitionsVector->begin() + lastIdx);
+		// check if whole top level partition is empty
 		if (partitionRigidBody.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
@@ -173,9 +183,11 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 
 bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
+	// lowest level node has objects attached?
 	if (node->partitionRidigBodies.size() > 0) {
 		return false;
 	} else {
+		// otherwise check top level node sub nodes
 		for (auto& subNode: node->subNodes) {
 			if (isPartitionNodeEmpty(&subNode) == false)
 				return false;
@@ -186,26 +198,32 @@ bool PhysicsPartitionOctTree::isPartitionNodeEmpty(PhysicsPartitionOctTree_Parti
 
 void PhysicsPartitionOctTree::removePartitionNode(PhysicsPartitionOctTree_PartitionTreeNode* node)
 {
+	// lowest level node has objects attached?
 	if (node->partitionRidigBodies.size() > 0) {
 		Console::println(string("PartitionOctTree::removePartitionNode(): partition has objects attached!!!"));
 		node->partitionRidigBodies.clear();
 	} else {
+		// otherwise check top level node sub nodes
 		for (auto& subNode: node->subNodes) {
 			removePartitionNode(&subNode);
 		}
+		// clear sub nodes
 		node->subNodes.clear();
 	}
 }
 
 void PhysicsPartitionOctTree::addToPartitionTree(PhysicsPartitionOctTree_PartitionTreeNode* node, RigidBody* rigidBody, BoundingBox* cbv)
 {
+	// check if given cbv collides with partition node bv
 	if (CollisionDetection::doCollideAABBvsAABBFast(&node->bv, cbv) == false) {
 		return;
 	}
+	// if this node already has the partition cbvs add it to the iterator
 	if (node->partitionSize == PARTITION_SIZE_MIN) {
 		node->partitionRidigBodies.push_back(rigidBody);
 		rigidBodyPartitionNodes[rigidBody->getId()].push_back(node);
 	} else {
+		// otherwise check sub nodes
 		for (auto& subNode: node->subNodes) {
 			addToPartitionTree(&subNode, rigidBody, cbv);
 		}
@@ -221,13 +239,16 @@ void PhysicsPartitionOctTree::addToPartitionTree(RigidBody* rigidBody, BoundingB
 
 int32_t PhysicsPartitionOctTree::doPartitionTreeLookUpNearEntities(PhysicsPartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<RigidBody*>& rigidBodyIterator)
 {
+	// check if given cbv collides with partition node bv
 	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
 		return 1;
 	}
+	// if this node already has the partition cbvs add it to the iterator
 	if (node->partitionRidigBodies.size() > 0) {
 		rigidBodyIterator.addVector(&node->partitionRidigBodies);
 		return 1;
 	} else {
+		// otherwise check sub nodes
 		auto lookUps = 1;
 		for (auto& subNode: node->subNodes) {
 			lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv, rigidBodyIterator);

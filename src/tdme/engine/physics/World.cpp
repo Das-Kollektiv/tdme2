@@ -120,13 +120,18 @@ RigidBody* World::getRigidBody(const string& id)
 }
 
 void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision) {
+	// create rigidBody12 key
 	string rigidBodyKey = rigidBody1->id + "," + rigidBody2->id;
+	// check if collision has been tested already
 	if (rigidBodyTestedCollisions.find(rigidBodyKey) != rigidBodyTestedCollisions.end()) return;
+	// nope, add 12 key
 	RigidBodyCollisionStruct rigidBodyCollisionStruct;
 	rigidBodyCollisionStruct.rigidBody1Id = rigidBody1->id;
 	rigidBodyCollisionStruct.rigidBody2Id = rigidBody2->id;
 	rigidBodyTestedCollisions[rigidBodyKey] = rigidBodyCollisionStruct;
+	// check if to use given collision and invert
 	if (useAndInvertCollision == false) {
+		// determine collision movement
 		collisionMovement.set(rigidBody1->movement);
 		if (collisionMovement.computeLength() < MathTools::EPSILON) {
 			collisionMovement.set(rigidBody2->movement);
@@ -135,18 +140,25 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 	} else {
 		collision.invertNormals();
 	}
+	// do collision test
 	if (useAndInvertCollision == true || (rigidBody1->cbv->doesCollideWith(rigidBody2->cbv, collisionMovement, &collision) == true && collision.hasPenetration() == true)) {
+		// check for hit point count
 		if (collision.getHitPointsCount() == 0) return;
 
+		// we have a collision, so register it
 		rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
+
+		// fire collision events
 		if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end()) {
 			rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
 		}
 		rigidBody1->fireOnCollision(rigidBody2, &collision);
+		// unset sleeping if both non static and colliding
 		if (rigidBody1->isStatic_ == false && rigidBody2->isStatic_ == false) {
 			rigidBody1->awake(true);
 			rigidBody2->awake(true);
 		}
+		// add constraint entity
 		constraintsSolver->allocateConstraintsEntity()->set(rigidBody1, rigidBody2, &collision);
 	}
 }
@@ -155,23 +167,30 @@ void World::update(float deltaTime)
 {
 	if (deltaTime < MathTools::EPSILON) return;
 
+	// lazy initiate constraints solver
 	if (constraintsSolver == nullptr) {
 		constraintsSolver = new ConstraintsSolver(&rigidBodiesDynamic);
 	}
+	// apply gravity
 	{
 		Vector3 worldPosForce;
 		Vector3 gravityForce;
 		for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
+			// update rigid body
 			auto rigidBody = rigidBodiesDynamic.at(i);
+			// skip on disabled, static
 			if (rigidBody->enabled == false) {
 				continue;
 			}
+			// unset sleeping if velocity change occured
 			if (rigidBody->checkVelocityChange() == true) {
 				rigidBody->awake(true);
 			}
+			// skip on sleeping
 			if (rigidBody->isSleeping_ == true) {
 				continue;
 			}
+			// add gravity
 			rigidBody->addForce(
 				worldPosForce.set(rigidBody->getPosition()).setY(10000.0f),
 				gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
@@ -179,6 +198,8 @@ void World::update(float deltaTime)
 		}
 	}
 	{
+		// do the collision tests,
+		// take every rigid body and its partitions into account
 		auto collisionTests = 0;
 		Vector3 collisionMovement;
 		CollisionResponse collision;
@@ -188,31 +209,42 @@ void World::update(float deltaTime)
 			auto rigidBody1 = rigidBodiesDynamic.at(i);
 			if (rigidBody1->enabled == false) continue;
 			auto nearObjects = 0;
+			// get objects near to into account, can return a rigid body multiple times
 			for (auto _i = partition->getObjectsNearTo(rigidBody1)->iterator(); _i->hasNext(); ) {
 				RigidBody* rigidBody2 = _i->next();
 
+				// skip on disabled
 				if (rigidBody2->enabled == false)
 					continue;
 
+				// skip on same rigid body
 				if (rigidBody1 == rigidBody2)
 					continue;
 
+				// skip if both are static
 				if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == true)
 					continue;
 
+				// skip on rigid body 1 static, 2 non static and sleeping
 				if (rigidBody1->isStatic_ == true && rigidBody2->isStatic_ == false && rigidBody2->isSleeping_ == true) {
 					continue;
 				}
+
+				// skip on rigid body 2 static, 1 non static and sleeping
 				if (rigidBody2->isStatic_ == true && rigidBody1->isStatic_ == false && rigidBody1->isSleeping_ == true) {
 					continue;
 				}
 
+				// check if rigid body 2 want to have collision with rigid body 1
 				if (((rigidBody1->typeId & rigidBody2->collisionTypeIds) == rigidBody1->typeId) == false) {
 					continue;
 				}
+
+				// check if rigid body 1 want to have collision with rigid body 2
 				if (((rigidBody2->typeId & rigidBody1->collisionTypeIds) == rigidBody2->typeId) == false) {
 					continue;
 				}
+
 				nearObjects++;
 				collisionTests++;
 				doCollisionTest(rigidBody1, rigidBody2, rigidBodyTestedCollisions, rigidBodyCollisionsCurrentFrame, collisionMovement, collision, false);
@@ -220,6 +252,8 @@ void World::update(float deltaTime)
 			}
 		}
 
+		// fire on collision end
+		//	check each collision last frame that disappeared in current frame
 		for (auto it: rigidBodyCollisionsLastFrame) {
 			RigidBodyCollisionStruct* rigidBodyCollisionStruct = &it.second;
 			{
@@ -238,21 +272,26 @@ void World::update(float deltaTime)
 			auto rigidBody2 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody2Id];
 			rigidBody1->fireOnCollisionEnd(rigidBody2);
 		}
-
+		// swap rigid body collisions current and last frame
 		rigidBodyCollisionsLastFrame = rigidBodyCollisionsCurrentFrame;
+		// do collision resolving
 		constraintsSolver->compute(deltaTime);
 		constraintsSolver->updateAllBodies(deltaTime);
 		constraintsSolver->reset();
 	}
 
+	// update transformations for rigid body
 	for (auto i = 0; i < rigidBodies.size(); i++) {
 		auto rigidBody = rigidBodies.at(i);
+		// skip if enabled
 		if (rigidBody->enabled == false) {
 			continue;
 		}
+		// skip if static or sleeping
 		if (rigidBody->isStatic_ == true || rigidBody->isSleeping_ == true) {
 			continue;
 		}
+		// set up transformations, keep care that only 1 rotation exists
 		auto rotations = rigidBody->transformations->getRotations();
 		while (rotations->size() > 1) {
 			rotations->remove(rotations->size() - 1);
@@ -260,12 +299,17 @@ void World::update(float deltaTime)
 		while (rotations->size() < 1) {
 			rotations->add(new Rotation());
 		}
+		// set up orientation
 		rotations->get(0)->fromQuaternion(rigidBody->orientation);
 		rotations->get(0)->getAxis().getArray()[1] *= -1.0f;
+		//	set up position
 		auto transformations = rigidBody->transformations;
 		transformations->getTranslation().set(rigidBody->position);
+		// update
 		transformations->update();
+		// update bounding volume
 		rigidBody->cbv->fromBoundingVolumeWithTransformations(rigidBody->obv, transformations);
+		// update partition
 		partition->updateRigidBody(rigidBody);
 	}
 }
@@ -273,13 +317,15 @@ void World::update(float deltaTime)
 void World::synch(Engine* engine)
 {
 	for (auto i = 0; i < rigidBodies.size(); i++) {
+		// update rigid body
 		auto rigidBody = rigidBodies.at(i);
+		// skip on static objects
 		if (rigidBody->isStatic_ == true)
 			continue;
-
+		// skip on sleeping objects
 		if (rigidBody->isSleeping_ == true)
 			continue;
-
+		// synch with engine entity
 		auto engineEntity = engine->getEntity(rigidBody->id);
 		if (engineEntity == nullptr) {
 			Console::println(
@@ -309,9 +355,11 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 	Vector3 heightOnPointCandidate;
 	Vector3 heightOnPointA;
 	Vector3 heightOnPointB;
+	// height bounding box to determine partition bounding volumes
 	heightBoundingBox.getMin().set(pointXYZ[0], -10000.0f, pointXYZ[2]);
 	heightBoundingBox.getMax().set(pointXYZ[0], +10000.0f, pointXYZ[2]);
 	heightBoundingBox.update();
+	// determine height of point on x, z
 	heightOnPointCandidate.set(pointXYZ[0], 10000.0f, pointXYZ[2]);
 	auto height = -10000.0f;
 	RigidBody* heightRigidBody = nullptr;
@@ -340,7 +388,9 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 					}
 				}
 			} else {
+				// compute closest point on height candidate
 				cbv->computeClosestPointOnBoundingVolume(heightOnPointCandidate, heightOnPointA);
+				// check new height, take only result into account which is near to candidate
 				if (Math::abs(heightOnPointCandidate.getX() - heightOnPointA.getX()) < 0.1f &&
 					Math::abs(heightOnPointCandidate.getZ() - heightOnPointA.getZ()) < 0.1f &&
 					heightOnPointA.getY() >= height && heightOnPointA.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
@@ -350,9 +400,12 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 			}
 		}
 	}
+	// check if we have a ground
 	if (heightRigidBody == nullptr) {
+		// nope
 		return nullptr;
 	}
+	// yep
 	dest.setY(height);
 	return heightRigidBody;
 }
@@ -371,6 +424,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	float heightPointDestY;
 	RigidBody* heightRigidBody = nullptr;
 	RigidBody* rigidBody = nullptr;
+	// center, center
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addY(-height / 2.0f);
 	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
@@ -381,6 +435,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
+	// left, top
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
@@ -393,6 +448,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
+	// left, bottom
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
@@ -405,6 +461,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
+	// right, top
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
@@ -417,6 +474,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
+	// right, bottom
 	heightPoint.set(boundingVolume->getCenter());
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
@@ -429,6 +487,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 			determinedHeight = heightPointDestY;
 		}
 	}
+	// set up result
 	if (heightRigidBody == nullptr) {
 		return nullptr;
 	} else {
@@ -462,13 +521,17 @@ World* World::clone()
 	auto clonedWorld = new World();
 	for (auto i = 0; i < rigidBodies.size(); i++) {
 		auto rigidBody = rigidBodies.at(i);
+		// clone obv
 		auto obv = rigidBody->obv == nullptr ? static_cast< BoundingVolume* >(nullptr) : rigidBody->obv->clone();
 		RigidBody* clonedRigidBody = nullptr;
 		if (rigidBody->isStatic_ == true) {
+			// clone static rigid body
 			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, obv, rigidBody->friction);
 		} else {
+			// update dynamic rigid body
 			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, obv, rigidBody->restitution, rigidBody->friction, rigidBody->mass, rigidBody->inverseInertia.clone());
 		}
+		// synch additional properties
 		synch(clonedRigidBody, clonedRigidBody);
 	}
 	return clonedWorld;
@@ -508,7 +571,9 @@ void World::synch(World* world)
 			);
 			continue;
 		}
+		// synch rigid bodies
 		synch(clonedRigidBody, rigidBody);
+		// set up rigid body in partition
 		if (clonedRigidBody->enabled == true) {
 			world->partition->updateRigidBody(clonedRigidBody);
 		} else {

@@ -29,13 +29,20 @@ using tdme::engine::primitives::BoundingBox;
  */
 struct tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode final
 {
+	// partition size
 	float partitionSize {  };
+	// x, y, z position
 	int32_t x {  };
 	int32_t y {  };
 	int32_t z {  };
+	// parent node
 	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
+	// node bounding volume
 	BoundingBox bv {  };
+	// sub nodes of oct tree node
 	list<PhysicsPartitionOctTree_PartitionTreeNode> subNodes {  };
+	// sub node of oct tree nodes by partition coordinate, only used in root node
 	map<string, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
+	// partition rigid bodies
 	vector<RigidBody*> partitionRidigBodies {  };
 };
