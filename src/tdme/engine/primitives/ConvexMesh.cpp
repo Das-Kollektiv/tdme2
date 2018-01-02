@@ -63,6 +63,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, bool terrain, float terrainHeight)
 
 void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight)
 {
+	// please note: no optimizations yet
 	vector<Triangle> faceTriangles;
 	model->getFaceTriangles(&faceTriangles);
 	for (auto i = 0; i < faceTriangles.size(); i++) {
@@ -94,9 +95,12 @@ void ConvexMesh::createVertices()
 {
 	vertexReferences.clear();
 	vertices.clear();
+	// iterate triangles
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();
+		// iterate triangle vertices
 		for (auto j = 0; j < triangleVertices->size(); j++) {
+			// check if we already have this vertex
 			auto haveVertex = false;
 			for (auto k = 0; k < vertices.size(); k++) {
 				if (vertices.at(k).equals((*triangleVertices)[j]) == true) {
@@ -123,6 +127,7 @@ vector<Triangle>* ConvexMesh::getTriangles()
 
 void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< ConvexMesh* >(original) != nullptr == false) {
 		return;
 	}
@@ -130,16 +135,21 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 	if (mesh->triangles.size() != triangles.size()) {
 		return;
 	}
+	// set up triangles from original
 	for (auto i = 0; i < (terrain == true?Math::min(1, triangles.size()):triangles.size()); i++) {
 		triangles[i].fromBoundingVolume(&mesh->triangles[i]);
 	}
+	// center
 	center.set(mesh->center);
+	// sphere radius
 	sphereRadius = mesh->sphereRadius;
+	// update
 	update();
 }
 
 void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< ConvexMesh* >(original) != nullptr == false) {
 		return;
 	}
@@ -147,18 +157,23 @@ void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original,
 	if (mesh->triangles.size() != triangles.size()) {
 		return;
 	}
+	// set up triangles from original
 	for (auto i = 0; i < (terrain == true?Math::min(1, triangles.size()):triangles.size()); i++) {
 		triangles[i].fromBoundingVolumeWithTransformations(&mesh->triangles[i], transformations);
 	}
+	// update
 	update();
 }
 
 void ConvexMesh::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestsPoint) const
 {
+	// check if convex mesh contains point
 	if (containsPoint(point) == true) {
+		// yep, return it
 		closestsPoint.set(point);
 		return;
 	}
+	// otherwise find closests point on triangles
 	if (triangles.size() == 0) {
 		return;
 	}
@@ -184,24 +199,22 @@ bool ConvexMesh::containsPoint(const Vector3& point) const
 	Vector3 triangleEdge3;
 	Vector3 triangleNormal;
 	for (auto i = 0; i < triangles.size(); i++) {
+		// determine axes to test
 		auto triangle = triangles[i];
 		auto triangleVertices = triangle.getVertices();
 		triangleEdge1.set((*triangleVertices)[1]).sub((*triangleVertices)[0]).normalize();
 		triangleEdge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
 		triangleEdge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
 		Vector3::computeCrossProduct(triangleEdge1, triangleEdge2, triangleNormal).normalize();
+		// check if projected point is between min and max of projected vertices
 		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge1) == false)
 			return false;
-
 		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge2) == false)
 			return false;
-
 		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleEdge3) == false)
 			return false;
-
 		if (SeparatingAxisTheorem::checkPointInVerticesOnAxis(&vertices, point, triangleNormal) == false)
 			return false;
-
 	}
 	return true;
 }
@@ -240,6 +253,7 @@ float ConvexMesh::computeDimensionOnAxis(const Vector3& axis) const
 void ConvexMesh::update()
 {
 	Vector3 tmp;
+	// update terrain mesh if it is one
 	if (terrain == true) {
 		int triangleIdx = 1;
 
@@ -294,14 +308,17 @@ void ConvexMesh::update()
 		//
 		createVertices();
 	}
+	// update vertices
 	for (auto i = 0; i < vertexReferences.size(); i++) {
 		vertices[i].set((*triangles[vertexReferences[i][0]].getVertices())[vertexReferences[i][1]]);
 	}
+	// center
 	center.set(0.0f, 0.0f, 0.0f);
 	for (auto i = 0; i < triangles.size(); i++) {
 		center.add(triangles[i].getCenter());
 	}
 	center.scale(1.0f / triangles.size());
+	// sphere radius
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < triangles.size(); i++) {
 		auto triangleVertices = triangles[i].getVertices();

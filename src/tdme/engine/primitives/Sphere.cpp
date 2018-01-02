@@ -75,6 +75,7 @@ void Sphere::createConvexMesh() {
 
 void Sphere::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< Sphere* >(original) != nullptr == false) {
 		return;
 	}
@@ -88,13 +89,19 @@ void Sphere::fromBoundingVolume(BoundingVolume* original)
 
 void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< Sphere* >(original) != nullptr == false) {
 		return;
 	}
 	Vector3 axis;
 	auto sphere = dynamic_cast< Sphere* >(original);
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	// apply translations
+	// 	translate center
 	transformationsMatrix.multiply(sphere->center, center);
+	// note:
+	//	sphere radius can only be scaled the same on all axes
+	//	thats why its enough to only take x axis to determine scaling
 	axis.set(sphere->center).addX(sphere->radius);
 	transformationsMatrix.multiply(axis, axis);
 	radius = axis.sub(center).computeLength();

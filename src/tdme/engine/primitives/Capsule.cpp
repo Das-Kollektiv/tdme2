@@ -128,6 +128,7 @@ Vector3& Capsule::getB()
 
 void Capsule::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< Capsule* >(original) != nullptr == false) {
 		return;
 	}
@@ -144,6 +145,7 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 
 void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< Capsule* >(original) != nullptr == false) {
 		return;
 	}
@@ -151,6 +153,9 @@ void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tr
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	transformationsMatrix.multiply(capsule->a, a);
 	transformationsMatrix.multiply(capsule->b, b);
+	// note:
+	//	capsule radius can only be scaled the same on all axes
+	//	thats why its enough to only take x axis to determine scaling
 	Vector3 side;
 	side.set(capsule->a).addX(capsule->radius);
 	transformationsMatrix.multiply(side, side);

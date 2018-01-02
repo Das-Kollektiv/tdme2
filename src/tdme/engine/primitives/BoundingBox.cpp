@@ -75,6 +75,7 @@ BoundingBox::BoundingBox(const Vector3& min, const Vector3& max)
 
 void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
 		return;
 	}
@@ -89,15 +90,18 @@ void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 
 void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
 		return;
 	}
 	auto boundingBox = dynamic_cast< BoundingBox* >(original);
+	// apply transformations from original vertices to local vertices
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
 		transformationsMatrix.multiply((*_vertices)[i], vertices[i]);
 	}
+	// determine axis aligned bounding box constraints based on local vertices
 	auto& vertexXYZ = vertices[0].getArray();
 	float minX = vertexXYZ[0], minY = vertexXYZ[1], minZ = vertexXYZ[2];
 	float maxX = vertexXYZ[0], maxY = vertexXYZ[1], maxZ = vertexXYZ[2];
@@ -112,8 +116,10 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 		if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
 
 	}
+	// set up new aabb
 	min.set(minX, minY, minZ);
 	max.set(maxX, maxY, maxZ);
+	// compute new vertices based on aabb constraints
 	update();
 }
 
@@ -176,13 +182,21 @@ void BoundingBox::update()
 {
 	auto& minXYZ = min.getArray();
 	auto& maxXYZ = max.getArray();
+	// near, left, top
 	vertices[0].set(minXYZ[0], minXYZ[1], minXYZ[2]);
+	// near, right, top
 	vertices[1].set(maxXYZ[0], minXYZ[1], minXYZ[2]);
+	// near, right, bottom
 	vertices[2].set(maxXYZ[0], maxXYZ[1], minXYZ[2]);
+	// near, left, bottom
 	vertices[3].set(minXYZ[0], maxXYZ[1], minXYZ[2]);
+	// far, left, top
 	vertices[4].set(minXYZ[0], minXYZ[1], maxXYZ[2]);
+	// far, right, top
 	vertices[5].set(maxXYZ[0], minXYZ[1], maxXYZ[2]);
+	// far, right, bottom
 	vertices[6].set(maxXYZ[0], maxXYZ[1], maxXYZ[2]);
+	// far, left, bottom
 	vertices[7].set(minXYZ[0], maxXYZ[1], maxXYZ[2]);
 	center.set(min).add(max).scale(0.5f);
 	Vector3 halfExtension;

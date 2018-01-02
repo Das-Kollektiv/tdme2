@@ -121,6 +121,7 @@ void OrientedBoundingBox::fromOrientedBoundingBox(OrientedBoundingBox* obb)
 
 void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< OrientedBoundingBox* >(original) != nullptr == false) {
 		return;
 	}
@@ -137,6 +138,7 @@ void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 
 void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< OrientedBoundingBox* >(original) != nullptr == false) {
 		return;
 	}
@@ -144,13 +146,17 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 	Vector3 scale;
 	auto obb = dynamic_cast< OrientedBoundingBox* >(original);
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	// apply rotation, scale, translation
 	transformationsMatrix.multiply(obb->center, center);
+	// apply transformations rotation + scale to axis
 	transformationsMatrix.multiplyNoTranslation(obb->axes[0], axisTransformed[0]);
 	transformationsMatrix.multiplyNoTranslation(obb->axes[1], axisTransformed[1]);
 	transformationsMatrix.multiplyNoTranslation(obb->axes[2], axisTransformed[2]);
+	// set up axes
 	axes[0].set(axisTransformed[0]).normalize();
 	axes[1].set(axisTransformed[1]).normalize();
 	axes[2].set(axisTransformed[2]).normalize();
+	// apply scale to half extension
 	halfExtension.set(obb->halfExtension);
 	halfExtension.scale(
 		scale.set(
@@ -159,6 +165,7 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 			axisTransformed[2].computeLength()
 		)
 	);
+	// compute vertices
 	update();
 }
 
@@ -166,38 +173,55 @@ void OrientedBoundingBox::update()
 {
 	Vector3 axis;
 	auto& halfExtensionXYZ = halfExtension.getArray();
+	// just for my imagination
+	//	near left top
 	vertices[0].set(center);
 	vertices[0].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[0].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]));
 	vertices[0].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]));
+	// just for my imagination
+	//	near right top
 	vertices[1].set(center);
 	vertices[1].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]));
 	vertices[1].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]));
 	vertices[1].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]));
+	// just for my imagination
+	//	near right bottom
 	vertices[2].set(center);
 	vertices[2].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]));
 	vertices[2].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[2].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]));
+	// just for my imagination
+	//	near left bottom
 	vertices[3].set(center);
 	vertices[3].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[3].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[3].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]));
+	// just for my imagination
+	//	far left top
 	vertices[4].set(center);
 	vertices[4].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[4].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]));
 	vertices[4].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
+	// just for my imagination
+	//	far right top
 	vertices[5].set(center);
 	vertices[5].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]));
 	vertices[5].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]));
 	vertices[5].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
+	// just for my imagination
+	//	far right bottom
 	vertices[6].set(center);
 	vertices[6].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]));
 	vertices[6].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[6].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
+	// just for my imagination
+	//	far left bottom
 	vertices[7].set(center);
 	vertices[7].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[7].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[7].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
+	// sphere radius
 	sphereRadius = halfExtension.computeLength();
 }
 
@@ -223,6 +247,7 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(const Vector3&
 	auto& halfExtensionXYZ = halfExtension.getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
+	// detemine axis with min penetration
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > halfExtensionXYZ[i]) distance = halfExtensionXYZ[i];
@@ -234,11 +259,13 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolume(const Vector3&
 		} else {
 			penetration = halfExtensionXYZ[i] + distance;
 		}
+		// determine axis with min penetration
 		if (penetration < axisMinPenetration) {
 			axisMinPenetration = penetration;
 			axisIdxLeastPenetration = i;
 		}
 	}
+	//
 	computeNearestPointOnFaceBoundingVolumeAxis(axisIdxLeastPenetration, pointInObb, pointOnFace);
 }
 
@@ -248,6 +275,7 @@ void OrientedBoundingBox::computeNearestPointOnFaceBoundingVolumeAxis(int32_t ax
 	Vector3 tmp;
 	direction.set(pointInObb).sub(center);
 	auto halfExtensionXYZ = halfExtension.getArray();
+	// compute point on obb face
 	pointOnFace.set(center);
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
@@ -272,6 +300,7 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(const Vector3
 	auto halfExtensionXYZ = halfExtension.getArray();
 	auto axisMinPenetration = 10000.0f;
 	auto axisIdxLeastPenetration = 0;
+	// detemine axis with min penetration
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
 		if (distance > halfExtensionXYZ[i]) distance = halfExtensionXYZ[i];
@@ -282,6 +311,7 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolume(const Vector3
 		} else {
 			penetration = halfExtensionXYZ[i] + distance;
 		}
+		// determine axis with min penetration
 		if (penetration < axisMinPenetration) {
 			axisMinPenetration = penetration;
 			axisIdxLeastPenetration = i;
@@ -296,6 +326,7 @@ void OrientedBoundingBox::computeOppositePointOnFaceBoundingVolumeAxis(int32_t a
 	Vector3 tmp;
 	direction.set(pointInObb).sub(center);
 	auto& halfExtensionXYZ = halfExtension.getArray();
+	// compute point on obb face
 	pointOnFace.set(center);
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);

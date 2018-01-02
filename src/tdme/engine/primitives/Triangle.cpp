@@ -50,6 +50,7 @@ Triangle::Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3
 
 void Triangle::fromBoundingVolume(BoundingVolume* original)
 {
+	// check for same type of original
 	if (dynamic_cast< Triangle* >(original) != nullptr == false) {
 		return;
 	}
@@ -63,6 +64,7 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 
 void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
 {
+	// check for same type of original
 	if (dynamic_cast< Triangle* >(original) != nullptr == false) {
 		return;
 	}
@@ -76,6 +78,7 @@ void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, T
 
 void Triangle::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
 {
+	// based on http://www.gamedev.net/topic/552906-closest-point-on-triangle/
 	Vector3 edge0;
 	Vector3 edge1;
 	Vector3 v0Point;
@@ -187,7 +190,9 @@ float Triangle::computeDimensionOnAxis(const Vector3& axis) const
 void Triangle::update()
 {
 	Vector3 distanceVector;
+	// center
 	this->center.set(vertices[0]).add(vertices[1]).add(vertices[2]).scale(1.0f / 3.0f);
+	// sphere radius
 	this->sphereRadius = 0.0f;
 	for (auto i = 0; i < vertices.size(); i++) {
 		auto _sphereRadius = distanceVector.set(center).sub(vertices[i]).computeLength();
