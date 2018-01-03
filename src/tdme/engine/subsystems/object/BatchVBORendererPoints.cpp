@@ -27,15 +27,15 @@ using tdme::engine::subsystems::object::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
-constexpr int32_t BatchVBORendererPoints::VERTEX_COUNT;
+constexpr int32_t BatchVBORendererPoints::POINT_COUNT;
 
 BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id) 
 {
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
-	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
-	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 4 * sizeof(float)))->asFloatBuffer();
+	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 }
 
 BatchVBORendererPoints::~BatchVBORendererPoints()
@@ -65,6 +65,7 @@ void BatchVBORendererPoints::release()
 
 void BatchVBORendererPoints::initialize()
 {
+	// initialize if not yet done
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 2);
 		vboIds = vboManaged->getVBOGlIds();
@@ -73,14 +74,21 @@ void BatchVBORendererPoints::initialize()
 
 void BatchVBORendererPoints::render()
 {
+	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0 || fbColors.getPosition() == 0)
 		return;
 
+	// determine point count
 	auto points = fbVertices.getPosition() / 3 /* 3 components */;
+	// upload vertices
 	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	// upload colors
 	renderer->uploadBufferObject((*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
+	// bind vertices
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
+	// bind colors
 	renderer->bindColorsBufferObject((*vboIds)[1]);
+	// draw
 	renderer->drawPointsFromBufferObjects(points, 0);
 }
 

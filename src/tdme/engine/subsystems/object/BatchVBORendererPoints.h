@@ -25,7 +25,7 @@ class tdme::engine::subsystems::object::BatchVBORendererPoints final
 	friend class Object3DVBORenderer;
 
 private:
-	static constexpr int32_t VERTEX_COUNT { 32768 };
+	static constexpr int32_t POINT_COUNT { 32768 };
 	GLRenderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t id {  };

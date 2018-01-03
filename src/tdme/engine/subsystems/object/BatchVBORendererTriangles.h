@@ -64,9 +64,10 @@ private:
 	 * @return success
 	 */
 	inline bool addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+		// check if full
 		if (vertices == VERTEX_COUNT)
 			return false;
-
+		// otherwise
 		fbVertices.put(vertex.getArray());
 		fbNormals.put(normal.getArray());
 		if (textureCoordinate != nullptr) {

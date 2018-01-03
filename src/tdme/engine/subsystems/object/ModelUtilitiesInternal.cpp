@@ -53,6 +53,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	float minX = 0.0f, minY = 0.0f, minZ = 0.0f;
 	float maxX = 0.0f, maxY = 0.0f, maxZ = 0.0f;
 	auto firstVertex = true;
+	// create bounding box for whole animation at 60fps
 	AnimationState animationState;
 	animationState.setup = defaultAnimation;
 	animationState.lastAtTime = Timing::UNDEFINED;
@@ -60,10 +61,12 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	animationState.time = 0.0f;
 	animationState.finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
+		// calculate transformations matrices without world transformations
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, 0);
 		Object3DGroup::computeTransformations(&object3DModelInternal->object3dGroups);
+		// parse through object groups to determine min, max
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {
 				auto& vertexXYZ = vertex.getArray();
@@ -88,9 +91,10 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
 		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
 	}
+	// skip on models without meshes to be rendered
 	if (firstVertex == true)
 		return nullptr;
-
+	// otherwise go with bounding box
 	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
 }
 
@@ -104,8 +108,10 @@ void ModelUtilitiesInternal::invertNormals(map<string, Group*>* groups)
 	for (auto it: *groups) {
 		Group* group = it.second;
 		for (auto& normal : *group->getNormals()) {
+			// invert
 			normal.scale(-1.0f);
 		}
+		// process sub groups
 		invertNormals(group->getSubGroups());
 	}
 }
@@ -122,27 +128,36 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
 	for (auto object3DGroup : object3DModelInternal->object3dGroups) {
+		// check each faces entity
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		auto facesEntityIdxCount = facesEntities->size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto& facesEntity = (*facesEntities)[faceEntityIdx];
 			auto faces = facesEntity.getFaces()->size();
+			// material
 			auto material = facesEntity.getMaterial();
+			// determine if transparent
 			auto transparentFacesEntity = false;
+			//	via material
 			if (material != nullptr) {
 				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true)
 					transparentFacesEntity = true;
 
 			}
+			// setup material usage
 			auto materialId = material == nullptr ? "tdme.material.none" : material->getId();
 			materialCountById[materialId]++;
+			// skip, if requested
 			if (transparentFacesEntity == true) {
+				// keep track of rendered faces
 				transparentFaceCount += faces;
+				// skip to next entity
 				continue;
 			}
 			opaqueFaceCount += faces;
 		}
 	}
+	// determine final material count
 	auto materialCount = materialCountById.size();
 	modelStatistics->opaqueFaceCount = opaqueFaceCount;
 	modelStatistics->transparentFaceCount = transparentFaceCount;
@@ -158,6 +173,7 @@ bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 
 bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)
 {
+	// check number of object 3d groups
 	if (object3DModel1Internal->object3dGroups.size() != object3DModel2Internal->object3dGroups.size())
 		return false;
 
@@ -166,15 +182,18 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 		auto object3DGroupModel2 = object3DModel2Internal->object3dGroups[i];
 		auto facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
 		auto facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
+		// check transformation matrix
 		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
 			return false;
-
+		// check number of faces entities
 		if (facesEntitiesModel1->size() != facesEntitiesModel2->size())
 			return false;
-
+		// check each faces entity
 		for (auto j = 0; j < facesEntitiesModel1->size(); j++) {
 			auto facesEntityModel1 = &(*facesEntitiesModel1)[j];
 			auto facesEntityModel2 = &(*facesEntitiesModel2)[j];
+			// check material
+			//	TODO: check if it should be allowed to have NULL material
 			if (facesEntityModel1->getMaterial() == nullptr && facesEntityModel2->getMaterial() != nullptr)
 				return false;
 
@@ -185,12 +204,15 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 				facesEntityModel1->getMaterial()->getId() != facesEntityModel2->getMaterial()->getId()) {
 				return false;
 			}
+			// check faces
 			auto facesModel1 = facesEntityModel1->getFaces();
 			auto facesModel2 = facesEntityModel2->getFaces();
+			// number of faces in faces entity
 			if (facesModel1->size() != facesModel2->size())
 				return false;
-
+			// face indices
 			for (auto k = 0; k < facesModel1->size(); k++) {
+				// vertex indices
 				auto vertexIndicesModel1 = (*facesModel1)[k].getVertexIndices();
 				auto vertexIndicesModel2 = (*facesModel2)[k].getVertexIndices();
 				if ((*vertexIndicesModel1)[0] != (*vertexIndicesModel2)[0] ||
@@ -198,8 +220,11 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 					(*vertexIndicesModel1)[2] != (*vertexIndicesModel2)[2]) {
 					return false;
 				}
+				// TODO: maybe other indices
 			}
+			// TODO: check vertices, normals and such
 		}
 	}
+	//
 	return true;
 }

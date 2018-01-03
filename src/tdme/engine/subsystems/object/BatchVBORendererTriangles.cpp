@@ -66,6 +66,7 @@ void BatchVBORendererTriangles::release()
 
 void BatchVBORendererTriangles::initialize()
 {
+	// initialize if not yet done
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 3);
 		vboIds = vboManaged->getVBOGlIds();
@@ -74,16 +75,24 @@ void BatchVBORendererTriangles::initialize()
 
 void BatchVBORendererTriangles::render()
 {
+	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0)
 		return;
-
+	// determine triangles count
 	auto triangles = fbVertices.getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
+	// upload vertices
 	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	// upload normals
 	renderer->uploadBufferObject((*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
+	// upload texture coordinates
 	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	// bind vertices
 	renderer->bindVerticesBufferObject((*vboIds)[0]);
+	// bind normals
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
+	// bind texture coordinates
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);
+	// draw
 	renderer->drawTrianglesFromBufferObjects(triangles, 0);
 }
 
