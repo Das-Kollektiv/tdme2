@@ -30,19 +30,29 @@ TextureManager::~TextureManager() {
 
 int32_t TextureManager::addTexture(Texture* texture)
 {
+	// check if we already manage this texture
 	auto textureManagedIt = textures.find(texture->getId());
 	if (textureManagedIt != textures.end()) {
+		//
 		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
+		// yep, return open gl id
 		return textureManaged->getGlId();
 	}
+	// create texture
 	auto textureId = renderer->createTexture();
+	// bind texture
 	renderer->bindTexture(textureId);
+	// upload texture
 	renderer->uploadTexture(texture);
+	// unbind texture
 	renderer->bindTexture(renderer->ID_NONE);
+	// create managed texture
 	auto textureManaged = new TextureManager_TextureManaged(texture->getId(), textureId);
+	// add it to our textures
 	textureManaged->incrementReferenceCounter();
 	textures[texture->getId()] = textureManaged;
+	// return open gl id
 	return textureId;
 }
 
@@ -52,7 +62,9 @@ void TextureManager::removeTexture(const string& textureId)
 	if (textureManagedIt != textures.end()) {
 		auto textureManaged = textureManagedIt->second;
 		if (textureManaged->decrementReferenceCounter()) {
+			// delete texture
 			renderer->disposeTexture(textureManaged->getGlId());
+			// remove from our list
 			textures.erase(textureManagedIt);
 			delete textureManaged;
 		}
