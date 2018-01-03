@@ -42,6 +42,7 @@ using tdme::utils::Console;
 
 GLES2Renderer::GLES2Renderer() 
 {
+	// setup GLES2 consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
@@ -67,8 +68,10 @@ const string GLES2Renderer::getGLVersion()
 void GLES2Renderer::initialize()
 {
 	glGetError();
+	// get default framebuffer
 	FRAMEBUFFER_DEFAULT = 0; // getContext()->getDefaultDrawFramebuffer();
 	checkGLError();
+	// setup open gl
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepthf(1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -121,27 +124,30 @@ int32_t GLES2Renderer::getTextureUnits()
 
 int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
 {
+	// create shader
 	int32_t handle = glCreateShader(type);
-	checkGLError();
+	// exit if no handle returned
 	if (handle == 0) return 0;
-
+	// shader source
 	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
-
 	string sourceString = (shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
+	// load source
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
-
+	// compile
 	glCompileShader(handle);
-
+	// check state
 	int32_t compileStatus;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
 	if (compileStatus == 0) {
+		// get error
 		int32_t infoLogLengthBuffer;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
+		// be verbose
 		Console::println(
 			string(
 				string("GLES2Renderer::loadShader") +
@@ -155,6 +161,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 				infoLogString
 			 )
 		 );
+		// remove shader
 		glDeleteShader(handle);
 		return 0;
 	}
@@ -181,15 +188,17 @@ void GLES2Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 bool GLES2Renderer::linkProgram(int32_t programId)
 {
 	glLinkProgram(programId);
-
+	// check state
 	int32_t linkStatus;
 	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
 	if (linkStatus == 0) {
+		// get error
 		int32_t infoLogLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = (string(infoLog, infoLogLength));
+		// be verbose
 		Console::println(
 			string(
 				"[" +
@@ -328,13 +337,17 @@ int32_t GLES2Renderer::createTexture()
 int32_t GLES2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
 	uint32_t depthTextureGlId;
+	// create depth texture
 	glGenTextures(1, &depthTextureGlId);
 	glBindTexture(GL_TEXTURE_2D, depthTextureGlId);
+	// create depth texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+	// depth texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return depthTextureGlId;
 }
@@ -342,13 +355,17 @@ int32_t GLES2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 {
 	uint32_t colorBufferTextureGlId;
+	// create color texture
 	glGenTextures(1, &colorBufferTextureGlId);
 	glBindTexture(GL_TEXTURE_2D, colorBufferTextureGlId);
+	// create color texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	// color texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return colorBufferTextureGlId;
 }
@@ -389,11 +406,14 @@ void GLES2Renderer::disposeTexture(int32_t textureId)
 int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
 {
 	uint32_t frameBufferGlId;
+	// create a frame buffer object
 	glGenFramebuffers(1, &frameBufferGlId);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
+	// attach the depth buffer texture to FBO
 	if (depthBufferTextureGlId != ID_NONE) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferTextureGlId, 0);
 	}
+	// attach the depth buffer texture to FBO
 	if (colorBufferTextureGlId != ID_NONE) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferTextureGlId, 0);
 		// glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -402,10 +422,12 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, i
 		// glDrawBuffer(GL_NONE);
 		// glReadBuffer(GL_NONE);
 	}
+	// check FBO status
 	auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
 		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
+	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
 }
@@ -538,6 +560,7 @@ void GLES2Renderer::unbindBufferObjects()
 	glDisableVertexAttribArray(4);
 	glDisableVertexAttribArray(5);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GLES2Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
