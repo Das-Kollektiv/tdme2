@@ -44,6 +44,7 @@ using tdme::utils::Console;
 
 GL2Renderer::GL2Renderer() 
 {
+	// setup GL2 consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
@@ -59,6 +60,7 @@ GL2Renderer::GL2Renderer()
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	// TODO: buffer objects available
 	bufferObjectsAvailable = true;
 }
 
@@ -69,7 +71,9 @@ const string GL2Renderer::getGLVersion()
 
 bool GL2Renderer::checkBufferObjectsAvailable()
 {
+	// Check if extension is available.
 	auto extensionOK = true; // isExtensionAvailable(u"GL_ARB_vertex_buffer_object"_j);
+	// Check for VBO functions.
 	auto functionsOK = true; // isFunctionAvailable(u"glGenBuffersARB"_j) && isFunctionAvailable(u"glBindBufferARB"_j) && isFunctionAvailable(u"glBufferDataARB"_j)&& isFunctionAvailable(u"glDeleteBuffersARB"_j);
 	return extensionOK == true && functionsOK == true;
 }
@@ -82,8 +86,11 @@ bool GL2Renderer::isDepthTextureAvailable()
 void GL2Renderer::initialize()
 {
 	glGetError();
+	// get default framebuffer
 	FRAMEBUFFER_DEFAULT = 0; // getContext()->getDefaultDrawFramebuffer();
+	// check VBO
 	bufferObjectsAvailable = checkBufferObjectsAvailable();
+	// setup open gl
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepth(1.0f);
@@ -135,26 +142,30 @@ int32_t GL2Renderer::getTextureUnits()
 
 int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
 {
+	// create shader
 	int32_t handle = glCreateShader(type);
+	// exit if no handle returned
 	if (handle == 0) return 0;
-
+	// shader source
 	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
-
 	string sourceString = (shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
+	// load source
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
-
+	// compile
 	glCompileShader(handle);
-
+	// check state
 	int32_t compileStatus;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
+	// get error
 	if (compileStatus == 0) {
 		int32_t infoLogLengthBuffer;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
 		char infoLogBuffer[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
+		// be verbose
 		Console::println(
 			string(
 				string("GL2Renderer::loadShader") +
@@ -168,10 +179,13 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLogString
 			 )
 		 );
+		// remove shader
 		glDeleteShader(handle);
+		//
 		return 0;
 	}
 
+	//
 	return handle;
 }
 
@@ -194,15 +208,17 @@ void GL2Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 bool GL2Renderer::linkProgram(int32_t programId)
 {
 	glLinkProgram(programId);
-
+	// check state
 	int32_t linkStatus;
 	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
 	if (linkStatus == 0) {
+		// get error
 		int32_t infoLogLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char infoLog[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = (string(infoLog, infoLogLength));
+		// be verbose
 		Console::println(
 			string(
 				"[" +
@@ -341,13 +357,17 @@ int32_t GL2Renderer::createTexture()
 int32_t GL2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
 	uint32_t depthTextureGlId;
+	// create depth texture
 	glGenTextures(1, &depthTextureGlId);
 	glBindTexture(GL_TEXTURE_2D, depthTextureGlId);
+	// create depth texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	// depth texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return depthTextureGlId;
 }
@@ -355,13 +375,17 @@ int32_t GL2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 {
 	uint32_t colorBufferTextureGlId;
+	// create color texture
 	glGenTextures(1, &colorBufferTextureGlId);
 	glBindTexture(GL_TEXTURE_2D, colorBufferTextureGlId);
+	// create color texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
+	// color texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return colorBufferTextureGlId;
 }
@@ -401,9 +425,11 @@ void GL2Renderer::disposeTexture(int32_t textureId)
 
 int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
 {
+	// create a frame buffer object
 	uint32_t frameBufferGlId;
 	glGenFramebuffers(1, &frameBufferGlId);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
+	// attach the depth buffer texture to FBO
 	if (depthBufferTextureGlId != ID_NONE) {
 		#ifdef __APPLE__
 			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
@@ -411,6 +437,7 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferTextureGlId, 0);
 		#endif
 	}
+	// attach the color buffer texture to FBO
 	if (colorBufferTextureGlId != ID_NONE) {
 		#ifdef __APPLE__
 			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
@@ -423,10 +450,12 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	}
+	// check FBO status
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
 		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: ") + to_string(fboStatus));
 	}
+	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferGlId;
 }

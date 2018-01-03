@@ -21,6 +21,7 @@ using tdme::math::Matrix4x4;
 GLRenderer::GLRenderer() 
 {
 	init();
+	// set up lights
 	for (auto i = 0; i < lights.size(); i++) {
 		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
 	}
