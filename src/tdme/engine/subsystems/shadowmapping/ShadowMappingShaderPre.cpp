@@ -23,6 +23,8 @@ bool ShadowMappingShaderPre::isInitialized()
 void ShadowMappingShaderPre::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
+	// load shadow mapping shaders
+	//	pre render
 	vertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
@@ -39,33 +41,35 @@ void ShadowMappingShaderPre::initialize()
 	if (fragmentShaderGlId == 0)
 		return;
 
+	// create shadow mapping render program
+	//	pre
 	programGlId = renderer->createProgram();
 	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
 	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
+	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(programGlId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(programGlId, 1, "inNormal");
 		renderer->setProgramAttributeLocation(programGlId, 2, "inTextureUV");
 	}
+	// link
 	if (renderer->linkProgram(programGlId) == false)
 		return;
-
+	//	uniforms
 	uniformMVPMatrix = renderer->getProgramUniformLocation(programGlId, "mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
-
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
-
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1)
 		return;
-
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1)
 		return;
 
+	//
 	initialized = true;
 }
 

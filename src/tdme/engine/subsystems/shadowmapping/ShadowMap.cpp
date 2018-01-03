@@ -85,27 +85,34 @@ Camera* ShadowMap::getCamera()
 
 void ShadowMap::render(Light* light)
 {
+	// clear visible objects
 	visibleObjects.clear();
+	// viewers camera
 	auto camera = shadowMapping->engine->getCamera();
 	Vector3 lightDirection;
 	Vector3 lightLookAt;
 	Vector3 lightLookFrom;
 	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * shadowMapping->lightEyeDistanceScale;
+	// compute camera from view of light
 	lightDirection.set(light->getSpotDirection()).normalize();
 	lightLookAt.set(camera->getLookAt());
 	lightLookFrom.set(lightLookAt).sub(lightDirection.scale(lightEyeDistance));
+	// determine light camera z far
 	auto lightCameraZFar = lightEyeDistance * 2.0f;
 	if (camera->getZFar() > lightCameraZFar)
 		lightCameraZFar = camera->getZFar();
-
+	// set up light camera from view of light
 	lightCamera->setZNear(camera->getZNear());
 	lightCamera->setZFar(lightCameraZFar);
 	lightCamera->getLookFrom().set(lightLookFrom);
 	lightCamera->getLookAt().set(lightLookAt);
 	lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt(), lightCamera->getUpVector());
 	lightCamera->update(frameBuffer->getWidth(), frameBuffer->getHeight());
+	// Bind frame buffer to shadow map fbo id
 	frameBuffer->enableFrameBuffer();
+	// clear depth buffer
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
+	// determine visible objects and objects that should generate a shadow
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if (dynamic_cast< Object3D* >(entity) != nullptr) {
 			auto object = dynamic_cast< Object3D* >(entity);
@@ -124,7 +131,9 @@ void ShadowMap::render(Light* light)
 			}
 		}
 	}
+	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();
+	// only draw opaque face entities as shadows will not be produced from transparent objects
 	shadowMapping->object3DVBORenderer->render(
 		visibleObjects,
 		false,
@@ -135,8 +144,10 @@ void ShadowMap::render(Light* light)
 
 void ShadowMap::computeDepthBiasMVPMatrix()
 {
+	// matrices
 	auto modelViewMatrix = shadowMapping->renderer->getModelViewMatrix();
 	auto projectionMatrix = shadowMapping->renderer->getProjectionMatrix();
+	// compute shadow texture matrix
 	depthBiasMVPMatrix.set(modelViewMatrix).multiply(projectionMatrix).multiply(biasMatrix);
 }
 

@@ -89,29 +89,40 @@ void ShadowMapping::reshape(int32_t width, int32_t height)
 void ShadowMapping::createShadowMaps()
 {
 	runState = ShadowMapping_RunState::PRE;
+	// disable color rendering, we only want to write to the Z-Buffer
 	renderer->setColorMask(false, false, false, false);
+	// render backfaces only, avoid self-shadowing
 	renderer->setCullFace(renderer->CULLFACE_FRONT);
+	// Use shadow mapping "pre programm"
 	Engine::getShadowMappingShaderPre()->useProgram();
+	// render to shadow maps
 	for (auto i = 0; i < engine->getLightCount(); i++) {
 		auto light = engine->getLightAt(i);
-		if (light->isEnabled()) {
+		if (light->isEnabled() == true) {
+			// create shadow map for light, if required
 			if (shadowMaps[i] == nullptr) {
 				auto shadowMap = new ShadowMap(this, width, height);
 				shadowMap->initialize();
 				shadowMaps[i] = shadowMap;
 			}
+			// render
 			shadowMaps[i]->render(light);
 		} else {
 			if (shadowMaps[i] != nullptr) {
+				// dispose shadow map
 				shadowMaps[i]->dispose();
 				delete shadowMaps[i];
 				shadowMaps[i] = nullptr;
 			}
 		}
 	}
+	// Un use shadow mapping "pre programm"
 	Engine::getShadowMappingShaderPre()->unUseProgram();
+	// restore disable color rendering
 	renderer->setColorMask(true, true, true, true);
+	// restore render backfaces only
 	renderer->setCullFace(renderer->CULLFACE_BACK);
+	//
 	runState = ShadowMapping_RunState::NONE;
 }
 
@@ -124,17 +135,24 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	Vector4 spotDirection4Transformed;
 	Vector3 spotDirection3Transformed;
 	runState = ShadowMapping_RunState::RENDER;
+	// render using shadow mapping program
 	auto shader = Engine::getShadowMappingShaderRender();
 	shader->useProgram();
 	shader->setProgramTextureUnit(ShadowMap::TEXTUREUNIT);
+	//	do not allow writing to depth buffer
 	renderer->disableDepthBuffer();
+	//	only process nearest fragments
 	renderer->setDepthFunction(renderer->DEPTHFUNCTION_EQUAL);
+	// render each shadow map
 	for (auto i = 0; i < shadowMaps.size(); i++) {
+		// skip on unused shadow mapping
 		if (shadowMaps[i] == nullptr)
 			continue;
 
+		//
 		auto shadowMap = shadowMaps[i];
 		auto light = engine->getLightAt(i);
+		// set up light shader uniforms
 		renderer->getCameraMatrix().multiply(light->getPosition(), lightPosition4Transformed).scale(1.0f / lightPosition4Transformed.getW());
 		shader->setProgramLightPosition(lightPosition3Transformed.set(lightPosition4Transformed.getX(), lightPosition4Transformed.getY(), lightPosition4Transformed.getZ()));
 		renderer->getCameraMatrix().multiply(spotDirection4.set(light->getSpotDirection(), 0.0f), spotDirection4Transformed);
@@ -144,13 +162,23 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		shader->setProgramLightConstantAttenuation(light->getConstantAttenuation());
 		shader->setProgramLightLinearAttenuation(light->getLinearAttenuation());
 		shader->setProgramLightQuadraticAttenuation(light->getQuadraticAttenuation());
-		shader->setProgramTexturePixelDimensions(1.0f / static_cast< float >(shadowMap->getWidth()), 1.0f / static_cast< float >(shadowMap->getHeight()));
+		// set up texture pixel dimensions in shader
+		shader->setProgramTexturePixelDimensions(
+			1.0f / static_cast< float >(shadowMap->getWidth()),
+			1.0f / static_cast< float >(shadowMap->getHeight())
+		);
+		// setup shadow texture matrix
 		shadowMap->updateDepthBiasMVPMatrix();
+		// bind shadow map texture on shadow map texture unit
 		auto textureUnit = renderer->getTextureUnit();
 		renderer->setTextureUnit(ShadowMap::TEXTUREUNIT);
 		shadowMap->bindDepthBufferTexture();
+		// switch back to texture last unit
 		renderer->setTextureUnit(textureUnit);
+		// render objects, enable blending
+		//	will be disabled after rendering transparent faces
 		renderer->enableBlending();
+		// 	only opaque face entities as shadows will not be produced on transparent faces
 		object3DVBORenderer->render(
 			visibleObjects,
 			false,
@@ -159,20 +187,25 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DVBORenderer::RENDERTYPE_SHADOWMAPPING
 		);
+		//	disable blending
 		renderer->disableBlending();
 	}
+	// restore texture unit
 	auto textureUnit = renderer->getTextureUnit();
 	renderer->setTextureUnit(ShadowMap::TEXTUREUNIT);
 	renderer->bindTexture(renderer->ID_NONE);
 	renderer->setTextureUnit(textureUnit);
+	// restore render defaults
 	renderer->disableBlending();
 	renderer->enableDepthBuffer();
 	renderer->setDepthFunction(renderer->DEPTHFUNCTION_LESSEQUAL);
+	//
 	runState = ShadowMapping_RunState::NONE;
 }
 
 void ShadowMapping::dispose()
 {
+	// dispose shadow mappings
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		if (shadowMaps[i] != nullptr) {
 			shadowMaps[i]->dispose();
@@ -187,10 +220,13 @@ void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
+	// retrieve current model view matrix and put it on stack
 	Matrix4x4 tmpMatrix;
 	shadowTransformationsMatrix.set(depthBiasMVPMatrix);
+	// set up new model view matrix
 	tmpMatrix.set(depthBiasMVPMatrix);
 	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
+	//
 	updateDepthBiasMVPMatrix();
 }
 
@@ -198,7 +234,7 @@ void ShadowMapping::endObjectTransformations()
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
-
+	// set up new model view matrix
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
@@ -207,9 +243,13 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 
+	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());
+	// object to screen matrix
 	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+	// normal matrix
 	normalMatrix.set(mvMatrix).invert().transpose();
+	// upload
 	{
 		auto v = runState;
 		if ((v == ShadowMapping_RunState::PRE)) {
@@ -284,8 +324,9 @@ void ShadowMapping::updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
-
+	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
+	// upload
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }
 
@@ -293,6 +334,6 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
-
+	// upload
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }
