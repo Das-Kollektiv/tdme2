@@ -28,13 +28,9 @@ LightingShader::LightingShader(GLRenderer* renderer)
 }
 
 constexpr int32_t LightingShader::MAX_LIGHTS;
-
 constexpr int32_t LightingShader::TEXTUREUNIT_DIFFUSE;
-
 constexpr int32_t LightingShader::TEXTUREUNIT_SPECULAR;
-
 constexpr int32_t LightingShader::TEXTUREUNIT_DISPLACEMENT;
-
 constexpr int32_t LightingShader::TEXTUREUNIT_NORMAL;
 
 bool LightingShader::isInitialized()
@@ -45,6 +41,9 @@ bool LightingShader::isInitialized()
 void LightingShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
+
+	// lighting
+	//	fragment shader
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/lighting",
@@ -53,6 +52,7 @@ void LightingShader::initialize()
 	if (renderLightingFragmentShaderId == 0)
 		return;
 
+	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/lighting",
@@ -61,17 +61,24 @@ void LightingShader::initialize()
 	if (renderLightingVertexShaderId == 0)
 		return;
 
+	// create, attach and link program
 	renderLightingProgramId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+
+	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, "inNormal");
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, "inTextureUV");
 	}
+
+	// link program
 	if (renderer->linkProgram(renderLightingProgramId) == false)
 		return;
 
+	// get uniforms
+	//	globals
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
@@ -138,6 +145,7 @@ void LightingShader::initialize()
 	if (uniformEffectColorAdd == -1)
 		return;
 
+	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
 	if (uniformMaterialAmbient == -1)
 		return;
@@ -158,6 +166,7 @@ void LightingShader::initialize()
 	if (uniformMaterialShininess == -1)
 		return;
 
+	//	lights
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
 		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) +"].enabled");
 		if (uniformLightEnabled[i] == -1)
@@ -204,6 +213,8 @@ void LightingShader::initialize()
 			return;
 
 	}
+
+	//
 	initialized = true;
 }
 
@@ -211,6 +222,7 @@ void LightingShader::useProgram()
 {
 	isRunning = true;
 	renderer->useProgram(renderLightingProgramId);
+	// initialize static uniforms
 	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, TEXTUREUNIT_DIFFUSE);
 	if (renderer->isSpecularMappingAvailable() == true) {
 		renderer->setProgramUniformInteger(uniformSpecularTextureUnit, TEXTUREUNIT_SPECULAR);
@@ -222,6 +234,7 @@ void LightingShader::useProgram()
 		renderer->setProgramUniformInteger(uniformDisplacementTextureUnit, TEXTUREUNIT_DISPLACEMENT);
 	}
 	renderer->setProgramUniformFloatVec4(uniformSceneColor, defaultSceneColor);
+	// initialize dynamic uniforms
 	updateEffect(renderer);
 	updateMaterial(renderer);
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
@@ -236,6 +249,7 @@ void LightingShader::unUseProgram()
 
 void LightingShader::updateEffect(GLRenderer* renderer)
 {
+	// skip if not running
 	if (isRunning == false)
 		return;
 
@@ -245,26 +259,37 @@ void LightingShader::updateEffect(GLRenderer* renderer)
 
 void LightingShader::updateMaterial(GLRenderer* renderer)
 {
+	// skip if not running
 	if (isRunning == false)
 		return;
 
+	// we dont have alpha on ambient, specular, emission
 	tmpColor4[3] = 0.0f;
+
+	// ambient without alpha, as we only use alpha from diffuse color
 	copy(begin(renderer->material.ambient), end(renderer->material.ambient), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, tmpColor4);
+	// diffuse
 	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, renderer->material.diffuse);
+	// specular without alpha, as we only use alpha from diffuse color
 	copy(begin(renderer->material.specular), end(renderer->material.specular), begin(tmpColor4));
+	// emission without alpha, as we only use alpha from diffuse color
 	renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, tmpColor4);
 	copy(begin(renderer->material.emission), end(renderer->material.emission), begin(tmpColor4));
 	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, tmpColor4);
+	// shininess
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
+	// diffuse texture masked transparency
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 }
 
 void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 {
+	// skip if not running
 	if (isRunning == false)
 		return;
 
+	// lighs
 	renderer->setProgramUniformInteger(uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
 	if (renderer->lights[lightId].enabled == 1) {
 		renderer->setProgramUniformFloatVec4(uniformLightAmbient[lightId], renderer->lights[lightId].ambient);
@@ -282,12 +307,17 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 
 void LightingShader::updateMatrices(GLRenderer* renderer)
 {
+	// skip if not running
 	if (isRunning == false)
 		return;
 
+	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());
+	// object to screen matrix
 	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+	// normal matrix
 	normalMatrix.set(mvMatrix).invert().transpose();
+	// upload matrices
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
 	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
 	renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
@@ -295,6 +325,7 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 
 void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
 {
+	// skip if not running
 	if (isRunning == false)
 		return;
 
