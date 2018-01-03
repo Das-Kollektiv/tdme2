@@ -63,13 +63,16 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 	auto& facesEntity = (*facesEntities)[facesEntityIdx];
 	auto faces = facesEntity.getFaces();
 	auto& face = (*faces)[faceIdx];
+	// compute vertices
 	auto faceVertexIndices = face.getVertexIndices();
 	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
 	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[0]], vertices[0]);
 	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[1]], vertices[1]);
 	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[2]], vertices[2]);
+	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;
+	// check if idxes over flow, if not yet finished
 	if (faceIdxTotal < faceCount) {
 		if (faceIdx == faces->size()) {
 			faceIdx = 0;
@@ -87,6 +90,7 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 			}
 		}
 	}
+	//
 	return &vertices;
 }
 
