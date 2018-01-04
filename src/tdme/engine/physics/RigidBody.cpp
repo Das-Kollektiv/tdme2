@@ -44,6 +44,7 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 	this->world = world;
 	this->idx = -1;
 	this->id = id;
+	this->rootId = id;
 	this->enabled = enabled;
 	this->typeId = typeId;
 	this->collisionTypeIds = TYPEIDS_ALL;
@@ -104,6 +105,15 @@ int32_t RigidBody::getIdx()
 const string& RigidBody::getId()
 {
 	return id;
+}
+
+const string& RigidBody::getRootId()
+{
+	return rootId;
+}
+
+void RigidBody::setRootId(const string& rootId) {
+	this->rootId = rootId;
 }
 
 int32_t RigidBody::getTypeId()

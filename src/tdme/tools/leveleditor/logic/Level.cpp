@@ -307,7 +307,8 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				transformations.update();
 				int i = 0;
 				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
-					world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, &transformations, &convexMesh, 1.0f);
+					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, &transformations, &convexMesh, 1.0f);
+					rigidBody->setRootId(object->getId());
 					i++;
 				}
 			}
@@ -320,6 +321,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				transformations.getTranslation().add(translation);
 				transformations.update();
 				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, &transformations, entityBv->getBoundingVolume(), 1.0f);
+				rigidBody->setRootId(object->getId());
 				rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
 				rigidBodies.push_back(rigidBody);
 			}

@@ -79,6 +79,7 @@ private:
 	World* world {  };
 	int32_t idx {  };
 	string id {  };
+	string rootId {  };
 	int32_t typeId {  };
 	int32_t collisionTypeIds {  };
 	bool enabled {  };
@@ -203,6 +204,17 @@ public:
 	const string& getId();
 
 	/** 
+	 * @return root id
+	 */
+	const string& getRootId();
+
+	/**
+	 * Set root id
+	 * @param root id
+	 */
+	void setRootId(const string& rootId);
+
+	/**
 	 * @return type id
 	 */
 	int32_t getTypeId();
