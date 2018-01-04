@@ -38,10 +38,12 @@ public:
 	 * @param color
 	 */
 	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
+		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 			return;
 		}
+		// create point in pool
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
 		transparentRenderPoint.acquired = true;
 		transparentRenderPoint.point.set(point);

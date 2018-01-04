@@ -33,13 +33,15 @@ TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 {
 	for (auto point: pool2->transparentRenderPoints) {
+		// skip if point is not in use
 		if (point.acquired == false)
 			break;
-
+		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("TransparentRenderPointsPool::merge(): Too many transparent render points"));
 			break;
 		}
+		// create point in pool
 		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
 		transparentRenderPoint.acquired = true;
 		transparentRenderPoint.point.set(point.point);

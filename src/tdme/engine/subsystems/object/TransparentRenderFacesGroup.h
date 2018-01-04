@@ -87,7 +87,9 @@ private:
 	 * @param texture coordinate
 	 */
 	inline void addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+		// check if we have a batch renderer already?
 		if (batchVBORenderers.size() == 0) {
+			// nope, add first one
 			auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 			if (batchVBORendererTriangles == nullptr) {
 				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
@@ -95,16 +97,19 @@ private:
 			}
 			batchVBORenderers.push_back(batchVBORendererTriangles);
 		}
+		// try to add vertex
 		auto batchVBORendererTriangles = batchVBORenderers.at(batchVBORenderers.size() - 1);
 		if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 			return;
-
+		// failed, acquire additionally one
 		batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
 		if (batchVBORendererTriangles == nullptr) {
 			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
 			return;
 		}
+		// 	add it
 		batchVBORenderers.push_back(batchVBORendererTriangles);
+		// 	add vertex
 		batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
 	}
 

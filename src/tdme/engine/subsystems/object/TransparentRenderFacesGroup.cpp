@@ -87,31 +87,40 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 
 void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 {
+	// store model view matrix
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
+	// texture coordinate
 	if (textureCoordinates == true) {
+		// enable texturing client state if not yet done
 		if (renderer->renderingTexturingClientState == false) {
 			renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
 			renderer->renderingTexturingClientState = true;
 		}
 	} else {
+		// disable texturing client state if not yet done
 		if (renderer->renderingTexturingClientState == true) {
 			renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
 			renderer->renderingTexturingClientState = false;
 		}
 	}
+	// effect
 	renderer->setEffectColorMul(effectColorMul.getArray());
 	renderer->setEffectColorAdd(effectColorAdd.getArray());
 	renderer->onUpdateEffect();
+	// material
 	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL);
+	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
+	// render, reset
 	for (auto batchVBORendererTriangles: batchVBORenderers) {
 		batchVBORendererTriangles->render();
 		batchVBORendererTriangles->clear();
 		batchVBORendererTriangles->release();
 	}
 	batchVBORenderers.clear();
+	// restore GL state, model view matrix
 	renderer->unbindBufferObjects();
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
