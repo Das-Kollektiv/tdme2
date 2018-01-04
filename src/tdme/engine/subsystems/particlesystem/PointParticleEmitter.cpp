@@ -61,6 +61,7 @@ void PointParticleEmitter::emit(Particle* particle)
 {
 	auto& velocityXYZ = velocity.getArray();
 	auto& velocityRndXYZ = velocityRnd.getArray();
+	// set up particle
 	particle->active = true;
 	particle->position.set(positionTransformed);
 	particle->velocity.set(
@@ -82,6 +83,8 @@ void PointParticleEmitter::emit(Particle* particle)
 
 void PointParticleEmitter::fromTransformations(Transformations* transformations)
 {
+	//
 	auto transformationsMatrix = transformations->getTransformationsMatrix();
+	// apply translations
 	transformationsMatrix.multiply(position, positionTransformed);
 }

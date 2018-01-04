@@ -58,7 +58,9 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	Vector3 cosOnAxis0;
 	Vector3 sinOnAxis1;
 	Vector3 side;
+	// set up particle
 	particle->active = true;
+	// emit particle on circle spanned on axis 0 and axis 1
 	auto rnd = Math::random();
 	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));
 	sinOnAxis1.set(axis1Transformed).scale(Math::sin(Math::PI * 2 * rnd));
@@ -66,10 +68,14 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->position.add(sinOnAxis1);
 	particle->position.scale(radiusTransformed);
 	particle->position.add(centerTransformed);
+	// compute velocity
 	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd));
+	// mass
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
+	// life time
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
+	// color
 	particle->color.set(colorStart);
 	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,
@@ -82,9 +88,14 @@ void CircleParticleEmitterPlaneVelocity::fromTransformations(Transformations* tr
 {
 	Vector3 side;
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	// apply rotation, scale, translation
 	transformationsMatrix.multiply(center, centerTransformed);
+	// apply transformations rotation + scale to axis
 	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
 	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
+	// note:
+	//	sphere radius can only be scaled the same on all axes
+	//	thats why its enough to only take x axis to determine scaling
 	side.set(axis0).scale(radius).add(center);
 	transformationsMatrix.multiply(side, side);
 	radius = side.sub(center).computeLength();

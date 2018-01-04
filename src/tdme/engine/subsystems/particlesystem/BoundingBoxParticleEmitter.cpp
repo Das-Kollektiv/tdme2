@@ -67,22 +67,28 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	Vector3 tmpAxis;
 	auto& velocityXYZ = velocity.getArray();
 	auto& velocityRndXYZ = velocityRnd.getArray();
+	// set up particle
 	particle->active = true;
 	auto obbAxes = obbTransformed->getAxes();
 	auto& obbHalfExtensionXYZ = obbTransformed->getHalfExtension().getArray();
+	// emit particle in oriented bounding box
 	particle->position.set(0.0f, 0.0f, 0.0f);
 	particle->position.add(tmpAxis.set((*obbAxes)[0]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
 	particle->position.add(tmpAxis.set((*obbAxes)[1]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
 	particle->position.add(tmpAxis.set((*obbAxes)[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
 	particle->position.add(obbTransformed->getCenter());
+	// compute velocity
 	particle->velocity.set(
 		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
 		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
 		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
+	// mass
 	particle->mass = mass + (Math::random() * (massRnd));
+	// life time
 	particle->lifeTimeMax = lifeTime + (Math::random() * lifeTimeRnd);
 	particle->lifeTimeCurrent = 0LL;
+	// color
 	particle->color.set(colorStart);
 	particle->colorAdd.set(
 		(colorEnd.getRed() - colorStart.getRed()) / particle->lifeTimeMax,

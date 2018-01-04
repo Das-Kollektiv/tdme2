@@ -174,7 +174,9 @@ ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()
 
 int32_t ObjectParticleSystemEntityInternal::emitParticles()
 {
+	// determine particles to spawn
 	auto particlesToSpawn = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
+	// particles to spawn
 	auto particlesToSpawnInteger = 0;
 	if (autoEmit == true) {
 		particlesToSpawnInteger = static_cast< int32_t >(particlesToSpawn);
@@ -187,16 +189,18 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 	} else {
 		particlesToSpawnInteger = emitter->getCount();
 	}
+	// skip if nothing to spawn
 	if (particlesToSpawnInteger == 0)
 		return 0;
-
+	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
 		if (particle.active == true)
 			continue;
-
+		// emit particle
 		emitter->emit(&particle);
+		// enable object
 		auto object = objects[i];
 		object->getTranslation().set(particle.position);
 		object->update();
@@ -204,11 +208,13 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		object->getEffectColorAdd().set(effectColorAdd);
 		object->getEffectColorMul().set(effectColorMul);
 		enabledObjects.push_back(object);
+		// all particles spawned?
 		particlesSpawned++;
 		if (particlesSpawned == particlesToSpawnInteger)
 			break;
 
 	}
+	// done
 	return particlesSpawned;
 }
 
@@ -225,6 +231,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 			continue;
 
 		auto object = objects[i];
+		// life time
 		particle.lifeTimeCurrent += timeDelta;
 		if (particle.lifeTimeCurrent >= particle.lifeTimeMax) {
 			particle.active = false;
@@ -232,11 +239,16 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 			enabledObjects.erase(remove(enabledObjects.begin(), enabledObjects.end(), object), enabledObjects.end());
 			continue;
 		}
+		// add gravity if our particle have a noticable mass
 		if (particle.mass > MathTools::EPSILON)
 			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
-
+		// TODO:
+		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
+		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
+		// update up effect colors
 		object->getEffectColorAdd().set(effectColorAdd);
 		object->getEffectColorMul().set(effectColorMul);
+		// translation
 		object->getTranslation().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		object->update();
 		if (first == true) {
@@ -254,6 +266,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 			if (objBbMaxXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = objBbMaxXYZ[2];
 		}
 	}
+	// compute bounding boxes
 	boundingBoxTransformed->update();
 	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
 }

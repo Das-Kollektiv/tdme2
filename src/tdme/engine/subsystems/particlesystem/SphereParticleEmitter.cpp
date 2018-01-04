@@ -66,6 +66,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 {
 	auto& velocityXYZ = velocity.getArray();
 	auto& velocityRndXYZ = velocityRnd.getArray();
+	// set up particle
 	particle->active = true;
 	particle->position.set(
 		Math::random() * 2.0f - 1.0f,
