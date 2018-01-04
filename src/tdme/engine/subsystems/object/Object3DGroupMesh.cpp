@@ -59,28 +59,37 @@ Object3DGroupMesh::Object3DGroupMesh()
 Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
+	//
 	mesh->group = group;
+	// group data
 	auto groupVertices = group->getVertices();
 	auto groupNormals = group->getNormals();
 	auto groupTextureCoordinates = group->getTextureCoordinates();
 	auto groupTangents = group->getTangents();
 	auto groupBitangents = group->getBitangents();
+	// determine face count
 	mesh->faceCount = group->getFaceCount();
+	// animation processing target
 	mesh->animationProcessingTarget = animationProcessingTarget;
+	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
+	// set up transformed vertices, normals and friends
 	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+		// transformed mesh vertices
 		mesh->transformedVertices.resize(groupVertices->size());
 		mesh->vertices = &mesh->transformedVertices;
 		for (auto j = 0; j < mesh->vertices->size(); j++) {
 			(*mesh->vertices)[j].set((*groupVertices)[j]);
 		}
+		// transformed mesh normals
 		mesh->transformedNormals.resize(groupNormals->size());
 		mesh->normals = &mesh->transformedNormals;
 		for (auto j = 0; j < mesh->normals->size(); j++) {
 			(*mesh->normals)[j].set((*groupNormals)[j]);
 		}
+		// transformed mesh tangents
 		if (groupTangents->size() > 0) {
 			mesh->transformedTangents.resize(groupTangents->size());
 			mesh->tangents = &mesh->transformedTangents;
@@ -88,6 +97,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 				(*mesh->tangents)[j].set((*groupTangents)[j]);
 			}
 		}
+		// transformed mesh bitangents
 		if (groupBitangents->size() > 0) {
 			mesh->transformedBitangents.resize(groupBitangents->size());
 			mesh->bitangents = &mesh->transformedBitangents;
@@ -96,6 +106,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 			}
 		}
 	} else {
+		// no transformations on CPU, we can use model data
 		mesh->vertices = groupVertices;
 		mesh->normals = groupNormals;
 		if (groupTangents->size() > 0) {
@@ -105,10 +116,12 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 			mesh->bitangents = groupBitangents;
 		}
 	}
+	// indices
 	auto indicesCount = 0;
 	for (auto& facesEntity : *group->getFacesEntities()) {
 		indicesCount += 3 * facesEntity.getFaces()->size();
 	}
+	// create face vertex indices
 	mesh->indices.resize(indicesCount);
 	{
 		auto j = 0;
@@ -118,17 +131,24 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 			mesh->indices[j++] = static_cast< int16_t >(vertexIndex);
 		}
 	}
+	// texture coordinates
 	mesh->textureCoordinates = groupTextureCoordinates;
+	//
 	mesh->recreatedBuffers = false;
+	// group transformations matrix
 	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU ||
 		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		auto transformationMatrixIt = transformationMatrices->find(group->getId());
+		// group transformations matrix
 		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
 	}
+	// skinning
 	if ((skinning != nullptr && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING))) {
+		// skinning computation caches if computing skinning on CPU
 		if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			mesh->cSkinningJointWeight.resize(groupVertices->size());
 			mesh->cSkinningJointTransformationsMatrices.resize(groupVertices->size());
+			// compute joint weight caches
 			auto joints = skinning->getJoints();
 			auto weights = skinning->getWeights();
 			auto jointsWeights = skinning->getVerticesJointsWeights();
@@ -145,6 +165,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = (*weights)[jointWeight.getWeightIndex()];
 					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
 					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr;
+					// next
 					jointWeightIdx++;
 				}
 			}
@@ -161,8 +182,10 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 	auto groupNormals = group->getNormals();
 	auto groupTangent = group->getTangents();
 	auto groupBitangent = group->getBitangents();
+	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	if (skinning != nullptr && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
+		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto jointsWeights = skinning->getVerticesJointsWeights();
 			Vector3* vertex;
@@ -176,6 +199,7 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 			float totalWeights;
 			float weightNormalized;
 			for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
+				// do vertices
 				vertex = &(*groupVertices)[vertexIndex];
 				transformedVertex = &(*vertices)[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				normal = &(*groupNormals)[vertexIndex];
@@ -184,43 +208,62 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 				transformedTangent = tangents != nullptr ? &(*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
 				bitangent = groupTangent->size() > 0 ? &(*groupBitangent)[vertexIndex] : static_cast< Vector3* >(nullptr);
 				transformedBitangent = bitangents != nullptr ? &(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
+				// compute every influence on vertex and vertex normals
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {
 					auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
+					// skinning transformation matrix
 					auto cTransformationsMatrix = cSkinningJointTransformationsMatrices[vertexIndex][vertexJointWeightIdx];
+					// vertex
 					transformedVertex->add(cTransformationsMatrix->multiply(*vertex, tmpVector3).scale(weight));
+					// normals
 					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(*normal, tmpVector3).scale(weight));
+					// tangent
 					if (tangent != nullptr) {
 						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(*tangent, tmpVector3).scale(weight));
 					}
+					// bitangent
 					if (bitangent != nullptr) {
 						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(*bitangent, tmpVector3).scale(weight));
 					}
+					//
 					totalWeights += weight;
 				}
+				// scale to full weight
 				if (Math::abs(totalWeights - 1.0f) > MathTools::EPSILON) {
 					weightNormalized = 1.0f / totalWeights;
+					// vertex
 					transformedVertex->scale(weightNormalized);
+					// normals
 					transformedNormal->scale(weightNormalized);
+					// tangent
 					if (transformedTangent != nullptr) {
 						transformedTangent->scale(weightNormalized);
 					}
+					// bitangent
 					if (transformedBitangent != nullptr) {
 						transformedBitangent->scale(weightNormalized);
 					}
 				}
+				// normalize normal
 				transformedNormal->normalize();
 			}
+			// recreate buffers
 			recreateBuffers();
 		}
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+		// transformations for non skinned rendering
+		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < groupVertices->size(); vertexIndex++) {
 			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply((*groupVertices)[vertexIndex], tmpVector3));
 		}
+		//	normals
 		for (auto normalIndex = 0; normalIndex < groupNormals->size(); normalIndex++) {
 			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation((*groupNormals)[normalIndex], tmpVector3).normalize());
 		}
+		//	TODO: tangents, bitangents, but actually it is only in use for computing bounding volumes, so I am not in a hurry
+		// recreate buffers
 		recreateBuffers();
 	}
 }
@@ -243,58 +286,74 @@ bool Object3DGroupMesh::hasRecreatedBuffers()
 void Object3DGroupMesh::setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
+	// create face vertex indices, will never be changed in engine
 	for (auto index : indices) {
 		sbIndices.put(index);
 	}
+	// done, upload
 	renderer->uploadIndicesBufferObject(vboId, sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 }
 
 void Object3DGroupMesh::setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId)
 {
+	// check if we have texture coordinates
 	auto groupTextureCoordinates = group->getTextureCoordinates();
 	if (groupTextureCoordinates == nullptr) return;
+	// create texture coordinates buffer, will never be changed in engine
 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
+	// construct texture coordinates byte buffer as this will not change usually
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
+	// done, upload
 	renderer->uploadBufferObject(vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
 void Object3DGroupMesh::setupVerticesBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
+	// create vertices buffers
 	for (auto& vertex : *vertices) {
 		fbVertices.put(vertex.getArray());
 	}
+	// done, upload
 	renderer->uploadBufferObject(vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
 void Object3DGroupMesh::setupNormalsBuffer(GLRenderer* renderer, int32_t vboId)
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
+	// create normals buffers
 	for (auto& normal : *normals) {
 		fbNormals.put(normal.getArray());
 	}
+	// done, upload
 	renderer->uploadBufferObject(vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
 void Object3DGroupMesh::setupTangentsBuffer(GLRenderer* renderer, int32_t vboId)
 {
+	// check if we have tangents
 	if (tangents == nullptr) return;
 	auto fbTangents = ObjectBuffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	// create tangents buffers
 	for (auto& tangent : *tangents) {
 		fbTangents.put(tangent.getArray());
 	}
+	// done, upload
 	renderer->uploadBufferObject(vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
 void Object3DGroupMesh::setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId)
 {
+	// check if we have bitangents
 	if (bitangents == nullptr) return;
 	auto fbBitangents = ObjectBuffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	// create bitangents buffers
 	for (auto& bitangent : *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
+	// done, upload
 	renderer->uploadBufferObject(vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 
