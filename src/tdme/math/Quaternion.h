@@ -164,9 +164,12 @@ public:
 	 * @return this quaternion
 	 */
 	inline Quaternion& rotate(float angle, const Vector3& v) {
+		// converts the angle in degrees to radians
 		auto radians = angle * 3.1415927f / 180.0f;
+		// finds the sin and cosin for the half angle
 		auto sin = Math::sin(radians * 0.5);
 		auto cos = Math::cos(radians * 0.5);
+		// formula to construct a new quaternion based on direction and angle
 		data[0] = v.data[0] * sin;
 		data[1] = v.data[1] * sin;
 		data[2] = v.data[2] * sin;
@@ -237,8 +240,10 @@ public:
 		Vector3 q;
 		Vector3 t;
 		Vector3 qxt;
+		// t = 2 * cross(q.xyz, v)
 		q.set(data[0], data[1], data[2]);
 		Vector3::computeCrossProduct(q, v, t).scale(2.0f);
+		// v' = v + q.w * t + cross(q.xyz, t)
 		Vector3::computeCrossProduct(q, t, qxt);
 		dest.set(v);
 		dest.add(qxt);

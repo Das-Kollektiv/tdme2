@@ -29,10 +29,13 @@ public:
 	 * @return negative
 	 */
 	inline bool isNegative(Matrix4x4& matrix) {
+		// check if negative scale and rotation
 		auto& transformationsMatrixData = matrix.getArray();
+		// copy into x,y,z axes
 		xAxis.set(transformationsMatrixData[0], transformationsMatrixData[1], transformationsMatrixData[2]);
 		yAxis.set(transformationsMatrixData[4], transformationsMatrixData[5], transformationsMatrixData[6]);
 		zAxis.set(transformationsMatrixData[8], transformationsMatrixData[9], transformationsMatrixData[10]);
+		// check if inverted/negative transformation
 		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f;
 	}
 

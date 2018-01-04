@@ -154,10 +154,13 @@ public:
 	 */
 	inline Matrix4x4& getScale(Vector3& scale) {
 		Vector3 tmpVector3;
+		// x axis
 		tmpVector3.set(data[0], data[1], data[2]);
 		scale.data[0] = tmpVector3.computeLength();
+		// y axis
 		tmpVector3.set(data[4], data[5], data[6]);
 		scale.data[1] = tmpVector3.computeLength();
+		// z axis
 		tmpVector3.set(data[8], data[9], data[10]);
 		scale.data[2] = tmpVector3.computeLength();
 		return *this;
@@ -170,18 +173,21 @@ public:
 	 */
 	inline Matrix4x4& setScale(const Vector3& scale) {
 		Vector3 tmpVector3;
+		// x axis
 		tmpVector3.set(data[0], data[1], data[2]);
 		tmpVector3.normalize();
 		tmpVector3.scale(scale.data[0]);
 		data[0] = tmpVector3.data[0];
 		data[1] = tmpVector3.data[1];
 		data[2] = tmpVector3.data[2];
+		// y axis
 		tmpVector3.set(data[4], data[5], data[6]);
 		tmpVector3.normalize();
 		tmpVector3.scale(scale.data[1]);
 		data[4] = tmpVector3.data[0];
 		data[5] = tmpVector3.data[1];
 		data[6] = tmpVector3.data[2];
+		// z axis
 		tmpVector3.set(data[8], data[9], data[10]);
 		tmpVector3.normalize();
 		tmpVector3.scale(scale.data[2]);
@@ -407,25 +413,27 @@ public:
 
 	/** 
 	 * Inverts the matrix
-	 * Taken from MESA GLU implementation
-	 * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved. 
-	 * Permission is hereby granted, free of charge, to any person obtaining a
-	 * copy of this software and associated documentation files (the "Software"),
-	 * to 	deal in the Software without restriction, including without limitation
-	 * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-	 * and/or sell copies of the Software, and to permit persons to whom the
-	 * Software is furnished to do so, subject to the following conditions:
-	 * The above copyright notice and this permission notice shall be included
-	 * in all copies or substantial portions of the Software.
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-	 * BRIAN PAUL BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-	 * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-	 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	 * @return this matrix
 	 */
 	inline Matrix4x4& invert() {
+		/*
+		 Taken from MESA GLU implementation
+		 Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
+		 Permission is hereby granted, free of charge, to any person obtaining a
+		 copy of this software and associated documentation files (the "Software"),
+		 to 	deal in the Software without restriction, including without limitation
+		 the rights to use, copy, modify, merge, publish, distribute, sublicense,
+		 and/or sell copies of the Software, and to permit persons to whom the
+		 Software is furnished to do so, subject to the following conditions:
+		 The above copyright notice and this permission notice shall be included
+		 in all copies or substantial portions of the Software.
+		 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+		 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+		 BRIAN PAUL BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+		 AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+		 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+		*/
 		array <float, 16> _data;
 		_data[0] = data[5] * data[10] * data[15] - data[5] * data[11] * data[14] - data[9] * data[6] * data[15] + data[9] * data[7] * data[14] + data[13] * data[6] * data[11] - data[13] * data[7] * data[10];
 		_data[4] = -data[4] * data[10] * data[15] + data[4] * data[11] * data[14] + data[8] * data[6] * data[15] - data[8] * data[7] * data[14] - data[12] * data[6] * data[11] + data[12] * data[7] * data[10];
@@ -529,21 +537,24 @@ public:
 		);
 	}
 
-	/** 
+	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @see https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
-	 * This code repository predates the concept of Open Source, and predates most licenses along such lines. 
-	 * As such, the official license truly is:
-	 * EULA: The Graphics Gems code is copyright-protected. 
-	 * In other words, you cannot claim the text of the code as your own and resell it. 
-	 * Using the code is permitted in any program, product, or library, non-commercial or commercial. 
-	 * Giving credit is not required, though is a nice gesture. 
-	 * The code comes as-is, and if there are any flaws or problems with any Gems code, 
-	 * nobody involved with Gems - authors, editors, publishers, or webmasters - are to be held responsible. 
-	 * Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 	 * @param euler
 	 */
 	inline void computeEulerAngles(Vector3& euler) const {
+		/*
+		see https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
+
+			This code repository predates the concept of Open Source, and predates most licenses along such lines.
+			As such, the official license truly is:
+			EULA: The Graphics Gems code is copyright-protected.
+			In other words, you cannot claim the text of the code as your own and resell it.
+			Using the code is permitted in any program, product, or library, non-commercial or commercial.
+			Giving credit is not required, though is a nice gesture.
+			The code comes as-is, and if there are any flaws or problems with any Gems code,
+			nobody involved with Gems - authors, editors, publishers, or webmasters - are to be held responsible.
+			Basically, don't be a jerk, and remember that anything free comes with no guarantee.
+		*/
 		auto& eulerXYZ = euler.getArray();
 		auto axis0 = 0;
 		auto axis1 = 1;

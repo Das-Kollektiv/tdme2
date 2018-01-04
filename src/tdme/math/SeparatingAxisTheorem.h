@@ -37,12 +37,15 @@ public:
 	 */
 	inline static bool checkAxis(const Vector3& axis) {
 		auto& axisXYZ = axis.getArray();
+		// return if axis contains NaN component
 		if (Float::isNaN(axisXYZ[0]) || Float::isNaN(axisXYZ[1]) || Float::isNaN(axisXYZ[2])) {
 			return false;
 		}
+		// check if axis has no length
 		if (Math::abs(axisXYZ[0]) < MathTools::EPSILON && Math::abs(axisXYZ[1]) < MathTools::EPSILON && Math::abs(axisXYZ[2]) < MathTools::EPSILON) {
 			return false;
 		}
+		// valid
 		return true;
 	}
 
@@ -109,13 +112,17 @@ public:
 		float max1;
 		float min2;
 		float max2;
+		// min, max for vertices 1 on axis
 		doCalculateInterval(vertices1, axisTest, min1, max1);
+		// min, max for vertices 2 on axis
 		doCalculateInterval(vertices2, axisTest, min2, max2);
+		// determine penetration
 		auto len1 = max1 - min1;
 		auto len2 = max2 - min2;
 		auto min = Math::min(min1, min2);
 		auto max = Math::max(max1, max2);
 		auto len = max - min;
+		// check if we have no penetration
 		if (len > len1 + len2) {
 			return false;
 		}
