@@ -43,8 +43,8 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin().sub(0.05f);
-	boundingBoxTransformed->getMax().add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
+	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();
 }
 
@@ -145,15 +145,17 @@ void Object3DInternal::setDynamicDiffuseTexture(const string& groupId, const str
 {
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
+		// skip if a group is desired but not matching
 		if (groupId != "" && groupId != object3DGroup->group->getId())
 			continue;
 
 		auto facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->size(); facesEntityIdx++) {
 			auto& facesEntity = (*facesEntities)[facesEntityIdx];
+			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
-
+			// set dynamic texture id
 			object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
 		}
 	}
@@ -166,11 +168,15 @@ void Object3DInternal::initialize()
 
 void Object3DInternal::dispose()
 {
+	// delete object 3d groups
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
+		// dispose renderer
 		object3DGroup->renderer->dispose();
+		// dispose object3d group
 		object3DGroup->dispose();
 	}
+	// dispose object 3d base
 	Object3DBase::dispose();
 }
 
@@ -178,8 +184,8 @@ void Object3DInternal::fromTransformations(Transformations* transformations)
 {
 	Object3DBase::fromTransformations(transformations);
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin().sub(0.05f);
-	boundingBoxTransformed->getMax().add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
+	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();
 }
 
@@ -187,8 +193,8 @@ void Object3DInternal::update()
 {
 	Object3DBase::update();
 	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
-	boundingBoxTransformed->getMin().sub(0.05f);
-	boundingBoxTransformed->getMax().add(0.05f);
+	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
+	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();
 }
 
