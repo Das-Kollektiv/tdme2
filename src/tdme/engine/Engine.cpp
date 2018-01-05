@@ -324,6 +324,7 @@ void Engine::addEntity(Entity* entity)
 	if (oldEntity != nullptr) {
 		oldEntity->dispose();
 		if (oldEntity->isFrustumCulling() == true && oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
+		// TODO: what exactly to do with old entity
 	}
 	// init entity
 	entity->setEngine(this);
