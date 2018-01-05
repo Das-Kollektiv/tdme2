@@ -125,6 +125,7 @@ void World::removeRigidBody(const string& id) {
 	auto rididBodyByIdIt = rigidBodiesById.find(id);
 	if (rididBodyByIdIt != rigidBodiesById.end()) {
 		auto rigidBody = rididBodyByIdIt->second;
+		if (rigidBody->enabled == true) partition->removeRigidBody(rigidBody);
 		rigidBodies.erase(remove(rigidBodies.begin(), rigidBodies.end(), rigidBody), rigidBodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
 		rigidBodiesById.erase(rididBodyByIdIt);
