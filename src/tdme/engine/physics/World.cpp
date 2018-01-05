@@ -1,5 +1,6 @@
 #include <tdme/engine/physics/World.h>
 
+#include <algorithm>
 #include <map>
 #include <string>
 
@@ -28,6 +29,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
+using std::remove;
 using std::map;
 using std::string;
 using std::to_string;
@@ -117,6 +119,17 @@ RigidBody* World::getRigidBody(const string& id)
 		return rididBodyByIdIt->second;
 	}
 	return nullptr;
+}
+
+void World::removeRigidBody(const string& id) {
+	auto rididBodyByIdIt = rigidBodiesById.find(id);
+	if (rididBodyByIdIt != rigidBodiesById.end()) {
+		auto rigidBody = rididBodyByIdIt->second;
+		rigidBodies.erase(remove(rigidBodies.begin(), rigidBodies.end(), rigidBody), rigidBodies.end());
+		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
+		rigidBodiesById.erase(rididBodyByIdIt);
+		delete rigidBody;
+	}
 }
 
 void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision) {

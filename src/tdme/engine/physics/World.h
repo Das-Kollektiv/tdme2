@@ -137,6 +137,12 @@ public:
 	RigidBody* getRigidBody(const string& id);
 
 	/** 
+	 * Removes rigid body identified by id
+	 * @param id
+	 */
+	void removeRigidBody(const string& id);
+
+	/**
 	 * Update world
 	 * @param delta time
 	 */
