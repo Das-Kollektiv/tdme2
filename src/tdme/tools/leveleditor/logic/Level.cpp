@@ -322,7 +322,6 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				transformations.update();
 				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, &transformations, entityBv->getBoundingVolume(), 1.0f);
 				rigidBody->setRootId(object->getId());
-				rigidBody->setCollisionTypeIds(RIGIDBODY_TYPEID_STATIC | RIGIDBODY_TYPEID_PLAYER);
 				rigidBodies.push_back(rigidBody);
 			}
 		}
