@@ -1,7 +1,7 @@
 #include <tdme/engine/Engine.h>
 
 #if defined(__linux__) or defined(_WIN32)
-        #include <GL/glew.h>
+	#include <GL/glew.h>
 #endif
 
 #include <string>
@@ -393,11 +393,15 @@ void Engine::initialize(bool debug)
 	// Linux/Win32, GL2 or GL3 via GLEW
 	#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	{
-		if (glewIsSupported("GL_VERSION_3_2") == true) {
-			Console::println(string("TDME::Using GL3"));
+		int glMajorVersion;
+		int glMinorVersion;
+		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+		if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
+			Console::println(string("TDME::Using GL3(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL3Renderer(this);
 		} else {
-			Console::println(string("TDME::Using GL2"));
+			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL2Renderer(this);
 		}
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
