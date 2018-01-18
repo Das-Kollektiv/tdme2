@@ -24,10 +24,10 @@ namespace nodes {
 			class GUINode_AlignmentHorizontal;
 			class GUINode_AlignmentVertical;
 			struct GUINode_Alignments;
-			class GUINode_Border;
+			struct GUINode_Border;
 			class GUINode_ComputedConstraints;
 			class GUINode_Flow;
-			class GUINode_Padding;
+			struct GUINode_Padding;
 			struct GUINode_RequestedConstraints;
 			class GUINode_RequestedConstraints_RequestedConstraintsType;
 			class GUIPanelNode;

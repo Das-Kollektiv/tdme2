@@ -18,25 +18,11 @@ using tdme::gui::nodes::GUINode;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUINode_Padding
+struct tdme::gui::nodes::GUINode_Padding
 {
 
-public:
 	int32_t left {  };
 	int32_t top {  };
 	int32_t right {  };
 	int32_t bottom {  };
-
-	GUINode_Padding();
-
-private:
-	friend class GUINode;
-	friend class GUINode_Flow;
-	friend class GUINode_AlignmentHorizontal;
-	friend class GUINode_AlignmentVertical;
-	friend class GUINode_Alignments;
-	friend class GUINode_RequestedConstraints;
-	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
-	friend class GUINode_ComputedConstraints;
-	friend class GUINode_Border;
 };
