@@ -67,7 +67,7 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const str
 	this->computedConstraints.contentAlignmentTop = 0;
 	this->backgroundColor = *backgroundColor;
 	this->border = border;
-	this->padding = padding;
+	this->padding = *padding;
 	this->showOn = showOn;
 	this->hideOn = hideOn;
 	this->controller = nullptr;
@@ -134,8 +134,8 @@ void GUINode::setTop(int32_t top)
 
 void GUINode::layout()
 {
-	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border->left - parentNode->border->right- parentNode->padding->left- parentNode->padding->right;
-	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border->top - parentNode->border->bottom- parentNode->padding->top- parentNode->padding->bottom;
+	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border->left - parentNode->border->right - parentNode->padding.left - parentNode->padding.right;
+	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border->top - parentNode->border->bottom - parentNode->padding.top - parentNode->padding.bottom;
 	computedConstraints.left = parentNode->computedConstraints.left + layoutConstraintPixel(requestedConstraints->leftType, 0, parentNodeContentWidth, requestedConstraints->left);
 	computedConstraints.top = parentNode->computedConstraints.top + layoutConstraintPixel(requestedConstraints->topType, 0, parentNodeContentHeight, requestedConstraints->top);
 	computedConstraints.width = layoutConstraintPixel(requestedConstraints->widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints->width);
@@ -150,20 +150,20 @@ void GUINode::computeContentAlignment()
 			auto v = alignments.horizontal;
 			if ((v == GUINode_AlignmentHorizontal::LEFT)) {
 				{
-					computedConstraints.contentAlignmentLeft = border->left + padding->left;
+					computedConstraints.contentAlignmentLeft = border->left + padding.left;
 					goto end_switch0;;
 				}
 			}
 			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
 				{
-					computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding->left;
+					computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding.left;
 					goto end_switch0;;
 				}
 			}
 			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
 				{
 					{
-						computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding->left;
+						computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding.left;
 						goto end_switch0;;
 					}
 				}
@@ -175,20 +175,20 @@ void GUINode::computeContentAlignment()
 			auto v = alignments.vertical;
 			if ((v == GUINode_AlignmentVertical::TOP)) {
 				{
-					computedConstraints.contentAlignmentTop = border->top + padding->top;
+					computedConstraints.contentAlignmentTop = border->top + padding.top;
 					goto end_switch1;;
 				}
 			}
 			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
 				{
-					computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding->top;
+					computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding.top;
 					goto end_switch1;;
 				}
 			}
 			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
 				{
 					{
-						computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding->left;
+						computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding.left;
 						goto end_switch1;;
 					}
 				}

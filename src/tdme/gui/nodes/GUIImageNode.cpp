@@ -48,12 +48,12 @@ bool GUIImageNode::isContentNode()
 
 int32_t GUIImageNode::getContentWidth()
 {
-	return (texture != nullptr ? texture->getWidth() : 0) + border->left + border->right+ padding->left+ padding->right;
+	return (texture != nullptr ? texture->getWidth() : 0) + border->left + border->right + padding.left + padding.right;
 }
 
 int32_t GUIImageNode::getContentHeight()
 {
-	return (texture != nullptr ? texture->getHeight() : 0) + border->top + border->bottom+ padding->top+ padding->bottom;
+	return (texture != nullptr ? texture->getHeight() : 0) + border->top + border->bottom+ padding.top + padding.bottom;
 }
 
 void GUIImageNode::dispose()

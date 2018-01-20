@@ -69,7 +69,7 @@ int32_t GUILayoutNode::getContentWidth()
 		}
 	}
 	width += border->left + border->right;
-	width += padding->left + padding->right;
+	width += padding.left + padding.right;
 	return width;
 }
 
@@ -97,7 +97,7 @@ int32_t GUILayoutNode::getContentHeight()
 		}
 	}
 	height += border->top + border->bottom;
-	height += padding->top + padding->bottom;
+	height += padding.top + padding.bottom;
 	return height;
 }
 
@@ -110,7 +110,7 @@ void GUILayoutNode::layoutSubNodes()
 		if ((v == GUILayoutNode_Alignment::VERTICAL)) {
 			{
 				auto starCount = 0;
-				auto height = computedConstraints.height - border->top - border->bottom- padding->top- padding->bottom;
+				auto height = computedConstraints.height - border->top - border->bottom - padding.top - padding.bottom;
 				auto nodesHeight = 0;
 				auto finalNodesHeight = 0;
 				for (auto i = 0; i < subNodes.size(); i++) {
@@ -151,14 +151,14 @@ void GUILayoutNode::layoutSubNodes()
 					if ((v_ == GUINode_AlignmentVertical::TOP)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);
-							guiSubNode->computedConstraints.alignmentTop = border->top + padding->top;
+							guiSubNode->computedConstraints.alignmentTop = border->top + padding.top;
 						}
 						goto end_switch1;;
 					}
 					if ((v_ == GUINode_AlignmentVertical::CENTER)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);
-							guiSubNode->computedConstraints.alignmentTop = border->top + padding->top + ((height - finalNodesHeight) / 2);
+							guiSubNode->computedConstraints.alignmentTop = border->top + padding.top + ((height - finalNodesHeight) / 2);
 						}
 						goto end_switch1;;
 					}
@@ -179,7 +179,7 @@ void GUILayoutNode::layoutSubNodes()
 		if ((v == GUILayoutNode_Alignment::VERTICAL) || (v == GUILayoutNode_Alignment::HORIZONTAL)) {
 			{
 				auto starCount = 0;
-				auto width = computedConstraints.width - border->left - border->right- padding->left- padding->right;
+				auto width = computedConstraints.width - border->left - border->right - padding.left - padding.right;
 				auto nodesWidth = 0;
 				auto finalNodesWidth = 0;
 				for (auto i = 0; i < subNodes.size(); i++) {
@@ -220,14 +220,14 @@ void GUILayoutNode::layoutSubNodes()
 					if ((v_ == GUINode_AlignmentHorizontal::LEFT)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);
-							guiSubNode->computedConstraints.alignmentLeft = border->left + padding->left;
+							guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left;
 						}
 						goto end_switch2;;
 					}
 					if ((v_ == GUINode_AlignmentHorizontal::CENTER)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);
-							guiSubNode->computedConstraints.alignmentLeft = border->left + padding->left + ((width - finalNodesWidth) / 2);
+							guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left + ((width - finalNodesWidth) / 2);
 						}
 						goto end_switch2;;
 					}

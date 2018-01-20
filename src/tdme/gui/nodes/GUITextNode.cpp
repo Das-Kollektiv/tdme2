@@ -44,12 +44,12 @@ bool GUITextNode::isContentNode()
 
 int32_t GUITextNode::getContentWidth()
 {
-	return font->getTextWidth(text) + border->left + border->right+ padding->left+ padding->right;
+	return font->getTextWidth(text) + border->left + border->right + padding.left + padding.right;
 }
 
 int32_t GUITextNode::getContentHeight()
 {
-	return font->getLineHeight() + border->top + border->bottom+ padding->top+ padding->bottom;
+	return font->getLineHeight() + border->top + border->bottom + padding.top + padding.bottom;
 }
 
 MutableString* GUITextNode::getText()

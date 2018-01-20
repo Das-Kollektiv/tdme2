@@ -122,7 +122,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) && event->getButton() == 1) {
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
-		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft + textInputNode->border->left+ textInputNode->padding->left));
+		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft + textInputNode->border->left+ textInputNode->padding.left));
 		resetCursorMode();
 		event->setProcessed(true);
 		isDragging = true;
@@ -145,7 +145,7 @@ void GUIInputInternalController::checkOffset()
 	auto textInputNodeConstraints = textInputNode->computedConstraints;
 	auto textInputNodeBorder = textInputNode->border;
 	auto textInputNodePadding = textInputNode->padding;
-	auto textInputNodeWidth = textInputNodeConstraints.width - textInputNodeBorder->left - textInputNodeBorder->right- textInputNodePadding->left- textInputNodePadding->right;
+	auto textInputNodeWidth = textInputNodeConstraints.width - textInputNodeBorder->left - textInputNodeBorder->right - textInputNodePadding.left - textInputNodePadding.right;
 	auto charsMax = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, textInputNodeWidth) - offset;
 	if (index - offset >= charsMax) {
 		offset = index - charsMax;

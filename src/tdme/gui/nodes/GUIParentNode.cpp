@@ -205,7 +205,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentLeft = border->left + padding->left;
+					guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left;
 				}
 				goto end_switch0;;
 			}		}
@@ -222,7 +222,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 					for (auto i = 0; i < subNodes.size(); i++) {
 						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding->right);
+						guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding.right);
 					}
 					goto end_switch0;;
 				}
@@ -240,7 +240,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentTop = border->top + padding->top;
+					guiSubNode->computedConstraints.alignmentTop = border->top + padding.top;
 				}
 				goto end_switch1;;
 			}		}
@@ -257,7 +257,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 					for (auto i = 0; i < subNodes.size(); i++) {
 						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding->bottom);
+						guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding.bottom);
 					}
 					goto end_switch1;;
 				}
