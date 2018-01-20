@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -62,7 +63,7 @@ protected:
 	GUINode_Alignments alignments {  };
 	GUINode_RequestedConstraints* requestedConstraints {  };
 	GUINode_ComputedConstraints computedConstraints {  };
-	GUIColor* backgroundColor {  };
+	GUIColor backgroundColor {  };
 	GUINode_Padding* padding {  };
 	GUINode_Border* border {  };
 	GUINodeConditions* showOn {  };

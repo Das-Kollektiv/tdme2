@@ -65,7 +65,7 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const str
 	this->computedConstraints.alignmentTop = 0;
 	this->computedConstraints.contentAlignmentLeft = 0;
 	this->computedConstraints.contentAlignmentTop = 0;
-	this->backgroundColor = backgroundColor;
+	this->backgroundColor = *backgroundColor;
 	this->border = border;
 	this->padding = padding;
 	this->showOn = showOn;
@@ -400,12 +400,12 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	if (backgroundColor != &GUIColor::GUICOLOR_TRANSPARENT) {
+	if (!backgroundColor.equals(GUIColor::GUICOLOR_TRANSPARENT)) {
 		float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left;
 		float top = computedConstraints.top + computedConstraints.alignmentTop + border->top;
 		float width = computedConstraints.width - border->left - border->right;
 		float height = computedConstraints.height - border->top - border->bottom;
-		auto bgColorData = &backgroundColor->getArray();
+		auto bgColorData = &backgroundColor.getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 0.0f);
 		guiRenderer->render();
