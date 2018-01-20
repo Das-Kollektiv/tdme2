@@ -59,7 +59,7 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const str
 	this->parentNode = parentNode;
 	this->id = id;
 	this->flow = flow;
-	this->alignments = alignments;
+	this->alignments = *alignments;
 	this->requestedConstraints = requestedConstraints;
 	this->computedConstraints = new GUINode_ComputedConstraints();
 	this->computedConstraints->alignmentLeft = 0;
@@ -148,7 +148,7 @@ void GUINode::computeContentAlignment()
 {
 	if (isContentNode() == true) {
 		{
-			auto v = alignments->horizontal;
+			auto v = alignments.horizontal;
 			if ((v == GUINode_AlignmentHorizontal::LEFT)) {
 				{
 					computedConstraints->contentAlignmentLeft = border->left + padding->left;
@@ -173,7 +173,7 @@ void GUINode::computeContentAlignment()
 		}
 
 		{
-			auto v = alignments->vertical;
+			auto v = alignments.vertical;
 			if ((v == GUINode_AlignmentVertical::TOP)) {
 				{
 					computedConstraints->contentAlignmentTop = border->top + padding->top;

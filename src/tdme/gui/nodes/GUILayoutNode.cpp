@@ -147,7 +147,7 @@ void GUILayoutNode::layoutSubNodes()
 					}
 				}
 				{
-					auto v_ = alignments->vertical;
+					auto v_ = alignments.vertical;
 					if ((v_ == GUINode_AlignmentVertical::TOP)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);
@@ -216,7 +216,7 @@ void GUILayoutNode::layoutSubNodes()
 					}
 				}
 				{
-					auto v_ = alignments->horizontal;
+					auto v_ = alignments.horizontal;
 					if ((v_ == GUINode_AlignmentHorizontal::LEFT)) {
 						for (auto i = 0; i < subNodes.size(); i++) {
 							auto guiSubNode = subNodes.at(i);

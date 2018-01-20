@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -57,7 +58,7 @@ protected:
 	GUIParentNode* parentNode {  };
 	string id {  };
 	GUINode_Flow* flow {  };
-	GUINode_Alignments* alignments {  };
+	GUINode_Alignments alignments {  };
 	GUINode_RequestedConstraints* requestedConstraints {  };
 	GUINode_ComputedConstraints* computedConstraints {  };
 	GUIColor* backgroundColor {  };

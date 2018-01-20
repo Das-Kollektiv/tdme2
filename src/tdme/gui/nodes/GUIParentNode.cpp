@@ -200,7 +200,7 @@ void GUIParentNode::layoutSubNodes()
 void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 	{
-		auto v = alignments->horizontal;
+		auto v = alignments.horizontal;
 		if ((v == GUINode_AlignmentHorizontal::LEFT)) {
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
@@ -235,7 +235,7 @@ end_switch0:;
 void GUIParentNode::computeVerticalChildrenAlignment()
 {
 	{
-		auto v = alignments->vertical;
+		auto v = alignments.vertical;
 		if ((v == GUINode_AlignmentVertical::TOP)) {
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
