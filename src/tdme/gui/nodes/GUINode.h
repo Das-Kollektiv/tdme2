@@ -49,12 +49,8 @@ class tdme::gui::nodes::GUINode
 	friend class GUINode_Flow;
 	friend class GUINode_AlignmentHorizontal;
 	friend class GUINode_AlignmentVertical;
-	friend class GUINode_Alignments;
 	friend class GUINode_RequestedConstraints;
 	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
-	friend class GUINode_ComputedConstraints;
-	friend class GUINode_Padding;
-	friend class GUINode_Border;
 
 protected:
 	GUIScreenNode* screenNode {  };
