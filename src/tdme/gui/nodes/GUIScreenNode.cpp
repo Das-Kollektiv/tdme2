@@ -188,10 +188,10 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->requestedConstraints->width = width;
 	this->requestedConstraints->heightType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	this->requestedConstraints->height = height;
-	this->computedConstraints->left = 0;
-	this->computedConstraints->top = 0;
-	this->computedConstraints->width = width;
-	this->computedConstraints->height = height;
+	this->computedConstraints.left = 0;
+	this->computedConstraints.top = 0;
+	this->computedConstraints.width = width;
+	this->computedConstraints.height = height;
 }
 
 const string GUIScreenNode::getNodeType()

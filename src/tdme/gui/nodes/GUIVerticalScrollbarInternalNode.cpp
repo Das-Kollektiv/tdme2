@@ -46,12 +46,12 @@ bool GUIVerticalScrollbarInternalNode::isContentNode()
 
 int32_t GUIVerticalScrollbarInternalNode::getContentWidth()
 {
-	return computedConstraints->width;
+	return computedConstraints.width;
 }
 
 int32_t GUIVerticalScrollbarInternalNode::getContentHeight()
 {
-	return computedConstraints->height;
+	return computedConstraints.height;
 }
 
 void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
@@ -65,9 +65,9 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
-	float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left;
+	float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left;
 	auto top = barTop;
-	float width = computedConstraints->width - border->left - border->right;
+	float width = computedConstraints.width - border->left - border->right;
 	auto height = barHeight;
 	array<float, 4>* barColorArray = nullptr;
 	{

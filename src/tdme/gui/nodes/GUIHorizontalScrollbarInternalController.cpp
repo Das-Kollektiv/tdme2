@@ -62,39 +62,39 @@ GUIHorizontalScrollbarInternalController_State* GUIHorizontalScrollbarInternalCo
 
 float GUIHorizontalScrollbarInternalController::getBarWidth()
 {
-	float elementWidth = contentNode->computedConstraints->width;
+	float elementWidth = contentNode->computedConstraints.width;
 	float contentWidth = contentNode->getContentWidth();
 	auto barWidthRelative = (elementWidth / contentWidth);
 	if (barWidthRelative > 1.0f)
 		barWidthRelative = 1.0f;
 
-	return (node->computedConstraints->width - node->border->left - node->border->right) * barWidthRelative;
+	return (node->computedConstraints.width - node->border->left - node->border->right) * barWidthRelative;
 }
 
 float GUIHorizontalScrollbarInternalController::getBarLeft()
 {
-	float elementWidth = contentNode->computedConstraints->width;
+	float elementWidth = contentNode->computedConstraints.width;
 	float contentWidth = contentNode->getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
 	auto childrenRenderOffsetX = contentNode->childrenRenderOffsetX;
-	auto barWidth = (node->computedConstraints->width - node->border->left - node->border->right) * (elementWidth / contentWidth);
+	auto barWidth = (node->computedConstraints.width - node->border->left - node->border->right) * (elementWidth / contentWidth);
 	if (scrollableWidth > 0.0f) {
-		return node->computedConstraints->left + node->computedConstraints->alignmentLeft + node->border->left+ (childrenRenderOffsetX * ((node->computedConstraints->width - barWidth) / scrollableWidth));
+		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border->left+ (childrenRenderOffsetX * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 	} else {
-		return node->computedConstraints->left + node->computedConstraints->alignmentLeft + node->border->left;
+		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border->left;
 	}
 }
 
 void GUIHorizontalScrollbarInternalController::setDraggedX(float draggedX)
 {
-	float elementWidth = contentNode->computedConstraints->width;
+	float elementWidth = contentNode->computedConstraints.width;
 	float contentWidth = contentNode->getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
 	if (scrollableWidth <= 0.0f)
 		return;
 
 	auto barWidth = getBarWidth();
-	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX() + (draggedX * (scrollableWidth / (node->computedConstraints->width - barWidth)));
+	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX() + (draggedX * (scrollableWidth / (node->computedConstraints.width - barWidth)));
 	if (childrenRenderOffsetX < 0)
 		childrenRenderOffsetX = 0;
 
@@ -117,15 +117,15 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 			auto barLeft = getBarLeft();
 			auto barWidth = getBarWidth();
 			if (event->getX() < barLeft) {
-				float elementWidth = contentNode->computedConstraints->width;
+				float elementWidth = contentNode->computedConstraints.width;
 				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
-				setDraggedX(-elementWidth * ((node->computedConstraints->width - barWidth) / scrollableWidth));
+				setDraggedX(-elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else if (event->getX() > barLeft + barWidth) {
-				float elementWidth = contentNode->computedConstraints->width;
+				float elementWidth = contentNode->computedConstraints.width;
 				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
-				setDraggedX(+elementWidth * ((node->computedConstraints->width - barWidth) / scrollableWidth));
+				setDraggedX(+elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else if (event->getX() >= barLeft && event->getX() < barLeft + barWidth) {
 				mouseXOffset = static_cast< int32_t >((event->getX() - barLeft));
 				state = GUIHorizontalScrollbarInternalController_State::DRAGGING;

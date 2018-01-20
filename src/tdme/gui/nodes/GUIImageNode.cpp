@@ -70,8 +70,8 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNo
 	GUINode::render(guiRenderer, floatingNodes);
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	float left = computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft;
-	float top = computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->contentAlignmentTop;
+	float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
+	float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
 	float width = getContentWidth();
 	float height = getContentHeight();
 	guiRenderer->bindTexture(textureId);

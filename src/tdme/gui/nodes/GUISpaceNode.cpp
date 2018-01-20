@@ -32,12 +32,12 @@ bool GUISpaceNode::isContentNode()
 
 int32_t GUISpaceNode::getContentWidth()
 {
-	return computedConstraints->width;
+	return computedConstraints.width;
 }
 
 int32_t GUISpaceNode::getContentHeight()
 {
-	return computedConstraints->height;
+	return computedConstraints.height;
 }
 
 GUINode_RequestedConstraints* GUISpaceNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)

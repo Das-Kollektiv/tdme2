@@ -84,7 +84,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	subNodes.clear();
 	GUIParser::parse(this, xml);
 	screenNode->layout(this);
-	float elementWidth = computedConstraints->width;
+	float elementWidth = computedConstraints.width;
 	float contentWidth = getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
 	if (childrenRenderOffsetX < 0)
@@ -93,7 +93,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	if (childrenRenderOffsetX > scrollableWidth)
 		childrenRenderOffsetX = scrollableWidth;
 
-	float elementHeight = computedConstraints->height;
+	float elementHeight = computedConstraints.height;
 	float contentHeight = getContentHeight();
 	auto scrollableHeight = contentHeight - elementHeight;
 	if (childrenRenderOffsetY < 0)
@@ -205,7 +205,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints->alignmentLeft = border->left + padding->left;
+					guiSubNode->computedConstraints.alignmentLeft = border->left + padding->left;
 				}
 				goto end_switch0;;
 			}		}
@@ -213,7 +213,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints->alignmentLeft = (computedConstraints->width - guiSubNode->computedConstraints->width) / 2;
+					guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
 				}
 				goto end_switch0;;
 			}		}
@@ -222,7 +222,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 					for (auto i = 0; i < subNodes.size(); i++) {
 						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints->alignmentLeft = (computedConstraints->width - guiSubNode->computedConstraints->width - border->right- padding->right);
+						guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding->right);
 					}
 					goto end_switch0;;
 				}
@@ -240,7 +240,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints->alignmentTop = border->top + padding->top;
+					guiSubNode->computedConstraints.alignmentTop = border->top + padding->top;
 				}
 				goto end_switch1;;
 			}		}
@@ -248,7 +248,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints->alignmentTop = (computedConstraints->height - guiSubNode->computedConstraints->height) / 2;
+					guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
 				}
 				goto end_switch1;;
 			}		}
@@ -257,7 +257,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 					for (auto i = 0; i < subNodes.size(); i++) {
 						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints->alignmentTop = (computedConstraints->height - guiSubNode->computedConstraints->height - border->bottom- padding->bottom);
+						guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding->bottom);
 					}
 					goto end_switch1;;
 				}
@@ -317,10 +317,10 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	auto renderAreaBottomCurrent = guiRenderer->getRenderAreaBottom();
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	float left = computedConstraints->left + computedConstraints->alignmentLeft;
-	float top = computedConstraints->top + computedConstraints->alignmentTop;
-	float width = computedConstraints->width;
-	float height = computedConstraints->height;
+	float left = computedConstraints.left + computedConstraints.alignmentLeft;
+	float top = computedConstraints.top + computedConstraints.alignmentTop;
+	float width = computedConstraints.width;
+	float height = computedConstraints.height;
 	auto renderOffsetXCurrent = guiRenderer->getRenderOffsetX();
 	auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
 	auto renderOffsetXPixel = 0.0f;
@@ -381,7 +381,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 	if (isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
 		if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
 			childrenRenderOffsetX -= event->getWheelX() * 10.0f;
-			float elementWidth = this->computedConstraints->width;
+			float elementWidth = this->computedConstraints.width;
 			float contentWidth = this->getContentWidth();
 			auto scrollableWidth = contentWidth - elementWidth;
 			if (childrenRenderOffsetX < 0)
@@ -395,7 +395,7 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 		}
 		if (event->getWheelY() != 0.0f && overflowY == GUIParentNode_Overflow::SCROLL) {
 			childrenRenderOffsetY -= event->getWheelY() * 10.0f;
-			float elementHeight = this->computedConstraints->height;
+			float elementHeight = this->computedConstraints.height;
 			float contentHeight = this->getContentHeight();
 			auto scrollableHeight = contentHeight - elementHeight;
 			if (childrenRenderOffsetY < 0)

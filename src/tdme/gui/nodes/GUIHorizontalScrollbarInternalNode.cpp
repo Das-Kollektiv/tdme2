@@ -46,12 +46,12 @@ bool GUIHorizontalScrollbarInternalNode::isContentNode()
 
 int32_t GUIHorizontalScrollbarInternalNode::getContentWidth()
 {
-	return computedConstraints->width;
+	return computedConstraints.width;
 }
 
 int32_t GUIHorizontalScrollbarInternalNode::getContentHeight()
 {
-	return computedConstraints->height;
+	return computedConstraints.height;
 }
 
 void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
@@ -66,9 +66,9 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();
 	auto left = barLeft;
-	float top = computedConstraints->top + computedConstraints->alignmentTop + border->top;
+	float top = computedConstraints.top + computedConstraints.alignmentTop + border->top;
 	auto width = barWidth;
-	float height = computedConstraints->height - border->top - border->bottom;
+	float height = computedConstraints.height - border->top - border->bottom;
 	array<float, 4>* barColorArray = nullptr;
 	{
 		auto v = controller->getState();

@@ -115,14 +115,14 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* fl
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
 	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
-	font->drawString(guiRenderer, computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft, computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
+	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController_CursorMode::SHOW) {
 		float screenWidth = guiRenderer->getGUI()->getWidth();
 		float screenHeight = guiRenderer->getGUI()->getHeight();
-		float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left+ padding->left+ font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
-		float top = computedConstraints->top + computedConstraints->alignmentTop + border->top+ padding->top;
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left+ padding->left+ font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
+		float top = computedConstraints.top + computedConstraints.alignmentTop + border->top+ padding->top;
 		float width = 2;
-		float height = computedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
+		float height = computedConstraints.height - border->top - border->bottom- padding->top- padding->bottom;
 		auto colorData = &(disable == false ? color : colorDisabled)->getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 0.0f);

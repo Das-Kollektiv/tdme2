@@ -69,6 +69,6 @@ void GUITextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNod
 		return;
 
 	GUINode::render(guiRenderer, floatingNodes);
-	font->drawString(guiRenderer, computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->contentAlignmentLeft, computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->contentAlignmentTop, text, 0, 0, color);
+	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, 0, 0, color);
 }
 

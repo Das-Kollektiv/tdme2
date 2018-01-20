@@ -61,11 +61,10 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const str
 	this->flow = flow;
 	this->alignments = *alignments;
 	this->requestedConstraints = requestedConstraints;
-	this->computedConstraints = new GUINode_ComputedConstraints();
-	this->computedConstraints->alignmentLeft = 0;
-	this->computedConstraints->alignmentTop = 0;
-	this->computedConstraints->contentAlignmentLeft = 0;
-	this->computedConstraints->contentAlignmentTop = 0;
+	this->computedConstraints.alignmentLeft = 0;
+	this->computedConstraints.alignmentTop = 0;
+	this->computedConstraints.contentAlignmentLeft = 0;
+	this->computedConstraints.contentAlignmentTop = 0;
 	this->backgroundColor = backgroundColor;
 	this->border = border;
 	this->padding = padding;
@@ -95,7 +94,7 @@ int32_t GUINode::getAutoWidth()
 	if (requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentWidth();
 	} else {
-		return computedConstraints->width;
+		return computedConstraints.width;
 	}
 }
 
@@ -104,7 +103,7 @@ int32_t GUINode::getAutoHeight()
 	if (requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentHeight();
 	} else {
-		return computedConstraints->height;
+		return computedConstraints.height;
 	}
 }
 
@@ -120,27 +119,27 @@ GUINode_RequestedConstraints* GUINode::getRequestsConstraints()
 
 GUINode_ComputedConstraints* GUINode::getComputedConstraints()
 {
-	return computedConstraints;
+	return &computedConstraints;
 }
 
 void GUINode::setLeft(int32_t left)
 {
-	computedConstraints->left = left;
+	computedConstraints.left = left;
 }
 
 void GUINode::setTop(int32_t top)
 {
-	computedConstraints->top = top;
+	computedConstraints.top = top;
 }
 
 void GUINode::layout()
 {
-	auto parentNodeContentWidth = parentNode->computedConstraints->width - parentNode->border->left - parentNode->border->right- parentNode->padding->left- parentNode->padding->right;
-	auto parentNodeContentHeight = parentNode->computedConstraints->height - parentNode->border->top - parentNode->border->bottom- parentNode->padding->top- parentNode->padding->bottom;
-	computedConstraints->left = parentNode->computedConstraints->left + layoutConstraintPixel(requestedConstraints->leftType, 0, parentNodeContentWidth, requestedConstraints->left);
-	computedConstraints->top = parentNode->computedConstraints->top + layoutConstraintPixel(requestedConstraints->topType, 0, parentNodeContentHeight, requestedConstraints->top);
-	computedConstraints->width = layoutConstraintPixel(requestedConstraints->widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints->width);
-	computedConstraints->height = layoutConstraintPixel(requestedConstraints->heightType, getAutoHeight(), parentNodeContentHeight, requestedConstraints->height);
+	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border->left - parentNode->border->right- parentNode->padding->left- parentNode->padding->right;
+	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border->top - parentNode->border->bottom- parentNode->padding->top- parentNode->padding->bottom;
+	computedConstraints.left = parentNode->computedConstraints.left + layoutConstraintPixel(requestedConstraints->leftType, 0, parentNodeContentWidth, requestedConstraints->left);
+	computedConstraints.top = parentNode->computedConstraints.top + layoutConstraintPixel(requestedConstraints->topType, 0, parentNodeContentHeight, requestedConstraints->top);
+	computedConstraints.width = layoutConstraintPixel(requestedConstraints->widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints->width);
+	computedConstraints.height = layoutConstraintPixel(requestedConstraints->heightType, getAutoHeight(), parentNodeContentHeight, requestedConstraints->height);
 	computeContentAlignment();
 }
 
@@ -151,20 +150,20 @@ void GUINode::computeContentAlignment()
 			auto v = alignments.horizontal;
 			if ((v == GUINode_AlignmentHorizontal::LEFT)) {
 				{
-					computedConstraints->contentAlignmentLeft = border->left + padding->left;
+					computedConstraints.contentAlignmentLeft = border->left + padding->left;
 					goto end_switch0;;
 				}
 			}
 			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
 				{
-					computedConstraints->contentAlignmentLeft = (computedConstraints->width - getContentWidth()) / 2 + border->left + padding->left;
+					computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding->left;
 					goto end_switch0;;
 				}
 			}
 			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
 				{
 					{
-						computedConstraints->contentAlignmentLeft = computedConstraints->width - getContentWidth() + border->left + padding->left;
+						computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding->left;
 						goto end_switch0;;
 					}
 				}
@@ -176,20 +175,20 @@ void GUINode::computeContentAlignment()
 			auto v = alignments.vertical;
 			if ((v == GUINode_AlignmentVertical::TOP)) {
 				{
-					computedConstraints->contentAlignmentTop = border->top + padding->top;
+					computedConstraints.contentAlignmentTop = border->top + padding->top;
 					goto end_switch1;;
 				}
 			}
 			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
 				{
-					computedConstraints->contentAlignmentTop = (computedConstraints->height - getContentHeight()) / 2 + border->top + padding->top;
+					computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding->top;
 					goto end_switch1;;
 				}
 			}
 			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
 				{
 					{
-						computedConstraints->contentAlignmentTop = computedConstraints->height - getContentHeight() + border->left + padding->left;
+						computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding->left;
 						goto end_switch1;;
 					}
 				}
@@ -402,10 +401,10 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	if (backgroundColor != &GUIColor::GUICOLOR_TRANSPARENT) {
-		float left = computedConstraints->left + computedConstraints->alignmentLeft + border->left;
-		float top = computedConstraints->top + computedConstraints->alignmentTop + border->top;
-		float width = computedConstraints->width - border->left - border->right;
-		float height = computedConstraints->height - border->top - border->bottom;
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left;
+		float top = computedConstraints.top + computedConstraints.alignmentTop + border->top;
+		float width = computedConstraints.width - border->left - border->right;
+		float height = computedConstraints.height - border->top - border->bottom;
 		auto bgColorData = &backgroundColor->getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 0.0f);
@@ -414,34 +413,34 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 	if (border != nullptr) {
 		guiRenderer->bindTexture(0);
 		if (border->top > 0) {
-			float left = computedConstraints->left + computedConstraints->alignmentLeft;
-			float top = computedConstraints->top + computedConstraints->alignmentTop;
-			float width = computedConstraints->width;
+			float left = computedConstraints.left + computedConstraints.alignmentLeft;
+			float top = computedConstraints.top + computedConstraints.alignmentTop;
+			float width = computedConstraints.width;
 			float height = border->top;
 			auto borderColorData = &border->topColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->bottom > 0) {
-			float left = computedConstraints->left + computedConstraints->alignmentLeft;
-			float top = computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->height - border->bottom;
-			float width = computedConstraints->width;
+			float left = computedConstraints.left + computedConstraints.alignmentLeft;
+			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - border->bottom;
+			float width = computedConstraints.width;
 			float height = border->bottom;
 			auto borderColorData = &border->bottomColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->left > 0) {
-			float left = computedConstraints->left + computedConstraints->alignmentLeft;
-			float top = computedConstraints->top + computedConstraints->alignmentTop;
+			float left = computedConstraints.left + computedConstraints.alignmentLeft;
+			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = border->left;
-			float height = computedConstraints->height;
+			float height = computedConstraints.height;
 			auto borderColorData = &border->leftColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
 		if (border->right > 0) {
-			float left = computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->width - border->right;
-			float top = computedConstraints->top + computedConstraints->alignmentTop;
+			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width - border->right;
+			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = border->right;
-			float height = computedConstraints->height;
+			float height = computedConstraints.height;
 			auto borderColorData = &border->rightColor->getArray();
 			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
 		}
@@ -482,17 +481,17 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 
 		auto eventX = eventXScreen + parentNode->computeParentChildrenRenderOffsetXTotal();
 		auto eventY = eventYScreen + parentNode->computeParentChildrenRenderOffsetYTotal();
-		if ((eventX >= parentNode->computedConstraints->left + parentNode->computedConstraints->alignmentLeft && eventX < parentNode->computedConstraints->left + parentNode->computedConstraints->alignmentLeft + parentNode->computedConstraints->width && eventY >= parentNode->computedConstraints->top + parentNode->computedConstraints->alignmentTop && eventY < parentNode->computedConstraints->top + parentNode->computedConstraints->alignmentTop + parentNode->computedConstraints->height) == false) {
+		if ((eventX >= parentNode->computedConstraints.left + parentNode->computedConstraints.alignmentLeft && eventX < parentNode->computedConstraints.left + parentNode->computedConstraints.alignmentLeft + parentNode->computedConstraints.width && eventY >= parentNode->computedConstraints.top + parentNode->computedConstraints.alignmentTop && eventY < parentNode->computedConstraints.top + parentNode->computedConstraints.alignmentTop + parentNode->computedConstraints.height) == false) {
 			return false;
 		}
 		parentNode = parentNode->parentNode;
 	}
 	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
 	auto eventY = eventYScreen + computeParentChildrenRenderOffsetYTotal();
-	auto belongsToElement = eventX >= computedConstraints->left + computedConstraints->alignmentLeft && eventX < computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->width && eventY >= computedConstraints->top + computedConstraints->alignmentTop && eventY < computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->height;
+	auto belongsToElement = eventX >= computedConstraints.left + computedConstraints.alignmentLeft && eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width && eventY >= computedConstraints.top + computedConstraints.alignmentTop && eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
 	if (belongsToElement == true) {
-		position[0] = static_cast< int32_t >((eventX - (computedConstraints->left + computedConstraints->alignmentLeft)));
-		position[1] = static_cast< int32_t >((eventY - (computedConstraints->top + computedConstraints->alignmentTop)));
+		position[0] = static_cast< int32_t >((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
+		position[1] = static_cast< int32_t >((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
 	}
 	return belongsToElement;
 }
@@ -509,10 +508,10 @@ void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float,
 	auto eventYScreen = event->getY();
 	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
 	auto eventY = eventYScreen + computeParentChildrenRenderOffsetYTotal();
-	float left = computedConstraints->left + computedConstraints->alignmentLeft;
-	float right = computedConstraints->left + computedConstraints->alignmentLeft + computedConstraints->width;
-	float top = computedConstraints->top + computedConstraints->alignmentTop;
-	float bottom = computedConstraints->top + computedConstraints->alignmentTop + computedConstraints->height;
+	float left = computedConstraints.left + computedConstraints.alignmentLeft;
+	float right = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width;
+	float top = computedConstraints.top + computedConstraints.alignmentTop;
+	float bottom = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
 	if (eventX < left) {
 		position[0] = static_cast< int32_t >((eventX - left));
 	} else if (eventX > right) {
@@ -611,11 +610,11 @@ void GUINode::scrollToNodeY(GUIParentNode* toNode)
 			return;
 
 	}
-	if (computedConstraints->top < scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints->top) {
-		scrollYParentNode->childrenRenderOffsetY = computedConstraints->top - scrollYParentNode->computedConstraints->top;
+	if (computedConstraints.top < scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints.top) {
+		scrollYParentNode->childrenRenderOffsetY = computedConstraints.top - scrollYParentNode->computedConstraints.top;
 	}
-	if (computedConstraints->top + computedConstraints->height > scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints->top + scrollYParentNode->computedConstraints->height) {
-		scrollYParentNode->childrenRenderOffsetY = computedConstraints->top + computedConstraints->height - scrollYParentNode->computedConstraints->top - scrollYParentNode->computedConstraints->height;
+	if (computedConstraints.top + computedConstraints.height > scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints.top + scrollYParentNode->computedConstraints.height) {
+		scrollYParentNode->childrenRenderOffsetY = computedConstraints.top + computedConstraints.height - scrollYParentNode->computedConstraints.top - scrollYParentNode->computedConstraints.height;
 	}
 	scrollYParentNode->scrollToNodeY(toNode);
 }
@@ -637,11 +636,11 @@ void GUINode::scrollToNodeX(GUIParentNode* toNode)
 		}
 		scrollXParentNode = scrollXParentNode->parentNode;
 	}
-	if (computedConstraints->left < scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints->left) {
-		scrollXParentNode->childrenRenderOffsetX = computedConstraints->left - scrollXParentNode->computedConstraints->left;
+	if (computedConstraints.left < scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints.left) {
+		scrollXParentNode->childrenRenderOffsetX = computedConstraints.left - scrollXParentNode->computedConstraints.left;
 	}
-	if (computedConstraints->left + computedConstraints->width > scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints->left + scrollXParentNode->computedConstraints->width) {
-		scrollXParentNode->childrenRenderOffsetX = computedConstraints->left + computedConstraints->width - scrollXParentNode->computedConstraints->left - scrollXParentNode->computedConstraints->width;
+	if (computedConstraints.left + computedConstraints.width > scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints.left + scrollXParentNode->computedConstraints.width) {
+		scrollXParentNode->childrenRenderOffsetX = computedConstraints.left + computedConstraints.width - scrollXParentNode->computedConstraints.left - scrollXParentNode->computedConstraints.width;
 	}
 	scrollXParentNode->scrollToNodeX(toNode);
 }

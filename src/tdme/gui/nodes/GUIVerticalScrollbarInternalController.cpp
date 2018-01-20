@@ -62,39 +62,39 @@ GUIVerticalScrollbarInternalController_State* GUIVerticalScrollbarInternalContro
 
 float GUIVerticalScrollbarInternalController::getBarHeight()
 {
-	float elementHeight = contentNode->computedConstraints->height;
+	float elementHeight = contentNode->computedConstraints.height;
 	float contentHeight = contentNode->getContentHeight();
 	auto barHeightRelative = (elementHeight / contentHeight);
 	if (barHeightRelative > 1.0f)
 		barHeightRelative = 1.0f;
 
-	return (node->computedConstraints->height - node->border->top - node->border->bottom) * barHeightRelative;
+	return (node->computedConstraints.height - node->border->top - node->border->bottom) * barHeightRelative;
 }
 
 float GUIVerticalScrollbarInternalController::getBarTop()
 {
-	float elementHeight = contentNode->computedConstraints->height;
+	float elementHeight = contentNode->computedConstraints.height;
 	float contentHeight = contentNode->getContentHeight();
 	auto scrollableHeight = contentHeight - elementHeight;
 	auto childrenRenderOffsetY = contentNode->childrenRenderOffsetY;
-	auto barHeight = (node->computedConstraints->height - node->border->top - node->border->bottom) * (elementHeight / contentHeight);
+	auto barHeight = (node->computedConstraints.height - node->border->top - node->border->bottom) * (elementHeight / contentHeight);
 	if (scrollableHeight > 0.0f) {
-		return node->computedConstraints->top + node->computedConstraints->alignmentTop + node->border->top+ (childrenRenderOffsetY * ((node->computedConstraints->height - barHeight) / scrollableHeight));
+		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border->top+ (childrenRenderOffsetY * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 	} else {
-		return node->computedConstraints->top + node->computedConstraints->alignmentTop + node->border->top;
+		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border->top;
 	}
 }
 
 void GUIVerticalScrollbarInternalController::setDraggedY(float draggedY)
 {
-	float elementHeight = contentNode->computedConstraints->height;
+	float elementHeight = contentNode->computedConstraints.height;
 	float contentHeight = contentNode->getContentHeight();
 	auto scrollableHeight = contentHeight - elementHeight;
 	if (scrollableHeight <= 0.0f)
 		return;
 
 	auto barHeight = getBarHeight();
-	auto childrenRenderOffsetY = contentNode->getChildrenRenderOffsetY() + (draggedY * (scrollableHeight / (node->computedConstraints->height - barHeight)));
+	auto childrenRenderOffsetY = contentNode->getChildrenRenderOffsetY() + (draggedY * (scrollableHeight / (node->computedConstraints.height - barHeight)));
 	if (childrenRenderOffsetY < 0)
 		childrenRenderOffsetY = 0;
 
@@ -117,15 +117,15 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 			auto barTop = getBarTop();
 			auto barHeight = getBarHeight();
 			if (event->getY() < barTop) {
-				float elementHeight = contentNode->computedConstraints->height;
+				float elementHeight = contentNode->computedConstraints.height;
 				float contentHeight = contentNode->getContentHeight();
 				auto scrollableHeight = contentHeight - elementHeight;
-				setDraggedY(-elementHeight * ((node->computedConstraints->height - barHeight) / scrollableHeight));
+				setDraggedY(-elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 			} else if (event->getY() > barTop + barHeight) {
-				float elementHeight = contentNode->computedConstraints->height;
+				float elementHeight = contentNode->computedConstraints.height;
 				float contentHeight = contentNode->getContentHeight();
 				auto scrollableHeight = contentHeight - elementHeight;
-				setDraggedY(+elementHeight * ((node->computedConstraints->height - barHeight) / scrollableHeight));
+				setDraggedY(+elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 			} else if (event->getY() >= barTop && event->getY() < barTop + barHeight) {
 				mouseYOffset = static_cast< int32_t >((event->getY() - barTop));
 				state = GUIVerticalScrollbarInternalController_State::DRAGGING;

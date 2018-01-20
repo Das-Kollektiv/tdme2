@@ -105,7 +105,7 @@ bool GUIElementNode::isFocusable()
 void GUIElementNode::setTop(int32_t top)
 {
 	GUIParentNode::setTop(top);
-	top += computedConstraints->alignmentTop;
+	top += computedConstraints.alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes.at(i)->setTop(top);
 	}
@@ -114,7 +114,7 @@ void GUIElementNode::setTop(int32_t top)
 void GUIElementNode::setLeft(int32_t left)
 {
 	GUIParentNode::setLeft(left);
-	left += computedConstraints->alignmentLeft;
+	left += computedConstraints.alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes.at(i)->setLeft(left);
 	}
@@ -123,16 +123,16 @@ void GUIElementNode::setLeft(int32_t left)
 void GUIElementNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	auto height = computedConstraints->height - border->top - border->bottom- padding->top- padding->bottom;
-	auto width = computedConstraints->width - border->left - border->right- padding->left- padding->right;
+	auto height = computedConstraints.height - border->top - border->bottom- padding->top- padding->bottom;
+	auto width = computedConstraints.width - border->left - border->right- padding->left- padding->right;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);
 		auto doLayoutSubNodes = false;
 		if (guiSubNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-			guiSubNode->computedConstraints->height = height;
+			guiSubNode->computedConstraints.height = height;
 			doLayoutSubNodes = true;
 		} else if (guiSubNode->requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-			guiSubNode->computedConstraints->width = width;
+			guiSubNode->computedConstraints.width = width;
 			doLayoutSubNodes = true;
 		}
 		if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr && doLayoutSubNodes == true) {
@@ -162,8 +162,8 @@ void GUIElementNode::layout()
 		}
 	}
 	GUIParentNode::layout();
-	setTop(computedConstraints->top);
-	setLeft(computedConstraints->left);
+	setTop(computedConstraints.top);
+	setLeft(computedConstraints.left);
 	computeHorizontalChildrenAlignment();
 	computeVerticalChildrenAlignment();
 }
