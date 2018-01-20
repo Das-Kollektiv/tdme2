@@ -25,7 +25,7 @@ namespace nodes {
 			class GUINode_AlignmentVertical;
 			struct GUINode_Alignments;
 			struct GUINode_Border;
-			class GUINode_ComputedConstraints;
+			struct GUINode_ComputedConstraints;
 			class GUINode_Flow;
 			struct GUINode_Padding;
 			struct GUINode_RequestedConstraints;
