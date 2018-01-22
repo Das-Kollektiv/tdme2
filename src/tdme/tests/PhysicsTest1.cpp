@@ -261,7 +261,6 @@ void PhysicsTest1::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_DYNAMIC, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
-	/*
 	try {
 		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
@@ -326,7 +325,6 @@ void PhysicsTest1::initialize()
 		Console::println(string(exception.what()));
 		exit(0);
 	}
-	*/
 }
 
 void PhysicsTest1::reshape(int32_t width, int32_t height)
