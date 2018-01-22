@@ -1,0 +1,58 @@
+language: cpp
+matrix:
+
+  # Linux / GCC
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+        - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+    # OS X / GCC
+    - os: osx
+      osx_image: xcode8
+      env:
+       - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+    # Linux / Clang
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env:
+        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+
+    # OS X / Clang
+    - os: osx
+      osx_image: xcode8
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+branches:
+  only:
+    - master
+    - develop
+script:
+  - mkdir build_directory
+  - cd build_directory
+  # Build in debug mode with double precision
+  - cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug —DDOUBLE_PRECISION_ENABLED=True -DCOMPILE_TESTS=True ../
+  - make && make test ARGS="-V"
+  # Build in debug mode with single precision
+  - cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug —DDOUBLE_PRECISION_ENABLED=False -DCOMPILE_TESTS=True ../
+  - make && make test ARGS="-V"
+  # Build in release mode with double precision
+  - cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release —DDOUBLE_PRECISION_ENABLED=True -DCOMPILE_TESTS=True ../
+  - make && make test ARGS="-V"
+  # Build in release mode with single precision
+  - cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release —DDOUBLE_PRECISION_ENABLED=False -DCOMPILE_TESTS=True ../
+  - make && make test ARGS="-V"

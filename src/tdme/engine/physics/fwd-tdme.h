@@ -8,19 +8,7 @@ namespace physics {
 			struct CollisionListener;
 			class CollisionResponse;
 			class CollisionResponse_Entity;
-			class ConstraintsEntity;
-			class ConstraintsSolver;
-			class ContactCache;
-			class ContactCache_ContactCacheInfo;
-			class DynamicVector;
-			class Matrix1x6;
-			class Matrix6x6;
-			class PhysicsPartition;
-			class PhysicsPartitionNone;
-			class PhysicsPartitionOctTree;
-			class PhysicsPartitionOctTree_PartitionTreeNode;
 			class RigidBody;
-			class Vector6;
 			class World;
 }  // namespace physics
 }  // namespace engine

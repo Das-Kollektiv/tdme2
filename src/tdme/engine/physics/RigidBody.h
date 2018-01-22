@@ -1,44 +1,22 @@
-/*********************************************************************************
- * This source code is based on                                                  *
- * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
- * Copyright (c) 2010-2015 Daniel Chappuis                                       *
- *********************************************************************************
- *                                                                               *
- * This software is provided 'as-is', without any express or implied warranty.   *
- * In no event will the authors be held liable for any damages arising from the  *
- * use of this software.                                                         *
- *                                                                               *
- * Permission is granted to anyone to use this software for any purpose,         *
- * including commercial applications, and to alter it and redistribute it        *
- * freely, subject to the following restrictions:                                *
- *                                                                               *
- * 1. The origin of this software must not be misrepresented; you must not claim *
- *    that you wrote the original software. If you use this software in a        *
- *    product, an acknowledgment in the product documentation would be           *
- *    appreciated but is not required.                                           *
- *                                                                               *
- * 2. Altered source versions must be plainly marked as such, and must not be    *
- *    misrepresented as being the original software.                             *
- *                                                                               *
- * 3. This notice may not be removed or altered from any source distribution.    *
- *                                                                               *
- ********************************************************************************/
-
 #pragma once
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
+#include <ext/reactphysics3d/src/body/Body.h>
+#include <ext/reactphysics3d/src/body/CollisionBody.h>
+#include <ext/reactphysics3d/src/body/RigidBody.h>
+#include <ext/reactphysics3d/src/collision/ProxyShape.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/physics/CollisionListener.h>
 
 using std::remove;
@@ -51,7 +29,6 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
-using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
 /** 
@@ -62,73 +39,41 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::RigidBody final
 {
-	friend class ConstraintsSolver;
-	friend class ContactCache;
-	friend class ConstraintsEntity;
-	friend class PhysicsPartitionOctTree;
 	friend class World;
 
 public:
-	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
+	static constexpr int32_t TYPE_STATIC { 0 };
+	static constexpr int32_t TYPE_DYNAMIC { 2 };
+	static constexpr int32_t TYPE_KINEMATIC { 1 };
+
+	static constexpr uint16_t TYPEID_STATIC { 1 };
+	static constexpr uint16_t TYPEID_DYNAMIC { 2 };
+	static constexpr uint16_t TYPEIDS_ALL { 65535 };
 
 private:
-	static constexpr float LINEARVELOCITY_SLEEPTOLERANCE { 1.0f };
-	static constexpr float ANGULARVELOCITY_SLEEPTOLERANCE { 2.0f };
-	static constexpr int32_t SLEEPING_FRAMES { 300 };
-
 	World* world {  };
-	int32_t idx {  };
+	reactphysics3d::Body* rigidBody;
+	reactphysics3d::ProxyShape* proxyShape;
 	string id {  };
 	string rootId {  };
-	int32_t typeId {  };
-	int32_t collisionTypeIds {  };
 	bool enabled {  };
-	bool isStatic_ {  };
-	bool isSleeping_ {  };
-
-	int32_t sleepingFrameCount {  };
-
-	Transformations* transformations {  };
-	BoundingVolume* obv {  };
-	BoundingVolume* cbv {  };
-	float friction {  };
-	float restitution {  };
-	float mass {  };
-	float inverseMass {  };
-	Vector3 movement {  };
-	Vector3 position {  };
-	Vector3 linearVelocity {  };
-	Vector3 linearVelocityLast {  };
-	Vector3 force {  };
-	Quaternion orientation {  };
-	Vector3 angularVelocity {  };
-	Vector3 angularVelocityLast {  };
-	Vector3 torque {  };
-	Matrix4x4 inverseInertia {  };
-	Matrix4x4 orientationMatrix {  };
-	Matrix4x4 worldInverseInertia {  };
+	int32_t typeId {  };
+	Matrix4x4 inverseInertiaMatrix;
+	Vector3 linearVelocity;
+	Vector3 angularVelocity;
+	Transformations transformations {  };
+	BoundingVolume* boundingVolume {  };
 	vector<CollisionListener*> collisionListener {  };
 
 	/**
-	 * Wake up
+	 * @return collision body
 	 */
-	void awake(bool resetFrameCount);
+	inline reactphysics3d::CollisionBody* getCollisionBody() { return dynamic_cast<reactphysics3d::CollisionBody*>(rigidBody); }
 
 	/**
-	 * Compute world inverse inertia
+	 * @return rigid body
 	 */
-	void computeWorldInverseInertiaMatrix();
-
-	/**
-	 * Updates this rigid body / integrates it
-	 * @param delta time
-	 */
-	void update(float deltaTime);
-
-	/**
-	 * @return if velocity has been changed
-	 */
-	bool checkVelocityChange();
+	inline reactphysics3d::RigidBody* getRigidBody() { return dynamic_cast<reactphysics3d::RigidBody*>(rigidBody); }
 
 	/**
 	 * Fire on collision
@@ -155,14 +100,15 @@ private:
 	 * Protected constructor
 	 * @param partition
 	 * @param id
+	 * @param type
 	 * @param enabled
 	 * @param type id
-	 * @param original bounding volume
+	 * @param bounding volume
 	 * @param transformations
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
+	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/**
 	 * Destructor
@@ -188,17 +134,6 @@ public:
 	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 	/** 
-	 * Set up index in rigid body array list
-	 * @param idx
-	 */
-	void setIdx(int32_t idx);
-
-	/** 
-	 * @return index in rigid body array list
-	 */
-	int32_t getIdx();
-
-	/** 
 	 * @return id
 	 */
 	const string& getId();
@@ -217,18 +152,18 @@ public:
 	/**
 	 * @return type id
 	 */
-	int32_t getTypeId();
+	uint16_t getTypeId();
 
 	/** 
 	 * @return collision type ids bitmask
 	 */
-	int32_t getCollisionTypeIds();
+	uint16_t getCollisionTypeIds();
 
 	/** 
 	 * Set up collision type ids
 	 * @param collisionTypeIds
 	 */
-	void setCollisionTypeIds(int32_t collisionTypeIds);
+	void setCollisionTypeIds(uint16_t collisionTypeIds);
 
 	/** 
 	 * @return if enabled
@@ -251,36 +186,15 @@ public:
 	 */
 	bool isSleeping();
 
-	/** 
-	 * @return transformations
-	 */
-	Transformations* getTransformations();
-
-	/** 
+	/**
 	 * @return original bounding volume
 	 */
-	BoundingVolume* getBoudingVolume();
+	BoundingVolume* getBoundingVolume();
 
-	/** 
-	 * Set up bounding volume
-	 * @param obv
-	 */
-	void setBoundingVolume(BoundingVolume* obv);
-
-	/** 
-	 * @return transformed bounding volume
-	 */
-	BoundingVolume* getBoundingVolumeTransformed();
-
-	/** 
+	/**
 	 * @return position
 	 */
 	Vector3& getPosition();
-
-	/** 
-	 * @return last frame movement
-	 */
-	Vector3& getMovement();
 
 	/** 
 	 * @return friction
@@ -325,15 +239,10 @@ public:
 	 */
 	Vector3& getAngularVelocity();
 
-	/** 
-	 * @return force
+	/**
+	 * @return transformations
 	 */
-	Vector3& getForce();
-
-	/** 
-	 * Put rigid body to sleep
-	 */
-	void sleep();
+	Transformations* getTransformations();
 
 	/** 
 	 * Synchronizes this rigid body with transformations

@@ -67,8 +67,8 @@ void PathFinding::reset() {
 
 bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	// determine y height of ground plate of actor bounding volume
-	float xHalfExtension = actorCbv->computeDimensionOnAxis(sideVector) / 2.0f;
-	float zHalfExtension = actorCbv->computeDimensionOnAxis(forwardVector) / 2.0f;
+	float xHalfExtension = actorCbv->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
+	float zHalfExtension = actorCbv->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
 	float _z = z - zHalfExtension;
 	height = -10000.0f;
 	Vector3 actorPosition;
@@ -95,7 +95,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	// set up correct height
 	actorTransformations.getTranslation().set(x, height + 0.1f, z);
 	actorTransformations.update();
-	actorCbv->fromBoundingVolumeWithTransformations(actorObv, &actorTransformations);
+	actorCbv->fromTransformations(&actorTransformations);
 
 	// check if collides with world
 	vector<RigidBody*> collidedRigidBodies;

@@ -305,8 +305,9 @@ int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_Par
 
 VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
-	auto& center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
+	auto& center = cbv->getBoundingBoxTransformed().getCenter();
+	auto halfExtension = cbv->getBoundingBoxTransformed().getDimensions();
+	halfExtension.scale(0.5f);
 	boundingBox.getMin().set(center);
 	boundingBox.getMin().sub(halfExtension);
 	boundingBox.getMax().set(center);

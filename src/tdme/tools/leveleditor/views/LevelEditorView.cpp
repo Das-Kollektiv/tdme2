@@ -985,7 +985,9 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 		} else {
 			auto bv = selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox()->clone();
 			bv->fromBoundingVolumeWithTransformations(selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox(), selectedLevelEditorObject->getTransformations());
-			levelEditorObjectTransformations->getTranslation().setY(bv->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
+			levelEditorObjectTransformations->getTranslation().setY(
+				bv->getDimensions().getY() / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
+			delete bv;
 		}
 		levelEditorObjectTransformations->getScale().set(Vector3(1.0f, 1.0f, 1.0f));
 		levelEditorObjectTransformations->getPivot().set(selectedEntity->getPivot());
@@ -1389,7 +1391,7 @@ void LevelEditorView::pasteObjects()
 	auto pasteObjectsMinZ = Float::MAX_VALUE;
 	auto pasteObjectsMinY = Float::MIN_VALUE;
 	for (auto object: pasteObjects_) {
-		BoundingVolume* obv = object->getEntity()->getModel()->getBoundingBox();
+		auto obv = object->getEntity()->getModel()->getBoundingBox();
 		auto cbv = obv->clone();
 		cbv->fromBoundingVolumeWithTransformations(obv, object->getTransformations());
 		auto& objectBBMinXYZ = (dynamic_cast< BoundingBox* >(cbv))->getMin().getArray();
@@ -1405,7 +1407,7 @@ void LevelEditorView::pasteObjects()
 		if (selectedEntity == nullptr) continue;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) continue;
-		BoundingVolume* obv = levelEntity->getEntity()->getModel()->getBoundingBox();
+		auto obv = levelEntity->getEntity()->getModel()->getBoundingBox();
 		auto cbv = dynamic_cast<BoundingBox*>(obv->clone());
 		cbv->fromBoundingVolumeWithTransformations(obv, levelEntity->getTransformations());
 		auto& objectBBMinXYZ = cbv->getMin().getArray();

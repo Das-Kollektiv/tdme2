@@ -27,6 +27,7 @@
 using std::array;
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
@@ -143,17 +144,17 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// vertices
 	vector<Vector3> vertices;
 	for (auto& vertex : *orientedBoundingBox->getVertices()) {
-		vertices.push_back(vertex);
+		vertices.push_back(transformVector3(orientedBoundingBox, toRP3DVector3(vertex)));
 	}
 	// normals
 	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
-	normals.push_back((*axes)[0].clone().scale(-1.0f));
-	normals.push_back((*axes)[0].clone());
-	normals.push_back((*axes)[1].clone().scale(-1.0f));
-	normals.push_back((*axes)[1].clone());
-	normals.push_back((*axes)[2].clone().scale(-1.0f));
-	normals.push_back((*axes)[2].clone());
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone())));
 	// faces
 	vector<Face> faces;
 	//	left
@@ -213,8 +214,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
 	vector<Vector3> vertices;
-	vertices.resize((segmentsY + 1) * segmentsX);
-	for (auto ySegment = 0; ySegment <= segmentsY; ySegment++) 
+	for (auto ySegment = 0; ySegment < segmentsY + 1; ySegment++)
 		for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
 			auto vertex = (
 				Vector3(
@@ -222,7 +222,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					((Math::cos(Math::PI * ySegment / segmentsY))),
 					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX))))
 				).scale(radius).add(center);
-			vertices[ySegment * segmentsX + xSegment] = vertex;
+			vertices.push_back(transformVector3(sphere, toRP3DVector3(vertex)));
 		}
 	// normals
 	vector<Vector3> normals;
@@ -230,7 +230,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	vector<Face> faces;
 	int32_t vi0, vi1, vi2;
 	int32_t ni;
-	for (auto y = 0; y <= segmentsY; y++) {
+	for (auto y = 0; y < segmentsY + 1; y++) {
 		for (auto x = 0; x < segmentsX; x++) {
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
@@ -294,8 +294,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 {
 	// capsule properties
 	auto radius = capsule->getRadius();
-	auto a = capsule->getA();
-	auto b = capsule->getB();
+	auto& a = capsule->getA();
+	auto& b = capsule->getB();
+	auto center = a.clone().add(b).scale(0.5f);
 	// rotation quaternion
 	Quaternion rotationQuaternion;
 	rotationQuaternion.identity();
@@ -323,25 +324,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
 	vector<Vector3> vertices;
-	vertices.resize((segmentsY + 2) * segmentsX);
-	//	top half sphere
-	for (auto ySegment = segmentsY / 2; ySegment <= segmentsY; ySegment++) 
-	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-		auto vertex = Vector3();
-		rotationQuaternion.multiply(
-			Vector3(
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-				((Math::cos(Math::PI * ySegment / segmentsY))),
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
-			),
-			vertex
-		);
-		vertex.scale(radius);
-		vertex.add(a);
-		vertices[ySegment * segmentsX + xSegment] = vertex;
-	}
 	//	bottom half sphere
-	for (auto ySegment = 0; ySegment <= segmentsY / 2; ySegment++) 
+	for (auto ySegment = 0; ySegment < segmentsY / 2; ySegment++)
 	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
 		auto vertex = Vector3();
 		rotationQuaternion.multiply(
@@ -354,7 +338,23 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 		);
 		vertex.scale(radius);
 		vertex.add(b);
-		vertices[ySegment * segmentsX + xSegment] = vertex;
+		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
+	}
+	//	top half sphere
+	for (auto ySegment = segmentsY / 2; ySegment < segmentsY + 1; ySegment++)
+	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
+		auto vertex = Vector3();
+		rotationQuaternion.multiply(
+			Vector3(
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+				((Math::cos(Math::PI * ySegment / segmentsY))),
+				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+			),
+			vertex
+		);
+		vertex.scale(radius);
+		vertex.add(a);
+		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
 	}
 	// normals
 	vector<Vector3> normals;
@@ -362,7 +362,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	vector<Face> faces;
 	int32_t vi0, vi1, vi2;
 	int32_t ni;
-	for (auto y = 0; y <= segmentsY + 1; y++) {
+	for (auto y = 0; y < segmentsY + 1; y++) {
 		for (auto x = 0; x < segmentsX; x++) {
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
@@ -439,11 +439,12 @@ Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id)
 	// create from convex mesh triangles
 	int vertexIndex = -1;
 	int normalIndex = -1;
-	for (Triangle& triangle: *mesh->getTriangles()) {
+	//
+	for (auto i = 0; i < mesh->getVertices().size() / 3; i++) {
 		vertexIndex = vertices.size();
-		vertices.push_back((*triangle.getVertices())[0]);
-		vertices.push_back((*triangle.getVertices())[1]);
-		vertices.push_back((*triangle.getVertices())[2]);
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 0])));
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 1])));
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 2])));
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
@@ -491,11 +492,13 @@ Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id)
 	return model;
 }
 
+Model* PrimitiveModel::createModel(BoundingBox* boundingVolume, const string& id)
+{
+	return PrimitiveModel::createBoundingBoxModel(boundingVolume, id);
+}
+
 Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string& id)
 {
-	if (dynamic_cast< BoundingBox* >(boundingVolume) != nullptr) {
-		return PrimitiveModel::createBoundingBoxModel(dynamic_cast< BoundingBox* >(boundingVolume), id);
-	} else
 	if (dynamic_cast< OrientedBoundingBox* >(boundingVolume) != nullptr) {
 		return PrimitiveModel::createOrientedBoundingBoxModel(dynamic_cast< OrientedBoundingBox* >(boundingVolume), id);
 	} else

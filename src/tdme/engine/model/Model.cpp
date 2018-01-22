@@ -179,6 +179,7 @@ Matrix4x4& Model::getImportTransformationsMatrix()
 
 BoundingBox* Model::getBoundingBox()
 {
+	// TODO: return const bb
 	if (boundingBox == nullptr) {
 		boundingBox = ModelUtilities::createBoundingBox(static_cast< Object3DModelInternal* >(new Object3DModel(this)));
 	}

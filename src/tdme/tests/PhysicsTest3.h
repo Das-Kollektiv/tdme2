@@ -22,7 +22,8 @@ class tdme::tests::PhysicsTest3 final
 	: public virtual Application, public virtual ApplicationInputEventsHandler
 {
 private:
-	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
+	static constexpr uint16_t RIGID_TYPEID_STATIC { 1 };
+	static constexpr uint16_t RIGID_TYPEID_DYNAMIC { 2 };
 	static constexpr int32_t BOX_COUNT { 5 };
 	static constexpr int32_t BOXSTACK_COUNT { 2 };
 	static constexpr int32_t CAPSULE_COUNT { 10 };

@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 
 #include <tdme/math/Math.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -10,6 +11,7 @@
 
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Math;
+using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::primitives::BoundingVolume;
@@ -93,5 +95,18 @@ void SphereParticleEmitter::emit(Particle* particle)
 
 void SphereParticleEmitter::fromTransformations(Transformations* transformations)
 {
-	sphereTransformed->fromBoundingVolumeWithTransformations(sphere, transformations);
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	// apply translations
+	Vector3 center;
+	Vector3 axis;
+	float radius;
+	// 	translate center
+	transformationsMatrix.multiply(sphere->getCenter(), center);
+	// note:
+	//	sphere radius can only be scaled the same on all axes
+	//	thats why its enough to only take x axis to determine scaling
+	axis.set(sphere->getCenter()).addX(sphere->getRadius());
+	transformationsMatrix.multiply(axis, axis);
+	radius = axis.sub(center).computeLength();
+	*sphereTransformed = Sphere(center, radius);
 }
