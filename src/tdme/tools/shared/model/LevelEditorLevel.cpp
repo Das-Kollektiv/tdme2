@@ -166,7 +166,11 @@ void LevelEditorLevel::computeBoundingBox()
 		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = bv->clone();
 		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
-		bbDimension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector));
+		bbDimension.set(
+			cbv->getDimensions().getX(),
+			cbv->getDimensions().getY(),
+			cbv->getDimensions().getZ()
+		);
 		bbDimension.scale(0.5f);
 		bbMin.set(cbv->getCenter());
 		bbMin.sub(bbDimension);

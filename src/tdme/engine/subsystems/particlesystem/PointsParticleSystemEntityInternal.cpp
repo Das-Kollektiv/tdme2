@@ -200,6 +200,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
 		// transform particle position to camera space
 		modelViewMatrix.multiply(particle.position, point);
+		/*
+		// TODO: remove me completely
 		// check for collision
 		if (doCollisionTests == true) {
 			for (auto _i = engine->getPartition()->getObjectsNearTo(particle.position)->iterator(); _i->hasNext(); ) {
@@ -219,6 +221,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 				}
 			}
 		}
+		*/
 		//
 		activeParticles++;
 		// compute distance from camera

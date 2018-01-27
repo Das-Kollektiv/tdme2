@@ -1,37 +1,13 @@
-/*********************************************************************************
- * This source code is based on                                                  *
- * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
- * Copyright (c) 2010-2015 Daniel Chappuis                                       *
- *********************************************************************************
- *                                                                               *
- * This software is provided 'as-is', without any express or implied warranty.   *
- * In no event will the authors be held liable for any damages arising from the  *
- * use of this software.                                                         *
- *                                                                               *
- * Permission is granted to anyone to use this software for any purpose,         *
- * including commercial applications, and to alter it and redistribute it        *
- * freely, subject to the following restrictions:                                *
- *                                                                               *
- * 1. The origin of this software must not be misrepresented; you must not claim *
- *    that you wrote the original software. If you use this software in a        *
- *    product, an acknowledgment in the product documentation would be           *
- *    appreciated but is not required.                                           *
- *                                                                               *
- * 2. Altered source versions must be plainly marked as such, and must not be    *
- *    misrepresented as being the original software.                             *
- *                                                                               *
- * 3. This notice may not be removed or altered from any source distribution.    *
- *                                                                               *
- ********************************************************************************/
-
 #pragma once
 
 #include <map>
 #include <string>
-#include <vector>
+
+#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -44,8 +20,6 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
-using tdme::engine::physics::ConstraintsSolver;
-using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -62,30 +36,19 @@ class tdme::engine::physics::World final
 	friend class RigidBody;
 
 private:
-	PhysicsPartition* partition {  };
-
 	struct RigidBodyCollisionStruct {
 		string rigidBody1Id;
 		string rigidBody2Id;
 	};
 
+	reactphysics3d::DynamicsWorld world;
+
 	vector<RigidBody*> rigidBodies {  };
 	vector<RigidBody*> rigidBodiesDynamic {  };
 	map<string, RigidBody*> rigidBodiesById {  };
-	ConstraintsSolver* constraintsSolver { nullptr };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	Transformations rigidBodyRotationTransformation;
 
-	/**
-	 * Do collision test between rigid bodies
-	 * @param rigid body 1
-	 * @param rigid body 1
-	 * @param rigid body tested collisions
-	 * @param rigid body collisions current frame
-	 * @param collision movement
-	 * @param collision
-	 * @param use and invert collision
-	 */
-	inline void doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision);
 public:
 
 	/** 
@@ -94,40 +57,31 @@ public:
 	void reset();
 
 	/** 
-	 * @return partition algorithm
-	 */
-	PhysicsPartition* getPartition();
-
-	/** 
-	 * Set partition algorithm
-	 * @param partition
-	 */
-	void setPartition(PhysicsPartition* partition);
-
-	/** 
 	 * Add a rigid body
 	 * @param id
 	 * @param enabled
+	 * @param type id
 	 * @param transformations
-	 * @param obv
+	 * @param bounding volume
 	 * @param restitution
 	 * @param friction
 	 * @param mass
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body
 	 * @param id
 	 * @param enabled
+	 * @param type id
 	 * @param transformations
-	 * @param obv
+	 * @param bounding volume
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 
@@ -153,16 +107,6 @@ public:
 	 * @param engine
 	 */
 	void synch(Engine* engine);
-
-private:
-
-	/** 
-	 * Returns higher vector of
-	 * @param a
-	 * @param b
-	 * @return higher vector
-	 */
-	static const Vector3& higher(const Vector3& a, const Vector3& b);
 
 public:
 

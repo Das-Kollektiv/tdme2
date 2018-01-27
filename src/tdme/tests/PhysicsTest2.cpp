@@ -13,10 +13,13 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/engine/primitives/Capsule.h>
+#include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utils/Console.h>
 
 using std::string;
 using std::to_string;
@@ -34,13 +37,16 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::Capsule;
+using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utils::Console;
 
-constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
-
+constexpr uint16_t PhysicsTest2::RIGID_TYPEID_STATIC;
+constexpr uint16_t PhysicsTest2::RIGID_TYPEID_DYNAMIC;
 constexpr int32_t PhysicsTest2::BOX_COUNT;
 
 PhysicsTest2::PhysicsTest2() 
@@ -100,18 +106,20 @@ void PhysicsTest2::initialize()
 	entity->getTranslation().setY(-1.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
+	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STATIC, entity, ground, 0.5f);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
+	// auto box = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
+	// auto box = new Sphere(Vector3(0.0f, 2.0f, 0.0f), 1.0f);
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
-	for (auto i = 0; i < BOX_COUNT; i++) {
+	for (auto i = 0; i < 1/*BOX_COUNT*/; i++) {
 		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getTranslation().addY(i * 2.0f + 1.0f);
+		entity->getTranslation().addY(4.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 

@@ -1,14 +1,20 @@
-
 #pragma once
+
+#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
+#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
+#include <ext/reactphysics3d/src/mathematics/Transform.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
+using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
 /** 
@@ -16,35 +22,58 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::primitives::BoundingVolume
+class tdme::engine::primitives::BoundingVolume
 {
+	friend class tdme::engine::physics::RigidBody;
+	friend class tdme::engine::physics::World;
+	friend class BoundingBox;
+	friend class Capsule;
+	friend class ConvexMesh;
+	friend class OrientedBoundingBox;
+	friend class Sphere;
+	friend class PrimitiveModel;
 
-	/** 
-	 * Set up this bounding volume from given bounding volume
-	 * @param original
+protected:
+	Vector3 collisionShapeLocalTranslation;
+	reactphysics3d::CollisionShape* collisionShape {  };
+	reactphysics3d::Transform collisionShapeTransform {  };
+	reactphysics3d::AABB collisionShapeAABB {  };
+	BoundingBox boundingBoxTransformed {  };
+	Vector3 centerTransformed {  };
+
+	/**
+	 * Compute bounding box
 	 */
-	virtual void fromBoundingVolume(BoundingVolume* original) = 0;
+	void computeBoundingBox();
+
+public:
+
+	/**
+	 * Apply local transformations
+	 * @param transformations
+	 * @param final transformations
+	 */
+	virtual void applyLocalTransformations(Transformations* transformations, Transformations* finalTransformations);
+
+	/**
+	 * Apply inverse local transformations
+	 * @param transformations
+	 * @param final transformations
+	 */
+	virtual void applyInverseLocalTransformations(Transformations* transformations, Transformations* finalTransformations);
 
 	/** 
-	 * Create bounding volume from given original(of same type) with applied transformations
-	 * @param original bounding volume
+	 * Transform bounding volume from given transformations
 	 * @param transformations
 	 */
-	virtual void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) = 0;
-
-	/** 
-	 * Computes closest point on bounding volume for given point 
-	 * @param point
-	 * @param clostest point
-	 */
-	virtual void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestsPoint) const = 0;
+	virtual void fromTransformations(Transformations* transformations);
 
 	/** 
 	 * Checks if point is in bounding volume
 	 * @param point
 	 * @return bool if point is in bounding volume
 	 */
-	virtual bool containsPoint(const Vector3& point) const = 0;
+	virtual bool containsPoint(const Vector3& point);
 
 	/** 
 	 * Check if this bounding volume collides with bounding volume 2
@@ -53,29 +82,18 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @param collision
 	 * @return collision
 	 */
-	virtual bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) = 0;
+	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision);
+
+	/**
+	 * @return transformed center
+	 */
+	const Vector3 getCenterTransformed() const;
 
 	/** 
-	 * @return center of bounding volume
+	 * Get bounding box transformed
+	 * @return bounding box
 	 */
-	virtual Vector3& getCenter() = 0;
-
-	/** 
-	 * @return radius of bounding volume if regarded as sphere
-	 */
-	virtual float getSphereRadius() const = 0;
-
-	/** 
-	 * Computes dimension on axis
-	 * @param axis
-	 * @return dimension on axis
-	 */
-	virtual float computeDimensionOnAxis(const Vector3& axis) const = 0;
-
-	/** 
-	 * Updates the bounding volume
-	 */
-	virtual void update() = 0;
+	const BoundingBox& getBoundingBoxTransformed() const;
 
 	/** 
 	 * Clones this bounding volume
@@ -86,5 +104,5 @@ struct tdme::engine::primitives::BoundingVolume
 	/**
 	 * Destructor
 	 */
-	virtual ~BoundingVolume() {}
+	virtual ~BoundingVolume();
 };

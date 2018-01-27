@@ -25,7 +25,6 @@
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -71,7 +70,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -202,14 +200,14 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 
 	if (keyRight || keyLeft) {
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromTransformations(player);
 	}
 	if (keyUp) {
 		r->getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
 		movement.scale(1.5f / fps);
 		player->getTranslation().add(movement);
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromTransformations(player);
 		if (player->getAnimation() != "walk") {
 			player->setAnimation("walk");
 		}
@@ -221,12 +219,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromTransformations(player);
 	}
-	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
+	if (playerBoundingVolumeTransformed->doesCollideWith(barrelBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromTransformations(player);
 	}
 	for (auto i = 0; i < players.size(); i++) {
 		if (idx == i)
@@ -235,7 +233,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
 			player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 			player->update();
-			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+			playerBoundingVolumeTransformed->fromTransformations(player);
 		}
 	}
 }
@@ -301,7 +299,7 @@ void EngineTest::initialize()
 		barrel->setEnabled(true);
 		barrel->update();
 		barrelBoundingVolumeTransformed = barrelBoundingVolume->clone();
-		barrelBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(barrelBoundingVolume, barrel);
+		barrelBoundingVolumeTransformed->fromTransformations(barrel);
 		engine->addEntity(barrel);
 		auto _farPlane = createWallModel();
 		auto farPlane = new Object3D("wall", _farPlane);
@@ -317,6 +315,9 @@ void EngineTest::initialize()
 		_player->addAnimationSetup("still", 3, 3, true);
 		_player->addAnimationSetup("walk", 0, 18, true);
 		playerBoundingVolume = new Capsule(Vector3(0, 30.0f / 130.0f, 0), Vector3(0, 230.0f / 130.0f, 0), 25 / 130.0f);
+		//playerBoundingVolume = new BoundingBox(Vector3(-0.2f, 0.0f, -0.2f), Vector3(0.2f, 2.0f, 0.2f));
+		//playerBoundingVolume = new OrientedBoundingBox(new BoundingBox(Vector3(-0.2f, 0.0f, -0.2f), Vector3(0.2f, 2.0f, 0.2f)));
+		//playerBoundingVolume = new Sphere(Vector3(0, 0.5f, 0.0f), 0.5f);
 		playerBoundingVolumeModel = PrimitiveModel::createModel(playerBoundingVolume, "player_bv");
 		auto player1 = new Object3D("player1", _player);
 		player1->getTranslation().add(Vector3(-1.5f, 0.0f, 0.0f));
@@ -328,7 +329,7 @@ void EngineTest::initialize()
 		player1->setDynamicShadowingEnabled(true);
 		engine->addEntity(player1);
 		auto player1BoundingVolumeTransformed = playerBoundingVolume->clone();
-		player1BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player1);
+		player1BoundingVolumeTransformed->fromTransformations(player1);
 		playerBoundingVolumesTransformed.push_back(player1BoundingVolumeTransformed);
 		players.push_back(player1);
 		auto player1BoundingVolume = new Object3D("player1_bv", playerBoundingVolumeModel);
@@ -345,7 +346,7 @@ void EngineTest::initialize()
 		player2->setDynamicShadowingEnabled(true);
 		players.push_back(player2);
 		auto player2BoundingVolumeTransformed = playerBoundingVolume->clone();
-		player2BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player2);
+		player2BoundingVolumeTransformed->fromTransformations(player2);
 		playerBoundingVolumesTransformed.push_back(player2BoundingVolumeTransformed);
 		engine->addEntity(player2);
 		auto player2BoundingVolume = new Object3D("player2_bv", playerBoundingVolumeModel);
@@ -361,8 +362,8 @@ void EngineTest::initialize()
 		cube->setDynamicShadowingEnabled(true);
 		cube->setEnabled(true);
 		cubeBoundingVolume = cube->getBoundingBox();
-		cubeBoundingVolumeTransformed = cubeBoundingVolume->clone();
-		cubeBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(cubeBoundingVolume, cube);
+		cubeBoundingVolumeTransformed = new OrientedBoundingBox(cubeBoundingVolume);
+		cubeBoundingVolumeTransformed->fromTransformations(cube);
 		engine->addEntity(cube);
 		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, "cube_bv");
 		auto cubeBoundingVolumeObject3D = new Object3D("cube_bv", cubeBoundingVolumeModel);

@@ -3,14 +3,22 @@
 #include <string>
 #include <vector>
 
+#include <ext/reactphysics3d/src/body/Body.h>
+#include <ext/reactphysics3d/src/body/CollisionBody.h>
+#include <ext/reactphysics3d/src/body/RigidBody.h>
+#include <ext/reactphysics3d/src/collision/ProxyShape.h>
+#include <ext/reactphysics3d/src/mathematics/Transform.h>
+
 #include <tdme/math/Math.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionListener.h>
-#include <tdme/engine/physics/PhysicsPartition.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/ConcaveMesh.h>
+#include <tdme/engine/primitives/HeightField.h>
+#include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
@@ -28,61 +36,113 @@ using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
-using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::ConcaveMesh;
+using tdme::engine::primitives::HeightField;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::primitives::TerrainConvexMesh;
 using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
+constexpr uint16_t RigidBody::TYPEIDS_ALL;
+constexpr uint16_t RigidBody::TYPEID_STATIC;
+constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia)
+RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
 {
 	this->world = world;
-	this->idx = -1;
 	this->id = id;
 	this->rootId = id;
-	this->enabled = enabled;
 	this->typeId = typeId;
-	this->collisionTypeIds = TYPEIDS_ALL;
-	this->transformations = new Transformations();
-	this->inverseInertia.set(inverseInertia);
-	this->restitution = restitution;
-	this->friction = friction;
-	this->isSleeping_ = false;
-	this->sleepingFrameCount = 0;
-	setBoundingVolume(obv);
-	setMass(mass);
-	fromTransformations(transformations);
-	computeWorldInverseInertiaMatrix();
+	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
+	// do not clone concave mesh or height fields
+	// TODO: Note this is not working yet
+	if (dynamic_cast<ConcaveMesh*>(boundingVolume) != nullptr ||
+		dynamic_cast<HeightField*>(boundingVolume) != nullptr) {
+		this->boundingVolume = boundingVolume;
+		this->rigidBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
+		this->proxyShape = getCollisionBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform());
+		this->proxyShape->setCollideWithMaskBits(~typeId);
+		getCollisionBody()->setType(reactphysics3d::BodyType::STATIC);
+	} else
+	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
+		// transform terrain convex mesh with transformations
+		this->boundingVolume = boundingVolume->clone();
+		dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->applyTransformations(transformations);
+		// determine position
+		auto positionTransformed = dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->getPositionTransformed();
+		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+		getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
+		getRigidBody()->getMaterial().setBounciness(restitution);
+		getRigidBody()->setMass(mass);
+		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform(), mass);
+		this->proxyShape->setCollideWithMaskBits(~typeId);
+		Transformations terrainTransformations;
+		terrainTransformations.getTranslation().set(positionTransformed.getX(), positionTransformed.getY(), positionTransformed.getZ());
+		fromTransformations(&terrainTransformations);
+	} else
+	{
+		this->boundingVolume = boundingVolume->clone();
+		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+		switch (type) {
+			case TYPE_STATIC:
+				getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+				break;
+			case TYPE_DYNAMIC:
+				getRigidBody()->setType(reactphysics3d::BodyType::DYNAMIC);
+				break;
+			case TYPE_KINEMATIC:
+				getRigidBody()->setType(reactphysics3d::BodyType::KINEMATIC);
+				break;
+		}
+		auto& inverseInertiaMatrixArray = inverseInertiaMatrix.getArray();
+		getRigidBody()->setInverseInertiaTensorLocal(
+			reactphysics3d::Matrix3x3(
+				inverseInertiaMatrixArray[0],
+				inverseInertiaMatrixArray[1],
+				inverseInertiaMatrixArray[2],
+				inverseInertiaMatrixArray[4],
+				inverseInertiaMatrixArray[5],
+				inverseInertiaMatrixArray[6],
+				inverseInertiaMatrixArray[8],
+				inverseInertiaMatrixArray[9],
+				inverseInertiaMatrixArray[10]
+			)
+		);
+		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
+		getRigidBody()->getMaterial().setBounciness(restitution);
+		getRigidBody()->setMass(mass);
+		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform(), mass);
+		this->proxyShape->setCollideWithMaskBits(~0);
+		fromTransformations(transformations);
+	}
+	this->rigidBody->setUserData(this);
+	this->proxyShape->setCollisionCategoryBits(typeId);
+	setEnabled(enabled);
 }
 
 RigidBody::~RigidBody() {
-	delete transformations;
-	delete obv;
-	delete cbv;
+	if (dynamic_cast<ConcaveMesh*>(boundingVolume) == nullptr &&
+		dynamic_cast<HeightField*>(boundingVolume) == nullptr) {
+		delete boundingVolume;
+	}
 }
-
-constexpr int32_t RigidBody::TYPEIDS_ALL;
-
-constexpr float RigidBody::LINEARVELOCITY_SLEEPTOLERANCE;
-constexpr float RigidBody::ANGULARVELOCITY_SLEEPTOLERANCE;
-
-constexpr int32_t RigidBody::SLEEPING_FRAMES;
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
 {
-	return Matrix4x4(0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	return Matrix4x4(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Matrix4x4 RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
 {
-	auto width = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_X);
-	auto height = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_Y);
-	auto depth = bv->computeDimensionOnAxis(OrientedBoundingBox::AABB_AXIS_Z);
+	auto width = bv->getBoundingBoxTransformed().getDimensions().getX();
+	auto height = bv->getBoundingBoxTransformed().getDimensions().getY();
+	auto depth = bv->getBoundingBoxTransformed().getDimensions().getZ();
 	return
 		(Matrix4x4(
 			scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f,
@@ -90,16 +150,6 @@ Matrix4x4 RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float 
 			0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		)).invert();
-}
-
-void RigidBody::setIdx(int32_t idx)
-{
-	this->idx = idx;
-}
-
-int32_t RigidBody::getIdx()
-{
-	return idx;
 }
 
 const string& RigidBody::getId()
@@ -116,19 +166,19 @@ void RigidBody::setRootId(const string& rootId) {
 	this->rootId = rootId;
 }
 
-int32_t RigidBody::getTypeId()
+uint16_t RigidBody::getTypeId()
 {
 	return typeId;
 }
 
-int32_t RigidBody::getCollisionTypeIds()
+uint16_t RigidBody::getCollisionTypeIds()
 {
-	return collisionTypeIds;
+	return this->proxyShape->getCollideWithMaskBits();
 }
 
-void RigidBody::setCollisionTypeIds(int32_t collisionTypeIds)
+void RigidBody::setCollisionTypeIds(uint16_t collisionTypeIds)
 {
-	this->collisionTypeIds = collisionTypeIds;
+	this->proxyShape->setCollideWithMaskBits(collisionTypeIds);
 }
 
 bool RigidBody::isEnabled()
@@ -144,89 +194,75 @@ void RigidBody::setEnabled(bool enabled)
 
 	//
 	if (enabled == true) {
-		world->partition->addRigidBody(this);
+		rigidBody->setIsActive(true);
 	} else {
-		world->partition->removeRigidBody(this);
+		rigidBody->setIsActive(false);
 	}
+
+	//
 	this->enabled = enabled;
 }
 
 bool RigidBody::isStatic()
 {
-	return isStatic_;
+	return getRigidBody()->getType() == reactphysics3d::BodyType::STATIC;
 }
 
 bool RigidBody::isSleeping()
 {
-	return isSleeping_;
+	return rigidBody->isSleeping();
 }
 
-Transformations* RigidBody::getTransformations()
+BoundingVolume* RigidBody::getBoundingVolume()
 {
-	return transformations;
-}
-
-BoundingVolume* RigidBody::getBoudingVolume()
-{
-	return obv;
-}
-
-void RigidBody::setBoundingVolume(BoundingVolume* obv)
-{
-	this->obv = obv->clone();
-	this->cbv = obv->clone();
-}
-
-BoundingVolume* RigidBody::getBoundingVolumeTransformed()
-{
-	return cbv;
+	return boundingVolume;
 }
 
 Vector3& RigidBody::getPosition()
 {
-	return position;
-}
-
-Vector3& RigidBody::getMovement()
-{
-	return movement;
+	return transformations.getTranslation();
 }
 
 float RigidBody::getFriction()
 {
-	return friction;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return 0.0f;
+	return rigidBody->getMaterial().getFrictionCoefficient();
 }
 
 void RigidBody::setFriction(float friction)
 {
-	this->friction = friction;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return;
+	rigidBody->getMaterial().setFrictionCoefficient(friction);
 }
 
 float RigidBody::getRestitution()
 {
-	return restitution;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return 0.0f;
+	return rigidBody->getMaterial().getBounciness();
 }
 
 void RigidBody::setRestitution(float restitution)
 {
-	this->restitution = restitution;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return;
+	rigidBody->getMaterial().setBounciness(restitution);
 }
 
 float RigidBody::getMass()
 {
-	return mass;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return 0.0f;
+	return rigidBody->getMass();
 }
 
 void RigidBody::setMass(float mass)
 {
-	this->mass = mass;
-	if (Math::abs(mass) < MathTools::EPSILON) {
-		this->isStatic_ = true;
-		this->inverseMass = 0.0f;
-	} else {
-		this->isStatic_ = false;
-		this->inverseMass = 1.0f / mass;
-	}
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return;
+	rigidBody->getMass();
 }
 
 Vector3& RigidBody::getLinearVelocity()
@@ -239,126 +275,49 @@ Vector3& RigidBody::getAngularVelocity()
 	return angularVelocity;
 }
 
-Vector3& RigidBody::getForce()
-{
-	return force;
-}
-
-void RigidBody::awake(bool resetFrameCount)
-{
-	isSleeping_ = false;
-	if (resetFrameCount) sleepingFrameCount = 0;
-}
-
-void RigidBody::sleep()
-{
-	isSleeping_ = true;
-	sleepingFrameCount = 0;
-}
-
-void RigidBody::computeWorldInverseInertiaMatrix()
-{
-	orientation.computeMatrix(orientationMatrix);
-	worldInverseInertia.set(orientationMatrix).transpose().multiply(inverseInertia).multiply(orientationMatrix);
+Transformations* RigidBody::getTransformations() {
+	return &transformations;
 }
 
 void RigidBody::fromTransformations(Transformations* transformations)
 {
-	this->transformations->fromTransformations(transformations);
-	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
-	this->transformations->getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
-	this->orientation.set(transformations->getRotations()->getQuaternion());
-	this->orientation.getArray()[1] *= -1.0f;
-	this->orientation.normalize();
-	this->awake(true);
+	if (dynamic_cast<ConcaveMesh*>(boundingVolume) != nullptr ||
+		dynamic_cast<HeightField*>(boundingVolume) != nullptr) {
+		Console::println("RigidBody::fromTransformations(): not supported with concave mesh, height field or terrain convex mesh");
+		return;
+	}
+	// store engine transformations
+	this->transformations.fromTransformations(transformations);
+	// inverse transformations is used in physics engine
+	Transformations inverseTransformations;
+	// apply local obv transformations like moving center to 0/0/0
+	this->boundingVolume->applyInverseLocalTransformations(transformations, &inverseTransformations);
+	// obv
+	boundingVolume->collisionShape->setLocalScaling(
+		reactphysics3d::Vector3(
+			transformations->getScale().getX(),
+			transformations->getScale().getY(),
+			transformations->getScale().getZ()
+		)
+	);
+	// rigig body transform
+	auto& transformationsMatrix = inverseTransformations.getTransformationsMatrix();
+	reactphysics3d::Transform transform;
+	transform.setFromOpenGL(transformationsMatrix.getArray().data());
+	auto rigidBody = getRigidBody();
+	if (rigidBody != nullptr) rigidBody->setTransform(transform);
+	auto collisionBody = getCollisionBody();
+	if (collisionBody != nullptr) collisionBody->setTransform(transform);
 }
 
 void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 {
-	// skip on static objects
-	if (isStatic_ == true)
-		return;
-
-	// check if we have any force to apply
-	if (force.computeLength() < MathTools::EPSILON)
-		return;
-
-	// unset sleeping
-	awake(false);
-
-	// linear
-	this->force.add(force);
-
-	// angular
-	Vector3 distance;
-	Vector3 tmp;
-	distance.set(forceOrigin).sub(position);
-	if (distance.computeLength() < MathTools::EPSILON) {
-		Console::println(
-			string("RigidBody::addForce(): ") +
-			id +
-			string(": Must not equals position")
-		);
-	}
-	Vector3::computeCrossProduct(force, distance, tmp);
-	this->torque.add(tmp);
-}
-
-void RigidBody::update(float deltaTime)
-{
-	if (isSleeping_ == true)
-		return;
-
-	// check if to put object into sleep
-	if (linearVelocity.computeLength() < LINEARVELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < ANGULARVELOCITY_SLEEPTOLERANCE) {
-		sleepingFrameCount++;
-		if (sleepingFrameCount >= SLEEPING_FRAMES) {
-			sleep();
-		}
-	} else {
-		awake(true);
-	}
-	// unset velocity if sleeping
-	if (isSleeping_ == true) {
-		linearVelocity.set(0.0f, 0.0f, 0.0f);
-		angularVelocity.set(0.0f, 0.0f, 0.0f);
-		return;
-	}
-	// linear
-	Vector3 tmpVector3;
-	Quaternion tmpQuaternion1;
-	Quaternion tmpQuaternion2;
-	movement.set(position);
-	position.add(tmpVector3.set(linearVelocity).scale(deltaTime));
-	movement.sub(position);
-	movement.scale(-1.0f);
-	// angular
-	auto& angularVelocityXYZ = angularVelocity.getArray();
-	tmpQuaternion2.set(angularVelocityXYZ[0], -angularVelocityXYZ[1], angularVelocityXYZ[2], 0.0f).scale(0.5f * deltaTime);
-	tmpQuaternion1.set(orientation);
-	tmpQuaternion1.multiply(tmpQuaternion2);
-	orientation.add(tmpQuaternion1);
-	orientation.normalize();
-	//
-	force.set(0.0f, 0.0f, 0.0f);
-	torque.set(0.0f, 0.0f, 0.0f);
-	// store last velocities
-	linearVelocityLast.set(linearVelocity);
-	angularVelocityLast.set(angularVelocity);
-	computeWorldInverseInertiaMatrix();
-}
-
-bool RigidBody::checkVelocityChange()
-{
-	Vector3 tmpVector3;
-
-	if (tmpVector3.set(linearVelocity).sub(linearVelocityLast).computeLength() > LINEARVELOCITY_SLEEPTOLERANCE)
-		return true;
-
-	if (tmpVector3.set(angularVelocity).sub(angularVelocityLast).computeLength() > ANGULARVELOCITY_SLEEPTOLERANCE)
-		return true;
-
-	return false;
+	auto rigidBody = getRigidBody();
+	if (rigidBody == nullptr) return;
+	rigidBody->applyForce(
+		reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ()),
+		reactphysics3d::Vector3(forceOrigin.getX(), forceOrigin.getY(), forceOrigin.getZ())
+	);
 }
 
 void RigidBody::addCollisionListener(CollisionListener* listener)

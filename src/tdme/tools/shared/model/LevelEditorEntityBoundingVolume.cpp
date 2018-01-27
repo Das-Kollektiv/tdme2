@@ -153,7 +153,8 @@ void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vect
 void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new BoundingBox(min, max);
+	BoundingBox aabb(min, max);
+	boundingVolume = new OrientedBoundingBox(&aabb);
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,

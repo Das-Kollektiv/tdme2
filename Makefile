@@ -1,6 +1,6 @@
 STACKFLAGS =
 SRC_PLATFORM =
-INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/
+INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -50,8 +50,8 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
-CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin
@@ -72,6 +72,7 @@ LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
+REACTPHYSICS3D = reactphysics3d
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -126,20 +127,20 @@ SRCS = \
 	src/tdme/engine/model/RotationOrder.cpp \
 	src/tdme/engine/model/Skinning.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
-	src/tdme/engine/physics/CollisionDetection.cpp \
-	src/tdme/engine/physics/ConstraintsSolver.cpp \
-	src/tdme/engine/physics/PhysicsPartitionNone.cpp \
-	src/tdme/engine/physics/PhysicsPartitionOctTree.cpp \
 	src/tdme/engine/physics/RigidBody.cpp \
 	src/tdme/engine/physics/World.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
+	src/tdme/engine/primitives/BoundingVolume.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
+	src/tdme/engine/primitives/ConvexMeshBoundingVolume.cpp \
+	src/tdme/engine/primitives/ConcaveMesh.cpp \
+	src/tdme/engine/primitives/HeightField.cpp \
 	src/tdme/engine/primitives/LineSegment.cpp \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
 	src/tdme/engine/primitives/PrimitiveModel.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \
-	src/tdme/engine/primitives/SphereInternal.cpp \
+	src/tdme/engine/primitives/TerrainConvexMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
@@ -275,7 +276,6 @@ SRCS = \
 	src/tdme/network/udpserver/NIOUDPServer.cpp \
 	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
 	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
-	src/tdme/math/TriangleTriangleIntersection.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
@@ -298,6 +298,7 @@ SRCS = \
 	src/tdme/tests/GUITest_init_1.cpp \
 	src/tdme/tests/GUITest_init_2.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
+	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
@@ -492,6 +493,74 @@ EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp \
 
+EXT_REACTPHYSICS3D_SRCS = \
+	ext/reactphysics3d/src/body/Body.cpp \
+	ext/reactphysics3d/src/body/CollisionBody.cpp \
+	ext/reactphysics3d/src/body/RigidBody.cpp \
+	ext/reactphysics3d/src/collision/ContactManifoldInfo.cpp \
+	ext/reactphysics3d/src/collision/broadphase/BroadPhaseAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/broadphase/DynamicAABBTree.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/GJK/VoronoiSimplex.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/GJK/GJKAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/SAT/SATAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsCapsuleAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/SphereVsCapsuleAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/SphereVsSphereAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/SphereVsConvexPolyhedronAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsConvexPolyhedronAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/ConvexPolyhedronVsConvexPolyhedronAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/shapes/AABB.cpp \
+	ext/reactphysics3d/src/collision/shapes/ConvexShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/ConvexPolyhedronShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/ConcaveShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/BoxShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/CapsuleShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/CollisionShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/SphereShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/TriangleShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/ConcaveMeshShape.cpp \
+	ext/reactphysics3d/src/collision/shapes/HeightFieldShape.cpp \
+	ext/reactphysics3d/src/collision/RaycastInfo.cpp \
+	ext/reactphysics3d/src/collision/ProxyShape.cpp \
+	ext/reactphysics3d/src/collision/TriangleVertexArray.cpp \
+	ext/reactphysics3d/src/collision/PolygonVertexArray.cpp \
+	ext/reactphysics3d/src/collision/TriangleMesh.cpp \
+	ext/reactphysics3d/src/collision/PolyhedronMesh.cpp \
+	ext/reactphysics3d/src/collision/HalfEdgeStructure.cpp \
+	ext/reactphysics3d/src/collision/CollisionDetection.cpp \
+	ext/reactphysics3d/src/collision/NarrowPhaseInfo.cpp \
+	ext/reactphysics3d/src/collision/ContactManifold.cpp \
+	ext/reactphysics3d/src/collision/ContactManifoldSet.cpp \
+	ext/reactphysics3d/src/collision/MiddlePhaseTriangleCallback.cpp \
+	ext/reactphysics3d/src/constraint/BallAndSocketJoint.cpp \
+	ext/reactphysics3d/src/constraint/ContactPoint.cpp \
+	ext/reactphysics3d/src/constraint/FixedJoint.cpp \
+	ext/reactphysics3d/src/constraint/HingeJoint.cpp \
+	ext/reactphysics3d/src/constraint/Joint.cpp \
+	ext/reactphysics3d/src/constraint/SliderJoint.cpp \
+	ext/reactphysics3d/src/engine/CollisionWorld.cpp \
+	ext/reactphysics3d/src/engine/ConstraintSolver.cpp \
+	ext/reactphysics3d/src/engine/ContactSolver.cpp \
+	ext/reactphysics3d/src/engine/DynamicsWorld.cpp \
+	ext/reactphysics3d/src/engine/Island.cpp \
+	ext/reactphysics3d/src/engine/Material.cpp \
+	ext/reactphysics3d/src/engine/OverlappingPair.cpp \
+	ext/reactphysics3d/src/engine/Profiler.cpp \
+	ext/reactphysics3d/src/engine/Timer.cpp \
+	ext/reactphysics3d/src/collision/CollisionCallback.cpp \
+	ext/reactphysics3d/src/mathematics/mathematics_functions.cpp \
+	ext/reactphysics3d/src/mathematics/Matrix2x2.cpp \
+	ext/reactphysics3d/src/mathematics/Matrix3x3.cpp \
+	ext/reactphysics3d/src/mathematics/Quaternion.cpp \
+	ext/reactphysics3d/src/mathematics/Transform.cpp \
+	ext/reactphysics3d/src/mathematics/Vector2.cpp \
+	ext/reactphysics3d/src/mathematics/Vector3.cpp \
+	ext/reactphysics3d/src/memory/PoolAllocator.cpp \
+	ext/reactphysics3d/src/memory/SingleFrameAllocator.cpp \
+	ext/reactphysics3d/src/memory/MemoryManager.cpp \
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -499,6 +568,7 @@ MAIN_SRCS = \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
+	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
@@ -521,6 +591,7 @@ EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
+EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -561,6 +632,9 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 	$(cpp-command)
 
+$(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -569,7 +643,7 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

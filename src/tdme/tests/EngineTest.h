@@ -25,6 +25,7 @@ using tdme::engine::Object3D;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
 using tdme::engine::physics::CollisionResponse;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 
 /** 
@@ -47,7 +48,7 @@ private:
 	vector<BoundingVolume*> playerBoundingVolumesTransformed {  };
 	Object3D* cube {  };
 	Model* cubeBoundingVolumeModel {  };
-	BoundingVolume* cubeBoundingVolume {  };
+	BoundingBox* cubeBoundingVolume {  };
 	BoundingVolume* cubeBoundingVolumeTransformed {  };
 	BoundingVolume* barrelBoundingVolume {  };
 	BoundingVolume* barrelBoundingVolumeTransformed {  };
