@@ -1,13 +1,11 @@
 #pragma once
 
-#include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
-
-#include <tdme/math/Vector3.h>
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/primitives/ConvexMeshBoundingVolume.h>
-#include <tdme/engine/primitives/ConvexMesh.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/math/Vector3.h>
 
-using tdme::engine::primitives::ConvexMeshBoundingVolume;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
 /** 
@@ -16,7 +14,7 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::primitives::Capsule final
-	: public ConvexMeshBoundingVolume
+	: public BoundingVolume
 {
 public:
 	/** 
@@ -46,11 +44,6 @@ public:
 	Capsule(const Vector3& a, const Vector3& b, float radius);
 
 private:
-	/**
-	 * Create convex mesh
-	 */
-	void createConvexMesh();
-
 	//
 	Vector3 a {  };
 	Vector3 b {  };

@@ -188,8 +188,6 @@ void World::update(float deltaTime)
 	}
 
 	// update transformations for rigid body
-	Transformations physicsTransformations;
-	physicsTransformations.getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 0.0f)));
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		auto rigidBody = rigidBodiesDynamic.at(i);
 		// skip if enabled
@@ -213,12 +211,10 @@ void World::update(float deltaTime)
 		auto& position = transform.getPosition();
 		auto& orientation = transform.getOrientation();
 		//	set up transformations
-		physicsTransformations.getScale().set(rigidBody->transformations.getScale());
+		auto& physicsTransformations = rigidBody->transformations;
 		physicsTransformations.getRotations()->get(0)->fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.getTranslation().set(position.x, position.y, position.z);
 		physicsTransformations.update();
-		rigidBody->boundingVolume->applyLocalTransformations(&physicsTransformations, &rigidBody->transformations);
-		// update
 		// velocities
 		auto angularVelocity = rigidBody->getRigidBody()->getAngularVelocity();
 		auto linearVelocity = rigidBody->getRigidBody()->getLinearVelocity();

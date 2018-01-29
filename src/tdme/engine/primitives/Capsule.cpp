@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
+#include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
 
 #include <tdme/math/Math.h>
 #include <tdme/math/MathTools.h>
@@ -12,8 +12,6 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Capsule;
-
-using std::vector;
 
 using tdme::math::Math;
 using tdme::math::MathTools;
@@ -27,17 +25,14 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
-	createConvexMesh();
-}
 
-void Capsule::createConvexMesh() {
-	vector<Vector3> vertices;
-	vector<int> indices;
-	int segmentsX = 5;
-	int segmentsY = 5;
-	Quaternion rotationQuaternion;
-	rotationQuaternion.identity();
-	Vector3 yAxis(0.0f, -1.0f, 0.0f);
+	// determine local translation
+	Vector3 center;
+	center.set(this->a).add(this->b).scale(0.5f);
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
+
+	// determine local rotation
+	Vector3 yAxis(0.0f, 1.0f, 0.0f);
 	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
@@ -47,57 +42,30 @@ void Capsule::createConvexMesh() {
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
+	Quaternion rotationQuaternion;
 	rotationQuaternion.rotate(angle, rotationAxis);
-	for (auto ySegment = 0; ySegment < segmentsY / 2; ySegment++)
-	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-		auto vertex = Vector3();
-		rotationQuaternion.multiply(
-			Vector3(
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-				((Math::cos(Math::PI * ySegment / segmentsY))),
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
-			),
-			vertex
-		);
-		vertex.scale(radius);
-		vertex.add(b);
-		vertices.push_back(vertex);
-	}
-	for (auto ySegment = segmentsY / 2; ySegment < segmentsY + 1; ySegment++)
-	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-		auto vertex = Vector3();
-		rotationQuaternion.multiply(
-			Vector3(
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-				((Math::cos(Math::PI * ySegment / segmentsY))),
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
-			),
-			vertex
-		);
-		vertex.scale(radius);
-		vertex.add(a);
-		vertices.push_back(vertex);
-	}
-	int vi0, vi1, vi2;
-	for (auto y = 0; y < segmentsY + 1; y++) {
-		for (auto x = 0; x < segmentsX; x++) {
-			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
-			vi1 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
-			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
-			indices.push_back(vi0);
-			indices.push_back(vi1);
-			indices.push_back(vi2);
-			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
-			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
-			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
-			indices.push_back(vi0);
-			indices.push_back(vi1);
-			indices.push_back(vi2);
-		}
-	}
+	collisionShapeLocalTransform.setOrientation(
+		reactphysics3d::Quaternion(
+			rotationQuaternion.getX(),
+			rotationQuaternion.getY(),
+			rotationQuaternion.getZ(),
+			rotationQuaternion.getW()
+		)
+	);
 
-	// create convex mesh
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, indices, true, a.clone().add(b).scale(0.5f));
+	// rotate a,b that a and b live on y axis
+	Quaternion inverseRotationQuaternion;
+	inverseRotationQuaternion.rotate(-angle, rotationAxis);
+	Vector3 aTransformed;
+	Vector3 bTransformed;
+	inverseRotationQuaternion.multiply(this->a, aTransformed);
+	inverseRotationQuaternion.multiply(this->b, bTransformed);
+
+	// create capsule
+	collisionShape = new reactphysics3d::CapsuleShape(
+		radius,
+		bTransformed.clone().sub(aTransformed).scale(0.5f).computeLength() + radius * 2.0f
+	);
 }
 
 float Capsule::getRadius() const

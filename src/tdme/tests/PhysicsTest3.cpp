@@ -237,8 +237,8 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
 	}
-	//auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 2.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
-	auto capsuleBig = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
+	auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 2.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
+	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
 	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(1.0f, 0.8f, 0.8f, 1.0f);
 	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);

@@ -28,7 +28,7 @@ BoundingVolume::~BoundingVolume() {
 }
 
 void BoundingVolume::computeBoundingBox() {
-	collisionShape->computeAABB(collisionShapeAABB, collisionShapeTransform);
+	collisionShape->computeAABB(collisionShapeAABB, collisionShapeLocalTransform * collisionShapeTransform);
 	boundingBoxTransformed = BoundingBox(
 		Vector3(collisionShapeAABB.getMin().x, collisionShapeAABB.getMin().y, collisionShapeAABB.getMin().z),
 		Vector3(collisionShapeAABB.getMax().x, collisionShapeAABB.getMax().y, collisionShapeAABB.getMax().z)
@@ -36,35 +36,8 @@ void BoundingVolume::computeBoundingBox() {
 	centerTransformed = boundingBoxTransformed.getCenter();
 }
 
-void BoundingVolume::applyLocalTransformations(Transformations* transformations, Transformations* finalTransformations) {
-	// apply bounding volume local transformations to final transformations
-	// copy transformations
-	finalTransformations->fromTransformations(transformations);
-	// apply local transformations
-	finalTransformations->getTranslation().sub(collisionShapeLocalTranslation);
-	// TODO: pivot
-	finalTransformations->getPivot().set(collisionShapeLocalTranslation.clone().scale(+1.0f));
-	// update
-	finalTransformations->update();
-}
-
-void BoundingVolume::applyInverseLocalTransformations(Transformations* transformations, Transformations* finalTransformations) {
-	// apply bounding volume inverse local transformations to final transformations
-	// copy
-	finalTransformations->fromTransformations(transformations);
-	// apply inverse local transformations
-	finalTransformations->getTranslation().add(collisionShapeLocalTranslation);
-	// TODO: pivotPhy
-	//finalTransformations->getPivot().set(collisionShapeLocalTranslation.clone().scale(-1.0f));
-	finalTransformations->getPivot().set(0.0f, 0.0f, 0.0f);
-	// TODO: handle rotations
-	finalTransformations->update();
-}
-
 void BoundingVolume::fromTransformations(Transformations* transformations) {
-	Transformations finalTransformations;
-	applyInverseLocalTransformations(transformations, &finalTransformations);
-	auto& transformationsMatrix = finalTransformations.getTransformationsMatrix();
+	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	collisionShape->setLocalScaling(reactphysics3d::Vector3(transformations->getScale().getX(), transformations->getScale().getY(), transformations->getScale().getZ()));
 	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
 	computeBoundingBox();

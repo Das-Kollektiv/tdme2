@@ -80,7 +80,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
 		getRigidBody()->getMaterial().setBounciness(restitution);
 		getRigidBody()->setMass(mass);
-		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform(), mass);
+		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
 		this->proxyShape->setCollideWithMaskBits(~typeId);
 		Transformations terrainTransformations;
 		terrainTransformations.getTranslation().set(positionTransformed.getX(), positionTransformed.getY(), positionTransformed.getZ());
@@ -117,7 +117,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
 		getRigidBody()->getMaterial().setBounciness(restitution);
 		getRigidBody()->setMass(mass);
-		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform(), mass);
+		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
 		this->proxyShape->setCollideWithMaskBits(~0);
 		fromTransformations(transformations);
 	}
@@ -288,10 +288,6 @@ void RigidBody::fromTransformations(Transformations* transformations)
 	}
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
-	// inverse transformations is used in physics engine
-	Transformations inverseTransformations;
-	// apply local obv transformations like moving center to 0/0/0
-	this->boundingVolume->applyInverseLocalTransformations(transformations, &inverseTransformations);
 	// obv
 	boundingVolume->collisionShape->setLocalScaling(
 		reactphysics3d::Vector3(
@@ -301,7 +297,7 @@ void RigidBody::fromTransformations(Transformations* transformations)
 		)
 	);
 	// rigig body transform
-	auto& transformationsMatrix = inverseTransformations.getTransformationsMatrix();
+	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 	reactphysics3d::Transform transform;
 	transform.setFromOpenGL(transformationsMatrix.getArray().data());
 	auto rigidBody = getRigidBody();

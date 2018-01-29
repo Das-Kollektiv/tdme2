@@ -17,6 +17,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
+#include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/math/MathTools.h>
@@ -143,7 +144,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	// vertices
 	vector<Vector3> vertices;
-	for (auto& vertex : *orientedBoundingBox->getVertices()) {
+	for (auto& vertex : orientedBoundingBox->getVertices()) {
 		vertices.push_back(transformVector3(orientedBoundingBox, toRP3DVector3(vertex)));
 	}
 	// normals
@@ -158,23 +159,23 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// faces
 	vector<Face> faces;
 	//	left
-	faces.push_back(Face(group, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
-	faces.push_back(Face(group, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
+	faces.push_back(Face(group, fvi[0][0], fvi[0][1], fvi[0][2], 0, 0, 0));
+	faces.push_back(Face(group, fvi[1][0], fvi[1][1], fvi[1][2], 0, 0, 0));
 	//	right
-	faces.push_back(Face(group, (*fvi)[2][0], (*fvi)[2][1], (*fvi)[2][2], 1, 1, 1));
-	faces.push_back(Face(group, (*fvi)[3][0], (*fvi)[3][1], (*fvi)[3][2], 1, 1, 1));
+	faces.push_back(Face(group, fvi[2][0], fvi[2][1], fvi[2][2], 1, 1, 1));
+	faces.push_back(Face(group, fvi[3][0], fvi[3][1], fvi[3][2], 1, 1, 1));
 	//	top
-	faces.push_back(Face(group, (*fvi)[4][0], (*fvi)[4][1], (*fvi)[4][2], 2, 2, 2));
-	faces.push_back(Face(group, (*fvi)[5][0], (*fvi)[5][1], (*fvi)[5][2], 2, 2, 2));
+	faces.push_back(Face(group, fvi[4][0], fvi[4][1], fvi[4][2], 2, 2, 2));
+	faces.push_back(Face(group, fvi[5][0], fvi[5][1], fvi[5][2], 2, 2, 2));
 	//	bottom
-	faces.push_back(Face(group, (*fvi)[6][0], (*fvi)[6][1], (*fvi)[6][2], 3, 3, 3));
-	faces.push_back(Face(group, (*fvi)[7][0], (*fvi)[7][1], (*fvi)[7][2], 3, 3, 3));
+	faces.push_back(Face(group, fvi[6][0], fvi[6][1], fvi[6][2], 3, 3, 3));
+	faces.push_back(Face(group, fvi[7][0], fvi[7][1], fvi[7][2], 3, 3, 3));
 	//	near
-	faces.push_back(Face(group, (*fvi)[8][0], (*fvi)[8][1], (*fvi)[8][2], 4, 4, 4));
-	faces.push_back(Face(group, (*fvi)[9][0], (*fvi)[9][1], (*fvi)[9][2], 4, 4, 4));
+	faces.push_back(Face(group, fvi[8][0], fvi[8][1], fvi[8][2], 4, 4, 4));
+	faces.push_back(Face(group, fvi[9][0], fvi[9][1], fvi[9][2], 4, 4, 4));
 	//	far
-	faces.push_back(Face(group, (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5));
-	faces.push_back(Face(group, (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5));
+	faces.push_back(Face(group, fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5));
+	faces.push_back(Face(group, fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5));
 	// faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);

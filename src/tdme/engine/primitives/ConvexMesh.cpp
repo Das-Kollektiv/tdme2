@@ -22,7 +22,6 @@ using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 
 ConvexMesh::ConvexMesh()
 {
@@ -31,18 +30,25 @@ ConvexMesh::ConvexMesh()
 ConvexMesh::ConvexMesh(Object3DModel* model)
 {
 	vector<Triangle> triangles;
-	vector<int> indices;
 	model->getFaceTriangles(&triangles);
-	int vertexIdx = 0;
 	for (auto& triangle: triangles) {
 		for (auto& vertex: *triangle.getVertices()) {
-			vertices.push_back(vertex);
-			indices.push_back(vertexIdx++);
+			int vertexIdx = 0;
+			for (auto& vertexExisting: vertices) {
+				if (vertexExisting.equals(vertex) == true) {
+					break;
+				}
+				vertexIdx++;
+			}
+			if (vertexIdx == vertices.size()) {
+				vertices.push_back(vertex);
+			}
+			indices.push_back(vertexIdx);
 		}
 	}
 
 	// create convex mesh
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, indices);
+	createConvexMesh(vertices, indices);
 }
 
 ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& indices) {
@@ -50,7 +56,7 @@ ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& indic
 	this->indices = indices;
 
 	// create convex mesh
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, indices);
+	createConvexMesh(vertices, indices);
 }
 
 BoundingVolume* ConvexMesh::clone() const

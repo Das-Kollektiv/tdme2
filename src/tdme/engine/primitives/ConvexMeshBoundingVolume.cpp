@@ -14,12 +14,11 @@
 
 using tdme::engine::primitives::ConvexMeshBoundingVolume;
 
-using std::string;
-using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::utils::ByteBuffer;
+using tdme::utils::Console;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 
@@ -31,17 +30,22 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 
+	Vector3 collisionShapeLocalTranslation;
 	// check if local translation is given
 	if (haveLocalTranslation == true) {
 		collisionShapeLocalTranslation.set(localTranslation);
 	} else {
 		// determine center/position transformed
 		collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
-		for (auto& vertex: vertices) {
+		for (auto vertexIdx: indices) {
+			auto& vertex = vertices[vertexIdx];
 			collisionShapeLocalTranslation.add(vertex);
 		}
-		collisionShapeLocalTranslation.scale(1.0f / vertices.size());
+		collisionShapeLocalTranslation.scale(1.0f / indices.size());
 	}
+
+	// local transformations
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 
 	// generate vertices and indices buffers
 	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
@@ -57,10 +61,11 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 	for (auto& index: indices) {
 		indicesBuffer.put(index);
 	}
+	faces.clear();
 	for (auto i = 0; i < indices.size() / 3; i++) {
 		reactphysics3d::PolygonVertexArray::PolygonFace face;
-		face.indexBase = i * 3;
 		face.nbVertices = 3;
+		face.indexBase = i * 3;
 		faces.push_back(face);
 	}
 	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(

@@ -3,11 +3,12 @@
 #include <array>
 #include <vector>
 
+#include <ext/reactphysics3d/src/collision/shapes/BoxShape.h>
+
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
-using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -43,9 +44,23 @@ OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& a
 	this->axes[1].set(axis1);
 	this->axes[2].set(axis2);
 	this->halfExtension.set(halfExtension);
-	this->vertices.resize(8);
-	createVertices();
-	createConvexMesh();
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
+	collisionShapeLocalTransform.setOrientation(
+		reactphysics3d::Quaternion(
+			reactphysics3d::Matrix3x3(
+				this->axes[0].getX(),
+				this->axes[0].getY(),
+				this->axes[0].getZ(),
+				this->axes[1].getX(),
+				this->axes[1].getY(),
+				this->axes[1].getZ(),
+				this->axes[2].getX(),
+				this->axes[2].getY(),
+				this->axes[2].getZ()
+			)
+		)
+	);
+	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
 }
 
 OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
@@ -55,9 +70,23 @@ OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 	this->axes[0].set(AABB_AXIS_X);
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
-	this->vertices.resize(8);
-	createVertices();
-	createConvexMesh();
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
+	collisionShapeLocalTransform.setOrientation(
+		reactphysics3d::Quaternion(
+			reactphysics3d::Matrix3x3(
+				this->axes[0].getX(),
+				this->axes[0].getY(),
+				this->axes[0].getZ(),
+				this->axes[1].getX(),
+				this->axes[1].getY(),
+				this->axes[1].getZ(),
+				this->axes[2].getX(),
+				this->axes[2].getY(),
+				this->axes[2].getZ()
+			)
+		)
+	);
+	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
 }
 
 OrientedBoundingBox::OrientedBoundingBox() 
@@ -67,12 +96,27 @@ OrientedBoundingBox::OrientedBoundingBox()
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
 	this->halfExtension.set(0.0f, 0.0f, 0.0f);
-	this->vertices.resize(8);
-	createVertices();
-	createConvexMesh();
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
+	collisionShapeLocalTransform.setOrientation(
+		reactphysics3d::Quaternion(
+			reactphysics3d::Matrix3x3(
+				this->axes[0].getX(),
+				this->axes[0].getY(),
+				this->axes[0].getZ(),
+				this->axes[1].getX(),
+				this->axes[1].getY(),
+				this->axes[1].getZ(),
+				this->axes[2].getX(),
+				this->axes[2].getY(),
+				this->axes[2].getZ()
+			)
+		)
+	);
+	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
 }
 
-void OrientedBoundingBox::createVertices() {
+const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
+	array<Vector3, 8> vertices;
 	Vector3 axis;
 	auto& halfExtensionXYZ = halfExtension.getArray();
 	// just for my imagination
@@ -123,18 +167,15 @@ void OrientedBoundingBox::createVertices() {
 	vertices[7].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[7].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[7].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
+	//
+	return vertices;
 }
 
-void OrientedBoundingBox::createConvexMesh() {
-	vector<int> indices;
-	for (auto& fvi: facesVerticesIndexes) {
-		indices.push_back(fvi[0]);
-		indices.push_back(fvi[1]);
-		indices.push_back(fvi[2]);
-	}
-
-	// create convex mesh
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, indices, true, center);
+/**
+ * @return faces vertices indexes
+ */
+const array<array<int32_t,3>,12>& OrientedBoundingBox::getFacesVerticesIndexes() {
+	return facesVerticesIndexes;
 }
 
 const Vector3& OrientedBoundingBox::getCenter() const

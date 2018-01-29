@@ -34,8 +34,8 @@ class tdme::engine::primitives::BoundingVolume
 	friend class PrimitiveModel;
 
 protected:
-	Vector3 collisionShapeLocalTranslation;
 	reactphysics3d::CollisionShape* collisionShape {  };
+	reactphysics3d::Transform collisionShapeLocalTransform {  };
 	reactphysics3d::Transform collisionShapeTransform {  };
 	reactphysics3d::AABB collisionShapeAABB {  };
 	BoundingBox boundingBoxTransformed {  };
@@ -47,20 +47,6 @@ protected:
 	void computeBoundingBox();
 
 public:
-
-	/**
-	 * Apply local transformations
-	 * @param transformations
-	 * @param final transformations
-	 */
-	virtual void applyLocalTransformations(Transformations* transformations, Transformations* finalTransformations);
-
-	/**
-	 * Apply inverse local transformations
-	 * @param transformations
-	 * @param final transformations
-	 */
-	virtual void applyInverseLocalTransformations(Transformations* transformations, Transformations* finalTransformations);
 
 	/** 
 	 * Transform bounding volume from given transformations

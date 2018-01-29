@@ -191,7 +191,7 @@ void PhysicsTest1::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STATIC, entity, side, 0.5f);
-	auto box = new OrientedBoundingBox(Vector3(0.0f, 2.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f));
+	auto box = new OrientedBoundingBox(Vector3(0.0f, 5.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f));
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
@@ -214,7 +214,7 @@ void PhysicsTest1::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_DYNAMIC, entity, box, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto sphere = new Sphere(Vector3(0.0f, 2.0f, 0.0f), 0.5f);
+	auto sphere = new Sphere(Vector3(0.0f, 4.0f, 0.0f), 0.5f);
 	auto sphereModel = PrimitiveModel::createModel(sphere, "sphere_model");
 	(*sphereModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.5f, 0.8f, 0.8f, 1.0f);
 	(*sphereModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(0.0f, 1.0f, 1.0f, 1.0f);
@@ -228,7 +228,7 @@ void PhysicsTest1::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto capsule = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f);
+	auto capsule = new Capsule(Vector3(0.0f, 3.0f, 0.0f), Vector3(0.0f, 4.0f, 0.0f), 0.25f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, "capsule_model");
 	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.0f, 0.8f, 1.0f);
 	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 1.0f, 1.0f);
@@ -266,7 +266,7 @@ void PhysicsTest1::initialize()
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		entity = new Object3D("barrel1", _barrel);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getTranslation().addY(5.0f);
+		entity->getTranslation().addY(10.0f);
 		entity->getTranslation().addX(+4.0f);
 		entity->getScale().set(2.0f, 2.0f, 2.0f);
 		entity->update();
