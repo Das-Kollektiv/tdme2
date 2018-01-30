@@ -59,7 +59,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross));
 	// What is best threshold here?
-	return Math::abs(v1Dotv2v3Cross) < MathTools::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < 0.001f; // MathTools::EPSILON;
 }
 
 ConvexMesh::ConvexMesh(Object3DModel* model)
@@ -177,6 +177,9 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 				}
 			}
 		}
+
+		// add face
+		facesVerticesCount.push_back(polygonVerticesOrdered.size());
 
 		// reverse if we want counter clockwise order
 		// reverse(std::begin(polygonVerticesOrdered), std::end(polygonVerticesOrdered));
