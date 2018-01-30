@@ -39,11 +39,12 @@ protected:
 	 * Create convex mesh
 	 * 	Note: it also translates center into origin
 	 * @param vertices
+	 * @param faces vertices count
 	 * @param indices
 	 * @param have local translation
 	 * @param local translation
 	 */
-	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& indices, bool haveLocalTranslation = false, const Vector3& localTranslation = Vector3());
+	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, bool haveLocalTranslation = false, const Vector3& localTranslation = Vector3());
 
 	/**
 	 * Destructor

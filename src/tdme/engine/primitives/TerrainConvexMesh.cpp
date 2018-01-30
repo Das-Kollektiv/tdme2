@@ -139,6 +139,7 @@ void TerrainConvexMesh::createConvexMesh() {
 
 	// create convex mesh shape
 	vector<Vector3> vertices;
+	vector<int> facesVerticesCount;
 	vector<int> indices;
 	int vertexIdx = 0;
 	Vector3 vertexTransformed;
@@ -149,10 +150,11 @@ void TerrainConvexMesh::createConvexMesh() {
 			vertices.push_back(vertexTransformed);
 			indices.push_back(vertexIdx++);
 		}
+		facesVerticesCount.push_back(3);
 	}
 
 	//
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, indices);
+	ConvexMeshBoundingVolume::createConvexMesh(vertices, facesVerticesCount, indices);
 }
 
 void TerrainConvexMesh::applyTransformations(Transformations* transformations) {

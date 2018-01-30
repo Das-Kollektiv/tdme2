@@ -35,7 +35,7 @@ public:
 	 * @param vertices
 	 * @return vertex order
 	 */
-	static ModelHelper_VertexOrder* determineVertexOrder(array<Vector3,3>* vertices);
+	static ModelHelper_VertexOrder* determineVertexOrder(const vector<Vector3>& vertices);
 
 	/** 
 	 * Computes face normal for given face vertices

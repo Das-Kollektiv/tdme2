@@ -22,7 +22,7 @@ using tdme::utils::Console;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 
-void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& indices, bool haveLocalTranslation, const Vector3& localTranslation) {
+void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, bool haveLocalTranslation, const Vector3& localTranslation) {
 	// delete old collision shape if we have any
 	if (collisionShape != nullptr) delete collisionShape;
 	if (polyhedronMesh != nullptr) delete polyhedronMesh;
@@ -62,11 +62,13 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 		indicesBuffer.put(index);
 	}
 	faces.clear();
-	for (auto i = 0; i < indices.size() / 3; i++) {
+	int indexIdx = 0;
+	for (auto faceVerticesCount: facesVerticesCount) {
 		reactphysics3d::PolygonVertexArray::PolygonFace face;
-		face.nbVertices = 3;
-		face.indexBase = i * 3;
+		face.nbVertices = faceVerticesCount;
+		face.indexBase = indexIdx;
 		faces.push_back(face);
+		indexIdx+= faceVerticesCount;
 	}
 	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
 		vertices.size(),

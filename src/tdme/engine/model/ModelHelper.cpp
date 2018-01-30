@@ -41,14 +41,14 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
+ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(const vector<Vector3>& vertices)
 {
 	auto edgeSum = 0;
-	for (auto i = 0; i < vertices->size(); i++) {
-		auto currentVertexXYZ = (*vertices)[i].getArray();
-		auto nextVertexXYZ = (*vertices)[(i + 1) % vertices->size()].getArray();
+	for (auto i = 0; i < vertices.size(); i++) {
+		auto& currentVertexXYZ = vertices[i].getArray();
+		auto& nextVertexXYZ = vertices[(i + 1) % vertices.size()].getArray();
 		edgeSum +=
-			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[0]);
+			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[2]);
 	}
 	if (edgeSum >= 0) {
 		return ModelHelper_VertexOrder::CLOCKWISE;
