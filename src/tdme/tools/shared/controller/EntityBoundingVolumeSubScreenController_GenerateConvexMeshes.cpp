@@ -186,10 +186,10 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 			meshTriangles.push_back(meshPoints.size() / 3 + 0);
 			meshTriangles.push_back(meshPoints.size() / 3 + 1);
 			meshTriangles.push_back(meshPoints.size() / 3 + 2);
-			for (auto i = 0; i < triangle.getVertices()->size(); i++) {
-				meshPoints.push_back((*triangle.getVertices())[i].getX());
-				meshPoints.push_back((*triangle.getVertices())[i].getY());
-				meshPoints.push_back((*triangle.getVertices())[i].getZ());
+			for (auto i = 0; i < triangle.getVertices().size(); i++) {
+				meshPoints.push_back(triangle.getVertices()[i].getX());
+				meshPoints.push_back(triangle.getVertices()[i].getY());
+				meshPoints.push_back(triangle.getVertices()[i].getZ());
 			}
 		}
 		delete meshModel;

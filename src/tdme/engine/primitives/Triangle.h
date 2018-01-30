@@ -20,8 +20,8 @@ public:
 	/** 
 	 * @return triangle vertices
 	 */
-	inline vector<Vector3>* getVertices() {
-		return &vertices;
+	inline vector<Vector3>& getVertices() {
+		return vertices;
 	}
 
 	/**

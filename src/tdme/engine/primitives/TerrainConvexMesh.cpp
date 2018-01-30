@@ -81,9 +81,9 @@ void TerrainConvexMesh::createConvexMesh() {
 	Vector3 triangleVertex0Bottom;
 	Vector3 triangleVertex1Bottom;
 	Vector3 triangleVertex2Bottom;
-	Vector3 triangleVertex0Top = (*triangles[triangleIdx].getVertices())[0];
-	Vector3 triangleVertex1Top = (*triangles[triangleIdx].getVertices())[1];
-	Vector3 triangleVertex2Top = (*triangles[triangleIdx].getVertices())[2];
+	Vector3 triangleVertex0Top = triangles[triangleIdx].getVertices()[0];
+	Vector3 triangleVertex1Top = triangles[triangleIdx].getVertices()[1];
+	Vector3 triangleVertex2Top = triangles[triangleIdx].getVertices()[2];
 	triangleIdx++;
 
 	triangleVertex0Bottom.set(triangleVertex0Top).addY(-height);
@@ -91,46 +91,46 @@ void TerrainConvexMesh::createConvexMesh() {
 	triangleVertex2Bottom.set(triangleVertex2Top).addY(-height);
 
 	// set up triangle on bottom
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex0Top).addY(-height);
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Top).addY(-height);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Top).addY(-height);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top).addY(-height);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top).addY(-height);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Top).addY(-height);
 	triangleIdx++;
 
 	// add bottom top triangles
 	//	vertices 0, 2
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex0Top);
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex2Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
 	triangleIdx++;
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Bottom);
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Bottom);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
 	triangleIdx++;
 
 	//	vertices 0, 1
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Top);
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex1Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Top);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
 	triangleIdx++;
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex0Bottom);
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex1Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex1Bottom);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
 	triangleIdx++;
 
 	//	vertices 1, 2
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Top);
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex1Bottom);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
 	triangleIdx++;
-	(*triangles[triangleIdx].getVertices())[1].set(triangleVertex1Bottom);
-	(*triangles[triangleIdx].getVertices())[0].set(triangleVertex2Top);
-	(*triangles[triangleIdx].getVertices())[2].set(triangleVertex2Bottom);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
 	triangleIdx++;
 
 	// center
 	Vector3 center;
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) {
+		for (auto& vertex: triangle.getVertices()) {
 			center.add(vertex);
 		}
 	}
@@ -143,7 +143,7 @@ void TerrainConvexMesh::createConvexMesh() {
 	int vertexIdx = 0;
 	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) {
+		for (auto& vertex: triangle.getVertices()) {
 			vertexTransformed.set(vertex);
 			vertexTransformed.sub(center);
 			vertices.push_back(vertexTransformed);
@@ -158,7 +158,7 @@ void TerrainConvexMesh::createConvexMesh() {
 void TerrainConvexMesh::applyTransformations(Transformations* transformations) {
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
 	triangleTransformed = triangle;
-	for (auto& vertex: *triangleTransformed.getVertices()) {
+	for (auto& vertex: triangleTransformed.getVertices()) {
 		transformationsMatrix.multiply(vertex, vertex);
 	}
 	createConvexMesh();

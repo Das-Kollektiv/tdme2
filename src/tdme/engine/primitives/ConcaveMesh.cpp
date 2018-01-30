@@ -37,7 +37,7 @@ ConcaveMesh::ConcaveMesh(Object3DModel* model, Transformations* transformations)
 	if (transformations != nullptr) {
 		auto& transformationsMatrix = transformations->getTransformationsMatrix();
 		for (auto& triangle: triangles) {
-			for (auto& vertex: *triangle.getVertices()) {
+			for (auto& vertex: triangle.getVertices()) {
 				transformationsMatrix.multiply(vertex, vertex);
 			}
 		}
@@ -49,7 +49,7 @@ ConcaveMesh::ConcaveMesh(Object3DModel* model, Transformations* transformations)
 	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
 	int vertexIdx = 0;
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) {
+		for (auto& vertex: triangle.getVertices()) {
 			verticesBuffer.put(vertex.getArray());
 			indicesBuffer.put(vertexIdx++);
 		}

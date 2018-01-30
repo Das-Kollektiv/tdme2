@@ -33,7 +33,7 @@ HeightField::HeightField(Object3DModel* model, Transformations* transformations)
 	if (transformations != nullptr) {
 		auto& transformationsMatrix = transformations->getTransformationsMatrix();
 		for (auto& triangle: triangles) {
-			for (auto& vertex: *triangle.getVertices()) {
+			for (auto& vertex: triangle.getVertices()) {
 				transformationsMatrix.multiply(vertex, vertex);
 			}
 		}
@@ -42,14 +42,14 @@ HeightField::HeightField(Object3DModel* model, Transformations* transformations)
 	// center
 	Vector3 center;
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) center.add(vertex);
+		for (auto& vertex: triangle.getVertices()) center.add(vertex);
 	}
 	center.scale(1.0f / (triangles.size() * 3));
 
 	Vector3 bbMin = center;
 	Vector3 bbMax = center;
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) {
+		for (auto& vertex: triangle.getVertices()) {
 			if (vertex.getX() < bbMin.getX()) bbMin.setX(vertex.getX());
 			if (vertex.getY() < bbMin.getY()) bbMin.setY(vertex.getY());
 			if (vertex.getZ() < bbMin.getZ()) bbMin.setZ(vertex.getZ());

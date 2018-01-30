@@ -1,6 +1,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 
 #include <array>
+#include <string>
 #include <vector>
 
 #include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
@@ -14,6 +15,8 @@
 #include <tdme/utils/Console.h>
 
 using std::array;
+using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
@@ -32,7 +35,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	vector<Triangle> triangles;
 	model->getFaceTriangles(&triangles);
 	for (auto& triangle: triangles) {
-		for (auto& vertex: *triangle.getVertices()) {
+		for (auto& vertex: triangle.getVertices()) {
 			int vertexIdx = 0;
 			for (auto& vertexExisting: vertices) {
 				if (vertexExisting.equals(vertex) == true) {
@@ -46,7 +49,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 			indices.push_back(vertexIdx);
 		}
 	}
-
 	// create convex mesh
 	createConvexMesh(vertices, indices);
 }
