@@ -11,8 +11,6 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/ModelHelper.h>
-#include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Math.h>
@@ -34,8 +32,6 @@ using std::vector;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
-using tdme::engine::model::ModelHelper;
-using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
@@ -120,12 +116,25 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 			}
 		}
 
+		// determine polygon center
+		Vector3 polygonCenter;
+		for (auto& polygonVertex: polygonVertices) {
+			polygonCenter.add(polygonVertex);
+		}
+		polygonCenter.scale(1.0f / polygonVertices.size());
+
 		// determine polygon vertices order
 		vector<int> polygonVerticesOrdered;
-		// add vertices of first triangles which should always be in clockwise order
+		// add first vertex
 		polygonVerticesOrdered.push_back(0);
-		polygonVerticesOrdered.push_back(1);
-		polygonVerticesOrdered.push_back(2);
+
+		// plane normal
+		Vector3 triangle1Edge1;
+		Vector3 triangle1Edge2;
+		Vector3 polygonNormal;
+		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]);
+		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]);
+		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
 
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
@@ -134,9 +143,8 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 		while (polygonVerticesOrdered.size() != polygonVertices.size()) {
 			auto& polygonVerticesOrderedLast = polygonVertices[polygonVerticesOrdered[polygonVerticesOrdered.size() - 1]];
 			// iterate polygon vertices to find next match to last vertex
-			bool hitFound = false;
 			vector<int> hitVerticesNoMatch;
-			while (hitFound == false) {
+			while (true == true) {
 				// find next closest vertex
 				float hitVertexMinDistance;
 				float hitVertexIdx = -1;
@@ -156,21 +164,20 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 				// exit if no hit was found, should never happen
 				if (hitVertexIdx == -1) return;
 
-				// collect current ordered vertices
-				vector<Vector3> vertexOrderVertices;
-				for (auto polygonVerticesOrderedIdx: polygonVerticesOrdered) {
-					vertexOrderVertices.push_back(polygonVertices[polygonVerticesOrderedIdx]);
-				}
-				// and add current next hit
-				vertexOrderVertices.push_back(polygonVertices[hitVertexIdx]);
-
-				// determine order
-				auto vertexOrder = ModelHelper::determineVertexOrder(vertexOrderVertices);
-
-				// if we have clockwise order everything is ok and we found a hit
-				if (vertexOrder == ModelHelper_VertexOrder::CLOCKWISE) {
-					hitFound = true;
+				// vertex order
+				// 	https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
+				auto& polygonVertexHit = polygonVertices[hitVertexIdx];
+				Vector3 ac;
+				Vector3 bc;
+				Vector3 acbcCross;
+				ac.set(polygonVerticesOrderedLast).sub(polygonCenter);
+				bc.set(polygonVertexHit).sub(polygonCenter);
+				Vector3::computeCrossProduct(ac, bc, acbcCross);
+				// counter clockwise???
+				if (Vector3::computeDotProduct(polygonNormal, acbcCross) < 0.0f) {
+					// yep
 					polygonVerticesOrdered.push_back(hitVertexIdx);
+					break;
 				} else {
 					// otherwise add to list of no matches
 					hitVerticesNoMatch.push_back(hitVertexIdx);
@@ -182,7 +189,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 		facesVerticesCount.push_back(polygonVerticesOrdered.size());
 
 		// reverse if we want counter clockwise order
-		// reverse(std::begin(polygonVerticesOrdered), std::end(polygonVerticesOrdered));
 		for (auto polygonVerticesOrderedIdx: polygonVerticesOrdered) {
 			// polygon vertex
 			auto& polygonVertex = polygonVertices[polygonVerticesOrderedIdx];
