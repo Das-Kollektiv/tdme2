@@ -23,7 +23,6 @@ using tdme::math::Vector3;
  */
 class tdme::audio::Audio final
 {
-	friend class Audio;
 	friend class AudioBufferManager;
 	friend class AudioStream;
 	friend class Sound;

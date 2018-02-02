@@ -1,5 +1,7 @@
 #if defined(__linux__)
-	#include <GL/glew.h>
+	#if !defined(__arm__) and !defined(__aarch64__)
+		#include <GL/glew.h>
+	#endif
 	#include <GL/freeglut.h>
 #elif defined(__APPLE__)
 	#include <GLUT/glut.h>
@@ -83,7 +85,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow((title).c_str());
-#if defined(_WIN32) or defined(__linux__)
+#if defined(_WIN32) or (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__))
 	glewExperimental = true;
 	GLenum glewInitStatus = glewInit();
 	if (glewInitStatus != GLEW_OK) {

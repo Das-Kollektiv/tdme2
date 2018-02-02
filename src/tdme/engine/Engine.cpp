@@ -1,6 +1,6 @@
 #include <tdme/engine/Engine.h>
 
-#if defined(__linux__) or defined(_WIN32)
+#if (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	#include <GL/glew.h>
 #endif
 

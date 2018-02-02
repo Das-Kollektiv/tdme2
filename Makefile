@@ -26,6 +26,12 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+	else ifeq ($(ARCH), armv7l)
+		# Linux, ARM64
+		SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/engine/EngineGLES2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, any other
 		SRC_PLATFORM:= $(SRC_PLATFORM) \
