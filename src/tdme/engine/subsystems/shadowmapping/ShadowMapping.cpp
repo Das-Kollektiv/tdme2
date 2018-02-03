@@ -252,13 +252,13 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 	// upload
 	{
 		auto v = runState;
-		if ((v == ShadowMapping_RunState::PRE)) {
+		if (v == ShadowMapping_RunState::PRE) {
 			{
 				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(mvpMatrix);
 				goto end_switch0;;
 			}
-		}
-		if ((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER)) {
+		} else
+		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				auto shader = Engine::getShadowMappingShaderRender();
 				shader->setProgramMVMatrix(mvMatrix);
@@ -266,8 +266,7 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 				shader->setProgramNormalMatrix(normalMatrix);
 				goto end_switch0;;
 			}
-		}
-		if (((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER) || ((v != ShadowMapping_RunState::PRE) && (v != ShadowMapping_RunState::RENDER)))) {
+		} else {
 			{
 				Console::println(string("ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_string(runState)));
 				goto end_switch0;;
@@ -288,7 +287,7 @@ void ShadowMapping::updateMaterial(GLRenderer* renderer) {
 				Engine::getShadowMappingShaderPre()->updateMaterial(renderer);
 				goto end_switch0;;
 			}
-		}
+		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				Engine::getShadowMappingShaderRender()->updateMaterial(renderer);
@@ -309,7 +308,7 @@ void ShadowMapping::bindTexture(GLRenderer* renderer, int32_t textureId) {
 				Engine::getShadowMappingShaderPre()->bindTexture(renderer, textureId);
 				goto end_switch0;;
 			}
-		}
+		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				Engine::getShadowMappingShaderRender()->bindTexture(renderer, textureId);

@@ -1095,15 +1095,15 @@ void CollisionDetection::computeHitPoints(OrientedBoundingBox* obb1, OrientedBou
 			{
 				{
 					auto v = tritriReturn;
-					if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
+					if (v == TriangleTriangleIntersection::NOINTERSECTION) {
 						goto end_switch0;;
-					}
-					if ((v == TriangleTriangleIntersection::INTERSECTION)) {
+					} else
+					if (v == TriangleTriangleIntersection::INTERSECTION) {
 						collisionEntity->addHitPoint(hitPointTriangle1);
 						collisionEntity->addHitPoint(hitPointTriangle2);
 						goto end_switch0;;
-					}
-					if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
+					} else
+					if (v == TriangleTriangleIntersection::COPLANAR_INTERSECTION) {
 						Triangle triangle1;
 						Triangle triangle2;
 						auto _triangle1Vertices = triangle1.getVertices();
@@ -1148,15 +1148,15 @@ void CollisionDetection::computeHitPoints(Triangle* triangle, OrientedBoundingBo
 		{
 			{
 				auto v = tritriReturn;
-				if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
+				if (v == TriangleTriangleIntersection::NOINTERSECTION) {
 					goto end_switch1;;
-				}
-				if ((v == TriangleTriangleIntersection::INTERSECTION)) {
+				} else
+				if (v == TriangleTriangleIntersection::INTERSECTION) {
 					collisionEntity->addHitPoint(hitPointTriangle1);
 					collisionEntity->addHitPoint(hitPointTriangle2);
 					goto end_switch1;;
-				}
-				if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
+				} else
+				if (v == TriangleTriangleIntersection::COPLANAR_INTERSECTION) {
 					Triangle triangle1;
 					Triangle triangle2;
 					auto _triangle1Vertices = triangle1.getVertices();
@@ -1198,15 +1198,15 @@ void CollisionDetection::computeHitPoints(Triangle* triangle1, Triangle* triangl
 	{
 		{
 			auto v = tritriReturn;
-			if ((v == TriangleTriangleIntersection::NOINTERSECTION)) {
+			if (v == TriangleTriangleIntersection::NOINTERSECTION) {
 				goto end_switch2;;
-			}
-			if ((v == TriangleTriangleIntersection::INTERSECTION)) {
+			} else
+			if (v == TriangleTriangleIntersection::INTERSECTION) {
 				collisionEntity->addHitPoint(hitPointTriangle1);
 				collisionEntity->addHitPoint(hitPointTriangle2);
 				goto end_switch2;;
-			}
-			if ((v == TriangleTriangleIntersection::COPLANAR_INTERSECTION)) {
+			} else
+			if (v == TriangleTriangleIntersection::COPLANAR_INTERSECTION) {
 				computeCoplanarTrianglesHitPoints(triangle1, triangle2, collisionEntity);
 				goto end_switch2;;
 			}
