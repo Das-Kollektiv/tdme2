@@ -28,7 +28,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -82,7 +82,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -266,7 +266,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
 		entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
+			entity->getScale().set(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ()));
 		}
 		entity->update();
 		entity->setEnabled(enable);
@@ -358,7 +358,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 		entity->fromTransformations(object->getTransformations());
 		entity->getTranslation().add(translation);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
+			entity->getScale().set(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ()));
 		}
 		entity->update();
 		entity->setEnabled(true);

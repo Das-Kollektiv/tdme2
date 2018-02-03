@@ -34,7 +34,7 @@
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector3.h>
@@ -79,7 +79,7 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
@@ -397,7 +397,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 					Object3DGroup::setupTextures(renderer, _object3DGroup, faceEntityIdx);
 				}
 				//	check transparency via effect
-				if (object->effectColorMul.getAlpha() < 1.0f - MathTools::EPSILON || object->effectColorAdd.getAlpha() < -MathTools::EPSILON) {
+				if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON || object->effectColorAdd.getAlpha() < -Math::EPSILON) {
 					// add to transparent render faces, if requested
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(

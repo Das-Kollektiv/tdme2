@@ -1,9 +1,8 @@
 #include <tdme/engine/Camera.h>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -11,7 +10,6 @@ using tdme::engine::Camera;
 using tdme::math::Math;
 using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -91,7 +89,7 @@ void Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt, Vec
 	Vector3 tmpForward;
 	Vector3 tmpSide;
 	tmpForward.set(lookAt).sub(lookFrom).normalize();
-	if (Math::abs(tmpForward.getX()) < MathTools::EPSILON && Math::abs(tmpForward.getZ()) < MathTools::EPSILON) {
+	if (Math::abs(tmpForward.getX()) < Math::EPSILON && Math::abs(tmpForward.getZ()) < Math::EPSILON) {
 		upVector.set(0.0f, 0.0f, tmpForward.getY()).normalize();
 		return;
 	}

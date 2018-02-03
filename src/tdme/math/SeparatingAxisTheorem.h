@@ -5,7 +5,6 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
@@ -16,7 +15,6 @@ using tdme::math::SeparatingAxisTheorem;
 
 using tdme::math::Vector3;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::utils::Float;
 using tdme::utils::Console;
@@ -42,7 +40,7 @@ public:
 			return false;
 		}
 		// check if axis has no length
-		if (Math::abs(axisXYZ[0]) < MathTools::EPSILON && Math::abs(axisXYZ[1]) < MathTools::EPSILON && Math::abs(axisXYZ[2]) < MathTools::EPSILON) {
+		if (Math::abs(axisXYZ[0]) < Math::EPSILON && Math::abs(axisXYZ[1]) < Math::EPSILON && Math::abs(axisXYZ[2]) < Math::EPSILON) {
 			return false;
 		}
 		// valid

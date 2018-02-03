@@ -14,7 +14,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/SphereInternal.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/SeparatingAxisTheorem.h>
 #include <tdme/math/TriangleTriangleIntersection.h>
 #include <tdme/math/Vector3.h>
@@ -37,7 +37,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::SphereInternal;
 using tdme::engine::primitives::Triangle;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::SeparatingAxisTheorem;
 using tdme::math::TriangleTriangleIntersection;
 using tdme::math::Vector3;
@@ -97,7 +97,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, SphereInternal* sph
 	obb->computeClosestPointOnBoundingVolume(sphereCenter, closestPoint);
 	axis.set(sphereCenter).sub(closestPoint);
 	float distance;
-	if (axis.computeLength() < MathTools::EPSILON) {
+	if (axis.computeLength() < Math::EPSILON) {
 		Vector3 pointOnFaceNearest;
 		Vector3 pointOnFaceOpposite;
 		obb->computeNearestPointOnFaceBoundingVolume(closestPoint, pointOnFaceNearest);
@@ -404,7 +404,7 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, Sphere* sphere, con
 	obb->computeClosestPointOnBoundingVolume(sphereCenter, closestPoint);
 	axis.set(sphereCenter).sub(closestPoint);
 	float distance;
-	if (axis.computeLength() < MathTools::EPSILON) {
+	if (axis.computeLength() < Math::EPSILON) {
 		Vector3 pointOnFaceNearest;
 		Vector3 pointOnFaceOpposite;
 		obb->computeNearestPointOnFaceBoundingVolume(closestPoint, pointOnFaceNearest);
@@ -441,7 +441,7 @@ bool CollisionDetection::doCollide(Sphere* sphere, OrientedBoundingBox* obb, con
 	obb->computeClosestPointOnBoundingVolume(sphereCenter, closestPoint);
 	axis.set(closestPoint).sub(sphereCenter);
 	float distance;
-	if (axis.computeLength() < MathTools::EPSILON) {
+	if (axis.computeLength() < Math::EPSILON) {
 		Vector3 pointOnFaceNearest;
 		Vector3 pointOnFaceOpposite;
 		obb->computeNearestPointOnFaceBoundingVolume(closestPoint, pointOnFaceNearest);

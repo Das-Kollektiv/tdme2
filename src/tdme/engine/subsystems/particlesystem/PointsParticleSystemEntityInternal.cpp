@@ -16,7 +16,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -37,7 +37,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -184,8 +184,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			continue;
 		}
 		// add gravity if our particle have a noticeable mass
-		if (particle.mass > MathTools::EPSILON)
-			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+		if (particle.mass > Math::EPSILON)
+			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f);
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
@@ -298,8 +298,8 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 		// add gravity if our particle have a noticable mass, add translation
 		// add some movement with a min of 0 time delta and a max of engine time delta
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));
-		if (particle.mass > MathTools::EPSILON)
-			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
+		if (particle.mass > Math::EPSILON)
+			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
 		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));
 		//
 		particlesSpawned++;

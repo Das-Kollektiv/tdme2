@@ -12,7 +12,7 @@
 #include <tdme/engine/physics/Matrix6x6.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/physics/Vector6.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -30,7 +30,7 @@ using tdme::engine::physics::Matrix1x6;
 using tdme::engine::physics::Matrix6x6;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::Vector6;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
@@ -371,7 +371,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		return -1;
 	}
 	// set up rigid body A
-	if (rigidBodyA->linearVelocity.computeLength() > MathTools::EPSILON) {
+	if (rigidBodyA->linearVelocity.computeLength() > Math::EPSILON) {
 		auto y = rigidBodyA->linearVelocity.getY();
 		rigidBodyA->linearVelocity.normalize();
 		rigidBodyA->linearVelocity.scale(rigidBodyASpeed - rigidBodyBSpeed > 0.0f ? rigidBodyASpeed - rigidBodyBSpeed : 0.0f);
@@ -379,7 +379,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 	}
 	// set up rigid body B
 	auto rigidBodyB = rigidBodiesCurrentChain.at(rigidBodyBIdx);
-	if (rigidBodyB->linearVelocity.computeLength() > MathTools::EPSILON) {
+	if (rigidBodyB->linearVelocity.computeLength() > Math::EPSILON) {
 		auto y = rigidBodyB->linearVelocity.getY();
 		rigidBodyB->linearVelocity.normalize();
 		rigidBodyB->linearVelocity.scale(rigidBodyBSpeed - rigidBodyASpeed > 0.0f ? rigidBodyBSpeed - rigidBodyASpeed : 0.0f);

@@ -4,7 +4,6 @@
 #include <array>
 
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 
 using std::array;
 using std::begin;
@@ -13,7 +12,6 @@ using std::end;
 
 using tdme::engine::model::Color4Base;
 using tdme::math::Math;
-using tdme::math::MathTools;
 
 Color4Base::Color4Base() 
 {
@@ -115,9 +113,9 @@ array<float, 4>& Color4Base::getArray() const
 bool Color4Base::equals(const Color4Base& c) const
 {
 	return (this == &c) || (
-		Math::abs(data[0] - c.data[0]) < MathTools::EPSILON &&
-		Math::abs(data[1] - c.data[1]) < MathTools::EPSILON &&
-		Math::abs(data[2] - c.data[2]) < MathTools::EPSILON &&
-		Math::abs(data[3] - c.data[3]) < MathTools::EPSILON
+		Math::abs(data[0] - c.data[0]) < Math::EPSILON &&
+		Math::abs(data[1] - c.data[1]) < Math::EPSILON &&
+		Math::abs(data[2] - c.data[2]) < Math::EPSILON &&
+		Math::abs(data[3] - c.data[3]) < Math::EPSILON
 	);
 }

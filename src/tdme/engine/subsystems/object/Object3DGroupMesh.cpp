@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <tdme/math/Math.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
@@ -17,7 +16,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/object/ObjectBuffer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -26,7 +25,6 @@ using std::vector;
 using std::string;
 
 using tdme::engine::subsystems::object::Object3DGroupMesh;
-using tdme::math::Math;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
@@ -39,7 +37,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::object::ObjectBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -230,7 +228,7 @@ void Object3DGroupMesh::computeTransformations(Group* group)
 					totalWeights += weight;
 				}
 				// scale to full weight
-				if (Math::abs(totalWeights - 1.0f) > MathTools::EPSILON) {
+				if (Math::abs(totalWeights - 1.0f) > Math::EPSILON) {
 					weightNormalized = 1.0f / totalWeights;
 					// vertex
 					transformedVertex->scale(weightNormalized);

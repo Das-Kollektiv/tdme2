@@ -8,6 +8,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -176,7 +177,7 @@ float Sphere::computeDimensionOnAxis(const Vector3& axis) const
 void Sphere::update()
 {
 	if (convexMeshCenter.equals(center) == false ||
-		Math::abs(convexMeshRadius - radius) > MathTools::EPSILON) {
+		Math::abs(convexMeshRadius - radius) > Math::EPSILON) {
 		convexMeshCenter.set(center);
 		convexMeshRadius = radius;
 		createConvexMesh();

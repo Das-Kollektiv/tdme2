@@ -20,7 +20,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -50,7 +50,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -147,7 +147,7 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 	if (useAndInvertCollision == false) {
 		// determine collision movement
 		collisionMovement.set(rigidBody1->movement);
-		if (collisionMovement.computeLength() < MathTools::EPSILON) {
+		if (collisionMovement.computeLength() < Math::EPSILON) {
 			collisionMovement.set(rigidBody2->movement);
 			collisionMovement.scale(-1.0f);
 		}
@@ -179,7 +179,7 @@ void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<st
 
 void World::update(float deltaTime)
 {
-	if (deltaTime < MathTools::EPSILON) return;
+	if (deltaTime < Math::EPSILON) return;
 
 	// lazy initiate constraints solver
 	if (constraintsSolver == nullptr) {
@@ -207,7 +207,7 @@ void World::update(float deltaTime)
 			// add gravity
 			rigidBody->addForce(
 				worldPosForce.set(rigidBody->getPosition()).setY(10000.0f),
-				gravityForce.set(0.0f, -rigidBody->getMass() * MathTools::g, 0.0f)
+				gravityForce.set(0.0f, -rigidBody->getMass() * Math::g, 0.0f)
 			);
 		}
 	}

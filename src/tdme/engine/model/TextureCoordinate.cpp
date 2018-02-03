@@ -3,13 +3,11 @@
 #include <array>
 
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 
 using std::array;
 
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Math;
-using tdme::math::MathTools;
 
 TextureCoordinate::TextureCoordinate()
 {
@@ -57,8 +55,8 @@ bool TextureCoordinate::equals(const TextureCoordinate& textureCoordinate) const
 	return
 		this == &textureCoordinate ||
 		(
-			Math::abs(data[0] - textureCoordinate.data[0]) < MathTools::EPSILON &&
-			Math::abs(data[1] - textureCoordinate.data[1]) < MathTools::EPSILON
+			Math::abs(data[0] - textureCoordinate.data[0]) < Math::EPSILON &&
+			Math::abs(data[1] - textureCoordinate.data[1]) < Math::EPSILON
 		);
 }
 

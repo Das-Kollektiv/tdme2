@@ -3,7 +3,6 @@
 #include <array>
 #include <vector>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -12,7 +11,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -29,7 +28,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -351,8 +350,8 @@ bool OrientedBoundingBox::containsPoint(const Vector3& point) const
 	auto halfExtensionXYZ = halfExtension.getArray();
 	for (auto i = 0; i < axes.size(); i++) {
 		auto distance = Vector3::computeDotProduct(direction, axes[i]);
-		if (distance > 0.0f) distance += -MathTools::EPSILON;
-		if (distance < 0.0f) distance += +MathTools::EPSILON;
+		if (distance > 0.0f) distance += -Math::EPSILON;
+		if (distance < 0.0f) distance += +Math::EPSILON;
 		if (distance > halfExtensionXYZ[i]) return false;
 		if (distance < -halfExtensionXYZ[i]) return false;
 	}

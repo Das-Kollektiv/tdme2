@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
@@ -12,7 +11,7 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -23,7 +22,6 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::RigidBody;
-using tdme::math::Math;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
@@ -32,7 +30,7 @@ using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -220,7 +218,7 @@ float RigidBody::getMass()
 void RigidBody::setMass(float mass)
 {
 	this->mass = mass;
-	if (Math::abs(mass) < MathTools::EPSILON) {
+	if (Math::abs(mass) < Math::EPSILON) {
 		this->isStatic_ = true;
 		this->inverseMass = 0.0f;
 	} else {
@@ -280,7 +278,7 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 		return;
 
 	// check if we have any force to apply
-	if (force.computeLength() < MathTools::EPSILON)
+	if (force.computeLength() < Math::EPSILON)
 		return;
 
 	// unset sleeping
@@ -293,7 +291,7 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 	Vector3 distance;
 	Vector3 tmp;
 	distance.set(forceOrigin).sub(position);
-	if (distance.computeLength() < MathTools::EPSILON) {
+	if (distance.computeLength() < Math::EPSILON) {
 		Console::println(
 			string("RigidBody::addForce(): ") +
 			id +

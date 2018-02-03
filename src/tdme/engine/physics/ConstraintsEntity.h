@@ -50,7 +50,7 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::DynamicVector;
 using tdme::engine::physics::Matrix1x6;
 using tdme::engine::physics::RigidBody;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Float;
 
@@ -85,7 +85,7 @@ private:
 		this->rb1 = rb1;
 		this->rb2 = rb2;
 		//	see http://en.wikipedia.org/wiki/Friction#Coefficient_of_friction
-		muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * MathTools::g;
+		muMg = ((rb1->friction + rb2->friction) / 2.0f) * ((rb1->mass + rb2->mass) / 2.0f) * Math::g;
 		// our collision normal is the vector object a collides with object b
 		this->collision.getNormal()->scale(-1.0f);
 		// compute first friction vector

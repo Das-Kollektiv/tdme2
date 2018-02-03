@@ -1,7 +1,6 @@
 #include <tdme/engine/primitives/Capsule.h>
 
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -16,7 +15,6 @@
 using tdme::engine::primitives::Capsule;
 
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
@@ -52,7 +50,7 @@ void Capsule::createConvexMesh() {
 	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
+	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
 		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
@@ -171,7 +169,7 @@ void Capsule::update()
 {
 	if (convexMeshA.equals(a) == false ||
 		convexMeshB.equals(b) == false ||
-		Math::abs(convexMeshRadius - radius) > MathTools::EPSILON) {
+		Math::abs(convexMeshRadius - radius) > Math::EPSILON) {
 		convexMeshA.set(a);
 		convexMeshB.set(b);
 		convexMeshRadius = radius;

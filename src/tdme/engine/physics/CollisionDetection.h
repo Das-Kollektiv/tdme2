@@ -520,7 +520,7 @@ private:
 	 */
 	inline static bool checkMovementFallback(const Vector3& normalCandidate, const Vector3& movement, CollisionResponse* collision) {
 		// check if movement is valid
-		if (movement.computeLength() < MathTools::EPSILON) {
+		if (movement.computeLength() < Math::EPSILON) {
 			if (VERBOSE) {
 				Console::println(string("CollisionDetection::checkMovementFallback(): fallback movement = 0.0, 0.0, 0.0"));
 				// TODO: print stack trace
