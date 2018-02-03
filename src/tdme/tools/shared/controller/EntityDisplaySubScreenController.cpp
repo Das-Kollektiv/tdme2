@@ -84,33 +84,23 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("button_display_apply") == 0) {
-					onDisplayApply();
-				} else {
-					Console::println(
-						string(
-							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("button_display_apply") == 0) {
+				onDisplayApply();
+			} else {
+				Console::println(
+					string(
+						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
-
 }

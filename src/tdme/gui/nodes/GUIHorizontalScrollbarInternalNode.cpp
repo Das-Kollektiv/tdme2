@@ -72,19 +72,15 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 	array<float, 4>* barColorArray = nullptr;
 	{
 		auto v = controller->getState();
-		if ((v == GUIHorizontalScrollbarInternalController_State::NONE)) {
+		if (v == GUIHorizontalScrollbarInternalController_State::NONE) {
 			barColorArray = &barColorNone->getArray();
-			goto end_switch0;;
-		}
-		if ((v == GUIHorizontalScrollbarInternalController_State::MOUSEOVER)) {
+		} else
+		if (v == GUIHorizontalScrollbarInternalController_State::MOUSEOVER) {
 			barColorArray = &barColorMouseOver->getArray();
-			goto end_switch0;;
-		}
-		if ((v == GUIHorizontalScrollbarInternalController_State::DRAGGING)) {
+		} else
+		if (v == GUIHorizontalScrollbarInternalController_State::DRAGGING) {
 			barColorArray = &barColorDragging->getArray();
-			goto end_switch0;;
 		}
-		end_switch0:;
 	}
 
 	guiRenderer->bindTexture(0);

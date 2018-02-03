@@ -164,7 +164,7 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 		if (vhacdParams.m_minVolumePerCH < 0.0f || vhacdParams.m_minVolumePerCH > 0.01f) {
 			throw ExceptionBase("Min volume per convex hull must be between 0.0 and 0.01");
 		}
-		if (vhacdParams.m_pca < 0 || vhacdParams.m_pca > 1) {
+		if (vhacdParams.m_pca > 1) {
 			throw ExceptionBase("PCA must be between 0 and 1");
 		}
 		VHACDCallback vhacdCallback;

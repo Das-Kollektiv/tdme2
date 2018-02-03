@@ -201,33 +201,24 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 	{
 		auto v = alignments.horizontal;
-		if ((v == GUINode_AlignmentHorizontal::LEFT)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left;
-				}
-				goto end_switch0;;
-			}		}
-		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
-				}
-				goto end_switch0;;
-			}		}
-		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
-{
-{
-					for (auto i = 0; i < subNodes.size(); i++) {
-						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding.right);
-					}
-					goto end_switch0;;
-				}
-			}		}
-end_switch0:;
+		if (v == GUINode_AlignmentHorizontal::LEFT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left;
+			}
+		} else
+		if (v == GUINode_AlignmentHorizontal::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
+			}
+		} else
+		if (v == GUINode_AlignmentHorizontal::RIGHT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding.right);
+			}
+		}
 	}
 
 }
@@ -236,35 +227,25 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 	{
 		auto v = alignments.vertical;
-		if ((v == GUINode_AlignmentVertical::TOP)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentTop = border->top + padding.top;
-				}
-				goto end_switch1;;
-			}		}
-		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
-				}
-				goto end_switch1;;
-			}		}
-		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
-{
-{
-					for (auto i = 0; i < subNodes.size(); i++) {
-						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding.bottom);
-					}
-					goto end_switch1;;
-				}
-			}		}
-end_switch1:;
+		if (v == GUINode_AlignmentVertical::TOP) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = border->top + padding.top;
+			}
+		} else
+		if (v == GUINode_AlignmentVertical::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
+			}
+		} else
+		if (v == GUINode_AlignmentVertical::BOTTOM) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding.bottom);
+			}
+		}
 	}
-
 }
 
 void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes)

@@ -771,84 +771,75 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 	entityBoundingVolumeSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("button_model_load") == 0) {
-					onModelLoad();
-				} else
-				if (node->getId().compare("button_model_reload") == 0) {
-					onModelReload();
-				} else
-				if (node->getId().compare("button_model_save") == 0) {
-					onModelSave();
-				} else
-				if (node->getId().compare("button_pivot_apply") == 0) {
-					onPivotApply();
-				} else
-				if (node->getId().compare("button_rendering_apply") == 0) {
-					onRenderingApply();
-				} else
-				if (node->getId().compare("button_materials_dropdown_apply") == 0) {
-					onMaterialDropDownApply();
-				} else
-				if (node->getId().compare("button_materials_material_apply") == 0) {
-					onMaterialApply();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
-					onMaterialLoadDiffuseTexture();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
-					onMaterialLoadDiffuseTransparencyTexture();
-				} else
-				if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
-					onMaterialLoadNormalTexture();
-				} else
-				if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
-					onMaterialLoadSpecularTexture();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialDiffuseTexture);
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
-				} else
-				if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialNormalTexture);
-				} else
-				if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialSpecularTexture);
-				} else
-				if (node->getId().compare("animations_dropdown_apply") == 0) {
-					onAnimationDropDownApply();
-				} else
-				if (node->getId().compare("animations_dropdown_delete") == 0) {
-					onAnimationDropDownDelete();
-				} else
-				if (node->getId().compare("button_animations_animation_apply") == 0){
-					onAnimationApply();
-				} else {
-					Console::println(
-						string(
-							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("button_model_load") == 0) {
+				onModelLoad();
+			} else
+			if (node->getId().compare("button_model_reload") == 0) {
+				onModelReload();
+			} else
+			if (node->getId().compare("button_model_save") == 0) {
+				onModelSave();
+			} else
+			if (node->getId().compare("button_pivot_apply") == 0) {
+				onPivotApply();
+			} else
+			if (node->getId().compare("button_rendering_apply") == 0) {
+				onRenderingApply();
+			} else
+			if (node->getId().compare("button_materials_dropdown_apply") == 0) {
+				onMaterialDropDownApply();
+			} else
+			if (node->getId().compare("button_materials_material_apply") == 0) {
+				onMaterialApply();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
+				onMaterialLoadDiffuseTexture();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
+				onMaterialLoadDiffuseTransparencyTexture();
+			} else
+			if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
+				onMaterialLoadNormalTexture();
+			} else
+			if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
+				onMaterialLoadSpecularTexture();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialDiffuseTexture);
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
+			} else
+			if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialNormalTexture);
+			} else
+			if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialSpecularTexture);
+			} else
+			if (node->getId().compare("animations_dropdown_apply") == 0) {
+				onAnimationDropDownApply();
+			} else
+			if (node->getId().compare("animations_dropdown_delete") == 0) {
+				onAnimationDropDownDelete();
+			} else
+			if (node->getId().compare("button_animations_animation_apply") == 0){
+				onAnimationApply();
+			} else {
+				Console::println(
+					string(
+						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

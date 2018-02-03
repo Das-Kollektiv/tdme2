@@ -168,35 +168,30 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	if (entity == nullptr) return;
 	{
 		auto v = entity->getType();
-		if ((v == LevelEditorEntity_EntityType::MODEL)) {
+		if (v == LevelEditorEntity_EntityType::MODEL) {
 			if (dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
 			(dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
-			goto end_switch0;;
-		}
-		if ((v == LevelEditorEntity_EntityType::TRIGGER)) {
+		} else
+		if (v == LevelEditorEntity_EntityType::TRIGGER) {
 			if (dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
 			(dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
-			goto end_switch0;;
-		}
-		if ((v == LevelEditorEntity_EntityType::EMPTY)) {
+		} else
+		if (v == LevelEditorEntity_EntityType::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
 			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
-			goto end_switch0;;
-		}
-		if ((v == LevelEditorEntity_EntityType::PARTICLESYSTEM)) {
+		} else
+		if (v == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			if (dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
 			(dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
-			goto end_switch0;;
 		}
-		end_switch0:;
 	}
 
 	buttonEntityPlace->getController()->setDisabled(true);

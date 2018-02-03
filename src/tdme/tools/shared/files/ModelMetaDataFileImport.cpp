@@ -157,237 +157,208 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].getString())));
 		{
 			auto v = particleSystem->getType();
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
-				{
-					goto end_switch0;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
-				{
-					auto& jObjectParticleSystem = jParticleSystem["ops"];
-					auto objectParticleSystem = particleSystem->getObjectParticleSystem();
-					objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].getInt());
-					objectParticleSystem->getScale().setX(static_cast< float >(jObjectParticleSystem["sx"].getDouble()));
-					objectParticleSystem->getScale().setY(static_cast< float >(jObjectParticleSystem["sy"].getDouble()));
-					objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].getDouble()));
-					objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
-					try {
-						auto particleModelFile = (jObjectParticleSystem["mf"].getString());
-						auto particleModelPath = getModelPathName(pathName, particleModelFile);
-						objectParticleSystem->setModelFile(
-							particleModelPath + "/" + Tools::getFileName(particleModelFile)
-						);
-					} catch (Exception& exception) {
-						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
-						Console::println(string(exception.what()));
-					}
-					goto end_switch0;;
-				}			}
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
-				{
-					auto& jPointParticleSystem = jParticleSystem["pps"];
-					particleSystem->getPointParticleSystem()->setMaxPoints(jPointParticleSystem["mp"].getInt());
-					particleSystem->getPointParticleSystem()->setAutoEmit(jPointParticleSystem["ae"].getBoolean());
-					goto end_switch0;;
-				}			}
-			if (((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) || ((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
-				{
-					Console::println(
-						string(
-							 "ModelMetaDataFileExport::export(): unknown particle system type '" +
-							 particleSystem->getType()->getName() +
-							 "'"
-						 )
-					 );
-					goto end_switch0;;
+			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+				// no op
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+				auto& jObjectParticleSystem = jParticleSystem["ops"];
+				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
+				objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].getInt());
+				objectParticleSystem->getScale().setX(static_cast< float >(jObjectParticleSystem["sx"].getDouble()));
+				objectParticleSystem->getScale().setY(static_cast< float >(jObjectParticleSystem["sy"].getDouble()));
+				objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].getDouble()));
+				objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
+				try {
+					auto particleModelFile = (jObjectParticleSystem["mf"].getString());
+					auto particleModelPath = getModelPathName(pathName, particleModelFile);
+					objectParticleSystem->setModelFile(
+						particleModelPath + "/" + Tools::getFileName(particleModelFile)
+					);
+				} catch (Exception& exception) {
+					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+					Console::println(string(exception.what()));
 				}
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+				auto& jPointParticleSystem = jParticleSystem["pps"];
+				particleSystem->getPointParticleSystem()->setMaxPoints(jPointParticleSystem["mp"].getInt());
+				particleSystem->getPointParticleSystem()->setAutoEmit(jPointParticleSystem["ae"].getBoolean());
+			} else {
+				Console::println(
+					string(
+						 "ModelMetaDataFileExport::export(): unknown particle system type '" +
+						 particleSystem->getType()->getName() +
+						 "'"
+					 )
+				 );
 			}
-			end_switch0:;
 		}
 
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf((jParticleSystem["e"].getString())));
 		{
 			auto v = particleSystem->getEmitter();
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-				{
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-				{
-					auto& jPointParticleEmitter = jParticleSystem["ppe"];
-					auto emitter = particleSystem->getPointParticleEmitter();
-					emitter->setCount(jPointParticleEmitter["c"].getInt());
-					emitter->setLifeTime(jPointParticleEmitter["lt"].getInt());
-					emitter->setLifeTimeRnd(jPointParticleEmitter["ltrnd"].getInt());
-					emitter->setMass(static_cast< float >(jPointParticleEmitter["m"].getDouble()));
-					emitter->setMassRnd(static_cast< float >(jPointParticleEmitter["mrnd"].getDouble()));
-					emitter->getPosition().setX(static_cast< float >(jPointParticleEmitter["px"].getDouble()));
-					emitter->getPosition().setY(static_cast< float >(jPointParticleEmitter["py"].getDouble()));
-					emitter->getPosition().setZ(static_cast< float >(jPointParticleEmitter["pz"].getDouble()));
-					emitter->getVelocity().setX(static_cast< float >(jPointParticleEmitter["vx"].getDouble()));
-					emitter->getVelocity().setY(static_cast< float >(jPointParticleEmitter["vy"].getDouble()));
-					emitter->getVelocity().setZ(static_cast< float >(jPointParticleEmitter["vz"].getDouble()));
-					emitter->getVelocityRnd().setX(static_cast< float >(jPointParticleEmitter["vrndx"].getDouble()));
-					emitter->getVelocityRnd().setY(static_cast< float >(jPointParticleEmitter["vrndy"].getDouble()));
-					emitter->getVelocityRnd().setZ(static_cast< float >(jPointParticleEmitter["vrndz"].getDouble()));
-					emitter->getColorStart().setRed(static_cast< float >(jPointParticleEmitter["csr"].getDouble()));
-					emitter->getColorStart().setGreen(static_cast< float >(jPointParticleEmitter["csg"].getDouble()));
-					emitter->getColorStart().setBlue(static_cast< float >(jPointParticleEmitter["csb"].getDouble()));
-					emitter->getColorStart().setAlpha(static_cast< float >(jPointParticleEmitter["csa"].getDouble()));
-					emitter->getColorEnd().setRed(static_cast< float >(jPointParticleEmitter["cer"].getDouble()));
-					emitter->getColorEnd().setGreen(static_cast< float >(jPointParticleEmitter["ceg"].getDouble()));
-					emitter->getColorEnd().setBlue(static_cast< float >(jPointParticleEmitter["ceb"].getDouble()));
-					emitter->getColorEnd().setAlpha(static_cast< float >(jPointParticleEmitter["cea"].getDouble()));
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-				{
-					auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
-					auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-					emitter->setCount(jBoundingBoxParticleEmitter["c"].getInt());
-					emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].getInt());
-					emitter->setLifeTimeRnd(jBoundingBoxParticleEmitter["ltrnd"].getInt());
-					emitter->setMass(static_cast< float >(jBoundingBoxParticleEmitter["m"].getDouble()));
-					emitter->setMassRnd(static_cast< float >(jBoundingBoxParticleEmitter["mrnd"].getDouble()));
-					emitter->getVelocity().setX(static_cast< float >(jBoundingBoxParticleEmitter["vx"].getDouble()));
-					emitter->getVelocity().setY(static_cast< float >(jBoundingBoxParticleEmitter["vy"].getDouble()));
-					emitter->getVelocity().setZ(static_cast< float >(jBoundingBoxParticleEmitter["vz"].getDouble()));
-					emitter->getVelocityRnd().setX(static_cast< float >(jBoundingBoxParticleEmitter["vrndx"].getDouble()));
-					emitter->getVelocityRnd().setY(static_cast< float >(jBoundingBoxParticleEmitter["vrndy"].getDouble()));
-					emitter->getVelocityRnd().setZ(static_cast< float >(jBoundingBoxParticleEmitter["vrndz"].getDouble()));
-					emitter->getColorStart().setRed(static_cast< float >(jBoundingBoxParticleEmitter["csr"].getDouble()));
-					emitter->getColorStart().setGreen(static_cast< float >(jBoundingBoxParticleEmitter["csg"].getDouble()));
-					emitter->getColorStart().setBlue(static_cast< float >(jBoundingBoxParticleEmitter["csb"].getDouble()));
-					emitter->getColorStart().setAlpha(static_cast< float >(jBoundingBoxParticleEmitter["csa"].getDouble()));
-					emitter->getColorEnd().setRed(static_cast< float >(jBoundingBoxParticleEmitter["cer"].getDouble()));
-					emitter->getColorEnd().setGreen(static_cast< float >(jBoundingBoxParticleEmitter["ceg"].getDouble()));
-					emitter->getColorEnd().setBlue(static_cast< float >(jBoundingBoxParticleEmitter["ceb"].getDouble()));
-					emitter->getColorEnd().setAlpha(static_cast< float >(jBoundingBoxParticleEmitter["cea"].getDouble()));
-					emitter->getObbCenter().setX(static_cast< float >(jBoundingBoxParticleEmitter["ocx"].getDouble()));
-					emitter->getObbCenter().setY(static_cast< float >(jBoundingBoxParticleEmitter["ocy"].getDouble()));
-					emitter->getObbCenter().setZ(static_cast< float >(jBoundingBoxParticleEmitter["ocz"].getDouble()));
-					emitter->getObbHalfextension().setX(static_cast< float >(jBoundingBoxParticleEmitter["ohex"].getDouble()));
-					emitter->getObbHalfextension().setY(static_cast< float >(jBoundingBoxParticleEmitter["ohey"].getDouble()));
-					emitter->getObbHalfextension().setZ(static_cast< float >(jBoundingBoxParticleEmitter["ohez"].getDouble()));
-					emitter->getObbAxis0().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa0x"].getDouble()));
-					emitter->getObbAxis0().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa0y"].getDouble()));
-					emitter->getObbAxis0().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa0z"].getDouble()));
-					emitter->getObbAxis1().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa1x"].getDouble()));
-					emitter->getObbAxis1().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa1y"].getDouble()));
-					emitter->getObbAxis1().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa1z"].getDouble()));
-					emitter->getObbAxis2().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa2x"].getDouble()));
-					emitter->getObbAxis2().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa2y"].getDouble()));
-					emitter->getObbAxis2().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa2z"].getDouble()));
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-				{
-					auto& jCircleParticleEmitter = jParticleSystem["cpe"];
-					auto emitter = particleSystem->getCircleParticleEmitter();
-					emitter->setCount(jCircleParticleEmitter["c"].getInt());
-					emitter->setLifeTime(jCircleParticleEmitter["lt"].getInt());
-					emitter->setLifeTimeRnd(jCircleParticleEmitter["ltrnd"].getInt());
-					emitter->setMass(static_cast< float >(jCircleParticleEmitter["m"].getDouble()));
-					emitter->setMassRnd(static_cast< float >(jCircleParticleEmitter["mrnd"].getDouble()));
-					emitter->getVelocity().setX(static_cast< float >(jCircleParticleEmitter["vx"].getDouble()));
-					emitter->getVelocity().setY(static_cast< float >(jCircleParticleEmitter["vy"].getDouble()));
-					emitter->getVelocity().setZ(static_cast< float >(jCircleParticleEmitter["vz"].getDouble()));
-					emitter->getVelocityRnd().setX(static_cast< float >(jCircleParticleEmitter["vrndx"].getDouble()));
-					emitter->getVelocityRnd().setY(static_cast< float >(jCircleParticleEmitter["vrndy"].getDouble()));
-					emitter->getVelocityRnd().setZ(static_cast< float >(jCircleParticleEmitter["vrndz"].getDouble()));
-					emitter->getColorStart().setRed(static_cast< float >(jCircleParticleEmitter["csr"].getDouble()));
-					emitter->getColorStart().setGreen(static_cast< float >(jCircleParticleEmitter["csg"].getDouble()));
-					emitter->getColorStart().setBlue(static_cast< float >(jCircleParticleEmitter["csb"].getDouble()));
-					emitter->getColorStart().setAlpha(static_cast< float >(jCircleParticleEmitter["csa"].getDouble()));
-					emitter->getColorEnd().setRed(static_cast< float >(jCircleParticleEmitter["cer"].getDouble()));
-					emitter->getColorEnd().setGreen(static_cast< float >(jCircleParticleEmitter["ceg"].getDouble()));
-					emitter->getColorEnd().setBlue(static_cast< float >(jCircleParticleEmitter["ceb"].getDouble()));
-					emitter->getColorEnd().setAlpha(static_cast< float >(jCircleParticleEmitter["cea"].getDouble()));
-					emitter->getCenter().setX(static_cast< float >(jCircleParticleEmitter["cx"].getDouble()));
-					emitter->getCenter().setY(static_cast< float >(jCircleParticleEmitter["cy"].getDouble()));
-					emitter->getCenter().setZ(static_cast< float >(jCircleParticleEmitter["cz"].getDouble()));
-					emitter->setRadius(static_cast< float >(jCircleParticleEmitter["r"].getDouble()));
-					emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitter["a0x"].getDouble()));
-					emitter->getAxis0().setY(static_cast< float >(jCircleParticleEmitter["a0y"].getDouble()));
-					emitter->getAxis0().setZ(static_cast< float >(jCircleParticleEmitter["a0z"].getDouble()));
-					emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitter["a1x"].getDouble()));
-					emitter->getAxis1().setY(static_cast< float >(jCircleParticleEmitter["a1y"].getDouble()));
-					emitter->getAxis1().setZ(static_cast< float >(jCircleParticleEmitter["a1z"].getDouble()));
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-				{
-					auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
-					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-					emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].getInt());
-					emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].getInt());
-					emitter->setLifeTimeRnd(jCircleParticleEmitterPlaneVelocity["ltrnd"].getInt());
-					emitter->setMass(static_cast< float >(jCircleParticleEmitterPlaneVelocity["m"].getDouble()));
-					emitter->setMassRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["mrnd"].getDouble()));
-					emitter->setVelocity(static_cast< float >(jCircleParticleEmitterPlaneVelocity["v"].getDouble()));
-					emitter->setVelocityRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["vrnd"].getDouble()));
-					emitter->getColorStart().setRed(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csr"].getDouble()));
-					emitter->getColorStart().setGreen(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csg"].getDouble()));
-					emitter->getColorStart().setBlue(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csb"].getDouble()));
-					emitter->getColorStart().setAlpha(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csa"].getDouble()));
-					emitter->getColorEnd().setRed(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cer"].getDouble()));
-					emitter->getColorEnd().setGreen(static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceg"].getDouble()));
-					emitter->getColorEnd().setBlue(static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceb"].getDouble()));
-					emitter->getColorEnd().setAlpha(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cea"].getDouble()));
-					emitter->getCenter().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cx"].getDouble()));
-					emitter->getCenter().setY(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cy"].getDouble()));
-					emitter->getCenter().setZ(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cz"].getDouble()));
-					emitter->setRadius(static_cast< float >(jCircleParticleEmitterPlaneVelocity["r"].getDouble()));
-					emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0x"].getDouble()));
-					emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0y"].getDouble()));
-					emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0z"].getDouble()));
-					emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1x"].getDouble()));
-					emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1y"].getDouble()));
-					emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1z"].getDouble()));
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-				{
-					auto& jSphereParticleEmitter = jParticleSystem["spe"];
-					auto emitter = particleSystem->getSphereParticleEmitter();
-					emitter->setCount(jSphereParticleEmitter["c"].getInt());
-					emitter->setLifeTime(jSphereParticleEmitter["lt"].getInt());
-					emitter->setLifeTimeRnd(jSphereParticleEmitter["ltrnd"].getInt());
-					emitter->setMass(static_cast< float >(jSphereParticleEmitter["m"].getDouble()));
-					emitter->setMassRnd(static_cast< float >(jSphereParticleEmitter["mrnd"].getDouble()));
-					emitter->getVelocity().setX(static_cast< float >(jSphereParticleEmitter["vx"].getDouble()));
-					emitter->getVelocity().setY(static_cast< float >(jSphereParticleEmitter["vy"].getDouble()));
-					emitter->getVelocity().setZ(static_cast< float >(jSphereParticleEmitter["vz"].getDouble()));
-					emitter->getVelocityRnd().setX(static_cast< float >(jSphereParticleEmitter["vrndx"].getDouble()));
-					emitter->getVelocityRnd().setY(static_cast< float >(jSphereParticleEmitter["vrndy"].getDouble()));
-					emitter->getVelocityRnd().setZ(static_cast< float >(jSphereParticleEmitter["vrndz"].getDouble()));
-					emitter->getColorStart().setRed(static_cast< float >(jSphereParticleEmitter["csr"].getDouble()));
-					emitter->getColorStart().setGreen(static_cast< float >(jSphereParticleEmitter["csg"].getDouble()));
-					emitter->getColorStart().setBlue(static_cast< float >(jSphereParticleEmitter["csb"].getDouble()));
-					emitter->getColorStart().setAlpha(static_cast< float >(jSphereParticleEmitter["csa"].getDouble()));
-					emitter->getColorEnd().setRed(static_cast< float >(jSphereParticleEmitter["cer"].getDouble()));
-					emitter->getColorEnd().setGreen(static_cast< float >(jSphereParticleEmitter["ceg"].getDouble()));
-					emitter->getColorEnd().setBlue(static_cast< float >(jSphereParticleEmitter["ceb"].getDouble()));
-					emitter->getColorEnd().setAlpha(static_cast< float >(jSphereParticleEmitter["cea"].getDouble()));
-					emitter->getCenter().setX(static_cast< float >(jSphereParticleEmitter["cx"].getDouble()));
-					emitter->getCenter().setY(static_cast< float >(jSphereParticleEmitter["cy"].getDouble()));
-					emitter->getCenter().setZ(static_cast< float >(jSphereParticleEmitter["cz"].getDouble()));
-					emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].getDouble()));
-					goto end_switch1;;
-				}
-			}
-			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
+			if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
+				// no op
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+				auto& jPointParticleEmitter = jParticleSystem["ppe"];
+				auto emitter = particleSystem->getPointParticleEmitter();
+				emitter->setCount(jPointParticleEmitter["c"].getInt());
+				emitter->setLifeTime(jPointParticleEmitter["lt"].getInt());
+				emitter->setLifeTimeRnd(jPointParticleEmitter["ltrnd"].getInt());
+				emitter->setMass(static_cast< float >(jPointParticleEmitter["m"].getDouble()));
+				emitter->setMassRnd(static_cast< float >(jPointParticleEmitter["mrnd"].getDouble()));
+				emitter->getPosition().setX(static_cast< float >(jPointParticleEmitter["px"].getDouble()));
+				emitter->getPosition().setY(static_cast< float >(jPointParticleEmitter["py"].getDouble()));
+				emitter->getPosition().setZ(static_cast< float >(jPointParticleEmitter["pz"].getDouble()));
+				emitter->getVelocity().setX(static_cast< float >(jPointParticleEmitter["vx"].getDouble()));
+				emitter->getVelocity().setY(static_cast< float >(jPointParticleEmitter["vy"].getDouble()));
+				emitter->getVelocity().setZ(static_cast< float >(jPointParticleEmitter["vz"].getDouble()));
+				emitter->getVelocityRnd().setX(static_cast< float >(jPointParticleEmitter["vrndx"].getDouble()));
+				emitter->getVelocityRnd().setY(static_cast< float >(jPointParticleEmitter["vrndy"].getDouble()));
+				emitter->getVelocityRnd().setZ(static_cast< float >(jPointParticleEmitter["vrndz"].getDouble()));
+				emitter->getColorStart().setRed(static_cast< float >(jPointParticleEmitter["csr"].getDouble()));
+				emitter->getColorStart().setGreen(static_cast< float >(jPointParticleEmitter["csg"].getDouble()));
+				emitter->getColorStart().setBlue(static_cast< float >(jPointParticleEmitter["csb"].getDouble()));
+				emitter->getColorStart().setAlpha(static_cast< float >(jPointParticleEmitter["csa"].getDouble()));
+				emitter->getColorEnd().setRed(static_cast< float >(jPointParticleEmitter["cer"].getDouble()));
+				emitter->getColorEnd().setGreen(static_cast< float >(jPointParticleEmitter["ceg"].getDouble()));
+				emitter->getColorEnd().setBlue(static_cast< float >(jPointParticleEmitter["ceb"].getDouble()));
+				emitter->getColorEnd().setAlpha(static_cast< float >(jPointParticleEmitter["cea"].getDouble()));
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+				auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
+				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
+				emitter->setCount(jBoundingBoxParticleEmitter["c"].getInt());
+				emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].getInt());
+				emitter->setLifeTimeRnd(jBoundingBoxParticleEmitter["ltrnd"].getInt());
+				emitter->setMass(static_cast< float >(jBoundingBoxParticleEmitter["m"].getDouble()));
+				emitter->setMassRnd(static_cast< float >(jBoundingBoxParticleEmitter["mrnd"].getDouble()));
+				emitter->getVelocity().setX(static_cast< float >(jBoundingBoxParticleEmitter["vx"].getDouble()));
+				emitter->getVelocity().setY(static_cast< float >(jBoundingBoxParticleEmitter["vy"].getDouble()));
+				emitter->getVelocity().setZ(static_cast< float >(jBoundingBoxParticleEmitter["vz"].getDouble()));
+				emitter->getVelocityRnd().setX(static_cast< float >(jBoundingBoxParticleEmitter["vrndx"].getDouble()));
+				emitter->getVelocityRnd().setY(static_cast< float >(jBoundingBoxParticleEmitter["vrndy"].getDouble()));
+				emitter->getVelocityRnd().setZ(static_cast< float >(jBoundingBoxParticleEmitter["vrndz"].getDouble()));
+				emitter->getColorStart().setRed(static_cast< float >(jBoundingBoxParticleEmitter["csr"].getDouble()));
+				emitter->getColorStart().setGreen(static_cast< float >(jBoundingBoxParticleEmitter["csg"].getDouble()));
+				emitter->getColorStart().setBlue(static_cast< float >(jBoundingBoxParticleEmitter["csb"].getDouble()));
+				emitter->getColorStart().setAlpha(static_cast< float >(jBoundingBoxParticleEmitter["csa"].getDouble()));
+				emitter->getColorEnd().setRed(static_cast< float >(jBoundingBoxParticleEmitter["cer"].getDouble()));
+				emitter->getColorEnd().setGreen(static_cast< float >(jBoundingBoxParticleEmitter["ceg"].getDouble()));
+				emitter->getColorEnd().setBlue(static_cast< float >(jBoundingBoxParticleEmitter["ceb"].getDouble()));
+				emitter->getColorEnd().setAlpha(static_cast< float >(jBoundingBoxParticleEmitter["cea"].getDouble()));
+				emitter->getObbCenter().setX(static_cast< float >(jBoundingBoxParticleEmitter["ocx"].getDouble()));
+				emitter->getObbCenter().setY(static_cast< float >(jBoundingBoxParticleEmitter["ocy"].getDouble()));
+				emitter->getObbCenter().setZ(static_cast< float >(jBoundingBoxParticleEmitter["ocz"].getDouble()));
+				emitter->getObbHalfextension().setX(static_cast< float >(jBoundingBoxParticleEmitter["ohex"].getDouble()));
+				emitter->getObbHalfextension().setY(static_cast< float >(jBoundingBoxParticleEmitter["ohey"].getDouble()));
+				emitter->getObbHalfextension().setZ(static_cast< float >(jBoundingBoxParticleEmitter["ohez"].getDouble()));
+				emitter->getObbAxis0().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa0x"].getDouble()));
+				emitter->getObbAxis0().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa0y"].getDouble()));
+				emitter->getObbAxis0().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa0z"].getDouble()));
+				emitter->getObbAxis1().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa1x"].getDouble()));
+				emitter->getObbAxis1().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa1y"].getDouble()));
+				emitter->getObbAxis1().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa1z"].getDouble()));
+				emitter->getObbAxis2().setX(static_cast< float >(jBoundingBoxParticleEmitter["oa2x"].getDouble()));
+				emitter->getObbAxis2().setY(static_cast< float >(jBoundingBoxParticleEmitter["oa2y"].getDouble()));
+				emitter->getObbAxis2().setZ(static_cast< float >(jBoundingBoxParticleEmitter["oa2z"].getDouble()));
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+				auto& jCircleParticleEmitter = jParticleSystem["cpe"];
+				auto emitter = particleSystem->getCircleParticleEmitter();
+				emitter->setCount(jCircleParticleEmitter["c"].getInt());
+				emitter->setLifeTime(jCircleParticleEmitter["lt"].getInt());
+				emitter->setLifeTimeRnd(jCircleParticleEmitter["ltrnd"].getInt());
+				emitter->setMass(static_cast< float >(jCircleParticleEmitter["m"].getDouble()));
+				emitter->setMassRnd(static_cast< float >(jCircleParticleEmitter["mrnd"].getDouble()));
+				emitter->getVelocity().setX(static_cast< float >(jCircleParticleEmitter["vx"].getDouble()));
+				emitter->getVelocity().setY(static_cast< float >(jCircleParticleEmitter["vy"].getDouble()));
+				emitter->getVelocity().setZ(static_cast< float >(jCircleParticleEmitter["vz"].getDouble()));
+				emitter->getVelocityRnd().setX(static_cast< float >(jCircleParticleEmitter["vrndx"].getDouble()));
+				emitter->getVelocityRnd().setY(static_cast< float >(jCircleParticleEmitter["vrndy"].getDouble()));
+				emitter->getVelocityRnd().setZ(static_cast< float >(jCircleParticleEmitter["vrndz"].getDouble()));
+				emitter->getColorStart().setRed(static_cast< float >(jCircleParticleEmitter["csr"].getDouble()));
+				emitter->getColorStart().setGreen(static_cast< float >(jCircleParticleEmitter["csg"].getDouble()));
+				emitter->getColorStart().setBlue(static_cast< float >(jCircleParticleEmitter["csb"].getDouble()));
+				emitter->getColorStart().setAlpha(static_cast< float >(jCircleParticleEmitter["csa"].getDouble()));
+				emitter->getColorEnd().setRed(static_cast< float >(jCircleParticleEmitter["cer"].getDouble()));
+				emitter->getColorEnd().setGreen(static_cast< float >(jCircleParticleEmitter["ceg"].getDouble()));
+				emitter->getColorEnd().setBlue(static_cast< float >(jCircleParticleEmitter["ceb"].getDouble()));
+				emitter->getColorEnd().setAlpha(static_cast< float >(jCircleParticleEmitter["cea"].getDouble()));
+				emitter->getCenter().setX(static_cast< float >(jCircleParticleEmitter["cx"].getDouble()));
+				emitter->getCenter().setY(static_cast< float >(jCircleParticleEmitter["cy"].getDouble()));
+				emitter->getCenter().setZ(static_cast< float >(jCircleParticleEmitter["cz"].getDouble()));
+				emitter->setRadius(static_cast< float >(jCircleParticleEmitter["r"].getDouble()));
+				emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitter["a0x"].getDouble()));
+				emitter->getAxis0().setY(static_cast< float >(jCircleParticleEmitter["a0y"].getDouble()));
+				emitter->getAxis0().setZ(static_cast< float >(jCircleParticleEmitter["a0z"].getDouble()));
+				emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitter["a1x"].getDouble()));
+				emitter->getAxis1().setY(static_cast< float >(jCircleParticleEmitter["a1y"].getDouble()));
+				emitter->getAxis1().setZ(static_cast< float >(jCircleParticleEmitter["a1z"].getDouble()));
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+				auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
+				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
+				emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].getInt());
+				emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].getInt());
+				emitter->setLifeTimeRnd(jCircleParticleEmitterPlaneVelocity["ltrnd"].getInt());
+				emitter->setMass(static_cast< float >(jCircleParticleEmitterPlaneVelocity["m"].getDouble()));
+				emitter->setMassRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["mrnd"].getDouble()));
+				emitter->setVelocity(static_cast< float >(jCircleParticleEmitterPlaneVelocity["v"].getDouble()));
+				emitter->setVelocityRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["vrnd"].getDouble()));
+				emitter->getColorStart().setRed(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csr"].getDouble()));
+				emitter->getColorStart().setGreen(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csg"].getDouble()));
+				emitter->getColorStart().setBlue(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csb"].getDouble()));
+				emitter->getColorStart().setAlpha(static_cast< float >(jCircleParticleEmitterPlaneVelocity["csa"].getDouble()));
+				emitter->getColorEnd().setRed(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cer"].getDouble()));
+				emitter->getColorEnd().setGreen(static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceg"].getDouble()));
+				emitter->getColorEnd().setBlue(static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceb"].getDouble()));
+				emitter->getColorEnd().setAlpha(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cea"].getDouble()));
+				emitter->getCenter().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cx"].getDouble()));
+				emitter->getCenter().setY(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cy"].getDouble()));
+				emitter->getCenter().setZ(static_cast< float >(jCircleParticleEmitterPlaneVelocity["cz"].getDouble()));
+				emitter->setRadius(static_cast< float >(jCircleParticleEmitterPlaneVelocity["r"].getDouble()));
+				emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0x"].getDouble()));
+				emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0y"].getDouble()));
+				emitter->getAxis0().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0z"].getDouble()));
+				emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1x"].getDouble()));
+				emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1y"].getDouble()));
+				emitter->getAxis1().setX(static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1z"].getDouble()));
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+				auto& jSphereParticleEmitter = jParticleSystem["spe"];
+				auto emitter = particleSystem->getSphereParticleEmitter();
+				emitter->setCount(jSphereParticleEmitter["c"].getInt());
+				emitter->setLifeTime(jSphereParticleEmitter["lt"].getInt());
+				emitter->setLifeTimeRnd(jSphereParticleEmitter["ltrnd"].getInt());
+				emitter->setMass(static_cast< float >(jSphereParticleEmitter["m"].getDouble()));
+				emitter->setMassRnd(static_cast< float >(jSphereParticleEmitter["mrnd"].getDouble()));
+				emitter->getVelocity().setX(static_cast< float >(jSphereParticleEmitter["vx"].getDouble()));
+				emitter->getVelocity().setY(static_cast< float >(jSphereParticleEmitter["vy"].getDouble()));
+				emitter->getVelocity().setZ(static_cast< float >(jSphereParticleEmitter["vz"].getDouble()));
+				emitter->getVelocityRnd().setX(static_cast< float >(jSphereParticleEmitter["vrndx"].getDouble()));
+				emitter->getVelocityRnd().setY(static_cast< float >(jSphereParticleEmitter["vrndy"].getDouble()));
+				emitter->getVelocityRnd().setZ(static_cast< float >(jSphereParticleEmitter["vrndz"].getDouble()));
+				emitter->getColorStart().setRed(static_cast< float >(jSphereParticleEmitter["csr"].getDouble()));
+				emitter->getColorStart().setGreen(static_cast< float >(jSphereParticleEmitter["csg"].getDouble()));
+				emitter->getColorStart().setBlue(static_cast< float >(jSphereParticleEmitter["csb"].getDouble()));
+				emitter->getColorStart().setAlpha(static_cast< float >(jSphereParticleEmitter["csa"].getDouble()));
+				emitter->getColorEnd().setRed(static_cast< float >(jSphereParticleEmitter["cer"].getDouble()));
+				emitter->getColorEnd().setGreen(static_cast< float >(jSphereParticleEmitter["ceg"].getDouble()));
+				emitter->getColorEnd().setBlue(static_cast< float >(jSphereParticleEmitter["ceb"].getDouble()));
+				emitter->getColorEnd().setAlpha(static_cast< float >(jSphereParticleEmitter["cea"].getDouble()));
+				emitter->getCenter().setX(static_cast< float >(jSphereParticleEmitter["cx"].getDouble()));
+				emitter->getCenter().setY(static_cast< float >(jSphereParticleEmitter["cy"].getDouble()));
+				emitter->getCenter().setZ(static_cast< float >(jSphereParticleEmitter["cz"].getDouble()));
+				emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].getDouble()));
+			} else {
 				Console::println(
 					"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
 					"'"
 				 );
 			}
-			end_switch1:;
 		}
 	}
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());

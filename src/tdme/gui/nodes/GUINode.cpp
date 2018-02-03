@@ -148,52 +148,28 @@ void GUINode::computeContentAlignment()
 	if (isContentNode() == true) {
 		{
 			auto v = alignments.horizontal;
-			if ((v == GUINode_AlignmentHorizontal::LEFT)) {
-				{
-					computedConstraints.contentAlignmentLeft = border->left + padding.left;
-					goto end_switch0;;
-				}
+			if (v == GUINode_AlignmentHorizontal::LEFT) {
+				computedConstraints.contentAlignmentLeft = border->left + padding.left;
+			} else
+			if (v == GUINode_AlignmentHorizontal::CENTER) {
+				computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding.left;
+			} else
+			if (v == GUINode_AlignmentHorizontal::RIGHT) {
+				computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding.left;
 			}
-			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
-				{
-					computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding.left;
-					goto end_switch0;;
-				}
-			}
-			if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
-				{
-					{
-						computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding.left;
-						goto end_switch0;;
-					}
-				}
-			}
-			end_switch0:;
 		}
 
 		{
 			auto v = alignments.vertical;
-			if ((v == GUINode_AlignmentVertical::TOP)) {
-				{
-					computedConstraints.contentAlignmentTop = border->top + padding.top;
-					goto end_switch1;;
-				}
+			if (v == GUINode_AlignmentVertical::TOP) {
+				computedConstraints.contentAlignmentTop = border->top + padding.top;
+			} else
+			if (v == GUINode_AlignmentVertical::CENTER) {
+				computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding.top;
+			} else
+			if (v == GUINode_AlignmentVertical::BOTTOM) {
+				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding.left;
 			}
-			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
-				{
-					computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding.top;
-					goto end_switch1;;
-				}
-			}
-			if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
-				{
-					{
-						computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding.left;
-						goto end_switch1;;
-					}
-				}
-			}
-			end_switch1:;
 		}
 
 	}

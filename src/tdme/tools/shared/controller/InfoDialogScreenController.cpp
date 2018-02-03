@@ -70,19 +70,10 @@ void InfoDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("infodialog_ok") == 0) {
-					close();
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("infodialog_ok") == 0) {
+				close();
 			}
 		}
-		if (((v == GUIActionListener_Type::PERFORMED) || ((v != GUIActionListener_Type::PERFORMED)))) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 }

@@ -159,33 +159,24 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("button_trigger_apply") == 0) {
-					onTriggerApply();
-				} else {
-					Console::println(
-						string(
-							"TriggerScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("button_trigger_apply") == 0) {
+				onTriggerApply();
+			} else {
+				Console::println(
+					string(
+						"TriggerScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

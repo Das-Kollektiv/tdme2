@@ -265,35 +265,24 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED))
+		if (v == GUIActionListener_Type::PERFORMED)
 		{
-			{
-				if (node->getId().compare("button_entity_apply") == 0) {
-					onEntityDataApply(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_presetapply") == 0) {
-					onEntityPropertyPresetApply(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_add") == 0) {
-					onEntityPropertyAdd(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_remove") == 0) {
-					onEntityPropertyRemove(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_save") == 0) {
-					onEntityPropertySave(entity);
-				} else {
-				}
-				goto end_switch0;;
+			if (node->getId().compare("button_entity_apply") == 0) {
+				onEntityDataApply(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_presetapply") == 0) {
+				onEntityPropertyPresetApply(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_add") == 0) {
+				onEntityPropertyAdd(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_remove") == 0) {
+				onEntityPropertyRemove(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_save") == 0) {
+				onEntityPropertySave(entity);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING))
-		{
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }
