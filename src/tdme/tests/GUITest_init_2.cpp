@@ -13,7 +13,7 @@ using tdme::tests::GUITest;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
 
-GUITest_init_2::GUITest_init_2(GUITest *GUITest_this)
+GUITest_init_2::GUITest_init_2(GUITest* guiTest)
 	: guiTest(guiTest)
 {
 }

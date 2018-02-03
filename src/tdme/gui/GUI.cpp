@@ -372,7 +372,7 @@ void GUI::focusPreviousNode()
 				focussedNodeIdx = i;
 			}
 		}
-		auto focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
+		int32_t focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
 		if (focussedPreviousNodeIdx < 0)
 			focussedPreviousNodeIdx += focusableNodes.size();
 
