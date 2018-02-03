@@ -321,5 +321,5 @@ private:
 	void init();
 
 public:
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
 };

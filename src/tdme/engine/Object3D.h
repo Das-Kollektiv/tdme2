@@ -54,23 +54,24 @@ public:
 	 * @param model
 	 */
 	Object3D(const string& id, Model* model);
+
 public:
-	virtual void dispose();
-	virtual BoundingBox* getBoundingBox();
-	virtual BoundingBox* getBoundingBoxTransformed();
-	virtual Color4& getEffectColorAdd();
-	virtual Color4& getEffectColorMul();
-	virtual const string& getId();
-	virtual Vector3& getPivot();
-	virtual Rotations* getRotations();
-	virtual Vector3& getScale();
-	virtual Matrix4x4& getTransformationsMatrix();
-	virtual Vector3& getTranslation();
-	virtual void initialize();
-	virtual bool isDynamicShadowingEnabled();
-	virtual bool isEnabled();
-	virtual bool isPickable();
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
-	virtual void setPickable(bool pickable);
-	virtual Matrix4x4* getTransformationsMatrix(const string& id);
+	virtual void dispose() override;
+	virtual BoundingBox* getBoundingBox() override;
+	virtual BoundingBox* getBoundingBoxTransformed() override;
+	virtual Color4& getEffectColorAdd() override;
+	virtual Color4& getEffectColorMul() override;
+	virtual const string& getId() override;
+	virtual Vector3& getPivot() override;
+	virtual Rotations* getRotations() override;
+	virtual Vector3& getScale() override;
+	virtual Matrix4x4& getTransformationsMatrix() override;
+	virtual Vector3& getTranslation() override;
+	virtual void initialize() override;
+	virtual bool isDynamicShadowingEnabled() override;
+	virtual bool isEnabled() override;
+	virtual bool isPickable() override;
+	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
+	virtual void setPickable(bool pickable) override;
+	virtual Matrix4x4* getTransformationsMatrix(const string& id) override;
 };

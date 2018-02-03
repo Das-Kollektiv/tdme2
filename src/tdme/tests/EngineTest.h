@@ -85,7 +85,7 @@ private:
 	Model* createWallModel();
 
 public:
-	void display();
+	void display() override;
 
 private:
 
@@ -99,9 +99,9 @@ private:
 	void doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp);
 
 public:
-	void dispose();
-	void initialize() ;
-	void reshape(int32_t width, int32_t height);
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;

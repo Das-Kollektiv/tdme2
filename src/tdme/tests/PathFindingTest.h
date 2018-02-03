@@ -66,10 +66,10 @@ public:
 	 */
 	static void main(int argc, char** argv);
 public:
-	void display();
-	void dispose();
-	void initialize();
-	void reshape(int32_t width, int32_t height);
+	void display() override;
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 
 	/**
 	 * Public constructor
