@@ -55,7 +55,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross));
 	// What is best threshold here?
-	return Math::abs(v1Dotv2v3Cross) < 0.001f; // MathTools::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < MathTools::EPSILON;
 }
 
 ConvexMesh::ConvexMesh(Object3DModel* model)
@@ -99,7 +99,8 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	for (auto trianglesCoplanarIt: trianglesCoplanar) {
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
-		auto trianglesCoplanarId = trianglesCoplanarIt.first;
+
+		// determine polygon vertices
 		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
 		for (auto triangle: trianglesCoplanarVector) {
 			for (auto& triangleVertex: triangle->getVertices()) {
@@ -116,7 +117,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 			}
 		}
 
-		// determine polygon center
+		// determine polygon center, a point outside of mesh viewing the polygon
 		Vector3 polygonCenter;
 		for (auto& polygonVertex: polygonVertices) {
 			polygonCenter.add(polygonVertex);
@@ -162,7 +163,10 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 					}
 				}
 				// exit if no hit was found, should never happen
-				if (hitVertexIdx == -1) return;
+				if (hitVertexIdx == -1) {
+					Console::println("ConvexMesh::ConvexMesh(): did not found a vertex in right order");
+					continue;
+				}
 
 				// vertex order
 				// 	https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
@@ -174,7 +178,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 				bc.set(polygonVertexHit).sub(polygonCenter);
 				Vector3::computeCrossProduct(ac, bc, acbcCross);
 				// counter clockwise???
-				if (Vector3::computeDotProduct(polygonNormal, acbcCross) < 0.0f) {
+				if (Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) {
 					// yep
 					polygonVerticesOrdered.push_back(hitVertexIdx);
 					break;
@@ -187,8 +191,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 
 		// add face
 		facesVerticesCount.push_back(polygonVerticesOrdered.size());
-
-		// reverse if we want counter clockwise order
 		for (auto polygonVerticesOrderedIdx: polygonVerticesOrdered) {
 			// polygon vertex
 			auto& polygonVertex = polygonVertices[polygonVerticesOrderedIdx];
