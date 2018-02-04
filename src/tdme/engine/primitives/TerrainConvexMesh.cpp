@@ -65,67 +65,30 @@ void TerrainConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<T
 	}
 }
 
+float TerrainConvexMesh::getHeight() {
+	return height;
+}
+
+Triangle* TerrainConvexMesh::getTriangleTransformed() {
+	return &triangleTransformed;
+}
+
 const Vector3& TerrainConvexMesh::getPositionTransformed() const {
 	return positionTransformed;
 }
 
 void TerrainConvexMesh::createConvexMesh() {
 	// extend triangle to convex mesh
-	int triangleIdx = 0;
-	array<Triangle, 8> triangles;
+	array<Triangle, 2> triangles;
 
 	// set up top triangle
 	triangles[0] = triangleTransformed;
 
-	// add triangle vertices
-	Vector3 triangleVertex0Bottom;
-	Vector3 triangleVertex1Bottom;
-	Vector3 triangleVertex2Bottom;
-	Vector3 triangleVertex0Top = triangles[triangleIdx].getVertices()[0];
-	Vector3 triangleVertex1Top = triangles[triangleIdx].getVertices()[1];
-	Vector3 triangleVertex2Top = triangles[triangleIdx].getVertices()[2];
-	triangleIdx++;
-
-	triangleVertex0Bottom.set(triangleVertex0Top).addY(-height);
-	triangleVertex1Bottom.set(triangleVertex1Top).addY(-height);
-	triangleVertex2Bottom.set(triangleVertex2Top).addY(-height);
-
-	// set up triangle on bottom
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top).addY(-height);
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top).addY(-height);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Top).addY(-height);
-	triangleIdx++;
-
-	// add bottom top triangles
-	//	vertices 0, 2
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top);
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex2Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
-	triangleIdx++;
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
-	triangleIdx++;
-
-	//	vertices 0, 1
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Top);
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
-	triangleIdx++;
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
-	triangleIdx++;
-
-	//	vertices 1, 2
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top);
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
-	triangleIdx++;
-	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Bottom);
-	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
-	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
-	triangleIdx++;
+	// set up bottom triangle
+	triangles[1] = triangleTransformed;
+	triangles[1].getVertices()[0].addY(-height);
+	triangles[1].getVertices()[1].addY(-height);
+	triangles[1].getVertices()[2].addY(-height);
 
 	// center
 	Vector3 center;
@@ -142,19 +105,49 @@ void TerrainConvexMesh::createConvexMesh() {
 	vector<int> facesVerticesCount;
 	vector<int> indices;
 	int vertexIdx = 0;
-	Vector3 vertexTransformed;
-	for (auto& triangle: triangles) {
-		for (auto& vertex: triangle.getVertices()) {
-			vertexTransformed.set(vertex);
-			vertexTransformed.sub(center);
-			vertices.push_back(vertexTransformed);
-			indices.push_back(vertexIdx++);
-		}
-		facesVerticesCount.push_back(3);
-	}
+
+	// vertices
+	vertices.push_back(triangles[0].getVertices()[2]);
+	vertices.push_back(triangles[0].getVertices()[1]);
+	vertices.push_back(triangles[0].getVertices()[0]);
+	vertices.push_back(triangles[1].getVertices()[2]);
+	vertices.push_back(triangles[1].getVertices()[1]);
+	vertices.push_back(triangles[1].getVertices()[0]);
+
+	// push top vertex
+	facesVerticesCount.push_back(3);
+	indices.push_back(2);
+	indices.push_back(1);
+	indices.push_back(0);
+
+	// sides
+	// correct
+	facesVerticesCount.push_back(4);
+	indices.push_back(0 * 3 + 0);
+	indices.push_back(0 * 3 + 1);
+	indices.push_back(1 * 3 + 1);
+	indices.push_back(1 * 3 + 0);
+	// correct
+	facesVerticesCount.push_back(4);
+	indices.push_back(0 * 3 + 1);
+	indices.push_back(0 * 3 + 2);
+	indices.push_back(1 * 3 + 2);
+	indices.push_back(1 * 3 + 1);
+	// xxx
+	facesVerticesCount.push_back(4);
+	indices.push_back(0 * 3 + 2);
+	indices.push_back(0 * 3 + 0);
+	indices.push_back(1 * 3 + 0);
+	indices.push_back(1 * 3 + 2);
+
+	// push bottom vertex
+	facesVerticesCount.push_back(3);
+	indices.push_back(3);
+	indices.push_back(4);
+	indices.push_back(5);
 
 	//
-	ConvexMeshBoundingVolume::createConvexMesh(vertices, facesVerticesCount, indices);
+	ConvexMeshBoundingVolume::createConvexMesh(vertices, facesVerticesCount, indices, true, center);
 }
 
 void TerrainConvexMesh::applyTransformations(Transformations* transformations) {

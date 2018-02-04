@@ -113,6 +113,14 @@ public:
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
 
+	/**
+	 * Creates a model from terrain convex mesh
+	 * @param terrain convex mesh
+	 * @param id
+	 * @return model
+	 */
+	static Model* createTerrainConvexMeshModel(TerrainConvexMesh* mesh, const string& id);
+
 public:
 	/** 
 	 * Creates a model from bounding volume

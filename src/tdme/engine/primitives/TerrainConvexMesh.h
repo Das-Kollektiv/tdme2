@@ -51,6 +51,16 @@ public:
 	static void createTerrainConvexMeshes(Object3DModel* model, vector<TerrainConvexMesh>* convexMeshes, float height = 0.75f);
 
 	/**
+	 * @return height
+	 */
+	float getHeight();
+
+	/**
+	 * @return triangle
+	 */
+	Triangle* getTriangleTransformed();
+
+	/**
 	 * @return position transformed
 	 */
 	const Vector3& getPositionTransformed() const;

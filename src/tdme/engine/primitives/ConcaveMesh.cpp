@@ -42,21 +42,40 @@ ConcaveMesh::ConcaveMesh(Object3DModel* model, Transformations* transformations)
 			}
 		}
 	}
+
+	// determine vertices and indices
+	vector<Vector3> vertices;
+	vector<int> indices;
+	for (auto& triangle: triangles) {
+		for (auto& triangleVertex: triangle.getVertices()) {
+			// check if to insert vertex
+			int vertexIdx = 0;
+			for (auto& vertexExisting: vertices) {
+				if (vertexExisting.equals(triangleVertex) == true) {
+					break;
+				}
+				vertexIdx++;
+			}
+			if (vertexIdx == vertices.size()) {
+				vertices.push_back(triangleVertex);
+			}
+
+			// add index
+			indices.push_back(vertexIdx);
+		}
+	}
+
 	// generate vertices and indices buffers
-	verticesByteBuffer = ByteBuffer::allocate(triangles.size() * 3 * 3 * sizeof(float));
+	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
 	indicesByteBuffer = ByteBuffer::allocate(triangles.size() * 3 * sizeof(int));
 	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
 	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
-	int vertexIdx = 0;
-	for (auto& triangle: triangles) {
-		for (auto& vertex: triangle.getVertices()) {
-			verticesBuffer.put(vertex.getArray());
-			indicesBuffer.put(vertexIdx++);
-		}
-	}
+	for (auto& vertex: vertices) verticesBuffer.put(vertex.getArray());
+	for (auto& index: indices) indicesBuffer.put(index);
+
 	// triangle vertex array
 	triangleVertexArray = new reactphysics3d::TriangleVertexArray(
-		vertexIdx,
+		vertices.size(),
 		verticesByteBuffer->getBuffer(),
 		3 * sizeof(float),
 		triangles.size(),

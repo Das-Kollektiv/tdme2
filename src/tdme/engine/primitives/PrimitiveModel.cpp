@@ -20,6 +20,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
+#include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/math/MathTools.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -46,6 +47,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
+using tdme::engine::primitives::TerrainConvexMesh;
 using tdme::math::MathTools;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -493,6 +495,143 @@ Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id)
 	return model;
 }
 
+Model* PrimitiveModel::createTerrainConvexMeshModel(TerrainConvexMesh* mesh, const string& id) {
+	// model
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	// material
+	auto material = new Material("tdme.primitive.material");
+	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
+	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
+	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	(*model->getMaterials())[material->getId()] = material;
+	// group
+	auto group = new Group(model, nullptr, "group", "group");
+	// vertices, normals, faces
+	vector<Vector3> vertices;
+	vector<Vector3> normals;
+	vector<Face> faces;
+	// create from convex mesh triangles
+	int vertexIndex = -1;
+	int normalIndex = -1;
+
+	//
+	auto& triangleTransformed = *mesh->getTriangleTransformed();
+	float height = mesh->getHeight();
+	array<Triangle, 8> triangles;
+	int triangleIdx = 0;
+
+	// set up top triangle
+	triangles[0] = triangleTransformed;
+
+	// add triangle vertices
+	Vector3 triangleVertex0Bottom;
+	Vector3 triangleVertex1Bottom;
+	Vector3 triangleVertex2Bottom;
+	Vector3 triangleVertex0Top = triangles[triangleIdx].getVertices()[0];
+	Vector3 triangleVertex1Top = triangles[triangleIdx].getVertices()[1];
+	Vector3 triangleVertex2Top = triangles[triangleIdx].getVertices()[2];
+	triangleIdx++;
+
+	triangleVertex0Bottom.set(triangleVertex0Top).addY(-height);
+	triangleVertex1Bottom.set(triangleVertex1Top).addY(-height);
+	triangleVertex2Bottom.set(triangleVertex2Top).addY(-height);
+
+	// set up triangle on bottom
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top).addY(-height);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top).addY(-height);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Top).addY(-height);
+	triangleIdx++;
+
+	// add bottom top triangles
+	//	vertices 0, 2
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex0Top);
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
+	triangleIdx++;
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
+	triangleIdx++;
+
+	//	vertices 0, 1
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Top);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex0Bottom);
+	triangleIdx++;
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex0Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
+	triangleIdx++;
+
+	//	vertices 1, 2
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Top);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex1Bottom);
+	triangleIdx++;
+	triangles[triangleIdx].getVertices()[1].set(triangleVertex1Bottom);
+	triangles[triangleIdx].getVertices()[0].set(triangleVertex2Top);
+	triangles[triangleIdx].getVertices()[2].set(triangleVertex2Bottom);
+	triangleIdx++;
+
+	vector<Vector3> meshVertices;
+	for (auto& triangle: triangles) {
+		for (auto& vertex: triangle.getVertices()) {
+			meshVertices.push_back(vertex);
+		}
+	}
+
+	for (auto i = 0; i < meshVertices.size() / 3; i++) {
+		vertexIndex = vertices.size();
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(meshVertices[i * 3 + 0])));
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(meshVertices[i * 3 + 1])));
+		vertices.push_back(transformVector3(mesh, toRP3DVector3(meshVertices[i * 3 + 2])));
+		normalIndex = normals.size();
+		{
+			array<Vector3, 3> faceVertices = {
+				vertices.at(vertexIndex + 0),
+				vertices.at(vertexIndex + 1),
+				vertices.at(vertexIndex + 2)
+			};
+			array<Vector3, 3> faceNormals;
+			ModelHelper::computeNormals(&faceVertices, &faceNormals);
+			for (auto& normal : faceNormals) {
+				normals.push_back(normal);
+			}
+		}
+		faces.push_back(
+			Face(
+				group,
+				vertexIndex + 0,
+				vertexIndex + 1,
+				vertexIndex + 2,
+				normalIndex + 0,
+				normalIndex + 1,
+				normalIndex + 2
+			)
+		);
+	}
+	// faces entity
+	FacesEntity groupFacesEntity(group, "faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	// set up faces entity
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	// setup group vertex data
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
+	// determine features
+	group->determineFeatures();
+	// register group
+	(*model->getGroups())["group"] = group;
+	(*model->getSubGroups())["group"] = group;
+	// prepare for indexed rendering
+	ModelHelper::prepareForIndexedRendering(model);
+	//
+	return model;
+}
+
 Model* PrimitiveModel::createModel(BoundingBox* boundingVolume, const string& id)
 {
 	return PrimitiveModel::createBoundingBoxModel(boundingVolume, id);
@@ -511,6 +650,9 @@ Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string&
 	} else
 	if (dynamic_cast< ConvexMesh* >(boundingVolume) != nullptr) {
 		return PrimitiveModel::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
+	} else
+	if (dynamic_cast< TerrainConvexMesh* >(boundingVolume) != nullptr) {
+		return PrimitiveModel::createTerrainConvexMeshModel(dynamic_cast< TerrainConvexMesh* >(boundingVolume), id);
 	} else {
 		Console::println(string("PrimitiveModel::createModel(): unsupported bounding volume"));
 		return nullptr;
