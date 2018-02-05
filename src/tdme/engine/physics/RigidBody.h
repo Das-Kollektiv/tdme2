@@ -257,6 +257,22 @@ public:
 	 */
 	void addForce(const Vector3& forceOrigin, const Vector3& force);
 
+	/**
+	 * Checks if this rigid body does collide with given bounding volume
+	 * @deprecated this method is deprecated, please try to avoid it
+	 * @param bounding volume
+	 * @param collision
+	 */
+	bool doesCollideWith(BoundingVolume* boundingVolume, CollisionResponse* collision);
+
+	/**
+	 * Checks if this rigid body does collide with another rigid body
+	 * @param rigid body
+	 * @param bounding volume
+	 * @param collision
+	 */
+	bool doesCollideWith(RigidBody* rigidBody, CollisionResponse* collision);
+
 	/** 
 	 * Add a collision listener to this rigid body
 	 * @param listener

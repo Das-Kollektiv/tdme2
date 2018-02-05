@@ -147,7 +147,6 @@ public:
 
 private:
 
-
 	/** 
 	 * Synch into cloned rigid body from rigid body
 	 * @param cloned rigid body

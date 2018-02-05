@@ -53,7 +53,7 @@ bool BoundingVolume::containsPoint(const Vector3& point) {
 	return false;
 }
 
-bool BoundingVolume::doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision)
+bool BoundingVolume::doesCollideWith(BoundingVolume* bv2, CollisionResponse* collision)
 {
 	// callback
 	class CustomCollisionCallbackInfo: public reactphysics3d::CollisionCallback::CollisionCallbackInfo {
@@ -92,7 +92,7 @@ bool BoundingVolume::doesCollideWith(BoundingVolume* bv2, const Vector3& movemen
 	// do broad test
 	if (collisionShapeAABB.testCollision(bv2->collisionShapeAABB) == false) return false;
 
-	// TODO: update for reactphysics3d-develop
+	// do narrow test
 	auto collisionShape1 = collisionShape;
 	auto& collisionShapeTransform1 = collisionShapeTransform;
 	auto collisionShape2 = bv2->collisionShape;
@@ -144,6 +144,7 @@ bool BoundingVolume::doesCollideWith(BoundingVolume* bv2, const Vector3& movemen
         customCollisionCallbackInfo.notifyContact(collisionInfo);
 	}
 
+	// done
 	return collision->hasEntitySelected();
 }
 

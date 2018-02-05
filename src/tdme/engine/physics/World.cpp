@@ -8,7 +8,6 @@
 
 #include <ext/reactphysics3d/src/collision/ProxyShape.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
-#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
 #include <ext/reactphysics3d/src/mathematics/Ray.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
@@ -430,7 +429,7 @@ bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vec
 	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
 	// check if they collide
 	for (auto rigidBody: rigidBodyCandidates) {
-		if (boundingVolume->doesCollideWith(rigidBody->getBoundingVolume(), movement, &response) == true) {
+		if (rigidBody->doesCollideWith(boundingVolume, &response) == true) {
 			if (find(rigidBodies.begin(), rigidBodies.end(), rigidBody) == rigidBodies.end()) {
 				rigidBodies.push_back(rigidBody);
 			}

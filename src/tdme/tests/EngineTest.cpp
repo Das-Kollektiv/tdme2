@@ -216,12 +216,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			player->setAnimation("still");
 		}
 	}
-	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
+	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromTransformations(player);
 	}
-	if (playerBoundingVolumeTransformed->doesCollideWith(barrelBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
+	if (playerBoundingVolumeTransformed->doesCollideWith(barrelBoundingVolumeTransformed, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
 		playerBoundingVolumeTransformed->fromTransformations(player);
@@ -230,7 +230,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		if (idx == i)
 			continue;
 
-		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
+		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), collision) == true && collision->hasPenetration()) {
 			player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 			player->update();
 			playerBoundingVolumeTransformed->fromTransformations(player);

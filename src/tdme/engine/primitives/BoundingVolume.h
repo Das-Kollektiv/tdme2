@@ -63,12 +63,13 @@ public:
 
 	/** 
 	 * Check if this bounding volume collides with bounding volume 2
+	 * @deprecated this method is deprecated, please try to avoid it
 	 * @param bounding volume 2
 	 * @param movement
 	 * @param collision
 	 * @return collision
 	 */
-	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision);
+	bool doesCollideWith(BoundingVolume* bv2, CollisionResponse* collision);
 
 	/**
 	 * @return transformed center
