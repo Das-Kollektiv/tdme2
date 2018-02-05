@@ -52,7 +52,7 @@ public:
 
 private:
 	World* world {  };
-	reactphysics3d::Body* rigidBody;
+	reactphysics3d::RigidBody* rigidBody;
 	reactphysics3d::ProxyShape* proxyShape;
 	string id {  };
 	string rootId {  };
@@ -64,16 +64,6 @@ private:
 	Transformations transformations {  };
 	BoundingVolume* boundingVolume {  };
 	vector<CollisionListener*> collisionListener {  };
-
-	/**
-	 * @return collision body
-	 */
-	inline reactphysics3d::CollisionBody* getCollisionBody() { return dynamic_cast<reactphysics3d::CollisionBody*>(rigidBody); }
-
-	/**
-	 * @return rigid body
-	 */
-	inline reactphysics3d::RigidBody* getRigidBody() { return dynamic_cast<reactphysics3d::RigidBody*>(rigidBody); }
 
 	/**
 	 * Fire on collision

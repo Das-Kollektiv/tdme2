@@ -27,8 +27,6 @@
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/primitives/ConcaveMesh.h>
-#include <tdme/engine/primitives/HeightField.h>
 #include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/MathTools.h>
@@ -49,8 +47,6 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::ConcaveMesh;
-using tdme::engine::primitives::HeightField;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::TerrainConvexMesh;
 using tdme::math::MathTools;
@@ -70,16 +66,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->rootId = id;
 	this->typeId = typeId;
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
-	// do not clone concave mesh or height fields
-	// TODO: Note this is not working yet
-	if (dynamic_cast<ConcaveMesh*>(boundingVolume) != nullptr ||
-		dynamic_cast<HeightField*>(boundingVolume) != nullptr) {
-		this->boundingVolume = boundingVolume;
-		this->rigidBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
-		this->proxyShape = getCollisionBody()->addCollisionShape(this->boundingVolume->collisionShape, reactphysics3d::Transform());
-		this->proxyShape->setCollideWithMaskBits(~typeId);
-		getCollisionBody()->setType(reactphysics3d::BodyType::STATIC);
-	} else
+	// terrain convex mesh
 	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
 		// transform terrain convex mesh with transformations
 		this->boundingVolume = boundingVolume->clone();
@@ -87,32 +74,33 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		// determine position
 		auto positionTransformed = dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->getPositionTransformed();
 		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
-		getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
-		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
-		getRigidBody()->getMaterial().setBounciness(restitution);
-		getRigidBody()->setMass(mass);
-		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
+		rigidBody->setType(reactphysics3d::BodyType::STATIC);
+		rigidBody->getMaterial().setFrictionCoefficient(friction);
+		rigidBody->getMaterial().setBounciness(restitution);
+		rigidBody->setMass(mass);
+		this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
 		this->proxyShape->setCollideWithMaskBits(~typeId);
 		Transformations terrainTransformations;
 		terrainTransformations.getTranslation().set(positionTransformed.getX(), positionTransformed.getY(), positionTransformed.getZ());
 		fromTransformations(&terrainTransformations);
 	} else
+	// everything other
 	{
 		this->boundingVolume = boundingVolume->clone();
 		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
 		switch (type) {
 			case TYPE_STATIC:
-				getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+				rigidBody->setType(reactphysics3d::BodyType::STATIC);
 				break;
 			case TYPE_DYNAMIC:
-				getRigidBody()->setType(reactphysics3d::BodyType::DYNAMIC);
+				rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 				break;
 			case TYPE_KINEMATIC:
-				getRigidBody()->setType(reactphysics3d::BodyType::KINEMATIC);
+				rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
 				break;
 		}
 		auto& inverseInertiaMatrixArray = inverseInertiaMatrix.getArray();
-		getRigidBody()->setInverseInertiaTensorLocal(
+		rigidBody->setInverseInertiaTensorLocal(
 			reactphysics3d::Matrix3x3(
 				inverseInertiaMatrixArray[0],
 				inverseInertiaMatrixArray[1],
@@ -125,10 +113,10 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 				inverseInertiaMatrixArray[10]
 			)
 		);
-		getRigidBody()->getMaterial().setFrictionCoefficient(friction);
-		getRigidBody()->getMaterial().setBounciness(restitution);
-		getRigidBody()->setMass(mass);
-		this->proxyShape = getRigidBody()->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
+		rigidBody->getMaterial().setFrictionCoefficient(friction);
+		rigidBody->getMaterial().setBounciness(restitution);
+		rigidBody->setMass(mass);
+		this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
 		this->proxyShape->setCollideWithMaskBits(~0);
 		fromTransformations(transformations);
 	}
@@ -138,10 +126,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 }
 
 RigidBody::~RigidBody() {
-	if (dynamic_cast<ConcaveMesh*>(boundingVolume) == nullptr &&
-		dynamic_cast<HeightField*>(boundingVolume) == nullptr) {
-		delete boundingVolume;
-	}
+	delete boundingVolume;
 }
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
@@ -216,7 +201,7 @@ void RigidBody::setEnabled(bool enabled)
 
 bool RigidBody::isStatic()
 {
-	return getRigidBody()->getType() == reactphysics3d::BodyType::STATIC;
+	return rigidBody->getType() == reactphysics3d::BodyType::STATIC;
 }
 
 bool RigidBody::isSleeping()
@@ -236,43 +221,31 @@ Vector3& RigidBody::getPosition()
 
 float RigidBody::getFriction()
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return 0.0f;
 	return rigidBody->getMaterial().getFrictionCoefficient();
 }
 
 void RigidBody::setFriction(float friction)
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return;
 	rigidBody->getMaterial().setFrictionCoefficient(friction);
 }
 
 float RigidBody::getRestitution()
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return 0.0f;
 	return rigidBody->getMaterial().getBounciness();
 }
 
 void RigidBody::setRestitution(float restitution)
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return;
 	rigidBody->getMaterial().setBounciness(restitution);
 }
 
 float RigidBody::getMass()
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return 0.0f;
 	return rigidBody->getMass();
 }
 
 void RigidBody::setMass(float mass)
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return;
 	rigidBody->getMass();
 }
 
@@ -292,11 +265,6 @@ Transformations* RigidBody::getTransformations() {
 
 void RigidBody::fromTransformations(Transformations* transformations)
 {
-	if (dynamic_cast<ConcaveMesh*>(boundingVolume) != nullptr ||
-		dynamic_cast<HeightField*>(boundingVolume) != nullptr) {
-		Console::println("RigidBody::fromTransformations(): not supported with concave mesh, height field or terrain convex mesh");
-		return;
-	}
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
 	// obv
@@ -311,16 +279,11 @@ void RigidBody::fromTransformations(Transformations* transformations)
 	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 	reactphysics3d::Transform transform;
 	transform.setFromOpenGL(transformationsMatrix.getArray().data());
-	auto rigidBody = getRigidBody();
-	if (rigidBody != nullptr) rigidBody->setTransform(transform);
-	auto collisionBody = getCollisionBody();
-	if (collisionBody != nullptr) collisionBody->setTransform(transform);
+	rigidBody->setTransform(transform);
 }
 
 void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 {
-	auto rigidBody = getRigidBody();
-	if (rigidBody == nullptr) return;
 	rigidBody->applyForce(
 		reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ()),
 		reactphysics3d::Vector3(forceOrigin.getX(), forceOrigin.getY(), forceOrigin.getZ())
@@ -363,7 +326,7 @@ bool RigidBody::doesCollideWith(BoundingVolume* boundingVolume, CollisionRespons
 	collision->reset();
 
 	// do broad test
-	auto rigidBodyAABB = getRigidBody()->getProxyShapesList()->getWorldAABB();
+	auto rigidBodyAABB = rigidBody->getProxyShapesList()->getWorldAABB();
 	if (rigidBodyAABB.testCollision(boundingVolume->collisionShapeAABB) == false) return false;
 
 	// do narrow test
@@ -373,8 +336,8 @@ bool RigidBody::doesCollideWith(BoundingVolume* boundingVolume, CollisionRespons
 	reactphysics3d::MemoryManager memoryManager;
 	reactphysics3d::DefaultCollisionDispatch collisionDispatch;
 	reactphysics3d::CollisionWorld world;
-	reactphysics3d::CollisionBody body2(collisionShapeTransform2, world, getRigidBody()->getID() + 1);
-	auto proxyShape1 = getRigidBody()->getProxyShapesList();
+	reactphysics3d::CollisionBody body2(collisionShapeTransform2, world, rigidBody->getID() + 1);
+	auto proxyShape1 = rigidBody->getProxyShapesList();
 	reactphysics3d::ProxyShape proxyShape2(&body2, collisionShape2, boundingVolume->collisionShapeLocalTransform, 0.0, memoryManager);
 	reactphysics3d::OverlappingPair pair(proxyShape1, &proxyShape2, memoryManager.getPoolAllocator(), memoryManager.getSingleFrameAllocator());
     auto narrowPhaseInfo = new (
@@ -455,7 +418,7 @@ bool RigidBody::doesCollideWith(RigidBody* rigidBody, CollisionResponse* collisi
 
 	// do the test
 	CustomCollisionCallback customCollisionCallback(collision);
-	world->world.testCollision(this->getRigidBody(), rigidBody->getRigidBody(), &customCollisionCallback);
+	world->world.testCollision(this->rigidBody, rigidBody->rigidBody, &customCollisionCallback);
 
 	// done
 	return collision->hasEntitySelected();

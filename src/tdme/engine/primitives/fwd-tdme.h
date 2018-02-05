@@ -7,10 +7,8 @@ namespace primitives {
 			class BoundingBox;
 			struct BoundingVolume;
 			class Capsule;
-			class ConcaveMesh;
 			class ConvexMesh;
 			class ConvexMeshBoundingVolume;
-			class HeightField;
 			class LineSegment;
 			class OrientedBoundingBox;
 			class Plane;

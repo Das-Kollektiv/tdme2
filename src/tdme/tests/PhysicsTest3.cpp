@@ -17,7 +17,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/TerrainConvexMesh.h>
-#include <tdme/engine/primitives/ConcaveMesh.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
@@ -48,7 +47,6 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
-using tdme::engine::primitives::ConcaveMesh;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
@@ -262,10 +260,6 @@ void PhysicsTest3::initialize()
 		entity->getTranslation().setY(-4.0f);
 		entity->update();
 		engine->addEntity(entity);
-		// TODO: both bounding volume types do not work yet, guess due to a bug in ReactPhysics3D 0.6.0
-		// auto terrainBoundingVolume = new ConcaveMesh(new Object3DModel(_terrainModel), entity);
-		// auto terrainBoundingVolume = new HeightField(new Object3DModel(_terrainModel), entity);
-		// world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, new Transformations(), terrainBoundingVolume, 0.5f);
 		vector<TerrainConvexMesh> groundConvexMeshes;
 		TerrainConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), &groundConvexMeshes);
 		{

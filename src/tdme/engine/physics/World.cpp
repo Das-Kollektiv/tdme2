@@ -108,12 +108,7 @@ void World::removeRigidBody(const string& id) {
 	auto rididBodyByIdIt = rigidBodiesById.find(id);
 	if (rididBodyByIdIt != rigidBodiesById.end()) {
 		auto rigidBody = rididBodyByIdIt->second;
-		auto rp3dRigidBody = rigidBody->getRigidBody();
-		if (rp3dRigidBody != nullptr) {
-			world.destroyRigidBody(rp3dRigidBody);
-		} else {
-			world.destroyCollisionBody(rigidBody->getCollisionBody());
-		}
+		world.destroyRigidBody(rigidBody->rigidBody);
 		rigidBodies.erase(remove(rigidBodies.begin(), rigidBodies.end(), rigidBody), rigidBodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
 		rigidBodiesById.erase(rididBodyByIdIt);
@@ -139,7 +134,7 @@ void World::update(float deltaTime)
 			continue;
 		}
 		auto& rigidBodyAngularVelocity = rigidBody->angularVelocity;
-		rigidBody->getRigidBody()->setAngularVelocity(
+		rigidBody->rigidBody->setAngularVelocity(
 			reactphysics3d::Vector3(
 				rigidBodyAngularVelocity.getX(),
 				rigidBodyAngularVelocity.getY(),
@@ -147,7 +142,7 @@ void World::update(float deltaTime)
 			)
 		);
 		auto& rigidBodyLinearVelocity = rigidBody->linearVelocity;
-		rigidBody->getRigidBody()->setLinearVelocity(
+		rigidBody->rigidBody->setLinearVelocity(
 			reactphysics3d::Vector3(
 				rigidBodyLinearVelocity.getX(),
 				rigidBodyLinearVelocity.getY(),
@@ -210,7 +205,7 @@ void World::update(float deltaTime)
 			rotations->add(new Rotation());
 		}
 		// set up position, orientation
-		auto transform = rigidBody->getRigidBody()->getTransform();
+		auto transform = rigidBody->rigidBody->getTransform();
 		auto& position = transform.getPosition();
 		auto& orientation = transform.getOrientation();
 		//	set up transformations
@@ -219,8 +214,8 @@ void World::update(float deltaTime)
 		physicsTransformations.getTranslation().set(position.x, position.y, position.z);
 		physicsTransformations.update();
 		// velocities
-		auto angularVelocity = rigidBody->getRigidBody()->getAngularVelocity();
-		auto linearVelocity = rigidBody->getRigidBody()->getLinearVelocity();
+		auto angularVelocity = rigidBody->rigidBody->getAngularVelocity();
+		auto linearVelocity = rigidBody->rigidBody->getLinearVelocity();
 		rigidBody->getAngularVelocity().set(angularVelocity.x, angularVelocity.y, angularVelocity.z);
 		rigidBody->getLinearVelocity().set(linearVelocity.x, linearVelocity.y, linearVelocity.z);
 	}
