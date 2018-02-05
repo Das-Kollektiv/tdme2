@@ -132,6 +132,15 @@ public:
 	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest);
 
 	/** 
+	 * Check if world collides with given bounding box
+	 * @param type ids
+	 * @param bounding volume
+	 * @param rigid bodies that collide with bounding volume
+	 * @return if collision happpened or not
+	 */
+	bool doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies);
+
+	/**
 	 * Check if world collides with given bounding volume
 	 * @param type ids
 	 * @param bounding volume

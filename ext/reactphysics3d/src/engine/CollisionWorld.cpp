@@ -162,16 +162,6 @@ bool CollisionWorld::testAABBOverlap(const CollisionBody* body1,
     return body1AABB.testCollision(body2AABB);
 }
 
-// Report all the bodies that overlap with the aabb in parameter
-/**
- * @param aabb AABB used to test for overlap
- * @param overlapCallback Pointer to the callback class to report overlap
- * @param categoryMaskBits bits mask used to filter the bodies to test overlap with
- */
-inline void CollisionWorld::testAABBOverlap(const AABB& aabb, OverlapCallback* overlapCallback, unsigned short categoryMaskBits) {
-    mCollisionDetection.testAABBOverlap(aabb, overlapCallback, categoryMaskBits);
-}
-
 // Return true if two bodies overlap
 bool CollisionWorld::testOverlap(CollisionBody* body1, CollisionBody* body2) {
     return mCollisionDetection.testOverlap(body1, body2);

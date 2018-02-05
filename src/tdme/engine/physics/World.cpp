@@ -7,6 +7,8 @@
 #include <string>
 
 #include <ext/reactphysics3d/src/collision/ProxyShape.h>
+#include <ext/reactphysics3d/src/collision/OverlapCallback.h>
+#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
 #include <ext/reactphysics3d/src/mathematics/Ray.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
@@ -375,54 +377,54 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	}
 }
 
+bool World::doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies) {
+	// callback
+	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
+	    public:
+			CustomOverlapCallback(vector<RigidBody*>& rigidBodies): rigidBodies(rigidBodies) {
+			}
+
+			virtual void notifyOverlap(reactphysics3d::CollisionBody* collisionBody) {
+				rigidBodies.push_back(static_cast<RigidBody*>(collisionBody->getUserData()));
+			}
+	    private:
+			vector<RigidBody*>& rigidBodies;
+	};
+
+	// create rp3d bounding box
+	auto& bbMin = boundingBox->getMin();
+	auto& bbMax = boundingBox->getMax();
+	reactphysics3d::AABB aabb(
+		reactphysics3d::Vector3(
+			bbMin.getX(),
+			bbMin.getY(),
+			bbMin.getZ()
+		),
+		reactphysics3d::Vector3(
+			bbMax.getX(),
+			bbMax.getY(),
+			bbMax.getZ()
+		)
+	);
+
+	// do the test
+	CustomOverlapCallback customOverlapCallback(rigidBodies);
+	world.testAABBOverlap(aabb, &customOverlapCallback, typeIds);
+
+	// done
+	return rigidBodies.size() > 0;
+}
+
 bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies)
 {
 	vector<RigidBody*> rigidBodyCandidates;
-	auto determinedHeight = -10000.0f;
-	CollisionResponse response;
-	Vector3 movement(0.0f, 0.0f, 0.0f);
-	Vector3 heightPoint;
-	Vector3 heightPointDest;
-	auto width = boundingVolume->getBoundingBoxTransformed().getDimensions().getX();
-	auto height = boundingVolume->getBoundingBoxTransformed().getDimensions().getY();
-	auto depth = boundingVolume->getBoundingBoxTransformed().getDimensions().getZ();
-	float heightPointDestY;
-	RigidBody* heightRigidBody = nullptr;
-	RigidBody* rigidBody = nullptr;
-	// center, center
-	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
-	heightPoint.addY(-height / 2.0f);
-	rigidBody = determineHeight(typeIds, height, heightPoint, heightPointDest);
-	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
-	// left, top
-	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
-	heightPoint.addX(-width / 2.0f);
-	heightPoint.addY(-height / 2.0f);
-	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, height, heightPoint, heightPointDest);
-	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
-	// left, bottom
-	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
-	heightPoint.addX(-width / 2.0f);
-	heightPoint.addY(-height / 2.0f);
-	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, height, heightPoint, heightPointDest);
-	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
-	// right, top
-	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
-	heightPoint.addX(+width / 2.0f);
-	heightPoint.addY(-height / 2.0f);
-	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, height, heightPoint, heightPointDest);
-	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
-	// right, bottom
-	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
-	heightPoint.addX(+width / 2.0f);
-	heightPoint.addY(-height / 2.0f);
-	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, height, heightPoint, heightPointDest);
-	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
+	auto boundingBox = boundingVolume->getBoundingBoxTransformed();
+	if (doesCollideWith(typeIds, &boundingBox, rigidBodyCandidates) == false) {
+		return false;
+	}
+
 	// check if they collide
+	CollisionResponse response;
 	for (auto rigidBody: rigidBodyCandidates) {
 		if (rigidBody->doesCollideWith(boundingVolume, &response) == true) {
 			if (find(rigidBodies.begin(), rigidBodies.end(), rigidBody) == rigidBodies.end()) {
@@ -430,6 +432,8 @@ bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vec
 			}
 		}
 	}
+
+	// done
 	return rigidBodies.size() > 0;
 }
 

@@ -121,19 +121,16 @@ void TerrainConvexMesh::createConvexMesh() {
 	indices.push_back(0);
 
 	// sides
-	// correct
 	facesVerticesCount.push_back(4);
 	indices.push_back(0 * 3 + 0);
 	indices.push_back(0 * 3 + 1);
 	indices.push_back(1 * 3 + 1);
 	indices.push_back(1 * 3 + 0);
-	// correct
 	facesVerticesCount.push_back(4);
 	indices.push_back(0 * 3 + 1);
 	indices.push_back(0 * 3 + 2);
 	indices.push_back(1 * 3 + 2);
 	indices.push_back(1 * 3 + 1);
-	// xxx
 	facesVerticesCount.push_back(4);
 	indices.push_back(0 * 3 + 2);
 	indices.push_back(0 * 3 + 0);

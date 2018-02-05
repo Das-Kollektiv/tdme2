@@ -245,6 +245,16 @@ inline void CollisionWorld::testOverlap(CollisionBody* body, OverlapCallback* ov
     mCollisionDetection.testOverlap(body, overlapCallback, categoryMaskBits);
 }
 
+// Report all the bodies that overlap with the aabb in parameter
+/**
+ * @param aabb AABB used to test for overlap
+ * @param overlapCallback Pointer to the callback class to report overlap
+ * @param categoryMaskBits bits mask used to filter the bodies to test overlap with
+ */
+inline void CollisionWorld::testAABBOverlap(const AABB& aabb, OverlapCallback* overlapCallback, unsigned short categoryMaskBits) {
+    mCollisionDetection.testAABBOverlap(aabb, overlapCallback, categoryMaskBits);
+}
+
 #ifdef IS_PROFILING_ACTIVE
 
 // Set the name of the profiler
