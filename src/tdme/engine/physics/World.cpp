@@ -13,6 +13,7 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
 #include <tdme/math/Math.h>
+#include <tdme/math/MathTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Rotation.h>
@@ -41,6 +42,7 @@ using std::unordered_set;
 
 using tdme::engine::physics::World;
 using tdme::math::Math;
+using tdme::math::MathTools;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Rotation;
@@ -132,7 +134,9 @@ void World::update(float deltaTime)
 			continue;
 		}
 		// skip if sleeping
-		if (rigidBody->isSleeping() == true) {
+		if (rigidBody->isSleeping() == true &&
+			rigidBody->angularVelocity.computeLengthSquared() < MathTools::EPSILON &&
+			rigidBody->linearVelocity.computeLengthSquared() < MathTools::EPSILON) {
 			continue;
 		}
 		auto& rigidBodyAngularVelocity = rigidBody->angularVelocity;
