@@ -66,6 +66,9 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 		radius,
 		bTransformed.clone().sub(aTransformed).scale(0.5f).computeLength() + radius * 2.0f
 	);
+
+	// compute bounding box
+	computeBoundingBox();
 }
 
 float Capsule::getRadius() const

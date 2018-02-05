@@ -153,6 +153,9 @@ class OverlappingPair {
         /// Add potential contact-points from narrow-phase into potential contact manifolds
         void addPotentialContactPoints(NarrowPhaseInfo* narrowPhaseInfo);
 
+        /// Add contact points from potential contact points
+        void addContactPointsFromPotentialContactPoints();
+
         /// Add a contact to the contact manifold
         void addContactManifold(const ContactManifoldInfo* contactManifoldInfo);
 

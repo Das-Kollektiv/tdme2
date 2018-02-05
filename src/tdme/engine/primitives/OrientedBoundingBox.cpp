@@ -61,6 +61,8 @@ OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& a
 		)
 	);
 	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	// compute bounding box
+	computeBoundingBox();
 }
 
 OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
@@ -87,6 +89,8 @@ OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 		)
 	);
 	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	// compute bounding box
+	computeBoundingBox();
 }
 
 OrientedBoundingBox::OrientedBoundingBox() 
@@ -113,6 +117,8 @@ OrientedBoundingBox::OrientedBoundingBox()
 		)
 	);
 	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	// compute bounding box
+	computeBoundingBox();
 }
 
 const array<Vector3, 8> OrientedBoundingBox::getVertices() const {

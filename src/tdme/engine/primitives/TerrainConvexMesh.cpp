@@ -148,6 +148,9 @@ void TerrainConvexMesh::createConvexMesh() {
 
 	//
 	ConvexMeshBoundingVolume::createConvexMesh(vertices, facesVerticesCount, indices, true, center);
+
+	// compute bounding box
+	computeBoundingBox();
 }
 
 void TerrainConvexMesh::applyTransformations(Transformations* transformations) {

@@ -113,6 +113,15 @@ void OverlappingPair::addPotentialContactPoints(NarrowPhaseInfo* narrowPhaseInfo
     narrowPhaseInfo->contactPoints = nullptr;
 }
 
+void OverlappingPair::addContactPointsFromPotentialContactPoints() {
+	// Add all the potential contact manifolds as actual contact manifolds to the pair
+	ContactManifoldInfo* potentialManifold = getPotentialContactManifolds();
+	while (potentialManifold != nullptr) {
+		addContactManifold(potentialManifold);
+		potentialManifold = potentialManifold->mNext;
+	}
+}
+
 // Clear all the potential contact manifolds
 void OverlappingPair::clearPotentialContactManifolds() {
 

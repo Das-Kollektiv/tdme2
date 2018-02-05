@@ -393,7 +393,7 @@ void EngineTest::initialize()
 		engine->getEntity("circle")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystemEntity("water", true, new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, true));
 		engine->getEntity("water")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("snow", false, new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, true));
+		engine->addEntity(new PointsParticleSystemEntity("snow", false, new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 1.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, true));
 		engine->getEntity("snow")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystemEntity("firebase", false, new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, true));
 		engine->getEntity("firebase")->setEnabled(true);

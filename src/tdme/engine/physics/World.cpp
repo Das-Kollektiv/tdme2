@@ -430,7 +430,7 @@ bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vec
 	if (rigidBody != nullptr) rigidBodyCandidates.push_back(rigidBody);
 	// check if they collide
 	for (auto rigidBody: rigidBodyCandidates) {
-		if (rigidBody->getBoundingVolume()->doesCollideWith(boundingVolume, movement, &response) == true) {
+		if (boundingVolume->doesCollideWith(rigidBody->getBoundingVolume(), movement, &response) == true) {
 			if (find(rigidBodies.begin(), rigidBodies.end(), rigidBody) == rigidBodies.end()) {
 				rigidBodies.push_back(rigidBody);
 			}

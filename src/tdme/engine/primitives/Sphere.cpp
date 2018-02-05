@@ -23,6 +23,8 @@ Sphere::Sphere(const Vector3& center, float radius)
 	this->radius = radius;
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
 	collisionShape = new reactphysics3d::SphereShape(radius);
+	// compute bounding box
+	computeBoundingBox();
 }
 
 const Vector3& Sphere::getCenter() const {
