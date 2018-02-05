@@ -10,6 +10,7 @@
 #include <ext/reactphysics3d/src/collision/OverlapCallback.h>
 #include <ext/reactphysics3d/src/collision/shapes/AABB.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
+#include <ext/reactphysics3d/src/engine/EventListener.h>
 #include <ext/reactphysics3d/src/mathematics/Ray.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
@@ -65,7 +66,6 @@ using tdme::utils::VectorIteratorMultiple;
 
 World::World(): world(reactphysics3d::Vector3(0.0, -9.81, 0.0))
 {
-	rigidBodyRotationTransformation.getRotations()->add(new Rotation());
 }
 
 World::~World()
@@ -156,12 +156,52 @@ void World::update(float deltaTime)
 	// do the job
 	world.update(deltaTime);
 
-	// TODO: collision events
+	// collision events
 	{
-		// do the collision tests,
-		// take every rigid body and its partitions into account
-		map<string, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
+		// fire on collision begin, on collision
 		map<string, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
+		CollisionResponse collision;
+		auto manifolds = world.getContactsList();
+		for (auto manifold: manifolds) {
+			auto rigidBody1 = static_cast<RigidBody*>(manifold->getBody1()->getUserData());
+			auto rigidBody2 = static_cast<RigidBody*>(manifold->getBody2()->getUserData());
+			RigidBodyCollisionStruct rigidBodyCollisionStruct;
+			rigidBodyCollisionStruct.rigidBody1Id = rigidBody1->getId();
+			rigidBodyCollisionStruct.rigidBody2Id = rigidBody2->getId();
+			string rigidBodyKey = rigidBodyCollisionStruct.rigidBody1Id + "," + rigidBodyCollisionStruct.rigidBody2Id;
+			string rigidBodyKeyInverted = rigidBodyCollisionStruct.rigidBody2Id + "," + rigidBodyCollisionStruct.rigidBody1Id;
+			rigidBodyCollisionsCurrentFrame[rigidBodyKey] = rigidBodyCollisionStruct;
+			for (int i=0; i<manifold->getNbContactPoints(); i++) {
+				auto contactPoint = manifold->getContactPoints();
+				while (contactPoint != nullptr) {
+					// construct collision
+					auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
+					auto normal = contactPoint->getNormal();
+					entity->getNormal().set(normal.x, normal.y, normal.z);
+					auto shape1 = manifold->getShape1();
+					auto shape2 = manifold->getShape2();
+					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
+					auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
+					auto& localPoint1 = contactPoint->getLocalPointOnShape1();
+					auto& localPoint2 = contactPoint->getLocalPointOnShape2();
+					auto worldPoint1 = shapeLocalToWorldTransform1 * (localPoint1 * shape1->getLocalScaling());
+					auto worldPoint2 = shapeLocalToWorldTransform2 * (localPoint2 * shape2->getLocalScaling());
+					entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
+					entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
+					contactPoint = contactPoint->getNext();
+					// fire events
+					if (rigidBodyCollisionsLastFrame.find(rigidBodyKey) == rigidBodyCollisionsLastFrame.end() &&
+						rigidBodyCollisionsLastFrame.find(rigidBodyKeyInverted) == rigidBodyCollisionsLastFrame.end()) {
+						// fire on collision begin
+						rigidBody1->fireOnCollisionBegin(rigidBody2, &collision);
+					}
+					// fire on collision
+					rigidBody1->fireOnCollision(rigidBody2, &collision);
+					// reset collision
+					collision.reset();
+				}
+			}
+		}
 
 		// fire on collision end
 		//	check each collision last frame that disappeared in current frame

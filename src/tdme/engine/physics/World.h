@@ -47,7 +47,6 @@ private:
 	vector<RigidBody*> rigidBodiesDynamic {  };
 	map<string, RigidBody*> rigidBodiesById {  };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
-	Transformations rigidBodyRotationTransformation;
 
 public:
 
