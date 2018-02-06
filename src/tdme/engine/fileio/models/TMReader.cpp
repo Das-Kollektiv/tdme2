@@ -112,6 +112,9 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	for (auto i = 0; i < animationSetupCount; i++) {
 		readAnimationSetup(&is, model);
 	}
+	if (model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr) {
+		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
+	}
 	return model;
 }
 
