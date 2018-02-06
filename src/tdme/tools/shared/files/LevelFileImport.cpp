@@ -294,6 +294,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			nullptr
 		);
 		model->getImportTransformationsMatrix().set(levelModel->getImportTransformationsMatrix());
+		float importFixScale = 1.0f;
 		Vector3 translation, scale, rotation;
 		Vector3 xAxis, yAxis, zAxis, tmpAxis;
 		Matrix4x4 groupTransformationsMatrix;
@@ -323,6 +324,24 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		}
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 		ModelHelper::prepareForIndexedRendering(model);
+		// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
+		{
+			auto width = model->getBoundingBox()->getDimensions().getX();
+			auto height = model->getBoundingBox()->getDimensions().getY();
+			auto depth = model->getBoundingBox()->getDimensions().getZ();
+			if (width < 0.2f && height < 0.2f && depth < 0.2f) {
+				if (width < height && width < depth) {
+					importFixScale = 1.0f / width / 5.0f;
+				} else
+				if (height < width && height < depth) {
+					importFixScale = 1.0f / height / 5.0f;
+				} else {
+					importFixScale = 1.0f / depth / 5.0f;
+				}
+			}
+			model->getImportTransformationsMatrix().scale(importFixScale);
+			scale.scale(1.0f / importFixScale);
+		}
 		auto entityType = LevelEditorEntity_EntityType::MODEL;
 		ModelStatistics modelStatistics;
 		ModelUtilities::computeModelStatistics(model, &modelStatistics);
