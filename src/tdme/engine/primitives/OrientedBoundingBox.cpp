@@ -60,7 +60,13 @@ OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& a
 			)
 		)
 	);
-	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	collisionShape = new reactphysics3d::BoxShape(
+		reactphysics3d::Vector3(
+			Math::max(0.1f, halfExtension.getX()),
+			Math::max(0.1f, halfExtension.getY()),
+			Math::max(0.1f, halfExtension.getZ())
+		)
+	);
 	// compute bounding box
 	computeBoundingBox();
 }
@@ -88,7 +94,13 @@ OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 			)
 		)
 	);
-	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	collisionShape = new reactphysics3d::BoxShape(
+		reactphysics3d::Vector3(
+			Math::max(0.1f, halfExtension.getX()),
+			Math::max(0.1f, halfExtension.getY()),
+			Math::max(0.1f, halfExtension.getZ())
+		)
+	);
 	// compute bounding box
 	computeBoundingBox();
 }
@@ -116,7 +128,13 @@ OrientedBoundingBox::OrientedBoundingBox()
 			)
 		)
 	);
-	collisionShape = new reactphysics3d::BoxShape(reactphysics3d::Vector3(halfExtension.getX(), halfExtension.getY(), halfExtension.getZ()));
+	collisionShape = new reactphysics3d::BoxShape(
+		reactphysics3d::Vector3(
+			Math::max(0.1f, halfExtension.getX()),
+			Math::max(0.1f, halfExtension.getY()),
+			Math::max(0.1f, halfExtension.getZ())
+		)
+	);
 	// compute bounding box
 	computeBoundingBox();
 }

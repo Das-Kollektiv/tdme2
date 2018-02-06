@@ -181,7 +181,8 @@ BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb
 	if (boundingBox == nullptr) {
-		boundingBox = ModelUtilities::createBoundingBox(static_cast< Object3DModelInternal* >(new Object3DModel(this)));
+		Object3DModel object3DModel(this);
+		boundingBox = ModelUtilities::createBoundingBox(&object3DModel);
 	}
 	return boundingBox;
 }

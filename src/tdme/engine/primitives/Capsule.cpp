@@ -63,8 +63,8 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 
 	// create capsule
 	collisionShape = new reactphysics3d::CapsuleShape(
-		radius,
-		bTransformed.clone().sub(aTransformed).scale(0.5f).computeLength() + radius * 2.0f
+		Math::max(0.1f, radius),
+		Math::max(0.1f, bTransformed.clone().sub(aTransformed).scale(0.5f).computeLength() + radius * 2.0f)
 	);
 
 	// compute bounding box

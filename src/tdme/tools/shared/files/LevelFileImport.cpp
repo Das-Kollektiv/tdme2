@@ -325,21 +325,26 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 		ModelHelper::prepareForIndexedRendering(model);
 		// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
+		// TODO: maybe make this conditional
 		{
 			auto width = model->getBoundingBox()->getDimensions().getX();
 			auto height = model->getBoundingBox()->getDimensions().getY();
 			auto depth = model->getBoundingBox()->getDimensions().getZ();
 			if (width < 0.2f && height < 0.2f && depth < 0.2f) {
-				if (width < height && width < depth) {
+				if (width > MathTools::EPSILON && width < height && width < depth) {
 					importFixScale = 1.0f / width / 5.0f;
 				} else
-				if (height < width && height < depth) {
+				if (height > MathTools::EPSILON && height < width && height < depth) {
 					importFixScale = 1.0f / height / 5.0f;
-				} else {
+				} else
+				if (depth > MathTools::EPSILON) {
 					importFixScale = 1.0f / depth / 5.0f;
 				}
 			}
 			model->getImportTransformationsMatrix().scale(importFixScale);
+			model->getBoundingBox()->getMin().scale(importFixScale);
+			model->getBoundingBox()->getMax().scale(importFixScale);
+			model->getBoundingBox()->update();
 			scale.scale(1.0f / importFixScale);
 		}
 		auto entityType = LevelEditorEntity_EntityType::MODEL;
