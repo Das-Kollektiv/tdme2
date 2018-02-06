@@ -68,6 +68,12 @@ private:
 		return Vector3(normalTransformed.x, normalTransformed.y, normalTransformed.z);
 	}
 
+	/**
+	 * Set up convex mesh material
+	 * @param groups
+	 */
+	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
+
 public:
 	/** 
 	 * Creates a model from bounding box
@@ -112,6 +118,12 @@ public:
 	 * @return model
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
+
+	/**
+	 * Set up a convex mesh model
+	 * @param model
+	 */
+	static void setupConvexMeshModel(Model* model);
 
 	/**
 	 * Creates a model from terrain convex mesh

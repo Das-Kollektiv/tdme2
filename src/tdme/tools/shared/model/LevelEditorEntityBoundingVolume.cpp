@@ -178,21 +178,12 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 	model = nullptr;
 	modelMeshFile = pathName + "/" + fileName;
 	try {
-		Model* convexMeshModel = ModelReader::read(
+		model = ModelReader::read(
 			pathName,
 			fileName
 		);
-		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
-		model = PrimitiveModel::createModel(
-			boundingVolume,
-			string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
-				string(",") +
-				to_string(levelEditorEntity->getId()) +
-				string("_model_bv.") +
-				to_string(id) +
-				string(".") +
-				to_string(staticIdx++)
-		);
+		boundingVolume = new ConvexMesh(new Object3DModel(model));
+		PrimitiveModel::setupConvexMeshModel(model);
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));

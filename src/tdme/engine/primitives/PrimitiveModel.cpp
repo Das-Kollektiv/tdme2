@@ -425,74 +425,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 }
 
 Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
-	// model
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	// materual
-	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
-	(*model->getMaterials())[material->getId()] = material;
-	// group
-	auto group = new Group(model, nullptr, "group", "group");
-	// vertices, normals, faces
-	vector<Vector3> vertices;
-	vector<Vector3> normals;
-	vector<Face> faces;
-	// create from convex mesh triangles
-	int vertexIndex = -1;
-	int normalIndex = -1;
-	//
-	for (auto i = 0; i < mesh->getVertices().size() / 3; i++) {
-		vertexIndex = vertices.size();
-		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 0])));
-		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 1])));
-		vertices.push_back(transformVector3(mesh, toRP3DVector3(mesh->getVertices()[i * 3 + 2])));
-		normalIndex = normals.size();
-		{
-			array<Vector3, 3> faceVertices = {
-				vertices.at(vertexIndex + 0),
-				vertices.at(vertexIndex + 1),
-				vertices.at(vertexIndex + 2)
-			};
-			array<Vector3, 3> faceNormals;
-			ModelHelper::computeNormals(&faceVertices, &faceNormals);
-			for (auto& normal : faceNormals) {
-				normals.push_back(normal);
-			}
-		}
-		faces.push_back(
-			Face(
-				group,
-				vertexIndex + 0,
-				vertexIndex + 1,
-				vertexIndex + 2,
-				normalIndex + 0,
-				normalIndex + 1,
-				normalIndex + 2
-			)
-		);
-	}
-	// faces entity
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
-	// set up faces entity
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	// setup group vertex data
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
-	// determine features
-	group->determineFeatures();
-	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
-	// prepare for indexed rendering
-	ModelHelper::prepareForIndexedRendering(model);
-	//
-	return model;
+	Console::println("PrimitiveModel::createConvexMeshModel(): This is not supported. Rather load the model and use PrimitiveModel::setupConvexMeshModel().");
+	return nullptr;
 }
 
 Model* PrimitiveModel::createTerrainConvexMeshModel(TerrainConvexMesh* mesh, const string& id) {
@@ -630,6 +564,28 @@ Model* PrimitiveModel::createTerrainConvexMeshModel(TerrainConvexMesh* mesh, con
 	ModelHelper::prepareForIndexedRendering(model);
 	//
 	return model;
+}
+
+void PrimitiveModel::setupConvexMeshModel(Model* model)
+{
+	model->getImportTransformationsMatrix().scale(1.01f);
+	auto material = new Material("tdme.primitive.material");
+	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
+	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
+	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	(*model->getMaterials())[material->getId()] = material;
+	setupConvexMeshMaterial(model->getSubGroups(), material);
+}
+
+void PrimitiveModel::setupConvexMeshMaterial(map<string, Group*>* groups, Material* material)
+{
+	for (auto it: *groups) {
+		Group* group = it.second;
+		for (auto& faceEntity : *group->getFacesEntities()) {
+			faceEntity.setMaterial(material);
+		}
+		setupConvexMeshMaterial(group->getSubGroups(), material);
+	}
 }
 
 Model* PrimitiveModel::createModel(BoundingBox* boundingVolume, const string& id)
