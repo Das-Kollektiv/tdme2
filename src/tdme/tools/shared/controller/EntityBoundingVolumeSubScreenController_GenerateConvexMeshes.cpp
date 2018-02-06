@@ -173,8 +173,8 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 		vhacdParams.m_callback = &vhacdCallback;
 		vector<float> meshPoints;
 		vector<int> meshTriangles;
-		string meshPathName = entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
-		string meshFileName = entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName();
+		string meshPathName = Tools::getPath(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue()->getString());
+		string meshFileName = Tools::getFileName(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue()->getString());
 		auto meshModel = ModelReader::read(
 			meshPathName,
 			meshFileName
