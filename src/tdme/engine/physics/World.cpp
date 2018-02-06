@@ -212,15 +212,16 @@ void World::update(float deltaTime)
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
-
 			{
 				string rigidBodyKey = rigidBodyCollisionStruct->rigidBody2Id + "," + rigidBodyCollisionStruct->rigidBody1Id;
 				auto rigidBodyCollisionsCurrentFrameIt = rigidBodyCollisionsCurrentFrame.find(rigidBodyKey);
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
-
-			auto rigidBody1 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody1Id];
-			auto rigidBody2 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody2Id];
+			auto rigidBody1It = rigidBodiesById.find(rigidBodyCollisionStruct->rigidBody1Id);
+			auto rigidBody1 = rigidBody1It == rigidBodiesById.end()?nullptr:rigidBody1It->second;
+			auto rigidBody2It = rigidBodiesById.find(rigidBodyCollisionStruct->rigidBody2Id);
+			auto rigidBody2 = rigidBody2It == rigidBodiesById.end()?nullptr:rigidBody2It->second;
+			if (rigidBody1 == nullptr || rigidBody2 == nullptr) continue;
 			rigidBody1->fireOnCollisionEnd(rigidBody2);
 		}
 		// swap rigid body collisions current and last frame
