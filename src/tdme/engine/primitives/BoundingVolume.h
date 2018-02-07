@@ -34,6 +34,8 @@ class tdme::engine::primitives::BoundingVolume
 	friend class PrimitiveModel;
 
 protected:
+	Vector3 center {  };
+	Vector3 collisionShapeLocalTranslation {  };
 	reactphysics3d::CollisionShape* collisionShape {  };
 	reactphysics3d::Transform collisionShapeLocalTransform {  };
 	reactphysics3d::Transform collisionShapeTransform {  };
@@ -72,9 +74,14 @@ public:
 	bool doesCollideWith(BoundingVolume* bv2, CollisionResponse* collision);
 
 	/**
+	 * @return center
+	 */
+	const Vector3& getCenter() const;
+
+	/**
 	 * @return transformed center
 	 */
-	const Vector3 getCenterTransformed() const;
+	const Vector3& getCenterTransformed() const;
 
 	/** 
 	 * Get bounding box transformed

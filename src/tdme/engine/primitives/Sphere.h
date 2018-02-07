@@ -17,16 +17,9 @@ class tdme::engine::primitives::Sphere final
 	: public BoundingVolume
 {
 private:
-	Vector3 center {  };
 	float radius {  };
 
 public:
-
-	/**
-	 * @return center
-	 */
-	const Vector3& getCenter() const;
-
 	/** 
 	 * @return float radius
 	 */

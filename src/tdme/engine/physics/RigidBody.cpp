@@ -214,6 +214,22 @@ BoundingVolume* RigidBody::getBoundingVolume()
 	return boundingVolume;
 }
 
+BoundingBox RigidBody::computeBoundingBoxTransformed() {
+	auto aabb = proxyShape->getWorldAABB();
+	return BoundingBox(
+		Vector3(
+			aabb.getMin().x,
+			aabb.getMin().y,
+			aabb.getMin().z
+		),
+		Vector3(
+			aabb.getMax().x,
+			aabb.getMax().y,
+			aabb.getMax().z
+		)
+	);
+}
+
 Vector3& RigidBody::getPosition()
 {
 	return transformations.getTranslation();
@@ -267,19 +283,58 @@ void RigidBody::fromTransformations(Transformations* transformations)
 {
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
-	// obv
-	boundingVolume->collisionShape->setLocalScaling(
-		reactphysics3d::Vector3(
-			transformations->getScale().getX(),
-			transformations->getScale().getY(),
-			transformations->getScale().getZ()
-		)
-	);
-	// rigig body transform
-	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
-	reactphysics3d::Transform transform;
-	transform.setFromOpenGL(transformationsMatrix.getArray().data());
-	rigidBody->setTransform(transform);
+	// terrain convex mesh
+	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
+		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
+		reactphysics3d::Transform transform;
+		transform.setFromOpenGL(transformationsMatrix.getArray().data());
+		rigidBody->setTransform(transform);
+	} else {
+		// everything else
+		// "scale vector transformed" which takes transformations scale and orientation into account
+		auto scaleVectorTransformed =
+			boundingVolume->collisionShapeLocalTransform.getOrientation() *
+			reactphysics3d::Vector3(
+				transformations->getScale().getX(),
+				transformations->getScale().getY(),
+				transformations->getScale().getZ()
+			);
+		// set bv local scaling
+		boundingVolume->collisionShape->setLocalScaling(scaleVectorTransformed);
+		// set bv local translation
+		boundingVolume->collisionShapeLocalTransform.setPosition(
+			reactphysics3d::Vector3(
+				boundingVolume->collisionShapeLocalTranslation.getX(),
+				boundingVolume->collisionShapeLocalTranslation.getY(),
+				boundingVolume->collisionShapeLocalTranslation.getZ()
+			) * scaleVectorTransformed
+		);
+		// set local to body transform
+		proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
+		// rigig body transform
+		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
+		reactphysics3d::Transform transform;
+		// take from transformations matrix
+		transform.setFromOpenGL(transformationsMatrix.getArray().data());
+		// set center of mass which is basically center of bv for now
+		rigidBody->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
+		// find final position, not sure yet if its working 100%, but still works with some tests
+		auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
+		transform.setPosition(
+			transform.getPosition() +
+			transform.getPosition() -
+			centerOfMassWorld +
+			(
+				reactphysics3d::Vector3(
+					boundingVolume->collisionShapeLocalTranslation.getX(),
+					boundingVolume->collisionShapeLocalTranslation.getY(),
+					boundingVolume->collisionShapeLocalTranslation.getZ()
+				) * scaleVectorTransformed
+			)
+		);
+		// set transform
+		rigidBody->setTransform(transform);
+	}
 }
 
 void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
@@ -287,6 +342,20 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 	rigidBody->applyForce(
 		reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ()),
 		reactphysics3d::Vector3(forceOrigin.getX(), forceOrigin.getY(), forceOrigin.getZ())
+	);
+}
+
+void RigidBody::addForce(const Vector3& force)
+{
+	rigidBody->applyForceToCenterOfMass(
+		reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ())
+	);
+}
+
+void RigidBody::addTorque(const Vector3& torque)
+{
+	rigidBody->applyForceToCenterOfMass(
+		reactphysics3d::Vector3(torque.getX(), torque.getY(), torque.getZ())
 	);
 }
 

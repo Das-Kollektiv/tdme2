@@ -164,8 +164,8 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 				}
 				// exit if no hit was found, should never happen
 				if (hitVertexIdx == -1) {
-					Console::println("ConvexMesh::ConvexMesh(): did not found a vertex in right order");
-					continue;
+					Console::println("ConvexMesh::ConvexMesh(): did not found a vertex in right order. Exiting.");
+					exit(0);
 				}
 
 				// vertex order

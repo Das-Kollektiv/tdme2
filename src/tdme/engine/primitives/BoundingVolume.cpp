@@ -43,8 +43,16 @@ void BoundingVolume::computeBoundingBox() {
 
 void BoundingVolume::fromTransformations(Transformations* transformations) {
 	auto& transformationsMatrix = transformations->getTransformationsMatrix();
-	collisionShape->setLocalScaling(reactphysics3d::Vector3(transformations->getScale().getX(), transformations->getScale().getY(), transformations->getScale().getZ()));
+	reactphysics3d::Vector3 scaleVector = reactphysics3d::Vector3(transformations->getScale().getX(), transformations->getScale().getY(), transformations->getScale().getZ());
+	collisionShape->setLocalScaling(scaleVector);
 	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
+	collisionShapeLocalTransform.setPosition(
+		reactphysics3d::Vector3(
+			collisionShapeLocalTranslation.getX(),
+			collisionShapeLocalTranslation.getY(),
+			collisionShapeLocalTranslation.getZ()
+		) * scaleVector
+	);
 	computeBoundingBox();
 }
 
@@ -148,7 +156,11 @@ bool BoundingVolume::doesCollideWith(BoundingVolume* bv2, CollisionResponse* col
 	return collision->hasEntitySelected();
 }
 
-const Vector3 BoundingVolume::getCenterTransformed() const {
+const Vector3& BoundingVolume::getCenter() const {
+	return center;
+}
+
+const Vector3& BoundingVolume::getCenterTransformed() const {
 	return centerTransformed;
 }
 

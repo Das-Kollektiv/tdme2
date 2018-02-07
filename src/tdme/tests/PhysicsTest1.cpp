@@ -86,6 +86,7 @@ void PhysicsTest1::main(int argc, char** argv)
 
 void PhysicsTest1::display()
 {
+	/*
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		auto body = world->getRigidBody("box" + to_string(i));
 		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
@@ -96,6 +97,7 @@ void PhysicsTest1::display()
 		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
 		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
 	}
+	*/
 	auto capsuleBig1 = world->getRigidBody("capsulebig1");
 	if (keyLeft)
 		capsuleBig1->getLinearVelocity().setX(8.0f);
@@ -195,6 +197,7 @@ void PhysicsTest1::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STATIC, entity, side, 0.5f);
+	/*
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 5.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f));
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
@@ -232,18 +235,23 @@ void PhysicsTest1::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, sphere, 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f));
 	}
-	auto capsule = new Capsule(Vector3(0.0f, 3.0f, 0.0f), Vector3(0.0f, 4.0f, 0.0f), 0.25f);
+	*/
+	//auto capsule = new OrientedBoundingBox(Vector3(0.05f, 0.2f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.025f, 0.01f, 0.01f));
+	auto capsule = new Capsule(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.001f, 0.0f, 0.5f), 0.01f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, "capsule_model");
 	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.0f, 0.8f, 1.0f);
 	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 1.0f, 1.0f);
-	for (auto i = 0; i < CAPSULE_COUNT; i++) {
+	for (auto i = 0; i < /*CAPSULE_COUNT*/1.0f; i++) {
 		entity = new Object3D("capsule" + to_string(i), capsuleModel);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getTranslation().addY(14.0f + (i * 2.0f));
-		entity->getTranslation().addX((i * 0.5f));
+		entity->getTranslation().addY(5.0f);
+		//entity->getTranslation().addY(14.0f + (i * 2.0f));
+		//entity->getTranslation().addX((i * 0.5f));
+		entity->getScale().scale(23.0f);
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, capsule, 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f));
+		//world->addStaticRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_DYNAMIC, entity, capsule, 0.4f);
 	}
 	auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
 	// auto capsuleBig = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
@@ -265,6 +273,7 @@ void PhysicsTest1::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_DYNAMIC, entity, capsuleBig, 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix());
+	/*
 	try {
 		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
@@ -324,26 +333,12 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("tire2", true, RIGID_TYPEID_DYNAMIC, entity, tireBoundingVolume, 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f));
-		auto terrainConvexMeshBoundingVolume = new TerrainConvexMesh(
-			Triangle(
-				Vector3(-1.0f, 1.0f, 1.0f),
-				Vector3(+1.0f, 1.0f, 1.0f),
-				Vector3(+1.0f, 1.0f, -1.0f)
-			),
-			2.0f
-		);
-		auto terrainConvexMeshModel = PrimitiveModel::createModel(terrainConvexMeshBoundingVolume, "terrainconvexmesh");
-		auto terrainEntity = new Object3D("terrainconvexmesh", terrainConvexMeshModel);
-		terrainEntity->getTranslation().addY(0.0f);
-		terrainEntity->getScale().scale(2.0f);
-		terrainEntity->update();
-		engine->addEntity(terrainEntity);
-		world->addStaticRigidBody("terrainconvexmesh", true, RIGID_TYPEID_STATIC, terrainEntity, terrainConvexMeshBoundingVolume, 1.0f);
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest1::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 		exit(0);
 	}
+	*/
 }
 
 void PhysicsTest1::reshape(int32_t width, int32_t height)

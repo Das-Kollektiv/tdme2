@@ -253,8 +253,24 @@ void World::update(float deltaTime)
 		auto& orientation = transform.getOrientation();
 		//	set up transformations
 		auto& physicsTransformations = rigidBody->transformations;
-		physicsTransformations.getRotations()->get(0)->fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.getTranslation().set(position.x, position.y, position.z);
+		/*
+		Console::println(
+			"position: " + rigidBody->getId() + ": " +
+			to_string(position.x) + ", " +
+			to_string(position.y) + ", " +
+			to_string(position.z)
+		);
+		physicsTransformations.getTranslation().sub(
+			Vector3(
+				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().x,
+				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().y,
+				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().z
+			)
+		);
+		*/
+		physicsTransformations.getPivot().set(rigidBody->boundingVolume->getCenter());
+		physicsTransformations.getRotations()->get(0)->fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.update();
 		// velocities
 		auto angularVelocity = rigidBody->rigidBody->getAngularVelocity();
@@ -458,6 +474,16 @@ bool World::doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<Ri
 
 bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies)
 {
+	// do a simple AABB test
+	auto boundingBox = boundingVolume->getBoundingBoxTransformed();
+	if (doesCollideWith(typeIds, &boundingBox, rigidBodies) == false) {
+		return false;
+	}
+
+	// done
+	return rigidBodies.size() > 0;
+
+	/*
 	vector<RigidBody*> rigidBodyCandidates;
 	auto boundingBox = boundingVolume->getBoundingBoxTransformed();
 	if (doesCollideWith(typeIds, &boundingBox, rigidBodyCandidates) == false) {
@@ -476,6 +502,7 @@ bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vec
 
 	// done
 	return rigidBodies.size() > 0;
+	*/
 }
 
 World* World::clone()

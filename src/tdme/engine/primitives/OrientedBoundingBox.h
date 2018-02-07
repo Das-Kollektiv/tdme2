@@ -42,11 +42,6 @@ public:
 	static const Vector3 AABB_AXIS_Z;
 
 public:
-	/** 
-	 * @return center
-	 */
-	const Vector3& getCenter() const;
-
 	/**
 	 * @return 3 axes
 	 */
@@ -97,7 +92,6 @@ public:
 	OrientedBoundingBox();
 
 private:
-	Vector3 center {  };
 	array<Vector3, 3> axes {  };
 	Vector3 halfExtension {  };
 };

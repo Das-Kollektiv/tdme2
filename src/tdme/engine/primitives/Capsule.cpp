@@ -8,6 +8,8 @@
 #include <tdme/math/MathTools.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -17,6 +19,8 @@ using tdme::math::Math;
 using tdme::math::MathTools;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::math::Math;
+using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -25,13 +29,9 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
+	center.set(a).add(b).scale(0.5f);
 
-	// determine local translation
-	Vector3 center;
-	center.set(this->a).add(this->b).scale(0.5f);
-	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(center.getX(), center.getY(), center.getZ()));
-
-	// determine local rotation
+	// determine local rotation around Y axis
 	Vector3 yAxis(0.0f, 1.0f, 0.0f);
 	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
@@ -44,6 +44,8 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	Quaternion rotationQuaternion;
 	rotationQuaternion.rotate(angle, rotationAxis);
+
+	// set shape orientation
 	collisionShapeLocalTransform.setOrientation(
 		reactphysics3d::Quaternion(
 			rotationQuaternion.getX(),
@@ -54,17 +56,19 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	);
 
 	// rotate a,b that a and b live on y axis
-	Quaternion inverseRotationQuaternion;
-	inverseRotationQuaternion.rotate(-angle, rotationAxis);
 	Vector3 aTransformed;
 	Vector3 bTransformed;
-	inverseRotationQuaternion.multiply(this->a, aTransformed);
-	inverseRotationQuaternion.multiply(this->b, bTransformed);
+	rotationQuaternion.multiply(this->a, aTransformed);
+	rotationQuaternion.multiply(this->b, bTransformed);
+
+	// determine local translation
+	collisionShapeLocalTranslation.set(aTransformed).add(bTransformed).scale(0.5f);
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 
 	// create capsule
 	collisionShape = new reactphysics3d::CapsuleShape(
-		Math::max(0.1f, radius),
-		Math::max(0.1f, bTransformed.clone().sub(aTransformed).scale(0.5f).computeLength() + radius * 2.0f)
+		Math::max(MathTools::EPSILON, radius),
+		Math::max(MathTools::EPSILON, bTransformed.clone().sub(aTransformed).computeLength() + radius * 2.0f)
 	);
 
 	// compute bounding box

@@ -30,7 +30,6 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 
-	Vector3 collisionShapeLocalTranslation;
 	// check if local translation is given
 	if (haveLocalTranslation == true) {
 		collisionShapeLocalTranslation.set(localTranslation);
@@ -43,6 +42,9 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 		}
 		collisionShapeLocalTranslation.scale(1.0f / indices.size());
 	}
+
+	// center
+	center.set(collisionShapeLocalTranslation);
 
 	// local transformations
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));

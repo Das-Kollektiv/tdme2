@@ -14,6 +14,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,6 +28,7 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -182,6 +184,11 @@ public:
 	BoundingVolume* getBoundingVolume();
 
 	/**
+	 * Compute bounding box transformed
+	 */
+	BoundingBox computeBoundingBoxTransformed();
+
+	/**
 	 * @return position
 	 */
 	Vector3& getPosition();
@@ -243,9 +250,21 @@ public:
 	/** 
 	 * Add force
 	 * @param position of world force
-	 * @param direction magnitude
+	 * @param force
 	 */
 	void addForce(const Vector3& forceOrigin, const Vector3& force);
+
+	/**
+	 * Add force to center of mass
+	 * @param force
+	 */
+	void addForce(const Vector3& forceOrigin);
+
+	/**
+	 * Add torque
+	 * @param torque
+	 */
+	void addTorque(const Vector3& torque);
 
 	/**
 	 * Checks if this rigid body does collide with given bounding volume
