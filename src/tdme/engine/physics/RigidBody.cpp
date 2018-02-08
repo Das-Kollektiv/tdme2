@@ -299,8 +299,6 @@ void RigidBody::fromTransformations(Transformations* transformations)
 				transformations->getScale().getY(),
 				transformations->getScale().getZ()
 			);
-		// set bv local scaling
-		boundingVolume->collisionShape->setLocalScaling(scaleVectorTransformed);
 		// set bv local translation
 		boundingVolume->collisionShapeLocalTransform.setPosition(
 			reactphysics3d::Vector3(
@@ -309,8 +307,9 @@ void RigidBody::fromTransformations(Transformations* transformations)
 				boundingVolume->collisionShapeLocalTranslation.getZ()
 			) * scaleVectorTransformed
 		);
-		// set local to body transform
+		// set local to body transform, proxy shape scaling
 		proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
+		proxyShape->setLocalScaling(scaleVectorTransformed);
 		// rigig body transform
 		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 		reactphysics3d::Transform transform;
