@@ -81,7 +81,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = new GUIColor("#8080FF");
+		this->foccussedBorderColor = GUIColor("#8080FF");
 	} catch (Exception& exception) {
 		Console::print(string("GUI(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -90,11 +90,6 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 
 void GUI::init()
 {
-	foccussedBorderColor = nullptr;
-	unfocussedNodeBorderLeftColor = nullptr;
-	unfocussedNodeBorderRightColor = nullptr;
-	unfocussedNodeBorderTopColor = nullptr;
-	unfocussedNodeBorderBottomColor = nullptr;
 	mouseEventsPool = new GUI_1(this);
 	keyboardEventsPool = new GUI_2(this);
 	mouseButtonLast = 0;
@@ -263,7 +258,7 @@ void GUI::addRenderScreen(const string& screenId)
 	renderScreens.push_back(screenIt->second);
 }
 
-GUIColor* GUI::getFoccussedBorderColor()
+GUIColor& GUI::getFoccussedBorderColor()
 {
 	return foccussedBorderColor;
 }
@@ -290,7 +285,7 @@ void GUI::determineFocussedNodes()
 	}
 	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
 		auto screen = focusableScreenNodes.at(i);
-		screen->determineFocussedNodes(screen, &focusableNodes);
+		screen->determineFocussedNodes(screen, focusableNodes);
 	}
 }
 
@@ -303,10 +298,10 @@ void GUI::unfocusNode()
 {
 	if (focussedNode != nullptr) {
 		focussedNode->getActiveConditions()->remove(GUIElementNode::CONDITION_FOCUS);
-		focussedNode->getBorder()->topColor = unfocussedNodeBorderTopColor;
-		focussedNode->getBorder()->leftColor = unfocussedNodeBorderLeftColor;
-		focussedNode->getBorder()->bottomColor = unfocussedNodeBorderBottomColor;
-		focussedNode->getBorder()->rightColor = unfocussedNodeBorderRightColor;
+		focussedNode->getBorder().topColor = unfocussedNodeBorderTopColor;
+		focussedNode->getBorder().leftColor = unfocussedNodeBorderLeftColor;
+		focussedNode->getBorder().bottomColor = unfocussedNodeBorderBottomColor;
+		focussedNode->getBorder().rightColor = unfocussedNodeBorderRightColor;
 		if (focussedNode->getController() != nullptr)
 			focussedNode->getController()->onFocusLost();
 
@@ -317,14 +312,14 @@ void GUI::focusNode()
 {
 	if (focussedNode != nullptr) {
 		focussedNode->getActiveConditions()->add(GUIElementNode::CONDITION_FOCUS);
-		unfocussedNodeBorderTopColor = focussedNode->getBorder()->topColor;
-		unfocussedNodeBorderLeftColor = focussedNode->getBorder()->leftColor;
-		unfocussedNodeBorderBottomColor = focussedNode->getBorder()->bottomColor;
-		unfocussedNodeBorderRightColor = focussedNode->getBorder()->rightColor;
-		focussedNode->getBorder()->topColor = foccussedBorderColor;
-		focussedNode->getBorder()->leftColor = foccussedBorderColor;
-		focussedNode->getBorder()->bottomColor = foccussedBorderColor;
-		focussedNode->getBorder()->rightColor = foccussedBorderColor;
+		unfocussedNodeBorderTopColor = focussedNode->getBorder().topColor;
+		unfocussedNodeBorderLeftColor = focussedNode->getBorder().leftColor;
+		unfocussedNodeBorderBottomColor = focussedNode->getBorder().bottomColor;
+		unfocussedNodeBorderRightColor = focussedNode->getBorder().rightColor;
+		focussedNode->getBorder().topColor = foccussedBorderColor;
+		focussedNode->getBorder().leftColor = foccussedBorderColor;
+		focussedNode->getBorder().bottomColor = foccussedBorderColor;
+		focussedNode->getBorder().rightColor = foccussedBorderColor;
 		if (focussedNode->getController() != nullptr)
 			focussedNode->getController()->onFocusGained();
 

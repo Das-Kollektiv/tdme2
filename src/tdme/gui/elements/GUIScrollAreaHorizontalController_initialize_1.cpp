@@ -20,7 +20,7 @@ GUIScrollAreaHorizontalController_initialize_1::GUIScrollAreaHorizontalControlle
 void GUIScrollAreaHorizontalController_initialize_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (node == leftArrowNode) {
-		float elementWidth = contentNode->getComputedConstraints()->width;
+		float elementWidth = contentNode->getComputedConstraints().width;
 		float contentWidth = contentNode->getContentWidth();
 		auto scrollableWidth = contentWidth - elementWidth;
 		if (scrollableWidth <= 0.0f)
@@ -32,15 +32,15 @@ void GUIScrollAreaHorizontalController_initialize_1::onActionPerformed(GUIAction
 
 		contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
 	} else if (node == rightArrowNode) {
-		float elementWidth = contentNode->getComputedConstraints()->width;
+		float elementWidth = contentNode->getComputedConstraints().width;
 		float contentWidth = contentNode->getContentWidth();
 		auto scrollableWidth = contentWidth - elementWidth;
 		if (scrollableWidth <= 0.0f)
 			return;
 
 		auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX() + 1.0f;
-		if (childrenRenderOffsetX > contentWidth - contentNode->getComputedConstraints()->width) {
-			childrenRenderOffsetX = contentWidth - contentNode->getComputedConstraints()->width;
+		if (childrenRenderOffsetX > contentWidth - contentNode->getComputedConstraints().width) {
+			childrenRenderOffsetX = contentWidth - contentNode->getComputedConstraints().width;
 		}
 		contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
 	}

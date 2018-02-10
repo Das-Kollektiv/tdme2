@@ -21,7 +21,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& src, GUIColor* effectColorMul, GUIColor* effectColorAdd)  /* throws(GUIParserException) */
+GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& src, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) throw(GUIParserException)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	init();
@@ -48,12 +48,12 @@ bool GUIImageNode::isContentNode()
 
 int32_t GUIImageNode::getContentWidth()
 {
-	return (texture != nullptr ? texture->getWidth() : 0) + border->left + border->right + padding.left + padding.right;
+	return (texture != nullptr ? texture->getWidth() : 0) + border.left + border.right + padding.left + padding.right;
 }
 
 int32_t GUIImageNode::getContentHeight()
 {
-	return (texture != nullptr ? texture->getHeight() : 0) + border->top + border->bottom+ padding.top + padding.bottom;
+	return (texture != nullptr ? texture->getHeight() : 0) + border.top + border.bottom + padding.top + padding.bottom;
 }
 
 void GUIImageNode::dispose()
@@ -62,7 +62,7 @@ void GUIImageNode::dispose()
 	GUINode::dispose();
 }
 
-void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

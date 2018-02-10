@@ -74,7 +74,7 @@ protected:
 	 */
 	virtual void computeVerticalChildrenAlignment();
 
-	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn) throw(GUIParserException);
 
 public:
 
@@ -144,7 +144,7 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 	/** 
 	 * Get child controller nodes
@@ -153,7 +153,7 @@ public:
 	virtual void getChildControllerNodes(vector<GUINode*>* childControllerNodes);
 	void dispose() override;
 	void setConditionsMet() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 	void handleMouseEvent(GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;

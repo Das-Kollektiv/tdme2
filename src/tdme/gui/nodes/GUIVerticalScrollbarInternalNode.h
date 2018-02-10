@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -32,9 +33,9 @@ class tdme::gui::nodes::GUIVerticalScrollbarInternalNode
 {
 
 private:
-	GUIColor* barColorNone {  };
-	GUIColor* barColorMouseOver {  };
-	GUIColor* barColorDragging {  };
+	GUIColor barColorNone {  };
+	GUIColor barColorMouseOver {  };
+	GUIColor barColorDragging {  };
 
 protected:
 	const string getNodeType() override;
@@ -49,7 +50,7 @@ public:
 	 * @param gui renderer
 	 * @param floating nodes
 	 */
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 
-	GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging);
+	GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const GUIColor& barColorNone, const GUIColor& barColorMouseOver, const GUIColor& barColorDragging);
 };

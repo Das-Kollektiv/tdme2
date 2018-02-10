@@ -68,7 +68,7 @@ float GUIVerticalScrollbarInternalController::getBarHeight()
 	if (barHeightRelative > 1.0f)
 		barHeightRelative = 1.0f;
 
-	return (node->computedConstraints.height - node->border->top - node->border->bottom) * barHeightRelative;
+	return (node->computedConstraints.height - node->border.top - node->border.bottom) * barHeightRelative;
 }
 
 float GUIVerticalScrollbarInternalController::getBarTop()
@@ -77,11 +77,11 @@ float GUIVerticalScrollbarInternalController::getBarTop()
 	float contentHeight = contentNode->getContentHeight();
 	auto scrollableHeight = contentHeight - elementHeight;
 	auto childrenRenderOffsetY = contentNode->childrenRenderOffsetY;
-	auto barHeight = (node->computedConstraints.height - node->border->top - node->border->bottom) * (elementHeight / contentHeight);
+	auto barHeight = (node->computedConstraints.height - node->border.top - node->border.bottom) * (elementHeight / contentHeight);
 	if (scrollableHeight > 0.0f) {
-		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border->top+ (childrenRenderOffsetY * ((node->computedConstraints.height - barHeight) / scrollableHeight));
+		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border.top+ (childrenRenderOffsetY * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 	} else {
-		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border->top;
+		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border.top;
 	}
 }
 

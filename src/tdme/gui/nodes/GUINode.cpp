@@ -53,21 +53,21 @@ using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
-GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)
+GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn)
 {
 	this->screenNode = screenNode;
 	this->parentNode = parentNode;
 	this->id = id;
 	this->flow = flow;
-	this->alignments = *alignments;
+	this->alignments = alignments;
 	this->requestedConstraints = requestedConstraints;
 	this->computedConstraints.alignmentLeft = 0;
 	this->computedConstraints.alignmentTop = 0;
 	this->computedConstraints.contentAlignmentLeft = 0;
 	this->computedConstraints.contentAlignmentTop = 0;
-	this->backgroundColor = *backgroundColor;
+	this->backgroundColor = backgroundColor;
 	this->border = border;
-	this->padding = *padding;
+	this->padding = padding;
 	this->showOn = showOn;
 	this->hideOn = hideOn;
 	this->controller = nullptr;
@@ -91,7 +91,7 @@ const string& GUINode::getId()
 
 int32_t GUINode::getAutoWidth()
 {
-	if (requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentWidth();
 	} else {
 		return computedConstraints.width;
@@ -100,26 +100,26 @@ int32_t GUINode::getAutoWidth()
 
 int32_t GUINode::getAutoHeight()
 {
-	if (requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentHeight();
 	} else {
 		return computedConstraints.height;
 	}
 }
 
-GUINode_Border* GUINode::getBorder()
+GUINode_Border& GUINode::getBorder()
 {
 	return border;
 }
 
-GUINode_RequestedConstraints* GUINode::getRequestsConstraints()
+GUINode_RequestedConstraints& GUINode::getRequestsConstraints()
 {
 	return requestedConstraints;
 }
 
-GUINode_ComputedConstraints* GUINode::getComputedConstraints()
+GUINode_ComputedConstraints& GUINode::getComputedConstraints()
 {
-	return &computedConstraints;
+	return computedConstraints;
 }
 
 void GUINode::setLeft(int32_t left)
@@ -134,12 +134,12 @@ void GUINode::setTop(int32_t top)
 
 void GUINode::layout()
 {
-	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border->left - parentNode->border->right - parentNode->padding.left - parentNode->padding.right;
-	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border->top - parentNode->border->bottom - parentNode->padding.top - parentNode->padding.bottom;
-	computedConstraints.left = parentNode->computedConstraints.left + layoutConstraintPixel(requestedConstraints->leftType, 0, parentNodeContentWidth, requestedConstraints->left);
-	computedConstraints.top = parentNode->computedConstraints.top + layoutConstraintPixel(requestedConstraints->topType, 0, parentNodeContentHeight, requestedConstraints->top);
-	computedConstraints.width = layoutConstraintPixel(requestedConstraints->widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints->width);
-	computedConstraints.height = layoutConstraintPixel(requestedConstraints->heightType, getAutoHeight(), parentNodeContentHeight, requestedConstraints->height);
+	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
+	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border.top - parentNode->border.bottom - parentNode->padding.top - parentNode->padding.bottom;
+	computedConstraints.left = parentNode->computedConstraints.left + layoutConstraintPixel(requestedConstraints.leftType, 0, parentNodeContentWidth, requestedConstraints.left);
+	computedConstraints.top = parentNode->computedConstraints.top + layoutConstraintPixel(requestedConstraints.topType, 0, parentNodeContentHeight, requestedConstraints.top);
+	computedConstraints.width = layoutConstraintPixel(requestedConstraints.widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints.width);
+	computedConstraints.height = layoutConstraintPixel(requestedConstraints.heightType, getAutoHeight(), parentNodeContentHeight, requestedConstraints.height);
 	computeContentAlignment();
 }
 
@@ -149,26 +149,26 @@ void GUINode::computeContentAlignment()
 		{
 			auto v = alignments.horizontal;
 			if (v == GUINode_AlignmentHorizontal::LEFT) {
-				computedConstraints.contentAlignmentLeft = border->left + padding.left;
+				computedConstraints.contentAlignmentLeft = border.left + padding.left;
 			} else
 			if (v == GUINode_AlignmentHorizontal::CENTER) {
-				computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border->left + padding.left;
+				computedConstraints.contentAlignmentLeft = (computedConstraints.width - getContentWidth()) / 2 + border.left + padding.left;
 			} else
 			if (v == GUINode_AlignmentHorizontal::RIGHT) {
-				computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border->left + padding.left;
+				computedConstraints.contentAlignmentLeft = computedConstraints.width - getContentWidth() + border.left + padding.left;
 			}
 		}
 
 		{
 			auto v = alignments.vertical;
 			if (v == GUINode_AlignmentVertical::TOP) {
-				computedConstraints.contentAlignmentTop = border->top + padding.top;
+				computedConstraints.contentAlignmentTop = border.top + padding.top;
 			} else
 			if (v == GUINode_AlignmentVertical::CENTER) {
-				computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border->top + padding.top;
+				computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border.top + padding.top;
 			} else
 			if (v == GUINode_AlignmentVertical::BOTTOM) {
-				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border->left + padding.left;
+				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border.left + padding.left;
 			}
 		}
 
@@ -189,25 +189,25 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 	return -1;
 }
 
-GUINode_Alignments* GUINode::createAlignments(const string& horizontal, const string& vertical)
+GUINode_Alignments GUINode::createAlignments(const string& horizontal, const string& vertical)
 {
-	auto alignments = new GUINode_Alignments();
-	alignments->horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "LEFT");
-	alignments->vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "TOP");
+	GUINode_Alignments alignments;
+	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "LEFT");
+	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "TOP");
 	return alignments;
 }
 
-GUINode_RequestedConstraints* GUINode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
+GUINode_RequestedConstraints GUINode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
-	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints->topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
-	constraints->widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
-	constraints->heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
+	GUINode_RequestedConstraints constraints;
+	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
+	constraints.heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
 	return constraints;
 }
 
@@ -256,12 +256,12 @@ int32_t GUINode::getRequestedPixelValue(const string& value, int32_t defaultValu
 	}
 }
 
-GUIColor* GUINode::getRequestedColor(const string& color, GUIColor* defaultColor) /* throws(GUIParserException) */
+GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& defaultColor) throw(GUIParserException)
 {
 	if (color.empty() == true || color.length() == 0) {
 		return defaultColor;
 	} else {
-		return new GUIColor(color);
+		return GUIColor(color);
 	}
 }
 
@@ -270,57 +270,57 @@ GUINode_Flow* GUINode::createFlow(const string& flow)
 	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringUtils::toUpperCase(flow) : "INTEGRATED");
 }
 
-GUINode_Border* GUINode::createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) /* throws(GUIParserException) */
+GUINode_Border GUINode::createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) throw(GUIParserException)
 {
-	auto border = new GUINode_Border();
-	border->left = getRequestedPixelValue(allBorder, 0);
-	border->top = getRequestedPixelValue(allBorder, 0);
-	border->right = getRequestedPixelValue(allBorder, 0);
-	border->bottom = getRequestedPixelValue(allBorder, 0);
-	border->left = getRequestedPixelValue(left, border->left);
-	border->top = getRequestedPixelValue(top, border->top);
-	border->right = getRequestedPixelValue(right, border->right);
-	border->bottom = getRequestedPixelValue(bottom, border->bottom);
-	border->leftColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
-	border->topColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
-	border->rightColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
-	border->bottomColor = getRequestedColor(allBorderColor, &GUIColor::GUICOLOR_BLACK);
-	border->leftColor = getRequestedColor(leftColor, border->leftColor);
-	border->topColor = getRequestedColor(topColor, border->topColor);
-	border->rightColor = getRequestedColor(rightColor, border->rightColor);
-	border->bottomColor = getRequestedColor(bottomColor, border->bottomColor);
+	GUINode_Border border;
+	border.left = getRequestedPixelValue(allBorder, 0);
+	border.top = getRequestedPixelValue(allBorder, 0);
+	border.right = getRequestedPixelValue(allBorder, 0);
+	border.bottom = getRequestedPixelValue(allBorder, 0);
+	border.left = getRequestedPixelValue(left, border.left);
+	border.top = getRequestedPixelValue(top, border.top);
+	border.right = getRequestedPixelValue(right, border.right);
+	border.bottom = getRequestedPixelValue(bottom, border.bottom);
+	border.leftColor = getRequestedColor(allBorderColor, GUIColor::GUICOLOR_BLACK);
+	border.topColor = getRequestedColor(allBorderColor, GUIColor::GUICOLOR_BLACK);
+	border.rightColor = getRequestedColor(allBorderColor, GUIColor::GUICOLOR_BLACK);
+	border.bottomColor = getRequestedColor(allBorderColor, GUIColor::GUICOLOR_BLACK);
+	border.leftColor = getRequestedColor(leftColor, border.leftColor);
+	border.topColor = getRequestedColor(topColor, border.topColor);
+	border.rightColor = getRequestedColor(rightColor, border.rightColor);
+	border.bottomColor = getRequestedColor(bottomColor, border.bottomColor);
 	return border;
 }
 
-GUINode_Padding* GUINode::createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) /* throws(GUIParserException) */
+GUINode_Padding GUINode::createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException)
 {
-	auto padding = new GUINode_Padding();
-	padding->left = getRequestedPixelValue(allPadding, 0);
-	padding->top = getRequestedPixelValue(allPadding, 0);
-	padding->right = getRequestedPixelValue(allPadding, 0);
-	padding->bottom = getRequestedPixelValue(allPadding, 0);
-	padding->left = getRequestedPixelValue(left, padding->left);
-	padding->top = getRequestedPixelValue(top, padding->top);
-	padding->right = getRequestedPixelValue(right, padding->right);
-	padding->bottom = getRequestedPixelValue(bottom, padding->bottom);
+	GUINode_Padding padding;
+	padding.left = getRequestedPixelValue(allPadding, 0);
+	padding.top = getRequestedPixelValue(allPadding, 0);
+	padding.right = getRequestedPixelValue(allPadding, 0);
+	padding.bottom = getRequestedPixelValue(allPadding, 0);
+	padding.left = getRequestedPixelValue(left, padding.left);
+	padding.top = getRequestedPixelValue(top, padding.top);
+	padding.right = getRequestedPixelValue(right, padding.right);
+	padding.bottom = getRequestedPixelValue(bottom, padding.bottom);
 	return padding;
 }
 
-GUINodeConditions* GUINode::createConditions(const string& conditions)
+GUINodeConditions GUINode::createConditions(const string& conditions)
 {
-	auto guiNodeConditions = new GUINodeConditions();
+	GUINodeConditions guiNodeConditions;
 	StringTokenizer strTokenizer;
 	strTokenizer.tokenize(conditions, ",");
 	while (strTokenizer.hasMoreTokens()) {
-		guiNodeConditions->add(StringUtils::trim(strTokenizer.nextToken()));
+		guiNodeConditions.add(StringUtils::trim(strTokenizer.nextToken()));
 	}
 	return guiNodeConditions;
 }
 
 bool GUINode::checkConditions()
 {
-	auto& showOn = this->showOn->conditions;
-	auto& hideOn = this->hideOn->conditions;
+	auto& showOn = this->showOn.conditions;
+	auto& hideOn = this->hideOn.conditions;
 
 	for (auto i = 0; i < showOn.size(); i++) {
 		if (showOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
@@ -369,7 +369,7 @@ void GUINode::setConditionsMet()
 	conditionsMet = checkConditions();
 }
 
-void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;
@@ -377,48 +377,48 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	if (!backgroundColor.equals(GUIColor::GUICOLOR_TRANSPARENT)) {
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left;
-		float top = computedConstraints.top + computedConstraints.alignmentTop + border->top;
-		float width = computedConstraints.width - border->left - border->right;
-		float height = computedConstraints.height - border->top - border->bottom;
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;
+		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top;
+		float width = computedConstraints.width - border.left - border.right;
+		float height = computedConstraints.height - border.top - border.bottom;
 		auto bgColorData = &backgroundColor.getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 0.0f);
 		guiRenderer->render();
 	}
-	if (border != nullptr) {
+	if (border.top > 0 || border.left > 0 || border.right > 0 || border.bottom > 0) {
 		guiRenderer->bindTexture(0);
-		if (border->top > 0) {
+		if (border.top > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft;
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = computedConstraints.width;
-			float height = border->top;
-			auto borderColorData = &border->topColor->getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
+			float height = border.top;
+			auto& borderColorData = border.topColor.getArray();
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
 		}
-		if (border->bottom > 0) {
+		if (border.bottom > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft;
-			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - border->bottom;
+			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - border.bottom;
 			float width = computedConstraints.width;
-			float height = border->bottom;
-			auto borderColorData = &border->bottomColor->getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
+			float height = border.bottom;
+			auto& borderColorData = border.bottomColor.getArray();
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
 		}
-		if (border->left > 0) {
+		if (border.left > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft;
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
-			float width = border->left;
+			float width = border.left;
 			float height = computedConstraints.height;
-			auto borderColorData = &border->leftColor->getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
+			auto& borderColorData = border.leftColor.getArray();
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
 		}
-		if (border->right > 0) {
-			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width - border->right;
+		if (border.right > 0) {
+			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width - border.right;
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
-			float width = border->right;
+			float width = border.right;
 			float height = computedConstraints.height;
-			auto borderColorData = &border->rightColor->getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*borderColorData)[0], (*borderColorData)[1], (*borderColorData)[2], (*borderColorData)[3], 0.0f, 0.0f);
+			auto& borderColorData = border.rightColor.getArray();
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
 		}
 		guiRenderer->render();
 	}

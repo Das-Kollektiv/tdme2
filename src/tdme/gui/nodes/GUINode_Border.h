@@ -2,6 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -22,10 +23,10 @@ using tdme::gui::nodes::GUINode;
 struct tdme::gui::nodes::GUINode_Border
 {
 
-	GUIColor* leftColor {  };
-	GUIColor* topColor {  };
-	GUIColor* rightColor {  };
-	GUIColor* bottomColor {  };
+	GUIColor leftColor;
+	GUIColor topColor;
+	GUIColor rightColor;
+	GUIColor bottomColor;
 	int32_t left {  };
 	int32_t top {  };
 	int32_t right {  };

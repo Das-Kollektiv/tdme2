@@ -39,7 +39,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
-GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, bool scrollable, bool popUp)  /* throws(GUIParserException) */
+GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow*  overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, bool scrollable, bool popUp) throw(GUIParserException)
 	: GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	init();
@@ -184,10 +184,10 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 {
 	this->screenWidth = width;
 	this->screenHeight = height;
-	this->requestedConstraints->widthType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	this->requestedConstraints->width = width;
-	this->requestedConstraints->heightType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	this->requestedConstraints->height = height;
+	this->requestedConstraints.widthType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+	this->requestedConstraints.width = width;
+	this->requestedConstraints.heightType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+	this->requestedConstraints.height = height;
 	this->computedConstraints.left = 0;
 	this->computedConstraints.top = 0;
 	this->computedConstraints.width = width;
@@ -248,24 +248,25 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 		}
 	}
 	floatingNodes.clear();
-	GUIParentNode::render(guiRenderer, &floatingNodes);
+	GUIParentNode::render(guiRenderer, floatingNodes);
 	guiRenderer->doneScreen();
 }
 
 void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 {
+	vector<GUINode*> subFloatingNodes;
 	guiRenderer->initScreen(this);
 	for (const auto& i : effects) {
 		auto effect = i.second;
 		effect->apply(guiRenderer);
 	}
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		floatingNodes.at(i)->render(guiRenderer, nullptr);
+		floatingNodes.at(i)->render(guiRenderer, subFloatingNodes);
 	}
 	guiRenderer->doneScreen();
 }
 
-void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>* focusableNodes)
+void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes)
 {
 	if (parentNode->conditionsMet == false) {
 		return;
@@ -273,7 +274,7 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	if (dynamic_cast< GUIElementNode* >(parentNode) != nullptr) {
 		auto parentElementNode = dynamic_cast< GUIElementNode* >(parentNode);
 		if (parentElementNode->focusable == true && (parentElementNode->getController() == nullptr || parentElementNode->getController()->isDisabled() == false)) {
-			focusableNodes->push_back(dynamic_cast< GUIElementNode* >(parentNode));
+			focusableNodes.push_back(dynamic_cast< GUIElementNode* >(parentNode));
 		}
 	}
 	for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -412,7 +413,7 @@ bool GUIScreenNode::removeEffect(const string& id)
 	return true;
 }
 
-void GUIScreenNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUIScreenNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	GUIParentNode::render(guiRenderer, floatingNodes);
 }

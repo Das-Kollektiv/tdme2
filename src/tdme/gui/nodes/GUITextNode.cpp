@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/GUIFont.h>
+#include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
 
 using std::vector;
@@ -21,13 +22,14 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIFont;
+using tdme::utils::Exception;
 using tdme::utils::MutableString;
 
-GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, MutableString* text)  /* throws(Exception) */
+GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, MutableString* text) throw(Exception)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
-	this->color = color.empty() == true || color.length() == 0 ? new GUIColor() : new GUIColor(color);
+	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
 	this->text = text;
 	this->font->initialize();
 }
@@ -44,12 +46,12 @@ bool GUITextNode::isContentNode()
 
 int32_t GUITextNode::getContentWidth()
 {
-	return font->getTextWidth(text) + border->left + border->right + padding.left + padding.right;
+	return font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
 }
 
 int32_t GUITextNode::getContentHeight()
 {
-	return font->getLineHeight() + border->top + border->bottom + padding.top + padding.bottom;
+	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
 MutableString* GUITextNode::getText()
@@ -63,7 +65,7 @@ void GUITextNode::dispose()
 	GUINode::dispose();
 }
 
-void GUITextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUITextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;

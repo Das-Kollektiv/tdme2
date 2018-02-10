@@ -148,29 +148,29 @@ void GUIRenderer::doneScreen()
 	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 }
 
-void GUIRenderer::setFontColor(GUIColor* color)
+void GUIRenderer::setFontColor(const GUIColor& color)
 {
-	fontColor = color->getArray();
+	fontColor = color.getArray();
 }
 
-void GUIRenderer::setEffectColorMul(GUIColor* color)
+void GUIRenderer::setEffectColorMul(const GUIColor& color)
 {
-	effectColorMul = color->getArray();
+	effectColorMul = color.getArray();
 }
 
-void GUIRenderer::setEffectColorAdd(GUIColor* color)
+void GUIRenderer::setEffectColorAdd(const GUIColor& color)
 {
-	effectColorAdd = color->getArray();
+	effectColorAdd = color.getArray();
 }
 
-void GUIRenderer::setGUIEffectColorMul(GUIColor* color)
+void GUIRenderer::setGUIEffectColorMul(const GUIColor& color)
 {
-	guiEffectColorMul = color->getArray();
+	guiEffectColorMul = color.getArray();
 }
 
-void GUIRenderer::setGUIEffectColorAdd(GUIColor* color)
+void GUIRenderer::setGUIEffectColorAdd(const GUIColor& color)
 {
-	guiEffectColorAdd = color->getArray();
+	guiEffectColorAdd = color.getArray();
 }
 
 float GUIRenderer::getGuiEffectOffsetX()

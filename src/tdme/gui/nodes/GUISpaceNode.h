@@ -40,7 +40,7 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn);
 
 public:
 	int32_t getContentWidth() override;
@@ -54,8 +54,8 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes) override;
+	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 
 };

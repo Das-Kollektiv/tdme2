@@ -33,7 +33,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents)  /* throws(GUIParserException) */
+GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException)
 	: GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	init();
@@ -77,7 +77,7 @@ int32_t GUIElementNode::getContentWidth()
 			width = contentWidth;
 		}
 	}
-	width += border->left + border->right;
+	width += border.left + border.right;
 	width += padding.left + padding.right;
 	return width;
 }
@@ -92,7 +92,7 @@ int32_t GUIElementNode::getContentHeight()
 			height = contentHeight;
 		}
 	}
-	height += border->top + border->bottom;
+	height += border.top + border.bottom;
 	height += padding.top + padding.bottom;
 	return height;
 }
@@ -123,15 +123,15 @@ void GUIElementNode::setLeft(int32_t left)
 void GUIElementNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	auto height = computedConstraints.height - border->top - border->bottom - padding.top - padding.bottom;
-	auto width = computedConstraints.width - border->left - border->right - padding.left - padding.right;
+	auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
+	auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);
 		auto doLayoutSubNodes = false;
-		if (guiSubNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+		if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.height = height;
 			doLayoutSubNodes = true;
-		} else if (guiSubNode->requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+		} else if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.width = width;
 			doLayoutSubNodes = true;
 		}
@@ -143,21 +143,21 @@ void GUIElementNode::layoutSubNodes()
 
 void GUIElementNode::layout()
 {
-	if (requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-		auto subNodesHeight = requestedConstraints->height - border->top - border->bottom - padding.top - padding.bottom;
+	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 		for (auto i = 0; i < subNodes.size(); i++) {
 			auto subNode = subNodes.at(i);
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints->heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints->height > subNodesHeight) {
-				subNode->requestedConstraints->height = subNodesHeight;
+			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.height > subNodesHeight) {
+				subNode->requestedConstraints.height = subNodesHeight;
 			}
 		}
 	}
-	if (requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-		auto subNodesWidth = requestedConstraints->width - border->left - border->right- padding.left - padding.right;
+	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+		auto subNodesWidth = requestedConstraints.width - border.left - border.right- padding.left - padding.right;
 		for (auto i = 0; i < subNodes.size(); i++) {
 			auto subNode = subNodes.at(i);
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints->widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints->width > subNodesWidth) {
-				subNode->requestedConstraints->width = subNodesWidth;
+			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.width > subNodesWidth) {
+				subNode->requestedConstraints.width = subNodesWidth;
 			}
 		}
 	}

@@ -6,6 +6,7 @@
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
@@ -37,10 +38,10 @@ private:
 	GUINode* tabsNode {  };
 	GUINode* tabsHeaderNode {  };
 	bool selected {  };
-	GUIColor* unfocussedNodeBorderLeftColor {  };
-	GUIColor* unfocussedNodeBorderRightColor {  };
-	GUIColor* unfocussedNodeBorderTopColor {  };
-	GUIColor* unfocussedNodeBorderBottomColor {  };
+	GUIColor unfocussedNodeBorderLeftColor;
+	GUIColor unfocussedNodeBorderRightColor;
+	GUIColor unfocussedNodeBorderTopColor;
+	GUIColor unfocussedNodeBorderBottomColor;
 	bool disabled {  };
 
 	/** 

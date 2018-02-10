@@ -14,30 +14,24 @@ GUIColorEffect::GUIColorEffect()
 
 void GUIColorEffect::init()
 {
-	colorAddStart = new GUIColor();
-	colorAddEnd = new GUIColor();
-	colorMulStart = new GUIColor();
-	colorMulEnd = new GUIColor();
-	colorAdd = new GUIColor();
-	colorMul = new GUIColor();
 }
 
-GUIColor* GUIColorEffect::getColorAddStart()
+GUIColor& GUIColorEffect::getColorAddStart()
 {
 	return colorAddStart;
 }
 
-GUIColor* GUIColorEffect::getColorAddEnd()
+GUIColor& GUIColorEffect::getColorAddEnd()
 {
 	return colorAddEnd;
 }
 
-GUIColor* GUIColorEffect::getColorMulStart()
+GUIColor& GUIColorEffect::getColorMulStart()
 {
 	return colorMulStart;
 }
 
-GUIColor* GUIColorEffect::getColorMulEnd()
+GUIColor& GUIColorEffect::getColorMulEnd()
 {
 	return colorMulEnd;
 }
@@ -52,9 +46,9 @@ void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 	if (active == false)
 		return;
 
-	colorMul->set(colorMulStart->getRed() + ((colorMulEnd->getRed() - colorMulStart->getRed()) / timeTotal * (timeTotal - timeLeft)), colorMulStart->getGreen() + ((colorMulEnd->getGreen() - colorMulStart->getGreen()) / timeTotal * (timeTotal - timeLeft)), colorMulStart->getBlue() + ((colorMulEnd->getBlue() - colorMulStart->getBlue()) / timeTotal * (timeTotal - timeLeft)), colorMulStart->getAlpha() + ((colorMulEnd->getAlpha() - colorMulStart->getAlpha()) / timeTotal * (timeTotal - timeLeft)));
+	colorMul.set(colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));
 	guiRenderer->setGUIEffectColorMul(colorMul);
-	colorAdd->set(colorAddStart->getRed() + ((colorAddEnd->getRed() - colorAddStart->getRed()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getGreen() + ((colorAddEnd->getGreen() - colorAddStart->getGreen()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getBlue() + ((colorAddEnd->getBlue() - colorAddStart->getBlue()) / timeTotal * (timeTotal - timeLeft)), colorAddStart->getAlpha() + ((colorAddEnd->getAlpha() - colorAddStart->getAlpha()) / timeTotal * (timeTotal - timeLeft)));
+	colorAdd.set(colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));
 	guiRenderer->setGUIEffectColorAdd(colorAdd);
 }
 

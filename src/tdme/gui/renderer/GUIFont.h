@@ -114,7 +114,7 @@ public:
 	 * @param length or 0 if full length
 	 * @param color
 	 */
-	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, MutableString* text, int32_t offset, int32_t length, GUIColor* color);
+	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, MutableString* text, int32_t offset, int32_t length, const GUIColor& color);
 
 	/** 
 	 * Get text index X of given text and index

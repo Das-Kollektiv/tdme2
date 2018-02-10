@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, GUIColor* barColorNone, GUIColor* barColorMouseOver, GUIColor* barColorDragging)
+GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const GUIColor& barColorNone, const GUIColor& barColorMouseOver, const GUIColor& barColorDragging)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->controller = new GUIVerticalScrollbarInternalController(this);
@@ -54,7 +54,7 @@ int32_t GUIVerticalScrollbarInternalNode::getContentHeight()
 	return computedConstraints.height;
 }
 
-void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;
@@ -65,26 +65,26 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
-	float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left;
+	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;
 	auto top = barTop;
-	float width = computedConstraints.width - border->left - border->right;
+	float width = computedConstraints.width - border.left - border.right;
 	auto height = barHeight;
-	array<float, 4>* barColorArray = nullptr;
+	array<float, 4> barColorArray;
 	{
 		auto v = controller->getState();
 		if (v == GUIVerticalScrollbarInternalController_State::NONE) {
-			barColorArray = &barColorNone->getArray();
+			barColorArray = barColorNone.getArray();
 		} else
 		if (v == GUIVerticalScrollbarInternalController_State::MOUSEOVER) {
-			barColorArray = &barColorMouseOver->getArray();
+			barColorArray = barColorMouseOver.getArray();
 		} else
 		if (v == GUIVerticalScrollbarInternalController_State::DRAGGING) {
-			barColorArray = &barColorDragging->getArray();
+			barColorArray = barColorDragging.getArray();
 		}
 	}
 
 	guiRenderer->bindTexture(0);
-	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*barColorArray)[0], (*barColorArray)[1], (*barColorArray)[2], (*barColorArray)[3], 0.0f, 0.0f);
+	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 0.0f, 0.0f);
 	guiRenderer->render();
 }
 

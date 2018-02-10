@@ -10,6 +10,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
 using std::array;
@@ -117,31 +118,31 @@ public:
 	 * Set effect color mul
 	 * @param color
 	 */
-	void setFontColor(GUIColor* color);
+	void setFontColor(const GUIColor& color);
 
 	/** 
 	 * Set effect color mul
 	 * @param color
 	 */
-	void setEffectColorMul(GUIColor* color);
+	void setEffectColorMul(const GUIColor& color);
 
 	/** 
 	 * Set effect color add
 	 * @param color
 	 */
-	void setEffectColorAdd(GUIColor* color);
+	void setEffectColorAdd(const GUIColor& color);
 
 	/** 
 	 * Set GUI effect color mul
 	 * @param color
 	 */
-	void setGUIEffectColorMul(GUIColor* color);
+	void setGUIEffectColorMul(const GUIColor& color);
 
 	/** 
 	 * Set GUI effect color add
 	 * @param color
 	 */
-	void setGUIEffectColorAdd(GUIColor* color);
+	void setGUIEffectColorAdd(const GUIColor& color);
 
 	/** 
 	 * @return GUI effect offset X
