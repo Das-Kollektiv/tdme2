@@ -25,9 +25,9 @@ void ModelEditorScreenController_onMaterialLoadTexture::performAction()
 {
 	MutableString value;
 	guiElementNode->getController()->setValue(
-		value.
-			set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName())->
-			append("/")->
+		MutableString().
+			set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+			append("/").
 			append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
 	);
 	/*

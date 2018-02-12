@@ -38,7 +38,6 @@ GUISelectBoxController::GUISelectBoxController(GUINode* node)
 
 void GUISelectBoxController::init()
 {
-	value = new MutableString();
 }
 
 string GUISelectBoxController::CONDITION_DISABLED = "disabled";
@@ -200,27 +199,27 @@ bool GUISelectBoxController::hasValue()
 	return true;
 }
 
-MutableString* GUISelectBoxController::getValue()
+const MutableString& GUISelectBoxController::getValue()
 {
-	value->reset();
+	value.reset();
 	determineSelectBoxOptionControllers();
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxOptionControllers.at(i);
 		if (selectBoxOptionController->isSelected() == true) {
-			value->append((dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode()))->getValue());
+			value.append((dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode()))->getValue());
 		}
 	}
 	return value;
 }
 
-void GUISelectBoxController::setValue(MutableString* value)
+void GUISelectBoxController::setValue(const MutableString& value)
 {
 	determineSelectBoxOptionControllers();
 	unselect();
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxOptionControllers.at(i);
 		auto selectBoxOptionNode = dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode());
-		if (value->equals(selectBoxOptionNode->getValue()) == true) {
+		if (value.equals(selectBoxOptionNode->getValue()) == true) {
 			selectBoxOptionController->select();
 			selectBoxOptionNode->scrollToNodeX(dynamic_cast< GUIParentNode* >(node));
 			selectBoxOptionNode->scrollToNodeY(dynamic_cast< GUIParentNode* >(node));
@@ -228,4 +227,3 @@ void GUISelectBoxController::setValue(MutableString* value)
 		}
 	}
 }
-

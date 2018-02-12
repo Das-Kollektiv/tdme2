@@ -79,12 +79,12 @@ bool GUITabContentController::hasValue()
 	return false;
 }
 
-MutableString* GUITabContentController::getValue()
+const MutableString& GUITabContentController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUITabContentController::setValue(MutableString* value)
+void GUITabContentController::setValue(const MutableString& value)
 {
 }
 

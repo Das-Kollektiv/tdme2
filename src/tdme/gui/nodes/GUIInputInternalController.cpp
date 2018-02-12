@@ -164,8 +164,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
 			if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
-				if (textInputNode->getMaxLength() == 0 || textInputNode->getText()->length() < textInputNode->getMaxLength()) {
-					textInputNode->getText()->insert(index, event->getKeyChar());
+				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
+					textInputNode->getText().insert(index, event->getKeyChar());
 					index++;
 					resetCursorMode();
 					checkOffset();
@@ -188,7 +188,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
-						if (index < textInputNode->getText()->length()) {
+						if (index < textInputNode->getText().length()) {
 							index++;
 							checkOffset();
 							resetCursorMode();
@@ -201,7 +201,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index > 0) {
-								textInputNode->getText()->delete_(index - 1, 1);
+								textInputNode->getText().delete_(index - 1, 1);
 								index--;
 								checkOffset();
 								resetCursorMode();
@@ -215,8 +215,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
-							if (index < textInputNode->getText()->length()) {
-								textInputNode->getText()->delete_(index, 1);
+							if (index < textInputNode->getText().length()) {
+								textInputNode->getText().delete_(index, 1);
 								resetCursorMode();
 								node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node->getParentControllerNode()));
 							}
@@ -246,7 +246,7 @@ void GUIInputInternalController::tick()
 			}
 		} else
 		if (dragPosition[0] > 0) {
-			if (index < textInputNode->getText()->length()) {
+			if (index < textInputNode->getText().length()) {
 				index++;
 				checkOffset();
 			}
@@ -267,12 +267,12 @@ bool GUIInputInternalController::hasValue()
 	return false;
 }
 
-MutableString* GUIInputInternalController::getValue()
+const MutableString& GUIInputInternalController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIInputInternalController::setValue(MutableString* value)
+void GUIInputInternalController::setValue(const MutableString& value)
 {
 }
 

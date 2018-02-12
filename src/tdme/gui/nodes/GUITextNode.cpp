@@ -25,12 +25,12 @@ using tdme::gui::renderer::GUIFont;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
 
-GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, MutableString* text) throw(Exception)
+GUITextNode::GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const MutableString& text) throw(Exception)
 	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
-	this->text = text;
+	this->text.set(text);
 	this->font->initialize();
 }
 
@@ -54,7 +54,7 @@ int32_t GUITextNode::getContentHeight()
 	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
-MutableString* GUITextNode::getText()
+MutableString& GUITextNode::getText()
 {
 	return text;
 }

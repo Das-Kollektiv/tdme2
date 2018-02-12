@@ -84,12 +84,12 @@ bool GUIElementIgnoreEventsController::hasValue()
 	return false;
 }
 
-MutableString* GUIElementIgnoreEventsController::getValue()
+const MutableString& GUIElementIgnoreEventsController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIElementIgnoreEventsController::setValue(MutableString* value)
+void GUIElementIgnoreEventsController::setValue(const MutableString& value)
 {
 }
 

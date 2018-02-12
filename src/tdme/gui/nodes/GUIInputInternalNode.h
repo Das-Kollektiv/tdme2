@@ -9,6 +9,7 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::string;
@@ -51,7 +52,7 @@ private:
 	GUIFont* font {  };
 	GUIColor color;
 	GUIColor colorDisabled;
-	MutableString* text {  };
+	MutableString text {  };
 	int32_t maxLength {  };
 
 protected:
@@ -61,7 +62,7 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const string& colorDisabled, MutableString* text, int32_t maxLength) throw(Exception);
+	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const string& colorDisabled, const MutableString& text, int32_t maxLength) throw(Exception);
 
 public:
 	int32_t getContentWidth() override;
@@ -75,7 +76,7 @@ public:
 	/** 
 	 * @return text
 	 */
-	MutableString* getText();
+	MutableString& getText();
 
 	/** 
 	 * @return max length

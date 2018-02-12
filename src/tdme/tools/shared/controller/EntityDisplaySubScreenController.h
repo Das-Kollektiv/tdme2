@@ -7,6 +7,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -22,8 +23,8 @@ using tdme::utils::MutableString;
 class tdme::tools::shared::controller::EntityDisplaySubScreenController
 {
 private:
-	static MutableString* CHECKBOX_CHECKED;
-	static MutableString* CHECKBOX_UNCHECKED;
+	static MutableString CHECKBOX_CHECKED;
+	static MutableString CHECKBOX_UNCHECKED;
 	GUIElementNode* displayBoundingVolume {  };
 	GUIElementNode* displayShadowing {  };
 	GUIElementNode* displayGround {  };

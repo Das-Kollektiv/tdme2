@@ -10,6 +10,7 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::vector;
@@ -43,7 +44,7 @@ class tdme::gui::nodes::GUITextNode final
 private:
 	GUIFont* font {  };
 	GUIColor color;
-	MutableString* text {  };
+	MutableString text {  };
 
 protected:
 	/** 
@@ -51,7 +52,7 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, MutableString* text) throw(Exception);
+	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const MutableString& text) throw(Exception);
 
 public:
 	int32_t getContentWidth() override;
@@ -60,7 +61,7 @@ public:
 	/** 
 	 * @return text
 	 */
-	MutableString* getText();
+	MutableString& getText();
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 };

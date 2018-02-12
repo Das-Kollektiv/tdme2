@@ -34,7 +34,7 @@ using tdme::utils::MutableString;
 class tdme::tools::shared::controller::EntityBaseSubScreenController
 {
 private:
-	static MutableString* TEXT_EMPTY;
+	static MutableString TEXT_EMPTY;
 	EntityBaseView* view {  };
 	PopUps* popUps {  };
 	GUIElementNode* entityName {  };

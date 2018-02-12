@@ -171,11 +171,11 @@ bool GUISelectBoxMultipleOptionController::hasValue()
 	return false;
 }
 
-MutableString* GUISelectBoxMultipleOptionController::getValue()
+const MutableString& GUISelectBoxMultipleOptionController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUISelectBoxMultipleOptionController::setValue(MutableString* value)
+void GUISelectBoxMultipleOptionController::setValue(const MutableString& value)
 {
 }

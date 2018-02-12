@@ -85,13 +85,13 @@ public:
 	/** 
 	 * @return value
 	 */
-	virtual MutableString* getValue() = 0;
+	virtual const MutableString& getValue() = 0;
 
 	/** 
 	 * Set value
 	 * @param value
 	 */
-	virtual void setValue(MutableString* value) = 0;
+	virtual void setValue(const MutableString& value) = 0;
 
 	/** 
 	 * @return is disabled

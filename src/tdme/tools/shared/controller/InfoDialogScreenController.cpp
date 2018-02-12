@@ -27,7 +27,6 @@ using tdme::utils::MutableString;
 
 InfoDialogScreenController::InfoDialogScreenController() 
 {
-	this->value = new MutableString();
 }
 
 GUIScreenNode* InfoDialogScreenController::getScreenNode()
@@ -56,8 +55,8 @@ void InfoDialogScreenController::dispose()
 void InfoDialogScreenController::show(const string& caption, const string& message)
 {
 	screenNode->setVisible(true);
-	captionNode->getText()->set(value->set(caption));
-	messageNode->getText()->set(value->set(message));
+	captionNode->getText().set(MutableString(caption));
+	messageNode->getText().set(MutableString(message));
 	screenNode->layout();
 }
 

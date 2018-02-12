@@ -167,12 +167,12 @@ bool GUIVerticalScrollbarInternalController::hasValue()
 	return false;
 }
 
-MutableString* GUIVerticalScrollbarInternalController::getValue()
+const MutableString& GUIVerticalScrollbarInternalController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIVerticalScrollbarInternalController::setValue(MutableString* value)
+void GUIVerticalScrollbarInternalController::setValue(const MutableString& value)
 {
 }
 

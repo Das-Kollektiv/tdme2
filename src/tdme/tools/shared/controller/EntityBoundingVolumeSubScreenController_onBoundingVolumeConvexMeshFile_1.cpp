@@ -33,7 +33,7 @@ EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::Entity
 void EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1::performAction()
 {
 	entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile[idxFinal]->getController()->setValue(
-		entityBoundingVolumeSubScreenController->value->set(
+		MutableString(
 			entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
 			"/" +
 			entityBoundingVolumeSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()

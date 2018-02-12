@@ -8,7 +8,7 @@
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::map;
@@ -40,7 +40,7 @@ private:
 	bool selected {  };
 	bool disabled {  };
 	static map<string, vector<GUIElementNode*>> radioButtonGroupNodesByName;
-	MutableString* value {  };
+	MutableString value {  };
 
 	/** 
 	 * @return is checked
@@ -71,8 +71,8 @@ public:
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;
-	MutableString* getValue() override;
-	void setValue(MutableString* value) override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
 
 private:
 	void init();

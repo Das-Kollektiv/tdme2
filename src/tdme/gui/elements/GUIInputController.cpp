@@ -88,12 +88,12 @@ bool GUIInputController::hasValue()
 	return true;
 }
 
-MutableString* GUIInputController::getValue()
+const MutableString& GUIInputController::getValue()
 {
 	return textInputNode->getText();
 }
 
-void GUIInputController::setValue(MutableString* value)
+void GUIInputController::setValue(const MutableString& value)
 {
-	textInputNode->getText()->set(value);
+	textInputNode->getText().set(value);
 }

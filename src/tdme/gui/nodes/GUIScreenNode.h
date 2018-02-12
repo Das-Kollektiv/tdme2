@@ -287,13 +287,13 @@ public:
 	 * Get values
 	 * @param values
 	 */
-	void getValues(map<string, MutableString*>* values);
+	void getValues(map<string, MutableString>& values);
 
 	/** 
 	 * Set values
 	 * @param values
 	 */
-	void setValues(map<string, MutableString*>* values);
+	void setValues(const map<string, MutableString>& values);
 
 	/** 
 	 * Add effect that will be removed if finished

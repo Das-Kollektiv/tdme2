@@ -491,7 +491,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
-					new MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text")))))
+					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text")))))
 				);
 				guiParentNode->addSubNode(guiTextNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -543,7 +543,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color-disabled"))),
-					new MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text"))))),
+					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text"))))),
 					GUIInputInternalNode::createMaxLength(string(AVOID_NULLPTR_STRING(node->Attribute("maxlength"))))
 				);
 				guiParentNode->addSubNode(guiInputInternalNode);

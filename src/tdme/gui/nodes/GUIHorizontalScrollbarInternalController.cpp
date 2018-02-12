@@ -167,12 +167,12 @@ bool GUIHorizontalScrollbarInternalController::hasValue()
 	return false;
 }
 
-MutableString* GUIHorizontalScrollbarInternalController::getValue()
+const MutableString& GUIHorizontalScrollbarInternalController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIHorizontalScrollbarInternalController::setValue(MutableString* value)
+void GUIHorizontalScrollbarInternalController::setValue(const MutableString& value)
 {
 }
 

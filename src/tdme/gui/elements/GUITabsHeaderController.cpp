@@ -201,12 +201,12 @@ bool GUITabsHeaderController::hasValue()
 	return false;
 }
 
-MutableString* GUITabsHeaderController::getValue()
+const MutableString& GUITabsHeaderController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUITabsHeaderController::setValue(MutableString* value)
+void GUITabsHeaderController::setValue(const MutableString& value)
 {
 }
 

@@ -37,7 +37,6 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 
 void GUIRadioButtonController::init()
 {
-	value = new MutableString();
 }
 
 string GUIRadioButtonController::CONDITION_SELECTED = "selected";
@@ -151,18 +150,18 @@ bool GUIRadioButtonController::hasValue()
 	return true;
 }
 
-MutableString* GUIRadioButtonController::getValue()
+const MutableString& GUIRadioButtonController::getValue()
 {
-	value->reset();
+	value.reset();
 	if (selected == true) {
-		value->append((dynamic_cast< GUIElementNode* >(node))->getValue());
+		value.append((dynamic_cast< GUIElementNode* >(node))->getValue());
 	}
 	return value;
 }
 
-void GUIRadioButtonController::setValue(MutableString* value)
+void GUIRadioButtonController::setValue(const MutableString& value)
 {
-	if (value->equals((dynamic_cast< GUIElementNode* >(node))->getValue()) == true) {
+	if (value.equals((dynamic_cast< GUIElementNode* >(node))->getValue()) == true) {
 		select();
 	}
 }

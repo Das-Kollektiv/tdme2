@@ -83,7 +83,6 @@ private:
 	GUIElementNode* convexMeshesPCA {  };
 	GUIElementNode* convexMeshesRemove {  };
 	GUIElementNode* convexMeshesGenerate {  };
-	MutableString* value {  };
 
 public:
 

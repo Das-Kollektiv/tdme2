@@ -5,7 +5,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -35,10 +35,12 @@ public:
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;
-	MutableString* getValue() override;
-	void setValue(MutableString* value) override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
 
 private:
+	MutableString value;
+
 	/**
 	 * Private constructor
 	 * @param node

@@ -16,6 +16,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -59,9 +60,9 @@ class tdme::tools::leveleditor::controller::LevelEditorScreenController final
 	friend class LevelEditorScreenController_onMapSave_2;
 
 private:
-	static MutableString* CHECKBOX_CHECKED;
-	static MutableString* CHECKBOX_UNCHECKED;
-	static MutableString* TEXT_EMPTY;
+	static MutableString CHECKBOX_CHECKED;
+	static MutableString CHECKBOX_UNCHECKED;
+	static MutableString TEXT_EMPTY;
 	LevelEditorView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
@@ -118,8 +119,6 @@ private:
 	array<GUIElementNode*, 4> lightsSpotCutoff {  };
 	array<GUIElementNode*, 4> ligthsSpotDirectionCompute {  };
 	array<GUIElementNode*, 4> lightsEnabled {  };
-	MutableString* value {  };
-	MutableString* selectedObjects {  };
 	FileDialogPath* mapPath {  };
 
 public:

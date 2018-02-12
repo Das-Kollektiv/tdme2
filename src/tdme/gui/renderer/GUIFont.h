@@ -9,6 +9,7 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
@@ -45,7 +46,7 @@ class tdme::gui::renderer::GUIFont final
 	friend class GUIFont_CharacterDefinition;
 
 private:
-	static MutableString* LINEHEIGHT_STRING;
+	static MutableString LINEHEIGHT_STRING;
 
 	/** 
 	 * The image containing the bitmap font 
@@ -114,7 +115,7 @@ public:
 	 * @param length or 0 if full length
 	 * @param color
 	 */
-	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, MutableString* text, int32_t offset, int32_t length, const GUIColor& color);
+	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const MutableString& text, int32_t offset, int32_t length, const GUIColor& color);
 
 	/** 
 	 * Get text index X of given text and index
@@ -124,7 +125,7 @@ public:
 	 * @param index
 	 * @return text index x
 	 */
-	int32_t getTextIndexX(MutableString* text, int32_t offset, int32_t length, int32_t index);
+	int32_t getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index);
 
 	/** 
 	 * Get text index by text and X in space of text
@@ -134,28 +135,28 @@ public:
 	 * @param text X
 	 * @return text index
 	 */
-	int32_t getTextIndexByX(MutableString* text, int32_t offset, int32_t length, int32_t textX);
+	int32_t getTextIndexByX(const MutableString& text, int32_t offset, int32_t length, int32_t textX);
 
 	/** 
 	 * Get the offset from the draw location the font will place glyphs
 	 * @param text The text that is to be tested
 	 * @return The yoffset from the y draw location at which text will start
 	 */
-	int32_t getYOffset(MutableString* text);
+	int32_t getYOffset(const MutableString& text);
 
 	/** 
 	 * Text height
 	 * @param text
 	 * @return text height
 	 */
-	int32_t getTextHeight(MutableString* text);
+	int32_t getTextHeight(const MutableString& text);
 
 	/** 
 	 * Text width
 	 * @param text
 	 * @return text width
 	 */
-	int32_t getTextWidth(MutableString* text);
+	int32_t getTextWidth(const MutableString& text);
 
 	/** 
 	 * @return line height

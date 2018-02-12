@@ -34,7 +34,6 @@ private:
 	GUIScreenNode* screenNode {  };
 	GUITextNode* captionNode {  };
 	GUITextNode* messageNode {  };
-	MutableString* value {  };
 
 public:
 	GUIScreenNode* getScreenNode() override;

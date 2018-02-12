@@ -48,7 +48,6 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 	friend class ModelEditorScreenController_onModelSave_3;
 
 private:
-	static MutableString* TEXT_EMPTY;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };
@@ -98,7 +97,6 @@ private:
 	GUIElementNode* animationsAnimationName {  };
 	GUIElementNode* animationsAnimationApply {  };
 
-	MutableString* value {  };
 	FileDialogPath* modelPath {  };
 
 public:

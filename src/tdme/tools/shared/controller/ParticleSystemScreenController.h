@@ -9,7 +9,6 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -30,7 +29,6 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedParticleSystemView;
-using tdme::utils::MutableString;
 
 /** 
  * Model viewer screen controller
@@ -138,7 +136,6 @@ private:
 	GUIElementNode* speColorEnd {  };
 	GUIElementNode* speCenter {  };
 	GUIElementNode* speRadius {  };
-	MutableString* value {  };
 	FileDialogPath* particleSystemPath {  };
 	FileDialogPath* modelPath {  };
 

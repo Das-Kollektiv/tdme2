@@ -21,9 +21,8 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EntityDisplaySubScreenController::CHECKBOX_CHECKED = new MutableString("1");
-
-MutableString* EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = new MutableString("");
+MutableString EntityDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
+MutableString EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");
 
 EntityDisplaySubScreenController::EntityDisplaySubScreenController() 
 {
@@ -60,24 +59,24 @@ void EntityDisplaySubScreenController::setupDisplay()
 
 void EntityDisplaySubScreenController::onDisplayApply()
 {
-	view->setDisplayShadowing(displayShadowing->getController()->getValue()->equals(CHECKBOX_CHECKED));
-	view->setDisplayGroundPlate(displayGround->getController()->getValue()->equals(CHECKBOX_CHECKED));
-	view->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue()->equals(CHECKBOX_CHECKED));
+	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED));
+	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals(CHECKBOX_CHECKED));
+	view->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED));
 }
 
 bool EntityDisplaySubScreenController::getDisplayShadowing()
 {
-	return displayShadowing->getController()->getValue()->equals(CHECKBOX_CHECKED);
+	return displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
 bool EntityDisplaySubScreenController::getDisplayGround()
 {
-	return displayGround->getController()->getValue()->equals(CHECKBOX_CHECKED);
+	return displayGround->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
 bool EntityDisplaySubScreenController::getDisplayBoundingVolume()
 {
-	return displayBoundingVolume->getController()->getValue()->equals(CHECKBOX_CHECKED);
+	return displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
 void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)

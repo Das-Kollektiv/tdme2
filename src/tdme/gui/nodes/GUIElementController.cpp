@@ -122,12 +122,12 @@ bool GUIElementController::hasValue()
 	return false;
 }
 
-MutableString* GUIElementController::getValue()
+const MutableString& GUIElementController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIElementController::setValue(MutableString* value)
+void GUIElementController::setValue(const MutableString& value)
 {
 }
 

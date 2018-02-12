@@ -8,6 +8,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using std::string;
@@ -43,6 +44,7 @@ private:
 	GUIColor unfocussedNodeBorderTopColor;
 	GUIColor unfocussedNodeBorderBottomColor;
 	bool disabled {  };
+	MutableString value {  };
 
 	/** 
 	 * @return is checked
@@ -69,8 +71,8 @@ public:
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;
-	MutableString* getValue() override;
-	void setValue(MutableString* value) override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
 
 	/** 
 	 * Select this tab

@@ -66,7 +66,6 @@ LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenControll
 {
 	this->popUps = popUps;
 	this->modelPath = ".";
-	entityLibraryListBoxSelection = new MutableString();
 }
 
 GUIScreenNode* LevelEditorEntityLibraryScreenController::getScreenNode()
@@ -99,7 +98,6 @@ void LevelEditorEntityLibraryScreenController::initialize()
 	}
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
-	dropdownEntityActionReset = new MutableString("action");
 }
 
 void LevelEditorEntityLibraryScreenController::dispose()
@@ -108,14 +106,16 @@ void LevelEditorEntityLibraryScreenController::dispose()
 
 void LevelEditorEntityLibraryScreenController::selectEntity(int32_t entityId)
 {
-	entityLibraryListBoxSelection->set(entityId);
+	MutableString entityLibraryListBoxSelection;
+	entityLibraryListBoxSelection.set(entityId);
 	entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
 }
 
 void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
+	MutableString entityLibraryListBoxSelection;
 	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-	entityLibraryListBoxSelection->set(entityLibraryListBox->getController()->getValue());
+	entityLibraryListBoxSelection.set(entityLibraryListBox->getController()->getValue());
 	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(entityLibraryListBox->getId() + "_inner")));
 	auto idx = 1;
 	string entityLibraryListBoxSubNodesXML;
@@ -144,7 +144,7 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 		Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	if (entityLibraryListBoxSelection->length() > 0) {
+	if (entityLibraryListBoxSelection.length() > 0) {
 		entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
 	}
 	onEntitySelectionChanged();
@@ -155,7 +155,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->getString()));
+		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 		if (entity != nullptr) {
 			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
 		}
@@ -164,7 +164,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 
 void LevelEditorEntityLibraryScreenController::onEditEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	{
 		auto v = entity->getType();
@@ -207,7 +207,7 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
@@ -217,7 +217,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue()->getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	TDMELevelEditor::getInstance()->getLevel()->removeObjectsByEntityId(entity->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
@@ -236,13 +236,13 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		onEntitySelectionChanged();
 	} else
 	if (node->getId().compare("dropdown_entity_action") == 0) {
-		if (node->getController()->getValue()->getString() == "edit") {
+		if (node->getController()->getValue().getString() == "edit") {
 			onEditEntity();
 		} else
-		if (node->getController()->getValue()->getString() == "delete") {
+		if (node->getController()->getValue().getString() == "delete") {
 			onDeleteEntity();
 		} else
-		if (node->getController()->getValue()->getString() == "create_model") {
+		if (node->getController()->getValue().getString() == "create_model") {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 			vector<string> extensions = ModelReader::getModelExtensions();
 			extensions.push_back("tmm");
@@ -254,11 +254,11 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
 			);
 		} else
-		if (node->getController()->getValue()->getString() == "create_trigger") {
+		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -267,11 +267,11 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				);
 			}
 		} else
-		if (node->getController()->getValue()->getString() == "create_empty") {
+		if (node->getController()->getValue().getString() == "create_empty") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, "New empty", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -280,13 +280,13 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else
-		if (node->getController()->getValue()->getString() == "create_light") {
+		if (node->getController()->getValue().getString() == "create_light") {
 		} else
-		if (node->getController()->getValue()->getString() == "create_particlesystem") {
+		if (node->getController()->getValue().getString() == "create_particlesystem") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, "New particle system", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection->set(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -295,9 +295,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else {
-			Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue()->getString());
+			Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue().getString());
 		}
-		node->getController()->setValue(dropdownEntityActionReset);
+		node->getController()->setValue(MutableString("action"));
 	} else {
 		Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId());
 	}

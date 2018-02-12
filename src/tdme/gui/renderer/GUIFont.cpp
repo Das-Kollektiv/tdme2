@@ -37,7 +37,7 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::MutableString;
 
-MutableString* GUIFont::LINEHEIGHT_STRING = new MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
+MutableString GUIFont::LINEHEIGHT_STRING = MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 
 GUIFont::GUIFont()
 {
@@ -132,16 +132,16 @@ void GUIFont::dispose()
 	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 }
 
-void GUIFont::drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, MutableString* text, int32_t offset, int32_t length, const GUIColor& color)
+void GUIFont::drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const MutableString& text, int32_t offset, int32_t length, const GUIColor& color)
 {
 	guiRenderer->bindTexture(textureId);
 	guiRenderer->setFontColor(color);
 	y -= getYOffset(text) / 2;
 	if (length == 0)
-		length = text->length();
+		length = text.length();
 
-	for (auto i = offset; i < text->length() && i < length; i++) {
-		int32_t id = text->charAt(i);
+	for (auto i = offset; i < text.length() && i < length; i++) {
+		int32_t id = text.charAt(i);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		charDef->draw(guiRenderer, x, y);
@@ -151,14 +151,14 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, Mutable
 	guiRenderer->render();
 }
 
-int32_t GUIFont::getTextIndexX(MutableString* text, int32_t offset, int32_t length, int32_t index)
+int32_t GUIFont::getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index)
 {
 	if (length == 0)
-		length = text->length();
+		length = text.length();
 
 	auto x = 0;
-	for (auto i = offset; i < index && i < text->length() && i < length; i++) {
-		int32_t id = text->charAt(i);
+	for (auto i = offset; i < index && i < text.length() && i < length; i++) {
+		int32_t id = text.charAt(i);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		auto xAdvance = charDef->xAdvance;
@@ -167,15 +167,15 @@ int32_t GUIFont::getTextIndexX(MutableString* text, int32_t offset, int32_t leng
 	return x;
 }
 
-int32_t GUIFont::getTextIndexByX(MutableString* text, int32_t offset, int32_t length, int32_t textX)
+int32_t GUIFont::getTextIndexByX(const MutableString& text, int32_t offset, int32_t length, int32_t textX)
 {
 	auto x = 0;
 	auto index = offset;
 	if (length == 0)
-		length = text->length();
+		length = text.length();
 
-	for (; index < text->length() && index < length; index++) {
-		int32_t id = text->charAt(index);
+	for (; index < text.length() && index < length; index++) {
+		int32_t id = text.charAt(index);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		auto xAdvance = charDef->xAdvance;
@@ -187,11 +187,11 @@ int32_t GUIFont::getTextIndexByX(MutableString* text, int32_t offset, int32_t le
 	return index;
 }
 
-int32_t GUIFont::getYOffset(MutableString* text)
+int32_t GUIFont::getYOffset(const MutableString& text)
 {
 	auto minYOffset = 10000;
-	for (auto i = 0; i < text->length(); i++) {
-		int32_t id = text->charAt(i);
+	for (auto i = 0; i < text.length(); i++) {
+		int32_t id = text.charAt(i);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		minYOffset = Math::min(charDef->yOffset, minYOffset);
@@ -199,11 +199,11 @@ int32_t GUIFont::getYOffset(MutableString* text)
 	return minYOffset;
 }
 
-int32_t GUIFont::getTextHeight(MutableString* text)
+int32_t GUIFont::getTextHeight(const MutableString& text)
 {
 	auto maxHeight = 0;
-	for (auto i = 0; i < text->length(); i++) {
-		int32_t id = text->charAt(i);
+	for (auto i = 0; i < text.length(); i++) {
+		int32_t id = text.charAt(i);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		if (id == L' ') {
@@ -214,11 +214,11 @@ int32_t GUIFont::getTextHeight(MutableString* text)
 	return maxHeight;
 }
 
-int32_t GUIFont::getTextWidth(MutableString* text)
+int32_t GUIFont::getTextWidth(const MutableString& text)
 {
 	auto width = 0;
-	for (auto i = 0; i < text->length(); i++) {
-		int32_t id = text->charAt(i);
+	for (auto i = 0; i < text.length(); i++) {
+		int32_t id = text.charAt(i);
 		GUIFont_CharacterDefinition* charDef = getCharacter(id);
 		if (charDef == nullptr) continue;
 		auto xAdvance = charDef->xAdvance;

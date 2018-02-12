@@ -20,5 +20,5 @@ GUITest_init_2::GUITest_init_2(GUITest* guiTest)
 
 void GUITest_init_2::onValueChanged(GUIElementNode* node)
 {
-	Console::println(node->getName() + ":onValueChanged: " + node->getController()->getValue()->getString());
+	Console::println(node->getName() + ":onValueChanged: " + node->getController()->getValue().getString());
 }

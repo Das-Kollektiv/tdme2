@@ -343,9 +343,9 @@ void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 	}
 }
 
-void GUIScreenNode::getValues(map<string, MutableString*>* values)
+void GUIScreenNode::getValues(map<string, MutableString>& values)
 {
-	values->clear();
+	values.clear();
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes.at(i);
@@ -355,17 +355,17 @@ void GUIScreenNode::getValues(map<string, MutableString*>* values)
 		auto guiElementNode = (dynamic_cast< GUIElementNode* >(childControllerNode));
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto name = guiElementNode->getName();
-			auto value = guiElementNodeController->getValue();
-			auto currentValueIt = values->find(name);
-			if (currentValueIt == values->end() || currentValueIt->second->length() == 0) {
-				(*values)[name] = value;
+			auto& name = guiElementNode->getName();
+			auto& value = guiElementNodeController->getValue();
+			auto currentValueIt = values.find(name);
+			if (currentValueIt == values.end() || currentValueIt->second.length() == 0) {
+				values[name] = value;
 			}
 		}
 	}
 }
 
-void GUIScreenNode::setValues(map<string, MutableString*>* values)
+void GUIScreenNode::setValues(const map<string, MutableString>& values)
 {
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -377,10 +377,9 @@ void GUIScreenNode::setValues(map<string, MutableString*>* values)
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
 			auto name = guiElementNode->getName();
-			auto newValueIt = values->find(name);
-			if (newValueIt == values->end())
+			auto newValueIt = values.find(name);
+			if (newValueIt == values.end())
 				continue;
-
 			guiElementNodeController->setValue(newValueIt->second);
 		}
 	}

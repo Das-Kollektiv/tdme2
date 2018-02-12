@@ -137,12 +137,11 @@ bool GUISelectBoxOptionController::hasValue()
 	return false;
 }
 
-MutableString* GUISelectBoxOptionController::getValue()
+const MutableString& GUISelectBoxOptionController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUISelectBoxOptionController::setValue(MutableString* value)
+void GUISelectBoxOptionController::setValue(const MutableString& value)
 {
 }
-

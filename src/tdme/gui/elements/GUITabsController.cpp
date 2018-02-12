@@ -27,7 +27,6 @@ GUITabsController::GUITabsController(GUINode* node)
 
 void GUITabsController::init()
 {
-	tabContentNodeId = new MutableString();
 }
 
 bool GUITabsController::isDisabled()
@@ -83,7 +82,8 @@ void GUITabsController::unselect()
 
 void GUITabsController::setTabContentSelected(const string& id)
 {
-	tabContentNodeId->set(id + "-content");
+	MutableString tabContentNodeId;
+	tabContentNodeId.set(id + "-content");
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes.at(i);
@@ -93,7 +93,7 @@ void GUITabsController::setTabContentSelected(const string& id)
 			if (static_cast< GUINode* >(tabContentController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
 				continue;
 
-			(dynamic_cast< GUITabContentController* >(childController))->setSelected(tabContentNodeId->equals(childController->getNode()->getId()));
+			(dynamic_cast< GUITabContentController* >(childController))->setSelected(tabContentNodeId.equals(childController->getNode()->getId()));
 		}
 	}
 }
@@ -123,12 +123,12 @@ bool GUITabsController::hasValue()
 	return false;
 }
 
-MutableString* GUITabsController::getValue()
+const MutableString& GUITabsController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUITabsController::setValue(MutableString* value)
+void GUITabsController::setValue(const MutableString& value)
 {
 }
 

@@ -33,7 +33,6 @@ GUICheckboxController::GUICheckboxController(GUINode* node)
 {
 	this->checked = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-	this->value = new MutableString();
 }
 
 bool GUICheckboxController::isChecked()
@@ -125,16 +124,16 @@ bool GUICheckboxController::hasValue()
 	return true;
 }
 
-MutableString* GUICheckboxController::getValue()
+const MutableString& GUICheckboxController::getValue()
 {
-	value->reset();
+	value.reset();
 	if (checked == true) {
-		value->append((dynamic_cast< GUIElementNode* >(node))->getValue());
+		value.append((dynamic_cast< GUIElementNode* >(node))->getValue());
 	}
 	return value;
 }
 
-void GUICheckboxController::setValue(MutableString* value)
+void GUICheckboxController::setValue(const MutableString& value)
 {
-	setChecked(value->equals((dynamic_cast< GUIElementNode* >(node))->getValue()));
+	setChecked(value.equals((dynamic_cast< GUIElementNode* >(node))->getValue()));
 }
