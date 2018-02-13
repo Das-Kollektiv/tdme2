@@ -93,7 +93,7 @@ void World::setPartition(PhysicsPartition* partition)
 	this->partition = partition;
 }
 
-RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
+RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
@@ -543,7 +543,7 @@ World* World::clone()
 			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, obv, rigidBody->friction);
 		} else {
 			// update dynamic rigid body
-			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, obv, rigidBody->restitution, rigidBody->friction, rigidBody->mass, rigidBody->inverseInertia.clone());
+			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, obv, rigidBody->restitution, rigidBody->friction, rigidBody->mass, rigidBody->inverseInertiaSettings);
 		}
 		// synch additional properties
 		synch(clonedRigidBody, clonedRigidBody);

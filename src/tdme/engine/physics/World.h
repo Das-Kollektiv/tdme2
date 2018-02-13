@@ -33,6 +33,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -116,7 +117,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body

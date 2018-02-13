@@ -71,6 +71,17 @@ class tdme::engine::physics::RigidBody final
 public:
 	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
 
+	/**
+	 * Inertia matrix
+	 */
+	struct InertiaMatrixSettings {
+		bool noInertiaMatrix;
+		float mass;
+		float scaleX;
+		float scaleY;
+		float scaleZ;
+	};
+
 private:
 	static constexpr float LINEARVELOCITY_SLEEPTOLERANCE { 1.0f };
 	static constexpr float ANGULARVELOCITY_SLEEPTOLERANCE { 2.0f };
@@ -104,7 +115,7 @@ private:
 	Vector3 angularVelocity {  };
 	Vector3 angularVelocityLast {  };
 	Vector3 torque {  };
-	Matrix4x4 inverseInertia {  };
+	InertiaMatrixSettings inverseInertiaSettings {  };
 	Matrix4x4 orientationMatrix {  };
 	Matrix4x4 worldInverseInertia {  };
 	vector<CollisionListener*> collisionListener {  };
@@ -162,12 +173,28 @@ private:
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertia);
+	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
 
 	/**
 	 * Destructor
 	 */
 	~RigidBody();
+
+	/**
+	 * No rotation inertia matrix
+	 * @param bv
+	 * @param mass
+	 * @return inertia matrix
+	 */
+	static Matrix4x4 _getNoRotationInertiaMatrix();
+
+	/**
+	 * Computes the inertia matrix
+	 * @param bv
+	 * @param mass
+	 * @return inertia matrix
+	 */
+	static Matrix4x4 _computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 public:
 
@@ -175,17 +202,17 @@ public:
 	 * No rotation inertia matrix
 	 * @param bv
 	 * @param mass
-	 * @return inertia matrix
+	 * @return inertia matrix settings
 	 */
-	static Matrix4x4 getNoRotationInertiaMatrix();
+	static InertiaMatrixSettings getNoRotationInertiaMatrix();
 
 	/** 
 	 * Computes the inertia matrix
 	 * @param bv
 	 * @param mass
-	 * @return inertia matrix
+	 * @return inertia matrix settings
 	 */
-	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
+	static InertiaMatrixSettings computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 	/** 
 	 * Set up index in rigid body array list
