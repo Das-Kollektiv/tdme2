@@ -1,14 +1,19 @@
 #pragma once
 
+#include <set>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -46,7 +51,7 @@ private:
 	string value {  };
 	bool selected {  };
 	bool disabled {  };
-	GUINodeConditions* activeConditions {  };
+	GUINodeConditions activeConditions {  };
 	bool focusable {  };
 	bool ignoreEvents {  };
 
@@ -104,8 +109,10 @@ public:
 	/** 
 	 * @return active conditions
 	 */
-	GUINodeConditions* getActiveConditions();
-	void handleMouseEvent(GUIMouseEvent* event) override;
+	GUINodeConditions& getActiveConditions();
+
+	// overriden methods
+	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 private:

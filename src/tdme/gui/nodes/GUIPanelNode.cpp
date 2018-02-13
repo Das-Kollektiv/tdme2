@@ -1,10 +1,14 @@
 #include <tdme/gui/nodes/GUIPanelNode.h>
 
 #include <string>
+#include <set>
+#include <vector>
 
 #include <tdme/gui/events/GUIMouseEvent.h>
 
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::events::GUIMouseEvent;
@@ -19,9 +23,9 @@ const string GUIPanelNode::getNodeType()
 	return "panel";
 }
 
-void GUIPanelNode::handleMouseEvent(GUIMouseEvent* event)
+void GUIPanelNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
-	GUILayoutNode::handleMouseEvent(event);
+	GUILayoutNode::determineMouseEventNodes(event, eventNodeIds);
 	if (isEventBelongingToNode(event) == true) {
 		event->setProcessed(true);
 	}

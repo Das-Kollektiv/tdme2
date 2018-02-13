@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -21,6 +22,7 @@
 
 using std::array;
 using std::vector;
+using std::set;
 using std::string;
 
 using tdme::gui::events::GUIKeyboardEvent;
@@ -186,6 +188,11 @@ protected:
 	 */
 	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn);
 
+	/**
+	 * Destructor
+	 */
+	virtual ~GUINode();
+
 public:
 
 	/** 
@@ -345,13 +352,14 @@ public:
 	 */
 	virtual GUIParentNode* getParentControllerNode();
 
-	/** 
-	 * Handle mouse event
+	/**
+	 * Determine mouse event nodes
 	 * @param event
+	 * @param event node ids
 	 */
-	virtual void handleMouseEvent(GUIMouseEvent* event);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds);
 
-	/** 
+	/**
 	 * Handle keyboard event
 	 * @param event
 	 */

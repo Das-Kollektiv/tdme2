@@ -1,6 +1,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
+#include <set>
 #include <map>
 #include <string>
 
@@ -17,9 +18,11 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/MutableString.h>
 
 using std::map;
+using std::set;
 using std::string;
 using std::to_string;
 
@@ -37,6 +40,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::Console;
 using tdme::utils::MutableString;
 
 GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow*  overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, bool scrollable, bool popUp) throw(GUIParserException)
@@ -52,6 +56,23 @@ GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
+}
+
+GUIScreenNode::~GUIScreenNode() {
+	// remove sub nodes
+	for (auto i = 0; i < subNodes.size(); i++) {
+		removeNode(subNodes.at(i));
+	}
+	subNodes.clear();
+
+	// remove effects
+	vector<string> effectsToRemove;
+	for (auto effectIt: effects) {
+		effectsToRemove.push_back(effectIt.first);
+	}
+	for (auto effectToRemoveId: effectsToRemove) {
+		removeEffect(effectToRemoveId);
+	}
 }
 
 void GUIScreenNode::init()
@@ -227,13 +248,16 @@ bool GUIScreenNode::addNode(GUINode* node)
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
-	nodesById.erase(node->id);
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 			removeNode(parentNode->subNodes.at(i));
 		}
+		parentNode->subNodes.clear();
 	}
+	nodesById.erase(node->id);
+	node->dispose();
+	delete node;
 	return true;
 }
 
@@ -256,7 +280,7 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 {
 	vector<GUINode*> subFloatingNodes;
 	guiRenderer->initScreen(this);
-	for (const auto& i : effects) {
+	for (auto& i : effects) {
 		auto effect = i.second;
 		effect->apply(guiRenderer);
 	}
@@ -285,14 +309,14 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::handleMouseEvent(GUIMouseEvent* event)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
 	mouseEventProcessedByFloatingNode = false;
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		auto floatingNode = floatingNodes.at(i);
-		floatingNode->handleMouseEvent(event);
+		floatingNode->determineMouseEventNodes(event, eventNodeIds);
 	}
-	GUIParentNode::handleMouseEvent(event);
+	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
 }
 
 void GUIScreenNode::handleKeyboardEvent(GUIKeyboardEvent* event)
@@ -396,19 +420,21 @@ bool GUIScreenNode::addEffect(const string& id, GUIEffect* effect)
 
 GUIEffect* GUIScreenNode::getEffect(const string& id)
 {
-	auto effectsIt = effects.find(id);
-	if (effectsIt == effects.end()) {
+	auto effectIt = effects.find(id);
+	if (effectIt == effects.end()) {
 		return nullptr;
 	}
-	return effectsIt->second;
+	return effectIt->second;
 }
 
 bool GUIScreenNode::removeEffect(const string& id)
 {
-	auto eraseCount = effects.erase(id);
-	if (eraseCount == 0) {
+	auto effectIt = effects.find(id);
+	if (effectIt == effects.end()) {
 		return false;
 	}
+	effects.erase(effectIt);
+	delete effectIt->second;
 	return true;
 }
 

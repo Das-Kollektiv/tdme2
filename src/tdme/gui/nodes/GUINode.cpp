@@ -1,6 +1,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 #include <array>
+#include <set>
 #include <string>
 
 #include <tdme/gui/GUI.h>
@@ -27,6 +28,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::set;
 using std::string;
 
 using tdme::gui::nodes::GUINode;
@@ -72,6 +74,10 @@ GUINode::GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const str
 	this->hideOn = hideOn;
 	this->controller = nullptr;
 	this->conditionsMet = false;
+}
+
+GUINode::~GUINode() {
+	if (controller != nullptr) delete controller;
 }
 
 GUIScreenNode* GUINode::getScreenNode()
@@ -341,15 +347,15 @@ bool GUINode::checkConditions()
 	}
 	auto elementNode = dynamic_cast< GUIElementNode* >(node);
 	for (auto i = 0; i < hideOn.size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
-			if (hideOn.at(i) == elementNode->activeConditions->conditions.at(j))
+		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
+			if (hideOn.at(i) == elementNode->activeConditions.conditions.at(j))
 				return false;
 
 		}
 	}
 	for (auto i = 0; i < showOn.size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions->conditions.size(); j++) {
-			if (showOn.at(i) == elementNode->activeConditions->conditions.at(j))
+		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
+			if (showOn.at(i) == elementNode->activeConditions.conditions.at(j))
 				return true;
 
 		}
@@ -513,7 +519,7 @@ GUIParentNode* GUINode::getParentControllerNode()
 	return node;
 }
 
-void GUINode::handleMouseEvent(GUIMouseEvent* event)
+void GUINode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
 	if (conditionsMet == false)
 		return;
@@ -521,14 +527,7 @@ void GUINode::handleMouseEvent(GUIMouseEvent* event)
 	if (screenNode->mouseEventProcessedByFloatingNode == true)
 		return;
 
-	auto node = this;
-	if (node->controller == nullptr) {
-		node = getParentControllerNode();
-	}
-	if (node == nullptr) {
-		return;
-	}
-	node->controller->handleMouseEvent(this, event);
+	eventNodeIds.insert(this->id);
 }
 
 void GUINode::handleKeyboardEvent(GUIKeyboardEvent* event)
@@ -543,6 +542,7 @@ void GUINode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (node == nullptr) {
 		return;
 	}
+
 	node->controller->handleKeyboardEvent(this, event);
 }
 

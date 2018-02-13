@@ -56,10 +56,10 @@ bool GUISelectBoxMultipleController::isDisabled()
 
 void GUISelectBoxMultipleController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	selectCurrent();
 }
 

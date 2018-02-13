@@ -5,6 +5,7 @@
 #endif
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -37,7 +38,7 @@
 
 using std::map;
 using std::vector;
-using std::string;
+using std::set;
 using std::string;
 using std::to_string;
 using std::to_string;
@@ -217,13 +218,13 @@ void GUI::addScreen(const string& id, GUIScreenNode* screen)
 	screens.emplace(id, screen);
 }
 
-void GUI::removeScreen(const string* id)
+void GUI::removeScreen(const string& id)
 {
-	auto screensIt = screens.find(*id);
-
+	auto screensIt = screens.find(id);
 	if (screensIt != screens.end()) {
+		screens.erase(id);
 		screensIt->second->dispose();
-		screens.erase(*id);
+		delete screensIt->second;
 	}
 }
 
@@ -234,7 +235,7 @@ void GUI::reset()
 		entitiesToRemove.push_back(screenKeysIt.first);
 	}
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
-		removeScreen(&(entitiesToRemove.at(i)));
+		removeScreen(entitiesToRemove.at(i));
 	}
 	fontCache.clear();
 	imageCache.clear();
@@ -297,7 +298,7 @@ GUIElementNode* GUI::getFocussedNode()
 void GUI::unfocusNode()
 {
 	if (focussedNode != nullptr) {
-		focussedNode->getActiveConditions()->remove(GUIElementNode::CONDITION_FOCUS);
+		focussedNode->getActiveConditions().remove(GUIElementNode::CONDITION_FOCUS);
 		focussedNode->getBorder().topColor = unfocussedNodeBorderTopColor;
 		focussedNode->getBorder().leftColor = unfocussedNodeBorderLeftColor;
 		focussedNode->getBorder().bottomColor = unfocussedNodeBorderBottomColor;
@@ -311,7 +312,7 @@ void GUI::unfocusNode()
 void GUI::focusNode()
 {
 	if (focussedNode != nullptr) {
-		focussedNode->getActiveConditions()->add(GUIElementNode::CONDITION_FOCUS);
+		focussedNode->getActiveConditions().add(GUIElementNode::CONDITION_FOCUS);
 		unfocussedNodeBorderTopColor = focussedNode->getBorder().topColor;
 		unfocussedNodeBorderLeftColor = focussedNode->getBorder().leftColor;
 		unfocussedNodeBorderBottomColor = focussedNode->getBorder().bottomColor;
@@ -415,6 +416,7 @@ void GUI::render()
 
 void GUI::handleEvents(GUINode* node)
 {
+	set<string> eventNodeIds;
 	for (auto i = 0; i < mouseEvents.size(); i++) {
 		auto event = mouseEvents.at(i);
 		if (event->isProcessed() == true)
@@ -422,7 +424,29 @@ void GUI::handleEvents(GUINode* node)
 
 		event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
 		event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
-		node->handleMouseEvent(event);
+
+		// determine nodes that receive this event
+		node->determineMouseEventNodes(event, eventNodeIds);
+
+		// handle mouse event for each node we collected
+		for (auto eventNodeId: eventNodeIds) {
+			// node event occurred on
+			auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+			if (eventNode == nullptr) continue;
+
+			// controller node
+			auto controllerNode = eventNode;
+			if (controllerNode->getController() == nullptr) {
+				controllerNode = controllerNode->getParentControllerNode();
+			}
+			if (controllerNode == nullptr) continue;
+
+			//
+			controllerNode->getController()->handleMouseEvent(eventNode, event);
+		}
+
+		// clear event node id list
+		eventNodeIds.clear();
 	}
 	for (auto i = 0; i < keyboardEvents.size(); i++) {
 		auto event = keyboardEvents.at(i);

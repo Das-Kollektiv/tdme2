@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -24,8 +25,9 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
@@ -63,9 +65,8 @@ void GUIParentNode::clearSubNodes()
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto node = subNodes.at(i);
-		screenNode->removeNode(node);
-		node->dispose();
+		auto subNode = subNodes.at(i);
+		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
 }
@@ -77,9 +78,8 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 		childrenRenderOffsetY = 0.0f;
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto node = subNodes.at(i);
-		screenNode->removeNode(node);
-		node->dispose();
+		auto subNode = subNodes.at(i);
+		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
 	GUIParser::parse(this, xml);
@@ -351,7 +351,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
 }
 
-void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
+void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
 	if (conditionsMet == false)
 		return;
@@ -394,9 +394,9 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 		if (subNode->flow == GUINode_Flow::FLOATING) {
 			continue;
 		}
-		subNode->handleMouseEvent(event);
+		subNode->determineMouseEventNodes(event, eventNodeIds);
 	}
-	GUINode::handleMouseEvent(event);
+	GUINode::determineMouseEventNodes(event, eventNodeIds);
 	if (flow == GUINode_Flow::FLOATING && event->isProcessed() == true) {
 		screenNode->mouseEventProcessedByFloatingNode = true;
 	}

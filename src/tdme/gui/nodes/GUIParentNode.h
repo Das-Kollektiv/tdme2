@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -12,8 +13,9 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/nodes/GUINode.h>
 
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -154,7 +156,7 @@ public:
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
-	void handleMouseEvent(GUIMouseEvent* event) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;
 

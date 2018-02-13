@@ -1,13 +1,17 @@
 #pragma once
 
+#include <set>
 #include <string>
+#include <vector>
 
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -39,7 +43,8 @@ protected:
 	GUIPanelNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, GUILayoutNode_Alignment* alignment) throw (GUIParserException);
 
 public:
-	void handleMouseEvent(GUIMouseEvent* event) override;
+	// overriden methods
+	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 };

@@ -354,16 +354,16 @@ void ParticleSystemScreenController::onQuit()
 void ParticleSystemScreenController::setParticleSystemType()
 {
 	auto particleSystem = view->getEntity()->getParticleSystem();
-	particleSystemType->getActiveConditions()->removeAll();
+	particleSystemType->getActiveConditions().removeAll();
 	{
 		auto v = particleSystem->getType();
 		if (v == LevelEditorEntityParticleSystem_Type::NONE) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_NONE));
-			particleSystemType->getActiveConditions()->add(TYPE_NONE);
+			particleSystemType->getActiveConditions().add(TYPE_NONE);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_OBJECTPARTICLESYSTEM));
-			particleSystemType->getActiveConditions()->add(TYPE_OBJECTPARTICLESYSTEM);
+			particleSystemType->getActiveConditions().add(TYPE_OBJECTPARTICLESYSTEM);
 			opsMaxCount->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getMaxCount()));
 			opsScale->getController()->setValue(MutableString(Tools::formatVector3(particleSystem->getObjectParticleSystem()->getScale())));
 			opsModel->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getModelFile()));
@@ -371,7 +371,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 		} else
 		if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_POINTSPARTICLESYSTEM));
-			particleSystemType->getActiveConditions()->add(TYPE_POINTSPARTICLESYSTEM);
+			particleSystemType->getActiveConditions().add(TYPE_POINTSPARTICLESYSTEM);
 			ppsMaxPoints->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getMaxPoints()));
 			ppsAutoEmit->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? "1" : ""));
 		} else {
@@ -429,8 +429,8 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 void ParticleSystemScreenController::onParticleSystemTypeApply()
 {
 	auto particleSystemTypeString = particleSystemTypes->getController()->getValue().getString();
-	particleSystemType->getActiveConditions()->removeAll();
-	particleSystemType->getActiveConditions()->add(particleSystemTypeString);
+	particleSystemType->getActiveConditions().removeAll();
+	particleSystemType->getActiveConditions().add(particleSystemTypeString);
 	if (particleSystemTypeString == TYPE_NONE) {
 		view->getEntity()->getParticleSystem()->setType(LevelEditorEntityParticleSystem_Type::NONE);
 	} else
@@ -456,8 +456,8 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 {
 	auto particleSystem = view->getEntity()->getParticleSystem();
 	auto particleSystemEmitterString = particleSystemEmitters->getController()->getValue().getString();
-	particleSystemEmitter->getActiveConditions()->removeAll();
-	particleSystemEmitter->getActiveConditions()->add(particleSystemEmitterString);
+	particleSystemEmitter->getActiveConditions().removeAll();
+	particleSystemEmitter->getActiveConditions().add(particleSystemEmitterString);
 	if (particleSystemEmitterString == EMITTER_NONE) {
 		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::NONE);
 	} else
@@ -614,17 +614,17 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 
 void ParticleSystemScreenController::setParticleSystemEmitter()
 {
-	particleSystemEmitter->getActiveConditions()->removeAll();
+	particleSystemEmitter->getActiveConditions().removeAll();
 	auto particleSystem = view->getEntity()->getParticleSystem();
 	{
 		auto v = particleSystem->getEmitter();
 		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_NONE));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_NONE);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_NONE);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_POINTPARTICLEEMITTER));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_POINTPARTICLEEMITTER);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_POINTPARTICLEEMITTER);
 			auto emitter = particleSystem->getPointParticleEmitter();
 			ppeCount->getController()->setValue(MutableString(emitter->getCount()));
 			ppeLifeTime->getController()->setValue(MutableString(static_cast< int32_t >(emitter->getLifeTime())));
@@ -639,7 +639,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_BOUNDINGBOXPARTICLEEMITTER);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_BOUNDINGBOXPARTICLEEMITTER);
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			bbpeCount->getController()->setValue(MutableString(emitter->getCount()));
 			bbpeLifeTime->getController()->setValue(MutableString(static_cast< int32_t >(emitter->getLifeTime())));
@@ -663,7 +663,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTER));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_CIRCLEPARTICLEEMITTER);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTER);
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			cpeCount->getController()->setValue(MutableString(emitter->getCount()));
 			cpeLifeTime->getController()->setValue(MutableString(static_cast< int32_t >(emitter->getLifeTime())));
@@ -688,7 +688,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY);
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			cpepvCount->getController()->setValue(MutableString(emitter->getCount()));
 			cpepvLifeTime->getController()->setValue(MutableString(static_cast< int32_t >(emitter->getLifeTime())));
@@ -713,7 +713,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_SPHEREPARTICLEEMITTER));
-			particleSystemEmitter->getActiveConditions()->add(EMITTER_SPHEREPARTICLEEMITTER);
+			particleSystemEmitter->getActiveConditions().add(EMITTER_SPHEREPARTICLEEMITTER);
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			speCount->getController()->setValue(MutableString(emitter->getCount()));
 			speLifeTime->getController()->setValue(MutableString(static_cast< int32_t >(emitter->getLifeTime())));

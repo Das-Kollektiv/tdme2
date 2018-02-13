@@ -50,26 +50,26 @@ bool GUISelectBoxOptionController::isSelected()
 
 void GUISelectBoxOptionController::select()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
-	nodeConditions->remove(CONDITION_DISABLED);
-	nodeConditions->remove(CONDITION_ENABLED);
-	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.remove(CONDITION_DISABLED);
+	nodeConditions.remove(CONDITION_ENABLED);
+	nodeConditions.add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUISelectBoxOptionController::unselect()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = false;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
-	nodeConditions->remove(CONDITION_DISABLED);
-	nodeConditions->remove(CONDITION_ENABLED);
-	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.remove(CONDITION_DISABLED);
+	nodeConditions.remove(CONDITION_ENABLED);
+	nodeConditions.add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUISelectBoxOptionController::initialize()
@@ -109,9 +109,9 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 			(dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->unselect();
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(selectBoxNode));
-			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(selectBoxNode));
 			node->scrollToNodeX(selectBoxNode);
 			node->scrollToNodeY(selectBoxNode);
+			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(selectBoxNode));
 		}
 	}
 }

@@ -50,10 +50,10 @@ bool GUITabController::isDisabled()
 
 void GUITabController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 bool GUITabController::isSelected()
@@ -63,10 +63,10 @@ bool GUITabController::isSelected()
 
 void GUITabController::setSelected(bool selected)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(this->node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(this->node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = selected;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	if ((dynamic_cast< GUITabsHeaderController* >(tabsHeaderNode->getController()))->hasFocus() == true) {
 		if (selected == true) {
 			auto focussedBorderColor = node->getScreenNode()->getGUI()->getFoccussedBorderColor();

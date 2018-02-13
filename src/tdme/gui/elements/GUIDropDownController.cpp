@@ -65,13 +65,13 @@ bool GUIDropDownController::isDisabled()
 
 void GUIDropDownController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	auto nodeConditionsTextElement = textElementNode->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto& nodeConditionsTextElement = textElementNode->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditionsTextElement.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditionsTextElement.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	if (disabled == true && isOpen() == true) {
 		toggleOpenState();
 	}
@@ -82,8 +82,8 @@ void GUIDropDownController::initialize()
 	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
 	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
 	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	setDisabled(disabled);
 }
 
@@ -114,11 +114,11 @@ void GUIDropDownController::unselect()
 
 void GUIDropDownController::toggleOpenState()
 {
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	isOpen_ = isOpen_ == true ? false : true;
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 }
 
 void GUIDropDownController::determineDropDownOptionControllers()

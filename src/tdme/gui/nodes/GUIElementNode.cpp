@@ -1,5 +1,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
+#include <set>
+
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -15,6 +17,8 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+
+using std::set;
 
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
@@ -49,7 +53,6 @@ GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentN
 
 void GUIElementNode::init()
 {
-	activeConditions = new GUINodeConditions();
 }
 
 string GUIElementNode::CONDITION_ALWAYS = "always";
@@ -188,18 +191,18 @@ bool GUIElementNode::isDisabled()
 	return disabled;
 }
 
-GUINodeConditions* GUIElementNode::getActiveConditions()
+GUINodeConditions& GUIElementNode::getActiveConditions()
 {
 	return activeConditions;
 }
 
-void GUIElementNode::handleMouseEvent(GUIMouseEvent* event)
+void GUIElementNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
 	if (conditionsMet == false)
 		return;
 
-	activeConditions->remove(CONDITION_ONMOUSEOVER);
-	activeConditions->remove(CONDITION_CLICK);
+	activeConditions.remove(CONDITION_ONMOUSEOVER);
+	activeConditions.remove(CONDITION_CLICK);
 	if (screenNode->mouseEventProcessedByFloatingNode == true)
 		return;
 
@@ -207,19 +210,17 @@ void GUIElementNode::handleMouseEvent(GUIMouseEvent* event)
 		{
 			auto v = event->getType();
 			if (v == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
-				activeConditions->add(CONDITION_ONMOUSEOVER);
-				if (ignoreEvents == false)
-					event->setProcessed(true);
+				activeConditions.add(CONDITION_ONMOUSEOVER);
+				if (ignoreEvents == false) event->setProcessed(true);
 			} else
 			if (v == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
-				activeConditions->add(CONDITION_CLICK);
-				if (ignoreEvents == false)
-					event->setProcessed(true);
+				activeConditions.add(CONDITION_CLICK);
+				if (ignoreEvents == false) event->setProcessed(true);
 			}
 		}
-
 	}
-	GUIParentNode::handleMouseEvent(event);
+
+	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
 }
 
 void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)

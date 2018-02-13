@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using std::map;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -47,6 +49,7 @@ using tdme::utils::MutableString;
 class tdme::gui::nodes::GUIScreenNode final
 	: public GUIParentNode
 {
+	friend class tdme::gui::GUI;
 	friend class tdme::gui::GUIParser;
 	friend class GUIElementNode;
 	friend class GUINode;
@@ -156,6 +159,11 @@ protected:
 
 	GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, bool scrollable, bool popUp) throw(GUIParserException);
 
+	/**
+	 * Destructor
+	 */
+	~GUIScreenNode();
+
 private:
 	/**
 	 * Add node
@@ -233,7 +241,9 @@ public:
 	 * @param focusable nodes
 	 */
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
-	void handleMouseEvent(GUIMouseEvent* event) override;
+
+	// overriden methods
+	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	/** 

@@ -53,26 +53,26 @@ bool GUISelectBoxMultipleOptionController::isSelected()
 
 void GUISelectBoxMultipleOptionController::select()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
-	nodeConditions->remove(CONDITION_DISABLED);
-	nodeConditions->remove(CONDITION_ENABLED);
-	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.remove(CONDITION_DISABLED);
+	nodeConditions.remove(CONDITION_ENABLED);
+	nodeConditions.add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUISelectBoxMultipleOptionController::unselect()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = false;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
-	nodeConditions->remove(CONDITION_DISABLED);
-	nodeConditions->remove(CONDITION_ENABLED);
-	nodeConditions->add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.remove(CONDITION_DISABLED);
+	nodeConditions.remove(CONDITION_ENABLED);
+	nodeConditions.add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUISelectBoxMultipleOptionController::toggle()
@@ -91,18 +91,18 @@ bool GUISelectBoxMultipleOptionController::isFocussed()
 
 void GUISelectBoxMultipleOptionController::focus()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 	this->focussed = true;
-	nodeConditions->add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
+	nodeConditions.add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 }
 
 void GUISelectBoxMultipleOptionController::unfocus()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 	this->focussed = false;
-	nodeConditions->add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
+	nodeConditions.add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 }
 
 void GUISelectBoxMultipleOptionController::initialize()
@@ -143,9 +143,9 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 			toggle();
 			focus();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(selectBoxMultipleNode));
-			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(selectBoxMultipleNode));
 			node->scrollToNodeX(selectBoxMultipleNode);
 			node->scrollToNodeY(selectBoxMultipleNode);
+			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(selectBoxMultipleNode));
 		}
 	}
 }

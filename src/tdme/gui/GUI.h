@@ -150,7 +150,7 @@ public:
 	 * Removes an screen
 	 * @param id
 	 */
-	void removeScreen(const string* id);
+	void removeScreen(const string& id);
 
 	/** 
 	 * Removes all screens and caches

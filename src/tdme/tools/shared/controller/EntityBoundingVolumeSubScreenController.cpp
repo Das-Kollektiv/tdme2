@@ -234,11 +234,11 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 
 void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType* bvType)
 {
-	boundingVolume[idx]->getActiveConditions()->remove("sphere");
-	boundingVolume[idx]->getActiveConditions()->remove("capsule");
-	boundingVolume[idx]->getActiveConditions()->remove("aabb");
-	boundingVolume[idx]->getActiveConditions()->remove("obb");
-	boundingVolume[idx]->getActiveConditions()->remove("convexmesh");
+	boundingVolume[idx]->getActiveConditions().remove("sphere");
+	boundingVolume[idx]->getActiveConditions().remove("capsule");
+	boundingVolume[idx]->getActiveConditions().remove("aabb");
+	boundingVolume[idx]->getActiveConditions().remove("obb");
+	boundingVolume[idx]->getActiveConditions().remove("convexmesh");
 	{
 		auto v = bvType;
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE) {
@@ -246,23 +246,23 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 		} else
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("1"));
-			boundingVolume[idx]->getActiveConditions()->add("sphere");
+			boundingVolume[idx]->getActiveConditions().add("sphere");
 		} else
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("2"));
-			boundingVolume[idx]->getActiveConditions()->add("capsule");
+			boundingVolume[idx]->getActiveConditions().add("capsule");
 		} else
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("3"));
-			boundingVolume[idx]->getActiveConditions()->add("aabb");
+			boundingVolume[idx]->getActiveConditions().add("aabb");
 		} else
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("4"));
-			boundingVolume[idx]->getActiveConditions()->add("obb");
+			boundingVolume[idx]->getActiveConditions().add("obb");
 		} else
 		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("5"));
-			boundingVolume[idx]->getActiveConditions()->add("convexmesh");
+			boundingVolume[idx]->getActiveConditions().add("convexmesh");
 		}
 	}
 
