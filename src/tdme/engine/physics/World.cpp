@@ -282,8 +282,14 @@ void World::update(float deltaTime)
 				if (rigidBodyCollisionsCurrentFrameIt != rigidBodyCollisionsCurrentFrame.end()) continue;
 			}
 
+			// determine rigid bodies
 			auto rigidBody1 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody1Id];
 			auto rigidBody2 = rigidBodiesById[rigidBodyCollisionStruct->rigidBody2Id];
+
+			// skip if one of the rigid bodies disappeared
+			if (rigidBody1 == nullptr || rigidBody2 == nullptr) continue;
+
+			// otherwise fire collision end
 			rigidBody1->fireOnCollisionEnd(rigidBody2);
 		}
 		// swap rigid body collisions current and last frame
