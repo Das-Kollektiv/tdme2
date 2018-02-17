@@ -18,15 +18,9 @@ using tdme::math::Vector3;
 class tdme::engine::Transformations {
 private:
 	Vector3 translation {  };
-	Matrix4x4 translationMatrix {  };
 	Vector3 scale {  };
-	Matrix4x4 scaleMatrix {  };
-	Rotations rotations {  };
-	Matrix4x4 rotationsQuaternionMatrix {  };
-	Matrix4x4 rotationsMatrix {  };
-	Vector3 rotationsPivot {  };
-	Matrix4x4 rotationsTranslationsMatrix {  };
 	Vector3 pivot {  };
+	Rotations rotations {  };
 	Matrix4x4 transformationsMatrix {  };
 
 public:

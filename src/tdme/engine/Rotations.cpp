@@ -88,4 +88,5 @@ void Rotations::update()
 		rotation->update();
 		quaternion.multiply(rotation->getQuaternion());
 	}
+	quaternion.normalize();
 }

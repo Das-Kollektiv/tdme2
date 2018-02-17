@@ -16,12 +16,7 @@ using tdme::math::Vector3;
 Transformations::Transformations() 
 {
 	transformationsMatrix.identity();
-	translationMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);
-	scaleMatrix.identity();
-	rotationsQuaternionMatrix.identity();
-	rotationsMatrix.identity();
-	rotationsTranslationsMatrix.identity();
 }
 
 Transformations::~Transformations() {
@@ -54,7 +49,6 @@ Matrix4x4& Transformations::getTransformationsMatrix()
 
 void Transformations::fromTransformations(Transformations* transformations)
 {
-	if (this == transformations) return;
 	// translation
 	translation.set(transformations->translation);
 	// scale
@@ -82,16 +76,18 @@ void Transformations::fromTransformations(Transformations* transformations)
 	}
 	// copy matrices and such
 	transformationsMatrix.set(transformations->transformationsMatrix);
-	translationMatrix.set(transformations->translationMatrix);
-	scaleMatrix.set(transformations->scaleMatrix);
-	rotationsMatrix.set(transformations->rotationsMatrix);
-	rotationsPivot.set(transformations->rotationsPivot);
 	rotations.quaternion.set(transformations->rotations.quaternion);
-	rotationsQuaternionMatrix.set(transformations->rotationsQuaternionMatrix);
 }
 
 void Transformations::update()
 {
+	// matrices
+	Matrix4x4 translationMatrix;
+	Matrix4x4 scaleMatrix;
+	Matrix4x4 rotationsMatrix;
+	Matrix4x4 rotationsQuaternionMatrix;
+	Matrix4x4 rotationsTranslationsMatrix;
+
 	// transformation matrix identity
 	transformationsMatrix.identity();
 	// set up translation matrix
@@ -103,8 +99,7 @@ void Transformations::update()
 	// apply rotations
 	rotationsMatrix.identity();
 	//	pivot
-	rotationsPivot.set(pivot).scale(-1.0f);
-	rotationsMatrix.translate(rotationsPivot);
+	rotationsMatrix.translate(pivot.clone().scale(-1.0f));
 	//	rotatations
 	rotations.quaternion.computeMatrix(rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);
