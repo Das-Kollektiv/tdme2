@@ -18,6 +18,7 @@
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
@@ -48,6 +49,7 @@ using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
@@ -407,7 +409,25 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 						heightRigidBody = rigidBody;
 					}
 				}
+			} else
+			if (dynamic_cast< ConvexMesh* >(cbv) != nullptr) {
+				auto convexMesh = dynamic_cast< ConvexMesh* >(cbv);
+				for (auto& triangle: *convexMesh->getTriangles()) {
+					if (LineSegment::doesLineSegmentCollideWithTriangle(
+						(*triangle.getVertices())[0],
+						(*triangle.getVertices())[1],
+						(*triangle.getVertices())[2],
+						heightBoundingBox.getMin(),
+						heightBoundingBox.getMax(),
+						heightOnPointA) == true) {
+						if (heightOnPointA.getY() >= height && heightOnPointA.getY() < pointXYZ[1] + Math::max(0.1f, stepUpMax)) {
+							height = heightOnPointA.getY();
+							heightRigidBody = rigidBody;
+						}
+					}
+				}
 			} else {
+				// TODO: This does not work well
 				// compute closest point on height candidate
 				cbv->computeClosestPointOnBoundingVolume(heightOnPointCandidate, heightOnPointA);
 				// check new height, take only result into account which is near to candidate
