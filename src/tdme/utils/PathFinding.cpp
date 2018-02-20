@@ -140,7 +140,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		return PathFindingStatus::PATH_NOWAY;
 	}
 
-	// Choose node form open nodes thats least expensive to check its successors
+	// Choose node from open nodes thats least expensive to check its successors
 	PathFindingNode* node = nullptr;
 	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
 		if (node == nullptr || nodeIt->second->costsAll < node->costsAll) node = nodeIt->second;
@@ -233,14 +233,14 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Remove found node from open nodes list, since it was less optimal
 		if (openListNode != nullptr) {
 			// remove open list node
-			delete openListNodeIt->second;
 			openNodes.erase(openListNodeIt);
+			delete openListNodeIt->second;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
-			delete closedListNodeIt->second;
 			closedNodes.erase(closedListNodeIt);
+			delete closedListNodeIt->second;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
