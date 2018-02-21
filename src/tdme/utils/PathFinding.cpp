@@ -28,9 +28,10 @@ using tdme::utils::PathFindingCustomTest;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
+PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
 	this->world = world;
 	this->customTest = customtest;
+	this->sloping = sloping;
 	this->end = new PathFindingNode();
 	this->actorObv = nullptr;
 	this->actorCbv = nullptr;
@@ -154,8 +155,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Find valid successors
 		for (int z = -1; z <= 1; z++)
 		for (int x = -1; x <= 1; x++)
-		if ((z != 0 || x != 0)  &&
-			(Math::abs(x) == 1 && Math::abs(z) == 1) == false) {
+		if ((z != 0 || x != 0) &&
+			(sloping == true ||
+			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
 			//
 			float yHeight;
 			float successorX = x * stepSize + node->x;
