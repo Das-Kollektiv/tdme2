@@ -28,27 +28,37 @@ public:
 	/** 
 	 * @return object translation
 	 */
-	virtual Vector3& getTranslation();
+	inline virtual Vector3& getTranslation() {
+		return translation;
+	}
 
 	/** 
 	 * @return object scale
 	 */
-	virtual Vector3& getScale();
+	inline virtual Vector3& getScale() {
+		return scale;
+	}
 
 	/** 
 	 * @return pivot or center of rotations
 	 */
-	virtual Vector3& getPivot();
+	inline virtual Vector3& getPivot() {
+		return pivot;
+	}
 
 	/** 
 	 * @return object rotations
 	 */
-	virtual Rotations* getRotations();
+	inline virtual Rotations* getRotations() {
+		return &rotations;
+	}
 
 	/** 
 	 * @return this transformations matrix
 	 */
-	virtual const Matrix4x4& getTransformationsMatrix() const;
+	inline virtual const Matrix4x4& getTransformationsMatrix() const {
+		return transformationsMatrix;
+	}
 
 	/** 
 	 * Set up this transformations from given transformations

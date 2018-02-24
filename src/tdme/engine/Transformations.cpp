@@ -4,20 +4,19 @@
 
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
 
 using std::to_string;
 
-using tdme::engine::Transformations;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 
 Transformations::Transformations() 
 {
@@ -26,31 +25,6 @@ Transformations::Transformations()
 }
 
 Transformations::~Transformations() {
-}
-
-Vector3& Transformations::getTranslation()
-{
-	return translation;
-}
-
-Vector3& Transformations::getScale()
-{
-	return scale;
-}
-
-Vector3& Transformations::getPivot()
-{
-	return pivot;
-}
-
-Rotations* Transformations::getRotations()
-{
-	return &rotations;
-}
-
-const Matrix4x4& Transformations::getTransformationsMatrix() const
-{
-	return transformationsMatrix;
 }
 
 void Transformations::fromTransformations(const Transformations& transformations)
