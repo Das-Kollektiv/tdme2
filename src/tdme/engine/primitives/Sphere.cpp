@@ -88,7 +88,7 @@ void Sphere::fromBoundingVolume(BoundingVolume* original)
 	convexMeshRadius = sphere->radius;
 }
 
-void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< Sphere* >(original) != nullptr == false) {
@@ -96,7 +96,7 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, Tra
 	}
 	Vector3 axis;
 	auto sphere = dynamic_cast< Sphere* >(original);
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply translations
 	// 	translate center
 	transformationsMatrix.multiply(sphere->center, center);

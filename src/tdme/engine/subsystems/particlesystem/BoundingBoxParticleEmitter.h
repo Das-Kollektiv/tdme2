@@ -44,7 +44,7 @@ public:
 	Color4& getColorStart() override;
 	Color4& getColorEnd() override;
 	void emit(Particle* particle) override;
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 
 	/** 
 	 * Public constructor

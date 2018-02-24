@@ -44,20 +44,18 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine)
 	keyMinus = false;
 	keyR = false;
 	mouseDragging = false;
-	lookFromRotations = new Transformations();
 	maxAxisDimension = 0.0f;
 	scale = 1.0f;
-	lookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
-	lookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
-	lookFromRotations->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
-	lookFromRotations->update();
+	lookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
+	lookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
+	lookFromRotations.getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
+	lookFromRotations.update();
 	resetRequested = false;
 	mouseLastX = 0;
 	mouseLastY = 0;
 }
 
 CameraRotationInputHandler::~CameraRotationInputHandler() {
-	delete lookFromRotations;
 }
 
 float CameraRotationInputHandler::getMaxAxisDimension()
@@ -70,7 +68,7 @@ void CameraRotationInputHandler::setMaxAxisDimension(float maxAxisDimension)
 	this->maxAxisDimension = maxAxisDimension;
 }
 
-Transformations* CameraRotationInputHandler::getLookFromRotations()
+const Transformations& CameraRotationInputHandler::getLookFromRotations()
 {
 	return lookFromRotations;
 }
@@ -103,13 +101,13 @@ void CameraRotationInputHandler::handleInputEvents()
 				auto yMoved = (event->getY() - mouseLastY) / 5.0f;
 				mouseLastX = event->getX();
 				mouseLastY = event->getY();
-				auto xRotation = lookFromRotations->getRotations()->get(0);
-				auto yRotation = lookFromRotations->getRotations()->get(1);
+				auto xRotation = lookFromRotations.getRotations()->get(0);
+				auto yRotation = lookFromRotations.getRotations()->get(1);
 				auto xRotationAngle = xRotation->getAngle() + xMoved;
 				auto yRotationAngle = yRotation->getAngle() + yMoved;
 				xRotation->setAngle(xRotationAngle);
 				yRotation->setAngle(yRotationAngle);
-				lookFromRotations->update();
+				lookFromRotations.update();
 			} else {
 				mouseDragging = false;
 			}
@@ -162,9 +160,9 @@ void CameraRotationInputHandler::handleInputEvents()
 			keyR = isKeyDown;
 
 	}
-	auto rotationX = lookFromRotations->getRotations()->get(0);
-	auto rotationY = lookFromRotations->getRotations()->get(1);
-	auto rotationZ = lookFromRotations->getRotations()->get(2);
+	auto rotationX = lookFromRotations.getRotations()->get(0);
+	auto rotationY = lookFromRotations.getRotations()->get(1);
+	auto rotationZ = lookFromRotations.getRotations()->get(2);
 	if (keyLeft)
 		rotationX->setAngle(rotationX->getAngle() - 1.0f);
 
@@ -195,7 +193,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		scale = 1.0f;
 	}
 	if (keyLeft || keyRight || keyUp|| keyDown|| keyComma|| keyPeriod|| keyR|| resetRequested) {
-		lookFromRotations->update();
+		lookFromRotations.update();
 		resetRequested = false;
 	}
 	auto cam = engine->getCamera();
@@ -209,8 +207,8 @@ void CameraRotationInputHandler::handleInputEvents()
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
-	lookFromRotations->getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	lookFromRotations.getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);

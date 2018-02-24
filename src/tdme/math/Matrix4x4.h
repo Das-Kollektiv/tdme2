@@ -571,6 +571,14 @@ public:
 	}
 
 	/**
+	 * Clones this matrix
+	 * @return new cloned matrix
+	 */
+	inline Matrix4x4 clone() const {
+		return Matrix4x4(data);
+	}
+
+	/**
 	 * Public constructor
 	 */
 	inline Matrix4x4() {

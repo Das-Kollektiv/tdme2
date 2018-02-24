@@ -1,10 +1,15 @@
 #include <tdme/engine/Transformations.h>
 
+#include <string>
+
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
+
+using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::engine::Rotation;
@@ -12,6 +17,7 @@ using tdme::engine::Rotations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 Transformations::Transformations() 
 {
@@ -42,23 +48,24 @@ Rotations* Transformations::getRotations()
 	return &rotations;
 }
 
-Matrix4x4& Transformations::getTransformationsMatrix()
+const Matrix4x4& Transformations::getTransformationsMatrix() const
 {
 	return transformationsMatrix;
 }
 
-void Transformations::fromTransformations(Transformations* transformations)
+void Transformations::fromTransformations(const Transformations& transformations)
 {
+	if (this == &transformations) return;
+
 	// translation
-	translation.set(transformations->translation);
+	translation.set(transformations.translation);
 	// scale
-	scale.set(transformations->scale);
+	scale.set(transformations.scale);
 	// pivot
-	pivot.set(transformations->pivot);
+	pivot.set(transformations.pivot);
 	// rotations
 	auto rotationIdx = 0;
-	for (; rotationIdx < transformations->rotations.size(); rotationIdx++) {
-		auto rotation = transformations->rotations.get(rotationIdx);
+	for (auto rotation: transformations.rotations.rotations) {
 		// do we have a rotation to reuse?
 		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : nullptr;
 		//	nope?
@@ -69,14 +76,16 @@ void Transformations::fromTransformations(Transformations* transformations)
 		}
 		// copy
 		_rotation->fromRotation(rotation);
+		// next
+		rotationIdx++;
 	}
 	// remove unused rotations
 	while (rotationIdx < rotations.size()) {
 		rotations.remove(rotations.size() - 1);
 	}
 	// copy matrices and such
-	transformationsMatrix.set(transformations->transformationsMatrix);
-	rotations.quaternion.set(transformations->rotations.quaternion);
+	transformationsMatrix.set(transformations.transformationsMatrix);
+	rotations.quaternion.set(transformations.rotations.quaternion);
 }
 
 void Transformations::update()
@@ -110,4 +119,15 @@ void Transformations::update()
 	transformationsMatrix.multiply(scaleMatrix);
 	transformationsMatrix.multiply(rotationsMatrix);
 	transformationsMatrix.multiply(translationMatrix);
+}
+
+void Transformations::invert() {
+	translation.scale(-1.0f);
+	scale.setX(1.0f / scale.getX());
+	scale.setY(1.0f / scale.getY());
+	scale.setZ(1.0f / scale.getZ());
+	for (auto rotation: rotations.rotations) {
+		rotation->setAngle(rotation->getAngle() - 180.0f);
+	}
+	update();
 }

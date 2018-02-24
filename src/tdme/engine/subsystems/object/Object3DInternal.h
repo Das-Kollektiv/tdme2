@@ -161,7 +161,7 @@ public:
 	 */
 	void dispose() override;
 
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 
 	/**

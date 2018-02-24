@@ -83,9 +83,6 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
-
-Transformations* Tools::oseLookFromRotations = nullptr;
-
 float Tools::oseScale = 0.75f;
 
 string Tools::formatFloat(float value)
@@ -207,22 +204,21 @@ void Tools::oseInit()
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
 	oseScale = 0.75f;
-	oseLookFromRotations = new Transformations();
-	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
-	oseLookFromRotations->getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
-	oseLookFromRotations->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
-	oseLookFromRotations->update();
 }
 
 void Tools::oseDispose()
 {
 	osEngine->dispose();
 	delete osEngine;
-	delete oseLookFromRotations;
 }
 
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
+	Transformations oseLookFromRotations;
+	oseLookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
+	oseLookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
+	oseLookFromRotations.getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
+	oseLookFromRotations.update();
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
 	osEngine->getSceneColor().set(0.5f, 0.5f, 0.5f, 1.0f);
 	osEngine->display();
@@ -280,7 +276,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformations* lookFromRotations, float scale)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale)
 {
 	if (entity == nullptr)
 		return;
@@ -356,8 +352,11 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, Transformatio
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
-	lookFromRotations->getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
-	lookFromRotations->getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	// TODO: a.drewke
+	Transformations _lookFromRotations;
+	_lookFromRotations.fromTransformations(lookFromRotations);
+	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	_lookFromRotations.getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);

@@ -645,7 +645,7 @@ void LevelEditorView::updateGUIElements()
 				bv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
 				objectCenter = bv->getCenter();
 			} else {
-				objectCenter = levelEditorObject->getTransformations()->getTranslation();
+				objectCenter = levelEditorObject->getTransformations().getTranslation();
 			}
 			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getEntity()->getName(), objectCenter);
 		} else {
@@ -975,27 +975,27 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 {
 	if (selectedEntity != nullptr && selectedObject != nullptr) {
 		auto selectedLevelEditorObject = level->getObjectById(selectedObject->getId());
-		auto levelEditorObjectTransformations = new Transformations();
-		levelEditorObjectTransformations->getTranslation().set(selectedObject->getTranslation());
+		Transformations levelEditorObjectTransformations;
+		levelEditorObjectTransformations.getTranslation().set(selectedObject->getTranslation());
 		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin().clone().add(selectedObject->getBoundingBox()->getMax()).scale(0.5f);
 		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter().clone() : Vector3(0.0f, 0.0f, 0.0f);
-		levelEditorObjectTransformations->getTranslation().add(centerNewObject.clone().add(centerSelectedObject));
+		levelEditorObjectTransformations.getTranslation().add(centerNewObject.clone().add(centerSelectedObject));
 		if (selectedLevelEditorObject == nullptr || selectedLevelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM || selectedEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			levelEditorObjectTransformations->getTranslation().setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin().getY() : 0.0f));
+			levelEditorObjectTransformations.getTranslation().setY(gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin().getY() : 0.0f));
 		} else {
 			auto bv = selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox()->clone();
 			bv->fromBoundingVolumeWithTransformations(selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox(), selectedLevelEditorObject->getTransformations());
-			levelEditorObjectTransformations->getTranslation().setY(bv->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
+			levelEditorObjectTransformations.getTranslation().setY(bv->computeDimensionOnAxis(Vector3(0.0f, 1.0f, 0.0f)) / 2 + bv->getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY());
 		}
-		levelEditorObjectTransformations->getScale().set(Vector3(1.0f, 1.0f, 1.0f));
-		levelEditorObjectTransformations->getPivot().set(selectedEntity->getPivot());
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
-		levelEditorObjectTransformations->update();
+		levelEditorObjectTransformations.getScale().set(Vector3(1.0f, 1.0f, 1.0f));
+		levelEditorObjectTransformations.getPivot().set(selectedEntity->getPivot());
+		levelEditorObjectTransformations.getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis0()));
+		levelEditorObjectTransformations.getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis1()));
+		levelEditorObjectTransformations.getRotations()->add(new Rotation(0.0f, level->getRotationOrder()->getAxis2()));
+		levelEditorObjectTransformations.update();
 		for (auto i = 0; i < level->getObjectCount(); i++) {
 			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations()->getTranslation().equals(levelEditorObjectTransformations->getTranslation())) {
+			if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 				return;
 			}
 		}
@@ -1118,8 +1118,8 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 
-		levelEntity->getTransformations()->getTranslation().set(x, y, z);
-		levelEntity->getTransformations()->update();
+		levelEntity->getTransformations().getTranslation().set(x, y, z);
+		levelEntity->getTransformations().update();
 		selectedEntity->fromTransformations(levelEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
@@ -1129,8 +1129,8 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 
-			levelEntity->getTransformations()->getTranslation().add(Vector3(x, y, z));
-			levelEntity->getTransformations()->update();
+			levelEntity->getTransformations().getTranslation().add(Vector3(x, y, z));
+			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
@@ -1150,8 +1150,8 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 
-		levelEntity->getTransformations()->getScale().set(x, y, z);
-		levelEntity->getTransformations()->update();
+		levelEntity->getTransformations().getScale().set(x, y, z);
+		levelEntity->getTransformations().update();
 		selectedEntity->fromTransformations(levelEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
@@ -1161,8 +1161,8 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 
-			levelEntity->getTransformations()->getScale().scale(Vector3(x, y, z));
-			levelEntity->getTransformations()->update();
+			levelEntity->getTransformations().getScale().scale(Vector3(x, y, z));
+			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
@@ -1182,10 +1182,10 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 
-		levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(x);
-		levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(y);
-		levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(z);
-		levelEntity->getTransformations()->update();
+		levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(x);
+		levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(y);
+		levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(z);
+		levelEntity->getTransformations().update();
 		selectedEntity->fromTransformations(levelEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
@@ -1195,10 +1195,10 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 
-			levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle() + x);
-			levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle() + y);
-			levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(levelEntity->getTransformations()->getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle() + z);
-			levelEntity->getTransformations()->update();
+			levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisXIndex())->setAngle(levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisXIndex())->getAngle() + x);
+			levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisYIndex())->setAngle(levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisYIndex())->getAngle() + y);
+			levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisZIndex())->setAngle(levelEntity->getTransformations().getRotations()->get(level->getRotationOrder()->getAxisZIndex())->getAngle() + z);
+			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
@@ -1417,18 +1417,18 @@ void LevelEditorView::pasteObjects()
 	}
 	for (auto pasteObject: pasteObjects_) {
 		auto pasteModel = pasteObject->getEntity();
-		auto levelEditorObjectTransformations = new Transformations();
-		levelEditorObjectTransformations->fromTransformations(pasteObject->getTransformations());
-		auto objectDiffX = pasteObject->getTransformations()->getTranslation().getX() - pasteObjectsMinX;
-		auto objectDiffY = pasteObject->getTransformations()->getTranslation().getY() - pasteObjectsMinY;
-		auto objectDiffZ = pasteObject->getTransformations()->getTranslation().getZ() - pasteObjectsMinZ;
-		levelEditorObjectTransformations->getTranslation().setX(selectedObjectsMinX + objectDiffX);
-		levelEditorObjectTransformations->getTranslation().setY(selectedObjectsMaxY + objectDiffY);
-		levelEditorObjectTransformations->getTranslation().setZ(selectedObjectsMinZ + objectDiffZ);
-		levelEditorObjectTransformations->update();
+		Transformations levelEditorObjectTransformations;
+		levelEditorObjectTransformations.fromTransformations(pasteObject->getTransformations());
+		auto objectDiffX = pasteObject->getTransformations().getTranslation().getX() - pasteObjectsMinX;
+		auto objectDiffY = pasteObject->getTransformations().getTranslation().getY() - pasteObjectsMinY;
+		auto objectDiffZ = pasteObject->getTransformations().getTranslation().getZ() - pasteObjectsMinZ;
+		levelEditorObjectTransformations.getTranslation().setX(selectedObjectsMinX + objectDiffX);
+		levelEditorObjectTransformations.getTranslation().setY(selectedObjectsMaxY + objectDiffY);
+		levelEditorObjectTransformations.getTranslation().setZ(selectedObjectsMinZ + objectDiffZ);
+		levelEditorObjectTransformations.update();
 		for (auto i = 0; i < level->getObjectCount(); i++) {
 			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations()->getTranslation().equals(levelEditorObjectTransformations->getTranslation())) {
+			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 				return;
 			}
 		}

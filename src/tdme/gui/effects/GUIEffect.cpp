@@ -17,6 +17,10 @@ GUIEffect::GUIEffect()
 	timePassed = 0.0f;
 }
 
+GUIEffect::~GUIEffect() {
+	if (action != nullptr) delete action;
+}
+
 bool GUIEffect::isActive()
 {
 	return active;

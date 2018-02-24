@@ -42,7 +42,7 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
 	boundingBoxTransformed = dynamic_cast< BoundingBox* >(model->getBoundingBox()->clone());
-	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
+	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, *this);
 	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
 	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();
@@ -180,10 +180,10 @@ void Object3DInternal::dispose()
 	Object3DBase::dispose();
 }
 
-void Object3DInternal::fromTransformations(Transformations* transformations)
+void Object3DInternal::fromTransformations(const Transformations& transformations)
 {
 	Object3DBase::fromTransformations(transformations);
-	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
+	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, *this);
 	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
 	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();
@@ -192,7 +192,7 @@ void Object3DInternal::fromTransformations(Transformations* transformations)
 void Object3DInternal::update()
 {
 	Object3DBase::update();
-	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, this);
+	boundingBoxTransformed->fromBoundingVolumeWithTransformations(boundingBox, *this);
 	boundingBoxTransformed->getMin().sub(0.05f); // scale a bit up to make picking work better
 	boundingBoxTransformed->getMax().add(0.05f); // same here
 	boundingBoxTransformed->update();

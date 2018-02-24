@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -40,10 +41,11 @@ private:
 	bool frustumCulling { true };
 
 public:
+	// overriden methods
 	void initialize() override;
 	BoundingBox* getBoundingBox() override;
 	BoundingBox* getBoundingBoxTransformed() override;
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
@@ -60,6 +62,7 @@ public:
 	 */
 	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 public:
+	// overridden methods
 	virtual void dispose() override;
 	virtual Color4& getEffectColorAdd() override;
 	virtual Color4& getEffectColorMul() override;
@@ -67,7 +70,7 @@ public:
 	virtual Vector3& getPivot() override;
 	virtual Rotations* getRotations() override;
 	virtual Vector3& getScale() override;
-	virtual Matrix4x4& getTransformationsMatrix() override;
+	virtual const Matrix4x4& getTransformationsMatrix() const override;
 	virtual Vector3& getTranslation() override;
 	virtual bool isDynamicShadowingEnabled() override;
 	virtual bool isEnabled() override;
@@ -76,4 +79,5 @@ public:
 	virtual void setEngine(Engine* engine) override;
 	virtual void setPickable(bool pickable) override;
 	virtual void setRenderer(GLRenderer* renderer) override;
+	virtual const Transformations& getTransformations() const override;
 };

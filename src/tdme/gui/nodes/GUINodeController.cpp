@@ -10,6 +10,9 @@ GUINodeController::GUINodeController(GUINode* node)
 	this->node = node;
 }
 
+GUINodeController::~GUINodeController() {
+}
+
 GUINode* GUINodeController::getNode()
 {
 	return node;

@@ -48,18 +48,23 @@ public:
 	/** 
 	 * @return this transformations matrix
 	 */
-	virtual Matrix4x4& getTransformationsMatrix();
+	virtual const Matrix4x4& getTransformationsMatrix() const;
 
 	/** 
 	 * Set up this transformations from given transformations
 	 * @param transformations
 	 */
-	virtual void fromTransformations(Transformations* transformations);
+	virtual void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Computes transformation matrix
 	 */
 	virtual void update();
+
+	/**
+	 * Invert this transformations
+	 */
+	virtual void invert();
 
 	/**
 	 * Public constructor

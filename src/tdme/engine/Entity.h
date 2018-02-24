@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -145,18 +146,23 @@ struct tdme::engine::Entity
 	/** 
 	 * @return this transformations matrix
 	 */
-	virtual Matrix4x4& getTransformationsMatrix() = 0;
+	virtual const Matrix4x4& getTransformationsMatrix() const = 0;
 
-	/** 
+	/**
 	 * Set up this transformations from given transformations
 	 * @param transformations
 	 */
-	virtual void fromTransformations(Transformations* transformations) = 0;
+	virtual void fromTransformations(const Transformations& transformations) = 0;
 
 	/** 
 	 * Update transformations
 	 */
 	virtual void update() = 0;
+
+	/**
+	 * @return this transformations
+	 */
+	virtual const Transformations& getTransformations() const = 0;
 
 	/**
 	 * Destructor

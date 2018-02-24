@@ -146,7 +146,7 @@ void PathFindingTest::display()
 			pathIdx = 0;
 			if (pathFinding->findPath(
 					playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-					playerObject,
+					*playerObject,
 					pathPositions[(int)(Math::random() * pathPositions.size())],
 					Level::RIGIDBODY_TYPEID_STATIC,
 					path
@@ -207,7 +207,7 @@ void PathFindingTest::initialize()
 	pathFinding = new PathFinding(world);
 	if (pathFinding->findPath(
 			playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-			playerObject,
+			playerObject->getTransformations(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
 			Level::RIGIDBODY_TYPEID_STATIC,
 			path

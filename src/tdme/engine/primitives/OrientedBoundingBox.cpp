@@ -135,7 +135,7 @@ void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 
 }
 
-void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< OrientedBoundingBox* >(original) != nullptr == false) {
@@ -144,7 +144,7 @@ void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* 
 	array<Vector3, 3> axisTransformed;
 	Vector3 scale;
 	auto obb = dynamic_cast< OrientedBoundingBox* >(original);
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(obb->center, center);
 	// apply transformations rotation + scale to axis

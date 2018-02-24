@@ -47,7 +47,7 @@ public:
 	 */
 	Vector3& getB();
 	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
+	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
 	void update() override;
 
 	inline Vector3& getCenter() override {

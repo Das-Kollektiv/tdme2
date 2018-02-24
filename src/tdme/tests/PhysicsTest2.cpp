@@ -100,7 +100,7 @@ void PhysicsTest2::initialize()
 	entity->getTranslation().setY(-1.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity, ground, 0.5f);
+	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), ground, 0.5f);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.5f, 0.5f, 1.0f);
@@ -111,7 +111,7 @@ void PhysicsTest2::initialize()
 		entity->getTranslation().addY(i * 2.0f + 1.0f);
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity, box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 

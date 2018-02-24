@@ -147,7 +147,7 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 	update();
 }
 
-void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< ConvexMesh* >(original) != nullptr == false) {

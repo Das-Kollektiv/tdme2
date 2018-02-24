@@ -88,7 +88,7 @@ void BoundingBox::fromBoundingVolume(BoundingVolume* original)
 	}
 }
 
-void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
@@ -96,7 +96,7 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 	}
 	auto boundingBox = dynamic_cast< BoundingBox* >(original);
 	// apply transformations from original vertices to local vertices
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
 		transformationsMatrix.multiply((*_vertices)[i], vertices[i]);

@@ -156,15 +156,17 @@ void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 void ObjectParticleSystemEntityInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	emitter->fromTransformations(*this);
+	inverseTransformation.fromTransformations(*this);
+	inverseTransformation.invert();
 }
 
-void ObjectParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
+void ObjectParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	inverseTransformation.fromTransformations(transformations);
+	inverseTransformation.invert();
 }
 
 ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()
@@ -268,7 +270,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 	}
 	// compute bounding boxes
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
 }
 
 void ObjectParticleSystemEntityInternal::dispose()

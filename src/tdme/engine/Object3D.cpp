@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
 
 using std::string;
@@ -10,6 +11,7 @@ using std::string;
 using tdme::engine::Object3D;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
+using tdme::engine::Transformations;
 
 Object3D::Object3D(const string& id, Model* model) :
 	Object3DInternal(id, model)
@@ -25,7 +27,7 @@ void Object3D::setRenderer(GLRenderer* renderer)
 {
 }
 
-void Object3D::fromTransformations(Transformations* transformations)
+void Object3D::fromTransformations(const Transformations& transformations)
 {
 	Object3DInternal::fromTransformations(transformations);
 	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -118,7 +120,7 @@ Vector3& Object3D::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4& Object3D::getTransformationsMatrix()
+const Matrix4x4& Object3D::getTransformationsMatrix() const
 {
 	return Transformations::getTransformationsMatrix();
 }
@@ -161,4 +163,8 @@ void Object3D::setPickable(bool pickable)
 Matrix4x4* Object3D::getTransformationsMatrix(const string& id)
 {
 	return Object3DInternal::getTransformationsMatrix(id);
+}
+
+const Transformations& Object3D::getTransformations() const {
+	return *this;
 }

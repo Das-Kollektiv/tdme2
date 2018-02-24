@@ -97,7 +97,7 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void BoundingBoxParticleEmitter::fromTransformations(Transformations* transformations)
+void BoundingBoxParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	obbTransformed->fromBoundingVolumeWithTransformations(obb, transformations);
 }

@@ -487,7 +487,7 @@ void Object3DBase::dispose()
 	}
 }
 
-Matrix4x4& Object3DBase::getTransformationsMatrix()
+const Matrix4x4& Object3DBase::getTransformationsMatrix() const
 {
 	return Transformations::getTransformationsMatrix();
 }

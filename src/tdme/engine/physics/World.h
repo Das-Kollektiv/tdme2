@@ -117,7 +117,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body
@@ -128,7 +128,7 @@ public:
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 

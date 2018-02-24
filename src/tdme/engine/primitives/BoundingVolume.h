@@ -30,7 +30,7 @@ struct tdme::engine::primitives::BoundingVolume
 	 * @param original bounding volume
 	 * @param transformations
 	 */
-	virtual void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) = 0;
+	virtual void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) = 0;
 
 	/** 
 	 * Computes closest point on bounding volume for given point 

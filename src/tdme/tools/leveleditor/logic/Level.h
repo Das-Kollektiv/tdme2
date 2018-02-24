@@ -39,7 +39,6 @@ public:
 
 private:
 	static MutableString* compareMutableString;
-	static Transformations* transformations;
 
 public:
 

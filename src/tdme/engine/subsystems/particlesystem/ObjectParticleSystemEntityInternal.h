@@ -12,7 +12,6 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
@@ -33,7 +32,6 @@ using tdme::engine::subsystems::object::Object3DInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::Vector3;
 
 /** 
  * Particle system which displays objects as particles
@@ -92,7 +90,7 @@ public:
 	 * Update transformations
 	 */
 	void update() override;
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	ParticleEmitter* getParticleEmitter() override;
 	int32_t emitParticles() override;
 	void updateParticles() override;

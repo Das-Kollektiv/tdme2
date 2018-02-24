@@ -4,6 +4,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
 using std::string;
@@ -11,6 +12,7 @@ using std::string;
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
+using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
 PointsParticleSystemEntity::PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit) :
@@ -32,7 +34,7 @@ BoundingBox* PointsParticleSystemEntity::getBoundingBoxTransformed()
 	return boundingBoxTransformed;
 }
 
-void PointsParticleSystemEntity::fromTransformations(Transformations* transformations)
+void PointsParticleSystemEntity::fromTransformations(const Transformations& transformations)
 {
 	PointsParticleSystemEntityInternal::fromTransformations(transformations);
 	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -121,7 +123,7 @@ Vector3& PointsParticleSystemEntity::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4& PointsParticleSystemEntity::getTransformationsMatrix()
+const Matrix4x4& PointsParticleSystemEntity::getTransformationsMatrix() const
 {
 	return Transformations::getTransformationsMatrix();
 }
@@ -166,3 +168,6 @@ void PointsParticleSystemEntity::setRenderer(GLRenderer* renderer)
 	PointsParticleSystemEntityInternal::setRenderer(renderer);
 }
 
+const Transformations& PointsParticleSystemEntity::getTransformations() const {
+	return *this;
+}

@@ -118,8 +118,6 @@ constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
 
 MutableString* Level::compareMutableString = new MutableString();
 
-Transformations* Level::transformations = new Transformations();
-
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getLightCount(); i++) {
@@ -285,7 +283,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				transformations.update();
 				int i = 0;
 				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
-					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, &transformations, &convexMesh, 1.0f);
+					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, transformations, &convexMesh, 1.0f);
 					rigidBody->setRootId(object->getId());
 					i++;
 				}
@@ -298,7 +296,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				transformations.fromTransformations(object->getTransformations());
 				transformations.getTranslation().add(translation);
 				transformations.update();
-				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, &transformations, entityBv->getBoundingVolume(), 1.0f);
+				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 				rigidBody->setRootId(object->getId());
 				rigidBodies.push_back(rigidBody);
 			}
@@ -345,6 +343,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 
 void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
 {
+	Transformations transformations;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
@@ -356,9 +355,9 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 				if (compareMutableString->equals(rigidBody->getId()) == false)
 					continue;
 
-				transformations->fromTransformations(object->getTransformations());
-				transformations->getTranslation().add(translation);
-				transformations->update();
+				transformations.fromTransformations(object->getTransformations());
+				transformations.getTranslation().add(translation);
+				transformations.update();
 				rigidBody->fromTransformations(transformations);
 				rigidBody->setEnabled(true);
 			}

@@ -93,7 +93,7 @@ void World::setPartition(PhysicsPartition* partition)
 	this->partition = partition;
 }
 
-RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix)
+RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
@@ -103,7 +103,7 @@ RigidBody* World::addRigidBody(const string& id, bool enabled, int32_t typeId, T
 	return rigidBody;
 }
 
-RigidBody* World::addStaticRigidBody(const string& id, bool enabled, int32_t typeId, Transformations* transformations, BoundingVolume* obv, float friction)
+RigidBody* World::addStaticRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, float friction)
 {
 	auto rigidBody = new RigidBody(this, id, enabled, typeId, obv, transformations, 0.0f, friction, 0.0f, RigidBody::computeInertiaMatrix(obv, 0.0f, 0.0f, 0.0f, 0.0f));
 	rigidBodies.push_back(rigidBody);
@@ -312,7 +312,7 @@ void World::update(float deltaTime)
 			continue;
 		}
 		// set up transformations, keep care that only 1 rotation exists
-		auto rotations = rigidBody->transformations->getRotations();
+		auto rotations = rigidBody->transformations.getRotations();
 		while (rotations->size() > 1) {
 			rotations->remove(rotations->size() - 1);
 		}
@@ -323,10 +323,10 @@ void World::update(float deltaTime)
 		rotations->get(0)->fromQuaternion(rigidBody->orientation);
 		rotations->get(0)->getAxis().getArray()[1] *= -1.0f;
 		//	set up position
-		auto transformations = rigidBody->transformations;
-		transformations->getTranslation().set(rigidBody->position);
+		auto& transformations = rigidBody->transformations;
+		transformations.getTranslation().set(rigidBody->position);
 		// update
-		transformations->update();
+		transformations.update();
 		// update bounding volume
 		rigidBody->cbv->fromBoundingVolumeWithTransformations(rigidBody->obv, transformations);
 		// update partition
@@ -386,9 +386,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 	for (auto _i = partition->getObjectsNearTo(static_cast< BoundingVolume* >(&heightBoundingBox))->iterator(); _i->hasNext(); ) {
 		RigidBody* rigidBody = _i->next();
 		{
-			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false)
-				continue;
-
+			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false) continue;
 			auto cbv = rigidBody->cbv;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
@@ -575,7 +573,7 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->movement.set(rigidBody->movement);
 	clonedRigidBody->position.set(rigidBody->position);
 	clonedRigidBody->worldInverseInertia.set(rigidBody->worldInverseInertia);
-	clonedRigidBody->transformations->fromTransformations(rigidBody->transformations);
+	clonedRigidBody->transformations.fromTransformations(rigidBody->transformations);
 }
 
 void World::synch(World* world)

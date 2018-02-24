@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -42,7 +43,7 @@ private:
 public:
 	void setEngine(Engine* engine) override;
 	void setRenderer(GLRenderer* renderer) override;
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
@@ -56,6 +57,7 @@ public:
 	Object3D(const string& id, Model* model);
 
 public:
+	// overriden methods
 	virtual void dispose() override;
 	virtual BoundingBox* getBoundingBox() override;
 	virtual BoundingBox* getBoundingBoxTransformed() override;
@@ -65,7 +67,7 @@ public:
 	virtual Vector3& getPivot() override;
 	virtual Rotations* getRotations() override;
 	virtual Vector3& getScale() override;
-	virtual Matrix4x4& getTransformationsMatrix() override;
+	virtual const Matrix4x4& getTransformationsMatrix() const override;
 	virtual Vector3& getTranslation() override;
 	virtual void initialize() override;
 	virtual bool isDynamicShadowingEnabled() override;
@@ -74,4 +76,5 @@ public:
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
 	virtual void setPickable(bool pickable) override;
 	virtual Matrix4x4* getTransformationsMatrix(const string& id) override;
+	virtual const Transformations& getTransformations() const override;
 };

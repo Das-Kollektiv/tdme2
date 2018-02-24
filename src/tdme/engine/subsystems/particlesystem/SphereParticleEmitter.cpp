@@ -91,7 +91,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void SphereParticleEmitter::fromTransformations(Transformations* transformations)
+void SphereParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	sphereTransformed->fromBoundingVolumeWithTransformations(sphere, transformations);
 }

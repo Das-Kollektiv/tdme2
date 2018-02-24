@@ -116,12 +116,12 @@ void LevelFileExport::export_(const string& pathName, const string& fileName, Le
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
 		tdme::ext::jsonbox::Object jObject;
-		auto transformations = levelEditorObject->getTransformations();
-		auto translation = transformations->getTranslation();
-		auto scale = transformations->getScale();
-		auto rotationAroundXAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisXIndex());
-		auto rotationAroundYAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisYIndex());
-		auto rotationAroundZAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisZIndex());
+		auto& transformations = levelEditorObject->getTransformations();
+		auto& translation = transformations.getTranslation();
+		auto& scale = transformations.getScale();
+		auto rotationAroundXAxis = transformations.getRotations()->get(level->getRotationOrder()->getAxisXIndex());
+		auto rotationAroundYAxis = transformations.getRotations()->get(level->getRotationOrder()->getAxisYIndex());
+		auto rotationAroundZAxis = transformations.getRotations()->get(level->getRotationOrder()->getAxisZIndex());
 		jObject["id"] = (levelEditorObject->getId());
 		jObject["descr"] = (levelEditorObject->getDescription());
 		jObject["mid"] = levelEditorObject->getEntity()->getId();

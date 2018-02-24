@@ -141,15 +141,17 @@ void PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 void PointsParticleSystemEntityInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	emitter->fromTransformations(*this);
+	inverseTransformation.fromTransformations(*this);
+	inverseTransformation.invert();
 }
 
-void PointsParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
+void PointsParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	inverseTransformation.fromTransformations(transformations);
+	inverseTransformation.invert();
 }
 
 void PointsParticleSystemEntityInternal::updateParticles()
@@ -250,7 +252,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	boundingBoxTransformed->getMax().add(0.05f);
 	// compute bounding boxes
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
 }
 
 void PointsParticleSystemEntityInternal::dispose()

@@ -80,7 +80,7 @@ public:
 	 */
 	void fromOrientedBoundingBox(OrientedBoundingBox* obb);
 	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
+	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
 	void update() override;
 
 	/** 

@@ -15,16 +15,15 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 
-LevelEditorObject::LevelEditorObject(const string& id, const string& description, Transformations* transformations, LevelEditorEntity* entity)
+LevelEditorObject::LevelEditorObject(const string& id, const string& description, const Transformations& transformations, LevelEditorEntity* entity)
 {
 	this->id = id;
 	this->description = description;
-	this->transformations = transformations;
+	this->transformations.fromTransformations(transformations);
 	this->entity = entity;
 }
 
 LevelEditorObject::~LevelEditorObject() {
-	delete transformations;
 }
 
 const string& LevelEditorObject::getId()
@@ -47,7 +46,7 @@ void LevelEditorObject::setDescription(const string& description)
 	this->description = description;
 }
 
-Transformations* LevelEditorObject::getTransformations()
+Transformations& LevelEditorObject::getTransformations()
 {
 	return transformations;
 }

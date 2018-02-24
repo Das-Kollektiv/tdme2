@@ -32,6 +32,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -99,7 +100,7 @@ private:
 
 	int32_t sleepingFrameCount {  };
 
-	Transformations* transformations {  };
+	Transformations transformations {  };
 	BoundingVolume* obv {  };
 	BoundingVolume* cbv {  };
 	float friction {  };
@@ -173,7 +174,7 @@ private:
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
+	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
 
 	/**
 	 * Destructor
@@ -281,7 +282,7 @@ public:
 	/** 
 	 * @return transformations
 	 */
-	Transformations* getTransformations();
+	const Transformations& getTransformations();
 
 	/** 
 	 * @return original bounding volume
@@ -366,7 +367,7 @@ public:
 	 * Synchronizes this rigid body with transformations
 	 * @param transformations
 	 */
-	void fromTransformations(Transformations* transformations);
+	void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Add force

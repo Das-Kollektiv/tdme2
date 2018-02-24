@@ -141,14 +141,14 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 	convexMeshRadius = capsule->radius;
 }
 
-void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< Capsule* >(original) != nullptr == false) {
 		return;
 	}
 	auto capsule = dynamic_cast< Capsule* >(original);
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	transformationsMatrix.multiply(capsule->a, a);
 	transformationsMatrix.multiply(capsule->b, b);
 	// note:

@@ -17,7 +17,6 @@ using tdme::utils::MutableString;
  */
 class tdme::gui::nodes::GUINodeController
 {
-
 protected:
 	GUINode* node {  };
 
@@ -27,6 +26,10 @@ protected:
 	GUINodeController(GUINode* node);
 
 public:
+	/**
+	 * Destructor
+	 */
+	virtual ~GUINodeController();
 
 	/** 
 	 * @return node

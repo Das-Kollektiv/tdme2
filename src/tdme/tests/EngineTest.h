@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -51,7 +52,7 @@ private:
 	BoundingVolume* cubeBoundingVolumeTransformed {  };
 	BoundingVolume* barrelBoundingVolume {  };
 	BoundingVolume* barrelBoundingVolumeTransformed {  };
-	Transformations* circleTransformations {  };
+	Transformations circleTransformations {  };
 
 public: /* package */
 	Entity* entityClicked {  };

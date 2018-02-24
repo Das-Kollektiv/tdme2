@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
@@ -24,7 +25,7 @@ class tdme::tools::shared::model::LevelEditorObject final
 private:
 	string id {  };
 	string description {  };
-	Transformations* transformations {  };
+	Transformations transformations {  };
 	LevelEditorEntity* entity {  };
 
 public:
@@ -54,7 +55,7 @@ public:
 	/** 
 	 * @return transformations
 	 */
-	Transformations* getTransformations();
+	Transformations& getTransformations();
 
 	/** 
 	 * @return entity
@@ -79,7 +80,7 @@ public:
 	 * @param transformations
 	 * @param entity
 	 */
-	LevelEditorObject(const string& id, const string& description, Transformations* transformations, LevelEditorEntity* entity);
+	LevelEditorObject(const string& id, const string& description, const Transformations& transformations, LevelEditorEntity* entity);
 
 	/**
 	 * Destructor

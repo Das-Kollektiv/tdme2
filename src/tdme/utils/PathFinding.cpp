@@ -95,7 +95,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	// set up correct height
 	actorTransformations.getTranslation().set(x, height + 0.1f, z);
 	actorTransformations.update();
-	actorCbv->fromBoundingVolumeWithTransformations(actorObv, &actorTransformations);
+	actorCbv->fromBoundingVolumeWithTransformations(actorObv, actorTransformations);
 
 	// check if collides with world
 	vector<RigidBody*> collidedRigidBodies;
@@ -260,7 +260,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorObv, Transformations* actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path) {
+bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path) {
 	// clear path
 	path.clear();
 

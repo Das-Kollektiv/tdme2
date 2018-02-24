@@ -100,10 +100,10 @@ void CircleParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void CircleParticleEmitter::fromTransformations(Transformations* transformations)
+void CircleParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	Vector3 side;
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(center, centerTransformed);
 	// apply transformations rotation + scale to axis

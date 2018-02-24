@@ -153,18 +153,18 @@ Model* EngineTest::createWallModel()
 
 void EngineTest::display()
 {
-	circleTransformations->getTranslation().setX(players.at(0)->getTranslation().getX());
-	circleTransformations->getTranslation().setZ(players.at(0)->getTranslation().getZ());
-	circleTransformations->getTranslation().addY(0.1f);
-	if (circleTransformations->getTranslation().getY() > 1.5f) {
-		circleTransformations->getTranslation().setY(0.0f);
+	circleTransformations.getTranslation().setX(players.at(0)->getTranslation().getX());
+	circleTransformations.getTranslation().setZ(players.at(0)->getTranslation().getZ());
+	circleTransformations.getTranslation().addY(0.1f);
+	if (circleTransformations.getTranslation().getY() > 1.5f) {
+		circleTransformations.getTranslation().setY(0.0f);
 	}
-	circleTransformations->update();
+	circleTransformations.update();
 	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	for (auto i = 0; i < players.size(); i++) {
-		playersBoundingVolumeModel.at(i)->fromTransformations(players.at(i));
+		playersBoundingVolumeModel.at(i)->fromTransformations(players.at(i)->getTransformations());
 	}
 	osEngine->display();
 	engine->display();
@@ -202,14 +202,14 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 
 	if (keyRight || keyLeft) {
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player->getTransformations());
 	}
 	if (keyUp) {
 		r->getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
 		movement.scale(1.5f / fps);
 		player->getTranslation().add(movement);
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player->getTransformations());
 		if (player->getAnimation() != "walk") {
 			player->setAnimation("walk");
 		}
@@ -221,12 +221,12 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, movement, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player->getTransformations());
 	}
 	if (CollisionDetection::doCollide(dynamic_cast< Capsule* >(playerBoundingVolumeTransformed), dynamic_cast< ConvexMesh* >(barrelBoundingVolumeTransformed), movement, collision) == true && collision->hasPenetration() == true) {
 		player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 		player->update();
-		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+		playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player->getTransformations());
 	}
 	for (auto i = 0; i < players.size(); i++) {
 		if (idx == i)
@@ -235,7 +235,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), movement, collision) == true && collision->hasPenetration()) {
 			player->getTranslation().sub(collision->getNormal()->clone().scale(collision->getPenetration()));
 			player->update();
-			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player);
+			playerBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player->getTransformations());
 		}
 	}
 }
@@ -301,7 +301,7 @@ void EngineTest::initialize()
 		barrel->setEnabled(true);
 		barrel->update();
 		barrelBoundingVolumeTransformed = barrelBoundingVolume->clone();
-		barrelBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(barrelBoundingVolume, barrel);
+		barrelBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(barrelBoundingVolume, barrel->getTransformations());
 		engine->addEntity(barrel);
 		auto _farPlane = createWallModel();
 		auto farPlane = new Object3D("wall", _farPlane);
@@ -328,11 +328,11 @@ void EngineTest::initialize()
 		player1->setDynamicShadowingEnabled(true);
 		engine->addEntity(player1);
 		auto player1BoundingVolumeTransformed = playerBoundingVolume->clone();
-		player1BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player1);
+		player1BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player1->getTransformations());
 		playerBoundingVolumesTransformed.push_back(player1BoundingVolumeTransformed);
 		players.push_back(player1);
 		auto player1BoundingVolume = new Object3D("player1_bv", playerBoundingVolumeModel);
-		player1BoundingVolume->fromTransformations(player1);
+		player1BoundingVolume->fromTransformations(player1->getTransformations());
 		player1BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player1BoundingVolume);
 		auto player2 = new Object3D("player2", _player);
@@ -345,11 +345,11 @@ void EngineTest::initialize()
 		player2->setDynamicShadowingEnabled(true);
 		players.push_back(player2);
 		auto player2BoundingVolumeTransformed = playerBoundingVolume->clone();
-		player2BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player2);
+		player2BoundingVolumeTransformed->fromBoundingVolumeWithTransformations(playerBoundingVolume, player2->getTransformations());
 		playerBoundingVolumesTransformed.push_back(player2BoundingVolumeTransformed);
 		engine->addEntity(player2);
 		auto player2BoundingVolume = new Object3D("player2_bv", playerBoundingVolumeModel);
-		player2BoundingVolume->fromTransformations(player2);
+		player2BoundingVolume->fromTransformations(player2->getTransformations());
 		player2BoundingVolume->setEnabled(true);
 		playersBoundingVolumeModel.push_back(player2BoundingVolume);
 		auto _cube = ModelReader::read("resources/tests/models/test", "cube.dae");
@@ -362,11 +362,11 @@ void EngineTest::initialize()
 		cube->setEnabled(true);
 		cubeBoundingVolume = cube->getBoundingBox();
 		cubeBoundingVolumeTransformed = cubeBoundingVolume->clone();
-		cubeBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(cubeBoundingVolume, cube);
+		cubeBoundingVolumeTransformed->fromBoundingVolumeWithTransformations(cubeBoundingVolume, cube->getTransformations());
 		engine->addEntity(cube);
 		cubeBoundingVolumeModel = PrimitiveModel::createModel(cubeBoundingVolume, "cube_bv");
 		auto cubeBoundingVolumeObject3D = new Object3D("cube_bv", cubeBoundingVolumeModel);
-		cubeBoundingVolumeObject3D->fromTransformations(cube);
+		cubeBoundingVolumeObject3D->fromTransformations(cube->getTransformations());
 		cubeBoundingVolumeObject3D->setEnabled(true);
 		engine->addEntity(cubeBoundingVolumeObject3D);
 		auto _wall = ModelReader::read("resources/tests/models/wall", "wall.dae");
@@ -387,7 +387,6 @@ void EngineTest::initialize()
 		osCube->getScale().set(2.0f, 2.0f, 2.0f);
 		osCube->update();
 		osEngine->addEntity(osCube);
-		circleTransformations = new Transformations();
 		engine->addEntity(new PointsParticleSystemEntity("circle", false, new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, true));
 		engine->getEntity("circle")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystemEntity("water", true, new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, true));

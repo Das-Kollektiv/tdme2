@@ -5,6 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
 using std::vector;
@@ -13,6 +14,7 @@ using std::string;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
+using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
 ObjectParticleSystemEntity::ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
@@ -39,7 +41,7 @@ const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
 	return &enabledObjects;
 }
 
-void ObjectParticleSystemEntity::fromTransformations(Transformations* transformations)
+void ObjectParticleSystemEntity::fromTransformations(const Transformations& transformations)
 {
 	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
 	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -128,7 +130,7 @@ Vector3& ObjectParticleSystemEntity::getScale()
 	return Transformations::getScale();
 }
 
-Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix()
+const Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix() const
 {
 	return Transformations::getTransformationsMatrix();
 }
@@ -173,3 +175,6 @@ void ObjectParticleSystemEntity::setRenderer(GLRenderer* renderer)
 	ObjectParticleSystemEntityInternal::setRenderer(renderer);
 }
 
+const Transformations& ObjectParticleSystemEntity::getTransformations() const {
+	return *this;
+}

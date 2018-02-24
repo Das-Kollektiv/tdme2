@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -52,7 +53,9 @@ public:
 	 * @return enabled objects
 	 */
 	const vector<Object3D*>* getEnabledObjects();
-	void fromTransformations(Transformations* transformations) override;
+
+	// overriden methods
+	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
@@ -72,6 +75,7 @@ public:
 	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
+	// overriden methods
 	virtual void dispose() override;
 	virtual Color4& getEffectColorAdd() override;
 	virtual Color4& getEffectColorMul() override;
@@ -79,7 +83,7 @@ public:
 	virtual Vector3& getPivot() override;
 	virtual Rotations* getRotations() override;
 	virtual Vector3& getScale() override;
-	virtual Matrix4x4& getTransformationsMatrix() override;
+	virtual const Matrix4x4& getTransformationsMatrix() const override;
 	virtual Vector3& getTranslation() override;
 	virtual bool isDynamicShadowingEnabled() override;
 	virtual bool isEnabled() override;
@@ -88,4 +92,5 @@ public:
 	virtual void setEngine(Engine* engine) override;
 	virtual void setPickable(bool pickable) override;
 	virtual void setRenderer(GLRenderer* renderer) override;
+	virtual const Transformations& getTransformations() const override;
 };

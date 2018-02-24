@@ -64,7 +64,7 @@ public:
 	 * @param path from actor to target
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorObv, Transformations* actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path);
+	bool findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path);
 
 private:
 	/**

@@ -389,15 +389,15 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
-		auto rotations = new Transformations();
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
-		rotations->update();
+		Transformations rotations;
+		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
+		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
+		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
+		rotations.update();
 		Vector3 xAxis;
 		Vector3 yAxis;
 		Vector3 zAxis;
-		rotations->getTransformationsMatrix().getAxes(xAxis, yAxis, zAxis);
+		rotations.getTransformationsMatrix().clone().getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,

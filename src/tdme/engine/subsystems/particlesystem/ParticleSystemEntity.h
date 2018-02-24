@@ -96,7 +96,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	 * Set up this transformations from given transformations
 	 * @param transformations
 	 */
-	virtual void fromTransformations(Transformations* transformations) = 0;
+	virtual void fromTransformations(const Transformations& transformations) = 0;
 
 	/** 
 	 * Update transformations

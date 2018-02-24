@@ -222,5 +222,5 @@ public:
 	virtual void dispose();
 
 	// overriden methods
-	virtual Matrix4x4& getTransformationsMatrix();
+	virtual const Matrix4x4& getTransformationsMatrix() const;
 };

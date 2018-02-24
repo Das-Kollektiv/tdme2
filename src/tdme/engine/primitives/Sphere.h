@@ -36,7 +36,7 @@ private:
 	void createConvexMesh();
 public:
 	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
+	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
 
 	inline Vector3& getCenter() override {
 		return center;

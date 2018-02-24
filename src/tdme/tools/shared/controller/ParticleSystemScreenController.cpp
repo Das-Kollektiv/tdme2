@@ -532,7 +532,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
 				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
 				transformations.update();
-				transformations.getTransformationsMatrix().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
+				transformations.getTransformationsMatrix().clone().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 			} else
 			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
 			{
@@ -555,7 +555,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
 				transformations.update();
 				Vector3 tmpVector3;
-				transformations.getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
+				transformations.getTransformationsMatrix().clone().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 			} else
 			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)
 			{
@@ -578,7 +578,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
 				transformations.update();
 				Vector3 tmpVector3;
-				transformations.getTransformationsMatrix().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
+				transformations.getTransformationsMatrix().clone().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
 			} else
 			if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
 			{

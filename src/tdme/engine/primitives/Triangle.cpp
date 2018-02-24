@@ -58,14 +58,14 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 	sphereRadius = triangle->sphereRadius;
 }
 
-void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations)
+void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
 {
 	// check for same type of original
 	if (dynamic_cast< Triangle* >(original) != nullptr == false) {
 		return;
 	}
 	auto triangle = dynamic_cast< Triangle* >(original);
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	for (auto i = 0; i < 3; i++) {
 		transformationsMatrix.multiply(triangle->vertices[i], vertices[i]);
 	}

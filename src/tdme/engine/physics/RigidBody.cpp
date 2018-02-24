@@ -37,7 +37,7 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 
 
-RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, Transformations* transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings)
+RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings)
 {
 	this->world = world;
 	this->idx = -1;
@@ -46,7 +46,6 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 	this->enabled = enabled;
 	this->typeId = typeId;
 	this->collisionTypeIds = TYPEIDS_ALL;
-	this->transformations = new Transformations();
 	this->inverseInertiaSettings = inverseInertiaSettings;
 	this->restitution = restitution;
 	this->friction = friction;
@@ -58,7 +57,6 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 }
 
 RigidBody::~RigidBody() {
-	delete transformations;
 	delete obv;
 	delete cbv;
 }
@@ -180,7 +178,7 @@ bool RigidBody::isSleeping()
 	return isSleeping_;
 }
 
-Transformations* RigidBody::getTransformations()
+const Transformations& RigidBody::getTransformations()
 {
 	return transformations;
 }
@@ -192,7 +190,9 @@ BoundingVolume* RigidBody::getBoudingVolume()
 
 void RigidBody::setBoundingVolume(BoundingVolume* obv)
 {
+	if (this->obv == nullptr) delete this->obv;
 	this->obv = obv->clone();
+	if (this->cbv == nullptr) delete this->cbv;
 	this->cbv = obv->clone();
 }
 
@@ -284,21 +284,21 @@ void RigidBody::computeWorldInverseInertiaMatrix()
 		inverseInertiaMatrix = _computeInertiaMatrix(
 			this->obv,
 			inverseInertiaSettings.mass,
-			inverseInertiaSettings.scaleX * this->transformations->getScale().getX(),
-			inverseInertiaSettings.scaleY * this->transformations->getScale().getY(),
-			inverseInertiaSettings.scaleZ * this->transformations->getScale().getZ()
+			inverseInertiaSettings.scaleX * this->transformations.getScale().getX(),
+			inverseInertiaSettings.scaleY * this->transformations.getScale().getY(),
+			inverseInertiaSettings.scaleZ * this->transformations.getScale().getZ()
 		);
 	}
 	orientation.computeMatrix(orientationMatrix);
 	worldInverseInertia.set(orientationMatrix).transpose().multiply(inverseInertiaMatrix).multiply(orientationMatrix);
 }
 
-void RigidBody::fromTransformations(Transformations* transformations)
+void RigidBody::fromTransformations(const Transformations& transformations)
 {
-	this->transformations->fromTransformations(transformations);
+	this->transformations.fromTransformations(transformations);
 	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
-	this->transformations->getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
-	this->orientation.set(transformations->getRotations()->getQuaternion());
+	this->transformations.getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
+	this->orientation.set(this->transformations.getRotations()->getQuaternion());
 	this->orientation.getArray()[1] *= -1.0f;
 	this->orientation.normalize();
 	this->computeWorldInverseInertiaMatrix();

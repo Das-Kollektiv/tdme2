@@ -81,7 +81,7 @@ public:
 	}
 
 	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, Transformations* transformations) override;
+	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
 	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
 	bool containsPoint(const Vector3& point) const override;
 	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
