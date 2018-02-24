@@ -2,6 +2,7 @@
 
 #include <map>
 #include <stack>
+#include <string>
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
@@ -14,6 +15,7 @@
 
 using std::map;
 using std::stack;
+using std::string;
 using std::vector;
 
 using tdme::engine::Transformations;
@@ -63,9 +65,10 @@ public:
 	 * @param end position
 	 * @param collision rigidbody types
 	 * @param path from actor to target
+	 * @param actor rigibody id
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path);
+	bool findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId = "");
 
 private:
 	/**
@@ -155,6 +158,7 @@ private:
 	map<string, PathFindingNode*> closedNodes;
 	Vector3 sideVector { 1.0f, 0.0f, 0.0f };
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
+	string actorId;
 	Transformations actorTransformations;
 	BoundingVolume* actorObv;
 	BoundingVolume* actorCbv;
