@@ -38,12 +38,13 @@ public:
 	 * Public constructor
 	 * @param world
 	 * @param user path finding test
+	 * @param sloping
 	 * @param steps max
 	 * @param step size
 	 * @param step size last
 	 * @param actor step up max
 	 */
-	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.5f);
+	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.5f);
 
 	/**
 	 * Destructor
@@ -142,6 +143,7 @@ private:
 	// properties
 	World* world;
 	PathFindingCustomTest* customTest;
+	bool sloping;
 	int stepsMax;
 	float stepSize;
 	float stepSizeLast;

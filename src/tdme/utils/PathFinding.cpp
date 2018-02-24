@@ -28,9 +28,10 @@ using tdme::utils::PathFindingCustomTest;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
+PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
 	this->world = world;
 	this->customTest = customtest;
+	this->sloping = sloping;
 	this->end = new PathFindingNode();
 	this->actorObv = nullptr;
 	this->actorCbv = nullptr;
@@ -140,7 +141,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		return PathFindingStatus::PATH_NOWAY;
 	}
 
-	// Choose node form open nodes thats least expensive to check its successors
+	// Choose node from open nodes thats least expensive to check its successors
 	PathFindingNode* node = nullptr;
 	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
 		if (node == nullptr || nodeIt->second->costsAll < node->costsAll) node = nodeIt->second;
@@ -154,8 +155,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Find valid successors
 		for (int z = -1; z <= 1; z++)
 		for (int x = -1; x <= 1; x++)
-		if ((z != 0 || x != 0)  &&
-			(Math::abs(x) == 1 && Math::abs(z) == 1) == false) {
+		if ((z != 0 || x != 0) &&
+			(sloping == true ||
+			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
 			//
 			float yHeight;
 			float successorX = x * stepSize + node->x;
@@ -233,14 +235,14 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Remove found node from open nodes list, since it was less optimal
 		if (openListNode != nullptr) {
 			// remove open list node
-			delete openListNodeIt->second;
 			openNodes.erase(openListNodeIt);
+			delete openListNodeIt->second;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
-			delete closedListNodeIt->second;
 			closedNodes.erase(closedListNodeIt);
+			delete closedListNodeIt->second;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
