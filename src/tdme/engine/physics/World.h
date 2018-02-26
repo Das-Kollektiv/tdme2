@@ -48,6 +48,7 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ConstraintsSolver;
 using tdme::engine::physics::PhysicsPartition;
 using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
@@ -75,6 +76,7 @@ private:
 	map<string, RigidBody*> rigidBodiesById {  };
 	ConstraintsSolver* constraintsSolver { nullptr };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	vector<WorldListener*> worldListeners {  };
 
 	/**
 	 * Do collision test between rigid bodies
@@ -220,6 +222,18 @@ public:
 	 * @param world
 	 */
 	void synch(World* world);
+
+	/**
+	 * Add a world listener
+	 * @param listener
+	 */
+	void addWorldListener(WorldListener* listener);
+
+	/**
+	 * Remove a world listener
+	 * @param listener
+	 */
+	void removeWorldListener(WorldListener* listener);
 
 	/**
 	 * Public constructor

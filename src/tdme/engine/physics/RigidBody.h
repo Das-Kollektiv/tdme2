@@ -119,7 +119,7 @@ private:
 	InertiaMatrixSettings inverseInertiaSettings {  };
 	Matrix4x4 orientationMatrix {  };
 	Matrix4x4 worldInverseInertia {  };
-	vector<CollisionListener*> collisionListener {  };
+	vector<CollisionListener*> collisionListeners {  };
 
 	/**
 	 * Wake up

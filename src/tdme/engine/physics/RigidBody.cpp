@@ -393,31 +393,32 @@ bool RigidBody::checkVelocityChange()
 
 void RigidBody::addCollisionListener(CollisionListener* listener)
 {
-	collisionListener.push_back(listener);
+	collisionListeners.push_back(listener);
 }
 
 void RigidBody::removeCollisionListener(CollisionListener* listener)
 {
-	collisionListener.erase(remove(collisionListener.begin(), collisionListener.end(), listener), collisionListener.end());
+	collisionListeners.erase(remove(collisionListeners.begin(), collisionListeners.end(), listener), collisionListeners.end());
+	delete listener;
 }
 
 void RigidBody::fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse)
 {
-	for (auto listener: collisionListener) {
+	for (auto listener: collisionListeners) {
 		listener->onCollision(this, other, collisionResponse);
 	}
 }
 
 void RigidBody::fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse)
 {
-	for (auto listener: collisionListener) {
+	for (auto listener: collisionListeners) {
 		listener->onCollisionBegin(this, other, collisionResponse);
 	}
 }
 
 void RigidBody::fireOnCollisionEnd(RigidBody* other)
 {
-	for (auto listener: collisionListener) {
+	for (auto listener: collisionListeners) {
 		listener->onCollisionEnd(this, other);
 	}
 }

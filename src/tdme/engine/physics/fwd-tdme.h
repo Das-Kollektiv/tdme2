@@ -20,8 +20,9 @@ namespace physics {
 			class PhysicsPartitionOctTree;
 			class PhysicsPartitionOctTree_PartitionTreeNode;
 			class RigidBody;
-			class Vector6;
 			class World;
+			class WorldListener;
+			class Vector6;
 }  // namespace physics
 }  // namespace engine
 }  // namespace tdme
