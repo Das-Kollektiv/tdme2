@@ -8,8 +8,6 @@
 
 #include <tdme/math/Math.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.h>
 #include <tdme/engine/fileio/models/DAEReader_AuthoringTool.h>
@@ -58,8 +56,6 @@ using std::string;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::math::Math;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::DAEReader_determineDisplacementFilename_1;
 using tdme::engine::fileio::models::DAEReader_AuthoringTool;

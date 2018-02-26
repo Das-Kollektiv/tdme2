@@ -4,8 +4,6 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -55,8 +53,6 @@ using std::string;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -528,9 +524,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->getObbCenter().set(Tools::convertToVector3(bbpeObbCenter->getController()->getValue().getString()));
 				emitter->getObbHalfextension().set(Tools::convertToVector3(bbpeObbHalfextension->getController()->getValue().getString()));
 				Transformations transformations;
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationY->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(bbpeObbRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Tools::convertToFloat(bbpeObbRotationZ->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Tools::convertToFloat(bbpeObbRotationY->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Tools::convertToFloat(bbpeObbRotationX->getController()->getValue().getString()));
 				transformations.update();
 				transformations.getTransformationsMatrix().clone().getAxes(emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2());
 			} else
@@ -550,9 +546,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->getCenter().set(Tools::convertToVector3(cpeCenter->getController()->getValue().getString()));
 				emitter->setRadius(Tools::convertToFloat(cpeRadius->getController()->getValue().getString()));
 				Transformations transformations;
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationZ->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationY->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpeRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Tools::convertToFloat(cpeRotationZ->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Tools::convertToFloat(cpeRotationY->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Tools::convertToFloat(cpeRotationX->getController()->getValue().getString()));
 				transformations.update();
 				Vector3 tmpVector3;
 				transformations.getTransformationsMatrix().clone().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());
@@ -573,9 +569,9 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->getCenter().set(Tools::convertToVector3(cpepvCenter->getController()->getValue().getString()));
 				emitter->setRadius(Tools::convertToFloat(cpepvRadius->getController()->getValue().getString()));
 				Transformations transformations;
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationZ->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationY->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
-				transformations.getRotations()->add(new Rotation(Tools::convertToFloat(cpepvRotationX->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Tools::convertToFloat(cpepvRotationZ->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Tools::convertToFloat(cpepvRotationY->getController()->getValue().getString()));
+				transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Tools::convertToFloat(cpepvRotationX->getController()->getValue().getString()));
 				transformations.update();
 				Vector3 tmpVector3;
 				transformations.getTransformationsMatrix().clone().getAxes(emitter->getAxis0(), tmpVector3, emitter->getAxis1());

@@ -32,28 +32,44 @@ public:
 	/** 
 	 * @return angle
 	 */
-	float getAngle();
+	inline const float getAngle() const {
+		return angle;
+	}
 
 	/** 
 	 * @param angle
 	 */
-	void setAngle(float angle);
+	inline void setAngle(const float angle) {
+		this->angle = angle;
+	}
 
 	/** 
 	 * @return axis
 	 */
-	Vector3& getAxis();
+	inline const Vector3& getAxis() const {
+		return axis;
+	}
 
-	/** 
+	/**
+	 * Set axis
+	 * @param axis
+	 */
+	inline void setAxis(const Vector3& axis) {
+		this->axis.set(axis);
+	}
+
+	/**
 	 * @return quaternion
 	 */
-	Quaternion& getQuaternion();
+	const Quaternion& getQuaternion() const {
+		return quaternion;
+	}
 
 	/** 
 	 * Sets up this rotation from another rotation
 	 * @param rotation
 	 */
-	void fromRotation(Rotation* rotation);
+	void fromRotation(const Rotation& rotation);
 
 	/** 
 	 * Sets up this rotation from quaternion, current quaternion will be lost, needs to get updated

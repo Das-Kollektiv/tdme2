@@ -275,7 +275,7 @@ void LevelEditorLevel::updatePivot(int32_t modelId, const Vector3& pivot)
 {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations().getPivot().set(pivot);
+			object->getTransformations().setPivot(pivot);
 			object->getTransformations().update();
 		}
 	}

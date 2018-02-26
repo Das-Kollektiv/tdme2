@@ -98,7 +98,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	}
 
 	// set up correct height
-	actorTransformations.getTranslation().set(x, height + 0.1f, z);
+	actorTransformations.setTranslation(Vector3(x, height + 0.1f, z));
 	actorTransformations.update();
 	actorCbv->fromBoundingVolumeWithTransformations(actorObv, actorTransformations);
 

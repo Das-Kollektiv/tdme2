@@ -3,8 +3,6 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -46,8 +44,6 @@ using std::to_string;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -390,9 +386,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 {
 	try {
 		Transformations rotations;
-		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Z));
-		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_Y));
-		rotations.getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue().getString()), OrientedBoundingBox::AABB_AXIS_X));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue().getString()));
 		rotations.update();
 		Vector3 xAxis;
 		Vector3 yAxis;

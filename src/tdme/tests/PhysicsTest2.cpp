@@ -97,7 +97,7 @@ void PhysicsTest2::initialize()
 	(*groundModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*groundModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D("ground", groundModel);
-	entity->getTranslation().setY(-1.0f);
+	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), ground, 0.5f);
@@ -108,7 +108,7 @@ void PhysicsTest2::initialize()
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setDynamicShadowingEnabled(true);
-		entity->getTranslation().addY(i * 2.0f + 1.0f);
+		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), box, 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f));

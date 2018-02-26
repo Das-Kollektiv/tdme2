@@ -14,7 +14,6 @@
 using std::string;
 
 using tdme::engine::Engine;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -123,27 +122,96 @@ struct tdme::engine::Entity
 	 */
 	virtual BoundingBox* getBoundingBoxTransformed() = 0;
 
-	/** 
+	/**
 	 * @return object translation
 	 */
-	virtual Vector3& getTranslation() = 0;
+	virtual const Vector3& getTranslation() const = 0;
 
-	/** 
+	/**
+	 * Set translation
+	 * @param translation
+	 */
+	virtual void setTranslation(const Vector3& translation) = 0;
+
+	/**
 	 * @return object scale
 	 */
-	virtual Vector3& getScale() = 0;
+	virtual const Vector3& getScale() const = 0;
 
-	/** 
+	/**
+	 * Set scale
+	 * @param scale
+	 */
+	virtual void setScale(const Vector3& scale) = 0;
+
+	/**
 	 * @return pivot or center of rotations
 	 */
-	virtual Vector3& getPivot() = 0;
+	virtual const Vector3& getPivot() const = 0;
 
-	/** 
-	 * @return object rotations
+	/**
+	 * Set pivot
+	 * @param pivot
 	 */
-	virtual Rotations* getRotations() = 0;
+	virtual void setPivot(const Vector3& pivot) = 0;
 
-	/** 
+	/**
+	 * @return rotation count
+	 */
+	virtual const int getRotationCount() const = 0;
+
+	/**
+	 * Get rotation at given index
+	 * @param rotation index
+	 * @return rotation
+	 */
+	virtual Rotation& getRotation(const int idx) = 0;
+
+	/**
+	 * Add rotation
+	 * @param axis
+	 * @param angle
+	 */
+	virtual void addRotation(const Vector3& axis, const float angle) = 0;
+
+	/**
+	 * Remove rotation
+	 * @param index
+	 */
+	virtual void removeRotation(int idx) = 0;
+
+	/**
+	 * @param rotation index
+	 * @return rotation axis for rotation with given index
+	 */
+	virtual const Vector3& getRotationAxis(const int idx) const = 0;
+
+	/**
+	 * Set rotation axis
+	 * @param rotation index
+	 * @param rotation axis
+	 */
+	virtual void setRotationAxis(const int idx, const Vector3& axis) = 0;
+
+	/**
+	 * @param rotation index
+	 * @return rotation angle for rotation with given index
+	 */
+	virtual const float getRotationAngle(const int idx) const = 0;
+
+	/**
+	 * @param rotation index
+	 * @param rotation angle
+	 * @return rotation angle for rotation with given index
+	 */
+	virtual void setRotationAngle(const int idx, const float angle) = 0;
+
+	/**
+	 * @return rotations quaternion
+	 */
+	virtual const Quaternion& getRotationsQuaternion() const = 0;
+
+	/**
 	 * @return this transformations matrix
 	 */
 	virtual const Matrix4x4& getTransformationsMatrix() const = 0;

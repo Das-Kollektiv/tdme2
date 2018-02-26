@@ -3,7 +3,6 @@
 #include <string>
 
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -12,7 +11,6 @@
 using std::to_string;
 
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -22,6 +20,7 @@ Transformations::Transformations()
 {
 	transformationsMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);
+	rotationsQuaternion.identity();
 }
 
 Transformations::~Transformations() {
@@ -39,27 +38,23 @@ void Transformations::fromTransformations(const Transformations& transformations
 	pivot.set(transformations.pivot);
 	// rotations
 	auto rotationIdx = 0;
-	for (auto rotation: transformations.rotations.rotations) {
+	for (auto rotation: transformations.rotations) {
 		// do we have a rotation to reuse?
-		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : nullptr;
-		//	nope?
-		if (_rotation == nullptr) {
-			// add it
-			_rotation = new Rotation();
-			rotations.add(_rotation);
-		}
-		// copy
-		_rotation->fromRotation(rotation);
+		if (rotationIdx == rotations.size()) {
+			// nope, add a rotation
+			rotations.push_back(Rotation(0.0f, Vector3(0.0f, 0.0f, 0.0f)));
+		}		// copy
+		rotations[rotations.size() - 1].fromRotation(rotation);
 		// next
 		rotationIdx++;
 	}
 	// remove unused rotations
 	while (rotationIdx < rotations.size()) {
-		rotations.remove(rotations.size() - 1);
+		removeRotation(rotations.size() - 1);
 	}
 	// copy matrices and such
 	transformationsMatrix.set(transformations.transformationsMatrix);
-	rotations.quaternion.set(transformations.rotations.quaternion);
+	rotationsQuaternion.set(transformations.rotationsQuaternion);
 }
 
 void Transformations::update()
@@ -78,13 +73,18 @@ void Transformations::update()
 	// set up scale matrix
 	scaleMatrix.identity().scale(scale);
 	// create and multiply rotations
-	rotations.update();
+	rotationsQuaternion.identity();
+	for (auto& rotation: rotations) {
+		rotation.update();
+		rotationsQuaternion.multiply(rotation.getQuaternion());
+	}
+	rotationsQuaternion.normalize();
 	// apply rotations
 	rotationsMatrix.identity();
 	//	pivot
 	rotationsMatrix.translate(pivot.clone().scale(-1.0f));
-	//	rotatations
-	rotations.quaternion.computeMatrix(rotationsQuaternionMatrix);
+	//	rotations
+	rotationsQuaternion.computeMatrix(rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);
 	//	pivot
 	rotationsTranslationsMatrix.identity().translate(pivot);
@@ -100,8 +100,8 @@ void Transformations::invert() {
 	scale.setX(1.0f / scale.getX());
 	scale.setY(1.0f / scale.getY());
 	scale.setZ(1.0f / scale.getZ());
-	for (auto rotation: rotations.rotations) {
-		rotation->setAngle(rotation->getAngle() - 180.0f);
+	for (auto& rotation: rotations) {
+		rotation.setAngle(rotation.getAngle() - 180.0f);
 	}
 	update();
 }

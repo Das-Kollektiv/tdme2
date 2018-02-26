@@ -37,9 +37,6 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
 	static constexpr int32_t RIGIDBODY_TYPEID_PLAYER { 2 };
 
-private:
-	static MutableString* compareMutableString;
-
 public:
 
 	/** 

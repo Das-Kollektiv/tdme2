@@ -24,7 +24,6 @@ namespace engine {
 		class PartitionOctTree_PartitionTreeNode;
 		class PointsParticleSystemEntity;
 		class Rotation;
-		class Rotations;
 		class Timing;
 		class Transformations;
 		class WindowManager;

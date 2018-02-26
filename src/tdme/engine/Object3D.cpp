@@ -105,31 +105,6 @@ const string& Object3D::getId()
 	return Object3DInternal::getId();
 }
 
-Vector3& Object3D::getPivot()
-{
-	return Transformations::getPivot();
-}
-
-Rotations* Object3D::getRotations()
-{
-	return Transformations::getRotations();
-}
-
-Vector3& Object3D::getScale()
-{
-	return Transformations::getScale();
-}
-
-const Matrix4x4& Object3D::getTransformationsMatrix() const
-{
-	return Transformations::getTransformationsMatrix();
-}
-
-Vector3& Object3D::getTranslation()
-{
-	return Transformations::getTranslation();
-}
-
 void Object3D::initialize()
 {
 	Object3DInternal::initialize();
@@ -163,6 +138,70 @@ void Object3D::setPickable(bool pickable)
 Matrix4x4* Object3D::getTransformationsMatrix(const string& id)
 {
 	return Object3DInternal::getTransformationsMatrix(id);
+}
+
+const Vector3& Object3D::getTranslation() const {
+	return Transformations::getTranslation();
+}
+
+void Object3D::setTranslation(const Vector3& translation) {
+	Transformations::setTranslation(translation);
+}
+
+const Vector3& Object3D::getScale() const {
+	return Transformations::getScale();
+}
+
+void Object3D::setScale(const Vector3& scale) {
+	Transformations::setScale(scale);
+}
+
+const Vector3& Object3D::getPivot() const {
+	return Transformations::getPivot();
+}
+
+void Object3D::setPivot(const Vector3& pivot) {
+	Transformations::setPivot(pivot);
+}
+
+const int Object3D::getRotationCount() const {
+	return Transformations::getRotationCount();
+}
+
+Rotation& Object3D::getRotation(int idx) {
+	return Transformations::getRotation(idx);
+}
+
+void Object3D::addRotation(const Vector3& axis, const float angle) {
+	Transformations::addRotation(axis, angle);
+}
+
+void Object3D::removeRotation(const int idx) {
+	Transformations::removeRotation(idx);
+}
+
+const Vector3& Object3D::getRotationAxis(const int idx) const {
+	Transformations::getRotationAxis(idx);
+}
+
+void Object3D::setRotationAxis(const int idx, const Vector3& axis) {
+	Transformations::setRotationAxis(idx, axis);
+}
+
+const float Object3D::getRotationAngle(const int idx) const {
+	return Transformations::getRotationAngle(idx);
+}
+
+void Object3D::setRotationAngle(const int idx, const float angle) {
+	Transformations::setRotationAngle(idx, angle);
+}
+
+const Quaternion& Object3D::getRotationsQuaternion() const {
+	return Transformations::getRotationsQuaternion();
+}
+
+const Matrix4x4& Object3D::getTransformationsMatrix() const {
+	return Transformations::getTransformationsMatrix();
 }
 
 const Transformations& Object3D::getTransformations() const {

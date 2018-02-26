@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/PhysicsPartition.h>
@@ -23,7 +22,6 @@ using std::vector;
 
 using tdme::engine::physics::RigidBody;
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::PhysicsPartition;
@@ -298,7 +296,7 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	this->transformations.fromTransformations(transformations);
 	this->cbv->fromBoundingVolumeWithTransformations(this->obv, this->transformations);
 	this->transformations.getTransformationsMatrix().multiply(Vector3(0.0f, 0.0f, 0.0f), this->position);
-	this->orientation.set(this->transformations.getRotations()->getQuaternion());
+	this->orientation.set(this->transformations.getRotationsQuaternion());
 	this->orientation.getArray()[1] *= -1.0f;
 	this->orientation.normalize();
 	this->computeWorldInverseInertiaMatrix();

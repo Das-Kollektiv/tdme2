@@ -4,8 +4,6 @@
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -21,8 +19,6 @@
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent_Type;
@@ -46,9 +42,9 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine)
 	mouseDragging = false;
 	maxAxisDimension = 0.0f;
 	scale = 1.0f;
-	lookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
-	lookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
-	lookFromRotations.getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
+	lookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
+	lookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
+	lookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	lookFromRotations.update();
 	resetRequested = false;
 	mouseLastX = 0;
@@ -101,12 +97,12 @@ void CameraRotationInputHandler::handleInputEvents()
 				auto yMoved = (event->getY() - mouseLastY) / 5.0f;
 				mouseLastX = event->getX();
 				mouseLastY = event->getY();
-				auto xRotation = lookFromRotations.getRotations()->get(0);
-				auto yRotation = lookFromRotations.getRotations()->get(1);
-				auto xRotationAngle = xRotation->getAngle() + xMoved;
-				auto yRotationAngle = yRotation->getAngle() + yMoved;
-				xRotation->setAngle(xRotationAngle);
-				yRotation->setAngle(yRotationAngle);
+				auto& xRotation = lookFromRotations.getRotation(0);
+				auto& yRotation = lookFromRotations.getRotation(1);
+				auto xRotationAngle = xRotation.getAngle() + xMoved;
+				auto yRotationAngle = yRotation.getAngle() + yMoved;
+				xRotation.setAngle(xRotationAngle);
+				yRotation.setAngle(yRotationAngle);
 				lookFromRotations.update();
 			} else {
 				mouseDragging = false;
@@ -160,26 +156,26 @@ void CameraRotationInputHandler::handleInputEvents()
 			keyR = isKeyDown;
 
 	}
-	auto rotationX = lookFromRotations.getRotations()->get(0);
-	auto rotationY = lookFromRotations.getRotations()->get(1);
-	auto rotationZ = lookFromRotations.getRotations()->get(2);
+	auto& rotationX = lookFromRotations.getRotation(0);
+	auto& rotationY = lookFromRotations.getRotation(1);
+	auto& rotationZ = lookFromRotations.getRotation(2);
 	if (keyLeft)
-		rotationX->setAngle(rotationX->getAngle() - 1.0f);
+		rotationX.setAngle(rotationX.getAngle() - 1.0f);
 
 	if (keyRight)
-		rotationX->setAngle(rotationX->getAngle() + 1.0f);
+		rotationX.setAngle(rotationX.getAngle() + 1.0f);
 
 	if (keyUp)
-		rotationY->setAngle(rotationY->getAngle() + 1.0f);
+		rotationY.setAngle(rotationY.getAngle() + 1.0f);
 
 	if (keyDown)
-		rotationY->setAngle(rotationY->getAngle() - 1.0f);
+		rotationY.setAngle(rotationY.getAngle() - 1.0f);
 
 	if (keyComma)
-		rotationZ->setAngle(rotationZ->getAngle() - 1.0f);
+		rotationZ.setAngle(rotationZ.getAngle() - 1.0f);
 
 	if (keyPeriod)
-		rotationZ->setAngle(rotationZ->getAngle() + 1.0f);
+		rotationZ.setAngle(rotationZ.getAngle() + 1.0f);
 
 	if (keyMinus)
 		scale += 0.05f;
@@ -188,8 +184,8 @@ void CameraRotationInputHandler::handleInputEvents()
 		scale -= 0.05f;
 
 	if (keyR == true || resetRequested == true) {
-		rotationY->setAngle(-45.0f);
-		rotationZ->setAngle(0.0f);
+		rotationY.setAngle(-45.0f);
+		rotationZ.setAngle(0.0f);
 		scale = 1.0f;
 	}
 	if (keyLeft || keyRight || keyUp|| keyDown|| keyComma|| keyPeriod|| keyR|| resetRequested) {
@@ -208,7 +204,7 @@ void CameraRotationInputHandler::handleInputEvents()
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
 	lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
-	lookFromRotations.getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);

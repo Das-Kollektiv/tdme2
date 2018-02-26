@@ -11,8 +11,6 @@
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
-#include <tdme/engine/Rotations.h>
-#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -115,8 +113,6 @@ Level::Level()
 constexpr int32_t Level::RIGIDBODY_TYPEID_STATIC;
 
 constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
-
-MutableString* Level::compareMutableString = new MutableString();
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
@@ -236,13 +232,13 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		entity->getTranslation().add(translation);
+		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty("shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
 		entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ()));
+			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
 		entity->setEnabled(enable);
@@ -279,7 +275,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 			{
 				Transformations transformations;
 				transformations.fromTransformations(object->getTransformations());
-				transformations.getTranslation().add(translation);
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
 				int i = 0;
 				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
@@ -294,7 +290,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				string worldId = object->getId() + ".bv." + to_string(j);
 				Transformations transformations;
 				transformations.fromTransformations(object->getTransformations());
-				transformations.getTranslation().add(translation);
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
 				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 				rigidBody->setRootId(object->getId());
@@ -332,9 +328,9 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		entity->getTranslation().add(translation);
+		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ()));
+			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
 		entity->setEnabled(true);
@@ -343,20 +339,21 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 
 void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
 {
+	MutableString compareMutableString;
 	Transformations transformations;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 			for (auto k = 0; k < rigidBodies.size(); k++) {
 				auto rigidBody = rigidBodies.at(k);
-				compareMutableString->set(object->getId());
-				compareMutableString->append(".bv.");
-				compareMutableString->append(j);
-				if (compareMutableString->equals(rigidBody->getId()) == false)
+				compareMutableString.set(object->getId());
+				compareMutableString.append(".bv.");
+				compareMutableString.append(j);
+				if (compareMutableString.equals(rigidBody->getId()) == false)
 					continue;
 
 				transformations.fromTransformations(object->getTransformations());
-				transformations.getTranslation().add(translation);
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
 				rigidBody->fromTransformations(transformations);
 				rigidBody->setEnabled(true);

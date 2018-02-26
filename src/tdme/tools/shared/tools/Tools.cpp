@@ -9,8 +9,6 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -51,8 +49,6 @@ using tdme::engine::Entity;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -215,9 +211,9 @@ void Tools::oseDispose()
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
 	Transformations oseLookFromRotations;
-	oseLookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(0.0f, 1.0f, 0.0f)));
-	oseLookFromRotations.getRotations()->add(new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f)));
-	oseLookFromRotations.getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
+	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
+	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
+	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
 	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
 	osEngine->getSceneColor().set(0.5f, 0.5f, 0.5f, 1.0f);
@@ -298,7 +294,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	}
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
 	if (modelEntity != nullptr) {
-		modelEntity->getScale().scale(1.0f / maxAxisDimension);
+		modelEntity->setScale(modelEntity->getScale().clone().scale(1.0f / maxAxisDimension));
 		modelEntity->update();
 	}
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - Math::EPSILON);
@@ -314,7 +310,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 			"model_bv." + to_string(i),
 			boundingVolume->getModel());
 		modelBoundingVolumeEntity->setEnabled(false);
-		modelBoundingVolumeEntity->getScale().set(modelEntity->getScale());
+		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
 		modelBoundingVolumeEntity->update();
 		engine->addEntity(modelBoundingVolumeEntity);
 	}
@@ -356,7 +352,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	Transformations _lookFromRotations;
 	_lookFromRotations.fromTransformations(lookFromRotations);
 	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
-	_lookFromRotations.getRotations()->get(2)->getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	_lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);

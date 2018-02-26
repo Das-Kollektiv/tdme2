@@ -7,8 +7,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/CollisionResponse.h>
@@ -40,8 +38,6 @@ using tdme::engine::physics::World;
 using tdme::math::Math;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::CollisionResponse;
@@ -316,19 +312,18 @@ void World::update(float deltaTime)
 			continue;
 		}
 		// set up transformations, keep care that only 1 rotation exists
-		auto rotations = rigidBody->transformations.getRotations();
-		while (rotations->size() > 1) {
-			rotations->remove(rotations->size() - 1);
+		auto& transformations = rigidBody->transformations;
+		while (transformations.getRotationCount() > 1) {
+			transformations.removeRotation(transformations.getRotationCount() - 1);
 		}
-		while (rotations->size() < 1) {
-			rotations->add(new Rotation());
+		while (transformations.getRotationCount() < 1) {
+			transformations.addRotation(Vector3(0.0f, 0.0f, 0.0f), 0.0f);
 		}
 		// set up orientation
-		rotations->get(0)->fromQuaternion(rigidBody->orientation);
-		rotations->get(0)->getAxis().getArray()[1] *= -1.0f;
+		transformations.getRotation(0).fromQuaternion(rigidBody->orientation);
+		transformations.getRotation(0).getAxis().getArray()[1] *= -1.0f;
 		//	set up position
-		auto& transformations = rigidBody->transformations;
-		transformations.getTranslation().set(rigidBody->position);
+		transformations.setTranslation(rigidBody->position);
 		// update
 		transformations.update();
 		// update bounding volume
