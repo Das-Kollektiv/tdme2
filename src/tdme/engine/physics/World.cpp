@@ -10,6 +10,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/ConstraintsEntity.h>
 #include <tdme/engine/physics/ConstraintsSolver.h>
@@ -42,6 +43,7 @@ using tdme::engine::Entity;
 using tdme::engine::Rotation;
 using tdme::engine::Rotations;
 using tdme::engine::Transformations;
+using tdme::engine::physics::CollisionDetection;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::ConstraintsEntity;
 using tdme::engine::physics::ConstraintsSolver;
@@ -61,7 +63,7 @@ using tdme::utils::Pool;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
-World::World() 
+World::World()
 {
 	partition = new PhysicsPartitionOctTree();
 }
@@ -390,6 +392,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 		{
 			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false) continue;
 			auto cbv = rigidBody->cbv;
+			if (CollisionDetection::doBroadTest(&heightBoundingBox, cbv) == false) continue;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
@@ -411,6 +414,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 			if (dynamic_cast< ConvexMesh* >(cbv) != nullptr) {
 				auto convexMesh = dynamic_cast< ConvexMesh* >(cbv);
 				for (auto& triangle: *convexMesh->getTriangles()) {
+					if (CollisionDetection::doBroadTest(&heightBoundingBox, &triangle) == false) continue;
 					if (LineSegment::doesLineSegmentCollideWithTriangle(
 						(*triangle.getVertices())[0],
 						(*triangle.getVertices())[1],
@@ -543,9 +547,7 @@ bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vec
 	for (auto _i = partition->getObjectsNearTo(boundingVolume)->iterator(); _i->hasNext(); ) {
 		RigidBody* rigidBody = _i->next();
 		{
-			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false)
-				continue;
-
+			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false) continue;
 			if (rigidBody->cbv->doesCollideWith(boundingVolume, nullMovement, &collision) == true && collision.hasPenetration() == true) {
 				rigidBodies.push_back(rigidBody);
 			}

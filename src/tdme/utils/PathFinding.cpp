@@ -13,6 +13,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
+#include <tdme/utils/Time.h>
 
 using std::map;
 using std::reverse;
@@ -27,6 +28,7 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
+using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
@@ -54,7 +56,7 @@ PathFinding::~PathFinding() {
 string PathFinding::toKeyFloat(float value)
 {
 	string floatString = to_string(value);
-	return floatString.substr(0, floatString.length() - 3);
+	return floatString.substr(0, floatString.length() - 5);
 }
 
 void PathFinding::reset() {
@@ -274,6 +276,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId) {
 	this->actorId = actorId;
 
+	//
+	auto now = Time::getCurrentMillis();
+
 	// clear path
 	path.clear();
 
@@ -290,6 +295,7 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 	startPositionComputed.set(this->actorTransformations.getTranslation());
 
 	// check if start is reachable
+	/*
 	{
 		float startYHeight = startPositionComputed.getY();
 		if (isWalkable(
@@ -305,6 +311,7 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 			startPositionComputed.setY(startYHeight);
 		}
 	}
+	*/
 
 	// check if target is reachable
 	Vector3 endPositionComputed;
@@ -341,11 +348,13 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 				}
 			case PATH_NOWAY:
 				{
+					Console::println("PathFinding::findPath(): path no way with steps: " + to_string(stepIdx));
 					done = true;
 					break;
 				}
 			case PATH_FOUND:
 				{
+					Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
 						path.push_back(Vector3(node->x, node->y, node->z));
 					}
@@ -370,6 +379,8 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 
 	// reset
 	reset();
+
+	Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
 
 	// return success
 	return success;
