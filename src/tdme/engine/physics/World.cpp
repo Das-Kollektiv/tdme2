@@ -79,6 +79,7 @@ World::~World()
 void World::reset()
 {
 	for (auto rigidBody: rigidBodies) {
+		rigidBody->dispose();
 		delete rigidBody;
 	}
 	rigidBodies.clear();
