@@ -423,7 +423,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 		{
 			if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false) continue;
 			auto cbv = rigidBody->cbv;
-			if (CollisionDetection::doBroadTest(&heightBoundingBox, cbv) == false) continue;
+			// if (CollisionDetection::doBroadTest(&heightBoundingBox, cbv) == false) continue;
 			if (dynamic_cast< BoundingBox* >(cbv) != nullptr) {
 				if (LineSegment::doesBoundingBoxCollideWithLineSegment(dynamic_cast< BoundingBox* >(cbv), heightBoundingBox.getMin(), heightBoundingBox.getMax(), heightOnPointA, heightOnPointB) == true) {
 					auto heightOnPoint = higher(heightOnPointA, heightOnPointB);
@@ -445,7 +445,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 			if (dynamic_cast< ConvexMesh* >(cbv) != nullptr) {
 				auto convexMesh = dynamic_cast< ConvexMesh* >(cbv);
 				for (auto& triangle: *convexMesh->getTriangles()) {
-					if (CollisionDetection::doBroadTest(&heightBoundingBox, &triangle) == false) continue;
+					// if (CollisionDetection::doBroadTest(&heightBoundingBox, &triangle) == false) continue;
 					if (LineSegment::doesLineSegmentCollideWithTriangle(
 						(*triangle.getVertices())[0],
 						(*triangle.getVertices())[1],

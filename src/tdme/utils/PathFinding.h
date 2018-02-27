@@ -125,10 +125,11 @@ private:
 	 * @param x
 	 * @param y
 	 * @param z
+	 * @param step up max
 	 * @param y stepped up
 	 * @return if cell is walkable
 	 */
-	bool isWalkable(float x, float y, float z, float& height);
+	bool isWalkable(float x, float y, float z, float stepUpMax, float& height);
 
 	/**
 	 * Sets up the PathFinding, it needs to be called after constructing the object

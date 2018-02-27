@@ -23,6 +23,7 @@ using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
@@ -70,7 +71,7 @@ void PathFinding::reset() {
 	closedNodes.clear();
 }
 
-bool PathFinding::isWalkable(float x, float y, float z, float& height) {
+bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& height) {
 	// determine y height of ground plate of actor bounding volume
 	float xHalfExtension = actorCbv->computeDimensionOnAxis(sideVector) / 2.0f;
 	float zHalfExtension = actorCbv->computeDimensionOnAxis(forwardVector) / 2.0f;
@@ -83,7 +84,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 			Vector3 actorPositionCandidate;
 			if (world->determineHeight(
 				collisionRigidBodyTypes,
-				actorStepUpMax,
+				stepUpMax,
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition) == nullptr) {
 				return false;
@@ -107,7 +108,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	world->doesCollideWith(collisionRigidBodyTypes, actorCbv, collidedRigidBodies);
 	if (actorId.size() > 0) {
 		for (auto rigidBody: collidedRigidBodies) {
-			if (rigidBody->getRootId() != actorId) return false;
+			if (rigidBody->getRootId() != actorId) {
+				return false;
+			}
 		}
 	} else {
 		return collidedRigidBodies.size() == 0;
@@ -174,7 +177,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 			float successorX = x * stepSize + node->x;
 			float successorZ = z * stepSize + node->z;
 			// first node or walkable?
-			if (isWalkable(successorX, node->y, successorZ, yHeight) == true) {
+			if (isWalkable(successorX, node->y, successorZ, actorStepUpMax, yHeight) == true) {
 				// check if successor node equals previous node / node
 				if (equals(node, successorX, yHeight, successorZ)) {
 					continue;
@@ -285,10 +288,11 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 	//
 	this->collisionRigidBodyTypes = collisionRigidBodyTypes;
 
-	// init path finding
+	// init transformations, bounding volumes
+	this->actorTransformations.fromTransformations(actorTransformations);
 	this->actorObv = actorObv->clone();
 	this->actorCbv = actorObv->clone();
-	this->actorTransformations.fromTransformations(actorTransformations);
+	this->actorCbv->fromBoundingVolumeWithTransformations(this->actorObv, this->actorTransformations);
 
 	// positions
 	Vector3 startPositionComputed;
@@ -322,6 +326,7 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 				endPositionComputed.getX(),
 				endPositionComputed.getY(),
 				endPositionComputed.getZ(),
+				10000.0f,
 				endYHeight
 			) == false) {
 			//
