@@ -20,12 +20,23 @@ struct tdme::engine::physics::WorldListener
 
 	/** 
 	 * Event fired when rigid body was added
+	 * @param id
+	 * @param type id
+	 * @param transformations
+	 * @param obv
+	 * @param cbv
+	 * @oaram restitution
+	 * @param friction
+	 * @param mass
+	 * @param inertia matrix
 	 */
-	virtual void onAddedRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix) = 0;
+	virtual void onAddedRigidBody(const string& id, bool enabled, int32_t typeId, const Transformations& transformations, BoundingVolume* obv, BoundingVolume* cbv, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inertiaMatrix) = 0;
 
 	/** 
 	 * Event fired when rigid body was removed
+	 * @param id
+	 * @param type id
 	 */
-	virtual void onRemovedRigidBody(const string& id) = 0;
+	virtual void onRemovedRigidBody(const string& id, int32_t typeId) = 0;
 
 };

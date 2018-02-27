@@ -59,7 +59,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::physics::World final
+class tdme::engine::physics::World
 {
 	friend class RigidBody;
 
@@ -89,6 +89,30 @@ private:
 	 * @param use and invert collision
 	 */
 	inline void doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision);
+protected:
+
+	/**
+	 * Create rigid body
+	 * @param id
+	 * @param enabled
+	 * @param type id
+	 * @param obv
+	 * @param cbv
+	 * @param transformations
+	 * @param restitution
+	 * @param friction
+	 * @param mass in kg
+	 * @param inertia matrix settings
+	 */
+	virtual RigidBody* createRigidBody(const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, BoundingVolume* cbv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
+
+	/**
+	 * Add a rigid body
+	 * @param rigid body
+	 * @return rigid body
+	 */
+	virtual RigidBody* addRigidBody(RigidBody* rigidBody);
+
 public:
 
 	/** 
@@ -200,12 +224,13 @@ public:
 	bool doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies);
 
 	/** 
-	 * Clone this world
+	 * Clone this worlds rigid bodies using given type ids into a new cloned world
+	 * @param type ids to be cloned
+	 * @return cloned world
 	 */
-	World* clone();
+	WorldCloned* clone(int32_t typeIds);
 
-private:
-
+protected:
 
 	/** 
 	 * Synch into cloned rigid body from rigid body
@@ -243,5 +268,5 @@ public:
 	/**
 	 * Destructor
 	 */
-	~World();
+	virtual ~World();
 };

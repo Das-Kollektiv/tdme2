@@ -61,13 +61,14 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::physics::RigidBody final
+class tdme::engine::physics::RigidBody
 {
 	friend class ConstraintsSolver;
 	friend class ContactCache;
 	friend class ConstraintsEntity;
 	friend class PhysicsPartitionOctTree;
 	friend class World;
+	friend class WorldCloned;
 
 public:
 	static constexpr int32_t TYPEIDS_ALL { 2147483647 };
@@ -83,7 +84,7 @@ public:
 		float scaleZ;
 	};
 
-private:
+protected:
 	static constexpr float LINEARVELOCITY_SLEEPTOLERANCE { 1.0f };
 	static constexpr float ANGULARVELOCITY_SLEEPTOLERANCE { 2.0f };
 	static constexpr int32_t SLEEPING_FRAMES { 300 };
@@ -164,22 +165,42 @@ private:
 	void fireOnCollisionEnd(RigidBody* other);
 
 	/**
-	 * Protected constructor
-	 * @param partition
+	 * Private constructor
+	 * @param world
 	 * @param id
 	 * @param enabled
 	 * @param type id
-	 * @param original bounding volume
+	 * @param restitution
+	 * @param friction
+	 * @param mass in kg
+	 * @param inertia matrix settings
+	 */
+	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
+
+	/**
+	 * Private constructor
+	 * @param world
+	 * @param id
+	 * @param enabled
+	 * @param type id
+	 * @param obv
 	 * @param transformations
 	 * @param restitution
+	 * @param friction
 	 * @param mass in kg
+	 * @param inertia matrix settings
 	 */
 	RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings);
 
 	/**
 	 * Destructor
 	 */
-	~RigidBody();
+	virtual ~RigidBody();
+
+	/**
+	 * Dispose
+	 */
+	virtual void dispose();
 
 	/**
 	 * No rotation inertia matrix

@@ -20,7 +20,9 @@ namespace physics {
 			class PhysicsPartitionOctTree;
 			class PhysicsPartitionOctTree_PartitionTreeNode;
 			class RigidBody;
+			class RigidBodyCloned;
 			class World;
+			class WorldCloned;
 			class WorldListener;
 			class Vector6;
 }  // namespace physics

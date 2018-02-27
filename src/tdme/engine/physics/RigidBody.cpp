@@ -34,9 +34,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-
-RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings)
-{
+RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings) {
 	this->world = world;
 	this->idx = -1;
 	this->id = id;
@@ -49,12 +47,21 @@ RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeI
 	this->friction = friction;
 	this->isSleeping_ = false;
 	this->sleepingFrameCount = 0;
-	setBoundingVolume(obv);
 	setMass(mass);
+}
+
+RigidBody::RigidBody(World* world, const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings) :
+	RigidBody(world, id, enabled, typeId, restitution, friction, mass, inverseInertiaSettings)
+{
+	this->enabled = enabled;
+	setBoundingVolume(obv);
 	fromTransformations(transformations);
 }
 
 RigidBody::~RigidBody() {
+}
+
+void RigidBody::dispose() {
 	delete obv;
 	delete cbv;
 }

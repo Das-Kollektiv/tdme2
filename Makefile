@@ -136,7 +136,9 @@ SRCS = \
 	src/tdme/engine/physics/PhysicsPartitionNone.cpp \
 	src/tdme/engine/physics/PhysicsPartitionOctTree.cpp \
 	src/tdme/engine/physics/RigidBody.cpp \
+	src/tdme/engine/physics/RigidBodyCloned.cpp \
 	src/tdme/engine/physics/World.cpp \
+	src/tdme/engine/physics/WorldCloned.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
