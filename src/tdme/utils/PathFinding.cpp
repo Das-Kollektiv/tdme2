@@ -112,6 +112,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& 
 				return false;
 			}
 		}
+		return true;
 	} else {
 		return collidedRigidBodies.size() == 0;
 	}
