@@ -99,6 +99,14 @@ void World::setPartition(PhysicsPartition* partition)
 	this->partition = partition;
 }
 
+bool World::getAutoDispose() {
+	return autoDispose;
+}
+
+void World::setAutoDispose(bool autoDispose) {
+	this->autoDispose = autoDispose;
+}
+
 RigidBody* World::createRigidBody(const string& id, bool enabled, int32_t typeId, BoundingVolume* obv, BoundingVolume* cbv, const Transformations& transformations, float restitution, float friction, float mass, const RigidBody::InertiaMatrixSettings& inverseInertiaSettings) {
 	return new RigidBody(this, id, enabled, typeId, obv, transformations, restitution, friction, mass, inverseInertiaSettings);
 }
@@ -154,7 +162,7 @@ RigidBody* World::getRigidBody(const string& id)
 	return nullptr;
 }
 
-void World::removeRigidBody(const string& id) {
+bool World::removeRigidBody(const string& id) {
 	auto rididBodyByIdIt = rigidBodiesById.find(id);
 	if (rididBodyByIdIt != rigidBodiesById.end()) {
 		auto rigidBody = rididBodyByIdIt->second;
@@ -163,10 +171,14 @@ void World::removeRigidBody(const string& id) {
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
 		rigidBodiesById.erase(rididBodyByIdIt);
 		auto typeId = rigidBody->typeId;
-		rigidBody->dispose();
+		auto obv = rigidBody->obv;
+		auto cbv = rigidBody->cbv;
+		if (autoDispose == true) rigidBody->dispose();
 		delete rigidBody;
-		for (auto listener: worldListeners) listener->onRemovedRigidBody(id, typeId);
+		for (auto listener: worldListeners) listener->onRemovedRigidBody(id, typeId, obv, cbv);
+		return true;
 	}
+	return false;
 }
 
 void World::doCollisionTest(RigidBody* rigidBody1, RigidBody* rigidBody2, map<string, RigidBodyCollisionStruct>& rigidBodyTestedCollisions, map<string, RigidBodyCollisionStruct>& rigidBodyCollisionsCurrentFrame, Vector3& collisionMovement, CollisionResponse &collision, bool useAndInvertCollision) {
@@ -621,7 +633,6 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->enabled = rigidBody->enabled;
 	clonedRigidBody->isSleeping_ = rigidBody->isSleeping_;
 	clonedRigidBody->collisionTypeIds = rigidBody->collisionTypeIds;
-	clonedRigidBody->cbv->fromBoundingVolume(rigidBody->cbv);
 	clonedRigidBody->isStatic_ = rigidBody->isStatic_;
 	clonedRigidBody->mass = rigidBody->mass;
 	clonedRigidBody->inverseMass = rigidBody->inverseMass;
@@ -635,30 +646,6 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->position.set(rigidBody->position);
 	clonedRigidBody->worldInverseInertia.set(rigidBody->worldInverseInertia);
 	clonedRigidBody->transformations.fromTransformations(rigidBody->transformations);
-}
-
-void World::synch(World* world)
-{
-	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-		auto rigidBody = rigidBodiesDynamic.at(i);
-		auto clonedRigidBody = world->getRigidBody(rigidBody->id);
-		if (clonedRigidBody == nullptr) {
-			Console::println(
-				string("Cloned world::entity '") +
-				rigidBody->id +
-				string("' not found")
-			);
-			continue;
-		}
-		// synch rigid bodies
-		synch(clonedRigidBody, rigidBody);
-		// set up rigid body in partition
-		if (clonedRigidBody->enabled == true) {
-			world->partition->updateRigidBody(clonedRigidBody);
-		} else {
-			world->partition->removeRigidBody(clonedRigidBody);
-		}
-	}
 }
 
 void World::addWorldListener(WorldListener* listener)

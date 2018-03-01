@@ -361,8 +361,13 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 			case PATH_FOUND:
 				{
 					Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					int nodesCount = 0;
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
 						path.push_back(Vector3(node->x, node->y, node->z));
+						if (nodesCount % 100 == 0) {
+							Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
+						}
+						nodesCount++;
 					}
 					reverse(path.begin(), path.end());
 					if (path.size() > 0) path.erase(path.begin());
@@ -371,6 +376,11 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 					break;
 				}
 		}
+	}
+
+	//
+	if (stepIdx == stepsMax) {
+		Console::println("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
 	}
 
 	this->actorId = "";

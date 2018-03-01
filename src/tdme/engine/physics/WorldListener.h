@@ -36,7 +36,9 @@ struct tdme::engine::physics::WorldListener
 	 * Event fired when rigid body was removed
 	 * @param id
 	 * @param type id
+	 * @param obv
+	 * @param cbv
 	 */
-	virtual void onRemovedRigidBody(const string& id, int32_t typeId) = 0;
+	virtual void onRemovedRigidBody(const string& id, int32_t typeId, BoundingVolume* obv, BoundingVolume* cbv) = 0;
 
 };

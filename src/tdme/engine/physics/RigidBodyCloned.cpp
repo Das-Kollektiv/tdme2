@@ -36,10 +36,10 @@ RigidBodyCloned::RigidBodyCloned(World* world, const string& id, bool enabled, i
 	this->sleepingFrameCount = 0;
 	setMass(mass);
 	this->obv = obv;
-	if (isStatic_ == false) {
-		this->cbv = obv->clone();
-	} else {
+	if (isStatic_ == true) {
 		this->cbv = cbv;
+	} else {
+		this->cbv = obv->clone();
 	}
 	fromTransformations(transformations);
 }

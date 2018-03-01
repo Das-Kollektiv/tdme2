@@ -78,6 +78,8 @@ private:
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
 	vector<WorldListener*> worldListeners {  };
 
+	bool autoDispose { true };
+
 	/**
 	 * Do collision test between rigid bodies
 	 * @param rigid body 1
@@ -131,6 +133,17 @@ public:
 	 */
 	void setPartition(PhysicsPartition* partition);
 
+	/**
+	 * @return auto dispose, which flags if bounding volumes of rigid body will be deleted on removal
+	 */
+	bool getAutoDispose();
+
+	/**
+	 * Set auto dispose, which deletes rigid body bounding volumes on removal
+	 * @param auto dispose
+	 */
+	void setAutoDispose(bool autoDispose);
+
 	/** 
 	 * Add a rigid body
 	 * @param id
@@ -167,7 +180,7 @@ public:
 	 * Removes rigid body identified by id
 	 * @param id
 	 */
-	void removeRigidBody(const string& id);
+	bool removeRigidBody(const string& id);
 
 	/**
 	 * Update world
@@ -240,13 +253,6 @@ protected:
 	void synch(RigidBody* clonedRigidBody, RigidBody* rigidBody);
 
 public:
-
-	/** 
-	 * Updates given world with this world
-	 * Given world should be a clone of this world
-	 * @param world
-	 */
-	void synch(World* world);
 
 	/**
 	 * Add a world listener
