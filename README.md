@@ -176,7 +176,7 @@ TDME2
     - Other credits
         - Dominik Hepp
         - Mathias Wenzel
-        - Sergiu Cr��i��oiu
+        - Sergiu Crăiţoiu
         - Kolja Gumpert
         - others
        
