@@ -70,7 +70,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInit(&argc, argv);
 #if defined(__APPLE__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
+#elif ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	if (glewIsSupported("GL_VERSION_3_2") == true) {
 		glutInitContextVersion(3,2);
