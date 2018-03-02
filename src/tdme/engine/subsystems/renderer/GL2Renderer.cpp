@@ -2,7 +2,7 @@
 
 #if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif defined(_WIN32) or defined(__linux__)
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
 	#include <GL/glew.h>
 #endif
 

@@ -2,7 +2,7 @@
 
 #if defined(__APPLE__)
 	#include <OpenAL/al.h>
-#elif defined(__linux__) or defined(_WIN32)
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
 	#include <AL/al.h>
 #endif
 

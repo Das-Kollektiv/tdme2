@@ -16,6 +16,17 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 	EXTRA_LIBS ?= -Lext/fbx/lib/ -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
+else ifeq ($(OS), FreeBSD)
+	# FreeBSD
+	INCLUDES := $(INCLUDES) -I/usr/local/include
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
 else ifeq ($(OS), Linux)
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \

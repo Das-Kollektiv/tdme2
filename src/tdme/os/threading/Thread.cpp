@@ -20,6 +20,11 @@ Thread::~Thread() {
 }
 
 void Thread::sleep(const uint64_t milliseconds) {
+	// TODO: Check nanosleep from time.h
+	//	struct timespec time;
+	//	time.tv_sec = milliseconds / 1000;
+	//	time.tv_nsec = (milliseconds - (time.tv_sec * 1000)) * 1000000;
+	//	nanosleep(&time, &time);
 	uint64_t secondsWaited = 0L;
 	while (milliseconds - (secondsWaited * 1000L) >= 1000L) {
 		::sleep(1);

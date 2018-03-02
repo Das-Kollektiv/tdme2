@@ -1,4 +1,4 @@
-#if defined(__linux__)
+#if defined(__FreeBSD__) or defined(__linux__)
 	#if !defined(__arm__) and !defined(__aarch64__)
 		#include <GL/glew.h>
 	#endif
@@ -85,7 +85,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow((title).c_str());
-#if defined(_WIN32) or (defined(__linux__) and !defined(__arm__) and !defined(__aarch64__))
+#if defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__))
 	glewExperimental = true;
 	GLenum glewInitStatus = glewInit();
 	if (glewInitStatus != GLEW_OK) {
@@ -104,7 +104,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutMotionFunc(Application::glutOnMouseDragged);
 	glutPassiveMotionFunc(Application::glutOnMouseMoved);
 	glutMouseFunc(Application::glutOnMouseButton);
-#if defined(_WIN32) || defined(__linux__)
+#if defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
 	glutMouseWheelFunc(Application::glutOnMouseWheel);
 #endif
 	glutMainLoop();

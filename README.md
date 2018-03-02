@@ -155,6 +155,7 @@ TDME2
             - Windows/MINGW(port completed)
             - Linux(port completed)
             - Mac Os X(port completed)
+            - FreeBSD(port completed)
             - Android(port pending)
             - iOS(port pending)
 
@@ -175,7 +176,7 @@ TDME2
     - Other credits
         - Dominik Hepp
         - Mathias Wenzel
-        - Sergiu Crăiţoiu
+        - Sergiu Cr��i��oiu
         - Kolja Gumpert
         - others
        
