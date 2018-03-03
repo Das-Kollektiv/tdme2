@@ -133,6 +133,7 @@ TDME2
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
         - Build documentation
+        - A auto build environment (for Windows/AMD64 and Linux/AMD64 for nighly builds) 
         - A release plan
 
     - Technology
