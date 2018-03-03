@@ -513,7 +513,6 @@ EXT_VHACD_SRCS = \
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
-	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
