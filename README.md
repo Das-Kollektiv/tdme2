@@ -132,6 +132,8 @@ TDME2
         - GUI system port needs to be finished(Memory Management and other minor things)
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
+        - Build documentation
+        - A release plan
 
     - Technology
         - designed for simple multi threading
