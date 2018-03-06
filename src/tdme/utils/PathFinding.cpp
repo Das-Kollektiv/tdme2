@@ -364,7 +364,7 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 					int nodesCount = 0;
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
 						path.push_back(Vector3(node->x, node->y, node->z));
-						if (nodesCount % 100 == 0) {
+						if (nodesCount > 0 && nodesCount % 100 == 0) {
 							Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
 						}
 						nodesCount++;
