@@ -137,6 +137,14 @@ void LightingShader::initialize()
 		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
 		if (uniformNormalMatrix == -1)
 			return;
+
+		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
+		if (uniformEffectColorMul == -1)
+			return;
+
+		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
+		if (uniformEffectColorAdd == -1)
+			return;
 	} else {
 		uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
 		if (uniformProjectionMatrix == -1)
@@ -146,17 +154,6 @@ void LightingShader::initialize()
 	uniformSceneColor = renderer->getProgramUniformLocation(renderLightingProgramId, "sceneColor");
 	if (uniformSceneColor == -1)
 		return;
-
-	// color effects as uniforms only if not using instanced rendering
-	if (renderer->isInstancedRenderingAvailable() == false) {
-		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
-		if (uniformEffectColorMul == -1)
-			return;
-
-		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
-		if (uniformEffectColorAdd == -1)
-			return;
-	}
 
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
@@ -269,11 +266,11 @@ void LightingShader::updateEffect(GLRenderer* renderer)
 	if (isRunning == false) return;
 
 	// skip if using instanced rendering
-	if (renderer->isInstancedRenderingAvailable() == true) return;
-
-	//
-	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+	if (renderer->isInstancedRenderingAvailable() == false) {
+		//
+		renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
+		renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+	}
 }
 
 void LightingShader::updateMaterial(GLRenderer* renderer)
@@ -332,19 +329,18 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 	// skip if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		return;
+	} else {
+		// model view matrix
+		mvMatrix.set(renderer->getModelViewMatrix());
+		// object to screen matrix
+		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+		// normal matrix
+		normalMatrix.set(mvMatrix).invert().transpose();
+		// upload matrices
+		renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
 	}
-
-	// model view matrix
-	mvMatrix.set(renderer->getModelViewMatrix());
-	// object to screen matrix
-	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
-	// normal matrix
-	normalMatrix.set(mvMatrix).invert().transpose();
-	// upload matrices
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
 }
 
 void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)

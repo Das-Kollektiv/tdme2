@@ -640,6 +640,26 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						// skip to next object
 						continue;
 					}
+
+					// set up local -> world transformations matrix
+					Matrix4x4 modelViewMatrix2;
+					modelViewMatrix2.set(
+						(_object3DGroup->mesh->skinning == true ?
+							modelViewMatrix.identity() :
+							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+						).
+							multiply(object->getTransformationsMatrix()).
+							multiply(modelViewMatrixBackup)
+					);
+					// push mv, mvp to layouts
+					mvMatrices.push_back(modelViewMatrix2);
+
+					// set up effect color
+					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+						effectColorMuls.push_back(object->effectColorMul);
+						effectColorAdds.push_back(object->effectColorAdd);
+					}
+
 					// bind buffer base objects if not bound yet
 					auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
 					if (boundVBOBaseIds == nullptr) {
@@ -697,25 +717,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// set up local -> world transformations matrix
-					Matrix4x4 modelViewMatrix2;
-					modelViewMatrix2.set(
-						(_object3DGroup->mesh->skinning == true ?
-							modelViewMatrix.identity() :
-							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-						).
-							multiply(object->getTransformationsMatrix()).
-							multiply(modelViewMatrixBackup)
-					);
-					// push mv, mvp to layouts
-					mvMatrices.push_back(modelViewMatrix2);
-
-					// set up effect color
-					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-						effectColorMuls.push_back(object->effectColorMul);
-						effectColorAdds.push_back(object->effectColorAdd);
-					}
-
 					// do transformation start to shadow mapping
 					if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 						shadowMapping != nullptr) {
@@ -760,7 +761,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				}
 
 				// draw
-				Console::println("Rendering " + to_string(mvMatrices.size()));
 				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, mvMatrices.size());
 
 				// keep track of rendered faces
