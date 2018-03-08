@@ -542,6 +542,23 @@ void GL2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
+void GL2Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+}
+
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))

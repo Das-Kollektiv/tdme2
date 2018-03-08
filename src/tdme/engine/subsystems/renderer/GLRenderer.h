@@ -505,7 +505,33 @@ public:
 	virtual void bindBitangentsBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
-	 * Draw indexed triangles from buffer objects 
+	 * Bind model view matrices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindModelViewMatricesBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind effect color muls buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindEffectColorMulsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind effect color adds buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindEffectColorAddsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Draw instanced indexed triangles from buffer objects
+	 * @param triangles
+	 * @param triangles offset
+	 * @param instances
+	 */
+	virtual void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+
+	/**
+	 * Draw indexed triangles from buffer objects
 	 * @param triangles
 	 * @param triangles offset
 	 */

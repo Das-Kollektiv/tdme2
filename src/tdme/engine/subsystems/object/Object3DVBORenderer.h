@@ -47,6 +47,7 @@ private:
 	Engine* engine {  };
 	GLRenderer* renderer {  };
 
+	vector<int32_t>* vboInstancedRenderingIds {  };
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
@@ -87,6 +88,24 @@ private:
 	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/** 
+	 * Renders multiple objects of same type(with same model) not using instancing
+	 * @param engine
+	 * @param objects of same type/ with same models
+	 * @param collect render faces
+	 * @param render types
+	 */
+	void renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+
+	/**
+	 * Renders multiple objects of same type(with same model) using instancing
+	 * @param engine
+	 * @param objects of same type/ with same models
+	 * @param collect render faces
+	 * @param render types
+	 */
+	void renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+
+	/**
 	 * Set ups a material for rendering
 	 * @param object 3d group
 	 * @param faces entity idx

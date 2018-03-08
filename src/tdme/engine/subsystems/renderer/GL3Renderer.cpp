@@ -524,15 +524,42 @@ void GL3Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 void GL3Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0LL);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 16, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribDivisor(6, 1);
+}
+
+void GL3Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribDivisor(10, 1);
+}
+
+void GL3Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribDivisor(11, 1);
+}
+
+void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	#define BUFFER_OFFSET(i) ((void*)(i))
+	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL), instances);
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -558,6 +585,13 @@ void GL3Renderer::unbindBufferObjects()
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
 	glDisableVertexAttribArray(4);
+	glDisableVertexAttribArray(5);
+	glDisableVertexAttribArray(6);
+	glDisableVertexAttribArray(7);
+	glDisableVertexAttribArray(8);
+	glDisableVertexAttribArray(9);
+	glDisableVertexAttribArray(10);
+	glDisableVertexAttribArray(11);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }

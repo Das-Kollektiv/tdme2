@@ -519,6 +519,24 @@ void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
+void GLES2Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+}
+
+
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))

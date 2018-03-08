@@ -91,6 +91,10 @@ public:
 	void bindColorsBufferObject(int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(int32_t bufferObjectId) override;
+	void bindModelViewMatricesBufferObject(int32_t bufferObjectId) override;
+	void bindEffectColorMulsBufferObject(int32_t bufferObjectId) override;
+	void bindEffectColorAddsBufferObject(int32_t bufferObjectId) override;
+	void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) override;

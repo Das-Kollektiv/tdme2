@@ -121,29 +121,40 @@ void LightingShader::initialize()
 			return;
 
 	}
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
-	if (uniformMVPMatrix == -1)
-		return;
 
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvMatrix");
-	if (uniformMVMatrix == -1)
-		return;
+	// matrices as uniform only if not using instanced rendering
+	if (renderer->isInstancedRenderingAvailable() == false) {
+		uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
+		if (uniformMVPMatrix == -1)
+			return;
 
-	uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
-	if (uniformNormalMatrix == -1)
-		return;
+		uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvMatrix");
+		if (uniformMVMatrix == -1)
+			return;
+
+		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
+		if (uniformNormalMatrix == -1)
+			return;
+	} else {
+		uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
+		if (uniformProjectionMatrix == -1)
+			return;
+	}
 
 	uniformSceneColor = renderer->getProgramUniformLocation(renderLightingProgramId, "sceneColor");
 	if (uniformSceneColor == -1)
 		return;
 
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
-	if (uniformEffectColorMul == -1)
-		return;
+	// color effects as uniforms only if not using instanced rendering
+	if (renderer->isInstancedRenderingAvailable() == false) {
+		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
+		if (uniformEffectColorMul == -1)
+			return;
 
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
-	if (uniformEffectColorAdd == -1)
-		return;
+		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
+		if (uniformEffectColorAdd == -1)
+			return;
+	}
 
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
@@ -223,6 +234,9 @@ void LightingShader::useProgram()
 	isRunning = true;
 	renderer->useProgram(renderLightingProgramId);
 	// initialize static uniforms
+	if (renderer->isInstancedRenderingAvailable() == true) {
+		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+	}
 	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, TEXTUREUNIT_DIFFUSE);
 	if (renderer->isSpecularMappingAvailable() == true) {
 		renderer->setProgramUniformInteger(uniformSpecularTextureUnit, TEXTUREUNIT_SPECULAR);
@@ -250,9 +264,12 @@ void LightingShader::unUseProgram()
 void LightingShader::updateEffect(GLRenderer* renderer)
 {
 	// skip if not running
-	if (isRunning == false)
-		return;
+	if (isRunning == false) return;
 
+	// skip if using instanced rendering
+	if (renderer->isInstancedRenderingAvailable() == true) return;
+
+	//
 	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
 	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
 }
@@ -308,8 +325,10 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 void LightingShader::updateMatrices(GLRenderer* renderer)
 {
 	// skip if not running
-	if (isRunning == false)
-		return;
+	if (isRunning == false) return;
+
+	// skip if using instanced rendering
+	if (renderer->isInstancedRenderingAvailable() == true) return;
 
 	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());

@@ -98,6 +98,17 @@ public:
 		return this;
 	}
 
+	/**
+	 * Put float values into float buffer
+	 * @param values
+	 */
+	inline FloatBuffer* put(array<float, 16>& values) {
+		for (int i = 0; i < values.size(); i++) {
+			put(values[i]);
+		}
+		return this;
+	}
+
 public:
 	/**
 	 * Default constructor

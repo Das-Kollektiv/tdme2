@@ -15,6 +15,7 @@ using tdme::utils::ByteBuffer;
 class tdme::engine::subsystems::object::ObjectBuffer
 {
 	friend class Object3DGroupMesh;
+	friend class Object3DVBORenderer;
 
 private:
 	static ByteBuffer* byteBuffer;
