@@ -538,13 +538,20 @@ public:
 	virtual void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/** 
-	 * Draw triangles from buffer objects 
+	 * Draw instanced triangles from buffer objects
+	 * @param triangles
+	 * @param triangles offset
+	 */
+	virtual void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+
+	/** 
+	 * Draw triangles from buffer objects
 	 * @param triangles
 	 * @param triangles offset
 	 */
 	virtual void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
 
-	/** 
+	/**
 	 * Draw points from buffer objects 
 	 * @param points
 	 * @param points offset

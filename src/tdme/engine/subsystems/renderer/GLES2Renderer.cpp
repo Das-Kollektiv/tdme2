@@ -543,6 +543,10 @@ void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
 }
 
+void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
+}
+
 void GLES2Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);

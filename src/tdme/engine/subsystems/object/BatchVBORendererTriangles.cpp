@@ -8,6 +8,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
+#include <tdme/engine/subsystems/object/ObjectBuffer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
 
@@ -21,6 +22,7 @@ using tdme::engine::Engine;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::object::ObjectBuffer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
@@ -68,7 +70,7 @@ void BatchVBORendererTriangles::initialize()
 {
 	// initialize if not yet done
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 3);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 6);
 		vboIds = vboManaged->getVBOGlIds();
 	}
 }
@@ -92,8 +94,39 @@ void BatchVBORendererTriangles::render()
 	renderer->bindNormalsBufferObject((*vboIds)[1]);
 	// bind texture coordinates
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[2]);
-	// draw
-	renderer->drawTrianglesFromBufferObjects(triangles, 0);
+	// handle instanced rendering
+	//	TODO: check if to move somewhere else
+	if (renderer->isInstancedRenderingAvailable() == true) {
+		// upload model view matrices
+		{
+			FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(16 * sizeof(float))->asFloatBuffer();
+			fbMvMatrices.put(renderer->getModelViewMatrix().getArray());
+			renderer->uploadBufferObject((*vboIds)[3], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+			renderer->bindModelViewMatricesBufferObject((*vboIds)[3]);
+		}
+
+		// upload effect color mul
+		{
+			FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(1 * 4 * sizeof(float))->asFloatBuffer();
+			fbEffectColorMuls.put(renderer->effectColorMul);
+			renderer->uploadBufferObject((*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+			renderer->bindEffectColorMulsBufferObject((*vboIds)[4]);
+		}
+
+		// upload effect color add
+		{
+			FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(1 * 4 * sizeof(float))->asFloatBuffer();
+			fbEffectColorAdds.put(renderer->effectColorAdd);
+			renderer->uploadBufferObject((*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+			renderer->bindEffectColorAddsBufferObject((*vboIds)[5]);
+		}
+
+		// draw
+		renderer->drawInstancedTrianglesFromBufferObjects(triangles, 0, 1);
+	} else {
+		// draw
+		renderer->drawTrianglesFromBufferObjects(triangles, 0);
+	}
 }
 
 void BatchVBORendererTriangles::dispose()

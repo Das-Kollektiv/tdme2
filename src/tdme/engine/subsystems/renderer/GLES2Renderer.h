@@ -96,6 +96,7 @@ public:
 	void bindEffectColorAddsBufferObject(int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
+	void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects() override;

@@ -16,6 +16,7 @@ class tdme::engine::subsystems::object::ObjectBuffer
 {
 	friend class Object3DGroupMesh;
 	friend class Object3DVBORenderer;
+	friend class BatchVBORendererTriangles;
 
 private:
 	static ByteBuffer* byteBuffer;

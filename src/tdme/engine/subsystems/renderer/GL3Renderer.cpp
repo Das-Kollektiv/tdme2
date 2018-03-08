@@ -578,6 +578,10 @@ void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
 }
 
+void GL3Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
+}
+
 void GL3Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
