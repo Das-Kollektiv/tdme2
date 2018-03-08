@@ -118,6 +118,10 @@ bool GLES2Renderer::isDisplacementMappingAvailable()
 	return false;
 }
 
+bool GLES2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
 int32_t GLES2Renderer::getTextureUnits()
 {
 	return -1;

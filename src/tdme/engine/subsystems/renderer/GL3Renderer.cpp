@@ -127,6 +127,10 @@ bool GL3Renderer::isDisplacementMappingAvailable()
 	return false;
 }
 
+bool GL3Renderer::isInstancedRenderingAvailable() {
+	return true;
+}
+
 int32_t GL3Renderer::getTextureUnits()
 {
 	return -1;

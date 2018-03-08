@@ -118,6 +118,12 @@ public:
 	virtual bool isDisplacementMappingAvailable() = 0;
 
 	/** 
+	 * Checks if instanced rendering is available
+	 * @return instance rendering availability
+	 */
+	virtual bool isInstancedRenderingAvailable() = 0;
+
+	/**
 	 * @return number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;

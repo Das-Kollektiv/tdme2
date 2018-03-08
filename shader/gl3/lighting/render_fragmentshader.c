@@ -41,10 +41,6 @@
 
 #version 330
 
-precision highp float;
-precision highp int;
-precision highp sampler2D;
-
 #define FALSE		0
 #define MAX_LIGHTS	8
 
@@ -74,8 +70,6 @@ uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
 uniform vec4 sceneColor;
-uniform vec4 effectColorMul;
-uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
@@ -96,7 +90,10 @@ in vec3 vsPosition;
 in vec3 vsNormal;
 in vec3 vsTangent;
 in vec3 vsBitangent;
+in vec4 vsEffectColorMul;
+in vec4 vsEffectColorAdd;
 
+// out
 out vec4 outColor;
 
 vec4 fragColor;
@@ -190,13 +187,13 @@ void main (void) {
 	computeLights(normal, vsPosition);
 
 	// take effect colors into account
-	fragColor = fragColor * effectColorMul;
-	fragColor.a = material.diffuse.a * effectColorMul.a;
+	fragColor = fragColor * vsEffectColorMul;
+	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
 
 	//
 	if (diffuseTextureAvailable == 1) {
-		outColor = clamp((effectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
+		outColor = clamp((vsEffectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
 	} else {
-		outColor = clamp(effectColorAdd + fragColor, 0.0, 1.0);
+		outColor = clamp(vsEffectColorAdd + fragColor, 0.0, 1.0);
 	}
 }

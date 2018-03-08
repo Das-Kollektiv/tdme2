@@ -135,6 +135,10 @@ bool GL2Renderer::isDisplacementMappingAvailable()
 	return false;
 }
 
+bool GL2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
 int32_t GL2Renderer::getTextureUnits()
 {
 	return -1;

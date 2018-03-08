@@ -41,10 +41,6 @@
 
 #version 330
 
-precision highp float;
-precision highp int;
-precision highp sampler2D;
-
 // standard layouts
 layout (location = 0) in vec3 inVertex;
 layout (location = 1) in vec3 inNormal;
@@ -54,15 +50,18 @@ layout (location = 2) in vec2 inTextureUV;
 layout (location = 7) in vec3 inTangent;
 layout (location = 8) in vec3 inBitangent;
 
+// indexed rendering
+layout (location = 12) in mat4 inMvpMatrix;
+layout (location = 16) in mat4 inMvMatrix;
+layout (location = 20) in mat4 inNormalMatrix;
+layout (location = 24) in vec4 inEffectColorMul;
+layout (location = 25) in vec4 inEffectColorAdd;
+
 // uniforms
 uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
 
 uniform int normalTextureAvailable;
-
-uniform mat4 mvpMatrix;
-uniform mat4 mvMatrix;
-uniform mat4 normalMatrix;
 
 // will be passed to fragment shader
 out vec2 vsFragTextureUV;
@@ -70,6 +69,8 @@ out vec3 vsPosition;
 out vec3 vsNormal;
 out vec3 vsTangent;
 out vec3 vsBitangent;
+out vec4 vsEffectColorMul;
+out vec4 vsEffectColorAdd;
 
 void main(void) {
 	// pass texture uv to fragment shader
@@ -85,20 +86,23 @@ void main(void) {
 		*/
 	}
 
-	//
-	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+	// vertices, normals
+	gl_Position = inMvpMatrix * vec4(inVertex, 1.0);
 
-	// Eye-coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
+	// eye coordinate position of vertex, needed in various calculations
+	vec4 vsPosition4 = inMvMatrix * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// compute the normal
-	vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+	vsNormal = normalize(vec3(inNormalMatrix * vec4(inNormal, 0.0)));
 
-	//
+	// normal texture
 	if (normalTextureAvailable == 1) {
-		vsTangent = normalize(vec3(normalMatrix * vec4(inTangent, 0.0)));
-		vsBitangent = normalize(vec3(normalMatrix * vec4(inBitangent, 0.0)));
+		vsTangent = normalize(vec3(inNormalMatrix * vec4(inTangent, 0.0)));
+		vsBitangent = normalize(vec3(inNormalMatrix * vec4(inBitangent, 0.0)));
 	}
 
+	// effect colors
+	vsEffectColorMul = inEffectColorMul;
+	vsEffectColorAdd = inEffectColorAdd;
 }
