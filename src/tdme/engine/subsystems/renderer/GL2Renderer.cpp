@@ -532,21 +532,6 @@ void GL2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glColorPointer(4, GL_FLOAT, 0, 0LL);
 }
 
-void GL2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesJointsBufferObject()::not implemented yet"));
-}
-
-void GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject()::not implemented yet"));
-}
-
-void GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject()::not implemented yet"));
-}
-
 void GL2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	Console::println(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));

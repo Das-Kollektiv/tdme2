@@ -481,24 +481,6 @@ public:
 	virtual void bindVerticesBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
-	 * Bind skinning vertices joints buffer object
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
-	 * Bind skinning vertices vertex joints idx buffer object
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
-	 * Bind skinning
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
 	 * Bind normals buffer object
 	 * @param buffer object id
 	 */

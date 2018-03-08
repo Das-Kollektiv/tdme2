@@ -47,15 +47,16 @@ layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTextureUV;
 
 // normal mapping
-layout (location = 7) in vec3 inTangent;
-layout (location = 8) in vec3 inBitangent;
+layout (location = 3) in vec3 inTangent;
+layout (location = 4) in vec3 inBitangent;
 
 // indexed rendering
-layout (location = 12) in mat4 inMvpMatrix;
-layout (location = 16) in mat4 inMvMatrix;
-layout (location = 20) in mat4 inNormalMatrix;
-layout (location = 24) in vec4 inEffectColorMul;
-layout (location = 25) in vec4 inEffectColorAdd;
+layout (location = 5) in mat4 inMvpMatrix;
+layout (location = 9) in mat4 inMvMatrix;
+
+// effect colors
+layout (location = 13) in vec4 inEffectColorMul;
+layout (location = 14) in vec4 inEffectColorAdd;
 
 // uniforms
 uniform sampler2D displacementTextureUnit;
@@ -73,8 +74,10 @@ out vec4 vsEffectColorMul;
 out vec4 vsEffectColorAdd;
 
 void main(void) {
-	// pass texture uv to fragment shader
+	// pass to fragment shader
 	vsFragTextureUV = inTextureUV;
+	vsEffectColorMul = inEffectColorMul;
+	vsEffectColorAdd = inEffectColorAdd;
 
 	// compute gl position
 	if (displacementTextureAvailable == 1) {
@@ -93,16 +96,15 @@ void main(void) {
 	vec4 vsPosition4 = inMvMatrix * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
+	// normal matrix
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(inMvMatrix))));
+
 	// compute the normal
-	vsNormal = normalize(vec3(inNormalMatrix * vec4(inNormal, 0.0)));
+	vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 
 	// normal texture
 	if (normalTextureAvailable == 1) {
-		vsTangent = normalize(vec3(inNormalMatrix * vec4(inTangent, 0.0)));
-		vsBitangent = normalize(vec3(inNormalMatrix * vec4(inBitangent, 0.0)));
+		vsTangent = normalize(vec3(normalMatrix * vec4(inTangent, 0.0)));
+		vsBitangent = normalize(vec3(normalMatrix * vec4(inBitangent, 0.0)));
 	}
-
-	// effect colors
-	vsEffectColorMul = inEffectColorMul;
-	vsEffectColorAdd = inEffectColorAdd;
 }

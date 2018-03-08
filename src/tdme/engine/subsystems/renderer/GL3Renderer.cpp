@@ -521,39 +521,18 @@ void GL3Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, false, 0, 0LL);
-}
-
-void GL3Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, false, 0, 0LL);
-}
-
-void GL3Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, false, 0, 0LL);
-}
-
 void GL3Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(7, 3, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(8, 3, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -579,10 +558,6 @@ void GL3Renderer::unbindBufferObjects()
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
 	glDisableVertexAttribArray(4);
-	glDisableVertexAttribArray(5);
-	glDisableVertexAttribArray(6);
-	glDisableVertexAttribArray(7);
-	glDisableVertexAttribArray(8);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }

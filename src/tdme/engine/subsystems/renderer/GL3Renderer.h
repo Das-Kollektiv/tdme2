@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -93,9 +92,6 @@ public:
 	void bindVerticesBufferObject(int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int32_t bufferObjectId) override;
 	void bindColorsBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(int32_t bufferObjectId) override;
 	void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;

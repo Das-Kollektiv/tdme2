@@ -509,27 +509,6 @@ void GLES2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, false, 0, 0LL);
-}
-
 void GLES2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	Console::println("GLES2Renderer::bindTangentsBufferObject()::not implemented");
