@@ -338,7 +338,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
-	vector<int32_t>* boundSkinningIds = nullptr;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
@@ -403,18 +402,18 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				}
 			}
 			// draw this faces entity for each object
+			bool materialUpdateOnly = false;
 			auto objectCount = objects.size();
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 				auto object = objects.at(objectIdx);
 				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
+
 				// set up material on first object
-				if (objectIdx == 0) {
-					// set up material
-					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes);
-				} else {
-					// only set up textures
-					Object3DGroup::setupTextures(renderer, _object3DGroup, faceEntityIdx);
-				}
+				string materialKey;
+				setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
+				// only update materials for next calls
+				materialUpdateOnly = true;
+
 				//	check transparency via effect
 				if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON || object->effectColorAdd.getAlpha() < -Math::EPSILON) {
 					// add to transparent render faces, if requested
@@ -516,19 +515,20 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
 	Matrix4x4 modelViewMatrixBackup(renderer->getModelViewMatrix());
+	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	vector<Object3D*> objectsToRender = objects;
+	// store layouts
+	vector<Matrix4x4> mvMatrixArray;
+	vector<Color4> effectColorMulArray;
+	vector<Color4> effectColorAddArray;
+	//	objects
+	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
-
-	// store
-	vector<Matrix4x4> mvMatrices;
-	vector<Color4> effectColorMuls;
-	vector<Color4> effectColorAdds;
 
 	{
 		// do pre render steps
-		for (auto object: objectsToRender) {
+		for (auto object: objects) {
 			for (auto j = 0; j < object->object3dGroups.size(); j++) {
 				auto object3DGroup = object->object3dGroups[j];
 				object3DGroup->renderer->preRender(this);
@@ -536,101 +536,98 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 		}
 	}
 
-	{
-		//
-		auto shadowMapping = engine->getShadowMapping();
-		Matrix4x4 modelViewMatrix;
-		// render faces entities
-		auto firstObject = objectsToRender.at(0);
-		// all objects share the same object 3d group structure, so we just take the first one
-		for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
-			auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
-			// render each faces entity
-			auto facesEntities = object3DGroup->group->getFacesEntities();
-			auto faceIdx = 0;
-			auto facesEntityIdxCount = facesEntities->size();
-			for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-				auto facesEntity = &(*facesEntities)[faceEntityIdx];
-				auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-				auto faces = facesEntity->getFaces()->size();
-				// material
-				auto material = facesEntity->getMaterial();
-				// determine if transparent
-				auto transparentFacesEntity = false;
-				//	via material
-				if (material != nullptr) {
-					if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
-					if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-						renderer->disableCulling();
+	//
+	auto shadowMapping = engine->getShadowMapping();
+
+	// render faces entities
+	auto firstObject = objects.at(0);
+
+	// all objects share the same object 3d group structure, so we just take the first one
+	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
+		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
+		// render each faces entity
+		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto faceIdx = 0;
+		auto facesEntityIdxCount = facesEntities->size();
+		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
+			auto facesEntity = &(*facesEntities)[faceEntityIdx];
+			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
+			auto faces = facesEntity->getFaces()->size();
+			// material
+			auto material = facesEntity->getMaterial();
+			// determine if transparent
+			auto transparentFacesEntity = false;
+			//	via material
+			if (material != nullptr) {
+				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
+				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+					renderer->disableCulling();
+				}
+			}
+			// skip, if requested
+			if (transparentFacesEntity == true) {
+				// add to transparent render faces, if requested
+				auto objectCount = objects.size();
+				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
+					auto object = objects.at(objectIdx);
+					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
+					// set up textures
+					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
+					// set up transparent render faces
+					if (collectTransparentFaces == true) {
+						transparentRenderFacesPool->createTransparentRenderFaces(
+							(_object3DGroup->mesh->skinning == true ?
+								modelViewMatrixTemp.identity() :
+								modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
+							).
+								multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
+								object->object3dGroups[object3DGroupIdx],
+								faceEntityIdx,
+								faceIdx
+							);
 					}
 				}
-				// skip, if requested
-				if (transparentFacesEntity == true) {
-					// add to transparent render faces, if requested
-					auto objectCount = objectsToRender.size();
-					for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-						auto object = objectsToRender.at(objectIdx);
-						auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
-						// set up textures
-						Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
-						// set up transparent render faces
-						if (collectTransparentFaces == true) {
-							transparentRenderFacesPool->createTransparentRenderFaces(
-								(_object3DGroup->mesh->skinning == true ?
-									modelViewMatrix.identity() :
-									modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-								).
-									multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
-									object->object3dGroups[object3DGroupIdx],
-									faceEntityIdx,
-									faceIdx
-								);
-						}
-					}
-					// keep track of rendered faces
-					faceIdx += faces;
-					// skip to next entity
-					continue;
+				// keep track of rendered faces
+				faceIdx += faces;
+				// skip to next entity
+				continue;
+			}
+			// optional texture coordinates
+			if (isTextureCoordinatesAvailable == true) {
+				// enable texturing client state if not yet done
+				if (renderer->renderingTexturingClientState == false) {
+					renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
+					renderer->renderingTexturingClientState = true;
 				}
-				// optional texture coordinates
-				if (isTextureCoordinatesAvailable == true) {
-					// enable texturing client state if not yet done
-					if (renderer->renderingTexturingClientState == false) {
-						renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-						renderer->renderingTexturingClientState = true;
-					}
-				} else {
-					// disable texturing client state if not yet done
-					if (renderer->renderingTexturingClientState == true) {
-						renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-						renderer->renderingTexturingClientState = false;
-					}
+			} else {
+				// disable texturing client state if not yet done
+				if (renderer->renderingTexturingClientState == true) {
+					renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
+					renderer->renderingTexturingClientState = false;
 				}
-				// draw this faces entity for each object
+			}
+
+			// draw this faces entity for each object
+			objectsToRender = objects;
+			do {
 				auto currentFrontFace = -1;
+				string materialKey;
+				bool materialUpdateOnly = false;
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
-				vector<int32_t>* boundSkinningIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objectsToRender.at(objectIdx);
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
-					// set up material on first object
-					if (objectIdx == 0) {
-						// set up material
-						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes);
-					} else {
-						// only set up textures
-						Object3DGroup::setupTextures(renderer, _object3DGroup, faceEntityIdx);
-					}
+
 					//	check transparency via effect
 					if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON || object->effectColorAdd.getAlpha() < -Math::EPSILON) {
 						// add to transparent render faces, if requested
 						if (collectTransparentFaces == true) {
 							transparentRenderFacesPool->createTransparentRenderFaces(
 								(_object3DGroup->mesh->skinning == true ?
-									modelViewMatrix.identity() :
-									modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+									modelViewMatrixTemp.identity() :
+									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
 								).multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
 								_object3DGroup,
 								faceEntityIdx,
@@ -641,46 +638,49 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// set up local -> world transformations matrix
-					Matrix4x4 modelViewMatrix2;
-					modelViewMatrix2.set(
-						(_object3DGroup->mesh->skinning == true ?
-							modelViewMatrix.identity() :
-							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-						).
-							multiply(object->getTransformationsMatrix()).
-							multiply(modelViewMatrixBackup)
-					);
-					// push mv, mvp to layouts
-					mvMatrices.push_back(modelViewMatrix2);
+					// set up material on first object
+					string materialKeyCurrent;
+					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+					// only update material for next material calls
+					materialUpdateOnly = true;
+
+					// check if material key has not been set yet
+					if (materialKey.size() == 0) {
+						materialKey = materialKeyCurrent;
+					} else
+					// otherwise check if it did change
+					if (materialKey != materialKeyCurrent) {
+						objectsNotRendered.push_back(object);
+						continue;
+					}
 
 					// set up effect color
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-						effectColorMuls.push_back(object->effectColorMul);
-						effectColorAdds.push_back(object->effectColorAdd);
+						effectColorMulArray.push_back(object->effectColorMul);
+						effectColorAddArray.push_back(object->effectColorAdd);
 					}
 
 					// bind buffer base objects if not bound yet
-					auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
+					auto currentVBOBaseIds = _object3DGroup->renderer->vboBaseIds;
 					if (boundVBOBaseIds == nullptr) {
-						boundVBOBaseIds = currentVBOGlIds;
+						boundVBOBaseIds = currentVBOBaseIds;
 						//	texture coordinates
 						if (isTextureCoordinatesAvailable == true &&
 							(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 							((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
-							renderer->bindTextureCoordinatesBufferObject((*currentVBOGlIds)[3]);
+							renderer->bindTextureCoordinatesBufferObject((*currentVBOBaseIds)[3]);
 						}
 						// 	indices
-						renderer->bindIndicesBufferObject((*currentVBOGlIds)[0]);
+						renderer->bindIndicesBufferObject((*currentVBOBaseIds)[0]);
 						// 	vertices
-						renderer->bindVerticesBufferObject((*currentVBOGlIds)[1]);
+						renderer->bindVerticesBufferObject((*currentVBOBaseIds)[1]);
 						// 	normals
 						if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) {
-							renderer->bindNormalsBufferObject((*currentVBOGlIds)[2]);
+							renderer->bindNormalsBufferObject((*currentVBOBaseIds)[2]);
 						}
 					} else
 					// check if buffers did change, then skip and render in next step
-					if (boundVBOBaseIds != currentVBOGlIds) {
+					if (boundVBOBaseIds != currentVBOBaseIds) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -704,6 +704,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						}
 					}
 
+					// set up local -> world transformations matrix
+					modelViewMatrix.set(
+						(_object3DGroup->mesh->skinning == true ?
+							modelViewMatrixTemp.identity() :
+							modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
+						).
+							multiply(object->getTransformationsMatrix()).
+							multiply(modelViewMatrixBackup)
+					);
+
 					// set up front face
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if not yet done
@@ -717,13 +727,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
+					// push mv, mvp to layouts
+					mvMatrixArray.push_back(modelViewMatrix);
+
 					// do transformation start to shadow mapping
 					if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 						shadowMapping != nullptr) {
 						shadowMapping->startObjectTransformations(
 							(_object3DGroup->mesh->skinning == true ?
-								modelViewMatrix.identity() :
-								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
+								modelViewMatrixTemp.identity() :
+								modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
 							).multiply(object->getTransformationsMatrix()));
 					}
 
@@ -738,52 +751,51 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 				// upload model view matrices
 				{
-					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(mvMatrices.size() * 16 * sizeof(float))->asFloatBuffer();
-					for (auto& mvMatrix: mvMatrices) fbMvMatrices.put(mvMatrix.getArray());
+					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(mvMatrixArray.size() * 16 * sizeof(float))->asFloatBuffer();
+					for (auto& mvMatrix: mvMatrixArray) fbMvMatrices.put(mvMatrix.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
 					renderer->bindModelViewMatricesBufferObject((*vboInstancedRenderingIds)[0]);
 				}
 
 				// upload effect color mul
 				{
-					FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(effectColorMuls.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorMul: effectColorMuls) fbEffectColorMuls.put(effectColorMul.getArray());
+					FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(effectColorMulArray.size() * 4 * sizeof(float))->asFloatBuffer();
+					for (auto& effectColorMul: effectColorMulArray) fbEffectColorMuls.put(effectColorMul.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
 				}
 
 				// upload effect color add
 				{
-					FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(effectColorAdds.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorAdd: effectColorAdds) fbEffectColorAdds.put(effectColorAdd.getArray());
+					FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(effectColorAddArray.size() * 4 * sizeof(float))->asFloatBuffer();
+					for (auto& effectColorAdd: effectColorAddArray) fbEffectColorAdds.put(effectColorAdd.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 					renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
 				}
 
 				// draw
-				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, mvMatrices.size());
-
-				// keep track of rendered faces
-				faceIdx += faces;
-				if (material != nullptr) {
-					if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-						renderer->enableCulling();
-					}
-				}
+				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, mvMatrixArray.size());
 
 				// reset layouts
-				mvMatrices.clear();
-				effectColorMuls.clear();
-				effectColorAdds.clear();
+				mvMatrixArray.clear();
+				effectColorMulArray.clear();
+				effectColorAddArray.clear();
+
+				// set up next objects to render
+				objectsToRender = objectsNotRendered;
+				// clear list of objects we did not render
+				objectsNotRendered.clear();
+			} while (objectsToRender.size() > 0);
+
+			// keep track of rendered faces
+			faceIdx += faces;
+			if (material != nullptr) {
+				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+					renderer->enableCulling();
+				}
 			}
 		}
-
-		// prepare to render remaining objects
-		objectsToRender = objectsNotRendered;
-		// clean up objects that have not been rendered
-		objectsNotRendered.clear();
-
-	} while (false);// objectsToRender.size() > 0);
+	}
 
 	// unbind buffers
 	renderer->unbindBufferObjects();
@@ -791,25 +803,52 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	renderer->getModelViewMatrix().set(modelViewMatrixBackup);
 }
 
-void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes)
+void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
 	// get material or use default
-	if (material == nullptr)
-		material = Material::getDefaultMaterial();
+	if (material == nullptr) material = Material::getDefaultMaterial();
+
+	// material key
+	materialKey = material->getId();
+
 	// setup textures
 	Object3DGroup::setupTextures(renderer, object3DGroup, facesEntityIdx);
-	// apply materials
-	if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-		renderer->setMaterialAmbient(material->getAmbientColor().getArray());
-		renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
-		renderer->setMaterialSpecular(material->getSpecularColor().getArray());
-		renderer->setMaterialEmission(material->getEmissionColor().getArray());
-		renderer->setMaterialShininess(material->getShininess());
-		renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
-		renderer->onUpdateMaterial();
+
+	//
+	if (updateOnly == false) {
+		// apply materials
+		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
+			renderer->setMaterialAmbient(material->getAmbientColor().getArray());
+			renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
+			renderer->setMaterialSpecular(material->getSpecularColor().getArray());
+			renderer->setMaterialEmission(material->getEmissionColor().getArray());
+			renderer->setMaterialShininess(material->getShininess());
+			renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
+			renderer->onUpdateMaterial();
+		}
+		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
+			// bind specular texture
+			if (renderer->isSpecularMappingAvailable() == true) {
+				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
+				renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
+			}
+			// bind displacement texture
+			if (renderer->isDisplacementMappingAvailable() == true) {
+				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
+				renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
+			}
+			// bind normal texture
+			if (renderer->isNormalMappingAvailable() == true) {
+				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
+				renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
+			}
+			// switch back texture unit to diffuse unit
+			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+		}
 	}
+
 	// bind diffuse texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
@@ -817,28 +856,11 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 		renderer->onUpdateMaterial();
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			material->hasDiffuseTextureMaskedTransparency() == true) {
+			auto diffuseTextureId = object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
+			materialKey+= "," + to_string(diffuseTextureId);
 			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
-			renderer->bindTexture(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx]);
+			renderer->bindTexture(diffuseTextureId);
 		}
-	}
-	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
-		// bind specular texture
-		if (renderer->isSpecularMappingAvailable() == true) {
-			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
-			renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
-		}
-		// bind displacement texture
-		if (renderer->isDisplacementMappingAvailable() == true) {
-			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
-			renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
-		}
-		// bind normal texture
-		if (renderer->isNormalMappingAvailable() == true) {
-			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
-			renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
-		}
-		// switch back texture unit to diffuse unit
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 	}
 }
 

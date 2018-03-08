@@ -110,8 +110,10 @@ private:
 	 * @param object 3d group
 	 * @param faces entity idx
 	 * @param render types
+	 * @param update only, means material has been set up already, only do changes
+	 * @param material key
 	 */
-	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes);
+	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey);
 
 	/** 
 	 * Clear material for rendering
@@ -167,6 +169,7 @@ public:
 	 * @param objects
 	 * @param render transparent faces
 	 * @param render types
+	 * @param material key
 	 */
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 

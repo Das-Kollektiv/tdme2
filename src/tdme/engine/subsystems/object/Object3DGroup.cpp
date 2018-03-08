@@ -87,7 +87,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 				group->getId() +
 				":" +
 				to_string(animationProcessingTarget);
-			if (animated == true && (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
+			if (group->getSkinning() != nullptr || (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
 				object3DGroup->id =
 					object3DGroup->id +
 					":" +

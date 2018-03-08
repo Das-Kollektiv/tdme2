@@ -109,7 +109,8 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	renderer->setEffectColorAdd(effectColorAdd.getArray());
 	renderer->onUpdateEffect();
 	// material
-	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL);
+	string materialKey;
+	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
