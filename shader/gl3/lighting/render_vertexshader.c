@@ -48,7 +48,7 @@ layout (location = 2) in vec2 inTextureUV;
 
 // normal mapping
 layout (location = 4) in vec3 inTangent;
-layout (location = 6) in vec3 inBitangent;
+layout (location = 5) in vec3 inBitangent;
 
 // indexed rendering
 layout (location = 6) in mat4 inMvMatrix;
@@ -87,7 +87,7 @@ void main(void) {
 	}
 
 	// vertices, normals
-	gl_Position = (inMvMatrix * projectionMatrix) * vec4(inVertex, 1.0);
+	gl_Position = (projectionMatrix * inMvMatrix) * vec4(inVertex, 1.0);
 
 	// eye coordinate position of vertex, needed in various calculations
 	vec4 vsPosition4 = inMvMatrix * vec4(inVertex, 1.0);

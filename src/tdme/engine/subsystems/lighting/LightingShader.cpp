@@ -7,6 +7,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utils/Console.h>
 
 using std::copy;
 using std::begin;
@@ -19,6 +20,7 @@ using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
+using tdme::utils::Console;
 
 LightingShader::LightingShader(GLRenderer* renderer) 
 {
@@ -328,7 +330,10 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 	if (isRunning == false) return;
 
 	// skip if using instanced rendering
-	if (renderer->isInstancedRenderingAvailable() == true) return;
+	if (renderer->isInstancedRenderingAvailable() == true) {
+		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		return;
+	}
 
 	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());

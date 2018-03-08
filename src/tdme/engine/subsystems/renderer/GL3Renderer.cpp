@@ -538,8 +538,14 @@ void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 void GL3Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 16, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(6, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(0 * 4 * sizeof(float)));
+	glVertexAttribPointer(7, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(1 * 4 * sizeof(float)));
+	glVertexAttribPointer(8, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(2 * 4 * sizeof(float)));
+	glVertexAttribPointer(9, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(3 * 4 * sizeof(float)));
 	glVertexAttribDivisor(6, 1);
+	glVertexAttribDivisor(7, 1);
+	glVertexAttribDivisor(8, 1);
+	glVertexAttribDivisor(9, 1);
 }
 
 void GL3Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
@@ -560,6 +566,7 @@ void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangl
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL), instances);
+	checkGLError();
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)

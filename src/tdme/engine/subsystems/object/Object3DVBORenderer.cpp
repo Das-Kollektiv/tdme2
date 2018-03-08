@@ -698,7 +698,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					}
 
 					// set up local -> world transformations matrix
-					modelViewMatrix.set(
+					Matrix4x4 modelViewMatrix2;
+					modelViewMatrix2.set(
 						(_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
 							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
@@ -707,7 +708,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 							multiply(modelViewMatrixBackup)
 					);
 					// push mv, mvp to layouts
-					mvMatrices.push_back(modelViewMatrix);
+					mvMatrices.push_back(modelViewMatrix2);
 
 					// set up effect color
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
@@ -759,6 +760,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				}
 
 				// draw
+				Console::println("Rendering " + to_string(mvMatrices.size()));
 				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, mvMatrices.size());
 
 				// keep track of rendered faces
@@ -781,7 +783,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 		// clean up objects that have not been rendered
 		objectsNotRendered.clear();
 
-	} while(objectsToRender.size() > 0);
+	} while (false);// objectsToRender.size() > 0);
 
 	// unbind buffers
 	renderer->unbindBufferObjects();
