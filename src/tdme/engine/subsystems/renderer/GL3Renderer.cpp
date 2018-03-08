@@ -82,7 +82,7 @@ void GL3Renderer::initialize()
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
-	#if defined(_WIN32) or defined(__linux__)
+	#if defined(_WIN32) or defined(__linux__) or defined(__FreeBSD__)
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -140,7 +140,6 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
-	checkGLError();
 	// exit if no handle returned
 	if (handle == 0) return 0;
 
@@ -569,7 +568,6 @@ void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangl
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL), instances);
-	checkGLError();
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)

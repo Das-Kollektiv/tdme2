@@ -918,8 +918,8 @@ const string Object3DVBORenderer::createPseKey(Color4& effectColorAdd, Color4& e
 
 void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visiblePses)
 {
-	if (visiblePses.size() == 0)
-		return;
+	if (visiblePses.size() == 0) return;
+
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -988,8 +988,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		pseTransparentRenderPointsPool->reset();
 	}
 	renderer->disableBlending();
-	if (depthBuffer == false)
-		renderer->enableDepthBuffer();
+	if (depthBuffer == false) renderer->enableDepthBuffer();
 	// restore gl state
 	renderer->unbindBufferObjects();
 	renderer->enableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
