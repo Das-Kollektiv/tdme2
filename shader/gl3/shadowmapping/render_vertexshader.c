@@ -1,19 +1,19 @@
 #version 330
 
-precision highp float;
-precision highp int;
-precision highp sampler2D;
-
 // based on http://fabiensanglard.net/shadowmapping/index.php, modified by me
 
+// standard layouts
 layout (location = 0) in vec3 inVertex;
 layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTextureUV;
 
+// indexed rendering
+layout (location = 6) in mat4 inModelMatrix;
+
+// uniforms
+uniform mat4 projectionMatrix;
+uniform mat4 cameraMatrix;
 uniform mat4 depthBiasMVPMatrix;
-uniform mat4 mvpMatrix;
-uniform mat4 mvMatrix;
-uniform mat4 normalMatrix;
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 
@@ -28,17 +28,20 @@ void main() {
 	vsFragTextureUV = inTextureUV;
 
 	// shadow coord
-	vsShadowCoord = depthBiasMVPMatrix * vec4(inVertex, 1.0);
+	vsShadowCoord = (depthBiasMVPMatrix * inModelMatrix) * vec4(inVertex, 1.0);
 	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;
+
+	// normal matrix
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix))));
 
 	// shadow intensity 
 	vec3 normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	vsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normal)), 0.0, 1.0);
 
-	// Eye-coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
+	// eye coordinate position of vertex, needed in various calculations
+	vec4 vsPosition4 = (cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// compute gl position
-	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
 }

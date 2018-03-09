@@ -87,6 +87,11 @@ private:
 	 */
 	void updateDepthBiasMVPMatrix();
 
+	/**
+	 * @return depth bias mvp matrix
+	 */
+	const Matrix4x4& getDepthBiasMVPMatrix();
+
 public:
 
 	/**

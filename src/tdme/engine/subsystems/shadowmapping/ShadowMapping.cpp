@@ -162,6 +162,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		shader->setProgramLightConstantAttenuation(light->getConstantAttenuation());
 		shader->setProgramLightLinearAttenuation(light->getLinearAttenuation());
 		shader->setProgramLightQuadraticAttenuation(light->getQuadraticAttenuation());
+		shader->setProgramViewMatrices();
 		// set up texture pixel dimensions in shader
 		shader->setProgramTexturePixelDimensions(
 			1.0f / static_cast< float >(shadowMap->getWidth()),
@@ -220,12 +221,13 @@ void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
-	// retrieve current model view matrix and put it on stack
+    // retrieve current model view matrix and put it on stack
 	Matrix4x4 tmpMatrix;
 	shadowTransformationsMatrix.set(depthBiasMVPMatrix);
 	// set up new model view matrix
 	tmpMatrix.set(depthBiasMVPMatrix);
 	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
+
 	//
 	updateDepthBiasMVPMatrix();
 }
@@ -240,8 +242,7 @@ void ShadowMapping::endObjectTransformations()
 
 void ShadowMapping::updateMatrices(GLRenderer* renderer)
 {
-	if (runState == ShadowMapping_RunState::NONE)
-		return;
+	if (runState == ShadowMapping_RunState::NONE) return;
 
 	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());
@@ -254,7 +255,7 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(mvpMatrix);
+				Engine::getShadowMappingShaderPre()->updateMatrices(mvpMatrix);
 				goto end_switch0;;
 			}
 		} else
@@ -268,7 +269,7 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 			}
 		} else {
 			{
-				Console::println(string("ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_string(runState)));
+				Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 				goto end_switch0;;
 			}
 		}

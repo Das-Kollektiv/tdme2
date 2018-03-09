@@ -534,7 +534,7 @@ void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	glVertexAttribPointer(5, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
 	glEnableVertexAttribArray(7);

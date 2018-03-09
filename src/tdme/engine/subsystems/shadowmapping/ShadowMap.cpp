@@ -155,3 +155,7 @@ void ShadowMap::updateDepthBiasMVPMatrix()
 {
 	shadowMapping->updateDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }
+
+const Matrix4x4& ShadowMap::getDepthBiasMVPMatrix() {
+	return depthBiasMVPMatrix;
+}

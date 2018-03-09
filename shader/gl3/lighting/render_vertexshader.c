@@ -51,12 +51,13 @@ layout (location = 4) in vec3 inTangent;
 layout (location = 5) in vec3 inBitangent;
 
 // indexed rendering
-layout (location = 6) in mat4 inMvMatrix;
+layout (location = 6) in mat4 inModelMatrix;
 layout (location = 10) in vec4 inEffectColorMul;
 layout (location = 11) in vec4 inEffectColorAdd;
 
 // uniforms
 uniform mat4 projectionMatrix;
+uniform mat4 cameraMatrix;
 uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
 uniform int normalTextureAvailable;
@@ -87,14 +88,14 @@ void main(void) {
 	}
 
 	// vertices, normals
-	gl_Position = (projectionMatrix * inMvMatrix) * vec4(inVertex, 1.0);
+	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
 
 	// eye coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = inMvMatrix * vec4(inVertex, 1.0);
+	vec4 vsPosition4 = (cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// normal matrix
-	mat4 normalMatrix = mat4(transpose(inverse(mat3(inMvMatrix))));
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix))));
 
 	// compute the normal
 	vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));

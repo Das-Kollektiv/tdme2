@@ -519,7 +519,7 @@ void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
-void GLES2Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
 	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 

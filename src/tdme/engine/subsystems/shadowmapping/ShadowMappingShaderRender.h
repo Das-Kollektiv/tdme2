@@ -28,6 +28,8 @@ private:
 	int32_t renderUniformTexturePixelWidth { -1 };
 	int32_t renderUniformTexturePixelHeight { -1 };
 	int32_t renderUniformDepthBiasMVPMatrix { -1 };
+	int32_t renderUniformProjectionMatrix { -1 };
+	int32_t renderUniformCameraMatrix { -1 };
 	int32_t renderUniformMVMatrix { -1 };
 	int32_t renderUniformMVPMatrix { -1 };
 	int32_t renderUniformNormalMatrix { -1 };
@@ -77,6 +79,11 @@ public:
 	void setProgramTexturePixelDimensions(float width, float height);
 
 	/** 
+	 * Set up program projection and camera matrix
+	 */
+	void setProgramViewMatrices();
+
+	/**
 	 * Set up program model view matrix
 	 * @param model view matrix
 	 */

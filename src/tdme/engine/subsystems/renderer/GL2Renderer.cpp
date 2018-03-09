@@ -542,7 +542,7 @@ void GL2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindModelViewMatricesBufferObject(int32_t bufferObjectId) {
+void GL2Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
 	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 

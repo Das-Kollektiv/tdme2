@@ -38,6 +38,12 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32
 	this->fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
 	this->fbNormals = (fbNormalsByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
 	this->fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float)))->asFloatBuffer();
+	this->fbModelMatrices = (fbModelMatricesByteBuffer = ByteBuffer::allocate(1 * 16 * sizeof(float)))->asFloatBuffer();
+	this->fbModelMatrices.put(Matrix4x4().identity().getArray());
+	this->fbEffectColorMuls = (fbEffectColorMulsByteBuffer = ByteBuffer::allocate(1 * 4 * sizeof(float)))->asFloatBuffer();
+	this->fbEffectColorMuls.put(Color4(1.0f, 1.0f, 1.0f, 1.0f).getArray());
+	this->fbEffectColorAdds = (fbEffectColorAddsByteBuffer = ByteBuffer::allocate(1 * 4 * sizeof(float)))->asFloatBuffer();
+	this->fbEffectColorAdds.put(Color4(0.0f, 0.0f, 0.0f, 0.0f).getArray());
 }
 
 BatchVBORendererTriangles::~BatchVBORendererTriangles()
@@ -45,6 +51,9 @@ BatchVBORendererTriangles::~BatchVBORendererTriangles()
 	delete fbVerticesByteBuffer;
 	delete fbNormalsByteBuffer;
 	delete fbTextureCoordinatesByteBuffer;
+	delete fbModelMatricesByteBuffer;
+	delete fbEffectColorMulsByteBuffer;
+	delete fbEffectColorAddsByteBuffer;
 }
 
 bool BatchVBORendererTriangles::isAcquired()
@@ -97,29 +106,12 @@ void BatchVBORendererTriangles::render()
 	// handle instanced rendering
 	//	TODO: check if to move somewhere else
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		// upload model view matrices
-		{
-			FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(16 * sizeof(float))->asFloatBuffer();
-			fbMvMatrices.put(renderer->getModelViewMatrix().getArray());
-			renderer->uploadBufferObject((*vboIds)[3], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-			renderer->bindModelViewMatricesBufferObject((*vboIds)[3]);
-		}
-
-		// upload effect color mul
-		{
-			FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(1 * 4 * sizeof(float))->asFloatBuffer();
-			fbEffectColorMuls.put(renderer->effectColorMul);
-			renderer->uploadBufferObject((*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-			renderer->bindEffectColorMulsBufferObject((*vboIds)[4]);
-		}
-
-		// upload effect color add
-		{
-			FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(1 * 4 * sizeof(float))->asFloatBuffer();
-			fbEffectColorAdds.put(renderer->effectColorAdd);
-			renderer->uploadBufferObject((*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-			renderer->bindEffectColorAddsBufferObject((*vboIds)[5]);
-		}
+		renderer->uploadBufferObject((*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
+		renderer->bindModelMatricesBufferObject((*vboIds)[3]);
+		renderer->uploadBufferObject((*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+		renderer->bindEffectColorMulsBufferObject((*vboIds)[4]);
+		renderer->uploadBufferObject((*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+		renderer->bindEffectColorAddsBufferObject((*vboIds)[5]);
 
 		// draw
 		renderer->drawInstancedTrianglesFromBufferObjects(triangles, 0, 1);

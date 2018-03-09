@@ -405,7 +405,7 @@ void Engine::initialize(bool debug)
 			renderer = new EngineGL2Renderer(this);
 		}
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		shadowMappingEnabled = false;
+		shadowMappingEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}

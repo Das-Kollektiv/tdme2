@@ -505,10 +505,10 @@ public:
 	virtual void bindBitangentsBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
-	 * Bind model view matrices buffer object
+	 * Bind model matrices buffer object
 	 * @param buffer object id
 	 */
-	virtual void bindModelViewMatricesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindModelMatricesBufferObject(int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind effect color muls buffer object

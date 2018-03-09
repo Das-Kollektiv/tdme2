@@ -12,6 +12,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Console.h>
 
@@ -49,6 +50,7 @@ private:
 
 	Color4 effectColorAdd {  };
 	Color4 effectColorMul {  };
+	Matrix4x4 modelMatrix {  };
 
 	Material* material {  };
 	bool textureCoordinates {  };
@@ -113,7 +115,7 @@ private:
 		batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
 	}
 
-	/** 
+	/**
 	 * Render this transparent render faces group
 	 * @param renderer
 	 */

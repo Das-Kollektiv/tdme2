@@ -111,9 +111,6 @@ void TransparentRenderFacesGroup::render(GLRenderer* renderer)
 	// material
 	string materialKey;
 	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
-	// model view matrix
-	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix();
 	// render, reset
 	for (auto batchVBORendererTriangles: batchVBORenderers) {
 		batchVBORendererTriangles->render();

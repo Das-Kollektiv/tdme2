@@ -243,7 +243,11 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	if (object3DGroup->mesh->skinning == true) {
 		modelViewMatrix.identity();
 	} else {
-		modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix()).multiply(renderer->getModelViewMatrix());
+		if (renderer->isInstancedRenderingAvailable() == true) {
+			modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix());
+		} else {
+			modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
+		}
 	}
 	//
 	auto model = object3DGroup->object->getModel();
@@ -281,7 +285,6 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
 			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
-		// add face vertices
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(
@@ -330,8 +333,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
-	Matrix4x4 modelViewMatrixBackup;
-	modelViewMatrixBackup.set(renderer->getModelViewMatrix());
+	Matrix4x4 cameraMatrix;
+	cameraMatrix.set(renderer->getModelViewMatrix());
 	// render faces entities
 	auto currentFrontFace = -1;
 	auto firstObject = objects.at(0);
@@ -375,7 +378,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 								modelViewMatrix.identity() :
 								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
 							).
-								multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
+								multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
 								object->object3dGroups[object3DGroupIdx],
 								faceEntityIdx,
 								faceIdx
@@ -422,7 +425,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 							(_object3DGroup->mesh->skinning == true ?
 								modelViewMatrix.identity() :
 								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-							).multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
+							).multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
 							_object3DGroup,
 							faceEntityIdx,
 							faceIdx
@@ -464,7 +467,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 						modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
 					).
 						multiply(object->getTransformationsMatrix()).
-						multiply(modelViewMatrixBackup)
+						multiply(cameraMatrix)
 				);
 				renderer->onUpdateModelViewMatrix();
 				// set up front face
@@ -508,20 +511,21 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	// unbind buffers
 	renderer->unbindBufferObjects();
 	// restore model view matrix / view matrix
-	renderer->getModelViewMatrix().set(modelViewMatrixBackup);
+	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
 
 void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
-	Matrix4x4 modelViewMatrixBackup(renderer->getModelViewMatrix());
+	Matrix4x4 cameraMatrix(renderer->getModelViewMatrix());
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
 	// store layouts
-	vector<Matrix4x4> mvMatrixArray;
+	vector<Matrix4x4> modelMatrixArray;
 	vector<Color4> effectColorMulArray;
 	vector<Color4> effectColorAddArray;
+
 	//	objects
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
@@ -580,7 +584,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 								modelViewMatrixTemp.identity() :
 								modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
 							).
-								multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
+								multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
 								object->object3dGroups[object3DGroupIdx],
 								faceEntityIdx,
 								faceIdx
@@ -628,7 +632,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 								(_object3DGroup->mesh->skinning == true ?
 									modelViewMatrixTemp.identity() :
 									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-								).multiply(object->getTransformationsMatrix()).multiply(modelViewMatrixBackup),
+								).multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
 								_object3DGroup,
 								faceEntityIdx,
 								faceIdx
@@ -652,12 +656,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					if (materialKey != materialKeyCurrent) {
 						objectsNotRendered.push_back(object);
 						continue;
-					}
-
-					// set up effect color
-					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-						effectColorMulArray.push_back(object->effectColorMul);
-						effectColorAddArray.push_back(object->effectColorAdd);
 					}
 
 					// bind buffer base objects if not bound yet
@@ -710,8 +708,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 							modelViewMatrixTemp.identity() :
 							modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
 						).
-							multiply(object->getTransformationsMatrix()).
-							multiply(modelViewMatrixBackup)
+							multiply(object->getTransformationsMatrix())
 					);
 
 					// set up front face
@@ -727,46 +724,32 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
+					// set up effect color
+					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+						effectColorMulArray.push_back(object->effectColorMul);
+						effectColorAddArray.push_back(object->effectColorAdd);
+					}
+
 					// push mv, mvp to layouts
-					mvMatrixArray.push_back(modelViewMatrix);
-
-					// do transformation start to shadow mapping
-					if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
-						shadowMapping != nullptr) {
-						shadowMapping->startObjectTransformations(
-							(_object3DGroup->mesh->skinning == true ?
-								modelViewMatrixTemp.identity() :
-								modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-							).multiply(object->getTransformationsMatrix()));
-					}
-
-					// TODO: Rendering was here
-
-					// do transformations end to shadow mapping
-					if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
-						shadowMapping != nullptr) {
-						shadowMapping->endObjectTransformations();
-					}
+					modelMatrixArray.push_back(modelViewMatrix);
 				}
 
 				// upload model view matrices
 				{
-					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(mvMatrixArray.size() * 16 * sizeof(float))->asFloatBuffer();
-					for (auto& mvMatrix: mvMatrixArray) fbMvMatrices.put(mvMatrix.getArray());
+					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(modelMatrixArray.size() * 16 * sizeof(float))->asFloatBuffer();
+					for (auto& mvMatrix: modelMatrixArray) fbMvMatrices.put(mvMatrix.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-					renderer->bindModelViewMatricesBufferObject((*vboInstancedRenderingIds)[0]);
+					renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
 				}
 
-				// upload effect color mul
-				{
+				// upload effects
+				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+					// upload effect color mul
 					FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(effectColorMulArray.size() * 4 * sizeof(float))->asFloatBuffer();
 					for (auto& effectColorMul: effectColorMulArray) fbEffectColorMuls.put(effectColorMul.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
-				}
-
-				// upload effect color add
-				{
+					// upload effect color add
 					FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(effectColorAddArray.size() * 4 * sizeof(float))->asFloatBuffer();
 					for (auto& effectColorAdd: effectColorAddArray) fbEffectColorAdds.put(effectColorAdd.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
@@ -774,10 +757,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				}
 
 				// draw
-				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, mvMatrixArray.size());
+				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, modelMatrixArray.size());
 
 				// reset layouts
-				mvMatrixArray.clear();
+				modelMatrixArray.clear();
 				effectColorMulArray.clear();
 				effectColorAddArray.clear();
 
@@ -800,7 +783,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	// unbind buffers
 	renderer->unbindBufferObjects();
 	// restore model view matrix / view matrix
-	renderer->getModelViewMatrix().set(modelViewMatrixBackup);
+	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
 void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey)
