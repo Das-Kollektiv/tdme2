@@ -106,6 +106,10 @@ void BatchVBORendererTriangles::render()
 	// handle instanced rendering
 	//	TODO: check if to move somewhere else
 	if (renderer->isInstancedRenderingAvailable() == true) {
+		fbEffectColorMuls.clear();
+		fbEffectColorMuls.put(renderer->effectColorMul);
+		fbEffectColorAdds.clear();
+		fbEffectColorAdds.put(renderer->effectColorAdd);
 		renderer->uploadBufferObject((*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
 		renderer->bindModelMatricesBufferObject((*vboIds)[3]);
 		renderer->uploadBufferObject((*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
