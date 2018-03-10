@@ -625,7 +625,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 					//	check transparency via effect
-					if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON || object->effectColorAdd.getAlpha() < -Math::EPSILON) {
+					if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON ||
+						object->effectColorAdd.getAlpha() < -Math::EPSILON) {
 						// add to transparent render faces, if requested
 						if (collectTransparentFaces == true) {
 							transparentRenderFacesPool->createTransparentRenderFaces(

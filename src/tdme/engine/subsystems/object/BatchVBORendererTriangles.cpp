@@ -87,8 +87,7 @@ void BatchVBORendererTriangles::initialize()
 void BatchVBORendererTriangles::render()
 {
 	// skip if no vertex data exists
-	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0)
-		return;
+	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0) return;
 	// determine triangles count
 	auto triangles = fbVertices.getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
 	// upload vertices
