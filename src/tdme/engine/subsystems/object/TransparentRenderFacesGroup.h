@@ -50,7 +50,6 @@ private:
 
 	Color4 effectColorAdd {  };
 	Color4 effectColorMul {  };
-	Matrix4x4 modelMatrix {  };
 
 	Material* material {  };
 	bool textureCoordinates {  };

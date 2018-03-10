@@ -184,6 +184,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			visibleObjects,
 			false,
 			Object3DVBORenderer::RENDERTYPE_NORMALS |
+			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
 			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DVBORenderer::RENDERTYPE_SHADOWMAPPING
@@ -334,6 +335,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
+
 	// upload
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }

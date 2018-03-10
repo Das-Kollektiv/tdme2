@@ -74,7 +74,6 @@ private:
 				Console::println(string("TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
 				break;
 			}
-			// TODO: take camera matrix into account
 			// set up face
 			auto faceVertexIndices = (*faces)[i].getVertexIndices();
 			tmpVector3.set(0.0f, 0.0f, 0.0f);

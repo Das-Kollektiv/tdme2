@@ -143,13 +143,13 @@ void ShadowMappingShaderRender::setProgramMVMatrix(const Matrix4x4& mvMatrix)
 
 void ShadowMappingShaderRender::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
 {
-	if (renderer->isInstancedRenderingAvailable() == true) return
+	if (renderer->isInstancedRenderingAvailable() == true) return;
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVPMatrix, mvpMatrix.getArray());
 }
 
 void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMatrix)
 {
-	if (renderer->isInstancedRenderingAvailable() == true) return
+	if (renderer->isInstancedRenderingAvailable() == true) return;
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
