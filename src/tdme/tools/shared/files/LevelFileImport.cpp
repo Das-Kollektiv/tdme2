@@ -12,7 +12,7 @@
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/UpVector.h>
-#include <tdme/engine/subsystems/object/ModelStatistics.h>
+#include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -47,7 +47,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
-using tdme::engine::subsystems::object::ModelStatistics;
+using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;

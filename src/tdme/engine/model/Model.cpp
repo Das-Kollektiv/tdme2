@@ -12,7 +12,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/object/Object3DModelInternal.h>
+#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::map;
@@ -28,7 +28,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::Object3DModelInternal;
+using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 
 string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";

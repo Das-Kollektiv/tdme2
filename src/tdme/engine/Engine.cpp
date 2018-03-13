@@ -29,8 +29,8 @@
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -78,8 +78,8 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::object::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::renderer::GLRenderer;

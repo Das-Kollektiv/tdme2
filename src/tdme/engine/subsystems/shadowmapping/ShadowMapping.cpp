@@ -5,7 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
@@ -22,7 +22,7 @@ using std::to_string;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;

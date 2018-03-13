@@ -13,7 +13,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
@@ -41,7 +41,7 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
@@ -68,13 +68,13 @@ class tdme::engine::Engine final
 	friend class Object3D;
 	friend class ObjectParticleSystemEntity;
 	friend class PointsParticleSystemEntity;
-	friend class tdme::engine::subsystems::object::BatchVBORendererPoints;
-	friend class tdme::engine::subsystems::object::BatchVBORendererTriangles;
-	friend class tdme::engine::subsystems::object::Object3DBase;
-	friend class tdme::engine::subsystems::object::Object3DGroup;
-	friend class tdme::engine::subsystems::object::Object3DGroupVBORenderer;
-	friend class tdme::engine::subsystems::object::Object3DVBORenderer;
-	friend class tdme::engine::subsystems::object::Object3DInternal;
+	friend class tdme::engine::subsystems::rendering::BatchVBORendererPoints;
+	friend class tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+	friend class tdme::engine::subsystems::rendering::Object3DBase;
+	friend class tdme::engine::subsystems::rendering::Object3DGroup;
+	friend class tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+	friend class tdme::engine::subsystems::rendering::Object3DVBORenderer;
+	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
 	friend class tdme::gui::GUI;

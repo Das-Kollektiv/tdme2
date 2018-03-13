@@ -10,12 +10,12 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/Object3DInternal.h>
+#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/Entity.h>
 
 using std::string;
 
-using tdme::engine::subsystems::object::Object3DInternal;
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;

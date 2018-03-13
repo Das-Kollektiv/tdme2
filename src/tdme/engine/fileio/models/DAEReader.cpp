@@ -42,7 +42,7 @@
 #include <tdme/utils/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
-#include "../../subsystems/object/ModelStatistics.h"
+#include "../../subsystems/rendering/ModelStatistics.h"
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
@@ -76,7 +76,7 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::object::ModelStatistics;
+using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;

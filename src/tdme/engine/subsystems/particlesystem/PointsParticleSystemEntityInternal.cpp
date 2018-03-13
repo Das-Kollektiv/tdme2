@@ -11,7 +11,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/object/TransparentRenderPointsPool.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
@@ -32,7 +32,7 @@ using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::TransparentRenderPointsPool;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;

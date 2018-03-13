@@ -9,7 +9,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -24,7 +24,7 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::TransparentRenderPointsPool;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;

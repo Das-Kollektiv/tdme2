@@ -2,9 +2,9 @@
 
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/Object3DModelInternal.h>
+#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 
-using tdme::engine::subsystems::object::Object3DModelInternal;
+using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::engine::model::Model;
 
 
