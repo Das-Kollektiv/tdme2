@@ -183,6 +183,10 @@ bool RigidBody::isSleeping()
 	return isSleeping_;
 }
 
+void RigidBody::setSleeping(bool sleeping) {
+	this->isSleeping_ = sleeping;
+}
+
 const Transformations& RigidBody::getTransformations()
 {
 	return transformations;

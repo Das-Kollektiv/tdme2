@@ -217,20 +217,55 @@ public:
 		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]);
 	}
 
+	/**
+	 * Compute Euler angles (rotation around x, y, z axes)
+	 * @param vector to test
+	 * @param euler angles
+	 */
+	inline Vector3& computeEulerAngles(Vector3& euler) const {
+		if (computeLength() < Math::EPSILON) {
+			return euler.set(0.0f, 0.0f, 0.0f);
+		}
+		Vector3 a(*this);
+		a.normalize();
+		// test around x axis
+		{
+			auto b = Vector3(0.0f, 1.0f, 0.0f);
+			auto n = Vector3(1.0f, 0.0f, 0.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setX(angle);
+		}
+		// test around y axis
+		{
+			auto b = Vector3(0.0f, 0.0f, -1.0f);
+			auto n = Vector3(0.0f, 1.0f, 0.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setY(angle);
+		}
+		// test around z axis
+		{
+			auto b = Vector3(0.0f, 1.0f, 0.0f);
+			auto n = Vector3(0.0f, 0.0f, 1.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setZ(angle);
+		}
+		return euler;
+	}
+
 	/** 
 	 * Computes angle between a and b from 0..180
-	 * @param vector a, must be normalized
-	 * @param vector b, must be normalized
+	 * @param vector a, vector to test, must be normalized
+	 * @param vector b, vector to test against, must be normalized
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b) {
 		return 180.0 / Math::PI * Math::acos(Vector3::computeDotProduct(a, b));
 	}
 
-	/** 
-	 * Computes angle between a and b 
-	 * @param vector a, must be normalized
-	 * @param vector b, must be normalized
+	/**
+	 * Computes angle between a and b
+	 * @param vector a, vector to test, must be normalized
+	 * @param vector b, vector to test against, must be normalized
 	 * @param plane normal n where a and b live in, must be normalized
 	 * @return
 	 */
@@ -242,7 +277,7 @@ public:
 		return std::fmod(((angle * sign) + 360.0f), 360.0f);
 	}
 
-	/** 
+	/**
 	 * Normalize the vector
 	 * @return this vector
 	 */

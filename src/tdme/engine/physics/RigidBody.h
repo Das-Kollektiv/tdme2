@@ -301,6 +301,12 @@ public:
 	bool isSleeping();
 
 	/** 
+	 * Set sleeping
+	 * @param sleeping
+	 */
+	void setSleeping(bool sleeping);
+
+	/**
 	 * @return transformations
 	 */
 	const Transformations& getTransformations();
