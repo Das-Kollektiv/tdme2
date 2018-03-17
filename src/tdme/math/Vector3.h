@@ -219,12 +219,12 @@ public:
 
 	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @param vector to test
 	 * @param euler angles
+	 * @return if euler angles have been generated
 	 */
-	inline Vector3& computeEulerAngles(Vector3& euler) const {
+	inline bool computeEulerAngles(Vector3& euler) const {
 		if (computeLength() < Math::EPSILON) {
-			return euler.set(0.0f, 0.0f, 0.0f);
+			return false;
 		}
 		Vector3 a(*this);
 		a.normalize();
@@ -249,7 +249,7 @@ public:
 			auto angle = Vector3::computeAngle(a, b, n);
 			euler.setZ(angle);
 		}
-		return euler;
+		return true;
 	}
 
 	/** 
@@ -405,7 +405,7 @@ public:
 	/** 
 	 * Compares this vector with given vector
 	 * @param vector v
-	 * @param tolerance
+	 * @param tolerance per component(x, y, z)
 	 * @return equality
 	 */
 	inline bool equals(const Vector3& v, float tolerance) const {

@@ -351,9 +351,11 @@ void RigidBody::update(float deltaTime)
 		return;
 
 	// check if to put object into sleep
-	if (linearVelocity.computeLength() < LINEARVELOCITY_SLEEPTOLERANCE && angularVelocity.computeLength() < ANGULARVELOCITY_SLEEPTOLERANCE) {
+	float frameRateFactor = deltaTime / (1.0 / 60.0f);
+	if (linearVelocity.computeLength() < LINEARVELOCITY_SLEEPTOLERANCE * frameRateFactor &&
+		angularVelocity.computeLength() < ANGULARVELOCITY_SLEEPTOLERANCE * frameRateFactor) {
 		sleepingFrameCount++;
-		if (sleepingFrameCount >= SLEEPING_FRAMES) {
+		if (sleepingFrameCount * frameRateFactor >= SLEEPING_FRAMES) {
 			sleep();
 		}
 	} else {
