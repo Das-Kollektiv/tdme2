@@ -136,9 +136,14 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 {
 	try {
 		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");
+		if (FileSystem::getInstance()->isPath(this->cwd) == false) {
+			this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
+		}
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::show(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::print(string(exception.what()));
+		Console::println(": using cwd!");
+		this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	}
 	this->captionText = captionText;
 	this->extensions = *extensions;
