@@ -41,7 +41,7 @@ class tdme::engine::physics::PhysicsPartitionOctTree final
 	friend class PhysicsPartitionOctTree_PartitionTreeNode;
 
 private:
-	static constexpr float PARTITION_SIZE_MIN { 16.0f };
+	static constexpr float PARTITION_SIZE_MIN { 4.0f };
 	static constexpr float PARTITION_SIZE_MAX { 64.0f };
 
 	VectorIteratorMultiple<RigidBody*> rigidBodyIterator {  };
