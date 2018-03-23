@@ -547,8 +547,7 @@ private:
 	 * @param collision
 	 */
 	inline static void checkCollision(CollisionResponse* collision) {
-		auto& normalXYZ = collision->getNormal()->getArray();
-		if (Float::isNaN(normalXYZ[0]) == true || Float::isNaN(normalXYZ[1]) == true || Float::isNaN(normalXYZ[2]) == true) {
+		if (collision->getNormal()->hasNaN() == true) {
 			Console::println(string("CollisionDetection::checkCollision(): BROKEN NORMAL"));
 		}
 	}

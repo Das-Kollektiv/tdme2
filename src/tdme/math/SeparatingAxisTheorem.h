@@ -36,11 +36,11 @@ public:
 	inline static bool checkAxis(const Vector3& axis) {
 		auto& axisXYZ = axis.getArray();
 		// return if axis contains NaN component
-		if (Float::isNaN(axisXYZ[0]) || Float::isNaN(axisXYZ[1]) || Float::isNaN(axisXYZ[2])) {
+		if (axis.hasNaN() == true) {
 			return false;
 		}
 		// check if axis has no length
-		if (Math::abs(axisXYZ[0]) < Math::EPSILON && Math::abs(axisXYZ[1]) < Math::EPSILON && Math::abs(axisXYZ[2]) < Math::EPSILON) {
+		if (axis.computeLengthSquared() < Math::EPSILON) {
 			return false;
 		}
 		// valid

@@ -171,6 +171,24 @@ public:
 		return *this;
 	}
 
+	/**
+	 * Array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline float& operator[](int i) {
+    		return data[i];
+    }
+
+	/**
+	 * Const array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline const float& operator[](int i) const {
+    		return data[i];
+    }
+
 	/** 
 	 * @return vector as array
 	 */
@@ -275,6 +293,26 @@ public:
 		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b, c)));
 		if (Float::isNaN(sign) == true) sign = 1.0f;
 		return std::fmod(((angle * sign) + 360.0f), 360.0f);
+	}
+
+	/**
+	 * Compute the cross product of vector v1 and v2
+	 * @param v1
+	 * @param v2
+	 * @param destination vector
+	 * @return destination vector
+	 */
+	inline Vector3& abs() {
+		#if defined(SIMD_ENABLED)
+			simdpp::float32<4> vXYZ0 = simdpp::load_u(data.data());
+			simdpp::float32<4> avXYZ0 = simdpp::abs(vXYZ0);
+			simdpp::store(data.data(), avXYZ0);
+		#else
+			data[0] = Math::abs(data[0]);
+			data[1] = Math::abs(data[1]);
+			data[2] = Math::abs(data[2]);
+		#endif
+		return *this;
 	}
 
 	/**
@@ -400,6 +438,29 @@ public:
 	 */
 	inline bool equals(const Vector3& v) const {
 		return equals(v, Math::EPSILON);
+	}
+
+	/**
+	 * Check if given vector has NaN value
+	 */
+	inline bool hasNaN() const {
+		#if defined(SIMD_ENABLED)
+			int zeroValue = 0;
+			simdpp::float32<4> vXYZ0 = simdpp::load_u(data.data());
+			simdpp::mask_float32<4> nXYZ0 = simdpp::isnan(vXYZ0);
+			simdpp::int32<4> cXYZ0 = simdpp::load_splat(&zeroValue);
+			auto isNan = nXYZ0 == cXYZ0;
+			return
+				isNan[0] != 0 &&
+				isNan[1] != 0 &&
+				isNan[2] != 0 &&
+				isNan[3] != 0;
+		#else
+			return
+				Float::isNaN(data[0]) == true ||
+				Float::isNaN(data[1]) == true ||
+				Float::isNaN(data[2]);
+		#endif
 	}
 
 	/** 

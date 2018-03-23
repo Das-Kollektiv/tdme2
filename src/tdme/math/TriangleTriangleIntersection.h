@@ -44,7 +44,12 @@ private:
 	 * @param Ay
 	 * @return
 	 */
-	inline static bool EDGE_EDGE_TEST(array<float, 3>& V0, array<float, 3>& U0, array<float, 3>& U1, int32_t i0, int32_t i1, float Ax, float Ay) {
+	inline static bool EDGE_EDGE_TEST(
+		const Vector3& V0,
+		const Vector3& U0,
+		const Vector3& U1,
+		int32_t i0, int32_t i1,
+		float Ax, float Ay) {
 		float Bx, By, Cx, Cy, e, d, f;
 		Bx = U0[i0] - U1[i0];
 		By = U0[i1] - U1[i1];
@@ -79,7 +84,13 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool EDGE_AGAINST_TRI_EDGES(array<float, 3>& V0, array<float, 3>& V1, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2, int32_t i0, int32_t i1) {
+	static bool EDGE_AGAINST_TRI_EDGES(
+		const Vector3& V0,
+		const Vector3& V1,
+		const Vector3&  U0,
+		const Vector3&  U1,
+		const Vector3&  U2,
+		int32_t i0, int32_t i1) {
 		float Ax, Ay;
 		Ax = V1[i0] - V0[i0];
 		Ay = V1[i1] - V0[i1];
@@ -106,7 +117,12 @@ private:
 	 * @param i1
 	 * @return
 	 */
-	static bool POINT_IN_TRI(array<float, 3>& V0, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2, int32_t i0, int32_t i1) {
+	static bool POINT_IN_TRI(
+		const Vector3& V0,
+		const Vector3& U0,
+		const Vector3& U1,
+		const Vector3& U2,
+		int32_t i0, int32_t i1) {
 		float a, b, c, d0, d1, d2;
 		a = U1[i1] - U0[i1];
 		b = -(U1[i0] - U0[i0]);
@@ -140,12 +156,17 @@ private:
 	 * @param U2
 	 * @return
 	 */
-	static bool coplanar_tri_tri(array<float, 3>& N, array<float, 3>& V0, array<float, 3>& V1, array<float, 3>& V2, array<float, 3>& U0, array<float, 3>& U1, array<float, 3>& U2) {
+	static bool coplanar_tri_tri(
+		const Vector3& N,
+		const Vector3& V0,
+		const Vector3& V1,
+		const Vector3& V2,
+		const Vector3& U0,
+		const Vector3& U1,
+		const Vector3& U2) {
 		int32_t i0, i1;
-		array<float, 3> A;
-		A[0] = Math::abs(N[0]);
-		A[1] = Math::abs(N[1]);
-		A[2] = Math::abs(N[2]);
+		Vector3 A;
+		A.set(N).abs();
 		if (A[0] > A[1]) {
 			if (A[0] > A[2]) {
 				i0 = 1;
@@ -203,12 +224,12 @@ private:
 	static void isect2(const Vector3& VTX0, const Vector3& VTX1, const Vector3& VTX2, float VV0, float VV1, float VV2, float D0, float D1, float D2, Vector2& isect0, int32_t isect0Idx, Vector2& isect1, int32_t isect1Idx, Vector3& isectpoint0, Vector3& isectpoint1) {
 		Vector3 diff;
 		auto tmp = D0 / (D0 - D1);
-		isect0.getArray()[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
+		isect0[isect0Idx] = VV0 + (VV1 - VV0) * tmp;
 		diff.set(VTX1).sub(VTX0);
 		diff.scale(tmp);
 		isectpoint0.set(diff).add(VTX0);
 		tmp = D0 / (D0 - D2);
-		isect1.getArray()[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
+		isect1[isect1Idx] = VV0 + (VV2 - VV0) * tmp;
 		diff.set(VTX2).sub(VTX0);
 		diff.scale(tmp);
 		isectpoint1.set(VTX0).add(diff);
@@ -256,7 +277,7 @@ private:
 	 * @param values
 	 * @return smallest value index
 	 */
-	static int32_t SORT2(array<float, 2>& values) {
+	static int32_t SORT2(Vector2& values) {
 		if (values[0] > values[1]) {
 			float tmp;
 			tmp = values[0];
