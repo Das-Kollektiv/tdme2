@@ -31,6 +31,7 @@ Sphere::Sphere()
 	this->convexMeshCenter.set(center);
 	this->convexMeshRadius = radius;
 	createConvexMesh();
+	update();
 }
 
 Sphere::Sphere(const Vector3& center, float radius)
@@ -40,6 +41,7 @@ Sphere::Sphere(const Vector3& center, float radius)
 	this->convexMeshCenter.set(center);
 	this->convexMeshRadius = radius;
 	createConvexMesh();
+	update();
 }
 
 void Sphere::createConvexMesh() {
@@ -86,6 +88,7 @@ void Sphere::fromBoundingVolume(BoundingVolume* original)
 	convexMesh = sphere->convexMesh;
 	convexMeshCenter.set(sphere->center);
 	convexMeshRadius = sphere->radius;
+	boundingBox = sphere->boundingBox;
 }
 
 void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
@@ -109,6 +112,7 @@ void Sphere::fromBoundingVolumeWithTransformations(BoundingVolume* original, con
 	convexMeshCenter.set(center);
 	convexMeshRadius = radius;
 	convexMesh.fromBoundingVolumeWithTransformations(&sphere->convexMesh, transformations);
+	update();
 }
 
 float Sphere::getRadius() const
@@ -182,6 +186,11 @@ void Sphere::update()
 		convexMeshRadius = radius;
 		createConvexMesh();
 	}
+	boundingBox.getMin().set(center);
+	boundingBox.getMin().sub(radius);
+	boundingBox.getMax().set(center);
+	boundingBox.getMax().add(radius);
+	boundingBox.update();
 }
 
 BoundingVolume* Sphere::clone() const

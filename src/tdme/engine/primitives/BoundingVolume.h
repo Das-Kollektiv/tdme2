@@ -60,10 +60,10 @@ struct tdme::engine::primitives::BoundingVolume
 	 */
 	virtual Vector3& getCenter() = 0;
 
-	/** 
-	 * @return radius of bounding volume if regarded as sphere
+	/**
+	 * @return bounding box
 	 */
-	virtual float getSphereRadius() const = 0;
+	virtual BoundingBox* getBoundingBox() = 0;
 
 	/** 
 	 * Computes dimension on axis

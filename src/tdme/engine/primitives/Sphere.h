@@ -7,9 +7,11 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
@@ -29,6 +31,7 @@ private:
 	ConvexMesh convexMesh {  };
 	Vector3 convexMeshCenter {  };
 	float convexMeshRadius {  };
+	BoundingBox boundingBox;
 
 	/**
 	 * Create convex mesh
@@ -42,14 +45,14 @@ public:
 		return center;
 	}
 
+	inline virtual BoundingBox* getBoundingBox() override {
+		return &boundingBox;
+	}
+
 	/** 
 	 * @return float radius
 	 */
 	float getRadius() const;
-
-	inline float getSphereRadius() const override {
-		return radius;
-	}
 
 	/** 
 	 * Set up radius

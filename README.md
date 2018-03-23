@@ -66,7 +66,7 @@ TDME2
             - rigid body simulator
               - broadphase collision detection
                   - uses oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
-                  - additionally sphere <> sphere test
+                  - additional bounding box <> bounding box test
               - narrowphase collision detection
               - collision filtering by type
               - sleeping technology

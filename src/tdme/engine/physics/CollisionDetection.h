@@ -43,6 +43,9 @@ private:
 
 public:
 
+	static int btSuccess;
+	static int btFail;
+
 	/** 
 	 * Returns if axis aligned bounding boxes do collide
 	 * Will not provide hit points
@@ -506,7 +509,13 @@ public:
 	inline static bool doBroadTest(BoundingVolume* bv1, BoundingVolume* bv2) {
 		// do a root sphere <> sphere broad test
 		Vector3 axis;
-		return axis.set(bv1->getCenter()).sub(bv2->getCenter()).computeLengthSquared() <= (bv1->getSphereRadius() + bv2->getSphereRadius()) * (bv1->getSphereRadius() + bv2->getSphereRadius());
+		auto collision = doCollideAABBvsAABBFast(bv1->getBoundingBox(), bv2->getBoundingBox());
+		if (collision == true) {
+			btSuccess++;
+		} else {
+			btFail++;
+		}
+		return collision;
 	}
 
 private:

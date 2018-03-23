@@ -141,10 +141,8 @@ void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 	}
 	// center
 	center.set(mesh->center);
-	// sphere radius
-	sphereRadius = mesh->sphereRadius;
-	// update
-	update();
+	// bounding box
+	boundingBox = mesh->boundingBox;
 }
 
 void ConvexMesh::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
@@ -318,16 +316,16 @@ void ConvexMesh::update()
 		center.add(triangles[i].getCenter());
 	}
 	center.scale(1.0f / triangles.size());
-	// sphere radius
-	this->sphereRadius = 0.0f;
-	for (auto i = 0; i < triangles.size(); i++) {
-		auto triangleVertices = triangles[i].getVertices();
-		for (auto j = 0; j < 3; j++) {
-			auto _sphereRadius = tmp.set(center).sub((*triangleVertices)[j]).computeLength();
-			if (_sphereRadius > sphereRadius)
-				sphereRadius = _sphereRadius;
+	// bounding box
+	boundingBox.getMin().set(center);
+	boundingBox.getMax().set(center);
+	for (auto& vertex: vertices) {
+		for (int i = 0; i < 3; i++) {
+			if (vertex[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = vertex[i]; else
+			if (vertex[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = vertex[i];
 		}
 	}
+	boundingBox.update();
 }
 
 BoundingVolume* ConvexMesh::clone() const

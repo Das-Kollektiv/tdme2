@@ -4,6 +4,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -11,6 +12,7 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 
 using tdme::engine::physics::CollisionDetection;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Transformations;
@@ -54,8 +56,8 @@ public:
 		return center;
 	}
 
-	inline float getSphereRadius() const override {
-		return sphereRadius;
+	inline virtual BoundingBox* getBoundingBox() override {
+		return &boundingBox;
 	}
 
 	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
@@ -95,6 +97,5 @@ private:
 	Vector3 convexMeshB {  };
 	float convexMeshRadius {  };
 	Vector3 center {  };
-	float sphereRadius {  };
-
+	BoundingBox boundingBox;
 };

@@ -45,7 +45,6 @@ private:
 	Vector3 min {  };
 	Vector3 max {  };
 	Vector3 center {  };
-	float sphereRadius {  };
 	vector<Vector3> vertices {  };
 
 public:
@@ -90,8 +89,8 @@ public:
 		return center;
 	}
 
-	inline float getSphereRadius() const override {
-		return sphereRadius;
+	inline virtual BoundingBox* getBoundingBox() override {
+		return this;
 	}
 
 	float computeDimensionOnAxis(const Vector3& axis) const override;

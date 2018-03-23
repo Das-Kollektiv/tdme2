@@ -53,9 +53,8 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 	auto triangle = dynamic_cast< Triangle* >(original);
 	for (auto i = 0; i < vertices.size(); i++)
 		vertices[i].set(triangle->vertices[i]);
-
-	center.set(triangle->center);
-	sphereRadius = triangle->sphereRadius;
+	center = triangle->center;
+	boundingBox = triangle->boundingBox;
 }
 
 void Triangle::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
@@ -188,12 +187,16 @@ void Triangle::update()
 	Vector3 distanceVector;
 	// center
 	this->center.set(vertices[0]).add(vertices[1]).add(vertices[2]).scale(1.0f / 3.0f);
-	// sphere radius
-	this->sphereRadius = 0.0f;
-	for (auto i = 0; i < vertices.size(); i++) {
-		auto _sphereRadius = distanceVector.set(center).sub(vertices[i]).computeLength();
-		if (_sphereRadius > sphereRadius) sphereRadius = _sphereRadius;
+	// bounding box
+	boundingBox.getMin().set(center);
+	boundingBox.getMax().set(center);
+	for (auto& vertex: vertices) {
+		for (int i = 0; i < 3; i++) {
+			if (vertex[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = vertex[i]; else
+			if (vertex[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = vertex[i];
+		}
 	}
+	boundingBox.update();
 }
 
 BoundingVolume* Triangle::clone() const

@@ -45,18 +45,16 @@ using tdme::utils::Float;
 using tdme::utils::Console;
 
 constexpr bool CollisionDetection::VERBOSE;
-
 constexpr bool CollisionDetection::CHECK_COLLISIONRESPONSE;
-
 constexpr array<int32_t,6> CollisionDetection::LINESEGMENTSTRIANGLEINDICES;
+
+int CollisionDetection::btSuccess = 0;
+int CollisionDetection::btFail = 0;
+
 
 bool CollisionDetection::doCollide(SphereInternal* s1, SphereInternal* s2, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	{
-		Vector3 axis;
-		if (axis.set(s1->getCenter()).sub(s2->getCenter()).computeLengthSquared() <= (s1->getSphereRadius() + s2->getSphereRadius()) * (s1->getSphereRadius() + s2->getSphereRadius()) == false) return false;
-	}
 
 	Vector3 axis;
 	Vector3 hitPoint;
@@ -84,11 +82,6 @@ bool CollisionDetection::doCollide(SphereInternal* s1, SphereInternal* s2, const
 
 bool CollisionDetection::doCollide(OrientedBoundingBox* obb, SphereInternal* sphere, const Vector3& movement, CollisionResponse* collision)
 {
-	{
-		Vector3 axis;
-		if (axis.set(obb->getCenter()).sub(sphere->getCenter()).computeLengthSquared() <= (obb->getSphereRadius() + sphere->getSphereRadius()) * (obb->getSphereRadius() + sphere->getSphereRadius()) == false) return false;
-	}
-
 	collision->reset();
 
 	Vector3 closestPoint;
@@ -125,10 +118,6 @@ bool CollisionDetection::doCollide(OrientedBoundingBox* obb, SphereInternal* sph
 bool CollisionDetection::doCollide(Triangle* triangle, SphereInternal* sphere, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
-	{
-		Vector3 axis;
-		if (axis.set(triangle->getCenter()).sub(sphere->getCenter()).computeLengthSquared() <= (triangle->getSphereRadius() + sphere->getSphereRadius()) * (triangle->getSphereRadius() + sphere->getSphereRadius()) == false) return false;
-	}
 
 	Vector3 closestPoint;
 	Vector3 axis;

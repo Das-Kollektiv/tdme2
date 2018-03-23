@@ -201,7 +201,6 @@ void BoundingBox::update()
 	center.set(min).add(max).scale(0.5f);
 	Vector3 halfExtension;
 	halfExtension.set(max).sub(min).scale(0.5f);
-	sphereRadius = halfExtension.computeLength();
 }
 
 BoundingVolume* BoundingBox::clone() const

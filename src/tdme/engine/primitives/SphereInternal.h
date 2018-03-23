@@ -26,10 +26,6 @@ public:
 	 */
 	float getRadius() const;
 
-	inline float getSphereRadius() const {
-		return radius;
-	}
-
 	/** 
 	 * Set up radius
 	 * @param radius

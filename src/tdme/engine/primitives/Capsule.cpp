@@ -139,6 +139,7 @@ void Capsule::fromBoundingVolume(BoundingVolume* original)
 	convexMeshA.set(capsule->a);
 	convexMeshB.set(capsule->b);
 	convexMeshRadius = capsule->radius;
+	boundingBox = capsule->boundingBox;
 }
 
 void Capsule::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
@@ -179,7 +180,19 @@ void Capsule::update()
 	baSub.set(b).sub(a);
 	auto baSubLength = baSub.computeLength();
 	center.set(a).add(baSub.normalize().scale(baSubLength * 0.5f));
-	sphereRadius = baSubLength / 2.0f + radius;
+	boundingBox.getMin().set(center);
+	boundingBox.getMax().set(center);
+	for (int i = 0; i < 3; i++) {
+		if (a[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = a[i]; else
+		if (a[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = a[i];
+	}
+	for (int i = 0; i < 3; i++) {
+		if (b[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = b[i]; else
+		if (b[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = b[i];
+	}
+	boundingBox.getMin().sub(radius);
+	boundingBox.getMax().add(radius);
+	boundingBox.update();
 }
 
 void Capsule::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const

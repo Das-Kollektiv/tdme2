@@ -133,6 +133,7 @@ void OrientedBoundingBox::fromBoundingVolume(BoundingVolume* original)
 	for (auto i = 0; i < vertices.size(); i++)
 		vertices[i].set(obb->vertices[i]);
 
+	boundingBox = obb->boundingBox;
 }
 
 void OrientedBoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
@@ -220,8 +221,16 @@ void OrientedBoundingBox::update()
 	vertices[7].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]));
 	vertices[7].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]));
 	vertices[7].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]));
-	// sphere radius
-	sphereRadius = halfExtension.computeLength();
+	// bounding box
+	boundingBox.getMin().set(center);
+	boundingBox.getMax().set(center);
+	for (auto& vertex: vertices) {
+		for (int i = 0; i < 3; i++) {
+			if (vertex[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = vertex[i]; else
+			if (vertex[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = vertex[i];
+		}
+	}
+	boundingBox.update();
 }
 
 void OrientedBoundingBox::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const

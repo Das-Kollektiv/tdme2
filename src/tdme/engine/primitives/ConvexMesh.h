@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -16,6 +17,7 @@
 using std::array;
 using std::vector;
 
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
@@ -37,7 +39,7 @@ private:
 	vector<Vector3> vertices {  };
 	vector<array<int32_t, 2>> vertexReferences {  };
 	Vector3 center {  };
-	float sphereRadius {  };
+	BoundingBox boundingBox;
 	bool terrain {  };
 	float terrainHeight {  };
 private:
@@ -84,8 +86,8 @@ public:
 		return center;
 	}
 
-	float getSphereRadius() const override {
-		return sphereRadius;
+	inline virtual BoundingBox* getBoundingBox() override {
+		return &boundingBox;
 	}
 
 	float computeDimensionOnAxis(const Vector3& axis) const override;

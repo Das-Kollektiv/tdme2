@@ -8,6 +8,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -54,8 +55,8 @@ public:
 		return center;
 	}
 
-	inline float getSphereRadius() const override {
-		return sphereRadius;
+	inline virtual BoundingBox* getBoundingBox() override {
+		return &boundingBox;
 	}
 
 	/** 
@@ -159,6 +160,6 @@ private:
 	array<Vector3, 3> axes {  };
 	Vector3 halfExtension {  };
 	vector<Vector3> vertices {  };
-	float sphereRadius {  };
+	BoundingBox boundingBox;
 
 };

@@ -7,12 +7,14 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::vector;
 
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
@@ -44,8 +46,8 @@ public:
 		return center;
 	}
 
-	float getSphereRadius() const override {
-		return sphereRadius;
+	inline virtual BoundingBox* getBoundingBox() override {
+		return &boundingBox;
 	}
 
 	float computeDimensionOnAxis(const Vector3& axis) const override;
@@ -68,6 +70,5 @@ public:
 private:
 	vector<Vector3> vertices {  };
 	Vector3 center {  };
-	Vector3 distanceVector {  };
-	float sphereRadius {  };
+	BoundingBox boundingBox;
 };
