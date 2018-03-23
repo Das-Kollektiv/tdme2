@@ -43,9 +43,6 @@ private:
 
 public:
 
-	static int btSuccess;
-	static int btFail;
-
 	/** 
 	 * Returns if axis aligned bounding boxes do collide
 	 * Will not provide hit points
