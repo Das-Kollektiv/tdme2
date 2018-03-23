@@ -48,10 +48,6 @@ constexpr bool CollisionDetection::VERBOSE;
 constexpr bool CollisionDetection::CHECK_COLLISIONRESPONSE;
 constexpr array<int32_t,6> CollisionDetection::LINESEGMENTSTRIANGLEINDICES;
 
-int CollisionDetection::btSuccess = 0;
-int CollisionDetection::btFail = 0;
-
-
 bool CollisionDetection::doCollide(SphereInternal* s1, SphereInternal* s2, const Vector3& movement, CollisionResponse* collision)
 {
 	collision->reset();
