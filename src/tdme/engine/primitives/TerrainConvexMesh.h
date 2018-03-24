@@ -69,10 +69,10 @@ public:
 	 * Apply transformations, needs to be used if having any transform for the convex terrain mesh
 	 * @param transformations
 	 */
-	void applyTransformations(Transformations* transformations);
+	void applyTransformations(const Transformations& transformations);
 
 	// overrides
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	BoundingVolume* clone() const override;
 
 	/**

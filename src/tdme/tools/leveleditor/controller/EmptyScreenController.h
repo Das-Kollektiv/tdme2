@@ -39,7 +39,6 @@ class tdme::tools::leveleditor::controller::EmptyScreenController final
 	friend class EmptyScreenController_EmptyScreenController_1;
 
 private:
-	static MutableString* TEXT_EMPTY;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EmptyView* view {  };
 	GUIScreenNode* screenNode {  };

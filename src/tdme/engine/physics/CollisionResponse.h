@@ -7,7 +7,6 @@
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Console.h>
@@ -15,9 +14,8 @@
 using std::vector;
 
 using tdme::engine::physics::CollisionResponse;
-using tdme::math::Math;
 using tdme::engine::physics::CollisionResponse_Entity;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
@@ -118,7 +116,7 @@ public:
 
 	inline bool hasPenetration() {
 		if (selectedEntity == nullptr) return false;
-		return selectedEntity->distance < -MathTools::EPSILON;
+		return selectedEntity->distance < -Math::EPSILON;
 	}
 
 	inline float getPenetration() {

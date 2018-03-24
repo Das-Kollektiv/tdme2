@@ -40,7 +40,7 @@ class tdme::tools::leveleditor::controller::TriggerScreenController final
 	friend class TriggerScreenController_TriggerScreenController_1;
 
 private:
-	static MutableString* TEXT_EMPTY;
+	static MutableString TEXT_EMPTY;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	TriggerView* view {  };
 	GUIScreenNode* screenNode {  };

@@ -13,11 +13,11 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/object/Object3DBase.h>
-#include <tdme/engine/subsystems/object/Object3DInternal.h>
+#include <tdme/engine/subsystems/rendering/Object3DBase.h>
+#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -36,11 +36,11 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::Object3DBase;
-using tdme::engine::subsystems::object::Object3DInternal;
+using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -62,7 +62,7 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const str
 			model
 		);
 		objects[i]->setEnabled(false);
-		objects[i]->getScale().set(scale);
+		objects[i]->setScale(scale);
 		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 		objects[i]->setPickable(false);
 	}
@@ -156,15 +156,17 @@ void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 void ObjectParticleSystemEntityInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	emitter->fromTransformations(*this);
+	inverseTransformation.fromTransformations(*this);
+	inverseTransformation.invert();
 }
 
-void ObjectParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
+void ObjectParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	inverseTransformation.fromTransformations(transformations);
+	inverseTransformation.invert();
 }
 
 ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()
@@ -202,7 +204,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		emitter->emit(&particle);
 		// enable object
 		auto object = objects[i];
-		object->getTranslation().set(particle.position);
+		object->setTranslation(particle.position);
 		object->update();
 		object->setEnabled(true);
 		object->getEffectColorAdd().set(effectColorAdd);
@@ -240,8 +242,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 			continue;
 		}
 		// add gravity if our particle have a noticable mass
-		if (particle.mass > MathTools::EPSILON)
-			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+		if (particle.mass > Math::EPSILON)
+			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f);
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
@@ -249,7 +251,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		object->getEffectColorAdd().set(effectColorAdd);
 		object->getEffectColorMul().set(effectColorMul);
 		// translation
-		object->getTranslation().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
+		object->setTranslation(object->getTranslation().clone().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed->getMin().set(object->getBoundingBoxTransformed()->getMin());
@@ -268,7 +270,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 	}
 	// compute bounding boxes
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
 }
 
 void ObjectParticleSystemEntityInternal::dispose()

@@ -34,6 +34,11 @@ public:
 	~Mutex();
 
 	/**
+	 * @brief Tries to locks the mutex
+	 */
+	bool tryLock();
+
+	/**
 	 * @brief Locks the mutex, additionally mutex locks will block until other locks have been unlocked.
 	 */
 	void lock();

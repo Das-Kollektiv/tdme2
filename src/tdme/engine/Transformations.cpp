@@ -1,14 +1,17 @@
 #include <tdme/engine/Transformations.h>
 
+#include <string>
+
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::Transformations;
+using std::to_string;
+
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -16,82 +19,53 @@ using tdme::math::Vector3;
 Transformations::Transformations() 
 {
 	transformationsMatrix.identity();
-	translationMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);
-	scaleMatrix.identity();
-	rotationsQuaternionMatrix.identity();
-	rotationsMatrix.identity();
-	rotationsTranslationsMatrix.identity();
+	rotationsQuaternion.identity();
 }
 
 Transformations::~Transformations() {
 }
 
-Vector3& Transformations::getTranslation()
+void Transformations::fromTransformations(const Transformations& transformations)
 {
-	return translation;
-}
+	if (this == &transformations) return;
 
-Vector3& Transformations::getScale()
-{
-	return scale;
-}
-
-Vector3& Transformations::getPivot()
-{
-	return pivot;
-}
-
-Rotations* Transformations::getRotations()
-{
-	return &rotations;
-}
-
-Matrix4x4& Transformations::getTransformationsMatrix()
-{
-	return transformationsMatrix;
-}
-
-void Transformations::fromTransformations(Transformations* transformations)
-{
-	if (this == transformations) return;
 	// translation
-	translation.set(transformations->translation);
+	translation.set(transformations.translation);
 	// scale
-	scale.set(transformations->scale);
+	scale.set(transformations.scale);
 	// pivot
-	pivot.set(transformations->pivot);
+	pivot.set(transformations.pivot);
 	// rotations
 	auto rotationIdx = 0;
-	for (; rotationIdx < transformations->rotations.size(); rotationIdx++) {
-		auto rotation = transformations->rotations.get(rotationIdx);
+	for (auto rotation: transformations.rotations) {
 		// do we have a rotation to reuse?
-		auto _rotation = rotationIdx < rotations.size() ? rotations.get(rotationIdx) : nullptr;
-		//	nope?
-		if (_rotation == nullptr) {
-			// add it
-			_rotation = new Rotation();
-			rotations.add(_rotation);
-		}
-		// copy
-		_rotation->fromRotation(rotation);
+		if (rotationIdx == rotations.size()) {
+			// nope, add a rotation
+			rotations.push_back(Rotation(0.0f, Vector3(0.0f, 0.0f, 0.0f)));
+		}		// copy
+		rotations[rotations.size() - 1].fromRotation(rotation);
+		// next
+		rotationIdx++;
 	}
 	// remove unused rotations
 	while (rotationIdx < rotations.size()) {
-		rotations.remove(rotations.size() - 1);
+		removeRotation(rotations.size() - 1);
 	}
 	// copy matrices and such
-	transformationsMatrix.set(transformations->transformationsMatrix);
-	translationMatrix.set(transformations->translationMatrix);
-	scaleMatrix.set(transformations->scaleMatrix);
-	rotationsMatrix.set(transformations->rotationsMatrix);
-	rotationsPivot.set(transformations->rotationsPivot);
-	rotations.quaternion.set(transformations->rotations.quaternion);
-	rotationsQuaternionMatrix.set(transformations->rotationsQuaternionMatrix);
+	transformationsMatrix.set(transformations.transformationsMatrix);
+	rotationsQuaternion.set(transformations.rotationsQuaternion);
 }
 
 void Transformations::update()
 {
+	// matrices
+	Matrix4x4 translationMatrix;
+	Matrix4x4 scaleMatrix;
+	Matrix4x4 rotationsMatrix;
+	Matrix4x4 rotationsQuaternionMatrix;
+	Matrix4x4 rotationsTranslationsMatrix;
+
 	// transformation matrix identity
 	transformationsMatrix.identity();
 	// set up translation matrix
@@ -99,14 +73,18 @@ void Transformations::update()
 	// set up scale matrix
 	scaleMatrix.identity().scale(scale);
 	// create and multiply rotations
-	rotations.update();
+	rotationsQuaternion.identity();
+	for (auto& rotation: rotations) {
+		rotation.update();
+		rotationsQuaternion.multiply(rotation.getQuaternion());
+	}
+	rotationsQuaternion.normalize();
 	// apply rotations
 	rotationsMatrix.identity();
 	//	pivot
-	rotationsPivot.set(pivot).scale(-1.0f);
-	rotationsMatrix.translate(rotationsPivot);
-	//	rotatations
-	rotations.quaternion.computeMatrix(rotationsQuaternionMatrix);
+	rotationsMatrix.translate(pivot.clone().scale(-1.0f));
+	//	rotations
+	rotationsQuaternion.computeMatrix(rotationsQuaternionMatrix);
 	rotationsMatrix.multiply(rotationsQuaternionMatrix);
 	//	pivot
 	rotationsTranslationsMatrix.identity().translate(pivot);
@@ -115,4 +93,15 @@ void Transformations::update()
 	transformationsMatrix.multiply(scaleMatrix);
 	transformationsMatrix.multiply(rotationsMatrix);
 	transformationsMatrix.multiply(translationMatrix);
+}
+
+void Transformations::invert() {
+	translation.scale(-1.0f);
+	scale.setX(1.0f / scale.getX());
+	scale.setY(1.0f / scale.getY());
+	scale.setZ(1.0f / scale.getZ());
+	for (auto& rotation: rotations) {
+		rotation.setAngle(rotation.getAngle() - 180.0f);
+	}
+	update();
 }

@@ -11,12 +11,12 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/object/TransparentRenderPointsPool.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -32,12 +32,12 @@ using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::TransparentRenderPointsPool;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -141,15 +141,17 @@ void PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 void PointsParticleSystemEntityInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(this);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	emitter->fromTransformations(*this);
+	inverseTransformation.fromTransformations(*this);
+	inverseTransformation.invert();
 }
 
-void PointsParticleSystemEntityInternal::fromTransformations(Transformations* transformations)
+void PointsParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
-	inverseTransformation.getTransformationsMatrix().set(this->getTransformationsMatrix()).invert();
+	inverseTransformation.fromTransformations(transformations);
+	inverseTransformation.invert();
 }
 
 void PointsParticleSystemEntityInternal::updateParticles()
@@ -184,8 +186,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 			continue;
 		}
 		// add gravity if our particle have a noticeable mass
-		if (particle.mass > MathTools::EPSILON)
-			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDelta) / 1000.0f);
+		if (particle.mass > Math::EPSILON)
+			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f);
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
@@ -253,7 +255,7 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	boundingBoxTransformed->getMax().add(0.05f);
 	// compute bounding boxes
 	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, &inverseTransformation);
+	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
 }
 
 void PointsParticleSystemEntityInternal::dispose()
@@ -301,8 +303,8 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 		// add gravity if our particle have a noticable mass, add translation
 		// add some movement with a min of 0 time delta and a max of engine time delta
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));
-		if (particle.mass > MathTools::EPSILON)
-			particle.velocity.subY(0.5f * MathTools::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
+		if (particle.mass > Math::EPSILON)
+			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
 		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));
 		//
 		particlesSpawned++;

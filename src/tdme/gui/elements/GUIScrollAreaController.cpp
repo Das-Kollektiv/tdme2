@@ -70,12 +70,12 @@ bool GUIScrollAreaController::hasValue()
 	return false;
 }
 
-MutableString* GUIScrollAreaController::getValue()
+const MutableString& GUIScrollAreaController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIScrollAreaController::setValue(MutableString* value)
+void GUIScrollAreaController::setValue(const MutableString& value)
 {
 }
 

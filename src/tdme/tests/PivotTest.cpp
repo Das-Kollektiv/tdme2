@@ -8,7 +8,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -34,7 +33,6 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
-using tdme::engine::Rotations;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -68,9 +66,9 @@ void PivotTest::display()
 	auto start = Time::getCurrentMillis();
 	auto end = Time::getCurrentMillis();
 	auto entity = engine->getEntity("box");
-	//entity->getRotations()->get(0)->setAngle(entity->getRotations()->get(0)->getAngle() + 0.1f);
-	entity->getRotations()->get(1)->setAngle(entity->getRotations()->get(1)->getAngle() + 0.1f);
-	//entity->getRotations()->get(2)->setAngle(entity->getRotations()->get(2)->getAngle() + 0.1f);
+	entity->getRotation(0).setAngle(entity->getRotation(1).getAngle() + 0.1f);
+	entity->getRotation(1).setAngle(entity->getRotation(1).getAngle() + 0.1f);
+	entity->getRotation(2).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->update();
 	engine->display();
 }
@@ -106,7 +104,7 @@ void PivotTest::initialize()
 	(*groundModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
 	(*groundModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
 	entity = new Object3D("ground", groundModel);
-	entity->getTranslation().setY(-1.0f);
+	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 10.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
@@ -120,11 +118,10 @@ void PivotTest::initialize()
 	(*boxModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
 	entity = new Object3D("box", boxModel);
 	entity->setDynamicShadowingEnabled(true);
-	entity->getTranslation().addY(0.0f);
-	entity->getPivot().set(0.0f, 10.0f, 0.0f);
-	entity->getRotations()->add(new Rotation(0.0f, Vector3(1.0f, 0.0f, 1.0f)));
-	entity->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 1.0f, 1.0f)));
-	entity->getRotations()->add(new Rotation(0.0f, Vector3(0.0f, 0.0f, 1.0f)));
+	entity->setPivot(Vector3(0.0f, 10.0f, 0.0f));
+	entity->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
+	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+	entity->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	entity->update();
 	engine->addEntity(entity);
 }

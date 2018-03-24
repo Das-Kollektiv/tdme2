@@ -5,7 +5,7 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/utils/ByteBuffer.h>
 
 using std::string;
@@ -14,7 +14,7 @@ using tdme::engine::model::Material;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::model::Color4;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::utils::ByteBuffer;
 
 Material::Material(const string& id)
@@ -276,7 +276,7 @@ Texture* Material::getDisplacementTexture()
 
 bool Material::hasColorTransparency()
 {
-	return diffuseColor.getAlpha() < 1.0f - MathTools::EPSILON;
+	return diffuseColor.getAlpha() < 1.0f - Math::EPSILON;
 }
 
 bool Material::hasTextureTransparency()

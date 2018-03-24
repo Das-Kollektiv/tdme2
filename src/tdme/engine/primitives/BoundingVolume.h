@@ -54,7 +54,7 @@ public:
 	 * Transform bounding volume from given transformations
 	 * @param transformations
 	 */
-	virtual void fromTransformations(Transformations* transformations);
+	virtual void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Checks if point is in bounding volume

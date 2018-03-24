@@ -3,8 +3,6 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -46,8 +44,6 @@ using std::to_string;
 using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -113,7 +109,6 @@ EntityBoundingVolumeView* EntityBoundingVolumeSubScreenController::getView()
 
 void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNode)
 {
-	value = new MutableString();
 	try {
 		for (auto i = 0; i < 8; i++) {
 			boundingVolumeTypeDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_type_" + to_string(i)));
@@ -235,43 +230,36 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 
 void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType* bvType)
 {
-	boundingVolume[idx]->getActiveConditions()->remove("sphere");
-	boundingVolume[idx]->getActiveConditions()->remove("capsule");
-	boundingVolume[idx]->getActiveConditions()->remove("aabb");
-	boundingVolume[idx]->getActiveConditions()->remove("obb");
-	boundingVolume[idx]->getActiveConditions()->remove("convexmesh");
+	boundingVolume[idx]->getActiveConditions().remove("sphere");
+	boundingVolume[idx]->getActiveConditions().remove("capsule");
+	boundingVolume[idx]->getActiveConditions().remove("aabb");
+	boundingVolume[idx]->getActiveConditions().remove("obb");
+	boundingVolume[idx]->getActiveConditions().remove("convexmesh");
 	{
 		auto v = bvType;
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("0"));
-			goto end_switch0;;
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("0"));
+		} else
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("1"));
+			boundingVolume[idx]->getActiveConditions().add("sphere");
+		} else
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("2"));
+			boundingVolume[idx]->getActiveConditions().add("capsule");
+		} else
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("3"));
+			boundingVolume[idx]->getActiveConditions().add("aabb");
+		} else
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("4"));
+			boundingVolume[idx]->getActiveConditions().add("obb");
+		} else
+		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH) {
+			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("5"));
+			boundingVolume[idx]->getActiveConditions().add("convexmesh");
 		}
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("1"));
-			boundingVolume[idx]->getActiveConditions()->add("sphere");
-			goto end_switch0;;
-		}
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("2"));
-			boundingVolume[idx]->getActiveConditions()->add("capsule");
-			goto end_switch0;;
-		}
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("3"));
-			boundingVolume[idx]->getActiveConditions()->add("aabb");
-			goto end_switch0;;
-		}
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("4"));
-			boundingVolume[idx]->getActiveConditions()->add("obb");
-			goto end_switch0;;
-		}
-		if ((v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH)) {
-			boundingVolumeTypeDropDown[idx]->getController()->setValue(value->set("5"));
-			boundingVolume[idx]->getActiveConditions()->add("convexmesh");
-			goto end_switch0;;
-		}
-		end_switch0:;
 	}
 
 }
@@ -279,23 +267,23 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 void EntityBoundingVolumeSubScreenController::setupSphere(int32_t idx, const Vector3& center, float radius)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
-	boundingvolumeSphereCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center.getX()))->append(", ")->append(Tools::formatFloat(center.getY()))->append(", ")->append(Tools::formatFloat(center.getZ())));
-	boundingvolumeSphereRadius[idx]->getController()->setValue(value->set(Tools::formatFloat(radius)));
+	boundingvolumeSphereCenter[idx]->getController()->setValue(MutableString(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
+	boundingvolumeSphereRadius[idx]->getController()->setValue(MutableString(Tools::formatFloat(radius)));
 }
 
 void EntityBoundingVolumeSubScreenController::setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
-	boundingvolumeCapsuleA[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(a.getX()))->append(", ")->append(Tools::formatFloat(a.getY()))->append(", ")->append(Tools::formatFloat(a.getZ())));
-	boundingvolumeCapsuleB[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(b.getX()))->append(", ")->append(Tools::formatFloat(b.getY()))->append(", ")->append(Tools::formatFloat(b.getZ())));
-	boundingvolumeCapsuleRadius[idx]->getController()->setValue(value->set(Tools::formatFloat(radius)));
+	boundingvolumeCapsuleA[idx]->getController()->setValue(MutableString(Tools::formatFloat(a.getX())).append(", ").append(Tools::formatFloat(a.getY())).append(", ").append(Tools::formatFloat(a.getZ())));
+	boundingvolumeCapsuleB[idx]->getController()->setValue(MutableString(Tools::formatFloat(b.getX())).append(", ").append(Tools::formatFloat(b.getY())).append(", ").append(Tools::formatFloat(b.getZ())));
+	boundingvolumeCapsuleRadius[idx]->getController()->setValue(MutableString(Tools::formatFloat(radius)));
 }
 
 void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
-	boundingvolumeBoundingBoxMin[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(min.getX()))->append(", ")->append(Tools::formatFloat(min.getY()))->append(", ")->append(Tools::formatFloat(min.getZ())));
-	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(max.getX()))->append(", ")->append(Tools::formatFloat(max.getY()))->append(", ")->append(Tools::formatFloat(max.getZ())));
+	boundingvolumeBoundingBoxMin[idx]->getController()->setValue(MutableString(Tools::formatFloat(min.getX())).append(", ").append(Tools::formatFloat(min.getY())).append(", ").append(Tools::formatFloat(min.getZ())));
+	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(MutableString(Tools::formatFloat(max.getX())).append(", ").append(Tools::formatFloat(max.getY())).append(", ").append(Tools::formatFloat(max.getZ())));
 }
 
 void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
@@ -306,22 +294,22 @@ void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t i
 	rotationMatrix.setAxes(axis0, axis1, axis2);
 	rotationMatrix.computeEulerAngles(rotation);
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
-	boundingvolumeObbCenter[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(center.getX()))->append(", ")->append(Tools::formatFloat(center.getY()))->append(", ")->append(Tools::formatFloat(center.getZ())));
-	boundingvolumeObbHalfextension[idx]->getController()->setValue(value->reset()->append(Tools::formatFloat(halfExtension.getX()))->append(", ")->append(Tools::formatFloat(halfExtension.getY()))->append(", ")->append(Tools::formatFloat(halfExtension.getZ())));
-	boundingvolumeObbRotationX[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getX())));
-	boundingvolumeObbRotationY[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getY())));
-	boundingvolumeObbRotationZ[idx]->getController()->setValue(value->set(Tools::formatFloat(rotation.getZ())));
+	boundingvolumeObbCenter[idx]->getController()->setValue(MutableString(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
+	boundingvolumeObbHalfextension[idx]->getController()->setValue(MutableString(Tools::formatFloat(halfExtension.getX())).append(", ").append(Tools::formatFloat(halfExtension.getY())).append(", ").append(Tools::formatFloat(halfExtension.getZ())));
+	boundingvolumeObbRotationX[idx]->getController()->setValue(MutableString(Tools::formatFloat(rotation.getX())));
+	boundingvolumeObbRotationY[idx]->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
+	boundingvolumeObbRotationZ[idx]->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
 }
 
 void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const string& file)
 {
 	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH);
-	boundingvolumeConvexMeshFile[idx]->getController()->setValue(value->set(file));
+	boundingvolumeConvexMeshFile[idx]->getController()->setValue(MutableString(file));
 }
 
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx)
 {
-	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue()->getString());
+	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue().getString());
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
 	switch (boundingVolumeTypeId) {
 	case (0):
@@ -357,8 +345,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 		view->applyBoundingVolumeSphere(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue()->getString()),
-			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue()->getString())
+			Tools::convertToVector3(boundingvolumeSphereCenter[idx]->getController()->getValue().getString()),
+			Tools::convertToFloat(boundingvolumeSphereRadius[idx]->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -371,9 +359,9 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 		view->applyBoundingVolumeCapsule(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue()->getString()),
-			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue()->getString()),
-			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue()->getString())
+			Tools::convertToVector3(boundingvolumeCapsuleA[idx]->getController()->getValue().getString()),
+			Tools::convertToVector3(boundingvolumeCapsuleB[idx]->getController()->getValue().getString()),
+			Tools::convertToFloat(boundingvolumeCapsuleRadius[idx]->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -386,8 +374,8 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 		view->applyBoundingVolumeAabb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue()->getString()),
-			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue()->getString())
+			Tools::convertToVector3(boundingvolumeBoundingBoxMin[idx]->getController()->getValue().getString()),
+			Tools::convertToVector3(boundingvolumeBoundingBoxMax[idx]->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -397,23 +385,23 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
-		auto rotations = new Transformations();
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_Z));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_Y));
-		rotations->getRotations()->add(new Rotation(Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue()->getString()), OrientedBoundingBox::AABB_AXIS_X));
-		rotations->update();
+		Transformations rotations;
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Tools::convertToFloat(boundingvolumeObbRotationZ[idx]->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Tools::convertToFloat(boundingvolumeObbRotationY[idx]->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Tools::convertToFloat(boundingvolumeObbRotationX[idx]->getController()->getValue().getString()));
+		rotations.update();
 		Vector3 xAxis;
 		Vector3 yAxis;
 		Vector3 zAxis;
-		rotations->getTransformationsMatrix().getAxes(xAxis, yAxis, zAxis);
+		rotations.getTransformationsMatrix().clone().getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(
 			entity,
 			idx,
-			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue()->getString()),
+			Tools::convertToVector3(boundingvolumeObbCenter[idx]->getController()->getValue().getString()),
 			xAxis,
 			yAxis,
 			zAxis,
-			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue()->getString())
+			Tools::convertToVector3(boundingvolumeObbHalfextension[idx]->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -425,7 +413,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(Le
 	view->applyBoundingVolumeConvexMesh(
 		entity,
 		idx,
-		boundingvolumeConvexMeshFile[idx]->getController()->getValue()->getString()
+		boundingvolumeConvexMeshFile[idx]->getController()->getValue().getString()
 	);
 }
 
@@ -448,10 +436,10 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesFile(L
 	auto const entityFinal = entity;
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		Tools::getPath(convexMeshesFile->getController()->getValue()->getString()),
+		Tools::getPath(convexMeshesFile->getController()->getValue().getString()),
 		"Load from: ",
 		&extensions,
-		Tools::getFileName(convexMeshesFile->getController()->getValue()->getString()),
+		Tools::getFileName(convexMeshesFile->getController()->getValue().getString()),
 		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
 	);
 }
@@ -473,17 +461,17 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesGenera
 }
 
 void EntityBoundingVolumeSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
-	terrainMesh->getController()->setValue(value->set(entity->getModelSettings()->isTerrainMesh() == true?"1":""));
+	terrainMesh->getController()->setValue(MutableString(entity->getModelSettings()->isTerrainMesh() == true?"1":""));
 	terrainMesh->getController()->setDisabled(false);
 	terrainMeshApply->getController()->setDisabled(false);
 }
 
 void EntityBoundingVolumeSubScreenController::onSetTerrainMesh(LevelEditorEntity* entity) {
-	entity->getModelSettings()->setTerrainMesh(terrainMesh->getController()->getValue()->equals("1"));
+	entity->getModelSettings()->setTerrainMesh(terrainMesh->getController()->getValue().equals("1"));
 }
 
 void EntityBoundingVolumeSubScreenController::unsetTerrainMesh() {
-	terrainMesh->getController()->setValue(value->set(""));
+	terrainMesh->getController()->setValue(MutableString(""));
 	terrainMesh->getController()->setDisabled(true);
 	terrainMeshApply->getController()->setDisabled(true);
 }
@@ -492,53 +480,53 @@ void EntityBoundingVolumeSubScreenController::unsetConvexMeshes() {
 	convexMeshesFile->getController()->setDisabled(true);
 	convexMeshesLoad->getController()->setDisabled(true);
 	convexMeshesResolution->getController()->setDisabled(true);
-	convexMeshesResolution->getController()->setValue(value->set("1000000"));
+	convexMeshesResolution->getController()->setValue(MutableString("1000000"));
 	convexMeshesDepth->getController()->setDisabled(true);
-	convexMeshesDepth->getController()->setValue(value->set("20"));
+	convexMeshesDepth->getController()->setValue(MutableString("20"));
 	convexMeshesConcavity->getController()->setDisabled(true);
-	convexMeshesConcavity->getController()->setValue(value->set("0.0025"));
+	convexMeshesConcavity->getController()->setValue(MutableString("0.0025"));
 	convexMeshesPlaneDownSampling->getController()->setDisabled(true);
-	convexMeshesPlaneDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesPlaneDownSampling->getController()->setValue(MutableString("4"));
 	convexMeshesConvexHullDownSampling->getController()->setDisabled(true);
-	convexMeshesConvexHullDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesConvexHullDownSampling->getController()->setValue(MutableString("4"));
 	convexMeshesAlpha->getController()->setDisabled(true);
-	convexMeshesAlpha->getController()->setValue(value->set("0.05"));
+	convexMeshesAlpha->getController()->setValue(MutableString("0.05"));
 	convexMeshesBeta->getController()->setDisabled(true);
-	convexMeshesBeta->getController()->setValue(value->set("0.05"));
+	convexMeshesBeta->getController()->setValue(MutableString("0.05"));
 	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(true);
-	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(value->set("256"));
+	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(MutableString("256"));
 	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(true);
-	convexMeshesMinVolumePerConvexHull->getController()->setValue(value->set("0.0001"));
+	convexMeshesMinVolumePerConvexHull->getController()->setValue(MutableString("0.0001"));
 	convexMeshesPCA->getController()->setDisabled(true);
-	convexMeshesPCA->getController()->setValue(value->set("0"));
+	convexMeshesPCA->getController()->setValue(MutableString("0"));
 	convexMeshesRemove->getController()->setDisabled(true);
 	convexMeshesGenerate->getController()->setDisabled(true);
 }
 
 void EntityBoundingVolumeSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
-	convexMeshesFile->getController()->setValue(value->set(entity->getFileName()));
+	convexMeshesFile->getController()->setValue(MutableString(entity->getFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
 	convexMeshesResolution->getController()->setDisabled(false);
-	convexMeshesResolution->getController()->setValue(value->set("1000000"));
+	convexMeshesResolution->getController()->setValue(MutableString("1000000"));
 	convexMeshesDepth->getController()->setDisabled(false);
-	convexMeshesDepth->getController()->setValue(value->set("20"));
+	convexMeshesDepth->getController()->setValue(MutableString("20"));
 	convexMeshesConcavity->getController()->setDisabled(false);
-	convexMeshesConcavity->getController()->setValue(value->set("0.0025"));
+	convexMeshesConcavity->getController()->setValue(MutableString("0.0025"));
 	convexMeshesPlaneDownSampling->getController()->setDisabled(false);
-	convexMeshesPlaneDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesPlaneDownSampling->getController()->setValue(MutableString("4"));
 	convexMeshesConvexHullDownSampling->getController()->setDisabled(false);
-	convexMeshesConvexHullDownSampling->getController()->setValue(value->set("4"));
+	convexMeshesConvexHullDownSampling->getController()->setValue(MutableString("4"));
 	convexMeshesAlpha->getController()->setDisabled(false);
-	convexMeshesAlpha->getController()->setValue(value->set("0.05f"));
+	convexMeshesAlpha->getController()->setValue(MutableString("0.05f"));
 	convexMeshesBeta->getController()->setDisabled(false);
-	convexMeshesBeta->getController()->setValue(value->set("0.05f"));
+	convexMeshesBeta->getController()->setValue(MutableString("0.05f"));
 	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(false);
-	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(value->set("256"));
+	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(MutableString("256"));
 	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(false);
-	convexMeshesMinVolumePerConvexHull->getController()->setValue(value->set("0.0001"));
+	convexMeshesMinVolumePerConvexHull->getController()->setValue(MutableString("0.0001"));
 	convexMeshesPCA->getController()->setDisabled(false);
-	convexMeshesPCA->getController()->setValue(value->set("0"));
+	convexMeshesPCA->getController()->setValue(MutableString("0"));
 	convexMeshesRemove->getController()->setDisabled(false);
 	convexMeshesGenerate->getController()->setDisabled(false);
 }
@@ -552,58 +540,49 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (StringUtils::startsWith(node->getId(), "button_boundingvolume_apply_")) {
-					onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_sphere_apply_")) {
-					onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_capsule_apply_")) {
-					onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_obb_apply_")) {
-					onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_aabb_apply_")) {
-					onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_apply_")) {
-					onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else
-				if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_file_")) {
-					onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
-				} else
-				if (node->getId() == "button_terrain_mesh_apply") {
-					onSetTerrainMesh(entity);
-				} else
-				if (node->getId() == "button_boundingvolume_convexmeshes_file") {
-					onBoundingVolumeConvexMeshesFile(entity);
-				} else
-				if (node->getId() == "button_boundingvolume_convexmeshes_remove") {
-					onBoundingVolumeConvexMeshesRemove(entity);
-				} else
-				if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
-					onBoundingVolumeConvexMeshesGenerate(entity);
-				} else {
-					Console::println(
-						string(
-							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch1;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_apply_")) {
+				onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_sphere_apply_")) {
+				onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_capsule_apply_")) {
+				onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_obb_apply_")) {
+				onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_aabb_apply_")) {
+				onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_apply_")) {
+				onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else
+			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_file_")) {
+				onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+			} else
+			if (node->getId() == "button_terrain_mesh_apply") {
+				onSetTerrainMesh(entity);
+			} else
+			if (node->getId() == "button_boundingvolume_convexmeshes_file") {
+				onBoundingVolumeConvexMeshesFile(entity);
+			} else
+			if (node->getId() == "button_boundingvolume_convexmeshes_remove") {
+				onBoundingVolumeConvexMeshesRemove(entity);
+			} else
+			if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
+				onBoundingVolumeConvexMeshesGenerate(entity);
+			} else {
+				Console::println(
+					string(
+						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch1;;
-			}
-		}
-		end_switch1:;
 	}
 
 }

@@ -5,22 +5,17 @@
 #include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
 
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Capsule;
 
-using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -36,7 +31,7 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
+	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
 		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
@@ -67,8 +62,8 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 
 	// create capsule
 	collisionShape = new reactphysics3d::CapsuleShape(
-		Math::max(MathTools::EPSILON, radius),
-		Math::max(MathTools::EPSILON, bTransformed.clone().sub(aTransformed).computeLength() + radius * 2.0f)
+		Math::max(Math::EPSILON, radius),
+		Math::max(Math::EPSILON, bTransformed.clone().sub(aTransformed).computeLength() + radius * 2.0f)
 	);
 
 	// compute bounding box

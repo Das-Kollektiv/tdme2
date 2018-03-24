@@ -39,12 +39,12 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::Integer;
 
-GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& font, const string& color, const string& colorDisabled, MutableString* text, int32_t maxLength)  /* throws(Exception) */
-	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const string& colorDisabled, const MutableString& text, int32_t maxLength) throw (Exception)
+	: GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
-	this->color = color.empty() == true || color.length() == 0 ? new GUIColor() : new GUIColor(color);
-	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? new GUIColor() : new GUIColor(colorDisabled);
+	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
+	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? GUIColor() : GUIColor(colorDisabled);
 	this->text = text;
 	this->maxLength = maxLength;
 	this->font->initialize();
@@ -76,12 +76,12 @@ bool GUIInputInternalNode::isContentNode()
 
 int32_t GUIInputInternalNode::getContentWidth()
 {
-	return font->getTextWidth(text) + border->left + border->right + padding.left + padding.right;
+	return font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
 }
 
 int32_t GUIInputInternalNode::getContentHeight()
 {
-	return font->getLineHeight() + border->top + border->bottom+ padding.top + padding.bottom;
+	return font->getLineHeight() + border.top + border.bottom+ padding.top + padding.bottom;
 }
 
 GUIFont* GUIInputInternalNode::getFont()
@@ -89,7 +89,7 @@ GUIFont* GUIInputInternalNode::getFont()
 	return font;
 }
 
-MutableString* GUIInputInternalNode::getText()
+MutableString& GUIInputInternalNode::getText()
 {
 	return text;
 }
@@ -106,7 +106,7 @@ void GUIInputInternalNode::dispose()
 	this->controller->dispose();
 }
 
-void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;
@@ -119,13 +119,13 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* fl
 	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController_CursorMode::SHOW) {
 		float screenWidth = guiRenderer->getGUI()->getWidth();
 		float screenHeight = guiRenderer->getGUI()->getHeight();
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + border->left + padding.left + font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
-		float top = computedConstraints.top + computedConstraints.alignmentTop + border->top + padding.top;
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
+		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top + padding.top;
 		float width = 2;
-		float height = computedConstraints.height - border->top - border->bottom- padding.top - padding.bottom;
-		auto colorData = &(disable == false ? color : colorDisabled)->getArray();
+		float height = computedConstraints.height - border.top - border.bottom- padding.top - padding.bottom;
+		auto& colorData = (disable == false ? color : colorDisabled).getArray();
 		guiRenderer->bindTexture(0);
-		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*colorData)[0], (*colorData)[1], (*colorData)[2], (*colorData)[3], 0.0f, 0.0f);
+		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 0.0f);
 		guiRenderer->render();
 	}
 }

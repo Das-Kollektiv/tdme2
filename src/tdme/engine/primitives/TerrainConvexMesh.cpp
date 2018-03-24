@@ -150,8 +150,8 @@ void TerrainConvexMesh::createConvexMesh() {
 	computeBoundingBox();
 }
 
-void TerrainConvexMesh::applyTransformations(Transformations* transformations) {
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+void TerrainConvexMesh::applyTransformations(const Transformations& transformations) {
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	triangleTransformed = triangle;
 	for (auto& vertex: triangleTransformed.getVertices()) {
 		transformationsMatrix.multiply(vertex, vertex);
@@ -159,7 +159,7 @@ void TerrainConvexMesh::applyTransformations(Transformations* transformations) {
 	createConvexMesh();
 }
 
-void TerrainConvexMesh::fromTransformations(Transformations* transformations) {
+void TerrainConvexMesh::fromTransformations(const Transformations& transformations) {
 	collisionShapeTransform.setPosition(reactphysics3d::Vector3(positionTransformed.getX(), positionTransformed.getY(), positionTransformed.getZ()));
 	computeBoundingBox();
 }

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -66,11 +65,8 @@ public:
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
-
-	/** 
-	 * @return if displacement mapping is supported
-	 */
 	bool isDisplacementMappingAvailable() override;
+	bool isInstancedRenderingAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
 	void useProgram(int32_t programId) override;
@@ -119,12 +115,14 @@ public:
 	void bindVerticesBufferObject(int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int32_t bufferObjectId) override;
 	void bindColorsBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId) override;
-	void bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(int32_t bufferObjectId) override;
+	void bindModelMatricesBufferObject(int32_t bufferObjectId) override;
+	void bindEffectColorMulsBufferObject(int32_t bufferObjectId) override;
+	void bindEffectColorAddsBufferObject(int32_t bufferObjectId) override;
+	void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
+	void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects() override;

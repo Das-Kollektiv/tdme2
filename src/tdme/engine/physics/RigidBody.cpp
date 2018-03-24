@@ -19,9 +19,7 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 #include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/CollisionResponse.h>
@@ -29,7 +27,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -40,16 +38,14 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::RigidBody;
-using tdme::math::Math;
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::TerrainConvexMesh;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -59,7 +55,7 @@ constexpr uint16_t RigidBody::TYPEIDS_ALL;
 constexpr uint16_t RigidBody::TYPEID_STATIC;
 constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
+RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
 {
 	this->world = world;
 	this->id = id;
@@ -81,8 +77,8 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
 		this->proxyShape->setCollideWithMaskBits(~typeId);
 		Transformations terrainTransformations;
-		terrainTransformations.getTranslation().set(positionTransformed.getX(), positionTransformed.getY(), positionTransformed.getZ());
-		fromTransformations(&terrainTransformations);
+		terrainTransformations.setTranslation(positionTransformed);
+		fromTransformations(terrainTransformations);
 	} else
 	// everything other
 	{
@@ -230,7 +226,7 @@ BoundingBox RigidBody::computeBoundingBoxTransformed() {
 	);
 }
 
-Vector3& RigidBody::getPosition()
+const Vector3& RigidBody::getPosition() const
 {
 	return transformations.getTranslation();
 }
@@ -275,11 +271,11 @@ Vector3& RigidBody::getAngularVelocity()
 	return angularVelocity;
 }
 
-Transformations* RigidBody::getTransformations() {
-	return &transformations;
+const Transformations& RigidBody::getTransformations() {
+	return transformations;
 }
 
-void RigidBody::fromTransformations(Transformations* transformations)
+void RigidBody::fromTransformations(const Transformations& transformations)
 {
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
@@ -295,9 +291,9 @@ void RigidBody::fromTransformations(Transformations* transformations)
 		auto scaleVectorTransformed =
 			boundingVolume->collisionShapeLocalTransform.getOrientation() *
 			reactphysics3d::Vector3(
-				transformations->getScale().getX(),
-				transformations->getScale().getY(),
-				transformations->getScale().getZ()
+				transformations.getScale().getX(),
+				transformations.getScale().getY(),
+				transformations.getScale().getZ()
 			);
 		// set bv local translation
 		boundingVolume->collisionShapeLocalTransform.setPosition(

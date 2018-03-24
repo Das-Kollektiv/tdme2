@@ -7,7 +7,6 @@
 
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
@@ -15,7 +14,6 @@ using std::array;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::math::Vector3;
 
@@ -68,9 +66,9 @@ OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& a
 	);
 	collisionShape = new reactphysics3d::BoxShape(
 		reactphysics3d::Vector3(
-			Math::max(MathTools::EPSILON, halfExtension.getX()),
-			Math::max(MathTools::EPSILON, halfExtension.getY()),
-			Math::max(MathTools::EPSILON, halfExtension.getZ())
+			Math::max(Math::EPSILON, halfExtension.getX()),
+			Math::max(Math::EPSILON, halfExtension.getY()),
+			Math::max(Math::EPSILON, halfExtension.getZ())
 		)
 	);
 	// compute bounding box

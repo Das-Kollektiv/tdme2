@@ -34,7 +34,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Properties.h>
-#include <tdme/engine/subsystems/object/ModelStatistics.h>
+#include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 
 using std::string;
 
@@ -46,7 +46,7 @@ using tdme::engine::PartitionNone;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::ModelStatistics;
+using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;

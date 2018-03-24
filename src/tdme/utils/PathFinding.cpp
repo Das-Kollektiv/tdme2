@@ -7,11 +7,14 @@
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
+#include <tdme/utils/Time.h>
 
 using std::map;
 using std::reverse;
@@ -21,16 +24,21 @@ using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::World;
+using tdme::engine::physics::RigidBody;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
+using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
+PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
 	this->world = world;
 	this->customTest = customtest;
+	this->sloping = sloping;
 	this->end = new PathFindingNode();
 	this->actorObv = nullptr;
 	this->actorCbv = nullptr;
@@ -51,7 +59,7 @@ PathFinding::~PathFinding() {
 string PathFinding::toKeyFloat(float value)
 {
 	string floatString = to_string(value);
-	return floatString.substr(0, floatString.length() - 3);
+	return floatString.substr(0, floatString.length() - 5);
 }
 
 void PathFinding::reset() {
@@ -65,7 +73,7 @@ void PathFinding::reset() {
 	closedNodes.clear();
 }
 
-bool PathFinding::isWalkable(float x, float y, float z, float& height) {
+bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& height) {
 	// determine y height of ground plate of actor bounding volume
 	float xHalfExtension = actorCbv->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
 	float zHalfExtension = actorCbv->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
@@ -78,7 +86,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 			Vector3 actorPositionCandidate;
 			if (world->determineHeight(
 				collisionRigidBodyTypes,
-				actorStepUpMax,
+				stepUpMax,
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition) == nullptr) {
 				return false;
@@ -93,13 +101,23 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height) {
 	}
 
 	// set up correct height
-	actorTransformations.getTranslation().set(x, height + 0.1f, z);
+	actorTransformations.setTranslation(Vector3(x, height + 0.1f, z));
 	actorTransformations.update();
-	actorCbv->fromTransformations(&actorTransformations);
+	actorCbv->fromTransformations(actorTransformations);
 
 	// check if collides with world
 	vector<RigidBody*> collidedRigidBodies;
-	return world->doesCollideWith(collisionRigidBodyTypes, actorCbv, collidedRigidBodies) == false;
+	world->doesCollideWith(collisionRigidBodyTypes, actorCbv, collidedRigidBodies);
+	if (actorId.size() > 0) {
+		for (auto rigidBody: collidedRigidBodies) {
+			if (rigidBody->getRootId() != actorId) {
+				return false;
+			}
+		}
+		return true;
+	} else {
+		return collidedRigidBodies.size() == 0;
+	}
 }
 
 void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {
@@ -140,7 +158,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		return PathFindingStatus::PATH_NOWAY;
 	}
 
-	// Choose node form open nodes thats least expensive to check its successors
+	// Choose node from open nodes thats least expensive to check its successors
 	PathFindingNode* node = nullptr;
 	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
 		if (node == nullptr || nodeIt->second->costsAll < node->costsAll) node = nodeIt->second;
@@ -154,14 +172,15 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Find valid successors
 		for (int z = -1; z <= 1; z++)
 		for (int x = -1; x <= 1; x++)
-		if ((z != 0 || x != 0)  &&
-			(Math::abs(x) == 1 && Math::abs(z) == 1) == false) {
+		if ((z != 0 || x != 0) &&
+			(sloping == true ||
+			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
 			//
 			float yHeight;
 			float successorX = x * stepSize + node->x;
 			float successorZ = z * stepSize + node->z;
 			// first node or walkable?
-			if (isWalkable(successorX, node->y, successorZ, yHeight) == true) {
+			if (isWalkable(successorX, node->y, successorZ, actorStepUpMax, yHeight) == true) {
 				// check if successor node equals previous node / node
 				if (equals(node, successorX, yHeight, successorZ)) {
 					continue;
@@ -233,14 +252,14 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Remove found node from open nodes list, since it was less optimal
 		if (openListNode != nullptr) {
 			// remove open list node
-			delete openListNodeIt->second;
 			openNodes.erase(openListNodeIt);
+			delete openListNodeIt->second;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
-			delete closedListNodeIt->second;
 			closedNodes.erase(closedListNodeIt);
+			delete closedListNodeIt->second;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
@@ -260,40 +279,69 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorObv, Transformations* actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path) {
+bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId) {
+	this->actorId = actorId;
+
+	//
+	auto now = Time::getCurrentMillis();
+
 	// clear path
 	path.clear();
 
 	//
 	this->collisionRigidBodyTypes = collisionRigidBodyTypes;
 
-	// init path finding
+	// init transformations, bounding volumes
+	this->actorTransformations.fromTransformations(actorTransformations);
 	this->actorObv = actorObv->clone();
 	this->actorCbv = actorObv->clone();
-	this->actorTransformations.fromTransformations(actorTransformations);
+	this->actorCbv->fromTransformations(this->actorTransformations);
 
 	// positions
-	Vector3 startPosition;
-	startPosition.set(this->actorTransformations.getTranslation());
-	Vector3 endPositionComputed;
-	endPositionComputed.set(endPosition);
+	Vector3 startPositionComputed;
+	startPositionComputed.set(this->actorTransformations.getTranslation());
+
+	// check if start is reachable
+	/*
+	{
+		float startYHeight = startPositionComputed.getY();
+		if (isWalkable(
+			startPositionComputed.getX(),
+			startPositionComputed.getY(),
+			startPositionComputed.getZ(),
+			startYHeight
+			) == false) {
+			//
+			Console::println("PathFinding::findPath(): start is not walkable!");
+			return false;
+		} else {
+			startPositionComputed.setY(startYHeight);
+		}
+	}
+	*/
 
 	// check if target is reachable
-	float endYHeight = 0.0f;
-	if (isWalkable(
-			endPositionComputed.getX(),
-			endPositionComputed.getY(),
-			endPositionComputed.getZ(),
-			endYHeight
-		) == false) {
-		//
-		return false;
-	} else {
-		endPositionComputed.setY(endYHeight);
+	Vector3 endPositionComputed;
+	endPositionComputed.set(endPosition);
+	{
+		float endYHeight = endPositionComputed.getY();
+		if (isWalkable(
+				endPositionComputed.getX(),
+				endPositionComputed.getY(),
+				endPositionComputed.getZ(),
+				10000.0f,
+				endYHeight
+			) == false) {
+			//
+			Console::println("PathFinding::findPath(): end is not walkable!");
+			return false;
+		} else {
+			endPositionComputed.setY(endYHeight);
+		}
 	}
 
 	// otherwise start path finding
-	start(startPosition, endPositionComputed);
+	start(startPositionComputed, endPositionComputed);
 
 	// do the steps
 	bool done = false;
@@ -308,13 +356,20 @@ bool PathFinding::findPath(BoundingVolume* actorObv, Transformations* actorTrans
 				}
 			case PATH_NOWAY:
 				{
+					Console::println("PathFinding::findPath(): path no way with steps: " + to_string(stepIdx));
 					done = true;
 					break;
 				}
 			case PATH_FOUND:
 				{
+					Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					int nodesCount = 0;
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
 						path.push_back(Vector3(node->x, node->y, node->z));
+						if (nodesCount > 0 && nodesCount % 100 == 0) {
+							Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
+						}
+						nodesCount++;
 					}
 					reverse(path.begin(), path.end());
 					if (path.size() > 0) path.erase(path.begin());
@@ -324,6 +379,13 @@ bool PathFinding::findPath(BoundingVolume* actorObv, Transformations* actorTrans
 				}
 		}
 	}
+
+	//
+	if (stepIdx == stepsMax) {
+		Console::println("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
+	}
+
+	this->actorId = "";
 
 	// delete old actor obv, cbv
 	delete this->actorObv;
@@ -335,6 +397,8 @@ bool PathFinding::findPath(BoundingVolume* actorObv, Transformations* actorTrans
 
 	// reset
 	reset();
+
+	Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
 
 	// return success
 	return success;

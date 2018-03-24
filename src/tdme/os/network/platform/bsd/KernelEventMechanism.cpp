@@ -1,4 +1,7 @@
 // kqueue
+#if defined(__FreeBSD__)
+	#include <sys/types.h>
+#endif
 #include <sys/event.h>
 #include <sys/time.h>
 

@@ -47,8 +47,6 @@ GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node)
 
 void GUISelectBoxMultipleController::init()
 {
-	value = new MutableString();
-	searchValue = new MutableString();
 }
 
 bool GUISelectBoxMultipleController::isDisabled()
@@ -58,10 +56,10 @@ bool GUISelectBoxMultipleController::isDisabled()
 
 void GUISelectBoxMultipleController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	selectCurrent();
 }
 
@@ -237,37 +235,38 @@ bool GUISelectBoxMultipleController::hasValue()
 	return true;
 }
 
-MutableString* GUISelectBoxMultipleController::getValue()
+const MutableString& GUISelectBoxMultipleController::getValue()
 {
-	value->reset();
+	value.reset();
 	determineSelectBoxMultipleOptionControllers();
 	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxMultipleOptionControllers.at(i);
 		if (selectBoxOptionController->isSelected() == true) {
-			value->append((dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode()))->getValue());
-			value->append(VALUE_DELIMITER);
+			value.append((dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode()))->getValue());
+			value.append(VALUE_DELIMITER);
 		}
 	}
-	if (value->length() > 0) {
-		value->insert(0, VALUE_DELIMITER);
+	if (value.length() > 0) {
+		value.insert(0, VALUE_DELIMITER);
 	}
 	return value;
 }
 
-void GUISelectBoxMultipleController::setValue(MutableString* value)
+void GUISelectBoxMultipleController::setValue(const MutableString& value)
 {
 	determineSelectBoxMultipleOptionControllers();
 	unselect();
 	unfocus();
+	MutableString searchValue;
 	GUIElementNode* selectBoxOptionNodeLast = nullptr;
 	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxMultipleOptionControllers.at(i);
 		auto selectBoxOptionNode = dynamic_cast< GUIElementNode* >(selectBoxOptionController->getNode());
-		searchValue->reset();
-		searchValue->append(VALUE_DELIMITER);
-		searchValue->append(selectBoxOptionNode->getValue());
-		searchValue->append(VALUE_DELIMITER);
-		if (value->indexOf(searchValue) != -1) {
+		searchValue.reset();
+		searchValue.append(VALUE_DELIMITER);
+		searchValue.append(selectBoxOptionNode->getValue());
+		searchValue.append(VALUE_DELIMITER);
+		if (value.indexOf(searchValue) != -1) {
 			selectBoxOptionController->select();
 			selectBoxOptionNode->scrollToNodeX(dynamic_cast< GUIParentNode* >(node));
 			selectBoxOptionNode->scrollToNodeY(dynamic_cast< GUIParentNode* >(node));

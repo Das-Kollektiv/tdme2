@@ -93,9 +93,9 @@ void SphereParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void SphereParticleEmitter::fromTransformations(Transformations* transformations)
+void SphereParticleEmitter::fromTransformations(const Transformations& transformations)
 {
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply translations
 	Vector3 center;
 	Vector3 axis;

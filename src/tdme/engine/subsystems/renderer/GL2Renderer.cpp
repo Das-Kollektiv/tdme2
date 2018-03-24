@@ -2,7 +2,7 @@
 
 #if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif defined(_WIN32) or defined(__linux__)
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
 	#include <GL/glew.h>
 #endif
 
@@ -132,6 +132,10 @@ bool GL2Renderer::isNormalMappingAvailable()
 
 bool GL2Renderer::isDisplacementMappingAvailable()
 {
+	return false;
+}
+
+bool GL2Renderer::isInstancedRenderingAvailable() {
 	return false;
 }
 
@@ -528,21 +532,6 @@ void GL2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glColorPointer(4, GL_FLOAT, 0, 0LL);
 }
 
-void GL2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesJointsBufferObject()::not implemented yet"));
-}
-
-void GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject()::not implemented yet"));
-}
-
-void GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	Console::println(string("GL2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject()::not implemented yet"));
-}
-
 void GL2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	Console::println(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
@@ -553,10 +542,31 @@ void GL2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
+void GL2Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+}
+
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+}
+
+void GL2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GL2Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)

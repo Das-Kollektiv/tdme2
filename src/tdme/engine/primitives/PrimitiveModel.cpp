@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -21,7 +20,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/TerrainConvexMesh.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -32,7 +31,6 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::primitives::PrimitiveModel;
-using tdme::math::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -48,7 +46,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::TerrainConvexMesh;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::Console;
@@ -308,7 +306,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	Vector3 abNormalized = a.clone().sub(b).normalize();
 	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs(abNormalizedVectorXYZ[0]) < MathTools::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < MathTools::EPSILON) {
+	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
 		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();

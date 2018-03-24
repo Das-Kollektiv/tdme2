@@ -5,7 +5,6 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
@@ -13,7 +12,6 @@ using std::array;
 
 using tdme::math::Matrix4x4;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
@@ -355,8 +353,8 @@ public:
 	inline Matrix4x4& rotate(float angle, const Vector3& v) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
 		auto& vXYZ = v.getArray();
-	    float c = Math::cos(angle * MathTools::DEG2RAD);    // cosine
-	    float s = Math::sin(angle * MathTools::DEG2RAD);    // sine
+	    float c = Math::cos(angle * Math::DEG2RAD);    // cosine
+	    float s = Math::sin(angle * Math::DEG2RAD);    // sine
 	    float c1 = 1.0f - c;                // 1 - c
 	    float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
 	          m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
@@ -472,22 +470,22 @@ public:
 		return
 			(this == &m) ||
 			(
-				Math::abs(data[0] - m.data[0]) < MathTools::EPSILON &&
-				Math::abs(data[1] - m.data[1]) < MathTools::EPSILON &&
-				Math::abs(data[2] - m.data[2]) < MathTools::EPSILON &&
-				Math::abs(data[3] - m.data[3]) < MathTools::EPSILON &&
-				Math::abs(data[4] - m.data[4]) < MathTools::EPSILON &&
-				Math::abs(data[5] - m.data[5]) < MathTools::EPSILON &&
-				Math::abs(data[6] - m.data[6]) < MathTools::EPSILON &&
-				Math::abs(data[7] - m.data[7]) < MathTools::EPSILON &&
-				Math::abs(data[8] - m.data[8]) < MathTools::EPSILON &&
-				Math::abs(data[9] - m.data[9]) < MathTools::EPSILON &&
-				Math::abs(data[10] - m.data[10]) < MathTools::EPSILON &&
-				Math::abs(data[11] - m.data[11]) < MathTools::EPSILON &&
-				Math::abs(data[12] - m.data[12]) < MathTools::EPSILON &&
-				Math::abs(data[13] - m.data[13]) < MathTools::EPSILON &&
-				Math::abs(data[14] - m.data[14]) < MathTools::EPSILON &&
-				Math::abs(data[15] - m.data[15]) < MathTools::EPSILON
+				Math::abs(data[0] - m.data[0]) < Math::EPSILON &&
+				Math::abs(data[1] - m.data[1]) < Math::EPSILON &&
+				Math::abs(data[2] - m.data[2]) < Math::EPSILON &&
+				Math::abs(data[3] - m.data[3]) < Math::EPSILON &&
+				Math::abs(data[4] - m.data[4]) < Math::EPSILON &&
+				Math::abs(data[5] - m.data[5]) < Math::EPSILON &&
+				Math::abs(data[6] - m.data[6]) < Math::EPSILON &&
+				Math::abs(data[7] - m.data[7]) < Math::EPSILON &&
+				Math::abs(data[8] - m.data[8]) < Math::EPSILON &&
+				Math::abs(data[9] - m.data[9]) < Math::EPSILON &&
+				Math::abs(data[10] - m.data[10]) < Math::EPSILON &&
+				Math::abs(data[11] - m.data[11]) < Math::EPSILON &&
+				Math::abs(data[12] - m.data[12]) < Math::EPSILON &&
+				Math::abs(data[13] - m.data[13]) < Math::EPSILON &&
+				Math::abs(data[14] - m.data[14]) < Math::EPSILON &&
+				Math::abs(data[15] - m.data[15]) < Math::EPSILON
 			);
 	}
 
@@ -560,7 +558,7 @@ public:
 		auto axis1 = 1;
 		auto axis2 = 2;
 		auto cy = static_cast< float >(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
-		if (cy > 16.0f * MathTools::EPSILON) {
+		if (cy > 16.0f * Math::EPSILON) {
 			eulerXYZ[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
 			eulerXYZ[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
 			eulerXYZ[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
@@ -570,6 +568,14 @@ public:
 			eulerXYZ[2] = 0.0f;
 		}
 		euler.scale(static_cast< float >((180.0 / Math::PI)));
+	}
+
+	/**
+	 * Clones this matrix
+	 * @return new cloned matrix
+	 */
+	inline Matrix4x4 clone() const {
+		return Matrix4x4(data);
 	}
 
 	/**

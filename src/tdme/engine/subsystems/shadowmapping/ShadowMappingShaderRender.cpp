@@ -19,7 +19,6 @@ ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer)
 	initialized = false;
 }
 
-
 bool ShadowMappingShaderRender::isInitialized()
 {
 	return initialized;
@@ -57,59 +56,52 @@ void ShadowMappingShaderRender::initialize()
 	// link
 	if (renderer->linkProgram(renderProgramGlId) == false)
 		return;
+
 	//	uniforms
 	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, "textureUnit");
-	if (renderUniformTextureUnit == -1)
-		return;
+	if (renderUniformTextureUnit == -1) return;
 	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramGlId, "texturePixelWidth");
-	if (renderUniformTexturePixelWidth == -1)
-		return;
+	if (renderUniformTexturePixelWidth == -1) return;
 	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(renderProgramGlId, "texturePixelHeight");
-	if (renderUniformTexturePixelHeight == -1)
-		return;
+	if (renderUniformTexturePixelHeight == -1) return;
 	renderUniformDepthBiasMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "depthBiasMVPMatrix");
-	if (renderUniformDepthBiasMVPMatrix == -1)
-		return;
-	renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvMatrix");
-	if (renderUniformMVMatrix == -1)
-		return;
-	renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvpMatrix");
-	if (renderUniformMVPMatrix == -1)
-		return;
-	renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "normalMatrix");
-	if (renderUniformNormalMatrix == -1)
-		return;
+	if (renderUniformDepthBiasMVPMatrix == -1) return;
+	if (renderer->isInstancedRenderingAvailable() == true) {
+		renderUniformProjectionMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "projectionMatrix");
+		if (renderUniformProjectionMatrix == -1) return;
+		renderUniformCameraMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "cameraMatrix");
+		if (renderUniformCameraMatrix == -1) return;
+	} else {
+		renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvpMatrix");
+		if (renderUniformMVPMatrix == -1) return;
+		renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "normalMatrix");
+		if (renderUniformNormalMatrix == -1) return;
+	}
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureUnit");
-	if (uniformDiffuseTextureUnit == -1)
-		return;
+	if (uniformDiffuseTextureUnit == -1) return;
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureAvailable");
-	if (uniformDiffuseTextureAvailable == -1)
-		return;
+	if (uniformDiffuseTextureAvailable == -1) return;
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparency");
-	if (uniformDiffuseTextureMaskedTransparency == -1)
-		return;
+	if (uniformDiffuseTextureMaskedTransparency == -1) return;
 	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, "lightDirection");
-	if (renderUniformLightDirection == -1)
-		return;
+	if (renderUniformLightDirection == -1) return;
 	if (rendererVersion != "gles2") {
+		if (renderer->isInstancedRenderingAvailable() == false) {
+			renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvMatrix");
+			if (renderUniformMVMatrix == -1) return;
+		}
 		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramGlId, "lightPosition");
-		if (renderUniformLightPosition == -1)
-			return;
+		if (renderUniformLightPosition == -1) return;
 		renderUniformLightSpotExponent = renderer->getProgramUniformLocation(renderProgramGlId, "lightSpotExponent");
-		if (renderUniformLightSpotExponent == -1)
-			return;
+		if (renderUniformLightSpotExponent == -1) return;
 		renderUniformLightSpotCosCutoff = renderer->getProgramUniformLocation(renderProgramGlId, "lightSpotCosCutoff");
-		if (renderUniformLightSpotCosCutoff == -1)
-			return;
+		if (renderUniformLightSpotCosCutoff == -1) return;
 		renderUniformLightConstantAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightConstantAttenuation");
-		if (renderUniformLightConstantAttenuation == -1)
-			return;
+		if (renderUniformLightConstantAttenuation == -1) return;
 		renderUniformLightLinearAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightLinearAttenuation");
-		if (renderUniformLightLinearAttenuation == -1)
-			return;
+		if (renderUniformLightLinearAttenuation == -1) return;
 		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightQuadraticAttenuation");
-		if (renderUniformLightQuadraticAttenuation == -1)
-			return;
+		if (renderUniformLightQuadraticAttenuation == -1) return;
 	}
 	//
 	initialized = true;
@@ -135,18 +127,29 @@ void ShadowMappingShaderRender::setProgramTexturePixelDimensions(float width, fl
 	renderer->setProgramUniformFloat(renderUniformTexturePixelHeight, height);
 }
 
+void ShadowMappingShaderRender::setProgramViewMatrices() {
+	if (renderer->isInstancedRenderingAvailable() == true) {
+		renderer->setProgramUniformFloatMatrix4x4(renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
+	}
+}
+
 void ShadowMappingShaderRender::setProgramMVMatrix(const Matrix4x4& mvMatrix)
 {
+	if (renderer->isInstancedRenderingAvailable() == true) return;
+	if (renderUniformMVMatrix == -1) return;
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVMatrix, mvMatrix.getArray());
 }
 
 void ShadowMappingShaderRender::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
 {
+	if (renderer->isInstancedRenderingAvailable() == true) return;
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformMVPMatrix, mvpMatrix.getArray());
 }
 
 void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMatrix)
 {
+	if (renderer->isInstancedRenderingAvailable() == true) return;
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
@@ -166,11 +169,13 @@ void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textur
 
 void ShadowMappingShaderRender::setProgramLightPosition(const Vector3& lightPosition)
 {
+	if (renderUniformLightPosition == -1) return;
 	renderer->setProgramUniformFloatVec3(renderUniformLightPosition, lightPosition.getArray());
 }
 
 void ShadowMappingShaderRender::setProgramLightDirection(const Vector3& lightDirection)
 {
+	if (renderUniformLightDirection == -1) return;
 	renderer->setProgramUniformFloatVec3(renderUniformLightDirection, lightDirection.getArray());
 }
 
@@ -181,25 +186,30 @@ void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(const Matrix4x4& de
 
 void ShadowMappingShaderRender::setProgramLightSpotExponent(float spotExponent)
 {
+	if (renderUniformLightSpotExponent == -1) return;
 	renderer->setProgramUniformFloat(renderUniformLightSpotExponent, spotExponent);
 }
 
 void ShadowMappingShaderRender::setProgramLightSpotCosCutOff(float spotCosCutOff)
 {
+	if (renderUniformLightSpotCosCutoff == -1) return;
 	renderer->setProgramUniformFloat(renderUniformLightSpotCosCutoff, Math::cos(Math::PI / 180.0f * spotCosCutOff));
 }
 
 void ShadowMappingShaderRender::setProgramLightConstantAttenuation(float constantAttenuation)
 {
+	if (renderUniformLightConstantAttenuation == -1) return;
 	renderer->setProgramUniformFloat(renderUniformLightConstantAttenuation, constantAttenuation);
 }
 
 void ShadowMappingShaderRender::setProgramLightLinearAttenuation(float linearAttenuation)
 {
+	if (renderUniformLightLinearAttenuation == -1) return;
 	renderer->setProgramUniformFloat(renderUniformLightLinearAttenuation, linearAttenuation);
 }
 
 void ShadowMappingShaderRender::setProgramLightQuadraticAttenuation(float quadraticAttenuation)
 {
+	if (renderUniformLightQuadraticAttenuation == -1) return;
 	renderer->setProgramUniformFloat(renderUniformLightQuadraticAttenuation, quadraticAttenuation);
 }

@@ -5,6 +5,7 @@
 #endif
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -37,7 +38,7 @@
 
 using std::map;
 using std::vector;
-using std::string;
+using std::set;
 using std::string;
 using std::to_string;
 using std::to_string;
@@ -81,7 +82,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = new GUIColor("#8080FF");
+		this->foccussedBorderColor = GUIColor("#8080FF");
 	} catch (Exception& exception) {
 		Console::print(string("GUI(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -90,11 +91,6 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 
 void GUI::init()
 {
-	foccussedBorderColor = nullptr;
-	unfocussedNodeBorderLeftColor = nullptr;
-	unfocussedNodeBorderRightColor = nullptr;
-	unfocussedNodeBorderTopColor = nullptr;
-	unfocussedNodeBorderBottomColor = nullptr;
 	mouseEventsPool = new GUI_1(this);
 	keyboardEventsPool = new GUI_2(this);
 	mouseButtonLast = 0;
@@ -222,13 +218,13 @@ void GUI::addScreen(const string& id, GUIScreenNode* screen)
 	screens.emplace(id, screen);
 }
 
-void GUI::removeScreen(const string* id)
+void GUI::removeScreen(const string& id)
 {
-	auto screensIt = screens.find(*id);
-
+	auto screensIt = screens.find(id);
 	if (screensIt != screens.end()) {
+		screens.erase(id);
 		screensIt->second->dispose();
-		screens.erase(*id);
+		delete screensIt->second;
 	}
 }
 
@@ -239,7 +235,7 @@ void GUI::reset()
 		entitiesToRemove.push_back(screenKeysIt.first);
 	}
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
-		removeScreen(&(entitiesToRemove.at(i)));
+		removeScreen(entitiesToRemove.at(i));
 	}
 	fontCache.clear();
 	imageCache.clear();
@@ -263,7 +259,7 @@ void GUI::addRenderScreen(const string& screenId)
 	renderScreens.push_back(screenIt->second);
 }
 
-GUIColor* GUI::getFoccussedBorderColor()
+GUIColor& GUI::getFoccussedBorderColor()
 {
 	return foccussedBorderColor;
 }
@@ -290,7 +286,7 @@ void GUI::determineFocussedNodes()
 	}
 	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
 		auto screen = focusableScreenNodes.at(i);
-		screen->determineFocussedNodes(screen, &focusableNodes);
+		screen->determineFocussedNodes(screen, focusableNodes);
 	}
 }
 
@@ -302,11 +298,11 @@ GUIElementNode* GUI::getFocussedNode()
 void GUI::unfocusNode()
 {
 	if (focussedNode != nullptr) {
-		focussedNode->getActiveConditions()->remove(GUIElementNode::CONDITION_FOCUS);
-		focussedNode->getBorder()->topColor = unfocussedNodeBorderTopColor;
-		focussedNode->getBorder()->leftColor = unfocussedNodeBorderLeftColor;
-		focussedNode->getBorder()->bottomColor = unfocussedNodeBorderBottomColor;
-		focussedNode->getBorder()->rightColor = unfocussedNodeBorderRightColor;
+		focussedNode->getActiveConditions().remove(GUIElementNode::CONDITION_FOCUS);
+		focussedNode->getBorder().topColor = unfocussedNodeBorderTopColor;
+		focussedNode->getBorder().leftColor = unfocussedNodeBorderLeftColor;
+		focussedNode->getBorder().bottomColor = unfocussedNodeBorderBottomColor;
+		focussedNode->getBorder().rightColor = unfocussedNodeBorderRightColor;
 		if (focussedNode->getController() != nullptr)
 			focussedNode->getController()->onFocusLost();
 
@@ -316,15 +312,15 @@ void GUI::unfocusNode()
 void GUI::focusNode()
 {
 	if (focussedNode != nullptr) {
-		focussedNode->getActiveConditions()->add(GUIElementNode::CONDITION_FOCUS);
-		unfocussedNodeBorderTopColor = focussedNode->getBorder()->topColor;
-		unfocussedNodeBorderLeftColor = focussedNode->getBorder()->leftColor;
-		unfocussedNodeBorderBottomColor = focussedNode->getBorder()->bottomColor;
-		unfocussedNodeBorderRightColor = focussedNode->getBorder()->rightColor;
-		focussedNode->getBorder()->topColor = foccussedBorderColor;
-		focussedNode->getBorder()->leftColor = foccussedBorderColor;
-		focussedNode->getBorder()->bottomColor = foccussedBorderColor;
-		focussedNode->getBorder()->rightColor = foccussedBorderColor;
+		focussedNode->getActiveConditions().add(GUIElementNode::CONDITION_FOCUS);
+		unfocussedNodeBorderTopColor = focussedNode->getBorder().topColor;
+		unfocussedNodeBorderLeftColor = focussedNode->getBorder().leftColor;
+		unfocussedNodeBorderBottomColor = focussedNode->getBorder().bottomColor;
+		unfocussedNodeBorderRightColor = focussedNode->getBorder().rightColor;
+		focussedNode->getBorder().topColor = foccussedBorderColor;
+		focussedNode->getBorder().leftColor = foccussedBorderColor;
+		focussedNode->getBorder().bottomColor = foccussedBorderColor;
+		focussedNode->getBorder().rightColor = foccussedBorderColor;
 		if (focussedNode->getController() != nullptr)
 			focussedNode->getController()->onFocusGained();
 
@@ -372,7 +368,7 @@ void GUI::focusPreviousNode()
 				focussedNodeIdx = i;
 			}
 		}
-		auto focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
+		int32_t focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
 		if (focussedPreviousNodeIdx < 0)
 			focussedPreviousNodeIdx += focusableNodes.size();
 
@@ -420,6 +416,7 @@ void GUI::render()
 
 void GUI::handleEvents(GUINode* node)
 {
+	set<string> eventNodeIds;
 	for (auto i = 0; i < mouseEvents.size(); i++) {
 		auto event = mouseEvents.at(i);
 		if (event->isProcessed() == true)
@@ -427,7 +424,29 @@ void GUI::handleEvents(GUINode* node)
 
 		event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
 		event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
-		node->handleMouseEvent(event);
+
+		// determine nodes that receive this event
+		node->determineMouseEventNodes(event, eventNodeIds);
+
+		// handle mouse event for each node we collected
+		for (auto eventNodeId: eventNodeIds) {
+			// node event occurred on
+			auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+			if (eventNode == nullptr) continue;
+
+			// controller node
+			auto controllerNode = eventNode;
+			if (controllerNode->getController() == nullptr) {
+				controllerNode = controllerNode->getParentControllerNode();
+			}
+			if (controllerNode == nullptr) continue;
+
+			//
+			controllerNode->getController()->handleMouseEvent(eventNode, event);
+		}
+
+		// clear event node id list
+		eventNodeIds.clear();
 	}
 	for (auto i = 0; i < keyboardEvents.size(); i++) {
 		auto event = keyboardEvents.at(i);

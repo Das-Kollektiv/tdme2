@@ -26,10 +26,10 @@ private:
 	Engine* engine {  };
 
 public:
-	void initialize();
-	void dispose();
-	void reshape(int32_t width, int32_t height);
-	void display();
+	void initialize() override;
+	void dispose() override;
+	void reshape(int32_t width, int32_t height) override;
+	void display() override;
 
 	/** 
 	 * Main

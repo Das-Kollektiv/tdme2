@@ -79,8 +79,6 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::ExceptionBase;
 
-MutableString* ModelEditorScreenController::TEXT_EMPTY = new MutableString("");
-
 ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view) 
 {
 	this->modelPath = new FileDialogPath(".");
@@ -181,7 +179,6 @@ void ModelEditorScreenController::initialize()
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
 	entityBoundingVolumeSubScreenController->initialize(screenNode);
-	value = new MutableString();
 }
 
 void ModelEditorScreenController::dispose()
@@ -190,7 +187,7 @@ void ModelEditorScreenController::dispose()
 
 void ModelEditorScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText()->set(text);
+	screenCaption->getText().set(text);
 	screenNode->layout(screenCaption);
 }
 
@@ -221,36 +218,36 @@ void ModelEditorScreenController::unsetEntityProperties()
 void ModelEditorScreenController::setPivot(const Vector3& pivot)
 {
 	pivotX->getController()->setDisabled(false);
-	pivotX->getController()->setValue(value->set(Tools::formatFloat(pivot.getX())));
+	pivotX->getController()->setValue(MutableString(Tools::formatFloat(pivot.getX())));
 	pivotY->getController()->setDisabled(false);
-	pivotY->getController()->setValue(value->set(Tools::formatFloat(pivot.getY())));
+	pivotY->getController()->setValue(MutableString(Tools::formatFloat(pivot.getY())));
 	pivotZ->getController()->setDisabled(false);
-	pivotZ->getController()->setValue(value->set(Tools::formatFloat(pivot.getZ())));
+	pivotZ->getController()->setValue(MutableString(Tools::formatFloat(pivot.getZ())));
 	pivotApply->getController()->setDisabled(false);
 }
 
 void ModelEditorScreenController::unsetPivot()
 {
 	pivotX->getController()->setDisabled(true);
-	pivotX->getController()->setValue(value->set(TEXT_EMPTY));
+	pivotX->getController()->setValue(MutableString());
 	pivotY->getController()->setDisabled(true);
-	pivotY->getController()->setValue(value->set(TEXT_EMPTY));
+	pivotY->getController()->setValue(MutableString());
 	pivotZ->getController()->setDisabled(true);
-	pivotZ->getController()->setValue(value->set(TEXT_EMPTY));
+	pivotZ->getController()->setValue(MutableString());
 	pivotApply->getController()->setDisabled(true);
 }
 
 void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingDynamicShadowing->getController()->setDisabled(false);
-	renderingDynamicShadowing->getController()->setValue(value->set(entity->isDynamicShadowing() == true?"1":""));
+	renderingDynamicShadowing->getController()->setValue(MutableString(entity->isDynamicShadowing() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
 void ModelEditorScreenController::unsetRendering()
 {
 	renderingDynamicShadowing->getController()->setDisabled(true);
-	renderingDynamicShadowing->getController()->setValue(value->set("1"));
+	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
 	renderingApply->getController()->setDisabled(true);
 }
 
@@ -333,88 +330,88 @@ void ModelEditorScreenController::unsetMaterials() {
 		}
 	}
 
-	materialsDropdown->getController()->setValue(value->set(""));
+	materialsDropdown->getController()->setValue(MutableString());
 	materialsDropdown->getController()->setDisabled(true);
 	materialsDropdownApply->getController()->setDisabled(true);
-	materialsMaterialName->getController()->setValue(value->set(""));
+	materialsMaterialName->getController()->setValue(MutableString(""));
 	materialsMaterialAmbient->getController()->setDisabled(true);
-	materialsMaterialAmbient->getController()->setValue(value->set(""));
+	materialsMaterialAmbient->getController()->setValue(MutableString(""));
 	materialsMaterialDiffuse->getController()->setDisabled(true);
-	materialsMaterialDiffuse->getController()->setValue(value->set(""));
+	materialsMaterialDiffuse->getController()->setValue(MutableString());
 	materialsMaterialSpecular->getController()->setDisabled(true);
-	materialsMaterialSpecular->getController()->setValue(value->set(""));
+	materialsMaterialSpecular->getController()->setValue(MutableString());
 	materialsMaterialEmission->getController()->setDisabled(true);
-	materialsMaterialEmission->getController()->setValue(value->set(""));
+	materialsMaterialEmission->getController()->setValue(MutableString());
 	materialsMaterialShininess->getController()->setDisabled(true);
-	materialsMaterialShininess->getController()->setValue(value->set(""));
+	materialsMaterialShininess->getController()->setValue(MutableString());
 	materialsMaterialApply->getController()->setDisabled(true);
-	materialsMaterialDiffuseTexture->getController()->setValue(value->set(""));
+	materialsMaterialDiffuseTexture->getController()->setValue(MutableString());
 	materialsMaterialDiffuseTextureLoad->getController()->setDisabled(true);
 	materialsMaterialDiffuseTextureClear->getController()->setDisabled(true);
-	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(value->set(""));
+	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(MutableString());
 	materialsMaterialDiffuseTransparencyTextureLoad->getController()->setDisabled(true);
 	materialsMaterialDiffuseTransparencyTextureClear->getController()->setDisabled(true);
-	materialsMaterialNormalTexture->getController()->setValue(value->set(""));
+	materialsMaterialNormalTexture->getController()->setValue(MutableString());
 	materialsMaterialNormalTextureLoad->getController()->setDisabled(true);
 	materialsMaterialNormalTextureClear->getController()->setDisabled(true);
-	materialsMaterialSpecularTexture->getController()->setValue(value->set(""));
+	materialsMaterialSpecularTexture->getController()->setValue(MutableString());
 	materialsMaterialSpecularTextureLoad->getController()->setDisabled(true);
 	materialsMaterialSpecularTextureClear->getController()->setDisabled(true);
-	materialsMaterialShininess->getController()->setValue(value->set(""));
-	materialsMaterialUseMaskedTransparency->getController()->setValue(value->set(""));
+	materialsMaterialShininess->getController()->setValue(MutableString());
+	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString());
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(true);
 
 }
 
 void ModelEditorScreenController::onMaterialDropDownApply() {
 	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
-	materialsMaterialName->getController()->setValue(value->set(material->getId()));
-	materialsMaterialAmbient->getController()->setValue(value->set(Tools::formatColor4(material->getAmbientColor())));
-	materialsMaterialDiffuse->getController()->setValue(value->set(Tools::formatColor4(material->getDiffuseColor())));
-	materialsMaterialSpecular->getController()->setValue(value->set(Tools::formatColor4(material->getSpecularColor())));
-	materialsMaterialEmission->getController()->setValue(value->set(Tools::formatColor4(material->getEmissionColor())));
-	materialsMaterialShininess->getController()->setValue(value->set(Tools::formatFloat(material->getShininess())));
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
+	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
+	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(material->getAmbientColor())));
+	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(material->getDiffuseColor())));
+	materialsMaterialSpecular->getController()->setValue(MutableString(Tools::formatColor4(material->getSpecularColor())));
+	materialsMaterialEmission->getController()->setValue(MutableString(Tools::formatColor4(material->getEmissionColor())));
+	materialsMaterialShininess->getController()->setValue(MutableString(Tools::formatFloat(material->getShininess())));
 	materialsMaterialDiffuseTexture->getController()->setValue(
-		value->set(material->getDiffuseTexturePathName())->append(material->getDiffuseTexturePathName() == ""?"":"/")->append(material->getDiffuseTextureFileName())
+		MutableString(material->getDiffuseTexturePathName()).append(material->getDiffuseTexturePathName() == ""?"":"/").append(material->getDiffuseTextureFileName())
 	);
 	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(
-		value->set(material->getDiffuseTransparencyTexturePathName())->append(material->getDiffuseTransparencyTexturePathName() == ""?"":"/")->append(material->getDiffuseTransparencyTextureFileName())
+		MutableString(material->getDiffuseTransparencyTexturePathName()).append(material->getDiffuseTransparencyTexturePathName() == ""?"":"/").append(material->getDiffuseTransparencyTextureFileName())
 	);
 	materialsMaterialNormalTexture->getController()->setValue(
-		value->set(material->getNormalTexturePathName())->append(material->getNormalTexturePathName() == ""?"":"/")->append(material->getNormalTextureFileName())
+		MutableString(material->getNormalTexturePathName()).append(material->getNormalTexturePathName() == ""?"":"/").append(material->getNormalTextureFileName())
 	);
 	materialsMaterialSpecularTexture->getController()->setValue(
-		value->set(material->getSpecularTexturePathName())->append(material->getSpecularTexturePathName() == ""?"":"/")->append(material->getSpecularTextureFileName())
+		MutableString(material->getSpecularTexturePathName()).append(material->getSpecularTexturePathName() == ""?"":"/").append(material->getSpecularTextureFileName())
 	);
-	materialsMaterialUseMaskedTransparency->getController()->setValue(value->set(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
 }
 
 void ModelEditorScreenController::onMaterialApply() {
 	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	try {
 		view->resetEntity();
-		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue()->getString()));
-		material->getDiffuseColor().set(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue()->getString()));
-		material->getSpecularColor().set(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue()->getString()));
-		material->getEmissionColor().set(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue()->getString()));
-		material->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue()->getString()));
+		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
+		material->getDiffuseColor().set(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
+		material->getSpecularColor().set(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
+		material->getEmissionColor().set(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
+		material->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
 		material->setDiffuseTexture(
-			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue()->getString()),
-			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue()->getString()),
-			Tools::getPath(materialsMaterialDiffuseTransparencyTexture->getController()->getValue()->getString()),
-			Tools::getFileName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue()->getString())
+			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
+			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
+			Tools::getPath(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
+			Tools::getFileName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString())
 		);
 		material->setNormalTexture(
-			Tools::getPath(materialsMaterialNormalTexture->getController()->getValue()->getString()),
-			Tools::getFileName(materialsMaterialNormalTexture->getController()->getValue()->getString())
+			Tools::getPath(materialsMaterialNormalTexture->getController()->getValue().getString()),
+			Tools::getFileName(materialsMaterialNormalTexture->getController()->getValue().getString())
 		);
 		material->setSpecularTexture(
-			Tools::getPath(materialsMaterialSpecularTexture->getController()->getValue()->getString()),
-			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue()->getString())
+			Tools::getPath(materialsMaterialSpecularTexture->getController()->getValue().getString()),
+			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue().getString())
 		);
-		material->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue()->getString() == "1"?true:false);
+		material->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -423,7 +420,7 @@ void ModelEditorScreenController::onMaterialApply() {
 void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 	auto entity = view->getEntity();
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -436,7 +433,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto entity = view->getEntity();
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -449,7 +446,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	auto entity = view->getEntity();
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -462,7 +459,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	auto entity = view->getEntity();
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue()->getString()];
+	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -473,7 +470,7 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 }
 
 void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElementNode) {
-	guiElementNode->getController()->setValue(value->set(""));
+	guiElementNode->getController()->setValue(MutableString(""));
 }
 
 void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
@@ -552,7 +549,7 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 	}
 
 	// select default animation
-	animationsDropDown->getController()->setValue(value->set(Model::ANIMATIONSETUP_DEFAULT));
+	animationsDropDown->getController()->setValue(MutableString(Model::ANIMATIONSETUP_DEFAULT));
 
 	// apply
 	onAnimationDropDownApply();
@@ -560,14 +557,14 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 
 void ModelEditorScreenController::onAnimationDropDownValueChanged() {
 	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == nullptr);
 }
 
 void ModelEditorScreenController::onAnimationDropDownApply() {
 	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	AnimationSetup newAnimationSetup(
 		entity->getModel(),
 		"New animation",
@@ -581,15 +578,15 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 	animationsDropDown->getController()->setDisabled(false);
 	animationsDropDownApply->getController()->setDisabled(false);
 	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == &newAnimationSetup);
-	animationsAnimationStartFrame->getController()->setValue(value->set(animationSetup->getStartFrame()));
+	animationsAnimationStartFrame->getController()->setValue(MutableString(animationSetup->getStartFrame()));
 	animationsAnimationStartFrame->getController()->setDisabled(defaultAnimation);
-	animationsAnimationEndFrame->getController()->setValue(value->set(animationSetup->getEndFrame()));
+	animationsAnimationEndFrame->getController()->setValue(MutableString(animationSetup->getEndFrame()));
 	animationsAnimationEndFrame->getController()->setDisabled(defaultAnimation);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(value->set(animationSetup->getOverlayFromGroupId()));
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(animationSetup->getOverlayFromGroupId()));
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
-	animationsAnimationLoop->getController()->setValue(value->set(animationSetup->isLoop() == true?"1":""));
+	animationsAnimationLoop->getController()->setValue(MutableString(animationSetup->isLoop() == true?"1":""));
 	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
-	animationsAnimationName->getController()->setValue(value->set(animationSetup->getId()));
+	animationsAnimationName->getController()->setValue(MutableString(animationSetup->getId()));
 	animationsAnimationName->getController()->setDisabled(defaultAnimation);
 	animationsAnimationApply->getController()->setDisabled(defaultAnimation);
 	if (animationSetup != &newAnimationSetup) view->playAnimation(animationSetup->getId());
@@ -597,47 +594,47 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 
 void ModelEditorScreenController::onAnimationDropDownDelete() {
 	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	auto it = entity->getModel()->getAnimationSetups()->find(animationSetup->getId());
 	it = entity->getModel()->getAnimationSetups()->erase(it);
 	setAnimations(entity);
-	animationsDropDown->getController()->setValue(value->set(it->second->getId()));
+	animationsDropDown->getController()->setValue(MutableString(it->second->getId()));
 	onAnimationDropDownApply();
 }
 
 void ModelEditorScreenController::onAnimationApply() {
 	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue()->getString());
+	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	try {
 		if (animationSetup == nullptr) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue()->getString()) != nullptr) {
-				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue()->getString() + "' already in use");
+			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
 			animationSetup = entity->getModel()->addAnimationSetup(
-				animationsAnimationName->getController()->getValue()->getString(),
+				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
 				false
 			);
 		} else
-		if (animationSetup->getId() != animationsAnimationName->getController()->getValue()->getString()) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue()->getString()) != nullptr) {
-				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue()->getString() + "' already in use");
+		if (animationSetup->getId() != animationsAnimationName->getController()->getValue().getString()) {
+			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
 			(*entity->getModel()->getAnimationSetups()).erase(animationSetup->getId());
 			animationSetup = entity->getModel()->addAnimationSetup(
-				animationsAnimationName->getController()->getValue()->getString(),
+				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
 				false
 			);
 		}
-		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue()->getString()));
-		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue()->getString()));
-		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue()->getString());
-		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue()->getString() == "1");
+		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue().getString()));
+		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
+		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
+		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		setAnimations(entity);
-		animationsDropDown->getController()->setValue(value->set(animationSetup->getId()));
+		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
@@ -648,28 +645,28 @@ void ModelEditorScreenController::onAnimationApply() {
 void ModelEditorScreenController::unsetAnimations() {
 
 	dynamic_cast<GUIParentNode*>(animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner"))->clearSubNodes();
-	animationsDropDown->getController()->setValue(value->set(""));
+	animationsDropDown->getController()->setValue(MutableString(""));
 	animationsDropDown->getController()->setDisabled(true);
 	animationsDropDownApply->getController()->setDisabled(true);
 	animationsDropDownDelete->getController()->setDisabled(true);
-	animationsAnimationStartFrame->getController()->setValue(value->set(""));
+	animationsAnimationStartFrame->getController()->setValue(MutableString(""));
 	animationsAnimationStartFrame->getController()->setDisabled(true);
-	animationsAnimationEndFrame->getController()->setValue(value->set(""));
+	animationsAnimationEndFrame->getController()->setValue(MutableString(""));
 	animationsAnimationEndFrame->getController()->setDisabled(true);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(value->set(""));
+	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(""));
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
-	animationsAnimationLoop->getController()->setValue(value->set(""));
+	animationsAnimationLoop->getController()->setValue(MutableString(""));
 	animationsAnimationLoop->getController()->setDisabled(true);
-	animationsAnimationName->getController()->setValue(value->set(""));
+	animationsAnimationName->getController()->setValue(MutableString(""));
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
 }
 
 void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
 {
-	this->statsOpaqueFaces->getController()->setValue(value->set(statsOpaqueFaces));
-	this->statsTransparentFaces->getController()->setValue(value->set(statsTransparentFaces));
-	this->statsMaterialCount->getController()->setValue(value->set(statsMaterialCount));
+	this->statsOpaqueFaces->getController()->setValue(MutableString(statsOpaqueFaces));
+	this->statsTransparentFaces->getController()->setValue(MutableString(statsTransparentFaces));
+	this->statsMaterialCount->getController()->setValue(MutableString(statsMaterialCount));
 }
 
 void ModelEditorScreenController::onQuit()
@@ -725,9 +722,9 @@ void ModelEditorScreenController::onModelReload()
 void ModelEditorScreenController::onPivotApply()
 {
 	try {
-		auto x = Float::parseFloat(pivotX->getController()->getValue()->getString());
-		auto y = Float::parseFloat(pivotY->getController()->getValue()->getString());
-		auto z = Float::parseFloat(pivotZ->getController()->getValue()->getString());
+		auto x = Float::parseFloat(pivotX->getController()->getValue().getString());
+		auto y = Float::parseFloat(pivotY->getController()->getValue().getString());
+		auto z = Float::parseFloat(pivotZ->getController()->getValue().getString());
 		view->pivotApply(x, y, z);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -737,7 +734,7 @@ void ModelEditorScreenController::onPivotApply()
 void ModelEditorScreenController::onRenderingApply()
 {
 	if (view->getEntity() == nullptr) return;
-	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue()->equals("1"));
+	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
@@ -771,84 +768,75 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 	entityBoundingVolumeSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("button_model_load") == 0) {
-					onModelLoad();
-				} else
-				if (node->getId().compare("button_model_reload") == 0) {
-					onModelReload();
-				} else
-				if (node->getId().compare("button_model_save") == 0) {
-					onModelSave();
-				} else
-				if (node->getId().compare("button_pivot_apply") == 0) {
-					onPivotApply();
-				} else
-				if (node->getId().compare("button_rendering_apply") == 0) {
-					onRenderingApply();
-				} else
-				if (node->getId().compare("button_materials_dropdown_apply") == 0) {
-					onMaterialDropDownApply();
-				} else
-				if (node->getId().compare("button_materials_material_apply") == 0) {
-					onMaterialApply();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
-					onMaterialLoadDiffuseTexture();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
-					onMaterialLoadDiffuseTransparencyTexture();
-				} else
-				if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
-					onMaterialLoadNormalTexture();
-				} else
-				if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
-					onMaterialLoadSpecularTexture();
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialDiffuseTexture);
-				} else
-				if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
-				} else
-				if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialNormalTexture);
-				} else
-				if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
-					onMaterialClearTexture(materialsMaterialSpecularTexture);
-				} else
-				if (node->getId().compare("animations_dropdown_apply") == 0) {
-					onAnimationDropDownApply();
-				} else
-				if (node->getId().compare("animations_dropdown_delete") == 0) {
-					onAnimationDropDownDelete();
-				} else
-				if (node->getId().compare("button_animations_animation_apply") == 0){
-					onAnimationApply();
-				} else {
-					Console::println(
-						string(
-							"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("button_model_load") == 0) {
+				onModelLoad();
+			} else
+			if (node->getId().compare("button_model_reload") == 0) {
+				onModelReload();
+			} else
+			if (node->getId().compare("button_model_save") == 0) {
+				onModelSave();
+			} else
+			if (node->getId().compare("button_pivot_apply") == 0) {
+				onPivotApply();
+			} else
+			if (node->getId().compare("button_rendering_apply") == 0) {
+				onRenderingApply();
+			} else
+			if (node->getId().compare("button_materials_dropdown_apply") == 0) {
+				onMaterialDropDownApply();
+			} else
+			if (node->getId().compare("button_materials_material_apply") == 0) {
+				onMaterialApply();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
+				onMaterialLoadDiffuseTexture();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
+				onMaterialLoadDiffuseTransparencyTexture();
+			} else
+			if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
+				onMaterialLoadNormalTexture();
+			} else
+			if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
+				onMaterialLoadSpecularTexture();
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialDiffuseTexture);
+			} else
+			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
+			} else
+			if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialNormalTexture);
+			} else
+			if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialSpecularTexture);
+			} else
+			if (node->getId().compare("animations_dropdown_apply") == 0) {
+				onAnimationDropDownApply();
+			} else
+			if (node->getId().compare("animations_dropdown_delete") == 0) {
+				onAnimationDropDownDelete();
+			} else
+			if (node->getId().compare("button_animations_animation_apply") == 0){
+				onAnimationApply();
+			} else {
+				Console::println(
+					string(
+						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

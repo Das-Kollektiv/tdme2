@@ -5,14 +5,14 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
 using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
-using tdme::engine::subsystems::object::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 
 /** 
  * Mesh manager

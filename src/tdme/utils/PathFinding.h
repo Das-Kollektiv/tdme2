@@ -2,6 +2,7 @@
 
 #include <map>
 #include <stack>
+#include <string>
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
@@ -14,6 +15,7 @@
 
 using std::map;
 using std::stack;
+using std::string;
 using std::vector;
 
 using tdme::engine::Transformations;
@@ -38,12 +40,13 @@ public:
 	 * Public constructor
 	 * @param world
 	 * @param user path finding test
+	 * @param sloping
 	 * @param steps max
 	 * @param step size
 	 * @param step size last
 	 * @param actor step up max
 	 */
-	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.5f);
+	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.5f);
 
 	/**
 	 * Destructor
@@ -62,9 +65,10 @@ public:
 	 * @param end position
 	 * @param collision rigidbody types
 	 * @param path from actor to target
+	 * @param actor rigibody id
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorObv, Transformations* actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path);
+	bool findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId = "");
 
 private:
 	/**
@@ -121,10 +125,11 @@ private:
 	 * @param x
 	 * @param y
 	 * @param z
+	 * @param step up max
 	 * @param y stepped up
 	 * @return if cell is walkable
 	 */
-	bool isWalkable(float x, float y, float z, float& height);
+	bool isWalkable(float x, float y, float z, float stepUpMax, float& height);
 
 	/**
 	 * Sets up the PathFinding, it needs to be called after constructing the object
@@ -142,6 +147,7 @@ private:
 	// properties
 	World* world;
 	PathFindingCustomTest* customTest;
+	bool sloping;
 	int stepsMax;
 	float stepSize;
 	float stepSizeLast;
@@ -153,6 +159,7 @@ private:
 	map<string, PathFindingNode*> closedNodes;
 	Vector3 sideVector { 1.0f, 0.0f, 0.0f };
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
+	string actorId;
 	Transformations actorTransformations;
 	BoundingVolume* actorObv;
 	BoundingVolume* actorCbv;

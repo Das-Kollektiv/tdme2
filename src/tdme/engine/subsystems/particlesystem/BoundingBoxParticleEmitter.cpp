@@ -99,13 +99,13 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void BoundingBoxParticleEmitter::fromTransformations(Transformations* transformations)
+void BoundingBoxParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	Vector3 center;
 	array<Vector3, 3> axes;
 	array<Vector3, 3> axesTransformed;
 	Vector3 halfExtension;
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(obb->getCenter(), center);
 	// apply transformations rotation + scale to axis

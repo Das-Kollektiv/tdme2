@@ -40,10 +40,6 @@ GUITabController::GUITabController(GUINode* node)
 	this->tabsNode = nullptr;
 	this->tabsHeaderNode = nullptr;
 	this->selected = false;
-	this->unfocussedNodeBorderLeftColor = nullptr;
-	this->unfocussedNodeBorderRightColor = nullptr;
-	this->unfocussedNodeBorderTopColor = nullptr;
-	this->unfocussedNodeBorderBottomColor = nullptr;
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
@@ -54,10 +50,10 @@ bool GUITabController::isDisabled()
 
 void GUITabController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 bool GUITabController::isSelected()
@@ -67,31 +63,31 @@ bool GUITabController::isSelected()
 
 void GUITabController::setSelected(bool selected)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(this->node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(this->node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = selected;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	if ((dynamic_cast< GUITabsHeaderController* >(tabsHeaderNode->getController()))->hasFocus() == true) {
 		if (selected == true) {
 			auto focussedBorderColor = node->getScreenNode()->getGUI()->getFoccussedBorderColor();
 			auto border = node->getBorder();
-			border->topColor = focussedBorderColor;
-			border->leftColor = focussedBorderColor;
-			border->bottomColor = focussedBorderColor;
-			border->rightColor = focussedBorderColor;
+			border.topColor = focussedBorderColor;
+			border.leftColor = focussedBorderColor;
+			border.bottomColor = focussedBorderColor;
+			border.rightColor = focussedBorderColor;
 		} else {
 			auto border = node->getBorder();
-			border->topColor = unfocussedNodeBorderTopColor;
-			border->leftColor = unfocussedNodeBorderLeftColor;
-			border->bottomColor = unfocussedNodeBorderBottomColor;
-			border->rightColor = unfocussedNodeBorderRightColor;
+			border.topColor = unfocussedNodeBorderTopColor;
+			border.leftColor = unfocussedNodeBorderLeftColor;
+			border.bottomColor = unfocussedNodeBorderBottomColor;
+			border.rightColor = unfocussedNodeBorderRightColor;
 		}
 	} else {
 		auto border = node->getBorder();
-		border->topColor = unfocussedNodeBorderTopColor;
-		border->leftColor = unfocussedNodeBorderLeftColor;
-		border->bottomColor = unfocussedNodeBorderBottomColor;
-		border->rightColor = unfocussedNodeBorderRightColor;
+		border.topColor = unfocussedNodeBorderTopColor;
+		border.leftColor = unfocussedNodeBorderLeftColor;
+		border.bottomColor = unfocussedNodeBorderBottomColor;
+		border.rightColor = unfocussedNodeBorderRightColor;
 	}
 }
 
@@ -100,10 +96,10 @@ void GUITabController::initialize()
 	tabsNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode()->getParentControllerNode();
 	tabsHeaderNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode();
 	auto border = node->getBorder();
-	unfocussedNodeBorderTopColor = border->topColor;
-	unfocussedNodeBorderLeftColor = border->leftColor;
-	unfocussedNodeBorderBottomColor = border->bottomColor;
-	unfocussedNodeBorderRightColor = border->rightColor;
+	unfocussedNodeBorderTopColor = border.topColor;
+	unfocussedNodeBorderLeftColor = border.leftColor;
+	unfocussedNodeBorderBottomColor = border.bottomColor;
+	unfocussedNodeBorderRightColor = border.rightColor;
 	setSelected(selected);
 	setDisabled(disabled);
 }
@@ -150,12 +146,12 @@ bool GUITabController::hasValue()
 	return false;
 }
 
-MutableString* GUITabController::getValue()
+const MutableString& GUITabController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUITabController::setValue(MutableString* value)
+void GUITabController::setValue(const MutableString& value)
 {
 }
 

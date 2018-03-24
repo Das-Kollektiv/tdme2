@@ -14,12 +14,9 @@
 #include <ext/reactphysics3d/src/mathematics/Ray.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
-#include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/RigidBody.h>
@@ -28,7 +25,7 @@
 #include <tdme/engine/primitives/ConvexMeshBoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -43,12 +40,9 @@ using std::to_string;
 using std::unordered_set;
 
 using tdme::engine::physics::World;
-using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::RigidBody;
@@ -57,7 +51,7 @@ using tdme::engine::primitives::ConvexMeshBoundingVolume;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -78,7 +72,7 @@ void World::reset()
 	// TODO
 }
 
-RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
+RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
 {
 	removeRigidBody(id);
 	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_DYNAMIC, enabled, typeId, boundingVolume, transformations, restitution, friction, mass, inertiaMatrix);
@@ -88,7 +82,7 @@ RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t typeId, 
 	return rigidBody;
 }
 
-RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float friction)
+RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction)
 {
 	removeRigidBody(id);
 	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_STATIC, enabled, typeId, boundingVolume, transformations, 0.0f, friction, 1000000.0f, RigidBody::computeInertiaMatrix(boundingVolume, 0.0f, 0.0f, 0.0f, 0.0f));
@@ -120,7 +114,7 @@ void World::removeRigidBody(const string& id) {
 
 void World::update(float deltaTime)
 {
-	if (deltaTime < MathTools::EPSILON) return;
+	if (deltaTime < Math::EPSILON) return;
 
 	// update velocities
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
@@ -131,8 +125,8 @@ void World::update(float deltaTime)
 		}
 		// skip if sleeping
 		if (rigidBody->isSleeping() == true &&
-			rigidBody->angularVelocity.computeLengthSquared() < MathTools::EPSILON &&
-			rigidBody->linearVelocity.computeLengthSquared() < MathTools::EPSILON) {
+			rigidBody->angularVelocity.computeLengthSquared() < Math::EPSILON &&
+			rigidBody->linearVelocity.computeLengthSquared() < Math::EPSILON) {
 			continue;
 		}
 		auto& rigidBodyAngularVelocity = rigidBody->angularVelocity;
@@ -239,21 +233,22 @@ void World::update(float deltaTime)
 		if (rigidBody->isSleeping() == true) {
 			continue;
 		}
+
+		auto& physicsTransformations = rigidBody->transformations;
+
 		// set up transformations, keep care that only 1 rotation exists
-		auto rotations = rigidBody->transformations.getRotations();
-		while (rotations->size() > 1) {
-			rotations->remove(rotations->size() - 1);
+		while (physicsTransformations.getRotationCount() > 1) {
+			physicsTransformations.removeRotation(physicsTransformations.getRotationCount() - 1);
 		}
-		while (rotations->size() < 1) {
-			rotations->add(new Rotation());
+		if (physicsTransformations.getRotationCount() < 1) {
+			physicsTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		}
 		// set up position, orientation
 		auto transform = rigidBody->rigidBody->getTransform();
 		auto& position = transform.getPosition();
 		auto& orientation = transform.getOrientation();
 		//	set up transformations
-		auto& physicsTransformations = rigidBody->transformations;
-		physicsTransformations.getTranslation().set(position.x, position.y, position.z);
+		physicsTransformations.setTranslation(Vector3(position.x, position.y, position.z));
 		/*
 		Console::println(
 			"position: " + rigidBody->getId() + ": " +
@@ -269,8 +264,8 @@ void World::update(float deltaTime)
 			)
 		);
 		*/
-		physicsTransformations.getPivot().set(rigidBody->boundingVolume->getCenter());
-		physicsTransformations.getRotations()->get(0)->fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
+		physicsTransformations.setPivot(rigidBody->boundingVolume->getCenter());
+		physicsTransformations.getRotation(0).fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.update();
 		// velocities
 		auto angularVelocity = rigidBody->rigidBody->getAngularVelocity();
@@ -305,7 +300,7 @@ void World::synch(Engine* engine)
 
 		//apply inverse local transformation for engine update
 		if (rigidBody->enabled == true) {
-			engineEntity->fromTransformations(&rigidBody->transformations);
+			engineEntity->fromTransformations(rigidBody->transformations);
 		}
 	}
 }
@@ -514,10 +509,10 @@ World* World::clone()
 		RigidBody* clonedRigidBody = nullptr;
 		if (rigidBody->isStatic() == true) {
 			// clone static rigid body
-			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, &rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
+			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
 		} else {
 			// update dynamic rigid body
-			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, &rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
+			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
 		}
 		// synch additional properties
 		synch(clonedRigidBody, clonedRigidBody);
@@ -534,7 +529,7 @@ void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 	clonedRigidBody->setMass(rigidBody->getMass());
 	clonedRigidBody->getAngularVelocity().set(rigidBody->angularVelocity);
 	clonedRigidBody->getLinearVelocity().set(rigidBody->linearVelocity);
-	clonedRigidBody->fromTransformations(&rigidBody->transformations);
+	clonedRigidBody->fromTransformations(rigidBody->transformations);
 }
 
 void World::synch(World* world)

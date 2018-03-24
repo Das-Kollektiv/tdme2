@@ -29,31 +29,11 @@ Vector3 Rotation::Y_AXIS(0.0f, 1.0f, 0.0f);
 
 Vector3 Rotation::Z_AXIS(0.0f, 0.0f, 1.0f);
 
-float Rotation::getAngle()
+void Rotation::fromRotation(const Rotation& rotation)
 {
-	return angle;
-}
-
-void Rotation::setAngle(float angle)
-{
-	this->angle = angle;
-}
-
-Vector3& Rotation::getAxis()
-{
-	return axis;
-}
-
-Quaternion& Rotation::getQuaternion()
-{
-	return quaternion;
-}
-
-void Rotation::fromRotation(Rotation* rotation)
-{
-	angle = rotation->angle;
-	axis.set(rotation->axis);
-	quaternion.set(rotation->quaternion);
+	angle = rotation.angle;
+	axis.set(rotation.axis);
+	quaternion.set(rotation.quaternion);
 }
 
 void Rotation::fromQuaternion(const Quaternion& q)

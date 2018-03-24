@@ -48,7 +48,7 @@ void LevelEditorEntityLibraryScreenController_onValueChanged_1::performAction()
 		);
 		entity->setDefaultBoundingVolumes();
 		levelEditorEntityLibraryScreenController->setEntityLibrary();
-		levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(levelEditorEntityLibraryScreenController->entityLibraryListBoxSelection->set(entity->getId()));
+		levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(MutableString(entity->getId()));
 		levelEditorEntityLibraryScreenController->onEditEntity();
 	} catch (Exception& exception) {
 		levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(

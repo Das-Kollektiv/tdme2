@@ -2,7 +2,7 @@
 
 #if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
-#elif defined(_WIN32) or defined(__linux__)
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
 	#include <GL/glew.h>
 #endif
 
@@ -82,7 +82,7 @@ void GL3Renderer::initialize()
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
-	#if defined(_WIN32) or defined(__linux__)
+	#if defined(_WIN32) or defined(__linux__) or defined(__FreeBSD__)
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -127,6 +127,10 @@ bool GL3Renderer::isDisplacementMappingAvailable()
 	return false;
 }
 
+bool GL3Renderer::isInstancedRenderingAvailable() {
+	return true;
+}
+
 int32_t GL3Renderer::getTextureUnits()
 {
 	return -1;
@@ -136,7 +140,6 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
-	checkGLError();
 	// exit if no handle returned
 	if (handle == 0) return 0;
 
@@ -517,45 +520,64 @@ void GL3Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, false, 0, 0LL);
-}
-
-void GL3Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, false, 0, 0LL);
-}
-
-void GL3Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, false, 0, 0LL);
-}
-
 void GL3Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(7, 3, GL_FLOAT, false, 0, 0LL);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glEnableVertexAttribArray(7);
 	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(8, 3, GL_FLOAT, false, 0, 0LL);
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(6, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(0 * 4 * sizeof(float)));
+	glVertexAttribPointer(7, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(1 * 4 * sizeof(float)));
+	glVertexAttribPointer(8, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(2 * 4 * sizeof(float)));
+	glVertexAttribPointer(9, 4, GL_FLOAT, false, 4 * 4 * sizeof(float), (void*)(3 * 4 * sizeof(float)));
+	glVertexAttribDivisor(6, 1);
+	glVertexAttribDivisor(7, 1);
+	glVertexAttribDivisor(8, 1);
+	glVertexAttribDivisor(9, 1);
+}
+
+void GL3Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribDivisor(10, 1);
+}
+
+void GL3Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribDivisor(11, 1);
+}
+
+void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	#define BUFFER_OFFSET(i) ((void*)(i))
+	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL), instances);
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+}
+
+void GL3Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
 }
 
 void GL3Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -579,6 +601,9 @@ void GL3Renderer::unbindBufferObjects()
 	glDisableVertexAttribArray(6);
 	glDisableVertexAttribArray(7);
 	glDisableVertexAttribArray(8);
+	glDisableVertexAttribArray(9);
+	glDisableVertexAttribArray(10);
+	glDisableVertexAttribArray(11);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }

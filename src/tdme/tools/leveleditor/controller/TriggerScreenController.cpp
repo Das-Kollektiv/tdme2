@@ -43,7 +43,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* TriggerScreenController::TEXT_EMPTY = new MutableString("");
+MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
 
 TriggerScreenController::TriggerScreenController(TriggerView* view) 
 {
@@ -81,7 +81,7 @@ void TriggerScreenController::dispose()
 
 void TriggerScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText()->set(text);
+	screenCaption->getText().set(text);
 	screenNode->layout(screenCaption);
 }
 
@@ -108,22 +108,22 @@ void TriggerScreenController::unsetEntityProperties()
 void TriggerScreenController::setTrigger(float width, float height, float depth)
 {
 	triggerWidth->getController()->setDisabled(false);
-	triggerWidth->getController()->getValue()->set(Tools::formatFloat(width));
+	triggerWidth->getController()->setValue(Tools::formatFloat(width));
 	triggerHeight->getController()->setDisabled(false);
-	triggerHeight->getController()->getValue()->set(Tools::formatFloat(height));
+	triggerHeight->getController()->setValue(Tools::formatFloat(height));
 	triggerDepth->getController()->setDisabled(false);
-	triggerDepth->getController()->getValue()->set(Tools::formatFloat(depth));
+	triggerDepth->getController()->setValue(Tools::formatFloat(depth));
 	triggerApply->getController()->setDisabled(false);
 }
 
 void TriggerScreenController::unsetTrigger()
 {
 	triggerWidth->getController()->setDisabled(true);
-	triggerWidth->getController()->getValue()->set(TEXT_EMPTY);
+	triggerWidth->getController()->setValue(TEXT_EMPTY);
 	triggerHeight->getController()->setDisabled(true);
-	triggerHeight->getController()->getValue()->set(TEXT_EMPTY);
+	triggerHeight->getController()->setValue(TEXT_EMPTY);
 	triggerDepth->getController()->setDisabled(true);
-	triggerDepth->getController()->getValue()->set(TEXT_EMPTY);
+	triggerDepth->getController()->setValue(TEXT_EMPTY);
 	triggerApply->getController()->setDisabled(true);
 }
 
@@ -135,9 +135,9 @@ void TriggerScreenController::onQuit()
 void TriggerScreenController::onTriggerApply()
 {
 	try {
-		auto width = Float::parseFloat(triggerWidth->getController()->getValue()->getString());
-		auto height = Float::parseFloat(triggerHeight->getController()->getValue()->getString());
-		auto depth = Float::parseFloat(triggerDepth->getController()->getValue()->getString());
+		auto width = Float::parseFloat(triggerWidth->getController()->getValue().getString());
+		auto height = Float::parseFloat(triggerHeight->getController()->getValue().getString());
+		auto depth = Float::parseFloat(triggerDepth->getController()->getValue().getString());
 		view->triggerApply(width, height, depth);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -159,33 +159,24 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED)) {
-			{
-				if (node->getId().compare("button_trigger_apply") == 0) {
-					onTriggerApply();
-				} else {
-					Console::println(
-						string(
-							"TriggerScreenController::onActionPerformed()::unknown, type='" +
-							type->getName() +
-							"', id = '" +
-							node->getId() +
-							"'" +
-							", name = '" +
-							node->getName() +
-							"'"
-						)
-					);
-				}
-				goto end_switch0;;
+		if (v == GUIActionListener_Type::PERFORMED) {
+			if (node->getId().compare("button_trigger_apply") == 0) {
+				onTriggerApply();
+			} else {
+				Console::println(
+					string(
+						"TriggerScreenController::onActionPerformed()::unknown, type='" +
+						type->getName() +
+						"', id = '" +
+						node->getId() +
+						"'" +
+						", name = '" +
+						node->getName() +
+						"'"
+					)
+				);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING)) {
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

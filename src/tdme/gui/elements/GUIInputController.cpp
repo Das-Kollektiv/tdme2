@@ -39,10 +39,10 @@ bool GUIInputController::isDisabled()
 
 void GUIInputController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUIInputController::initialize()
@@ -88,12 +88,12 @@ bool GUIInputController::hasValue()
 	return true;
 }
 
-MutableString* GUIInputController::getValue()
+const MutableString& GUIInputController::getValue()
 {
 	return textInputNode->getText();
 }
 
-void GUIInputController::setValue(MutableString* value)
+void GUIInputController::setValue(const MutableString& value)
 {
-	textInputNode->getText()->set(value);
+	textInputNode->getText().set(value);
 }

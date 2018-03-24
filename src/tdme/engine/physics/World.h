@@ -68,7 +68,7 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/** 
 	 * Add a static rigid body
@@ -80,7 +80,7 @@ public:
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, Transformations* transformations, BoundingVolume* boundingVolume, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 

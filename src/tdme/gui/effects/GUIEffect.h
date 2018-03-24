@@ -73,4 +73,10 @@ public:
 	 * Public constructor
 	 */
 	GUIEffect();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUIEffect();
+
 };

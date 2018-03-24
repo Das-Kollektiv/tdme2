@@ -5,8 +5,6 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
@@ -14,7 +12,8 @@
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/UpVector.h>
-#include <tdme/engine/subsystems/object/ModelStatistics.h>
+#include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -42,8 +41,6 @@ using tdme::tools::shared::files::LevelFileImport;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
@@ -51,7 +48,8 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
-using tdme::engine::subsystems::object::ModelStatistics;
+using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
@@ -178,27 +176,31 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			continue;
 		}
 
-		auto transformations = new Transformations();
-		transformations->getPivot().set(model->getPivot());
-		transformations->getTranslation().set(
-			static_cast< float >(jObject["tx"].getDouble()),
-			static_cast< float >(jObject["ty"].getDouble()),
-			static_cast< float >(jObject["tz"].getDouble())
+		Transformations transformations;
+		transformations.setPivot(model->getPivot());
+		transformations.setTranslation(
+			Vector3(
+				static_cast< float >(jObject["tx"].getDouble()),
+				static_cast< float >(jObject["ty"].getDouble()),
+				static_cast< float >(jObject["tz"].getDouble())
+			)
 		);
-		transformations->getScale().set(
-			static_cast< float >(jObject["sx"].getDouble()),
-			static_cast< float >(jObject["sy"].getDouble()),
-			static_cast< float >(jObject["sz"].getDouble())
+		transformations.setScale(
+			Vector3(
+				static_cast< float >(jObject["sx"].getDouble()),
+				static_cast< float >(jObject["sy"].getDouble()),
+				static_cast< float >(jObject["sz"].getDouble())
+			)
 		);
 		Vector3 rotation(
 			static_cast< float >(jObject["rx"].getDouble()),
 			static_cast< float >(jObject["ry"].getDouble()),
 			static_cast< float >(jObject["rz"].getDouble())
 		);
-		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()], level->getRotationOrder()->getAxis0()));
-		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()], level->getRotationOrder()->getAxis1()));
-		transformations->getRotations()->add(new Rotation(rotation.getArray()[level->getRotationOrder()->getAxis2VectorIndex()], level->getRotationOrder()->getAxis2()));
-		transformations->update();
+		transformations.addRotation(level->getRotationOrder()->getAxis0(), rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()]);
+		transformations.addRotation(level->getRotationOrder()->getAxis1(), rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()]);
+		transformations.addRotation(level->getRotationOrder()->getAxis2(), rotation.getArray()[level->getRotationOrder()->getAxis2VectorIndex()]);
+		transformations.update();
 		auto levelEditorObject = new LevelEditorObject(
 			objectIdPrefix != "" ?
 				objectIdPrefix + (jObject["id"].getString()) :
@@ -331,13 +333,13 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			auto height = model->getBoundingBox()->getDimensions().getY();
 			auto depth = model->getBoundingBox()->getDimensions().getZ();
 			if (width < 0.2f && height < 0.2f && depth < 0.2f) {
-				if (width > MathTools::EPSILON && width < height && width < depth) {
+				if (width > Math::EPSILON && width < height && width < depth) {
 					importFixScale = 1.0f / width / 5.0f;
 				} else
-				if (height > MathTools::EPSILON && height < width && height < depth) {
+				if (height > Math::EPSILON && height < width && height < depth) {
 					importFixScale = 1.0f / height / 5.0f;
 				} else
-				if (depth > MathTools::EPSILON) {
+				if (depth > Math::EPSILON) {
 					importFixScale = 1.0f / depth / 5.0f;
 				}
 			}
@@ -392,13 +394,13 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
 			continue;
 		}
-		auto levelEditorObjectTransformations = new Transformations();
-		levelEditorObjectTransformations->getTranslation().set(translation);
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
-		levelEditorObjectTransformations->getRotations()->add(new Rotation(rotation.getArray()[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
-		levelEditorObjectTransformations->getScale().set(scale);
-		levelEditorObjectTransformations->update();
+		Transformations levelEditorObjectTransformations;
+		levelEditorObjectTransformations.setTranslation(translation);
+		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
+		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
+		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
+		levelEditorObjectTransformations.setScale(scale);
+		levelEditorObjectTransformations.update();
 		auto object = new LevelEditorObject(
 			groupId,
 			groupId,

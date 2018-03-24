@@ -46,7 +46,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	 * Update transformation with given transformations
 	 * @param transformations
 	 */
-	virtual void fromTransformations(Transformations* transformations) = 0;
+	virtual void fromTransformations(const Transformations& transformations) = 0;
 
 	/**
 	 * Destructor

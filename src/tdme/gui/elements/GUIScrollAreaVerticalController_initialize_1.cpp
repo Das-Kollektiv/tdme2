@@ -20,7 +20,7 @@ GUIScrollAreaVerticalController_initialize_1::GUIScrollAreaVerticalController_in
 void GUIScrollAreaVerticalController_initialize_1::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	if (node == upArrowNode) {
-		float elementHeight = contentNode->getComputedConstraints()->height;
+		float elementHeight = contentNode->getComputedConstraints().height;
 		float contentHeight = contentNode->getContentHeight();
 		auto scrollableHeight = contentHeight - elementHeight;
 		if (scrollableHeight <= 0.0f)
@@ -32,15 +32,15 @@ void GUIScrollAreaVerticalController_initialize_1::onActionPerformed(GUIActionLi
 
 		contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
 	} else if (node == downArrowNode) {
-		float elementHeight = contentNode->getComputedConstraints()->height;
+		float elementHeight = contentNode->getComputedConstraints().height;
 		float contentHeight = contentNode->getContentHeight();
 		auto scrollableHeight = contentHeight - elementHeight;
 		if (scrollableHeight <= 0.0f)
 			return;
 
 		auto childrenRenderOffsetY = contentNode->getChildrenRenderOffsetY() + 1.0f;
-		if (childrenRenderOffsetY > contentHeight - contentNode->getComputedConstraints()->height) {
-			childrenRenderOffsetY = contentHeight - contentNode->getComputedConstraints()->height;
+		if (childrenRenderOffsetY > contentHeight - contentNode->getComputedConstraints().height) {
+			childrenRenderOffsetY = contentHeight - contentNode->getComputedConstraints().height;
 		}
 		contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
 	}

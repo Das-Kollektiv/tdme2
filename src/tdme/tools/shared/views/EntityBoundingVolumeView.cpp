@@ -208,10 +208,12 @@ void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* enti
 	modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
 	modelBoundingVolumeEntity->setEnabled(false);
 	if (modelEntity != nullptr) {
-		modelBoundingVolumeEntity->getScale().set(modelEntity->getScale());
+		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
 		modelBoundingVolumeEntity->update();
 	}
-	modelBoundingVolumeEntity->getScale().scale(1.1f);
+	modelBoundingVolumeEntity->setScale(
+		modelBoundingVolumeEntity->getScale().clone().scale(1.1f)
+	);
 	engine->addEntity(modelBoundingVolumeEntity);
 }
 

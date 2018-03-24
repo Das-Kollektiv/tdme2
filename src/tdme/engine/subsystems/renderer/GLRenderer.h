@@ -118,6 +118,12 @@ public:
 	virtual bool isDisplacementMappingAvailable() = 0;
 
 	/** 
+	 * Checks if instanced rendering is available
+	 * @return instance rendering availability
+	 */
+	virtual bool isInstancedRenderingAvailable() = 0;
+
+	/**
 	 * @return number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;
@@ -475,24 +481,6 @@ public:
 	virtual void bindVerticesBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
-	 * Bind skinning vertices joints buffer object
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
-	 * Bind skinning vertices vertex joints idx buffer object
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
-	 * Bind skinning
-	 * @param buffer object id
-	 */
-	virtual void bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId) = 0;
-
-	/** 
 	 * Bind normals buffer object
 	 * @param buffer object id
 	 */
@@ -517,20 +505,53 @@ public:
 	virtual void bindBitangentsBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
-	 * Draw indexed triangles from buffer objects 
+	 * Bind model matrices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindModelMatricesBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind effect color muls buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindEffectColorMulsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind effect color adds buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindEffectColorAddsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Draw instanced indexed triangles from buffer objects
+	 * @param triangles
+	 * @param triangles offset
+	 * @param instances
+	 */
+	virtual void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+
+	/**
+	 * Draw indexed triangles from buffer objects
 	 * @param triangles
 	 * @param triangles offset
 	 */
 	virtual void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/** 
-	 * Draw triangles from buffer objects 
+	 * Draw instanced triangles from buffer objects
+	 * @param triangles
+	 * @param triangles offset
+	 */
+	virtual void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+
+	/** 
+	 * Draw triangles from buffer objects
 	 * @param triangles
 	 * @param triangles offset
 	 */
 	virtual void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
 
-	/** 
+	/**
 	 * Draw points from buffer objects 
 	 * @param points
 	 * @param points offset

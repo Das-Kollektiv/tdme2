@@ -3,19 +3,26 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
+#include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUINode_Flow.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
 using std::vector;
+using std::set;
 using std::string;
 
 using tdme::gui::events::GUIKeyboardEvent;
@@ -60,15 +67,15 @@ protected:
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
 	string id {  };
-	GUINode_Flow* flow {  };
-	GUINode_Alignments alignments {  };
-	GUINode_RequestedConstraints* requestedConstraints {  };
-	GUINode_ComputedConstraints computedConstraints {  };
-	GUIColor backgroundColor {  };
-	GUINode_Padding padding {  };
-	GUINode_Border* border {  };
-	GUINodeConditions* showOn {  };
-	GUINodeConditions* hideOn {  };
+	GUINode_Flow* flow;
+	GUINode_Alignments alignments;
+	GUINode_RequestedConstraints requestedConstraints;
+	GUINode_ComputedConstraints computedConstraints;
+	GUIColor backgroundColor;
+	GUINode_Padding padding;
+	GUINode_Border border;
+	GUINodeConditions showOn;
+	GUINodeConditions hideOn;
 	GUINodeController* controller {  };
 	bool conditionsMet {  };
 
@@ -85,7 +92,7 @@ protected:
 	/**
 	 * @return requested constraints
 	 */
-	virtual GUINode_RequestedConstraints* getRequestsConstraints();
+	virtual GUINode_RequestedConstraints& getRequestsConstraints();
 
 	/**
 	 * Set computed left
@@ -179,7 +186,12 @@ protected:
 	 * @param show on
 	 * @param hide on
 	 */
-	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn);
+	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUINode();
 
 public:
 
@@ -221,12 +233,12 @@ public:
 	/** 
 	 * @return border
 	 */
-	virtual GUINode_Border* getBorder();
+	virtual GUINode_Border& getBorder();
 
 	/**
 	 * @return computed constraints
 	 */
-	virtual GUINode_ComputedConstraints* getComputedConstraints();
+	virtual GUINode_ComputedConstraints& getComputedConstraints();
 
 	/** 
 	 * Create alignments
@@ -234,7 +246,7 @@ public:
 	 * @param vertical
 	 * @return alignments
 	 */
-	static GUINode_Alignments* createAlignments(const string& horizontal, const string& vertical);
+	static GUINode_Alignments createAlignments(const string& horizontal, const string& vertical);
 
 	/** 
 	 * Create requested constraints
@@ -244,7 +256,7 @@ public:
 	 * @param height
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints* createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 	/** 
 	 * Get color
@@ -252,7 +264,7 @@ public:
 	 * @param default color
 	 * @return value
 	 */
-	static GUIColor* getRequestedColor(const string& color, GUIColor* defaultColor) /* throws(GUIParserException) */;
+	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor) throw (GUIParserException);
 
 	/** 
 	 * Create flow
@@ -275,7 +287,7 @@ public:
 	 * @param bottom color
 	 * @return border
 	 */
-	static GUINode_Border* createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) /* throws(GUIParserException) */;
+	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) throw(GUIParserException);
 
 	/** 
 	 * Create padding
@@ -286,13 +298,13 @@ public:
 	 * @param bottom
 	 * @return padding
 	 */
-	static GUINode_Padding* createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) /* throws(GUIParserException) */;
+	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
 
 	/** 
 	 * Create conditions
 	 * @param conditions
 	 */
-	static GUINodeConditions* createConditions(const string& conditions);
+	static GUINodeConditions createConditions(const string& conditions);
 
 	/** 
 	 * Dispose node
@@ -300,7 +312,7 @@ public:
 	virtual void dispose();
 
 	/** 
-	 * Set conditions met for the while tree
+	 * Set conditions met for the whole tree
 	 */
 	virtual void setConditionsMet();
 
@@ -309,7 +321,7 @@ public:
 	 * @param gui renderer
 	 * @param floating nodes
 	 */
-	virtual void render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes);
+	virtual void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes);
 
 	/** 
 	 * Is event belonging to node
@@ -328,6 +340,7 @@ public:
 
 	/** 
 	 * Get event off node relative position
+	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event
 	 * @param x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
 	 * @return void
@@ -339,13 +352,14 @@ public:
 	 */
 	virtual GUIParentNode* getParentControllerNode();
 
-	/** 
-	 * Handle mouse event
+	/**
+	 * Determine mouse event nodes
 	 * @param event
+	 * @param event node ids
 	 */
-	virtual void handleMouseEvent(GUIMouseEvent* event);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds);
 
-	/** 
+	/**
 	 * Handle keyboard event
 	 * @param event
 	 */

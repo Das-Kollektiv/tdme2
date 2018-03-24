@@ -5,6 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
 using std::vector;
@@ -13,6 +14,7 @@ using std::string;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
+using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
 ObjectParticleSystemEntity::ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
@@ -39,7 +41,7 @@ const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
 	return &enabledObjects;
 }
 
-void ObjectParticleSystemEntity::fromTransformations(Transformations* transformations)
+void ObjectParticleSystemEntity::fromTransformations(const Transformations& transformations)
 {
 	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
 	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -113,31 +115,6 @@ const string& ObjectParticleSystemEntity::getId()
 	return ObjectParticleSystemEntityInternal::getId();
 }
 
-Vector3& ObjectParticleSystemEntity::getPivot()
-{
-	return Transformations::getPivot();
-}
-
-Rotations* ObjectParticleSystemEntity::getRotations()
-{
-	return Transformations::getRotations();
-}
-
-Vector3& ObjectParticleSystemEntity::getScale()
-{
-	return Transformations::getScale();
-}
-
-Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix()
-{
-	return Transformations::getTransformationsMatrix();
-}
-
-Vector3& ObjectParticleSystemEntity::getTranslation()
-{
-	return Transformations::getTranslation();
-}
-
 bool ObjectParticleSystemEntity::isDynamicShadowingEnabled()
 {
 	return ObjectParticleSystemEntityInternal::isDynamicShadowingEnabled();
@@ -173,3 +150,70 @@ void ObjectParticleSystemEntity::setRenderer(GLRenderer* renderer)
 	ObjectParticleSystemEntityInternal::setRenderer(renderer);
 }
 
+const Vector3& ObjectParticleSystemEntity::getTranslation() const {
+	return Transformations::getTranslation();
+}
+
+void ObjectParticleSystemEntity::setTranslation(const Vector3& translation) {
+	Transformations::setTranslation(translation);
+}
+
+const Vector3& ObjectParticleSystemEntity::getScale() const {
+	return Transformations::getScale();
+}
+
+void ObjectParticleSystemEntity::setScale(const Vector3& scale) {
+	Transformations::setScale(scale);
+}
+
+const Vector3& ObjectParticleSystemEntity::getPivot() const {
+	return Transformations::getPivot();
+}
+
+void ObjectParticleSystemEntity::setPivot(const Vector3& pivot) {
+	Transformations::setPivot(pivot);
+}
+
+const int ObjectParticleSystemEntity::getRotationCount() const {
+	return Transformations::getRotationCount();
+}
+
+Rotation& ObjectParticleSystemEntity::getRotation(int idx) {
+	return Transformations::getRotation(idx);
+}
+
+void ObjectParticleSystemEntity::addRotation(const Vector3& axis, const float angle) {
+	Transformations::addRotation(axis, angle);
+}
+
+void ObjectParticleSystemEntity::removeRotation(const int idx) {
+	Transformations::removeRotation(idx);
+}
+
+const Vector3& ObjectParticleSystemEntity::getRotationAxis(const int idx) const {
+	Transformations::getRotationAxis(idx);
+}
+
+void ObjectParticleSystemEntity::setRotationAxis(const int idx, const Vector3& axis) {
+	Transformations::setRotationAxis(idx, axis);
+}
+
+const float ObjectParticleSystemEntity::getRotationAngle(const int idx) const {
+	return Transformations::getRotationAngle(idx);
+}
+
+void ObjectParticleSystemEntity::setRotationAngle(const int idx, const float angle) {
+	Transformations::setRotationAngle(idx, angle);
+}
+
+const Quaternion& ObjectParticleSystemEntity::getRotationsQuaternion() const {
+	return Transformations::getRotationsQuaternion();
+}
+
+const Matrix4x4& ObjectParticleSystemEntity::getTransformationsMatrix() const {
+	return Transformations::getTransformationsMatrix();
+}
+
+const Transformations& ObjectParticleSystemEntity::getTransformations() const {
+	return *this;
+}

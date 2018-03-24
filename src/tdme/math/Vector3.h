@@ -5,14 +5,12 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/utils/Float.h>
 
 using std::array;
 
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::math::MathTools;
 using tdme::utils::Float;
 
 /** 
@@ -173,6 +171,24 @@ public:
 		return *this;
 	}
 
+	/**
+	 * Array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline float& operator[](int i) {
+    		return data[i];
+    }
+
+	/**
+	 * Const array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline const float& operator[](int i) const {
+    		return data[i];
+    }
+
 	/** 
 	 * @return vector as array
 	 */
@@ -219,32 +235,81 @@ public:
 		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]);
 	}
 
+	/**
+	 * Compute Euler angles (rotation around x, y, z axes)
+	 * @param euler angles
+	 * @return if euler angles have been generated
+	 */
+	inline bool computeEulerAngles(Vector3& euler) const {
+		if (computeLength() < Math::EPSILON) {
+			return false;
+		}
+		Vector3 a(*this);
+		a.normalize();
+		// test around x axis
+		{
+			auto b = Vector3(0.0f, 1.0f, 0.0f);
+			auto n = Vector3(1.0f, 0.0f, 0.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setX(angle);
+		}
+		// test around y axis
+		{
+			auto b = Vector3(0.0f, 0.0f, -1.0f);
+			auto n = Vector3(0.0f, 1.0f, 0.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setY(angle);
+		}
+		// test around z axis
+		{
+			auto b = Vector3(0.0f, 1.0f, 0.0f);
+			auto n = Vector3(0.0f, 0.0f, 1.0f);
+			auto angle = Vector3::computeAngle(a, b, n);
+			euler.setZ(angle);
+		}
+		return true;
+	}
+
 	/** 
 	 * Computes angle between a and b from 0..180
-	 * @param vector a, must be normalized
-	 * @param vector b, must be normalized
+	 * @param vector a, vector to test, must be normalized
+	 * @param vector b, vector to test against, must be normalized
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b) {
 		return 180.0 / Math::PI * Math::acos(Vector3::computeDotProduct(a, b));
 	}
 
-	/** 
-	 * Computes angle between a and b 
-	 * @param vector a, must be normalized
-	 * @param vector b, must be normalized
+	/**
+	 * Computes angle between a and b
+	 * @param vector a, vector to test, must be normalized
+	 * @param vector b, vector to test against, must be normalized
 	 * @param plane normal n where a and b live in, must be normalized
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
 		Vector3 c;
 		auto angle = Vector3::computeAngle(a, b);
-		auto sign = MathTools::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b, c)));
+		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b, c)));
 		if (Float::isNaN(sign) == true) sign = 1.0f;
 		return std::fmod(((angle * sign) + 360.0f), 360.0f);
 	}
 
-	/** 
+	/**
+	 * Compute the cross product of vector v1 and v2
+	 * @param v1
+	 * @param v2
+	 * @param destination vector
+	 * @return destination vector
+	 */
+	inline Vector3& abs() {
+		data[0] = Math::abs(data[0]);
+		data[1] = Math::abs(data[1]);
+		data[2] = Math::abs(data[2]);
+		return *this;
+	}
+
+	/**
 	 * Normalize the vector
 	 * @return this vector
 	 */
@@ -262,17 +327,17 @@ public:
 	 * @return destination vector
 	 */
 	inline Vector3& computeOrthogonalVector(Vector3& dest) {
-		if (Math::abs(data[0]) > MathTools::EPSILON) {
+		if (Math::abs(data[0]) > Math::EPSILON) {
 			dest.data[1] = data[0];
 			dest.data[2] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[2]) / (2 * (data[2] * data[2] + data[0] * data[0])));
 			dest.data[0] = ((-data[0] * data[1] - data[2] * dest.data[2]) / data[0]);
 		} else
-		if (Math::abs(data[1]) > MathTools::EPSILON) {
+		if (Math::abs(data[1]) > Math::EPSILON) {
 			dest.data[2] = data[1];
 			dest.data[0] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[1]) / (2 * (data[1] * data[1] + data[0] * data[0])));
 			dest.data[1] = ((-data[2] * data[1] - data[0] * dest.data[0]) / data[1]);
 		} else
-		if (Math::abs(data[2]) > MathTools::EPSILON) {
+		if (Math::abs(data[2]) > Math::EPSILON) {
 			dest.data[0] = data[2];
 			dest.data[1] = ((-2 * data[0] * data[1]* data[2] + 2 * data[1] * data[2]) / (2 * (data[2] * data[2] + data[1] * data[1])));
 			dest.data[2] = ((-data[0] * data[2] - data[1] * dest.data[1]) / data[2]);
@@ -366,13 +431,23 @@ public:
 	 * @return equality
 	 */
 	inline bool equals(const Vector3& v) const {
-		return equals(v, MathTools::EPSILON);
+		return equals(v, Math::EPSILON);
+	}
+
+	/**
+	 * Check if given vector has NaN value
+	 */
+	inline bool hasNaN() const {
+		return
+			Float::isNaN(data[0]) == true ||
+			Float::isNaN(data[1]) == true ||
+			Float::isNaN(data[2]);
 	}
 
 	/** 
 	 * Compares this vector with given vector
 	 * @param vector v
-	 * @param tolerance
+	 * @param tolerance per component(x, y, z)
 	 * @return equality
 	 */
 	inline bool equals(const Vector3& v, float tolerance) const {

@@ -66,7 +66,7 @@ TDME2
             - rigid body simulator
               - broadphase collision detection
                   - uses oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
-                  - additionally sphere <> sphere test
+                  - additional bounding box <> bounding box test
               - narrowphase collision detection
               - collision filtering by type
               - sleeping technology
@@ -132,6 +132,9 @@ TDME2
         - GUI system port needs to be finished(Memory Management and other minor things)
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
+        - Build documentation
+        - A auto build environment (for Windows/AMD64 and Linux/AMD64 for nighly builds) 
+        - A release plan
 
     - Technology
         - designed for simple multi threading
@@ -155,6 +158,7 @@ TDME2
             - Windows/MINGW(port completed)
             - Linux(port completed)
             - Mac Os X(port completed)
+            - FreeBSD(port completed)
             - Android(port pending)
             - iOS(port pending)
 

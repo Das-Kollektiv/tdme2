@@ -11,8 +11,6 @@
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
-#include <tdme/engine/Rotations.h>
-#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -29,7 +27,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
-#include <tdme/math/MathTools.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -84,7 +82,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
-using tdme::math::MathTools;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
@@ -118,10 +116,6 @@ constexpr int32_t Level::RIGIDBODY_TYPEID_STATIC;
 
 constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
 
-MutableString* Level::compareMutableString = new MutableString();
-
-Transformations* Level::transformations = new Transformations();
-
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getLightCount(); i++) {
@@ -147,47 +141,29 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 	ParticleEmitter* engineEmitter = nullptr;
 	{
 		auto v = particleSystem->getEmitter();
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE)) {
-			{
-				return nullptr;
-			}		
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)) {
-			{
-				auto emitter = particleSystem->getPointParticleEmitter();
-				engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
-				goto end_switch0;;
-			}		
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)) {
-			{
-				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-				engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
-				goto end_switch0;;
-			}		
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)) {
-			{
-				auto emitter = particleSystem->getCircleParticleEmitter();
-				engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
-				goto end_switch0;;
-			}		
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-			{
-				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-				engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
-				goto end_switch0;;
-			}		
-		}
-		if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)) {
-			{
-				auto emitter = particleSystem->getSphereParticleEmitter();
-				engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
-				goto end_switch0;;
-			}		
-		}
-		if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)))) {
+		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
+			return nullptr;
+		} else
+		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+			auto emitter = particleSystem->getPointParticleEmitter();
+			engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+		} else
+		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
+			engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+		} else
+		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+			auto emitter = particleSystem->getCircleParticleEmitter();
+			engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+		} else
+		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
+			engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+		} else
+		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+			auto emitter = particleSystem->getSphereParticleEmitter();
+			engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+		} else {
 			Console::println(
 				string(
 					"Level::createParticleSystem(): unknown particle system emitter '" +
@@ -197,7 +173,6 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			);
 			return nullptr;
 		}
-		end_switch0:;
 	}
 
 	{
@@ -205,21 +180,19 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 		LevelEditorEntityParticleSystem_PointParticleSystem* pointParticleSystem;
 		{
 			auto v = particleSystem->getType();
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE)) {
+			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
 				return nullptr;
-			}
-			if ((v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)) {
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
-				if (objectParticleSystem->getModel() == nullptr)
-					return nullptr;
+				if (objectParticleSystem->getModel() == nullptr) return nullptr;
 
 				return new ObjectParticleSystemEntity(id, objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
-			}
-			if ((v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)) {
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
 				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
-			}
-			if ((((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)))) {
+			} else {
 				Console::println(
 					string(
 						"Level::createParticleSystem(): unknown particle system type '" +
@@ -229,7 +202,6 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				);
 				return nullptr;
 			}
-			end_switch1:;
 		}
 	}
 
@@ -262,13 +234,13 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		entity->getTranslation().add(translation);
+		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty("shadowing");
 		auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
 		entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
+			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
 		entity->setEnabled(enable);
@@ -305,11 +277,11 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 			{
 				Transformations transformations;
 				transformations.fromTransformations(object->getTransformations());
-				transformations.getTranslation().add(translation);
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
 				int i = 0;
 				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
-					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, &transformations, &convexMesh, 1.0f);
+					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, transformations, &convexMesh, 1.0f);
 					rigidBody->setRootId(object->getId());
 					i++;
 				}
@@ -320,9 +292,9 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 				string worldId = object->getId() + ".bv." + to_string(j);
 				Transformations transformations;
 				transformations.fromTransformations(object->getTransformations());
-				transformations.getTranslation().add(translation);
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
-				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, &transformations, entityBv->getBoundingVolume(), 1.0f);
+				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
 				rigidBody->setRootId(object->getId());
 				rigidBodies.push_back(rigidBody);
 			}
@@ -358,9 +330,9 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 			continue;
 
 		entity->fromTransformations(object->getTransformations());
-		entity->getTranslation().add(translation);
+		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
-			entity->getScale().set(MathTools::sign(entity->getScale().getX()), MathTools::sign(entity->getScale().getY()), MathTools::sign(entity->getScale().getZ()));
+			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
 		entity->setEnabled(true);
@@ -369,20 +341,22 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 
 void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
 {
+	MutableString compareMutableString;
+	Transformations transformations;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 			for (auto k = 0; k < rigidBodies.size(); k++) {
 				auto rigidBody = rigidBodies.at(k);
-				compareMutableString->set(object->getId());
-				compareMutableString->append(".bv.");
-				compareMutableString->append(j);
-				if (compareMutableString->equals(rigidBody->getId()) == false)
+				compareMutableString.set(object->getId());
+				compareMutableString.append(".bv.");
+				compareMutableString.append(j);
+				if (compareMutableString.equals(rigidBody->getId()) == false)
 					continue;
 
-				transformations->fromTransformations(object->getTransformations());
-				transformations->getTranslation().add(translation);
-				transformations->update();
+				transformations.fromTransformations(object->getTransformations());
+				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
+				transformations.update();
 				rigidBody->fromTransformations(transformations);
 				rigidBody->setEnabled(true);
 			}

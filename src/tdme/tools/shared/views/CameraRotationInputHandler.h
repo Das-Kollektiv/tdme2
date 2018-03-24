@@ -3,6 +3,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
@@ -33,7 +34,7 @@ private:
 	int32_t mouseLastX {  };
 	int32_t mouseLastY {  };
 	float maxAxisDimension {  };
-	Transformations* lookFromRotations {  };
+	Transformations lookFromRotations {  };
 	float scale {  };
 	bool resetRequested {  };
 
@@ -53,7 +54,7 @@ public:
 	/** 
 	 * @return look from rotation
 	 */
-	virtual Transformations* getLookFromRotations();
+	virtual const Transformations& getLookFromRotations();
 
 	/** 
 	 * @return scale

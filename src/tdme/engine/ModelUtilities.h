@@ -1,9 +1,9 @@
 #pragma once
 
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/ModelUtilitiesInternal.h>
+#include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 
-using tdme::engine::subsystems::object::ModelUtilitiesInternal;
+using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 
 /** 
  * Model Utilities

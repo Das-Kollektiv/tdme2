@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -15,7 +15,7 @@
 using std::vector;
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;

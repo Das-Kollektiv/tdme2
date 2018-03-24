@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using tdme::gui::nodes::GUINodeController;
@@ -29,6 +29,7 @@ private:
 	GUILayoutNode* contentNode {  };
 	GUIVerticalScrollbarInternalController_State* state {  };
 	int32_t mouseYOffset {  };
+	MutableString value {  };
 
 public:
 	bool isDisabled() override;
@@ -67,8 +68,8 @@ public:
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;
-	MutableString* getValue() override;
-	void setValue(MutableString* value) override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
 
 private:
 	/**

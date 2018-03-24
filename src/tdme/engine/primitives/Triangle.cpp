@@ -2,11 +2,14 @@
 
 #include <vector>
 
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
 using tdme::engine::primitives::Triangle;
+
+using tdme::math::Math;
 using tdme::math::Vector3;
 
 Triangle::Triangle()
@@ -42,18 +45,18 @@ void Triangle::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3
 		if (s < 0.0f) {
 			if (t < 0.0f) {
 				if (d < 0.0f) {
-					s = MathTools::clamp(-d / a, 0.0f, 1.0f);
+					s = Math::clamp(-d / a, 0.0f, 1.0f);
 					t = 0.0f;
 				} else {
 					s = 0.0f;
-					t = MathTools::clamp(-e / c, 0.0f, 1.0f);
+					t = Math::clamp(-e / c, 0.0f, 1.0f);
 				}
 			} else {
 				s = 0.0f;
-				t = MathTools::clamp(-e / c, 0.0f, 1.0f);
+				t = Math::clamp(-e / c, 0.0f, 1.0f);
 			}
 		} else if (t < 0.0f) {
-			s = MathTools::clamp(-d / a, 0.0f, 1.0f);
+			s = Math::clamp(-d / a, 0.0f, 1.0f);
 			t = 0.0f;
 		} else {
 			auto invDet = 1.0f / det;
@@ -67,26 +70,26 @@ void Triangle::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3
 			if (tmp1 > tmp0) {
 				auto numer = tmp1 - tmp0;
 				auto denom = a - 2 * b + c;
-				s = MathTools::clamp(numer / denom, 0.0f, 1.0f);
+				s = Math::clamp(numer / denom, 0.0f, 1.0f);
 				t = 1 - s;
 			} else {
-				t = MathTools::clamp(-e / c, 0.0f, 1.0f);
+				t = Math::clamp(-e / c, 0.0f, 1.0f);
 				s = 0.0f;
 			}
 		} else if (t < 0.0f) {
 			if (a + d > b + e) {
 				auto numer = c + e - b - d;
 				auto denom = a - 2 * b + c;
-				s = MathTools::clamp(numer / denom, 0.0f, 1.0f);
+				s = Math::clamp(numer / denom, 0.0f, 1.0f);
 				t = 1 - s;
 			} else {
-				s = MathTools::clamp(-e / c, 0.0f, 1.0f);
+				s = Math::clamp(-e / c, 0.0f, 1.0f);
 				t = 0.0f;
 			}
 		} else {
 			auto numer = c + e - b - d;
 			auto denom = a - 2 * b + c;
-			s = MathTools::clamp(numer / denom, 0.0f, 1.0f);
+			s = Math::clamp(numer / denom, 0.0f, 1.0f);
 			t = 1.0f - s;
 		}
 	}

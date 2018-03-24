@@ -18,6 +18,12 @@ Mutex::~Mutex() {
 	PTHREAD_CHECK_ERROR(name, "Could not destroy mutex", "pthread_mutex_destroy");
 }
 
+bool Mutex::tryLock() {
+	int result = pthread_mutex_trylock(&pThreadMutex);
+	PTHREAD_CHECK_ERROR(name, "Could not try lock mutex", "pthread_mutex_trylock");
+	return result == 0;
+}
+
 void Mutex::lock() {
 	int result = pthread_mutex_lock(&pThreadMutex);
 	PTHREAD_CHECK_ERROR(name, "Could not lock mutex", "pthread_mutex_lock");

@@ -84,10 +84,10 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void CircleParticleEmitterPlaneVelocity::fromTransformations(Transformations* transformations)
+void CircleParticleEmitterPlaneVelocity::fromTransformations(const Transformations& transformations)
 {
 	Vector3 side;
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(center, centerTransformed);
 	// apply transformations rotation + scale to axis

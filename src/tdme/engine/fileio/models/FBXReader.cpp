@@ -255,6 +255,10 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, 
 					group = processSkeletonNode(fbxNode, model, parentGroup, pathName);
 					break;
 				}
+			default:
+				{
+					break;
+				}
 		}
 	}
 	if (group == nullptr) {

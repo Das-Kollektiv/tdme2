@@ -8,7 +8,6 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -22,7 +21,6 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
 
 /** 
  * Level editor model library screen controller
@@ -41,8 +39,6 @@ private:
 	GUIElementNode* entityLibraryListBox {  };
 	GUIElementNode* buttonEntityPlace {  };
 	GUIElementNode* buttonLevelEdit {  };
-	MutableString* entityLibraryListBoxSelection {  };
-	MutableString* dropdownEntityActionReset {  };
 	PopUps* popUps {  };
 	string modelPath {  };
 

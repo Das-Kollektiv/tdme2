@@ -216,7 +216,7 @@ void LevelEditorLevel::computeCenter()
 		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
 			continue;
 
-		center.add(levelEditorObject->getTransformations()->getTranslation());
+		center.add(levelEditorObject->getTransformations().getTranslation());
 		objectCount++;
 	}
 	if (objectCount != 0)
@@ -279,8 +279,8 @@ void LevelEditorLevel::updatePivot(int32_t modelId, const Vector3& pivot)
 {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations()->getPivot().set(pivot);
-			object->getTransformations()->update();
+			object->getTransformations().setPivot(pivot);
+			object->getTransformations().update();
 		}
 	}
 }

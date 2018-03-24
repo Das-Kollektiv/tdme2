@@ -14,7 +14,6 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -35,7 +34,6 @@ using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::Float;
@@ -55,7 +53,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross));
 	// What is best threshold here?
-	return Math::abs(v1Dotv2v3Cross) < MathTools::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
 }
 
 ConvexMesh::ConvexMesh(Object3DModel* model)

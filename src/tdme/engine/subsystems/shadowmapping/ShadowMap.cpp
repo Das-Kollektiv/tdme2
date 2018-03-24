@@ -10,7 +10,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,7 +27,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Partition;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
@@ -137,6 +137,8 @@ void ShadowMap::render(Light* light)
 	shadowMapping->object3DVBORenderer->render(
 		visibleObjects,
 		false,
+		Object3DVBORenderer::RENDERTYPE_NORMALS | // TODO: actually this is not required, but GL2 currently needs this
+		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
 		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 		Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
 	);

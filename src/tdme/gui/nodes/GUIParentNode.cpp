@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -24,8 +25,9 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
@@ -49,7 +51,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::StringUtils;
 
-GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn)  /* throws(GUIParserException) */
+GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn) throw(GUIParserException)
 	: GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
 {
 	this->overflowX = overflowX;
@@ -63,9 +65,8 @@ void GUIParentNode::clearSubNodes()
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto node = subNodes.at(i);
-		screenNode->removeNode(node);
-		node->dispose();
+		auto subNode = subNodes.at(i);
+		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
 }
@@ -77,9 +78,8 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 		childrenRenderOffsetY = 0.0f;
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto node = subNodes.at(i);
-		screenNode->removeNode(node);
-		node->dispose();
+		auto subNode = subNodes.at(i);
+		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
 	GUIParser::parse(this, xml);
@@ -170,17 +170,17 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffSetY)
 	this->childrenRenderOffsetY = childrenRenderOffSetY;
 }
 
-GUINode_RequestedConstraints* GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
+GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
-	auto constraints = new GUINode_RequestedConstraints();
-	constraints->leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints->topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints->top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
-	constraints->widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
-	constraints->heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints->height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
+	GUINode_RequestedConstraints constraints;
+	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
+	constraints.heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
 	return constraints;
 }
 
@@ -201,33 +201,24 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 	{
 		auto v = alignments.horizontal;
-		if ((v == GUINode_AlignmentHorizontal::LEFT)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentLeft = border->left + padding.left;
-				}
-				goto end_switch0;;
-			}		}
-		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
-				}
-				goto end_switch0;;
-			}		}
-		if ((v == GUINode_AlignmentHorizontal::LEFT) || (v == GUINode_AlignmentHorizontal::CENTER) || (v == GUINode_AlignmentHorizontal::RIGHT)) {
-{
-{
-					for (auto i = 0; i < subNodes.size(); i++) {
-						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border->right- padding.right);
-					}
-					goto end_switch0;;
-				}
-			}		}
-end_switch0:;
+		if (v == GUINode_AlignmentHorizontal::LEFT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
+			}
+		} else
+		if (v == GUINode_AlignmentHorizontal::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
+			}
+		} else
+		if (v == GUINode_AlignmentHorizontal::RIGHT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right- padding.right);
+			}
+		}
 	}
 
 }
@@ -236,35 +227,25 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 {
 	{
 		auto v = alignments.vertical;
-		if ((v == GUINode_AlignmentVertical::TOP)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentTop = border->top + padding.top;
-				}
-				goto end_switch1;;
-			}		}
-		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER)) {
-{
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes.at(i);
-					guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
-				}
-				goto end_switch1;;
-			}		}
-		if ((v == GUINode_AlignmentVertical::TOP) || (v == GUINode_AlignmentVertical::CENTER) || (v == GUINode_AlignmentVertical::BOTTOM)) {
-{
-{
-					for (auto i = 0; i < subNodes.size(); i++) {
-						auto guiSubNode = subNodes.at(i);
-						guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border->bottom- padding.bottom);
-					}
-					goto end_switch1;;
-				}
-			}		}
-end_switch1:;
+		if (v == GUINode_AlignmentVertical::TOP) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
+			}
+		} else
+		if (v == GUINode_AlignmentVertical::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
+			}
+		} else
+		if (v == GUINode_AlignmentVertical::BOTTOM) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes.at(i);
+				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom- padding.bottom);
+			}
+		}
 	}
-
 }
 
 void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes)
@@ -306,7 +287,7 @@ void GUIParentNode::setConditionsMet()
 	}
 }
 
-void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingNodes)
+void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 {
 	if (conditionsMet == false)
 		return;
@@ -346,7 +327,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes.at(i);
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
-			floatingNodes->push_back(guiSubNode);
+			floatingNodes.push_back(guiSubNode);
 			continue;
 		}
 		guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
@@ -370,7 +351,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>* floatingN
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
 }
 
-void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
+void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
 	if (conditionsMet == false)
 		return;
@@ -413,9 +394,9 @@ void GUIParentNode::handleMouseEvent(GUIMouseEvent* event)
 		if (subNode->flow == GUINode_Flow::FLOATING) {
 			continue;
 		}
-		subNode->handleMouseEvent(event);
+		subNode->determineMouseEventNodes(event, eventNodeIds);
 	}
-	GUINode::handleMouseEvent(event);
+	GUINode::determineMouseEventNodes(event, eventNodeIds);
 	if (flow == GUINode_Flow::FLOATING && event->isProcessed() == true) {
 		screenNode->mouseEventProcessedByFloatingNode = true;
 	}

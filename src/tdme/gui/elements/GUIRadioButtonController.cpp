@@ -37,7 +37,6 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 
 void GUIRadioButtonController::init()
 {
-	value = new MutableString();
 }
 
 string GUIRadioButtonController::CONDITION_SELECTED = "selected";
@@ -59,17 +58,17 @@ void GUIRadioButtonController::select()
 	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
 		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
 			auto radioButtonNode = dynamic_cast< GUIElementNode* >(radioButtonGroupNodesIt->second.at(i));
-			auto nodeConditions = radioButtonNode->getActiveConditions();
+			auto& nodeConditions = radioButtonNode->getActiveConditions();
 			auto nodeController = dynamic_cast< GUIRadioButtonController* >(radioButtonNode->getController());
-			nodeConditions->remove(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+			nodeConditions.remove(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 			nodeController->selected = false;
-			nodeConditions->add(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+			nodeConditions.add(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 		}
 	}
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = true;
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 }
 
 bool GUIRadioButtonController::isDisabled()
@@ -79,16 +78,16 @@ bool GUIRadioButtonController::isDisabled()
 
 void GUIRadioButtonController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUIRadioButtonController::initialize()
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	setDisabled(disabled);
 }
 
@@ -151,18 +150,18 @@ bool GUIRadioButtonController::hasValue()
 	return true;
 }
 
-MutableString* GUIRadioButtonController::getValue()
+const MutableString& GUIRadioButtonController::getValue()
 {
-	value->reset();
+	value.reset();
 	if (selected == true) {
-		value->append((dynamic_cast< GUIElementNode* >(node))->getValue());
+		value.append((dynamic_cast< GUIElementNode* >(node))->getValue());
 	}
 	return value;
 }
 
-void GUIRadioButtonController::setValue(MutableString* value)
+void GUIRadioButtonController::setValue(const MutableString& value)
 {
-	if (value->equals((dynamic_cast< GUIElementNode* >(node))->getValue()) == true) {
+	if (value.equals((dynamic_cast< GUIElementNode* >(node))->getValue()) == true) {
 		select();
 	}
 }

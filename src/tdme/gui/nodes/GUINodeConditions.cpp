@@ -11,9 +11,9 @@ GUINodeConditions::GUINodeConditions()
 {
 }
 
-vector<string>* GUINodeConditions::getConditions()
+vector<string>& GUINodeConditions::getConditions()
 {
-	return &conditions;
+	return conditions;
 }
 
 void GUINodeConditions::add(const string& condition)
@@ -24,6 +24,7 @@ void GUINodeConditions::add(const string& condition)
 
 void GUINodeConditions::remove(const string& condition)
 {
+	// TODO: use STL to remove conditions
 	for (vector<string>::iterator i = conditions.begin(); i != conditions.end(); ++i) {
 		if (condition == *i) {
 			conditions.erase(i);

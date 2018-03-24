@@ -21,10 +21,12 @@ private:
 	int32_t vertexShaderGlId {  };
 	int32_t fragmentShaderGlId {  };
 	int32_t programGlId {  };
-	int32_t uniformMVPMatrix {  };
-	int32_t uniformDiffuseTextureUnit {  };
-	int32_t uniformDiffuseTextureAvailable {  };
-	int32_t uniformDiffuseTextureMaskedTransparency {  };
+	int32_t uniformProjectionMatrix { -1 };
+	int32_t uniformCameraMatrix { -1 };
+	int32_t uniformMVPMatrix { -1 };
+	int32_t uniformDiffuseTextureUnit { -1 };
+	int32_t uniformDiffuseTextureAvailable { -1 };
+	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
 	bool initialized {  };
 
 public:
@@ -53,7 +55,7 @@ public:
 	 * Set up pre program mvp matrix
 	 * @param mvp matrix
 	 */
-	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
+	virtual void updateMatrices(const Matrix4x4& mvpMatrix);
 
 	/**
 	 * Update material

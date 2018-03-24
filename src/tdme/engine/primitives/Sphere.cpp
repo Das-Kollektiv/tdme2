@@ -5,7 +5,6 @@
 #include <ext/reactphysics3d/src/collision/shapes/SphereShape.h>
 
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 
 using std::to_string;
@@ -13,7 +12,6 @@ using std::vector;
 
 using tdme::engine::primitives::Sphere;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 
 Sphere::Sphere() 
@@ -28,7 +26,7 @@ Sphere::Sphere(const Vector3& center, float radius)
 	collisionShapeLocalTranslation.set(center);
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 	collisionShape = new reactphysics3d::SphereShape(
-		Math::max(MathTools::EPSILON, radius)
+		Math::max(Math::EPSILON, radius)
 	);
 	// compute bounding box
 	computeBoundingBox();

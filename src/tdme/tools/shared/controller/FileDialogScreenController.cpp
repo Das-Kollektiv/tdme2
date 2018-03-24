@@ -65,7 +65,7 @@ const string& FileDialogScreenController::getPathName()
 
 const string FileDialogScreenController::getFileName()
 {
-	return fileName->getController()->getValue()->getString();
+	return fileName->getController()->getValue().getString();
 }
 
 void FileDialogScreenController::initialize()
@@ -95,7 +95,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 		directory = "..." + StringUtils::substring(directory, directory.length() - 50 + 3);
 	}
 
-	caption->getText()->set(captionText)->append(directory);
+	caption->getText().set(captionText).append(directory);
 
 	vector<string> fileList;
 	try {
@@ -136,9 +136,14 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 {
 	try {
 		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");
+		if (FileSystem::getInstance()->isPath(this->cwd) == false) {
+			this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
+		}
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::show(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::print(string(exception.what()));
+		Console::println(": using cwd!");
+		this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	}
 	this->captionText = captionText;
 	this->extensions = *extensions;
@@ -158,7 +163,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
-			auto selectedFile = node->getController()->getValue()->getString();
+			auto selectedFile = node->getController()->getValue().getString();
 			if (FileSystem::getInstance()->isPath(cwd + "/" + selectedFile) == true) {
 				try {
 					cwd = FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
@@ -181,26 +186,15 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED))
+		if (v == GUIActionListener_Type::PERFORMED)
 		{
-			{
-				if (node->getId().compare("filedialog_apply") == 0) {
-					if (applyAction != nullptr)
-						applyAction->performAction();
-
-				} else if (node->getId().compare("filedialog_abort") == 0) {
-					close();
-				}
-				goto end_switch0;;
+			if (node->getId().compare("filedialog_apply") == 0) {
+				if (applyAction != nullptr)
+					applyAction->performAction();
+			} else if (node->getId().compare("filedialog_abort") == 0) {
+				close();
 			}
 		}
-		if (((v == GUIActionListener_Type::PERFORMED) || ((v != GUIActionListener_Type::PERFORMED))))
-		{
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

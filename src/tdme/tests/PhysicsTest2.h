@@ -20,8 +20,7 @@ class tdme::tests::PhysicsTest2 final
 	: public virtual Application
 {
 private:
-	static constexpr uint16_t RIGID_TYPEID_STATIC { 1 };
-	static constexpr uint16_t RIGID_TYPEID_DYNAMIC { 2 };
+	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 4 };
 	Engine* engine {  };
 	World* world {  };
@@ -35,10 +34,10 @@ public:
 	 */
 	static void main(int argc, char** argv);
 public:
-	void display();
-	void dispose();
-	void initialize();
-	void reshape(int32_t width, int32_t height);
+	void display() override;
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 
 	/**
 	 * Public constructor

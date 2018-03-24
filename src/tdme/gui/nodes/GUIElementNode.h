@@ -1,14 +1,19 @@
 #pragma once
 
+#include <set>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -46,7 +51,7 @@ private:
 	string value {  };
 	bool selected {  };
 	bool disabled {  };
-	GUINodeConditions* activeConditions {  };
+	GUINodeConditions activeConditions {  };
 	bool focusable {  };
 	bool ignoreEvents {  };
 
@@ -70,7 +75,7 @@ protected:
 	void setLeft(int32_t left) override;
 	void layoutSubNodes() override;
 	void layout() override;
-	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, GUINode_Alignments* alignments, GUINode_RequestedConstraints* requestedConstraints, GUIColor* backgroundColor, GUINode_Border* border, GUINode_Padding* padding, GUINodeConditions* showOn, GUINodeConditions* hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents);
+	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException);
 
 public:
 	int32_t getContentWidth() override;
@@ -104,8 +109,10 @@ public:
 	/** 
 	 * @return active conditions
 	 */
-	GUINodeConditions* getActiveConditions();
-	void handleMouseEvent(GUIMouseEvent* event) override;
+	GUINodeConditions& getActiveConditions();
+
+	// overriden methods
+	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 private:

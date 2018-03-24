@@ -100,7 +100,7 @@ private:
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, Transformations* transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/**
 	 * Destructor
@@ -191,7 +191,7 @@ public:
 	/**
 	 * @return position
 	 */
-	Vector3& getPosition();
+	const Vector3& getPosition() const;
 
 	/** 
 	 * @return friction
@@ -239,13 +239,13 @@ public:
 	/**
 	 * @return transformations
 	 */
-	Transformations* getTransformations();
+	const Transformations& getTransformations();
 
 	/** 
 	 * Synchronizes this rigid body with transformations
 	 * @param transformations
 	 */
-	void fromTransformations(Transformations* transformations);
+	void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Add force

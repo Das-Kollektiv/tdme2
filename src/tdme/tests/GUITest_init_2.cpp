@@ -13,12 +13,12 @@ using tdme::tests::GUITest;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
 
-GUITest_init_2::GUITest_init_2(GUITest *GUITest_this)
+GUITest_init_2::GUITest_init_2(GUITest* guiTest)
 	: guiTest(guiTest)
 {
 }
 
 void GUITest_init_2::onValueChanged(GUIElementNode* node)
 {
-	Console::println(node->getName() + ":onValueChanged: " + node->getController()->getValue()->getString());
+	Console::println(node->getName() + ":onValueChanged: " + node->getController()->getValue().getString());
 }

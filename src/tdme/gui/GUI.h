@@ -11,6 +11,7 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Time.h>
@@ -51,14 +52,14 @@ private:
 	map<string, GUIScreenNode*> screens {  };
 	static map<string, GUIFont*> fontCache;
 	static map<string, Texture*> imageCache;
-	GUIColor* foccussedBorderColor {  };
+	GUIColor foccussedBorderColor;
 	vector<GUIElementNode*> focusableNodes {  };
 	vector<GUIScreenNode*> focusableScreenNodes {  };
 	GUIElementNode* focussedNode {  };
-	GUIColor* unfocussedNodeBorderLeftColor {  };
-	GUIColor* unfocussedNodeBorderRightColor {  };
-	GUIColor* unfocussedNodeBorderTopColor {  };
-	GUIColor* unfocussedNodeBorderBottomColor {  };
+	GUIColor unfocussedNodeBorderLeftColor;
+	GUIColor unfocussedNodeBorderRightColor;
+	GUIColor unfocussedNodeBorderTopColor;
+	GUIColor unfocussedNodeBorderBottomColor;
 	Pool<GUIMouseEvent*>* mouseEventsPool {  };
 	vector<GUIMouseEvent*> mouseEvents {  };
 	Pool<GUIKeyboardEvent*>* keyboardEventsPool {  };
@@ -149,7 +150,7 @@ public:
 	 * Removes an screen
 	 * @param id
 	 */
-	void removeScreen(const string* id);
+	void removeScreen(const string& id);
 
 	/** 
 	 * Removes all screens and caches
@@ -170,7 +171,7 @@ public:
 	/** 
 	 * @return focussed border color
 	 */
-	GUIColor* getFoccussedBorderColor();
+	GUIColor& getFoccussedBorderColor();
 
 	/** 
 	 * Invalidate focussed node

@@ -6,7 +6,6 @@
 #include <string>
 
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Rotations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -31,7 +30,6 @@ using std::string;
 
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::engine::Rotation;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
@@ -116,12 +114,12 @@ void LevelFileExport::export_(const string& pathName, const string& fileName, Le
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
 		tdme::ext::jsonbox::Object jObject;
-		auto transformations = levelEditorObject->getTransformations();
-		auto translation = transformations->getTranslation();
-		auto scale = transformations->getScale();
-		auto rotationAroundXAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisXIndex());
-		auto rotationAroundYAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisYIndex());
-		auto rotationAroundZAxis = transformations->getRotations()->get(level->getRotationOrder()->getAxisZIndex());
+		auto& transformations = levelEditorObject->getTransformations();
+		auto& translation = transformations.getTranslation();
+		auto& scale = transformations.getScale();
+		auto& rotationAroundXAxis = transformations.getRotation(level->getRotationOrder()->getAxisXIndex());
+		auto& rotationAroundYAxis = transformations.getRotation(level->getRotationOrder()->getAxisYIndex());
+		auto& rotationAroundZAxis = transformations.getRotation(level->getRotationOrder()->getAxisZIndex());
 		jObject["id"] = (levelEditorObject->getId());
 		jObject["descr"] = (levelEditorObject->getDescription());
 		jObject["mid"] = levelEditorObject->getEntity()->getId();
@@ -131,9 +129,9 @@ void LevelFileExport::export_(const string& pathName, const string& fileName, Le
 		jObject["sx"] = static_cast< double >(scale.getX());
 		jObject["sy"] = static_cast< double >(scale.getY());
 		jObject["sz"] = static_cast< double >(scale.getZ());
-		jObject["rx"] = static_cast< double >(rotationAroundXAxis->getAngle());
-		jObject["ry"] = static_cast< double >(rotationAroundYAxis->getAngle());
-		jObject["rz"] = static_cast< double >(rotationAroundZAxis->getAngle());
+		jObject["rx"] = static_cast< double >(rotationAroundXAxis.getAngle());
+		jObject["ry"] = static_cast< double >(rotationAroundYAxis.getAngle());
+		jObject["rz"] = static_cast< double >(rotationAroundZAxis.getAngle());
 		tdme::ext::jsonbox::Array jObjectProperties;
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
 			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);

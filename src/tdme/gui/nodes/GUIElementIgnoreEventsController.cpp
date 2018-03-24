@@ -33,10 +33,10 @@ bool GUIElementIgnoreEventsController::isDisabled()
 
 void GUIElementIgnoreEventsController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
 
 void GUIElementIgnoreEventsController::initialize()
@@ -84,12 +84,12 @@ bool GUIElementIgnoreEventsController::hasValue()
 	return false;
 }
 
-MutableString* GUIElementIgnoreEventsController::getValue()
+const MutableString& GUIElementIgnoreEventsController::getValue()
 {
-	return nullptr;
+	return value;
 }
 
-void GUIElementIgnoreEventsController::setValue(MutableString* value)
+void GUIElementIgnoreEventsController::setValue(const MutableString& value)
 {
 }
 

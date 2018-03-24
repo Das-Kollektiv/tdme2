@@ -48,7 +48,6 @@ void GUIDropDownController::init()
 	dropDownNode = nullptr;
 	arrowNode = nullptr;
 	textElementNode = nullptr;
-	value = new MutableString();
 }
 
 string GUIDropDownController::CONDITION_DISABLED = "disabled";
@@ -66,13 +65,13 @@ bool GUIDropDownController::isDisabled()
 
 void GUIDropDownController::setDisabled(bool disabled)
 {
-	auto nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	auto nodeConditionsTextElement = textElementNode->getActiveConditions();
-	nodeConditions->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement->remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto& nodeConditionsTextElement = textElementNode->getActiveConditions();
+	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditionsTextElement.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement->add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditionsTextElement.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 	if (disabled == true && isOpen() == true) {
 		toggleOpenState();
 	}
@@ -83,8 +82,8 @@ void GUIDropDownController::initialize()
 	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
 	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
 	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	setDisabled(disabled);
 }
 
@@ -115,11 +114,11 @@ void GUIDropDownController::unselect()
 
 void GUIDropDownController::toggleOpenState()
 {
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	isOpen_ = isOpen_ == true ? false : true;
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions()->add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 }
 
 void GUIDropDownController::determineDropDownOptionControllers()
@@ -251,27 +250,27 @@ bool GUIDropDownController::hasValue()
 	return true;
 }
 
-MutableString* GUIDropDownController::getValue()
+const MutableString& GUIDropDownController::getValue()
 {
-	value->reset();
+	value.reset();
 	determineDropDownOptionControllers();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers.at(i);
 		if (dropDownOptionController->isSelected() == true) {
-			value->append((dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
+			value.append((dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
 		}
 	}
 	return value;
 }
 
-void GUIDropDownController::setValue(MutableString* value)
+void GUIDropDownController::setValue(const MutableString& value)
 {
 	determineDropDownOptionControllers();
 	unselect();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers.at(i);
 		auto dropDownOptionNode = (dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()));
-		if (value->equals(dropDownOptionNode->getValue())) {
+		if (value.equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();
 			dropDownOptionNode->scrollToNodeX(dropDownNode);
 			dropDownOptionNode->scrollToNodeY(dropDownNode);

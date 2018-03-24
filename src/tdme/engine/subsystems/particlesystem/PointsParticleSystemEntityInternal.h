@@ -9,12 +9,10 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 
@@ -26,11 +24,11 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::object::TransparentRenderPointsPool;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::math::Vector3;
+using tdme::math::Matrix4x4;
 
 /** 
  * Points particle system entity internal
@@ -92,7 +90,7 @@ public:
 	 * Update transformations
 	 */
 	void update() override;
-	void fromTransformations(Transformations* transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;
 	virtual void dispose();
 	ParticleEmitter* getParticleEmitter() override;

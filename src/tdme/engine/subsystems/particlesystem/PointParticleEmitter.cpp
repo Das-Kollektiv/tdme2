@@ -81,10 +81,10 @@ void PointParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void PointParticleEmitter::fromTransformations(Transformations* transformations)
+void PointParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	//
-	auto transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply translations
 	transformationsMatrix.multiply(position, positionTransformed);
 }

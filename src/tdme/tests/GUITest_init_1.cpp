@@ -42,18 +42,18 @@ void GUITest_init_1::onActionPerformed(GUIActionListener_Type* type, GUIElementN
 {
 	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare("button") == 0) {
 		Console::println(node->getId() + ".actionPerformed()");
-		map<string, MutableString*> values;
-		node->getScreenNode()->getValues(&values);
+		map<string, MutableString> values;
+		node->getScreenNode()->getValues(values);
 		values.clear();
-		values.emplace("select", new MutableString("8"));
-		values.emplace("input", new MutableString("Enter some more text here!"));
-		values.emplace("checkbox1", new MutableString("1"));
-		values.emplace("checkbox2", new MutableString("1"));
-		values.emplace("checkbox3", new MutableString("1"));
-		values.emplace("dropdown", new MutableString("11"));
-		values.emplace("radio", new MutableString("3"));
-		values.emplace("selectmultiple", new MutableString("|1|2|3|15|16|17|"));
-		node->getScreenNode()->setValues(&values);
+		values["select"] = MutableString("8");
+		values["input"] = MutableString("Enter some more text here!");
+		values["checkbox1"] = MutableString("1");
+		values["checkbox2"] = MutableString("1");
+		values["checkbox3"] = MutableString("1");
+		values["dropdown"] = MutableString("11");
+		values["radio"] = MutableString("3");
+		values["selectmultiple"] = MutableString("|1|2|3|15|16|17|");
+		node->getScreenNode()->setValues(values);
 		(dynamic_cast< GUITabController* >(node->getScreenNode()->getNodeById("tab1")->getController()))->selectTab();
 	} else
 	if (type == GUIActionListener_Type::PERFORMED && node->getName().compare("button2") == 0) {

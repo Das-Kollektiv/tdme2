@@ -45,7 +45,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EntityBaseSubScreenController::TEXT_EMPTY = new MutableString("");
+MutableString EntityBaseSubScreenController::TEXT_EMPTY = MutableString("");
 
 EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction) 
 {
@@ -84,9 +84,9 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 void EntityBaseSubScreenController::setEntityData(const string& name, const string& description)
 {
 	entityName->getController()->setDisabled(false);
-	entityName->getController()->getValue()->set(name);
+	entityName->getController()->setValue(name);
 	entityDescription->getController()->setDisabled(false);
-	entityDescription->getController()->getValue()->set(description);
+	entityDescription->getController()->setValue(description);
 	entityApply->getController()->setDisabled(false);
 }
 
@@ -104,7 +104,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	if (model == nullptr)
 		return;
 
-	view->setEntityData(model, entityName->getController()->getValue()->getString(), entityDescription->getController()->getValue()->getString());
+	view->setEntityData(model, entityName->getController()->getValue().getString(), entityDescription->getController()->getValue().getString());
 	onSetEntityDataAction->performAction();
 }
 
@@ -203,9 +203,9 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 {
 	if (view->entityPropertySave(
 		entity,
-		entityPropertiesList->getController()->getValue()->getString(),
-		entityPropertyName->getController()->getValue()->getString(),
-		entityPropertyValue->getController()->getValue()->getString()) == false) {
+		entityPropertiesList->getController()->getValue().getString(),
+		entityPropertyName->getController()->getValue().getString(),
+		entityPropertyValue->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Saving entity property failed");
 	}
 }
@@ -219,7 +219,7 @@ void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entit
 
 void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
 {
-	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue()->getString()) == false) {
+	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
@@ -231,7 +231,7 @@ void EntityBaseSubScreenController::showErrorPopUp(const string& caption, const 
 
 void EntityBaseSubScreenController::onEntityPropertyPresetApply(LevelEditorEntity* model)
 {
-	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue()->getString());
+	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue().getString());
 }
 
 void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEditorEntity* entity)
@@ -242,7 +242,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyRemove->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue()->getString());
+	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue().getString());
 	if (entityProperty != nullptr) {
 		entityPropertyName->getController()->setValue(value->set(entityProperty->getName()));
 		entityPropertyValue->getController()->setValue(value->set(entityProperty->getValue()));
@@ -265,35 +265,24 @@ void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* ty
 {
 	{
 		auto v = type;
-		if ((v == GUIActionListener_Type::PERFORMED))
+		if (v == GUIActionListener_Type::PERFORMED)
 		{
-			{
-				if (node->getId().compare("button_entity_apply") == 0) {
-					onEntityDataApply(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_presetapply") == 0) {
-					onEntityPropertyPresetApply(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_add") == 0) {
-					onEntityPropertyAdd(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_remove") == 0) {
-					onEntityPropertyRemove(entity);
-				} else
-				if (node->getId().compare("button_entity_properties_save") == 0) {
-					onEntityPropertySave(entity);
-				} else {
-				}
-				goto end_switch0;;
+			if (node->getId().compare("button_entity_apply") == 0) {
+				onEntityDataApply(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_presetapply") == 0) {
+				onEntityPropertyPresetApply(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_add") == 0) {
+				onEntityPropertyAdd(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_remove") == 0) {
+				onEntityPropertyRemove(entity);
+			} else
+			if (node->getId().compare("button_entity_properties_save") == 0) {
+				onEntityPropertySave(entity);
 			}
 		}
-		if ((v == GUIActionListener_Type::PERFORMED) || (v == GUIActionListener_Type::PERFORMING))
-		{
-			{
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
 	}
 
 }

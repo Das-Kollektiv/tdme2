@@ -18,7 +18,6 @@ uniform vec3 lightDirection;
 
 // passed from vertex shader
 varying vec2 vsFragTextureUV;
-varying vec3 vsPosition;
 varying vec4 vsShadowCoord;
 varying float vsShadowIntensity;
 

@@ -33,8 +33,6 @@ using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-MutableString* EmptyScreenController::TEXT_EMPTY = new MutableString("");
-
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
 {
 	this->view = view;
@@ -67,7 +65,7 @@ void EmptyScreenController::dispose()
 
 void EmptyScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText()->set(text);
+	screenCaption->getText().set(text);
 	screenNode->layout(screenCaption);
 }
 

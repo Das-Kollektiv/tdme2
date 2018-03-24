@@ -23,8 +23,7 @@ class tdme::tests::PhysicsTest1 final
 {
 
 private:
-	static constexpr uint16_t RIGID_TYPEID_STATIC { 1 };
-	static constexpr uint16_t RIGID_TYPEID_DYNAMIC { 2 };
+	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 5 };
 	static constexpr int32_t BOXSTACK_COUNT { 2 };
 	static constexpr int32_t CAPSULE_COUNT { 10 };
@@ -58,10 +57,10 @@ protected:
 	void ctor();
 
 public:
-	void display();
-	void dispose();
-	void initialize();
-	void reshape(int32_t width, int32_t height);
+	void display() override;
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;

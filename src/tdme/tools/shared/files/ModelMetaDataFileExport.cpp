@@ -132,249 +132,215 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		jParticleSystem["t"] = (particleSystem->getType()->getName());
 		{
 			auto v = particleSystem->getType();
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE))
+			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+				// no op
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)
 			{
-				{
-					goto end_switch0;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM))
-			{
-				{
-					ext::jsonbox::Object jObjectParticleSystem;
-					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
-						auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), ".tm") == false ? ".tm" : ""));
-						TMWriter::write(
-							particleSystem->getObjectParticleSystem()->getModel(),
-							modelPathName,
-							modelFileName
-						);
-						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + "/" + modelFileName);
-					}
-					jObjectParticleSystem["mc"] = particleSystem->getObjectParticleSystem()->getMaxCount();
-					jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getX());
-					jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getY());
-					jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getZ());
-					jObjectParticleSystem["mf"] = (particleSystem->getObjectParticleSystem()->getModelFile());
-					jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
-					jParticleSystem["ops"] = jObjectParticleSystem;
-					goto end_switch0;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM))
-			{
-				{
-					ext::jsonbox::Object jPointParticleSystem;
-					jPointParticleSystem["mp"] = particleSystem->getPointParticleSystem()->getMaxPoints();
-					jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
-					jParticleSystem["pps"] = jPointParticleSystem;
-					goto end_switch0;;
-				}
-			}
-			if (((v == LevelEditorEntityParticleSystem_Type::NONE) || (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) || (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) || ((v != LevelEditorEntityParticleSystem_Type::NONE) && (v != LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) && (v != LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM))))
-			{
-				{
-					Console::println(
-						string(
-							"ModelMetaDataFileExport::export(): unknown particle system type '" +
-							particleSystem->getType()->getName() +
-							"'"
-						)
+				ext::jsonbox::Object jObjectParticleSystem;
+				if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
+					auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
+					auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), ".tm") == false ? ".tm" : ""));
+					TMWriter::write(
+						particleSystem->getObjectParticleSystem()->getModel(),
+						modelPathName,
+						modelFileName
 					);
-					goto end_switch0;;
+					particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + "/" + modelFileName);
 				}
+				jObjectParticleSystem["mc"] = particleSystem->getObjectParticleSystem()->getMaxCount();
+				jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getX());
+				jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getY());
+				jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getZ());
+				jObjectParticleSystem["mf"] = (particleSystem->getObjectParticleSystem()->getModelFile());
+				jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
+				jParticleSystem["ops"] = jObjectParticleSystem;
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)
+			{
+				ext::jsonbox::Object jPointParticleSystem;
+				jPointParticleSystem["mp"] = particleSystem->getPointParticleSystem()->getMaxPoints();
+				jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
+				jParticleSystem["pps"] = jPointParticleSystem;
+			} else {
+				Console::println(
+					string(
+						"ModelMetaDataFileExport::export(): unknown particle system type '" +
+						particleSystem->getType()->getName() +
+						"'"
+					)
+				);
 			}
-			end_switch0:;
 		}
 
 		jParticleSystem["e"] = (particleSystem->getEmitter()->getName());
 		{
 			auto v = particleSystem->getEmitter();
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE))
+			if (v == LevelEditorEntityParticleSystem_Emitter::NONE)
 			{
-				{
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER))
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
 			{
-				{
-					ext::jsonbox::Object jPointParticleEmitter;
-					auto emitter = particleSystem->getPointParticleEmitter();
-					jPointParticleEmitter["c"] = emitter->getCount();
-					jPointParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jPointParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jPointParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jPointParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jPointParticleEmitter["px"] = static_cast< double >(emitter->getPosition().getX());
-					jPointParticleEmitter["py"] = static_cast< double >(emitter->getPosition().getY());
-					jPointParticleEmitter["pz"] = static_cast< double >(emitter->getPosition().getZ());
-					jPointParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jPointParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jPointParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jPointParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jPointParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jPointParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jPointParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jPointParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jPointParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jPointParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jPointParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jPointParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jPointParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jPointParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jParticleSystem["ppe"] = jPointParticleEmitter;
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER))
+				ext::jsonbox::Object jPointParticleEmitter;
+				auto emitter = particleSystem->getPointParticleEmitter();
+				jPointParticleEmitter["c"] = emitter->getCount();
+				jPointParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
+				jPointParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
+				jPointParticleEmitter["m"] = static_cast< double >(emitter->getMass());
+				jPointParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
+				jPointParticleEmitter["px"] = static_cast< double >(emitter->getPosition().getX());
+				jPointParticleEmitter["py"] = static_cast< double >(emitter->getPosition().getY());
+				jPointParticleEmitter["pz"] = static_cast< double >(emitter->getPosition().getZ());
+				jPointParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
+				jPointParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
+				jPointParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
+				jPointParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
+				jPointParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
+				jPointParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
+				jPointParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
+				jPointParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
+				jPointParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
+				jPointParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
+				jPointParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
+				jPointParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
+				jPointParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
+				jPointParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
+				jParticleSystem["ppe"] = jPointParticleEmitter;
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
 			{
-				{
-					ext::jsonbox::Object jBoundingBoxParticleEmitter;
-					auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-					jBoundingBoxParticleEmitter["c"] = emitter->getCount();
-					jBoundingBoxParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jBoundingBoxParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jBoundingBoxParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jBoundingBoxParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jBoundingBoxParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jBoundingBoxParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jBoundingBoxParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jBoundingBoxParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jBoundingBoxParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jBoundingBoxParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jBoundingBoxParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jBoundingBoxParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jBoundingBoxParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jBoundingBoxParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jBoundingBoxParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jBoundingBoxParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jBoundingBoxParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jBoundingBoxParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jBoundingBoxParticleEmitter["ocx"] = static_cast< double >(emitter->getObbCenter().getX());
-					jBoundingBoxParticleEmitter["ocy"] = static_cast< double >(emitter->getObbCenter().getY());
-					jBoundingBoxParticleEmitter["ocz"] = static_cast< double >(emitter->getObbCenter().getZ());
-					jBoundingBoxParticleEmitter["ohex"] = static_cast< double >(emitter->getObbHalfextension().getX());
-					jBoundingBoxParticleEmitter["ohey"] = static_cast< double >(emitter->getObbHalfextension().getY());
-					jBoundingBoxParticleEmitter["ohez"] = static_cast< double >(emitter->getObbHalfextension().getZ());
-					jBoundingBoxParticleEmitter["oa0x"] = static_cast< double >(emitter->getObbAxis0().getX());
-					jBoundingBoxParticleEmitter["oa0y"] = static_cast< double >(emitter->getObbAxis0().getY());
-					jBoundingBoxParticleEmitter["oa0z"] = static_cast< double >(emitter->getObbAxis0().getZ());
-					jBoundingBoxParticleEmitter["oa1x"] = static_cast< double >(emitter->getObbAxis1().getX());
-					jBoundingBoxParticleEmitter["oa1y"] = static_cast< double >(emitter->getObbAxis1().getY());
-					jBoundingBoxParticleEmitter["oa1z"] = static_cast< double >(emitter->getObbAxis1().getZ());
-					jBoundingBoxParticleEmitter["oa2x"] = static_cast< double >(emitter->getObbAxis2().getX());
-					jBoundingBoxParticleEmitter["oa2y"] = static_cast< double >(emitter->getObbAxis2().getY());
-					jBoundingBoxParticleEmitter["oa2z"] = static_cast< double >(emitter->getObbAxis2().getZ());
-					jParticleSystem["bbpe"] = jBoundingBoxParticleEmitter;
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER))
+				ext::jsonbox::Object jBoundingBoxParticleEmitter;
+				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
+				jBoundingBoxParticleEmitter["c"] = emitter->getCount();
+				jBoundingBoxParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
+				jBoundingBoxParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
+				jBoundingBoxParticleEmitter["m"] = static_cast< double >(emitter->getMass());
+				jBoundingBoxParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
+				jBoundingBoxParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
+				jBoundingBoxParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
+				jBoundingBoxParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
+				jBoundingBoxParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
+				jBoundingBoxParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
+				jBoundingBoxParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
+				jBoundingBoxParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
+				jBoundingBoxParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
+				jBoundingBoxParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
+				jBoundingBoxParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
+				jBoundingBoxParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
+				jBoundingBoxParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
+				jBoundingBoxParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
+				jBoundingBoxParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
+				jBoundingBoxParticleEmitter["ocx"] = static_cast< double >(emitter->getObbCenter().getX());
+				jBoundingBoxParticleEmitter["ocy"] = static_cast< double >(emitter->getObbCenter().getY());
+				jBoundingBoxParticleEmitter["ocz"] = static_cast< double >(emitter->getObbCenter().getZ());
+				jBoundingBoxParticleEmitter["ohex"] = static_cast< double >(emitter->getObbHalfextension().getX());
+				jBoundingBoxParticleEmitter["ohey"] = static_cast< double >(emitter->getObbHalfextension().getY());
+				jBoundingBoxParticleEmitter["ohez"] = static_cast< double >(emitter->getObbHalfextension().getZ());
+				jBoundingBoxParticleEmitter["oa0x"] = static_cast< double >(emitter->getObbAxis0().getX());
+				jBoundingBoxParticleEmitter["oa0y"] = static_cast< double >(emitter->getObbAxis0().getY());
+				jBoundingBoxParticleEmitter["oa0z"] = static_cast< double >(emitter->getObbAxis0().getZ());
+				jBoundingBoxParticleEmitter["oa1x"] = static_cast< double >(emitter->getObbAxis1().getX());
+				jBoundingBoxParticleEmitter["oa1y"] = static_cast< double >(emitter->getObbAxis1().getY());
+				jBoundingBoxParticleEmitter["oa1z"] = static_cast< double >(emitter->getObbAxis1().getZ());
+				jBoundingBoxParticleEmitter["oa2x"] = static_cast< double >(emitter->getObbAxis2().getX());
+				jBoundingBoxParticleEmitter["oa2y"] = static_cast< double >(emitter->getObbAxis2().getY());
+				jBoundingBoxParticleEmitter["oa2z"] = static_cast< double >(emitter->getObbAxis2().getZ());
+				jParticleSystem["bbpe"] = jBoundingBoxParticleEmitter;
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
 			{
-				{
-					ext::jsonbox::Object jCircleParticleEmitter;
-					auto emitter = particleSystem->getCircleParticleEmitter();
-					jCircleParticleEmitter["c"] = emitter->getCount();
-					jCircleParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jCircleParticleEmitter["ltrnd"] = static_cast< int32_t>(emitter->getLifeTimeRnd());
-					jCircleParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jCircleParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jCircleParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jCircleParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jCircleParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jCircleParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jCircleParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jCircleParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jCircleParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jCircleParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jCircleParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jCircleParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jCircleParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jCircleParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jCircleParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jCircleParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jCircleParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jCircleParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jCircleParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jCircleParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
-					jCircleParticleEmitter["a0x"] = static_cast< double >(emitter->getAxis0().getX());
-					jCircleParticleEmitter["a0y"] = static_cast< double >(emitter->getAxis0().getY());
-					jCircleParticleEmitter["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
-					jCircleParticleEmitter["a1x"] = static_cast< double >(emitter->getAxis1().getX());
-					jCircleParticleEmitter["a1y"] = static_cast< double >(emitter->getAxis1().getY());
-					jCircleParticleEmitter["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
-					jParticleSystem["cpe"] = jCircleParticleEmitter;
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)) {
-				{
-					ext::jsonbox::Object jCircleParticleEmitterPlaneVelocity;
-					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-					jCircleParticleEmitterPlaneVelocity["c"] = emitter->getCount();
-					jCircleParticleEmitterPlaneVelocity["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jCircleParticleEmitterPlaneVelocity["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jCircleParticleEmitterPlaneVelocity["m"] = static_cast< double >(emitter->getMass());
-					jCircleParticleEmitterPlaneVelocity["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jCircleParticleEmitterPlaneVelocity["v"] = static_cast< double >(emitter->getVelocity());
-					jCircleParticleEmitterPlaneVelocity["vrnd"] = static_cast< double >(emitter->getVelocityRnd());
-					jCircleParticleEmitterPlaneVelocity["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jCircleParticleEmitterPlaneVelocity["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jCircleParticleEmitterPlaneVelocity["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jCircleParticleEmitterPlaneVelocity["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jCircleParticleEmitterPlaneVelocity["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jCircleParticleEmitterPlaneVelocity["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jCircleParticleEmitterPlaneVelocity["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jCircleParticleEmitterPlaneVelocity["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jCircleParticleEmitterPlaneVelocity["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jCircleParticleEmitterPlaneVelocity["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jCircleParticleEmitterPlaneVelocity["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jCircleParticleEmitterPlaneVelocity["r"] = static_cast< double >(emitter->getRadius());
-					jCircleParticleEmitterPlaneVelocity["a0x"] = static_cast< double >(emitter->getAxis0().getX());
-					jCircleParticleEmitterPlaneVelocity["a0y"] = static_cast< double >(emitter->getAxis0().getY());
-					jCircleParticleEmitterPlaneVelocity["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
-					jCircleParticleEmitterPlaneVelocity["a1x"] = static_cast< double >(emitter->getAxis1().getX());
-					jCircleParticleEmitterPlaneVelocity["a1y"] = static_cast< double >(emitter->getAxis1().getY());
-					jCircleParticleEmitterPlaneVelocity["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
-					jParticleSystem["cpeev"] = jCircleParticleEmitterPlaneVelocity;
-					goto end_switch1;;
-				}
-			}
-			if ((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))
+				ext::jsonbox::Object jCircleParticleEmitter;
+				auto emitter = particleSystem->getCircleParticleEmitter();
+				jCircleParticleEmitter["c"] = emitter->getCount();
+				jCircleParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
+				jCircleParticleEmitter["ltrnd"] = static_cast< int32_t>(emitter->getLifeTimeRnd());
+				jCircleParticleEmitter["m"] = static_cast< double >(emitter->getMass());
+				jCircleParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
+				jCircleParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
+				jCircleParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
+				jCircleParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
+				jCircleParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
+				jCircleParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
+				jCircleParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
+				jCircleParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
+				jCircleParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
+				jCircleParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
+				jCircleParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
+				jCircleParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
+				jCircleParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
+				jCircleParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
+				jCircleParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
+				jCircleParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
+				jCircleParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
+				jCircleParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
+				jCircleParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
+				jCircleParticleEmitter["a0x"] = static_cast< double >(emitter->getAxis0().getX());
+				jCircleParticleEmitter["a0y"] = static_cast< double >(emitter->getAxis0().getY());
+				jCircleParticleEmitter["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
+				jCircleParticleEmitter["a1x"] = static_cast< double >(emitter->getAxis1().getX());
+				jCircleParticleEmitter["a1y"] = static_cast< double >(emitter->getAxis1().getY());
+				jCircleParticleEmitter["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
+				jParticleSystem["cpe"] = jCircleParticleEmitter;
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+				ext::jsonbox::Object jCircleParticleEmitterPlaneVelocity;
+				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
+				jCircleParticleEmitterPlaneVelocity["c"] = emitter->getCount();
+				jCircleParticleEmitterPlaneVelocity["lt"] = static_cast< int32_t >(emitter->getLifeTime());
+				jCircleParticleEmitterPlaneVelocity["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
+				jCircleParticleEmitterPlaneVelocity["m"] = static_cast< double >(emitter->getMass());
+				jCircleParticleEmitterPlaneVelocity["mrnd"] = static_cast< double >(emitter->getMassRnd());
+				jCircleParticleEmitterPlaneVelocity["v"] = static_cast< double >(emitter->getVelocity());
+				jCircleParticleEmitterPlaneVelocity["vrnd"] = static_cast< double >(emitter->getVelocityRnd());
+				jCircleParticleEmitterPlaneVelocity["csr"] = static_cast< double >(emitter->getColorStart().getRed());
+				jCircleParticleEmitterPlaneVelocity["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
+				jCircleParticleEmitterPlaneVelocity["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
+				jCircleParticleEmitterPlaneVelocity["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
+				jCircleParticleEmitterPlaneVelocity["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
+				jCircleParticleEmitterPlaneVelocity["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
+				jCircleParticleEmitterPlaneVelocity["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
+				jCircleParticleEmitterPlaneVelocity["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
+				jCircleParticleEmitterPlaneVelocity["cx"] = static_cast< double >(emitter->getCenter().getX());
+				jCircleParticleEmitterPlaneVelocity["cy"] = static_cast< double >(emitter->getCenter().getY());
+				jCircleParticleEmitterPlaneVelocity["cz"] = static_cast< double >(emitter->getCenter().getZ());
+				jCircleParticleEmitterPlaneVelocity["r"] = static_cast< double >(emitter->getRadius());
+				jCircleParticleEmitterPlaneVelocity["a0x"] = static_cast< double >(emitter->getAxis0().getX());
+				jCircleParticleEmitterPlaneVelocity["a0y"] = static_cast< double >(emitter->getAxis0().getY());
+				jCircleParticleEmitterPlaneVelocity["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
+				jCircleParticleEmitterPlaneVelocity["a1x"] = static_cast< double >(emitter->getAxis1().getX());
+				jCircleParticleEmitterPlaneVelocity["a1y"] = static_cast< double >(emitter->getAxis1().getY());
+				jCircleParticleEmitterPlaneVelocity["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
+				jParticleSystem["cpeev"] = jCircleParticleEmitterPlaneVelocity;
+			} else
+			if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
 			{
-				{
-					ext::jsonbox::Object jSphereParticleEmitter;
-					auto emitter = particleSystem->getSphereParticleEmitter();
-					jSphereParticleEmitter["c"] = emitter->getCount();
-					jSphereParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jSphereParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jSphereParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jSphereParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jSphereParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jSphereParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jSphereParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jSphereParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jSphereParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jSphereParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jSphereParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jSphereParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jSphereParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jSphereParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jSphereParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jSphereParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jSphereParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jSphereParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jSphereParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jSphereParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jSphereParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jSphereParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
-					jParticleSystem["spe"] = jSphereParticleEmitter;
-					goto end_switch1;;
-				}
-			}
-			if (((v == LevelEditorEntityParticleSystem_Emitter::NONE) || (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) || (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) || (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) || ((v != LevelEditorEntityParticleSystem_Emitter::NONE) && (v != LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) && (v != LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) && (v != LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER))))
+				ext::jsonbox::Object jSphereParticleEmitter;
+				auto emitter = particleSystem->getSphereParticleEmitter();
+				jSphereParticleEmitter["c"] = emitter->getCount();
+				jSphereParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
+				jSphereParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
+				jSphereParticleEmitter["m"] = static_cast< double >(emitter->getMass());
+				jSphereParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
+				jSphereParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
+				jSphereParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
+				jSphereParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
+				jSphereParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
+				jSphereParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
+				jSphereParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
+				jSphereParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
+				jSphereParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
+				jSphereParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
+				jSphereParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
+				jSphereParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
+				jSphereParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
+				jSphereParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
+				jSphereParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
+				jSphereParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
+				jSphereParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
+				jSphereParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
+				jSphereParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
+				jParticleSystem["spe"] = jSphereParticleEmitter;
+			} else
 			{
 				Console::println(
 					string(
@@ -384,7 +350,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					 )
 				 );
 			}
-			end_switch1:;
 		}
 
 		jEntityRoot["ps"] = jParticleSystem;

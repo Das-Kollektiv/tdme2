@@ -63,10 +63,10 @@ void BoundingBox::fromBoundingVolume(BoundingBox* boundingBox)
 	dimensions = boundingBox->dimensions;
 }
 
-void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox, Transformations* transformations)
+void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox, const Transformations& transformations)
 {
 	// apply transformations from original vertices to local vertices
-	auto& transformationsMatrix = transformations->getTransformationsMatrix();
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
 		transformationsMatrix.multiply((*_vertices)[i], vertices[i]);

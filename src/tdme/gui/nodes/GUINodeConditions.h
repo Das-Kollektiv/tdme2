@@ -26,7 +26,7 @@ public:
 	/** 
 	 * @return conditions
 	 */
-	vector<string>* getConditions();
+	vector<string>& getConditions();
 
 	/** 
 	 * Add a condition

@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
-#ifdef __linux__
+#if defined(__linux__)
+	#define GL_GLEXT_PROTOTYPES
 	#include <GLES2/gl2.h>
 #endif
 
@@ -114,6 +115,10 @@ bool GLES2Renderer::isNormalMappingAvailable()
 
 bool GLES2Renderer::isDisplacementMappingAvailable()
 {
+	return false;
+}
+
+bool GLES2Renderer::isInstancedRenderingAvailable() {
 	return false;
 }
 
@@ -504,27 +509,6 @@ void GLES2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindSkinningVerticesJointsBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSkinningVerticesVertexJointsIdxBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSkinningVerticesVertexJointsWeightBufferObject(int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, false, 0, 0LL);
-}
-
 void GLES2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	Console::println("GLES2Renderer::bindTangentsBufferObject()::not implemented");
@@ -535,10 +519,32 @@ void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
+void GLES2Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+}
+
+void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+}
+
+
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+}
+
+void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
 void GLES2Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)

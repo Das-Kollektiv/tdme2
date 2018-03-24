@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -21,7 +22,6 @@ using std::string;
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
-using tdme::engine::Rotations;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -52,7 +52,9 @@ public:
 	 * @return enabled objects
 	 */
 	const vector<Object3D*>* getEnabledObjects();
-	void fromTransformations(Transformations* transformations) override;
+
+	// overriden methods
+	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
@@ -72,20 +74,33 @@ public:
 	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
-	virtual void dispose();
-	virtual Color4& getEffectColorAdd();
-	virtual Color4& getEffectColorMul();
-	virtual const string& getId();
-	virtual Vector3& getPivot();
-	virtual Rotations* getRotations();
-	virtual Vector3& getScale();
-	virtual Matrix4x4& getTransformationsMatrix();
-	virtual Vector3& getTranslation();
-	virtual bool isDynamicShadowingEnabled();
-	virtual bool isEnabled();
-	virtual bool isPickable();
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
-	virtual void setEngine(Engine* engine);
-	virtual void setPickable(bool pickable);
-	virtual void setRenderer(GLRenderer* renderer);
+	// overriden methods
+	virtual void dispose() override;
+	virtual Color4& getEffectColorAdd() override;
+	virtual Color4& getEffectColorMul() override;
+	virtual const string& getId() override;
+	virtual bool isDynamicShadowingEnabled() override;
+	virtual bool isEnabled() override;
+	virtual bool isPickable() override;
+	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
+	virtual void setEngine(Engine* engine) override;
+	virtual void setPickable(bool pickable) override;
+	virtual void setRenderer(GLRenderer* renderer) override;
+	virtual const Vector3& getTranslation() const override;
+	virtual void setTranslation(const Vector3& translation) override;
+	virtual const Vector3& getScale() const override;
+	virtual void setScale(const Vector3& scale) override;
+	virtual const Vector3& getPivot() const override;
+	virtual void setPivot(const Vector3& pivot) override;
+	virtual const int getRotationCount() const override;
+	virtual Rotation& getRotation(const int idx) override;
+	virtual void addRotation(const Vector3& axis, const float angle) override;
+	virtual void removeRotation(const int idx) override;
+	virtual const Vector3& getRotationAxis(const int idx) const override;
+	virtual void setRotationAxis(const int idx, const Vector3& axis) override;
+	virtual const float getRotationAngle(const int idx) const override;
+	virtual void setRotationAngle(const int idx, const float angle) override;
+	virtual const Quaternion& getRotationsQuaternion() const override;
+	virtual const Matrix4x4& getTransformationsMatrix() const override;
+	virtual const Transformations& getTransformations() const override;
 };

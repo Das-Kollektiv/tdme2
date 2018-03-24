@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -25,7 +26,6 @@ using tdme::engine::Object3D;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
 using tdme::engine::physics::CollisionResponse;
-using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 
 /** 
@@ -48,11 +48,11 @@ private:
 	vector<BoundingVolume*> playerBoundingVolumesTransformed {  };
 	Object3D* cube {  };
 	Model* cubeBoundingVolumeModel {  };
-	BoundingBox* cubeBoundingVolume {  };
+	BoundingVolume* cubeBoundingVolume {  };
 	BoundingVolume* cubeBoundingVolumeTransformed {  };
 	BoundingVolume* barrelBoundingVolume {  };
 	BoundingVolume* barrelBoundingVolumeTransformed {  };
-	Transformations* circleTransformations {  };
+	Transformations circleTransformations {  };
 
 public: /* package */
 	Entity* entityClicked {  };
@@ -86,7 +86,7 @@ private:
 	Model* createWallModel();
 
 public:
-	void display();
+	void display() override;
 
 private:
 
@@ -100,9 +100,9 @@ private:
 	void doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp);
 
 public:
-	void dispose();
-	void initialize() ;
-	void reshape(int32_t width, int32_t height);
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;

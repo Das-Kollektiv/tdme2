@@ -21,93 +21,102 @@ MutableString::MutableString(const string& s)
 	data = s;
 }
 
-int32_t MutableString::length()
+MutableString::MutableString(int i)
+{
+	set(i);
+}
+
+MutableString::MutableString(float f, int32_t decimals) {
+	set(f, decimals);
+}
+
+int32_t MutableString::length() const
 {
 	return data.size();
 }
 
-char MutableString::charAt(int32_t idx)
+char MutableString::charAt(int32_t idx) const
 {
 	return data[idx];
 }
 
-MutableString* MutableString::reset()
+MutableString& MutableString::reset()
 {
 	data = "";
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::set(char c)
+MutableString& MutableString::set(char c)
 {
 	reset();
 	append(c);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::append(char c)
+MutableString& MutableString::append(char c)
 {
 	data.push_back(c);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::insert(int32_t idx, char c)
+MutableString& MutableString::insert(int32_t idx, char c)
 {
 	data.insert(idx, 1, c);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::set(const string& s)
+MutableString& MutableString::set(const string& s)
 {
 	reset();
 	append(s);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::append(const string& s)
+MutableString& MutableString::append(const string& s)
 {
 	data+= s;
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::insert(int32_t idx, const string& s)
+MutableString& MutableString::insert(int32_t idx, const string& s)
 {
 	data.insert(idx, s);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::set(MutableString* s)
+MutableString& MutableString::set(const MutableString& s)
 {
 	reset();
 	append(s);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::append(MutableString* s)
+MutableString& MutableString::append(const MutableString& s)
 {
-	data+= s->data;
-	return this;
+	data+= s.data;
+	return *this;
 }
 
-MutableString* MutableString::insert(int32_t idx, MutableString* s)
+MutableString& MutableString::insert(int32_t idx, const MutableString& s)
 {
-	insert(idx, s->data);
-	return this;
+	insert(idx, s.data);
+	return *this;
 }
 
-MutableString* MutableString::set(int32_t i)
+MutableString& MutableString::set(int32_t i)
 {
 	reset();
 	append(i);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::append(int32_t i)
+MutableString& MutableString::append(int32_t i)
 {
 	data+= to_string(i);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::insert(int32_t idx, int32_t i)
+MutableString& MutableString::insert(int32_t idx, int32_t i)
 {
 	auto negative = false;
 	if (i < 0) {
@@ -125,23 +134,23 @@ MutableString* MutableString::insert(int32_t idx, int32_t i)
 	if (negative == true) {
 		insert(idx, '-');
 	}
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::set(float f, int32_t decimals)
+MutableString& MutableString::set(float f, int32_t decimals)
 {
 	reset();
 	append(f, decimals);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::append(float f, int32_t decimals)
+MutableString& MutableString::append(float f, int32_t decimals)
 {
 	insert(data.size(), f, decimals);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::insert(int32_t idx, float f, int32_t decimals)
+MutableString& MutableString::insert(int32_t idx, float f, int32_t decimals)
 {
 	auto integer = static_cast< int32_t >(f);
 	auto integerDecimals = static_cast< int32_t >(((f - integer) * Math::pow(10.0f, decimals)));
@@ -154,37 +163,36 @@ MutableString* MutableString::insert(int32_t idx, float f, int32_t decimals)
 	}
 	insert(idx, '.');
 	insert(idx, integer);
-	return this;
+	return *this;
 }
 
-MutableString* MutableString::delete_(int32_t idx, int32_t count)
+MutableString& MutableString::delete_(int32_t idx, int32_t count)
 {
 	data.erase(idx, count);
-	return this;
+	return *this;
 }
 
-int32_t MutableString::indexOf(MutableString* s, int32_t idx)
+int32_t MutableString::indexOf(const MutableString& s, int32_t idx) const
 {
-	return data.find(s->data, idx);
+	return data.find(s.data, idx);
 }
 
-int32_t MutableString::indexOf(MutableString* s)
+int32_t MutableString::indexOf(const MutableString& s) const
 {
 	return indexOf(s, 0);
 }
 
-
-bool MutableString::equals(const string& s2)
+bool MutableString::equals(const string& s2) const
 {
 	return data == s2;
 }
 
-bool MutableString::equals(MutableString* s2)
+bool MutableString::equals(const MutableString& s2) const
 {
-	return data == s2->data;
+	return data == s2.data;
 }
 
-const string& MutableString::getString()
+const string& MutableString::getString() const
 {
 	return data;
 }

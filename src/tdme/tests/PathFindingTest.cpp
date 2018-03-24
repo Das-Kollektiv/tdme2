@@ -18,7 +18,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/MathTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
@@ -51,7 +50,6 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
-using tdme::math::MathTools;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::logic::Level;
@@ -126,20 +124,22 @@ void PathFindingTest::display()
 {
 	auto now = Time::getCurrentMillis();
 	bool hadMovement = false;
+	auto playerTranslation = playerObject->getTranslation();
 	if (determinePlayerCompletedStepX() == false) {
-		if (hadMovement == false) playerObject->getTranslation().addX(playerXDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
-		playerObject->getRotations()->get(0)->setAngle(playerXDirection > 0.1f?90.0f:270.0f);
+		if (hadMovement == false) playerTranslation.addX(playerXDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
+		playerObject->getRotation(0).setAngle(playerXDirection > 0.1f?90.0f:270.0f);
 		hadMovement = true;
 	} else {
-		playerObject->getTranslation().setX(path[pathIdx].getX());
+		playerTranslation.setX(path[pathIdx].getX());
 	}
 	if (determinePlayerCompletedStepZ() == false) {
-		if (hadMovement == false) playerObject->getTranslation().addZ(playerZDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
-		playerObject->getRotations()->get(0)->setAngle(playerZDirection > 0.1f?0.0f:180.0f);
+		if (hadMovement == false) playerTranslation.addZ(playerZDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
+		playerObject->getRotation(0).setAngle(playerZDirection > 0.1f?0.0f:180.0f);
 		hadMovement = true;
 	} else {
-		playerObject->getTranslation().setZ(path[pathIdx].getZ());
+		playerTranslation.setZ(path[pathIdx].getZ());
 	}
+	playerObject->setTranslation(playerTranslation);
 	bool completed = false;
 	playerObject->update();
 	if (hadMovement == false) {
@@ -148,7 +148,7 @@ void PathFindingTest::display()
 			pathIdx = 0;
 			if (pathFinding->findPath(
 					playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-					playerObject,
+					*playerObject,
 					pathPositions[(int)(Math::random() * pathPositions.size())],
 					Level::RIGIDBODY_TYPEID_STATIC,
 					path
@@ -194,8 +194,8 @@ void PathFindingTest::initialize()
 	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelEntity->getModel()->addAnimationSetup("death", 109, 169, false);
 	playerObject = new Object3D("player", playerModelEntity->getModel());
-	playerObject->getRotations()->add(new Rotation(90.0f, Vector3(0.0f, 1.0f, 0.0f)));
-	playerObject->getTranslation().set(2.5f, 0.25f, 0.5f);
+	playerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+	playerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	// playerObject->getTranslation().set(-2.5f, 0.25f, -4.5f);
 	playerObject->update();
 	playerObject->setAnimation("walk");
@@ -209,7 +209,7 @@ void PathFindingTest::initialize()
 	pathFinding = new PathFinding(world);
 	if (pathFinding->findPath(
 			playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-			playerObject,
+			playerObject->getTransformations(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
 			Level::RIGIDBODY_TYPEID_STATIC,
 			path

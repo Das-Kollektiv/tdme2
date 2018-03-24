@@ -5,7 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/subsystems/object/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
@@ -22,7 +22,7 @@ using std::to_string;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::subsystems::object::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
@@ -162,6 +162,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		shader->setProgramLightConstantAttenuation(light->getConstantAttenuation());
 		shader->setProgramLightLinearAttenuation(light->getLinearAttenuation());
 		shader->setProgramLightQuadraticAttenuation(light->getQuadraticAttenuation());
+		shader->setProgramViewMatrices();
 		// set up texture pixel dimensions in shader
 		shader->setProgramTexturePixelDimensions(
 			1.0f / static_cast< float >(shadowMap->getWidth()),
@@ -183,6 +184,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			visibleObjects,
 			false,
 			Object3DVBORenderer::RENDERTYPE_NORMALS |
+			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
 			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DVBORenderer::RENDERTYPE_SHADOWMAPPING
@@ -220,12 +222,13 @@ void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
-	// retrieve current model view matrix and put it on stack
+    // retrieve current model view matrix and put it on stack
 	Matrix4x4 tmpMatrix;
 	shadowTransformationsMatrix.set(depthBiasMVPMatrix);
 	// set up new model view matrix
 	tmpMatrix.set(depthBiasMVPMatrix);
 	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
+
 	//
 	updateDepthBiasMVPMatrix();
 }
@@ -240,8 +243,7 @@ void ShadowMapping::endObjectTransformations()
 
 void ShadowMapping::updateMatrices(GLRenderer* renderer)
 {
-	if (runState == ShadowMapping_RunState::NONE)
-		return;
+	if (runState == ShadowMapping_RunState::NONE) return;
 
 	// model view matrix
 	mvMatrix.set(renderer->getModelViewMatrix());
@@ -252,13 +254,13 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 	// upload
 	{
 		auto v = runState;
-		if ((v == ShadowMapping_RunState::PRE)) {
+		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->setProgramMVPMatrix(mvpMatrix);
+				Engine::getShadowMappingShaderPre()->updateMatrices(mvpMatrix);
 				goto end_switch0;;
 			}
-		}
-		if ((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER)) {
+		} else
+		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				auto shader = Engine::getShadowMappingShaderRender();
 				shader->setProgramMVMatrix(mvMatrix);
@@ -266,10 +268,9 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 				shader->setProgramNormalMatrix(normalMatrix);
 				goto end_switch0;;
 			}
-		}
-		if (((v == ShadowMapping_RunState::PRE) || (v == ShadowMapping_RunState::RENDER) || ((v != ShadowMapping_RunState::PRE) && (v != ShadowMapping_RunState::RENDER)))) {
+		} else {
 			{
-				Console::println(string("ShadowMapping::updateMVPMatrices(): unsupported run state '" + to_string(runState)));
+				Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 				goto end_switch0;;
 			}
 		}
@@ -288,7 +289,7 @@ void ShadowMapping::updateMaterial(GLRenderer* renderer) {
 				Engine::getShadowMappingShaderPre()->updateMaterial(renderer);
 				goto end_switch0;;
 			}
-		}
+		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				Engine::getShadowMappingShaderRender()->updateMaterial(renderer);
@@ -309,7 +310,7 @@ void ShadowMapping::bindTexture(GLRenderer* renderer, int32_t textureId) {
 				Engine::getShadowMappingShaderPre()->bindTexture(renderer, textureId);
 				goto end_switch0;;
 			}
-		}
+		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				Engine::getShadowMappingShaderRender()->bindTexture(renderer, textureId);
@@ -334,6 +335,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
+
 	// upload
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }

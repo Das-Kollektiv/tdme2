@@ -34,7 +34,6 @@ class tdme::tools::shared::tools::Tools final
 {
 private:
 	static Engine* osEngine;
-	static Transformations* oseLookFromRotations;
 	static float oseScale;
 
 public:
@@ -168,7 +167,7 @@ public:
 	 * @param look from rotations
 	 * @param scale
 	 */
-	static void setupEntity(LevelEditorEntity* entity, Engine* engine, Transformations* lookFromRotations, float scale);
+	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale);
 
 	/** 
 	 * Get relative resources file name

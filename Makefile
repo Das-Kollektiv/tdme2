@@ -16,12 +16,29 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 	EXTRA_LIBS ?= -Lext/fbx/lib/ -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
+else ifeq ($(OS), FreeBSD)
+	# FreeBSD
+	INCLUDES := $(INCLUDES) -I/usr/local/include
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
 else ifeq ($(OS), Linux)
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	ifeq ($(ARCH), aarch64)
 		# Linux, ARM64
+		SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/engine/EngineGLES2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+	else ifeq ($(ARCH), armv7l)
+		# Linux, ARM
 		SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
@@ -98,7 +115,6 @@ SRCS = \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \
 	src/tdme/engine/Rotation.cpp \
-	src/tdme/engine/Rotations.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
@@ -147,23 +163,23 @@ SRCS = \
 	src/tdme/engine/subsystems/manager/TextureManager_TextureManaged.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp \
-	src/tdme/engine/subsystems/object/BatchVBORendererPoints.cpp \
-	src/tdme/engine/subsystems/object/BatchVBORendererTriangles.cpp \
-	src/tdme/engine/subsystems/object/ModelUtilitiesInternal.cpp \
-	src/tdme/engine/subsystems/object/Object3DBase.cpp \
-	src/tdme/engine/subsystems/object/Object3DBase_TransformedFacesIterator.cpp \
-	src/tdme/engine/subsystems/object/Object3DGroup.cpp \
-	src/tdme/engine/subsystems/object/Object3DGroupMesh.cpp \
-	src/tdme/engine/subsystems/object/Object3DGroupVBORenderer.cpp \
-	src/tdme/engine/subsystems/object/Object3DInternal.cpp \
-	src/tdme/engine/subsystems/object/Object3DModelInternal.cpp \
-	src/tdme/engine/subsystems/object/Object3DVBORenderer.cpp \
-	src/tdme/engine/subsystems/object/Object3DVBORenderer_TransparentRenderFacesGroupPool.cpp \
-	src/tdme/engine/subsystems/object/ObjectBuffer.cpp \
-	src/tdme/engine/subsystems/object/TransparentRenderFacesGroup.cpp \
-	src/tdme/engine/subsystems/object/TransparentRenderFacesPool.cpp \
-	src/tdme/engine/subsystems/object/TransparentRenderFacesPool_TransparentRenderFacesPool.cpp \
-	src/tdme/engine/subsystems/object/TransparentRenderPointsPool.cpp \
+	src/tdme/engine/subsystems/rendering/BatchVBORendererPoints.cpp \
+	src/tdme/engine/subsystems/rendering/BatchVBORendererTriangles.cpp \
+	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DGroup.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DVBORenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DVBORenderer_TransparentRenderFacesGroupPool.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \
+	src/tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.cpp \
+	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool.cpp \
+	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.cpp \
+	src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
@@ -562,7 +578,6 @@ EXT_REACTPHYSICS3D_SRCS = \
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
-	src/tdme/tests/DAETests-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \

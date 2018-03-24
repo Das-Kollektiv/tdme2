@@ -102,7 +102,7 @@ public:
 	 * @param original bounding box
 	 * @param transformations
 	 */
-	void fromBoundingVolumeWithTransformations(BoundingBox* original, Transformations* transformations);
+	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
 
 	/**
 	 * Clones this bounding volume

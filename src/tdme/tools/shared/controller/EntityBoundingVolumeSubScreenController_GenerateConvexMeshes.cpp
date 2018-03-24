@@ -131,15 +131,15 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 	vector<string> convexMeshFileNames;
 	try {
 		IVHACD::Parameters vhacdParams;
-		vhacdParams.m_resolution = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesResolution->getController()->getValue()->getString());
-		vhacdParams.m_concavity = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesConcavity->getController()->getValue()->getString());
-		vhacdParams.m_planeDownsampling = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue()->getString());
-		vhacdParams.m_convexhullDownsampling = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue()->getString());
-		vhacdParams.m_alpha = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesAlpha->getController()->getValue()->getString());
-		vhacdParams.m_beta = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesBeta->getController()->getValue()->getString());
-		vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue()->getString());
-		vhacdParams.m_minVolumePerCH = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue()->getString());
-		vhacdParams.m_pca = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesPCA->getController()->getValue()->getString());
+		vhacdParams.m_resolution = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesResolution->getController()->getValue().getString());
+		vhacdParams.m_concavity = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesConcavity->getController()->getValue().getString());
+		vhacdParams.m_planeDownsampling = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
+		vhacdParams.m_convexhullDownsampling = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue().getString());
+		vhacdParams.m_alpha = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesAlpha->getController()->getValue().getString());
+		vhacdParams.m_beta = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesBeta->getController()->getValue().getString());
+		vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
+		vhacdParams.m_minVolumePerCH = Tools::convertToFloat(entityBoundingVolumeSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
+		vhacdParams.m_pca = Tools::convertToInt(entityBoundingVolumeSubScreenController->convexMeshesPCA->getController()->getValue().getString());
 		if (vhacdParams.m_resolution < 10000 || vhacdParams.m_resolution > 64000000) {
 			throw ExceptionBase("Resolution must be between 10000 and 64000000");
 		}
@@ -164,7 +164,7 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 		if (vhacdParams.m_minVolumePerCH < 0.0f || vhacdParams.m_minVolumePerCH > 0.01f) {
 			throw ExceptionBase("Min volume per convex hull must be between 0.0 and 0.01");
 		}
-		if (vhacdParams.m_pca < 0 || vhacdParams.m_pca > 1) {
+		if (vhacdParams.m_pca > 1) {
 			throw ExceptionBase("PCA must be between 0 and 1");
 		}
 		VHACDCallback vhacdCallback;
@@ -173,8 +173,8 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 		vhacdParams.m_callback = &vhacdCallback;
 		vector<float> meshPoints;
 		vector<int> meshTriangles;
-		string meshPathName = Tools::getPath(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue()->getString());
-		string meshFileName = Tools::getFileName(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue()->getString());
+		string meshPathName = Tools::getPath(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue().getString());
+		string meshFileName = Tools::getFileName(entityBoundingVolumeSubScreenController->convexMeshesFile->getController()->getValue().getString());
 		auto meshModel = ModelReader::read(
 			meshPathName,
 			meshFileName
@@ -256,9 +256,7 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 	vhacd->Clean();
 	vhacd->Release();
 	for (auto i = 0; i < EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
-		entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(
-			entityBoundingVolumeSubScreenController->value->set(convexMeshFileNames[i])
-		);
+		entityBoundingVolumeSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
 		entityBoundingVolumeSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, i);
 		entityBoundingVolumeSubScreenController->setupModelBoundingVolumeType(entityFinal, i);
 	}

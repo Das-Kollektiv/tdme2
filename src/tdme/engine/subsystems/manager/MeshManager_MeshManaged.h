@@ -5,12 +5,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <tdme/engine/subsystems/object/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 
 using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager;
-using tdme::engine::subsystems::object::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 
 /** 
  * Managed Mesh entity
