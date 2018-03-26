@@ -222,6 +222,10 @@ void GUI::removeScreen(const string& id)
 	auto screensIt = screens.find(id);
 	if (screensIt != screens.end()) {
 		screens.erase(id);
+		mouseMovedEventNodeIdsLast.erase(id);
+		mousePressedEventNodeIds.erase(id);
+		mouseDraggingEventNodeIds.erase(id);
+		mouseIsDragging.erase(id);
 		screensIt->second->dispose();
 		delete screensIt->second;
 	}
