@@ -470,7 +470,11 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 	}
 	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
 	auto eventY = eventYScreen + computeParentChildrenRenderOffsetYTotal();
-	auto belongsToElement = eventX >= computedConstraints.left + computedConstraints.alignmentLeft && eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width && eventY >= computedConstraints.top + computedConstraints.alignmentTop && eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
+	auto belongsToElement =
+		eventX >= computedConstraints.left + computedConstraints.alignmentLeft &&
+		eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
+		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
+		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
 	if (belongsToElement == true) {
 		position[0] = static_cast< int32_t >((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
 		position[1] = static_cast< int32_t >((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
@@ -527,7 +531,9 @@ void GUINode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventN
 	if (screenNode->mouseEventProcessedByFloatingNode == true)
 		return;
 
-	eventNodeIds.insert(this->id);
+	if (isEventBelongingToNode(event) == true) {
+		eventNodeIds.insert(this->id);
+	}
 }
 
 void GUINode::handleKeyboardEvent(GUIKeyboardEvent* event)

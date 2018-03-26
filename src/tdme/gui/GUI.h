@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -18,8 +19,9 @@
 #include <tdme/utils/Pool.h>
 
 using std::map;
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::application::ApplicationInputEventsHandler;
@@ -68,6 +70,7 @@ private:
 	int32_t width {  };
 	int32_t height {  };
 	int32_t mouseButtonLast { };
+	set<string> mouseEventMovedNodeIdsLast;
 
 public:
 

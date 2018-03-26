@@ -41,7 +41,6 @@ using std::vector;
 using std::set;
 using std::string;
 using std::to_string;
-using std::to_string;
 
 using tdme::gui::GUI;
 using tdme::engine::Engine;
@@ -416,38 +415,88 @@ void GUI::render()
 
 void GUI::handleEvents(GUINode* node)
 {
-	set<string> eventNodeIds;
-	for (auto i = 0; i < mouseEvents.size(); i++) {
-		auto event = mouseEvents.at(i);
-		if (event->isProcessed() == true)
-			continue;
+	// handle mouse events
+	{
+		// have mouse moved event in this frame?
+		bool haveMouseMovedEvent = false;
 
-		event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
-		event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
+		// collect nodes that received MOVED events this frame
+		set<string> mouseEventMovedNodeIds;
 
-		// determine nodes that receive this event
-		node->determineMouseEventNodes(event, eventNodeIds);
+		// handle each event
+		set<string> mouseEventNodeIds;
+		for (auto i = 0; i < mouseEvents.size(); i++) {
+			auto event = mouseEvents.at(i);
 
-		// handle mouse event for each node we collected
-		for (auto eventNodeId: eventNodeIds) {
-			// node event occurred on
-			auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
-			if (eventNode == nullptr) continue;
+			if (event->isProcessed() == true)
+				continue;
 
-			// controller node
-			auto controllerNode = eventNode;
-			if (controllerNode->getController() == nullptr) {
-				controllerNode = controllerNode->getParentControllerNode();
+			event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
+			event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
+
+			// determine nodes that receive this event
+			node->determineMouseEventNodes(event, mouseEventNodeIds);
+
+			// send mouse MOVED event to nodes that received last frame mouse move events
+			// 	think of a MOUSE OUT event that other gui systems fire
+			if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+				haveMouseMovedEvent = true;
+				for (auto eventNodeId: mouseEventMovedNodeIdsLast) {
+					// Will this node receive a MOVED event in this frame, if yes skip on it
+					if (mouseEventNodeIds.find(eventNodeId) != mouseEventNodeIds.end()) continue;
+
+					// node event occurred on
+					auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+					if (eventNode == nullptr) continue;
+
+					// controller node
+					auto controllerNode = eventNode;
+					if (controllerNode->getController() == nullptr) {
+						controllerNode = controllerNode->getParentControllerNode();
+					}
+					if (controllerNode == nullptr) continue;
+
+					//
+					controllerNode->getController()->handleMouseEvent(eventNode, event);
+				}
+				// clear last frame list
+				mouseEventMovedNodeIdsLast.clear();
 			}
-			if (controllerNode == nullptr) continue;
 
-			//
-			controllerNode->getController()->handleMouseEvent(eventNode, event);
+			// handle mouse event for each node we collected
+			for (auto eventNodeId: mouseEventNodeIds) {
+				// node event occurred on
+				auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+				if (eventNode == nullptr) continue;
+
+				// controller node
+				auto controllerNode = eventNode;
+				if (controllerNode->getController() == nullptr) {
+					controllerNode = controllerNode->getParentControllerNode();
+				}
+				if (controllerNode == nullptr) continue;
+
+				//
+				controllerNode->getController()->handleMouseEvent(eventNode, event);
+			}
+
+			// grow list of gui node ids that received mouse MOVED events
+			if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+				for (auto eventNodeId: mouseEventNodeIds) {
+					mouseEventMovedNodeIds.insert(eventNodeId);
+				}
+			}
+
+			// clear event node id list
+			mouseEventNodeIds.clear();
 		}
 
-		// clear event node id list
-		eventNodeIds.clear();
+		// store nodes that received MOVED events last frame, if we had a mouse MOVED event
+		if (haveMouseMovedEvent == true) {
+			mouseEventMovedNodeIdsLast = mouseEventMovedNodeIds;
+		}
 	}
+
 	for (auto i = 0; i < keyboardEvents.size(); i++) {
 		auto event = keyboardEvents.at(i);
 		if (event->isProcessed() == true)
@@ -479,6 +528,7 @@ void GUI::handleEvents(GUINode* node)
 		if (event->isProcessed() == true) {
 			continue;
 		}
+
 		if (focussedNode != nullptr) {
 			focussedNode->handleKeyboardEvent(event);
 		}
