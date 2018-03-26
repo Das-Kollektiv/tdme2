@@ -13,6 +13,11 @@ using tdme::engine::physics::RigidBody;
 struct tdme::engine::physics::CollisionListener
 {
 
+	/**
+	 * Destructor
+	 */
+	virtual ~CollisionListener() {}
+
 	/** 
 	 * On collision
 	 * Note: 

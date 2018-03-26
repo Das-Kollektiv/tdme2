@@ -191,7 +191,7 @@ void ObjectParticleSystemEntity::removeRotation(const int idx) {
 }
 
 const Vector3& ObjectParticleSystemEntity::getRotationAxis(const int idx) const {
-	Transformations::getRotationAxis(idx);
+	return Transformations::getRotationAxis(idx);
 }
 
 void ObjectParticleSystemEntity::setRotationAxis(const int idx, const Vector3& axis) {

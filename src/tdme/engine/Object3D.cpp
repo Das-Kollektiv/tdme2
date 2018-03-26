@@ -181,7 +181,7 @@ void Object3D::removeRotation(const int idx) {
 }
 
 const Vector3& Object3D::getRotationAxis(const int idx) const {
-	Transformations::getRotationAxis(idx);
+	return Transformations::getRotationAxis(idx);
 }
 
 void Object3D::setRotationAxis(const int idx, const Vector3& axis) {

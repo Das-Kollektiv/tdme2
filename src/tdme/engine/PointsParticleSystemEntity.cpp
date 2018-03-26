@@ -184,7 +184,7 @@ void PointsParticleSystemEntity::removeRotation(const int idx) {
 }
 
 const Vector3& PointsParticleSystemEntity::getRotationAxis(const int idx) const {
-	Transformations::getRotationAxis(idx);
+	return Transformations::getRotationAxis(idx);
 }
 
 void PointsParticleSystemEntity::setRotationAxis(const int idx, const Vector3& axis) {

@@ -18,6 +18,11 @@ using tdme::engine::primitives::BoundingVolume;
 struct tdme::engine::physics::WorldListener
 {
 
+	/**
+	 * Destructor
+	 */
+	virtual ~WorldListener() {}
+
 	/** 
 	 * Event fired when rigid body was added
 	 * @param id
