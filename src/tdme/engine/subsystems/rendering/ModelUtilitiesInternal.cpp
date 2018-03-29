@@ -180,11 +180,29 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 	for (auto i = 0; i < object3DModel1Internal->object3dGroups.size(); i++) {
 		auto object3DGroupModel1 = object3DModel1Internal->object3dGroups[i];
 		auto object3DGroupModel2 = object3DModel2Internal->object3dGroups[i];
+		auto group1 = object3DModel1Internal->object3dGroups[i]->group;
+		auto group2 = object3DModel2Internal->object3dGroups[i]->group;
 		auto facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
 		auto facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
 		// check transformation matrix
 		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
 			return false;
+		// check vertices count
+		if (group1->getVertices()->size() != group2->getVertices()->size())
+			return false;
+		// check vertices
+		for (auto j = 0; j < group1->getVertices()->size(); j++) {
+			if ((*group1->getVertices())[j].equals((*group2->getVertices())[j]) == false)
+				return false;
+		}
+		// check normals count
+		if (group1->getNormals()->size() != group2->getNormals()->size())
+			return false;
+		// check normals
+		for (auto j = 0; j < group1->getNormals()->size(); j++) {
+			if ((*group1->getNormals())[j].equals((*group2->getNormals())[j]) == false)
+				return false;
+		}
 		// check number of faces entities
 		if (facesEntitiesModel1->size() != facesEntitiesModel2->size())
 			return false;
