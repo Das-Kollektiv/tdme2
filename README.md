@@ -127,7 +127,7 @@ TDME2
         - example games
         - documentation
 
-    - What is WIP
+    - What is WIP or planned
         - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
         - Logic documentation/comments need to be imported from TDME(-JAVA)
