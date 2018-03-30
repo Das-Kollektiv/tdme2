@@ -135,6 +135,7 @@ TDME2
         - Build documentation
         - A auto build environment (for Windows/AMD64 and Linux/AMD64 for nighly builds) 
         - A release plan
+        - Integrate LUA to be able to write TDME2 applications comlpetely via LUA or some sub logics
 
     - Technology
         - designed for simple multi threading
