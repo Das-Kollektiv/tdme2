@@ -178,9 +178,9 @@ TDME2
         - the world wide web! thank you for sharing
 
     - Other credits
+        - Mathias Lenz
         - Dominik Hepp
         - Mathias Wenzel
         - Sergiu Crăiţoiu
         - Kolja Gumpert
         - others
-       
