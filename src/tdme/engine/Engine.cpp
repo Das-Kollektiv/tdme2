@@ -432,7 +432,6 @@ void Engine::initialize(bool debug)
 	// init
 	initialized = true;
 	renderer->initialize();
-	renderer->renderingTexturingClientState = false;
 
 	// create manager
 	textureManager = new TextureManager(renderer);
@@ -624,10 +623,6 @@ void Engine::display()
 	// init frame
 	Engine::renderer->initializeFrame();
 
-	// enable vertex and normal arrays, we always have them
-	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_VERTEX_ARRAY);
-	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_NORMAL_ARRAY);
-
 	// update camera
 	camera->update(width, height);
 
@@ -704,15 +699,9 @@ void Engine::display()
 		particlesShader->unUseProgram();
 	}
 
-	// disable vertex, normal, texturecoord arrays
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_VERTEX_ARRAY);
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_NORMAL_ARRAY);
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-
 	// clear pre render states
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
-	renderer->renderingTexturingClientState = false;
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
