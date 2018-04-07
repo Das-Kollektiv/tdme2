@@ -4,6 +4,8 @@
 	#include <GL/freeglut.h>
 #elif defined(__APPLE__)
 	#include <GLUT/glut.h>
+#elif defined(__HAIKU__)
+	#include <GL/glut.h>
 #endif
 
 #include <tdme/tdme.h>

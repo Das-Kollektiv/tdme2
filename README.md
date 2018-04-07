@@ -162,6 +162,7 @@ TDME2
             - Linux(port completed)
             - Mac Os X(port completed)
             - FreeBSD(port completed)
+            - Haiku(port completed, some minor issues are still left)
             - Android(port pending)
             - iOS(port pending)
 

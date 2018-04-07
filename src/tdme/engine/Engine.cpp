@@ -1,6 +1,6 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
+#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
 	#include <GL/glew.h>
 #endif
 
@@ -391,7 +391,7 @@ void Engine::initialize(bool debug)
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	// Linux/FreeBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__))
+	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
 	{
 		int glMajorVersion;
 		int glMinorVersion;
