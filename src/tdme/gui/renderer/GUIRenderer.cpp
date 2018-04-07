@@ -114,9 +114,6 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->enableClientState(renderer->CLIENTSTATE_VERTEX_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	renderer->bindIndicesBufferObject((*vboIds)[0]);
 	renderer->bindVerticesBufferObject((*vboIds)[1]);
 	renderer->bindColorsBufferObject((*vboIds)[2]);
@@ -126,9 +123,6 @@ void GUIRenderer::initRendering()
 void GUIRenderer::doneRendering()
 {
 	renderer->unbindBufferObjects();
-	renderer->disableClientState(renderer->CLIENTSTATE_VERTEX_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	Engine::getGUIShader()->unUseProgram();
 }
 

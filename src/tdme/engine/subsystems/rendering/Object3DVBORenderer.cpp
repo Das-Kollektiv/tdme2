@@ -390,20 +390,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				// skip to next entity
 				continue;
 			}
-			// optional texture coordinates
-			if (isTextureCoordinatesAvailable == true) {
-				// enable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == false) {
-					renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = true;
-				}
-			} else {
-				// disable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == true) {
-					renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = false;
-				}
-			}
 			// draw this faces entity for each object
 			bool materialUpdateOnly = false;
 			auto objectCount = objects.size();
@@ -596,20 +582,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				faceIdx += faces;
 				// skip to next entity
 				continue;
-			}
-			// optional texture coordinates
-			if (isTextureCoordinatesAvailable == true) {
-				// enable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == false) {
-					renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = true;
-				}
-			} else {
-				// disable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == true) {
-					renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = false;
-				}
 			}
 
 			// draw this faces entity for each object
@@ -913,13 +885,6 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	// set up GL state
 	renderer->enableBlending();
 	renderer->disableDepthBuffer();
-	renderer->disableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
-	// 	disable texturing client state if not yet done
-	if (renderer->renderingTexturingClientState == false) {
-		renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-		renderer->renderingTexturingClientState = true;
-	}
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
@@ -976,7 +941,5 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	if (depthBuffer == false) renderer->enableDepthBuffer();
 	// restore gl state
 	renderer->unbindBufferObjects();
-	renderer->enableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }

@@ -38,10 +38,6 @@ public:
 	int32_t CLEAR_COLOR_BUFFER_BIT {  };
 	int32_t CULLFACE_FRONT {  };
 	int32_t CULLFACE_BACK {  };
-	int32_t CLIENTSTATE_TEXTURECOORD_ARRAY {  };
-	int32_t CLIENTSTATE_VERTEX_ARRAY {  };
-	int32_t CLIENTSTATE_NORMAL_ARRAY {  };
-	int32_t CLIENTSTATE_COLOR_ARRAY {  };
 	int32_t TEXTUREUNITS_MAX {  };
 	int32_t SHADER_FRAGMENT_SHADER {  };
 	int32_t SHADER_VERTEX_SHADER {  };
@@ -67,7 +63,6 @@ protected:
 	Matrix4x4 viewportMatrix {  };
 
 public:
-	bool renderingTexturingClientState {  };
 	float pointSize {  };
 
 	/** 
@@ -579,18 +574,6 @@ public:
 	 * @param texture unit
 	 */
 	virtual void setTextureUnit(int32_t textureUnit) = 0;
-
-	/** 
-	 * Enable a client state / capability
-	 * @param client state
-	 */
-	virtual void enableClientState(int32_t clientState) = 0;
-
-	/** 
-	 * Disable a client state / capability
-	 * @param client state
-	 */
-	virtual void disableClientState(int32_t clientState) = 0;
 
 	/** 
 	 * Enable light

@@ -52,10 +52,6 @@ GL3Renderer::GL3Renderer()
 	CULLFACE_BACK = GL_BACK;
 	FRONTFACE_CW = GL_CW;
 	FRONTFACE_CCW = GL_CCW;
-	CLIENTSTATE_TEXTURECOORD_ARRAY = -1;
-	CLIENTSTATE_VERTEX_ARRAY = -1;
-	CLIENTSTATE_NORMAL_ARRAY = -1;
-	CLIENTSTATE_COLOR_ARRAY = -1;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
@@ -622,14 +618,6 @@ void GL3Renderer::setTextureUnit(int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
-}
-
-void GL3Renderer::enableClientState(int32_t clientState)
-{
-}
-
-void GL3Renderer::disableClientState(int32_t clientState)
-{
 }
 
 float GL3Renderer::readPixelDepth(int32_t x, int32_t y)

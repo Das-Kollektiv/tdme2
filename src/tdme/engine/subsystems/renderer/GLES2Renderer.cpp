@@ -51,10 +51,6 @@ GLES2Renderer::GLES2Renderer()
 	CULLFACE_BACK = GL_BACK;
 	FRONTFACE_CW = GL_CW;
 	FRONTFACE_CCW = GL_CCW;
-	CLIENTSTATE_TEXTURECOORD_ARRAY = 2;
-	CLIENTSTATE_VERTEX_ARRAY = 0;
-	CLIENTSTATE_NORMAL_ARRAY = 1;
-	CLIENTSTATE_COLOR_ARRAY = 3;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
@@ -485,21 +481,21 @@ void GLES2Renderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(CLIENTSTATE_TEXTURECOORD_ARRAY, 2, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(CLIENTSTATE_VERTEX_ARRAY, 3, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(CLIENTSTATE_NORMAL_ARRAY, 3, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
@@ -563,8 +559,6 @@ void GLES2Renderer::unbindBufferObjects()
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
-	glDisableVertexAttribArray(4);
-	glDisableVertexAttribArray(5);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -583,14 +577,6 @@ void GLES2Renderer::setTextureUnit(int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
-}
-
-void GLES2Renderer::enableClientState(int32_t clientState)
-{
-}
-
-void GLES2Renderer::disableClientState(int32_t clientState)
-{
 }
 
 float GLES2Renderer::readPixelDepth(int32_t x, int32_t y)

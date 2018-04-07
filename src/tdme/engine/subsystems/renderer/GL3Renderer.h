@@ -110,8 +110,6 @@ public:
 	 * Set up current texture unit
 	 */
 	void setTextureUnit(int32_t textureUnit) override;
-	void enableClientState(int32_t clientState) override;
-	void disableClientState(int32_t clientState) override;
 	float readPixelDepth(int32_t x, int32_t y) override;
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void initGuiMode() override;

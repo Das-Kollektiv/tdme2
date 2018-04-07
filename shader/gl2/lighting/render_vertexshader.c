@@ -44,6 +44,11 @@
 #define FALSE		0
 #define MAX_LIGHTS	8
 
+// standard layouts
+attribute vec3 inVertex;
+attribute vec3 inNormal;
+attribute vec2 inTextureUV;
+
 // uniforms
 uniform sampler2D diffuseTextureUnit;
 uniform mat4 mvpMatrix;
@@ -57,15 +62,15 @@ varying vec3 vsNormal;
  
 void main(void) {
 	// pass texture uv to fragment shader
-	vsFragTextureUV = vec2(gl_MultiTexCoord0);
+	vsFragTextureUV = inTextureUV;
 
 	// compute gl position
-	gl_Position = mvpMatrix * gl_Vertex;
+	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 
 	// Eye-coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = mvMatrix * gl_Vertex;
+	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// compute the normal
-	vsNormal = normalize(vec3(normalMatrix * vec4(gl_Normal, 0.0)));
+	vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 }
