@@ -189,6 +189,6 @@ TDME2
         - others
 
     - Interested in collaboration? Then drop me a line via mail
-    	- I have easy to hard task regarding engine/tools development
-    	- I have tasks regarding documentation
-    	- I even might have system administrator tasks
+        - I have easy to hard task regarding engine/tools development
+        - I have tasks regarding documentation
+        - I even might have system administrator tasks
