@@ -239,7 +239,7 @@ void World::update(float deltaTime)
 		Vector3 gravityForce;
 		for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 			// update rigid body
-			auto rigidBody = rigidBodiesDynamic.at(i);
+			auto rigidBody = rigidBodiesDynamic[i];
 			// skip on disabled, static
 			if (rigidBody->enabled == false) {
 				continue;
@@ -268,7 +268,7 @@ void World::update(float deltaTime)
 		map<string, RigidBodyCollisionStruct> rigidBodyTestedCollisions;
 		map<string, RigidBodyCollisionStruct> rigidBodyCollisionsCurrentFrame;
 		for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-			auto rigidBody1 = rigidBodiesDynamic.at(i);
+			auto rigidBody1 = rigidBodiesDynamic[i];
 			if (rigidBody1->enabled == false) continue;
 			auto nearObjects = 0;
 			// get objects near to into account, can return a rigid body multiple times
@@ -348,9 +348,9 @@ void World::update(float deltaTime)
 		constraintsSolver->reset();
 	}
 
-	// update transformations for rigid body
-	for (auto i = 0; i < rigidBodies.size(); i++) {
-		auto rigidBody = rigidBodies.at(i);
+	// update transformations for dynamic rigid body
+	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
+		auto rigidBody = rigidBodiesDynamic[i];
 		// skip if enabled
 		if (rigidBody->enabled == false) {
 			continue;
@@ -385,7 +385,7 @@ void World::synch(Engine* engine)
 {
 	for (auto i = 0; i < rigidBodies.size(); i++) {
 		// update rigid body
-		auto rigidBody = rigidBodies.at(i);
+		auto rigidBody = rigidBodies[i];
 		// skip on static objects
 		if (rigidBody->isStatic_ == true)
 			continue;
@@ -603,7 +603,7 @@ WorldCloned* World::clone(int32_t typeIds)
 {
 	auto clonedWorld = new WorldCloned();
 	for (auto i = 0; i < rigidBodies.size(); i++) {
-		auto rigidBody = rigidBodies.at(i);
+		auto rigidBody = rigidBodies[i];
 		// check if type matches
 		if (((rigidBody->typeId & typeIds) == rigidBody->typeId) == false) continue;
 		//

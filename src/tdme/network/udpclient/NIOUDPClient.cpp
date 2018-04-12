@@ -188,7 +188,7 @@ void NIOUDPClient::run() {
 									{
 										//	check if message queue is full
 										recvMessageQueueMutex.lock();
-										if (recvMessageQueue.size() > 20) {
+										if (recvMessageQueue.size() > 100) {
 											recvMessageQueueMutex.unlock();
 											throw NIOClientException("recv message queue overflow");
 										}
