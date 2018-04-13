@@ -12,6 +12,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
@@ -19,6 +20,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using std::map;
 using std::vector;
@@ -40,6 +42,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 Object3DGroupMesh::Object3DGroupMesh()
 {
@@ -126,7 +129,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Engine::AnimationProcessingTarg
 		for (auto& facesEntity : *group->getFacesEntities())
 		for (auto& face : *facesEntity.getFaces())
 		for (auto& vertexIndex : *face.getVertexIndices()) {
-			mesh->indices[j++] = static_cast< int16_t >(vertexIndex);
+			mesh->indices[j++] = vertexIndex;
 		}
 	}
 	// texture coordinates
@@ -283,13 +286,31 @@ bool Object3DGroupMesh::hasRecreatedBuffers()
 
 void Object3DGroupMesh::setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId)
 {
-	auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(int16_t))->asShortBuffer();
-	// create face vertex indices, will never be changed in engine
-	for (auto index : indices) {
-		sbIndices.put(index);
+	if (renderer->isUsingShortIndices() == true) {
+		if (indices.size() > 65535) {
+			Console::println(
+				"Object3DGroupMesh::setupVertexIndicesBuffer(): " +
+				group->getModel()->getName() + ":" +
+				group->getName() + ":" +
+				"more than 2^16-1 indices"
+			);
+		}
+		auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
+		// create face vertex indices, will never be changed in engine
+		for (auto index : indices) {
+			sbIndices.put(index);
+		}
+		// done, upload
+		renderer->uploadIndicesBufferObject(vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+	} else {
+		auto ibIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
+		// create face vertex indices, will never be changed in engine
+		for (auto index : indices) {
+			ibIndices.put(index);
+		}
+		// done, upload
+		renderer->uploadIndicesBufferObject(vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
-	// done, upload
-	renderer->uploadIndicesBufferObject(vboId, sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 }
 
 void Object3DGroupMesh::setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId)

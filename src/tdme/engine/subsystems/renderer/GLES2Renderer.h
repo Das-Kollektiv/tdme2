@@ -41,6 +41,7 @@ public:
 	bool isNormalMappingAvailable() override;
 	bool isDisplacementMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
+	bool isUsingShortIndices() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
 	void useProgram(int32_t programId) override;
@@ -83,6 +84,7 @@ public:
 	vector<int32_t> createBufferObjects(int32_t buffers) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
+	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void bindIndicesBufferObject(int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int32_t bufferObjectId) override;

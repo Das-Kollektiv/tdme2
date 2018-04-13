@@ -135,6 +135,10 @@ bool GL2Renderer::isInstancedRenderingAvailable() {
 	return false;
 }
 
+bool GL2Renderer::isUsingShortIndices() {
+	return false;
+}
+
 int32_t GL2Renderer::getTextureUnits()
 {
 	return -1;
@@ -487,6 +491,11 @@ void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, Float
 
 void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
+	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
@@ -562,7 +571,7 @@ void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangl
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
-	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
 }
 
 void GL2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {

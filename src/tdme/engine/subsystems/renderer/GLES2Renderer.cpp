@@ -118,6 +118,10 @@ bool GLES2Renderer::isInstancedRenderingAvailable() {
 	return false;
 }
 
+bool GLES2Renderer::isUsingShortIndices() {
+	return false;
+}
+
 int32_t GLES2Renderer::getTextureUnits()
 {
 	return -1;
@@ -465,6 +469,11 @@ void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t si
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
+void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
+	Console::println("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
+}
+
 void GLES2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
@@ -531,7 +540,6 @@ void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t trian
 {
 	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
 }
-
 
 void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {

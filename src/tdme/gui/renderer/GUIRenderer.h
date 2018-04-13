@@ -46,7 +46,6 @@ private:
 	vector<int32_t>* vboIds {  };
 	int32_t quadCount {  };
 	ByteBuffer* sbIndicesByteBuffer {  };
-	ShortBuffer sbIndices {  };
 	ByteBuffer* fbVerticesByteBuffer {  };
 	FloatBuffer fbVertices {  };
 	ByteBuffer* fbColorsByteBuffer {  };

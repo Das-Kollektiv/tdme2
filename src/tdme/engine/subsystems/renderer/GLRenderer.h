@@ -19,6 +19,7 @@ using std::string;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
@@ -117,6 +118,11 @@ public:
 	 * @return instance rendering availability
 	 */
 	virtual bool isInstancedRenderingAvailable() = 0;
+
+	/**
+	 * @return Returns if renderer is using short indices, otherwise it uses int indices
+	 */
+	virtual bool isUsingShortIndices() = 0;
 
 	/**
 	 * @return number of texture units
@@ -450,6 +456,14 @@ public:
 	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/** 
+	 * Uploads buffer data to buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
+	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+
+	/**
 	 * Uploads buffer data to buffer object
 	 * @param buffer object id
 	 * @param size

@@ -4,6 +4,7 @@
 #include <tdme/utils/Time.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -20,6 +21,7 @@ using tdme::math::Math;
 using tdme::utils::Time;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -33,8 +35,8 @@ using tdme::utils::Console;
 
 GUIRenderer::GUIRenderer(GLRenderer* renderer) 
 {
-	init();
 	this->renderer = renderer;
+	init();
 }
 
 GUIRenderer::~GUIRenderer() {
@@ -47,7 +49,7 @@ GUIRenderer::~GUIRenderer() {
 
 void GUIRenderer::init()
 {
-	sbIndices = (sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * sizeof(int16_t)))->asShortBuffer();
+	sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t)));
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
 	fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 2 * sizeof(float)))->asFloatBuffer();
@@ -86,16 +88,31 @@ void GUIRenderer::initialize()
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4);
 		vboIds = vboManaged->getVBOGlIds();
-		for (auto i = 0; i < QUAD_COUNT; i++) {
-			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 1)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 3)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
+		if (renderer->isUsingShortIndices() == true) {
+			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
+			for (auto i = 0; i < QUAD_COUNT; i++) {
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 1)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
+			}
+			// sbIndices->flip();
+			renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		} else {
+			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
+			for (auto i = 0; i < QUAD_COUNT; i++) {
+				ibIndices.put(i * 4 + 0);
+				ibIndices.put(i * 4 + 1);
+				ibIndices.put(i * 4 + 2);
+				ibIndices.put(i * 4 + 2);
+				ibIndices.put(i * 4 + 3);
+				ibIndices.put(i * 4 + 0);
+			}
+			// sbIndices->flip();
+			renderer->uploadIndicesBufferObject((*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
-		// sbIndices->flip();
-		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 	}
 }
 

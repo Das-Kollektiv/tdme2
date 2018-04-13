@@ -40,7 +40,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 private:
 	Group* group {  };
 	int32_t faceCount {  };
-	vector<int16_t> indices {  };
+	vector<uint32_t> indices {  };
 	vector<TextureCoordinate>* textureCoordinates;
 	vector<Vector3>* vertices {  };
 	vector<Vector3>* normals {  };

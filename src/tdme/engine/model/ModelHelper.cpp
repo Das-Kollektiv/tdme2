@@ -228,6 +228,14 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 				face.setIndexedRenderingIndices(&indexedFaceVertexIndices);
 			}
 		}
+		if (preparedIndices > 65535) {
+			Console::println(
+				"ModelHelper::prepareForIndexedRendering(): " +
+				group->getModel()->getName() + ":" +
+				group->getName() + ":" +
+				"more than 2^16-1 indices!"
+			);
+		}
 		// remap skinning
 		auto skinning = group->getSkinning();
 		if (skinning != nullptr) {
