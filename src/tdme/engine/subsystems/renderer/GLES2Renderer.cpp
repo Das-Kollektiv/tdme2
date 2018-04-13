@@ -119,7 +119,7 @@ bool GLES2Renderer::isInstancedRenderingAvailable() {
 }
 
 bool GLES2Renderer::isUsingShortIndices() {
-	return false;
+	return true;
 }
 
 int32_t GLES2Renderer::getTextureUnits()
