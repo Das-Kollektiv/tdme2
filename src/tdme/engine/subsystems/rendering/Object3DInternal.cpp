@@ -56,24 +56,9 @@ Object3DInternal::~Object3DInternal() {
 	}
 }
 
-const string& Object3DInternal::getId()
-{
-	return id;
-}
-
-bool Object3DInternal::isEnabled()
-{
-	return enabled;
-}
-
 void Object3DInternal::setEnabled(bool enabled)
 {
 	this->enabled = enabled;
-}
-
-bool Object3DInternal::isPickable()
-{
-	return pickable;
 }
 
 void Object3DInternal::setPickable(bool pickable)
@@ -81,34 +66,9 @@ void Object3DInternal::setPickable(bool pickable)
 	this->pickable = pickable;
 }
 
-bool Object3DInternal::isDynamicShadowingEnabled()
-{
-	return dynamicShadowing;
-}
-
 void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 {
 	this->dynamicShadowing = dynamicShadowing;
-}
-
-Color4& Object3DInternal::getEffectColorMul()
-{
-	return effectColorMul;
-}
-
-Color4& Object3DInternal::getEffectColorAdd()
-{
-	return effectColorAdd;
-}
-
-BoundingBox* Object3DInternal::getBoundingBox()
-{
-	return boundingBox;
-}
-
-BoundingBox* Object3DInternal::getBoundingBoxTransformed()
-{
-	return boundingBoxTransformed;
 }
 
 void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer)

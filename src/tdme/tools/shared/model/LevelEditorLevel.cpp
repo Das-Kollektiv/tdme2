@@ -245,14 +245,18 @@ void LevelEditorLevel::clearObjects()
 	objectIdx = 0;
 }
 
+void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId) {
+	for (auto object: objects) {
+		if (object->getEntity()->getId() == entityId) {
+			objectsByEntityId.push_back(object->getId());
+		}
+	}
+}
+
 void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 {
 	vector<string> objectsToRemove;
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == entityId) {
-			objectsToRemove.push_back(object->getId());
-		}
-	}
+	getObjectsByEntityId(entityId, objectsToRemove);
 	for (auto objectId: objectsToRemove) {
 		removeObject(objectId);
 	}

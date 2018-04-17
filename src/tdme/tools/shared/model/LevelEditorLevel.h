@@ -160,6 +160,12 @@ public:
 	void clearObjects();
 
 	/** 
+	 * Get objects with given entity id
+	 * @param entity id
+	 */
+	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
+
+	/**
 	 * Remove objects with given entity id
 	 * @param entity id
 	 */

@@ -58,15 +58,41 @@ public:
 public:
 	// overriden methods
 	virtual void dispose() override;
-	virtual BoundingBox* getBoundingBox() override;
-	virtual BoundingBox* getBoundingBoxTransformed() override;
-	virtual Color4& getEffectColorAdd() override;
-	virtual Color4& getEffectColorMul() override;
-	virtual const string& getId() override;
+
+	inline virtual BoundingBox* getBoundingBox() override {
+		return Object3DInternal::getBoundingBox();
+	}
+
+	inline virtual BoundingBox* getBoundingBoxTransformed() override {
+		return Object3DInternal::getBoundingBoxTransformed();
+	}
+
+	inline virtual Color4& getEffectColorAdd() override {
+		return Object3DInternal::getEffectColorAdd();
+	}
+
+	inline virtual Color4& getEffectColorMul() override {
+		return Object3DInternal::getEffectColorMul();
+	}
+
+	inline virtual const string& getId() override {
+		return Object3DInternal::getId();
+	}
+
 	virtual void initialize() override;
-	virtual bool isDynamicShadowingEnabled() override;
-	virtual bool isEnabled() override;
-	virtual bool isPickable() override;
+
+	inline virtual bool isDynamicShadowingEnabled() override {
+		return Object3DInternal::isDynamicShadowingEnabled();
+	}
+
+	inline virtual bool isEnabled() override {
+		return Object3DInternal::isEnabled();
+	}
+
+	inline virtual bool isPickable() override {
+		return Object3DInternal::isPickable();
+	}
+
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
 	virtual void setPickable(bool pickable) override;
 	virtual Matrix4x4* getTransformationsMatrix(const string& id) override;
@@ -85,6 +111,12 @@ public:
 	virtual const float getRotationAngle(const int idx) const override;
 	virtual void setRotationAngle(const int idx, const float angle) override;
 	virtual const Quaternion& getRotationsQuaternion() const override;
-	virtual const Matrix4x4& getTransformationsMatrix() const override;
-	virtual const Transformations& getTransformations() const override;
+
+	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+		return Transformations::getTransformationsMatrix();
+	}
+
+	inline virtual const Transformations& getTransformations() const override {
+		return *this;
+	}
 };

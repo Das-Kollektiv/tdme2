@@ -80,49 +80,9 @@ void Object3D::dispose()
 	Object3DInternal::dispose();
 }
 
-BoundingBox* Object3D::getBoundingBox()
-{
-	return Object3DInternal::getBoundingBox();
-}
-
-BoundingBox* Object3D::getBoundingBoxTransformed()
-{
-	return Object3DInternal::getBoundingBoxTransformed();
-}
-
-Color4& Object3D::getEffectColorAdd()
-{
-	return Object3DInternal::getEffectColorAdd();
-}
-
-Color4& Object3D::getEffectColorMul()
-{
-	return Object3DInternal::getEffectColorMul();
-}
-
-const string& Object3D::getId()
-{
-	return Object3DInternal::getId();
-}
-
 void Object3D::initialize()
 {
 	Object3DInternal::initialize();
-}
-
-bool Object3D::isDynamicShadowingEnabled()
-{
-	return Object3DInternal::isDynamicShadowingEnabled();
-}
-
-bool Object3D::isEnabled()
-{
-	return Object3DInternal::isEnabled();
-}
-
-bool Object3D::isPickable()
-{
-	return Object3DInternal::isPickable();
 }
 
 void Object3D::setDynamicShadowingEnabled(bool dynamicShadowing)
@@ -198,12 +158,4 @@ void Object3D::setRotationAngle(const int idx, const float angle) {
 
 const Quaternion& Object3D::getRotationsQuaternion() const {
 	return Transformations::getRotationsQuaternion();
-}
-
-const Matrix4x4& Object3D::getTransformationsMatrix() const {
-	return Transformations::getTransformationsMatrix();
-}
-
-const Transformations& Object3D::getTransformations() const {
-	return *this;
 }

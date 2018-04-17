@@ -207,45 +207,6 @@ void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* n
 	}
 }
 
-int32_t PartitionOctTree::doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities)
-{
-	auto lookUps = 1;
-	// check if given cbv collides with partition node bv
-	if (frustum->isVisible(&node->bv) == false) {
-		return lookUps;
-	}
-	// if this node already has the partition cbvs add it to the iterator
-	if (node->partitionEntities.size() > 0) {
-		for (auto i = 0; i < node->partitionEntities.size(); i++) {
-			auto entity = node->partitionEntities.at(i);
-			auto hasEntity = false;
-			for (auto j = 0; j < visibleEntities.size(); j++) {
-				if (visibleEntities.at(j) == entity) {
-					hasEntity = true;
-					break;
-				}
-			}
-			if (hasEntity == true)
-				continue;
-
-			lookUps++;
-			if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false)
-				continue;
-
-			visibleEntities.push_back(entity);
-		}
-		return lookUps;
-	} else
-	// otherwise check sub nodes
-	if (node->subNodes.size() > 0) {
-		for (auto& subNode: node->subNodes) {
-			lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode, visibleEntities);
-		}
-		return lookUps;
-	}
-	return lookUps;
-}
-
 vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();

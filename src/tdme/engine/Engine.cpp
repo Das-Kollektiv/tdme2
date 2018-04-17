@@ -552,6 +552,8 @@ void Engine::computeTransformations()
 	if (renderingInitiated == false) initRendering();
 
 	// collect entities that do not have frustum culling enabled, do particle systems auto emit
+	// TODO: Iterating all entities for those purposes is too expensive on large levels
+	/*
 	for (auto it: entitiesById) {
 		Entity* entity = it.second;
 		// skip on disabled entities
@@ -586,6 +588,7 @@ void Engine::computeTransformations()
 			}
 		}
 	}
+	*/
 
 	// add visible entities to related lists by querying frustum
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {

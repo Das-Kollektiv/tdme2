@@ -230,6 +230,21 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 	setEntityLibrary();
 }
 
+void LevelEditorEntityLibraryScreenController::onPartitionEntity()
+{
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (entity == nullptr) return;
+	TDMELevelEditor::getInstance()->getLevel()->removeObjectsByEntityId(entity->getId());
+	auto view = TDMELevelEditor::getInstance()->getView();
+	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
+		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
+	} else {
+		TDMELevelEditor::getInstance()->switchToLevelEditor();
+	}
+	TDMELevelEditor::getInstance()->getLevel()->getEntityLibrary()->removeEntity(entity->getId());
+	setEntityLibrary();
+}
+
 void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("entity_library_listbox") == 0) {
@@ -241,6 +256,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "delete") {
 			onDeleteEntity();
+		} else
+		if (node->getController()->getValue().getString() == "partition") {
+			onPartitionEntity();
 		} else
 		if (node->getController()->getValue().getString() == "create_model") {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();

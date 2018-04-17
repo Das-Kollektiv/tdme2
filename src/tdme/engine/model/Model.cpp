@@ -65,11 +65,6 @@ void Model::deleteSubGroups(map<string, Group*>* subGroups) {
 	}
 }
 
-const string& Model::getId()
-{
-	return id;
-}
-
 const string& Model::getName()
 {
 	return name;

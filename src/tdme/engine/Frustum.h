@@ -54,14 +54,14 @@ public:
 
 	/** 
 	 * Checks if given vector is in frustum
-	 * @param v
+	 * @param vecto
 	 * @return visibility
 	 */
-	inline bool isVisible(const Vector3& v) {
-		auto& vector = v.getArray();
+	inline bool isVisible(const Vector3& vector) {
 		for (auto& p : planes) {
-			auto& normal = p.getNormal().getArray();
-			if ((normal[0] * vector[0]) + (normal[1] * vector[1]) + (normal[2] * vector[2]) + p.getDistance() <= 0) {
+			auto& normal = p.getNormal();
+			auto distance = p.getDistance();
+			if (Vector3::computeDotProduct(normal, vector) + distance <= 0) {
 				return false;
 			}
 		}
@@ -74,11 +74,11 @@ public:
 	 * @return visibility
 	 */
 	inline bool isVisible(Sphere* s) {
-		auto& center = s->getCenter().getArray();
+		auto& center = s->getCenter();
 		auto radius = s->getRadius();
 		for (auto& p : planes) {
-			auto& normal = p.getNormal().getArray();
-			if ((normal[0] * center[0]) + (normal[1] * center[1]) + (normal[2] * center[2]) + p.getDistance() <= -radius) {
+			auto& normal = p.getNormal();
+			if (Vector3::computeDotProduct(normal, center) + p.getDistance() <= -radius) {
 				return false;
 			}
 		}
@@ -91,41 +91,24 @@ public:
 	 * @return visibility
 	 */
 	inline bool isVisible(BoundingBox* b) {
-		auto& min = b->getMin().getArray();
-		auto& max = b->getMax().getArray();
-		auto minX = min[0];
-		auto minY = min[1];
-		auto minZ = min[2];
-		auto maxX = max[0];
-		auto maxY = max[1];
-		auto maxZ = max[2];
+		auto minX = b->getMin()[0];
+		auto minY = b->getMin()[1];
+		auto minZ = b->getMin()[2];
+		auto maxX = b->getMax()[0];
+		auto maxY = b->getMax()[1];
+		auto maxZ = b->getMax()[2];
+		Vector3 point;
 		for (auto& p : planes) {
-			auto& normal = p.getNormal().getArray();
+			auto& normal = p.getNormal();
 			auto distance = p.getDistance();
-			if ((normal[0] * minX) + (normal[1] * minY) + (normal[2] * minZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * maxX) + (normal[1] * minY) + (normal[2] * minZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * minX) + (normal[1] * maxY) + (normal[2] * minZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * maxX) + (normal[1] * maxY) + (normal[2] * minZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * minX) + (normal[1] * minY) + (normal[2] * maxZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * maxX) + (normal[1] * minY) + (normal[2] * maxZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * minX) + (normal[1] * maxY) + (normal[2] * maxZ) + distance > 0) {
-				continue;
-			}
-			if ((normal[0] * maxX) + (normal[1] * maxY) + (normal[2] * maxZ) + distance > 0) {
-				continue;
-			}
+			if (Vector3::computeDotProduct(normal, point.set(minX, minY, minZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, minZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, minZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, minZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, minY, maxZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, maxZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, maxZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, maxZ)) + distance > 0) continue;
 			return false;
 		}
 		return true;

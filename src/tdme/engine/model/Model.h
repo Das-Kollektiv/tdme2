@@ -75,7 +75,9 @@ public:
 	/** 
 	 * @return model id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return model name

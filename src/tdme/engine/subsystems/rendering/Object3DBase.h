@@ -123,7 +123,9 @@ public:
 	/** 
 	 * @return model
 	 */
-	virtual Model* getModel();
+	inline virtual Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * Sets up a base animation to play

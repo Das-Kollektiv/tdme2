@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Frustum.h>
 #include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -42,8 +43,8 @@ class tdme::engine::PartitionOctTree final
 	friend class PartitionOctTree_PartitionTreeNode;
 
 private:
-	static constexpr float PARTITION_SIZE_MIN { 16.0f };
-	static constexpr float PARTITION_SIZE_MAX { 64.0f };
+	static constexpr float PARTITION_SIZE_MIN { 64.0f };
+	static constexpr float PARTITION_SIZE_MAX { 1024.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox boundingBox {  };
@@ -90,7 +91,41 @@ private:
 	 * @param visible entities
 	 * @return number of look ups
 	 */
-	int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities);
+	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities) {
+		auto lookUps = 1;
+		// check if given cbv collides with partition node bv
+		if (frustum->isVisible(&node->bv) == false) {
+			return lookUps;
+		}
+		// if this node already has the partition cbvs add it to the iterator
+		if (node->partitionEntities.size() > 0) {
+			for (auto i = 0; i < node->partitionEntities.size(); i++) {
+				auto entity = node->partitionEntities.at(i);
+				auto hasEntity = false;
+				for (auto j = 0; j < visibleEntities.size(); j++) {
+					if (visibleEntities.at(j) == entity) {
+						hasEntity = true;
+						break;
+					}
+				}
+				if (hasEntity == true) continue;
+
+				lookUps++;
+				// if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
+
+				visibleEntities.push_back(entity);
+			}
+			return lookUps;
+		} else
+		// otherwise check sub nodes
+		if (node->subNodes.size() > 0) {
+			for (auto& subNode: node->subNodes) {
+				lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode, visibleEntities);
+			}
+			return lookUps;
+		}
+		return lookUps;
+	}
 
 	/** 
 	 * Do partition tree lookup

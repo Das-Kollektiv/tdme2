@@ -97,11 +97,6 @@ Object3DBase::~Object3DBase() {
 	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
-Model* Object3DBase::getModel()
-{
-	return model;
-}
-
 void Object3DBase::setAnimation(const string& id)
 {
 	auto _animationActiveSetup = model->getAnimationSetup(id);

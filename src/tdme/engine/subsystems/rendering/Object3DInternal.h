@@ -51,12 +51,16 @@ public:
 	/** 
 	 * @return object id
 	 */
-	virtual const string& getId();
+	inline virtual const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return true if enabled to be rendered
 	 */
-	virtual bool isEnabled();
+	inline virtual bool isEnabled() {
+		return enabled;
+	}
 
 	/** 
 	 * Enable/disable rendering
@@ -67,7 +71,9 @@ public:
 	/** 
 	 * @return if object is pickable
 	 */
-	virtual bool isPickable();
+	inline virtual bool isPickable() {
+		return pickable;
+	}
 
 	/** 
 	 * Set this object pickable
@@ -78,7 +84,9 @@ public:
 	/** 
 	 * @return dynamic shadowing enabled
 	 */
-	virtual bool isDynamicShadowingEnabled();
+	inline virtual bool isDynamicShadowingEnabled() {
+		return dynamicShadowing;
+	}
 
 	/** 
 	 * Enable/disable dynamic shadowing
@@ -90,24 +98,32 @@ public:
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	virtual Color4& getEffectColorMul();
+	inline virtual Color4& getEffectColorMul() {
+		return effectColorMul;
+	}
 
 	/** 
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	virtual Color4& getEffectColorAdd();
+	inline virtual Color4& getEffectColorAdd() {
+		return effectColorAdd;
+	}
 
 	/** 
 	 * @return bounding box
 	 */
-	virtual BoundingBox* getBoundingBox();
+	inline virtual BoundingBox* getBoundingBox() {
+		return boundingBox;
+	}
 
 	/** 
 	 * Retrieves bounding sphere with transformations applied
 	 * @return bounding sphere
 	 */
-	virtual BoundingBox* getBoundingBoxTransformed();
+	inline virtual BoundingBox* getBoundingBoxTransformed() {
+		return boundingBoxTransformed;
+	}
 
 	/** 
 	 * Bind frame buffer color texture to this object
@@ -151,16 +167,9 @@ public:
 	 */
 	virtual void unbindDiffuseTexture(const string& groupId, const string& facesEntityId);
 
-	/** 
-	 * Initiates this object3d 
-	 */
+	// overriden methods
 	void initialize() override;
-
-	/** 
-	 * Dispose this object3d
-	 */
 	void dispose() override;
-
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 
