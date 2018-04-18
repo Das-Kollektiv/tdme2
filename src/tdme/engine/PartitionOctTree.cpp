@@ -238,9 +238,10 @@ void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* n
 vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
+	visibleEntitiesById.clear();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode, visibleEntities);
+		lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);
 	}
 	return &visibleEntities;
 }

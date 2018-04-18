@@ -19,8 +19,34 @@ class tdme::engine::model::Color4 final
 	: public Color4Base
 {
 public:
-	Color4();
-	Color4(const Color4& color);
-	Color4(float r, float g, float b, float a);
-	Color4(const array<float, 4>& color);
+	/**
+	 * Public constructor
+	 */
+	inline Color4() : Color4Base() {
+	}
+
+	/**
+	 * Public constructor
+	 * @param color
+	 */
+	inline Color4(const Color4& color) : Color4Base(color) {
+	}
+
+	/**
+	 * Public constructor
+	 * @param red
+	 * @param green
+	 * @param blue
+	 * @param alpha
+	 */
+	inline Color4(float r, float g, float b, float a) : Color4Base(r,g,b,a) {
+	}
+
+	/**
+	 * Public constructor
+	 * @param color array
+	 */
+	inline Color4(const array<float, 4>& color) : Color4Base(color) {
+	}
+
 };

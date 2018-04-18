@@ -315,7 +315,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 void Object3DBase::computeTransformations()
 {
 	// do transformations if we have a animation
-	if (baseAnimation.setup != nullptr) {
+	if (baseAnimation.setup != nullptr && baseAnimation.setup->getFrames() > 1) {
 		auto engine = Engine::getInstance();
 		// animation timing
 		auto timing = engine->getTiming();

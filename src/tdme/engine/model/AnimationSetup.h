@@ -31,17 +31,23 @@ public:
 	/** 
 	 * @return model this animation belongs to
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * @return id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return start frame
 	 */
-	int32_t getStartFrame();
+	inline int32_t getStartFrame() {
+		return startFrame;
+	}
 
 	/**
 	 * Set start frame
@@ -52,7 +58,9 @@ public:
 	/** 
 	 * @return end frame
 	 */
-	int32_t getEndFrame();
+	inline int32_t getEndFrame() {
+		return endFrame;
+	}
 
 	/**
 	 * Set end frame
@@ -63,12 +71,16 @@ public:
 	/** 
 	 * @return frames
 	 */
-	int32_t getFrames();
+	inline int32_t getFrames() {
+		return frames;
+	}
 
 	/** 
 	 * @return looping enabled
 	 */
-	bool isLoop();
+	inline bool isLoop() {
+		return loop;
+	}
 
 	/** 
 	 * Set loop
@@ -80,7 +92,9 @@ public:
 	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy
 	 * @return group id from which the animation will start in the hierarchy
 	 */
-	const string& getOverlayFromGroupId();
+	inline const string& getOverlayFromGroupId() {
+		return overlayFromGroupId;
+	}
 
 	/**
 	 * Set overlay from group id

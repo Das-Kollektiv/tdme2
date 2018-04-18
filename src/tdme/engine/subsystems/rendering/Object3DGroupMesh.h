@@ -87,10 +87,17 @@ private:
 	 */
 	void recreateBuffers();
 
+	/**
+	 * @return has recreated buffers
+	 */
+	bool hasRecreatedBuffers() {
+		return recreatedBuffers == true;
+	}
+
 	/** 
 	 * @return if buffers has been recreated and unsets state
 	 */
-	bool hasRecreatedBuffers();
+	bool getRecreatedBuffers();
 
 	/** 
 	 * Set up vertex indices buffer

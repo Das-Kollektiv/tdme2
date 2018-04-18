@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,7 @@
 
 using std::map;
 using std::vector;
+using std::set;
 using std::string;
 
 using tdme::engine::Partition;
@@ -44,7 +46,7 @@ class tdme::engine::PartitionOctTree final
 
 private:
 	static constexpr float PARTITION_SIZE_MIN { 64.0f };
-	static constexpr float PARTITION_SIZE_MAX { 1024.0f };
+	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator {  };
 	BoundingBox boundingBox {  };
@@ -54,6 +56,7 @@ private:
 	Vector3 upVector {  };
 	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
+	set<string> visibleEntitiesById {  };
 	PartitionOctTree_PartitionTreeNode treeRoot {  };
 
 	void reset() override;
@@ -91,7 +94,7 @@ private:
 	 * @param visible entities
 	 * @return number of look ups
 	 */
-	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node, vector<Entity*>& visibleEntities) {
+	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node) {
 		auto lookUps = 1;
 		// check if given cbv collides with partition node bv
 		if (frustum->isVisible(&node->bv) == false) {
@@ -101,18 +104,21 @@ private:
 		if (node->partitionEntities.size() > 0) {
 			for (auto i = 0; i < node->partitionEntities.size(); i++) {
 				auto entity = node->partitionEntities.at(i);
-				auto hasEntity = false;
-				for (auto j = 0; j < visibleEntities.size(); j++) {
-					if (visibleEntities.at(j) == entity) {
-						hasEntity = true;
-						break;
-					}
-				}
-				if (hasEntity == true) continue;
 
+				// look up
 				lookUps++;
-				// if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
+				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
 
+				// lets have this only once in array
+				auto& entityPartitionNodesVector = entityPartitionNodes[entity->getId()];
+				if (entityPartitionNodesVector.size() > 1) {
+					if (visibleEntitiesById.find(entity->getId()) != visibleEntitiesById.end()) {
+						continue;
+					}
+					visibleEntitiesById.insert(entity->getId());
+				}
+
+				// done
 				visibleEntities.push_back(entity);
 			}
 			return lookUps;
@@ -120,7 +126,7 @@ private:
 		// otherwise check sub nodes
 		if (node->subNodes.size() > 0) {
 			for (auto& subNode: node->subNodes) {
-				lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode, visibleEntities);
+				lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);
 			}
 			return lookUps;
 		}

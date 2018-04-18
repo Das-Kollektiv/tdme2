@@ -4,10 +4,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 
 using std::vector;
 
 using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 
 /** 
@@ -24,7 +27,16 @@ private:
 	vector<int32_t>* vboBaseIds {  };
 	vector<int32_t>* vboTangentBitangentIds {  };
 	vector<int32_t>* vboSkinningIds {  };
+	bool haveVBOs { false };
 public:
+
+	/**
+	 * @return if preRender call is required
+	 */
+	inline bool needsPreRender() {
+		return haveVBOs == false || object3DGroup->mesh->hasRecreatedBuffers() == true;
+	}
+
 	void preRender(Object3DVBORenderer* object3DVBORenderer);
 
 	/** 

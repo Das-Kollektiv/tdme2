@@ -330,7 +330,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	for (auto object: objects) {
 		for (auto j = 0; j < object->object3dGroups.size(); j++) {
 			auto object3DGroup = object->object3dGroups[j];
-			object3DGroup->renderer->preRender(this);
+			if (object3DGroup->renderer->needsPreRender() == true) {
+				object3DGroup->renderer->preRender(this);
+			}
 		}
 	}
 	//
@@ -520,7 +522,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 		for (auto object: objects) {
 			for (auto j = 0; j < object->object3dGroups.size(); j++) {
 				auto object3DGroup = object->object3dGroups[j];
-				object3DGroup->renderer->preRender(this);
+				if (object3DGroup->renderer->needsPreRender() == true) {
+					object3DGroup->renderer->preRender(this);
+				}
 			}
 		}
 	}
@@ -619,11 +623,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					}
 
 					// set up material on first object
+					// TODO: improve me
 					string materialKeyCurrent;
-					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+					if (materialUpdateOnly == false) {
+						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+					}
 					// only update material for next material calls
 					materialUpdateOnly = true;
 
+					/*
+					// TODO: improve me
 					// check if material key has not been set yet
 					if (materialKey.size() == 0) {
 						materialKey = materialKeyCurrent;
@@ -633,6 +642,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						objectsNotRendered.push_back(object);
 						continue;
 					}
+					*/
 
 					// bind buffer base objects if not bound yet
 					auto currentVBOBaseIds = _object3DGroup->renderer->vboBaseIds;

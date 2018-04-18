@@ -138,8 +138,6 @@ SRCS = \
 	src/tdme/engine/fileio/textures/TextureLoader.cpp \
 	src/tdme/engine/model/Animation.cpp \
 	src/tdme/engine/model/AnimationSetup.cpp \
-	src/tdme/engine/model/Color4.cpp \
-	src/tdme/engine/model/Color4Base.cpp \
 	src/tdme/engine/model/Face.cpp \
 	src/tdme/engine/model/FacesEntity.cpp \
 	src/tdme/engine/model/Group.cpp \

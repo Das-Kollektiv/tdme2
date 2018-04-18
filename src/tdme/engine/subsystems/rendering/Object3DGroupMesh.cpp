@@ -274,7 +274,7 @@ void Object3DGroupMesh::recreateBuffers()
 	recreatedBuffers = true;
 }
 
-bool Object3DGroupMesh::hasRecreatedBuffers()
+bool Object3DGroupMesh::getRecreatedBuffers()
 {
 	if (recreatedBuffers == true) {
 		recreatedBuffers = false;

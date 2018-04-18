@@ -41,19 +41,28 @@ Object3DGroupVBORenderer::Object3DGroupVBORenderer(Object3DGroup* object3DGroup)
 void Object3DGroupVBORenderer::preRender(Object3DVBORenderer* object3DVBORenderer)
 {
 	auto meshUploaded = true;
+
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, object3DGroup->mesh->group->getTextureCoordinates() != nullptr ? 4 : 3);
 		vboBaseIds = vboManaged->getVBOGlIds();
 		meshUploaded = vboManaged->isUploaded();
 	}
+
 	// initialize tangents, bitangents
-	if (object3DVBORenderer->renderer->isNormalMappingAvailable() && object3DGroup->mesh->group->getTangents()->size() > 0 && object3DGroup->mesh->group->getBitangents()->size() > 0 && vboTangentBitangentIds == nullptr) {
+	if (object3DVBORenderer->renderer->isNormalMappingAvailable() &&
+		object3DGroup->mesh->group->getTangents()->size() > 0 &&
+		object3DGroup->mesh->group->getBitangents()->size() > 0 &&
+		vboTangentBitangentIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2);
 		vboTangentBitangentIds = vboManaged->getVBOGlIds();
 	}
+
+	//
+	haveVBOs = true;
+
 	// check if to upload new mesh
-	if (object3DGroup->mesh->hasRecreatedBuffers() == true || meshUploaded == false) {
+	if (object3DGroup->mesh->getRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
 			// upload indices
 			object3DGroup->mesh->setupVertexIndicesBuffer(object3DVBORenderer->renderer, (*vboBaseIds)[0]);
