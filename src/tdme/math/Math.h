@@ -21,6 +21,19 @@ public:
 	static constexpr float g { 9.80665f };
 
 	/**
+	 * Clamps a int value to min or max value
+	 * @param value
+	 * @param min value
+	 * @param max value
+	 * @return clamped value
+	 */
+	inline static int clamp(int value, int min, int max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+
+	/**
 	 * Clamps a float value to min or max value
 	 * @param value
 	 * @param min value

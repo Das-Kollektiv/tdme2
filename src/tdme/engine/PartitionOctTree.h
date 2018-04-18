@@ -62,14 +62,14 @@ private:
 	void removeEntity(Entity* entity) override;
 
 	/** 
-	 * Creates a partition
+	 * Updates partition tree
 	 * @param parent
 	 * @param x
 	 * @param y
 	 * @param z
 	 * @param partition size
 	 */
-	void createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize);
+	void updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity);
 
 	/** 
 	 * Is partition empty

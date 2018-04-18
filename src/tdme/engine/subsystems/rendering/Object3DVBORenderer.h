@@ -13,6 +13,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Pool.h>
 
 using std::map;
@@ -30,6 +31,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Pool;
 
 /** 
@@ -57,6 +59,9 @@ private:
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
+	ByteBuffer* bbEffectColorMuls;
+	ByteBuffer* bbEffectColorAdds;
+	ByteBuffer* bbMvMatrices;
 
 	/** 
 	 * Renders transparent faces

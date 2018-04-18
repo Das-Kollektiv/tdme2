@@ -61,36 +61,67 @@ void PartitionOctTree::reset()
 	this->treeRoot.parent = nullptr;
 }
 
-void PartitionOctTree::createPartition(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize)
+void PartitionOctTree::updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity)
 {
-	PartitionOctTree_PartitionTreeNode node;
-	node.partitionSize = partitionSize;
-	node.x = x;
-	node.y = y;
-	node.z = z;
-	node.parent = parent;
-	node.bv.getMin().set(x * partitionSize, y * partitionSize, z * partitionSize);
-	node.bv.getMax().set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
-	node.bv.update();
-	// register in parent sub nodes
-	parent->subNodes.push_back(node);
-	PartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
-	// register in parent sub nodes by coordinate, if root node
-	if (parent == &treeRoot) {
-		string key = to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z);
+	// key
+	string key = to_string(x) + "," + to_string(y) + "," + to_string(z);
+	auto storedNodeIt = parent->subNodesByCoordinate.find(key);
+	auto storedNode = storedNodeIt != parent->subNodesByCoordinate.end()?storedNodeIt->second:nullptr;
+
+	// check if exists
+	if (storedNode == nullptr) {
+		// if not add
+		PartitionOctTree_PartitionTreeNode node;
+		node.partitionSize = partitionSize;
+		node.x = x;
+		node.y = y;
+		node.z = z;
+		node.parent = parent;
+		node.bv.getMin().set(
+			x * partitionSize,
+			y * partitionSize,
+			z * partitionSize
+		);
+		node.bv.getMax().set(
+			x * partitionSize + partitionSize,
+			y * partitionSize + partitionSize,
+			z * partitionSize + partitionSize
+		);
+		node.bv.update();
+		// register in parent sub nodes
+		parent->subNodes.push_back(node);
+		storedNode = &parent->subNodes.back();
+		// register in parent sub nodes by coordinate, if root node
 		parent->subNodesByCoordinate[key] = storedNode;
 	}
+
 	// create sub nodes
 	if (partitionSize > PARTITION_SIZE_MIN) {
-		for (auto _y = 0; _y < 2; _y++) 
-		for (auto _x = 0; _x < 2; _x++)
-		for (auto _z = 0; _z < 2; _z++) {
-			createPartition(
+		// frustum bounding box
+		auto boundingBox = entity->getBoundingBoxTransformed();
+		// create partitions if not yet done
+		auto minXPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getX() - x * partitionSize) / (partitionSize / 2.0f)));
+		auto minYPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getY() - y * partitionSize) / (partitionSize / 2.0f)));
+		auto minZPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getZ() - z * partitionSize) / (partitionSize / 2.0f)));
+		auto maxXPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getX() - x * partitionSize) / (partitionSize / 2.0f)));
+		auto maxYPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getY() - y * partitionSize) / (partitionSize / 2.0f)));
+		auto maxZPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getZ() - z * partitionSize) / (partitionSize / 2.0f)));
+		minXPartition = Math::clamp(minXPartition, 0, 1);
+		minYPartition = Math::clamp(minYPartition, 0, 1);
+		minZPartition = Math::clamp(minZPartition, 0, 1);
+		maxXPartition = Math::clamp(maxXPartition, 0, 1);
+		maxYPartition = Math::clamp(maxYPartition, 0, 1);
+		maxZPartition = Math::clamp(maxZPartition, 0, 1);
+		for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++)
+		for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
+		for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
+			updatePartitionTree(
 				storedNode,
-				static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x,
-				static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y,
-				static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z,
-				partitionSize / 2.0f
+				static_cast< int32_t >((x * partitionSize) / (partitionSize / 2.0f) + xPartition),
+				static_cast< int32_t >((y * partitionSize) / (partitionSize / 2.0f) + yPartition),
+				static_cast< int32_t >((z * partitionSize) / (partitionSize / 2.0f) + zPartition),
+				partitionSize / 2.0f,
+				entity
 			);
 		}
 	}
@@ -119,11 +150,7 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-		// check if first level node has been created already
-		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
-		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
-			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
-		}
+		updatePartitionTree(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX, entity);
 	}
 	// add entity to tree
 	addToPartitionTree(entity, boundingBox);
@@ -203,6 +230,7 @@ void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* n
 		for (auto& subNode: node->subNodes) {
 			removePartitionNode(&subNode);
 		}
+		node->subNodesByCoordinate.clear();
 		node->subNodes.clear();
 	}
 }

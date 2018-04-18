@@ -106,6 +106,9 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
+	bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * 50000);
+	bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * 50000);
+	bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * 50000);
 }
 
 Object3DVBORenderer::~Object3DVBORenderer() {
@@ -508,11 +511,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	// store layouts
-	vector<Matrix4x4> modelMatrixArray;
-	vector<Color4> effectColorMulArray;
-	vector<Color4> effectColorAddArray;
-
 	//	objects
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
@@ -587,6 +585,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			// draw this faces entity for each object
 			objectsToRender = objects;
 			do {
+				FloatBuffer fbEffectColorMuls = bbEffectColorMuls->asFloatBuffer();
+				FloatBuffer fbEffectColorAdds = bbEffectColorAdds->asFloatBuffer();
+				FloatBuffer fbMvMatrices = bbMvMatrices->asFloatBuffer();
+
 				auto currentFrontFace = -1;
 				string materialKey;
 				bool materialUpdateOnly = false;
@@ -700,18 +702,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 					// set up effect color
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-						effectColorMulArray.push_back(object->effectColorMul);
-						effectColorAddArray.push_back(object->effectColorAdd);
+						fbEffectColorMuls.put(object->effectColorMul.getArray());
+						fbEffectColorAdds.put(object->effectColorAdd.getArray());
 					}
 
 					// push mv, mvp to layouts
-					modelMatrixArray.push_back(modelViewMatrix);
+					fbMvMatrices.put(modelViewMatrix.getArray());
 				}
 
 				// upload model view matrices
 				{
-					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(modelMatrixArray.size() * 16 * sizeof(float))->asFloatBuffer();
-					for (auto& mvMatrix: modelMatrixArray) fbMvMatrices.put(mvMatrix.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
 					renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
 				}
@@ -719,24 +719,14 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// upload effects
 				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 					// upload effect color mul
-					FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(effectColorMulArray.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorMul: effectColorMulArray) fbEffectColorMuls.put(effectColorMul.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
-					// upload effect color add
-					FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(effectColorAddArray.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorAdd: effectColorAddArray) fbEffectColorAdds.put(effectColorAdd.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 					renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
 				}
 
 				// draw
-				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, modelMatrixArray.size());
-
-				// reset layouts
-				modelMatrixArray.clear();
-				effectColorMulArray.clear();
-				effectColorAddArray.clear();
+				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, fbMvMatrices.getPosition() / 16);
 
 				// set up next objects to render
 				objectsToRender = objectsNotRendered;
