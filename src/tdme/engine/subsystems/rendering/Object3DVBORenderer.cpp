@@ -410,9 +410,11 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 
 				// set up material on first object
 				string materialKey;
-				setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
-				// only update materials for next calls
-				materialUpdateOnly = true;
+				if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
+					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
+					// only update materials for next calls
+					materialUpdateOnly = true;
+				}
 
 				//	check transparency via effect
 				if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON ||
@@ -632,27 +634,22 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// set up material on first object
-					// TODO: improve me
-					string materialKeyCurrent;
-					if (materialUpdateOnly == false) {
+					// set up material on first object and update on succeeding
+					string materialKeyCurrent = materialKey;
+					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
 						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+						// only update material for next material calls
+						if (materialUpdateOnly == false) {
+							materialKey = materialKeyCurrent;
+							materialUpdateOnly = true;
+						}
 					}
-					// only update material for next material calls
-					materialUpdateOnly = true;
 
-					/*
-					// TODO: improve me
 					// check if material key has not been set yet
-					if (materialKey.size() == 0) {
-						materialKey = materialKeyCurrent;
-					} else
-					// otherwise check if it did change
 					if (materialKey != materialKeyCurrent) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
-					*/
 
 					// bind buffer base objects if not bound yet
 					auto currentVBOBaseIds = _object3DGroup->renderer->vboBaseIds;

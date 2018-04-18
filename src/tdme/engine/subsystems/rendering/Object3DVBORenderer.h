@@ -10,6 +10,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -112,6 +113,16 @@ private:
 	 * @param render types
 	 */
 	void renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+
+	/**
+	 * Checks if a material could change when having multiple objects but same model
+	 * @param object 3d group
+	 * @param faces entity idx
+	 * @param render types
+	 */
+	inline bool checkMaterialChangable(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes) {
+		return object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE;
+	}
 
 	/**
 	 * Set ups a material for rendering
