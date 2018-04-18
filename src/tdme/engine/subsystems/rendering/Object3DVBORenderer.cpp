@@ -97,6 +97,7 @@ using tdme::utils::Pool;
 using tdme::utils::Console;
 
 constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
+constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
 Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
 {
@@ -106,9 +107,11 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
-	bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * 50000);
-	bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * 50000);
-	bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * 50000);
+	if (this->renderer->isInstancedRenderingAvailable() == true) {
+		bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+		bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+		bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+	}
 }
 
 Object3DVBORenderer::~Object3DVBORenderer() {
@@ -169,6 +172,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
+
 	// sort objects by model
 	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 		auto object = objects.at(objectIdx);
@@ -176,6 +180,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
 		visibleObjectsByModel.push_back(object);
 	}
+
 	// render objects
 	for (auto& objectsByModelIt: visibleObjectsByModels) {
 		auto& objectsByModel = objectsByModelIt.second;
@@ -335,6 +340,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			}
 		}
 	}
+
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
@@ -500,6 +506,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			}
 		}
 	}
+
 	// unbind buffers
 	renderer->unbindBufferObjects();
 	// restore model view matrix / view matrix
@@ -514,9 +521,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	Matrix4x4 modelViewMatrix;
 
 	//	objects
-	vector<Object3D*> objectsToRender;
-	vector<Object3D*> objectsNotRendered;
-
 	{
 		// do pre render steps
 		for (auto object: objects) {
@@ -619,6 +623,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 							);
 						}
 						// skip to next object
+						continue;
+					}
+
+					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
+					if (objectsToRender.size() == INSTANCEDRENDERING_OBJECTS_MAX) {
+						objectsNotRendered.push_back(object);
 						continue;
 					}
 
@@ -753,6 +763,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			}
 		}
 	}
+
+	// reset objects to render
+	objectsToRender.clear();
+	objectsNotRendered.clear();
 
 	// unbind buffers
 	renderer->unbindBufferObjects();

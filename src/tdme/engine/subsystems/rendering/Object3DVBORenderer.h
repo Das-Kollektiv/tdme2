@@ -46,9 +46,10 @@ class tdme::engine::subsystems::rendering::Object3DVBORenderer final {
 private:
 	static constexpr int32_t BATCHVBORENDERER_MAX { 256 };
 
+	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 40000 };
+
 	Engine* engine {  };
 	GLRenderer* renderer {  };
-
 	vector<int32_t>* vboInstancedRenderingIds {  };
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	map<string, vector<Object3D*>> visibleObjectsByModels {  };
@@ -59,9 +60,11 @@ private:
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
-	ByteBuffer* bbEffectColorMuls;
-	ByteBuffer* bbEffectColorAdds;
-	ByteBuffer* bbMvMatrices;
+	vector<Object3D*> objectsToRender;
+	vector<Object3D*> objectsNotRendered;
+	ByteBuffer* bbEffectColorMuls { nullptr };
+	ByteBuffer* bbEffectColorAdds { nullptr };
+	ByteBuffer* bbMvMatrices { nullptr };
 
 	/** 
 	 * Renders transparent faces
