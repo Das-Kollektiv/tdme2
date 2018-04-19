@@ -180,7 +180,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 	// remove object from assigned partitions
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
-		auto partitionTreeNode = objectPartitionsVector->at(lastIdx);
+		auto partitionTreeNode = (*objectPartitionsVector)[lastIdx];
 		auto& partitionObjects = partitionTreeNode->partitionEntities;
 		partitionObjects.erase(remove(partitionObjects.begin(), partitionObjects.end(), entity), partitionObjects.end());
 		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);

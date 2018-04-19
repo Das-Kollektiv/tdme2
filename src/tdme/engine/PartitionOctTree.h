@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <set>
+#include <unordered_set>
 #include <string>
 #include <vector>
 
@@ -21,7 +21,7 @@
 
 using std::map;
 using std::vector;
-using std::set;
+using std::unordered_set;
 using std::string;
 
 using tdme::engine::Partition;
@@ -56,7 +56,7 @@ private:
 	Vector3 upVector {  };
 	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
 	vector<Entity*> visibleEntities {  };
-	set<string> visibleEntitiesById {  };
+	unordered_set<string> visibleEntitiesById {  };
 	PartitionOctTree_PartitionTreeNode treeRoot {  };
 
 	void reset() override;
@@ -99,34 +99,31 @@ private:
 		// check if given cbv collides with partition node bv
 		if (frustum->isVisible(&node->bv) == false) {
 			return lookUps;
-		}
-		// if this node already has the partition cbvs add it to the iterator
-		if (node->partitionEntities.size() > 0) {
-			for (auto i = 0; i < node->partitionEntities.size(); i++) {
-				auto entity = node->partitionEntities.at(i);
-
-				// look up
-				lookUps++;
-				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
-
-				// lets have this only once in array
-				auto& entityPartitionNodesVector = entityPartitionNodes[entity->getId()];
-				if (entityPartitionNodesVector.size() > 1) {
-					if (visibleEntitiesById.find(entity->getId()) != visibleEntitiesById.end()) {
-						continue;
-					}
-					visibleEntitiesById.insert(entity->getId());
-				}
-
-				// done
-				visibleEntities.push_back(entity);
-			}
-			return lookUps;
 		} else
 		// otherwise check sub nodes
 		if (node->subNodes.size() > 0) {
 			for (auto& subNode: node->subNodes) {
 				lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);
+			}
+			return lookUps;
+		} else
+		// last check if this node has partition entities
+		if (node->partitionEntities.size() > 0) {
+			for (auto i = 0; i < node->partitionEntities.size(); i++) {
+				auto entity = node->partitionEntities[i];
+
+				// look up
+				lookUps++;
+				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
+
+				// lets have this only once in result
+				if (visibleEntitiesById.count(entity->getId()) == 1) {
+					continue;
+				}
+				visibleEntitiesById.insert(entity->getId());
+
+				// done
+				visibleEntities.push_back(entity);
 			}
 			return lookUps;
 		}
