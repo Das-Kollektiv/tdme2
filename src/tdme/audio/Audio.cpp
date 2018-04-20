@@ -16,6 +16,7 @@
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/audio/AudioStream.h>
+#include <tdme/audio/VorbisAudioStream.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -29,6 +30,7 @@ using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
 using tdme::audio::AudioStream;
+using tdme::audio::VorbisAudioStream;
 using tdme::audio::Sound;
 using tdme::math::Vector3;
 using tdme::utils::Console;
@@ -36,11 +38,10 @@ using tdme::utils::Console;
 Audio::Audio() 
 {
 	// TODO: error handling
-	ALCdevice* device;
-	ALCcontext* context;
 	device = alcOpenDevice(NULL);
 	context = alcCreateContext(device, NULL);
 	alcMakeContextCurrent(context);
+
 	//
 	listenerPosition.set(0.0f, 0.0f, 0.0);
 	listenerVelocity.set(0.0f, 0.0f, 0.0);
@@ -92,29 +93,13 @@ AudioEntity* Audio::getEntity(const string& id)
 	return audioEntityIt->second;
 }
 
-AudioEntity* Audio::addStream(const string& id, const string& pathName, const string& fileName)
+void Audio::addEntity(AudioEntity* entity)
 {
-	AudioEntity* stream = new AudioStream(id, pathName, fileName);
-	if (stream->initialize() == true) {
-		removeEntity(id);
-		audioEntities[id] = stream;
-		return stream;
+	if (entity->initialize() == true) {
+		removeEntity(entity->getId());
+		audioEntities[entity->getId()] = entity;
 	} else {
-		Console::println(string("Audio stream: '" + id + "' failed"));
-		return nullptr;
-	}
-}
-
-AudioEntity* Audio::addSound(const string& id, const string& pathName, const string& fileName)
-{
-	AudioEntity* sound = new Sound(id, pathName, fileName);
-	if (sound->initialize() == true) {
-		removeEntity(id);
-		audioEntities[id] = sound;
-		return sound;
-	} else {
-		Console::println(string("Audio sound: '" + id + "' failed"));
-		return nullptr;
+		Console::println(string("Audio::addEntity(): adding '" + entity->getId() + "' failed"));
 	}
 }
 
@@ -147,6 +132,7 @@ void Audio::reset()
 void Audio::shutdown()
 {
 	reset();
+	alcCloseDevice(device);
 }
 
 void Audio::update()

@@ -1,5 +1,13 @@
 #pragma once
 
+#if defined(__APPLE__)
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
+	#include <AL/al.h>
+	#include <AL/alc.h>
+#endif
+
 #include <map>
 #include <string>
 
@@ -31,6 +39,9 @@ private:
 	static constexpr int32_t ALBUFFERID_NONE { -1 };
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
 	static Audio* instance;
+
+	ALCdevice* device;
+	ALCcontext* context;
 
 	map<string, AudioEntity*> audioEntities;
 
@@ -79,24 +90,10 @@ public:
 	AudioEntity* getEntity(const string& id);
 
 	/** 
-	 * Adds an stream
-	 * the only format supported by now is ogg vorbis
-	 * @param id
-	 * @param path name
-	 * @param file name
-	 * @return audio entity
+	 * Adds a audio entity
+	 * @param audio entity
 	 */
-	AudioEntity* addStream(const string& id, const string& pathName, const string& fileName);
-
-	/** 
-	 * Adds an sound
-	 * the only format supported by now is ogg vorbis
-	 * @param id
-	 * @param path name
-	 * @param file name
-	 * @return audio entity
-	 */
-	AudioEntity* addSound(const string& id, const string& pathName, const string& fileName);
+	void addEntity(AudioEntity* entity);
 
 	/** 
 	 * Removes an audio entity

@@ -9,6 +9,7 @@ namespace audio {
 		class AudioBufferManager_AudioBufferManaged;
 		class AudioEntity;
 		class AudioStream;
+		class VorbisAudioStream;
 		class Sound;
 }  // namespace audio
 }  // namespace tdme

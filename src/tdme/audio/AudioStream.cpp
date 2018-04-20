@@ -12,8 +12,6 @@
 
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
-#include <tdme/audio/decoder/AudioDecoder.h>
-#include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/Console.h>
@@ -27,28 +25,27 @@ using std::string;
 using tdme::audio::AudioStream;
 using tdme::utils::ByteBuffer;
 using tdme::audio::Audio;
-using tdme::audio::decoder::AudioDecoder;
-using tdme::audio::decoder::AudioDecoderException;
 using tdme::math::Vector3;
-using tdme::os::filesystem::FileSystemException;
 using tdme::utils::Console;
 
-constexpr int32_t AudioStream::BUFFER_COUNT;
-
-constexpr int32_t AudioStream::BUFFER_SIZE;
-
-AudioStream::AudioStream(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)
+AudioStream::AudioStream(const string& id) : AudioEntity(id)
 {
 	initiated = false;
-	this->pathName = pathName;
-	this->fileName = fileName;
 	alSourceId = Audio::ALSOURCEID_NONE;
-	format = -1;
-	frequency = -1;
+	sampleRate = 0;
+	channels = 0;
 	data = nullptr;
+	format = -1;
 }
 
 AudioStream::~AudioStream() {
+}
+
+void AudioStream::setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize) {
+	this->sampleRate = sampleRate;
+	this->channels = channels;
+	if (this->data != nullptr) delete data;
+	this->data = ByteBuffer::allocate(bufferSize);
 }
 
 bool AudioStream::isPlaying()
@@ -60,13 +57,6 @@ bool AudioStream::isPlaying()
 
 void AudioStream::rewind()
 {
-	try {
-		decoder.reset();
-	} catch (FileSystemException &fse) {
-		Console::println(string("Audio stream: '"+ (id) + "': " + fse.what()));
-	} catch (AudioDecoderException &ade) {
-		Console::println(string("Audio stream: '" + (id) + "': " + ade.what()));
-	}
 }
 
 void AudioStream::play()
@@ -82,29 +72,25 @@ void AudioStream::play()
 	ALsizei buffersToPlay = 0;
 	for (auto i = 0; i < alBufferIds.size(); i++) {
 		data->clear();
-		try {
-			auto bytesDecoded = decoder.readFromStream(data);
-			// skip if no more data is available
-			if (bytesDecoded == 0) break;
-		} catch (FileSystemException &fse) {
-			Console::println(string("Audio stream: '" + (id) + "': " + fse.what()));
-		} catch (AudioDecoderException& ade) {
-			Console::println(string("Audio stream: '" + (id) + "': " + ade.what()));
-		}
-		alBufferData(alBufferIds[i], format, data->getBuffer(), data->getPosition(), frequency);
+		fillBuffer(data);
+		// skip if no more data is available
+		if (data->getPosition() == 0) break;
+		// otherwise upload
+		alBufferData(alBufferIds[i], format, data->getBuffer(), data->getPosition(), sampleRate);
+		//
 		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("Audio stream: '"+ id + "': Could not upload buffer"));
+			Console::println(string("AudioStream::play(): '"+ id + "': Could not upload buffer"));
 		}
 		buffersToPlay++;
 	}
 
 	alSourceQueueBuffers(alSourceId, buffersToPlay, alBufferIds.data());
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '" + id + "': Could not queue buffers"));
+		Console::println(string("AudioStream::play(): '" + id + "': Could not queue buffers"));
 	}
 	alSourcePlay(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '"+ id + "': Could not play source"));
+		Console::println(string("AudioStream::play(): '"+ id + "': Could not play source"));
 	}
 }
 
@@ -115,7 +101,7 @@ void AudioStream::pause()
 
 	alSourcePause(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio sound: '" + id + "': Could not pause"));
+		Console::println(string("AudioStream::pause(): '" + id + "': Could not pause"));
 	}
 }
 
@@ -126,13 +112,13 @@ void AudioStream::stop()
 
 	alSourceStop(alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio sound: '" + id + "': Could not stop"));
+		Console::println(string("AudioStream::stop(): '" + id + "': Could not stop"));
 	}
 	// determine queued buffers
 	ALint queuedBuffers;
 	alGetSourcei(alSourceId, AL_BUFFERS_QUEUED, &queuedBuffers);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '" + id + "': Could not determine queued buffers"));
+		Console::println(string("AudioStream::stop(): '" + id + "': Could not determine queued buffers"));
 	}
 	// unqueue buffers
 	if (queuedBuffers > 0) {
@@ -140,64 +126,34 @@ void AudioStream::stop()
 		removedBuffers.resize(queuedBuffers);
 		alSourceUnqueueBuffers(alSourceId, queuedBuffers, removedBuffers.data());
 		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("Audio stream: '" + id + "': Could not unqueue buffers"));
+			Console::println(string("AudioStream::stop(): '" + id + "': Could not unqueue buffers"));
 		}
 	}
 }
 
 bool AudioStream::initialize()
 {
-	// decode audio stream
-	try {
-		// decode ogg vorbis
-		decoder.openFile(pathName, fileName);
-		Console::println(
-			string(
-				"Audio sound: '" +
-				id +
-				"' with " +
-				to_string(decoder.getBitsPerSample()) +
-				" bits per sample, " +
-				to_string(decoder.getChannels()) +
-				" channels, " +
-				to_string(decoder.getSampleRate()) +
-				" samplerate"
-			)
-		);
-		frequency = decoder.getSampleRate();
-		switch (decoder.getChannels()) {
-			case(1): format = AL_FORMAT_MONO16; break;
-			case(2): format = AL_FORMAT_STEREO16; break;
-			default:
-				Console::println(string("Audio sound: '" + id + "': Unsupported number of channels"));
-		}
-	} catch (FileSystemException& fse) {
-		Console::println(string("Audio sound: '" + (id) + "': " + fse.what()));
-		decoder.close();
-		dispose();
-		return false;
-	} catch (AudioDecoderException& ade) {
-		Console::println(string("Audio sound: '" + (id) + "': " + ade.what()));
-		decoder.close();
-		dispose();
-		return false;
+	switch (channels) {
+		case(1): format = AL_FORMAT_MONO16; break;
+		case(2): format = AL_FORMAT_STEREO16; break;
+		default:
+			Console::println(string("AudioStream::initialize(): '" + id + "': Unsupported number of channels"));
 	}
 
 	alGenBuffers(alBufferIds.size(), alBufferIds.data());
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '" + id + "': Could not generate buffer"));
+		Console::println(string("AudioStream::initialize(): '" + id + "': Could not generate buffer"));
 		return false;
 	}
 	// create source
 	alGenSources(1, &alSourceId);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '" + id + "': Could not generate source"));
+		Console::println(string("AudioStream::initialize(): '" + id + "': Could not generate source"));
 		dispose();
 		return false;
 	}
 	// initiate sound properties
 	updateProperties();
-	data = ByteBuffer::allocate(BUFFER_SIZE);
 	initiated = true;
 	return true;
 }
@@ -211,7 +167,7 @@ void AudioStream::update()
 	int32_t processedBuffers;
 	alGetSourcei(alSourceId, AL_BUFFERS_PROCESSED, &processedBuffers);
 	if (alGetError() != AL_NO_ERROR) {
-		Console::println(string("Audio stream: '" + id + "': Could not determine processed buffers"));
+		Console::println(string("AudioStream::update(): '" + id + "': Could not determine processed buffers"));
 	}
 	if (processedBuffers > 0) {
 		while (processedBuffers > 0) {
@@ -219,33 +175,22 @@ void AudioStream::update()
 			uint32_t processedBufferId;
 			alSourceUnqueueBuffers(alSourceId, 1, &processedBufferId);
 			if (alGetError() != AL_NO_ERROR) {
-				Console::println(string("Audio stream: '" + id + "': Could not unqueue buffers"));
+				Console::println(string("AudioStream::update(): '" + id + "': Could not unqueue buffers"));
 			}
 			// fill processed buffer again
 			data->clear();
-			auto bytesDecoded = 0;
-			try {
-				bytesDecoded = decoder.readFromStream(data);
-				if (looping == true && bytesDecoded < BUFFER_SIZE) {
-					decoder.reset();
-					bytesDecoded += decoder.readFromStream(data);
-				}
-			} catch (FileSystemException& fse) {
-				Console::println(string("Audio stream: '" + (id) + "': " + fse.what()));
-			} catch (AudioDecoderException& ade) {
-				Console::println(string("Audio stream: '" + (id) + "': " + ade.what()));
-			}
-			// new buffer if we have any data left
-			if (bytesDecoded > 0) {
+			fillBuffer(data);
+			//
+			if (data->getPosition() > 0) {
 				// upload buffer data
-				alBufferData(processedBufferId, format, data->getBuffer(), data->getPosition(), frequency);
+				alBufferData(processedBufferId, format, data->getBuffer(), data->getPosition(), sampleRate);
 				if (alGetError() != AL_NO_ERROR) {
-					Console::println(string("Audio stream: '" + id + "': Could not upload buffer"));
+					Console::println(string("AudioStream::update(): '" + id + "': Could not upload buffer"));
 				}
 				// queue it
 				alSourceQueueBuffers(alSourceId, 1, &processedBufferId);
 				if (alGetError() != AL_NO_ERROR) {
-					Console::println(string("Audio stream: '" + id + "': Could not queue buffer"));
+					Console::println(string("AudioStream::update(): '" + id + "': Could not queue buffer"));
 				}
 			}
 			// processed it
@@ -281,19 +226,18 @@ void AudioStream::dispose()
 	if (alSourceId != Audio::ALSOURCEID_NONE) {
 		alDeleteSources(1, &alSourceId);
 		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("Audio sound: '" + id + "': Could not delete source"));
+			Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete source"));
 		}
 		alSourceId = Audio::ALSOURCEID_NONE;
 	}
 	// if (alBufferIds != nullptr) {
 		alDeleteBuffers(alBufferIds.size(), alBufferIds.data());
 		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("Audio sound: '" + id + "': Could not delete buffers"));
+			Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete buffers"));
 		}
 	//	alBufferIds = nullptr;
 	// }
 
-	decoder.close();
 	if (data != nullptr) {
 		delete data;
 		data = nullptr;

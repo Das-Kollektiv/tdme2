@@ -5,7 +5,6 @@ namespace tdme {
 namespace tests {
 		class AngleTest;
 		class AudioTest;
-		class AudioTest_main_1;
 		class EngineTest;
 		class GUITest;
 		class GUITest_init_1;
