@@ -13,11 +13,7 @@
 #include <string>
 #include <vector>
 
-#include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/AudioEntity.h>
-#include <tdme/audio/AudioStream.h>
-#include <tdme/audio/VorbisAudioStream.h>
-#include <tdme/audio/Sound.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
@@ -27,11 +23,7 @@ using std::vector;
 using std::string;
 
 using tdme::audio::Audio;
-using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
-using tdme::audio::AudioStream;
-using tdme::audio::VorbisAudioStream;
-using tdme::audio::Sound;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 

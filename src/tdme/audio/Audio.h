@@ -1,10 +1,8 @@
 #pragma once
 
 #if defined(__APPLE__)
-	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
 #elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
-	#include <AL/al.h>
 	#include <AL/alc.h>
 #endif
 
@@ -14,7 +12,6 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;
