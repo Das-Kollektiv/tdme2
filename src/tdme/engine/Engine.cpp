@@ -320,19 +320,36 @@ Entity* Engine::getEntity(const string& id)
 void Engine::addEntity(Entity* entity)
 {
 	// dispose old entity if any did exist in engine with same id
-	auto oldEntity = getEntity(entity->getId());
-	if (oldEntity != nullptr) {
-		oldEntity->dispose();
-		if (oldEntity->isFrustumCulling() == true && oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
-		// TODO: what exactly to do with old entity
-	}
+	removeEntity(entity->getId());
+
 	// init entity
 	entity->setEngine(this);
 	entity->setRenderer(renderer);
 	entity->initialize();
 	entitiesById[entity->getId()] = entity;
+
 	// add to partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->addEntity(entity);
+
+	// update
+	updateEntity(entity);
+}
+
+void Engine::updateEntity(Entity* entity) {
+	noFrustumCullingEntities.erase(entity->getId());
+	autoEmitParticleSystemEntities.erase(entity->getId());
+
+	// add to no frustum culling
+	if (entity->isFrustumCulling() == false) {
+		// otherwise add to no frustum culling entities
+		noFrustumCullingEntities[entity->getId()] = entity;
+	}
+
+	// add to auto emit particle system entities
+	auto particleSystemEntity = dynamic_cast<ParticleSystemEntity*>(entity);
+	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == true) {
+		autoEmitParticleSystemEntities[particleSystemEntity->getId()] = particleSystemEntity;
+	}
 }
 
 void Engine::removeEntity(const string& id)
@@ -343,6 +360,8 @@ void Engine::removeEntity(const string& id)
 	if (entityByIdIt != entitiesById.end()) {
 		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
+		autoEmitParticleSystemEntities.erase(entity->getId());
+		noFrustumCullingEntities.erase(entity->getId());
 	}
 	if (entity != nullptr) {
 		// remove from partition if enabled and frustum culling requested
@@ -551,44 +570,47 @@ void Engine::computeTransformations()
 	// init rendering if not yet done
 	if (renderingInitiated == false) initRendering();
 
-	// collect entities that do not have frustum culling enabled, do particle systems auto emit
-	// TODO: Iterating all entities for those purposes is too expensive on large levels
-	/*
-	for (auto it: entitiesById) {
-		Entity* entity = it.second;
+	// collect entities that do not have frustum culling enabled
+	for (auto it: noFrustumCullingEntities) {
+		auto entity = it.second;
+
 		// skip on disabled entities
 		if (entity->isEnabled() == false) continue;
-		// check entities with frustum culling disabled and add them to related lists
-		if (entity->isFrustumCulling() == false) {
-			// objects
-			if (dynamic_cast< Object3D* >(entity) != nullptr) {
-				auto object = dynamic_cast< Object3D* >(entity);
-				visibleObjects.push_back(object);
-			} else
-			// object particle systems
-			if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-				auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
-				for (auto object3D: *opse->getEnabledObjects()) {
-					visibleObjects.push_back(object3D);
-				}
-				visibleOpses.push_back(opse);
-			} else
-			// point particle systems
-			if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-				auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
-				visiblePpses.push_back(ppse);
+
+		// do entities with frustum culling disabled and add them to related lists
+		if (dynamic_cast< Object3D* >(entity) != nullptr) {
+			auto object = dynamic_cast< Object3D* >(entity);
+			visibleObjects.push_back(object);
+		} else
+		// object particle systems
+		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
+			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
+			for (auto object3D: *opse->getEnabledObjects()) {
+				visibleObjects.push_back(object3D);
 			}
+			visibleOpses.push_back(opse);
+		} else
+		// point particle systems
+		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
+			auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
+			visiblePpses.push_back(ppse);
 		}
+	}
+
+	// do particle systems auto emit
+	for (auto it: autoEmitParticleSystemEntities) {
+		auto entity = it.second;
+
+		// skip on disabled entities
+		if (entity->isEnabled() == false) continue;
+
 		// do auto emit
 		if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
 			auto pse = dynamic_cast< ParticleSystemEntity* >(entity);
-			if (pse->isAutoEmit() == true) {
-				pse->emitParticles();
-				pse->updateParticles();
-			}
+			pse->emitParticles();
+			pse->updateParticles();
 		}
 	}
-	*/
 
 	// add visible entities to related lists by querying frustum
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {

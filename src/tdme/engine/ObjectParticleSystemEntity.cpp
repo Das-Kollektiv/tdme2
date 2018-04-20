@@ -93,6 +93,15 @@ void ObjectParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
 		}
 	}
 	this->frustumCulling = frustumCulling;
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntity(this);
+}
+
+void ObjectParticleSystemEntity::setAutoEmit(bool autoEmit) {
+	// delegate to base class
+	ObjectParticleSystemEntityInternal::setAutoEmit(autoEmit);
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::dispose()

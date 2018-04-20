@@ -50,6 +50,7 @@ public:
 	void updateParticles() override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
+	void setAutoEmit(bool autoEmit) override;
 
 	/**
 	 * Public constructor

@@ -43,6 +43,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -114,7 +115,10 @@ private:
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
+
 	map<string, Entity*> entitiesById {  };
+	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities {  };
+	map<string, Entity*> noFrustumCullingEntities {  };
 
 	vector<Object3D*> visibleObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
@@ -404,5 +408,13 @@ public:
 	 * Destructor
 	 */
 	~Engine();
+
+private:
+
+	/**
+	 * Updates an entity regarding internal lists
+	 * @param entity
+	 */
+	void updateEntity(Entity* entity);
 
 };

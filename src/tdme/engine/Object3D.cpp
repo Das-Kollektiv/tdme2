@@ -73,6 +73,8 @@ void Object3D::setFrustumCulling(bool frustumCulling) {
 		}
 	}
 	this->frustumCulling = frustumCulling;
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntity(this);
 }
 
 void Object3D::dispose()
