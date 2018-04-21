@@ -78,9 +78,8 @@ void GUIParentNode::clearSubNodes()
 
 	//
 	setConditionsMet();
-	computeViewportCache = true;
 	floatingNodesCache.clear();
-	vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 }
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */
@@ -116,8 +115,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 		childrenRenderOffsetY = scrollableHeight;
 
 	setConditionsMet();
-	computeViewportCache = true;
-	vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 	floatingNodesCache.clear();
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
@@ -183,8 +181,7 @@ float GUIParentNode::getChildrenRenderOffsetX()
 
 void GUIParentNode::setChildrenRenderOffsetX(float childrenRenderOffsetX)
 {
-	this->computeViewportCache = true;
-	this->vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 	this->childrenRenderOffsetX = childrenRenderOffsetX;
 }
 
@@ -195,8 +192,7 @@ float GUIParentNode::getChildrenRenderOffsetY()
 
 void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 {
-	this->computeViewportCache = true;
-	this->vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 	this->childrenRenderOffsetY = childrenRenderOffsetY;
 }
 
@@ -218,8 +214,7 @@ void GUIParentNode::layout()
 {
 	GUINode::layout();
 	layoutSubNodes();
-	computeViewportCache = true;
-	vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 }
 
 void GUIParentNode::layoutSubNodes()
@@ -227,8 +222,7 @@ void GUIParentNode::layoutSubNodes()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}
-	computeViewportCache = true;
-	vieportSubNodesCache.clear();
+	invalidateRenderCaches();
 }
 
 void GUIParentNode::computeHorizontalChildrenAlignment()
@@ -254,7 +248,6 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 			}
 		}
 	}
-
 }
 
 void GUIParentNode::computeVerticalChildrenAlignment()
@@ -338,9 +331,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
 	auto renderOffsetXPixel = 0.0f;
 	auto renderOffsetYPixel = 0.0f;
-	for (auto *parentNode = this; parentNode != nullptr; parentNode = parentNode->parentNode) {
-		renderOffsetXPixel += parentNode->childrenRenderOffsetX;
-		renderOffsetYPixel += parentNode->childrenRenderOffsetY;
+	for (auto *_parentNode = this; _parentNode != nullptr; _parentNode = _parentNode->parentNode) {
+		renderOffsetXPixel += _parentNode->childrenRenderOffsetX;
+		renderOffsetYPixel += _parentNode->childrenRenderOffsetY;
 	}
 	auto renderOffsetX = renderOffsetXPixel / (screenWidth / 2.0f);
 	auto renderOffsetY = renderOffsetYPixel / (screenHeight / 2.0f);
@@ -490,3 +483,11 @@ void GUIParentNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	GUINode::handleKeyboardEvent(event);
 }
 
+void GUIParentNode::invalidateRenderCaches() {
+	computeViewportCache = true;
+	vieportSubNodesCache.clear();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNodeParentNode = dynamic_cast<GUIParentNode*>(subNodes[i]);
+		if (guiSubNodeParentNode != nullptr) guiSubNodeParentNode->invalidateRenderCaches();
+	}
+}

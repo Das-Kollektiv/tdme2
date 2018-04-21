@@ -170,4 +170,9 @@ private:
 	 * @param child controller nodes
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
+
+	/**
+	 * Invalidate render caches
+	 */
+	void invalidateRenderCaches();
 };
