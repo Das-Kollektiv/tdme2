@@ -27,6 +27,7 @@ class tdme::gui::nodes::GUIVerticalScrollbarInternalController
 
 private:
 	GUILayoutNode* contentNode {  };
+	float contentHeight {  };
 	GUIVerticalScrollbarInternalController_State* state {  };
 	int32_t mouseYOffset {  };
 	MutableString value {  };
