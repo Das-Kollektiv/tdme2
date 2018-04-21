@@ -460,11 +460,8 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 			}
 		}
 
-		for (auto i = 0; i < subNodes.size(); i++) {
-			auto subNode = subNodes[i];
-			if (subNode->flow == GUINode_Flow::FLOATING) {
-				continue;
-			}
+		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
+			auto subNode = vieportSubNodesCache[i];
 			subNode->determineMouseEventNodes(event, eventNodeIds);
 		}
 	}
