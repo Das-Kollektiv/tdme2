@@ -24,6 +24,17 @@ private:
 	GUIElementNode* elementNode {  };
 	vector<string> conditions {  };
 
+	/**
+	 * Update node
+	 * @param node
+	 */
+	void updateNode(GUINode* node);
+
+	/**
+	 * Update element node
+	 */
+	void updateElementNode();
+
 public:
 
 	/** 

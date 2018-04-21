@@ -74,6 +74,8 @@ void GUIParentNode::clearSubNodes()
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
+
+	setConditionsMet();
 }
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */
@@ -107,6 +109,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	if (childrenRenderOffsetY > scrollableHeight)
 		childrenRenderOffsetY = scrollableHeight;
 
+	setConditionsMet();
 }
 
 void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
@@ -283,8 +286,6 @@ void GUIParentNode::dispose()
 void GUIParentNode::setConditionsMet()
 {
 	conditionsMet = checkConditions();
-	if (conditionsMet == false)
-		return;
 
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
@@ -329,7 +330,6 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
 	GUINode::render(guiRenderer, floatingNodes);
-	int skippedChildren = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
@@ -363,9 +363,6 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 			//
 			guiSubNode->render(guiRenderer, floatingNodes);
 		}
-	}
-	if (skippedChildren > 0) {
-		Console::println(getId() + ": " + to_string(skippedChildren));
 	}
 	guiRenderer->setRenderOffsetX(renderOffsetXCurrent);
 	guiRenderer->setRenderOffsetY(renderOffsetYCurrent);

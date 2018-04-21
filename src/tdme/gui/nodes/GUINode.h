@@ -57,6 +57,7 @@ class tdme::gui::nodes::GUINode
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;
 	friend class GUIInputInternalController;
+	friend class GUINodeConditions;
 	friend class GUINode_Flow;
 	friend class GUINode_AlignmentHorizontal;
 	friend class GUINode_AlignmentVertical;

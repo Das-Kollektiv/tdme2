@@ -31,12 +31,7 @@ bool GUINodeConditions::add(const string& condition)
 		}
 	}
 	if (conditionsChanged == true) conditions.push_back(condition);
-	if (conditionsChanged == true && elementNode != nullptr) {
-		for (auto i = 0; i < elementNode->subNodes.size(); i++) {
-			auto guiSubNode = elementNode->subNodes[i];
-			guiSubNode->setConditionsMet();
-		}
-	}
+	if (conditionsChanged == true) updateElementNode();
 	return conditionsChanged;
 }
 
@@ -50,12 +45,7 @@ bool GUINodeConditions::remove(const string& condition)
 			break;
 		}
 	}
-	if (conditionsChanged == true && elementNode != nullptr) {
-		for (auto i = 0; i < elementNode->subNodes.size(); i++) {
-			auto guiSubNode = elementNode->subNodes[i];
-			guiSubNode->setConditionsMet();
-		}
-	}
+	if (conditionsChanged == true) updateElementNode();
 	return conditionsChanged;
 }
 
@@ -63,12 +53,30 @@ bool GUINodeConditions::removeAll()
 {
 	auto conditionsChanged = conditions.empty() == false;
 	conditions.clear();
-	if (conditionsChanged == true && elementNode != nullptr) {
-		for (auto i = 0; i < elementNode->subNodes.size(); i++) {
-			auto guiSubNode = elementNode->subNodes[i];
-			guiSubNode->setConditionsMet();
-		}
-	}
+	if (conditionsChanged == true) updateElementNode();
 	return conditionsChanged;
 }
 
+void GUINodeConditions::updateNode(GUINode* node) {
+	node->conditionsMet = node->checkConditions();
+	if (node->conditionsMet == false) return;
+
+	auto asElementNode = dynamic_cast<GUIElementNode*>(node);
+	if (asElementNode != nullptr) return;
+
+	auto parentNode = dynamic_cast<GUIParentNode*>(node);
+	if (parentNode != nullptr) {
+		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
+			auto guiSubNode = parentNode->subNodes[i];
+			updateNode(guiSubNode);
+		}
+	}
+}
+
+void GUINodeConditions::updateElementNode() {
+	if (elementNode == nullptr) return;
+	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
+		auto guiSubNode = elementNode->subNodes[i];
+		updateNode(guiSubNode);
+	}
+}
