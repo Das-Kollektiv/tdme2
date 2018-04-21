@@ -591,6 +591,11 @@ GUINodeController* GUINode::getController()
 
 void GUINode::setController(GUINodeController* controller)
 {
+	if (this->controller != nullptr) {
+		screenNode->removeTickNode(this);
+		this->controller->dispose();
+		delete this->controller;
+	}
 	this->controller = controller;
 }
 
