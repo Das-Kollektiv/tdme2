@@ -256,6 +256,7 @@ bool GUIScreenNode::removeNode(GUINode* node)
 		parentNode->subNodes.clear();
 	}
 	nodesById.erase(node->id);
+	tickNodesById.erase(node->getId());
 	node->dispose();
 	delete node;
 	return true;
@@ -364,6 +365,21 @@ void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 {
 	for (auto i = 0; i < changeListener.size(); i++) {
 		changeListener[i]->onValueChanged(node);
+	}
+}
+
+void GUIScreenNode::addTickNode(GUINode* node) {
+	tickNodesById[node->getId()] = node;
+}
+
+void GUIScreenNode::removeTickNode(GUINode* node) {
+	tickNodesById.erase(node->getId());
+}
+
+void GUIScreenNode::tick() {
+	for (auto tickNodesByIdIt: tickNodesById) {
+		auto node = tickNodesByIdIt.second;
+		if (node->controller != nullptr) node->controller->tick();
 	}
 }
 

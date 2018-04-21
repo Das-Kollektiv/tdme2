@@ -159,7 +159,6 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
-	void tick() override;
 
 private:
 	/**

@@ -435,15 +435,3 @@ void GUIParentNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	GUINode::handleKeyboardEvent(event);
 }
 
-void GUIParentNode::tick()
-{
-	if (conditionsMet == false)
-		return;
-
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes[i];
-		subNode->tick();
-	}
-	GUINode::tick();
-}
-

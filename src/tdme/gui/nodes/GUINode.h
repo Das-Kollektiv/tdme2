@@ -370,11 +370,6 @@ public:
 	virtual void handleKeyboardEvent(GUIKeyboardEvent* event);
 
 	/** 
-	 * Tick method will be executed once per frame
-	 */
-	virtual void tick();
-
-	/** 
 	 * @return controller
 	 */
 	virtual GUINodeController* getController();

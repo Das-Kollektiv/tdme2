@@ -584,16 +584,6 @@ void GUINode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	node->controller->handleKeyboardEvent(this, event);
 }
 
-void GUINode::tick()
-{
-	if (conditionsMet == false)
-		return;
-
-	if (controller != nullptr)
-		controller->tick();
-
-}
-
 GUINodeController* GUINode::getController()
 {
 	return controller;

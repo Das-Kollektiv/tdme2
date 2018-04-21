@@ -61,6 +61,7 @@ private:
 	int32_t screenWidth {  };
 	int32_t screenHeight {  };
 	map<string, GUINode*> nodesById {  };
+	map<string, GUINode*> tickNodesById {  };
 	vector<GUINode*> floatingNodes {  };
 	vector<GUIActionListener*> actionListener {  };
 	vector<GUIChangeListener*> changeListener {  };
@@ -179,6 +180,11 @@ private:
 	 */
 	bool removeNode(GUINode* node);
 
+	/**
+	 * Calls registered tick nodes controller tick method
+	 */
+	void tick();
+
 public:
 
 	/** 
@@ -292,6 +298,17 @@ public:
 	 * @param node
 	 */
 	void delegateValueChanged(GUIElementNode* node);
+
+	/**
+	 * Add tick node, registered node controllers will have a tick once per frame
+	 * @param
+	 */
+	void addTickNode(GUINode* node);
+
+	/**
+	 * Remove tick node
+	 */
+	void removeTickNode(GUINode* node);
 
 	/** 
 	 * Get values
