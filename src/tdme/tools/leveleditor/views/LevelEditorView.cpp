@@ -585,8 +585,8 @@ void LevelEditorView::display()
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
 	gridCenter.set(cam->getLookAt());
 	updateGrid();
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void LevelEditorView::selectObjects(vector<string>* entityIds)

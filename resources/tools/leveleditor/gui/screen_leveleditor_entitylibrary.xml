@@ -46,7 +46,9 @@
 										<dropdown-option text="Action ..." value="action" />
 										<dropdown-option text="Edit" value="edit" />
 										<dropdown-option text="Delete" value="delete" />
+										<!--
 										<dropdown-option text="Partition" value="partition" />
+										-->
 										<dropdown-option text="Create model" value="create_model" />
 										<dropdown-option text="Create trigger" value="create_trigger" />
 										<dropdown-option text="Create empty" value="create_empty" />

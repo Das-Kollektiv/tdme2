@@ -44,6 +44,7 @@ class tdme::gui::nodes::GUIParentNode
 	friend class GUIElementNode;
 	friend class GUILayoutNode;
 	friend class GUINode;
+	friend class GUINodeConditions;
 	friend class GUIScreenNode;
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;

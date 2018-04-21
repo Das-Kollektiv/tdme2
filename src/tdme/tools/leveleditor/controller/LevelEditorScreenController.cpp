@@ -251,7 +251,6 @@ void LevelEditorScreenController::onObjectDataApply()
 
 void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 {
-	/*
 	auto selectedObjects = objectsListBox->getController()->getValue();
 	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
 	auto idx = 1;
@@ -282,7 +281,6 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		Console::println(string(exception.what()));
 	}
 	objectsListBox->getController()->setValue(selectedObjects);
-	*/
 }
 
 void LevelEditorScreenController::unselectObjectInObjectListBox(const string& objectId)

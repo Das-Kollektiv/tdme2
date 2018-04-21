@@ -181,8 +181,8 @@ void SharedModelEditorView::display()
 		initModelRequestedReset = false;
 	}
 	entityDisplayView->display(entity);
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void SharedModelEditorView::updateGUIElements()

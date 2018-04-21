@@ -186,8 +186,8 @@ void SharedParticleSystemView::display()
 		particleSystemEntity->updateParticles();
 	}
 	entityDisplayView->display(entity);
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void SharedParticleSystemView::updateGUIElements()

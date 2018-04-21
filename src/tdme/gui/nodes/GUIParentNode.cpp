@@ -9,6 +9,7 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
@@ -23,10 +24,12 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::set;
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
@@ -35,6 +38,7 @@ using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -49,6 +53,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
 GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn) throw(GUIParserException)
@@ -65,7 +70,7 @@ void GUIParentNode::clearSubNodes()
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes.at(i);
+		auto subNode = subNodes[i];
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
@@ -78,7 +83,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 		childrenRenderOffsetY = 0.0f;
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes.at(i);
+		auto subNode = subNodes[i];
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
@@ -193,7 +198,7 @@ void GUIParentNode::layout()
 void GUIParentNode::layoutSubNodes()
 {
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes.at(i)->layout();
+		subNodes[i]->layout();
 	}
 }
 
@@ -203,19 +208,19 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		auto v = alignments.horizontal;
 		if (v == GUINode_AlignmentHorizontal::LEFT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right- padding.right);
 			}
 		}
@@ -229,19 +234,19 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		auto v = alignments.vertical;
 		if (v == GUINode_AlignmentVertical::TOP) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes.at(i);
+				auto guiSubNode = subNodes[i];
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom- padding.bottom);
 			}
 		}
@@ -251,7 +256,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes)
 {
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto node = subNodes.at(i);
+		auto node = subNodes[i];
 		if (node->controller != nullptr) {
 			childControllerNodes->push_back(node);
 		}
@@ -270,7 +275,7 @@ void GUIParentNode::getChildControllerNodes(vector<GUINode*>*childControllerNode
 void GUIParentNode::dispose()
 {
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes.at(i)->dispose();
+		subNodes[i]->dispose();
 	}
 	GUINode::dispose();
 }
@@ -282,7 +287,7 @@ void GUIParentNode::setConditionsMet()
 		return;
 
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes.at(i);
+		auto guiSubNode = subNodes[i];
 		guiSubNode->setConditionsMet();
 	}
 }
@@ -324,8 +329,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
 	GUINode::render(guiRenderer, floatingNodes);
+	int skippedChildren = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes.at(i);
+		auto guiSubNode = subNodes[i];
 		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
 			floatingNodes.push_back(guiSubNode);
 			continue;
@@ -341,7 +347,25 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 		guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 		guiRenderer->setRenderOffsetX(renderOffsetX);
 		guiRenderer->setRenderOffsetY(renderOffsetY);
-		guiSubNode->render(guiRenderer, floatingNodes);
+		float left = guiSubNode->computedConstraints.left + guiSubNode->computedConstraints.alignmentLeft + guiSubNode->border.left;
+		float top = guiSubNode->computedConstraints.top + guiSubNode->computedConstraints.alignmentTop + guiSubNode->border.top;
+		float width = guiSubNode->computedConstraints.width - guiSubNode->border.left - guiSubNode->border.right;
+		float height = guiSubNode->computedConstraints.height - guiSubNode->border.top - guiSubNode->border.bottom;
+		if (guiRenderer->isQuadVisible(
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
+			//
+			guiSubNode->render(guiRenderer, floatingNodes);
+		}
+	}
+	if (skippedChildren > 0) {
+		Console::println(getId() + ": " + to_string(skippedChildren));
 	}
 	guiRenderer->setRenderOffsetX(renderOffsetXCurrent);
 	guiRenderer->setRenderOffsetY(renderOffsetYCurrent);
@@ -390,7 +414,7 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 		}
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes.at(i);
+		auto subNode = subNodes[i];
 		if (subNode->flow == GUINode_Flow::FLOATING) {
 			continue;
 		}
@@ -416,7 +440,7 @@ void GUIParentNode::tick()
 		return;
 
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes.at(i);
+		auto subNode = subNodes[i];
 		subNode->tick();
 	}
 	GUINode::tick();

@@ -42,7 +42,7 @@ void GUITabsController::initialize()
 {
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto tabController = dynamic_cast< GUITabController* >(childController);
@@ -68,7 +68,7 @@ void GUITabsController::unselect()
 {
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto tabController = dynamic_cast< GUITabController* >(childController);
@@ -86,7 +86,7 @@ void GUITabsController::setTabContentSelected(const string& id)
 	tabContentNodeId.set(id + "-content");
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabContentController* >(childController) != nullptr) {
 			auto tabContentController = dynamic_cast< GUITabContentController* >(childController);

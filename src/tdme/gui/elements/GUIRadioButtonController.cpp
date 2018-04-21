@@ -57,7 +57,7 @@ void GUIRadioButtonController::select()
 		(dynamic_cast< GUIElementNode* >(this->node))->getName());
 	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
 		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
-			auto radioButtonNode = dynamic_cast< GUIElementNode* >(radioButtonGroupNodesIt->second.at(i));
+			auto radioButtonNode = dynamic_cast< GUIElementNode* >(radioButtonGroupNodesIt->second[i]);
 			auto& nodeConditions = radioButtonNode->getActiveConditions();
 			auto nodeController = dynamic_cast< GUIRadioButtonController* >(radioButtonNode->getController());
 			nodeConditions.remove(nodeController->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);

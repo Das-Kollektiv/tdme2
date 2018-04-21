@@ -12,6 +12,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/math/Math.h>
 
 using std::array;
 using std::vector;
@@ -23,6 +24,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::math::Math;
 
 /** 
  * GUI
@@ -168,92 +170,159 @@ public:
 	/** 
 	 * @return render area left
 	 */
-	float getRenderAreaLeft();
+	inline float getRenderAreaLeft() {
+		return renderAreaLeft;
+	}
 
 	/** 
 	 * Set up render area left
 	 * @param render area left
 	 */
-	void setRenderAreaLeft(float renderAreaLeft);
+	inline void setRenderAreaLeft(float renderAreaLeft) {
+		this->renderAreaLeft = renderAreaLeft;
+	}
 
 	/** 
 	 * Set sub render area left
 	 * @param render area left
 	 */
-	void setSubRenderAreaLeft(float renderAreaLeft);
+	inline void setSubRenderAreaLeft(float renderAreaLeft) {
+		this->renderAreaLeft = renderAreaLeft > this->renderAreaLeft ? renderAreaLeft : this->renderAreaLeft;
+	}
 
 	/** 
 	 * @return render area top
 	 */
-	float getRenderAreaTop();
+	inline float getRenderAreaTop() {
+		return renderAreaTop;
+	}
 
 	/** 
 	 * Set up render area top
 	 * @param render area top
 	 */
-	void setRenderAreaTop(float renderAreaTop);
+	inline void setRenderAreaTop(float renderAreaTop) {
+		this->renderAreaTop = renderAreaTop;
+	}
 
 	/** 
 	 * Set sub render area top
 	 * @param render area top
 	 */
-	void setSubRenderAreaTop(float renderAreaTop);
+	inline void setSubRenderAreaTop(float renderAreaTop) {
+		this->renderAreaTop = renderAreaTop < this->renderAreaTop ? renderAreaTop : this->renderAreaTop;
+	}
 
 	/** 
 	 * @return render area right
 	 */
-	float getRenderAreaRight();
+	inline float getRenderAreaRight() {
+		return renderAreaRight;
+	}
 
 	/** 
 	 * Set up render area right
 	 * @param render area right
 	 */
-	void setRenderAreaRight(float renderAreaRight);
+	inline void setRenderAreaRight(float renderAreaRight) {
+		this->renderAreaRight = renderAreaRight;
+	}
 
 	/** 
 	 * Set sub render area right
 	 * @param render area right
 	 */
-	void setSubRenderAreaRight(float renderAreaRight);
+	inline void setSubRenderAreaRight(float renderAreaRight) {
+		this->renderAreaRight = renderAreaRight < this->renderAreaRight ? renderAreaRight : this->renderAreaRight;
+	}
 
 	/** 
 	 * @return render area bottom
 	 */
-	float getRenderAreaBottom();
+	inline float getRenderAreaBottom() {
+		return renderAreaBottom;
+	}
 
 	/** 
 	 * Set up render area bottom
 	 * @param render area bottom
 	 */
-	void setRenderAreaBottom(float renderAreaBottom);
+	inline void setRenderAreaBottom(float renderAreaBottom) {
+		this->renderAreaBottom = renderAreaBottom;
+	}
 
 	/** 
 	 * Set sub render area bottom
 	 * @param render area bottom
 	 */
-	void setSubRenderAreaBottom(float renderAreaBottom);
+	inline void setSubRenderAreaBottom(float renderAreaBottom) {
+		this->renderAreaBottom = renderAreaBottom > this->renderAreaBottom ? renderAreaBottom : this->renderAreaBottom;
+	}
 
 	/** 
 	 * @return render offset x
 	 */
-	float getRenderOffsetX();
+	inline float getRenderOffsetX() {
+		return renderOffsetX;
+	}
 
 	/** 
 	 * Set render offset x
 	 * @param render offset x
 	 */
-	void setRenderOffsetX(float renderOffsetX);
+	inline void setRenderOffsetX(float renderOffsetX) {
+		this->renderOffsetX = renderOffsetX;
+	}
 
 	/** 
 	 * @return render offset y
 	 */
-	float getRenderOffsetY();
+	inline float getRenderOffsetY() {
+		return renderOffsetY;
+	}
 
 	/** 
 	 * Set render offset y
 	 * @param render offset y
 	 */
-	void setRenderOffsetY(float renderOffsetY);
+	inline void setRenderOffsetY(float renderOffsetY) {
+		this->renderOffsetY = renderOffsetY;
+	}
+
+	/**
+	 * @return if quad is visible
+	 */
+	inline bool isQuadVisible(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
+		x1 -= renderOffsetX;
+		x2 -= renderOffsetX;
+		x3 -= renderOffsetX;
+		x4 -= renderOffsetX;
+		y1 += renderOffsetY;
+		y2 += renderOffsetY;
+		y3 += renderOffsetY;
+		y4 += renderOffsetY;
+		x1 -= guiEffectOffsetX;
+		x2 -= guiEffectOffsetX;
+		x3 -= guiEffectOffsetX;
+		x4 -= guiEffectOffsetX;
+		y1 += guiEffectOffsetY;
+		y2 += guiEffectOffsetY;
+		y3 += guiEffectOffsetY;
+		y4 += guiEffectOffsetY;
+		auto renderAreaTop = this->renderAreaTop;
+		auto renderAreaBottom = this->renderAreaBottom;
+		auto renderAreaRight = this->renderAreaRight;
+		auto renderAreaLeft = this->renderAreaLeft;
+		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
+		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
+		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
+		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+		if (y3 > renderAreaTop) return false;
+		if (y1 < renderAreaBottom) return false;
+		if (x1 > renderAreaRight) return false;
+		if (x2 < renderAreaLeft) return false;
+		return true;
+	}
 
 	/** 
 	 * Add quad

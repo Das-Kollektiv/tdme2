@@ -76,8 +76,8 @@ void GUITest::reshape(int32_t width, int32_t height)
 void GUITest::display()
 {
 	engine->display();
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void GUITest::main(int argc, char** argv)

@@ -329,15 +329,16 @@ bool GUINode::checkConditions()
 	auto& hideOn = this->hideOn.conditions;
 
 	for (auto i = 0; i < showOn.size(); i++) {
-		if (showOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
+		if (showOn[i] == GUIElementNode::CONDITION_ALWAYS)
 			return true;
 
 	}
 	for (auto i = 0; i < hideOn.size(); i++) {
-		if (hideOn.at(i) == GUIElementNode::CONDITION_ALWAYS)
+		if (hideOn[i] == GUIElementNode::CONDITION_ALWAYS)
 			return false;
 
 	}
+
 	GUINode* node = parentNode;
 	while (node != nullptr && dynamic_cast< GUIElementNode* >(node) != nullptr == false) {
 		node = node->parentNode;
@@ -345,17 +346,18 @@ bool GUINode::checkConditions()
 	if (node == nullptr) {
 		return true;
 	}
+
 	auto elementNode = dynamic_cast< GUIElementNode* >(node);
 	for (auto i = 0; i < hideOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
-			if (hideOn.at(i) == elementNode->activeConditions.conditions.at(j))
+			if (hideOn[i] == elementNode->activeConditions.conditions[j])
 				return false;
 
 		}
 	}
 	for (auto i = 0; i < showOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
-			if (showOn.at(i) == elementNode->activeConditions.conditions.at(j))
+			if (showOn[i] == elementNode->activeConditions.conditions[j])
 				return true;
 
 		}
@@ -389,7 +391,40 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 		float height = computedConstraints.height - border.top - border.bottom;
 		auto bgColorData = &backgroundColor.getArray();
 		guiRenderer->bindTexture(0);
-		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, (*bgColorData)[0], (*bgColorData)[1], (*bgColorData)[2], (*bgColorData)[3], 0.0f, 0.0f);
+		guiRenderer->addQuad(
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			(*bgColorData)[0],
+			(*bgColorData)[1],
+			(*bgColorData)[2],
+			(*bgColorData)[3],
+			0.0f,
+			1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			(*bgColorData)[0],
+			(*bgColorData)[1],
+			(*bgColorData)[2],
+			(*bgColorData)[3],
+			1.0f,
+			1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+			(*bgColorData)[0],
+			(*bgColorData)[1],
+			(*bgColorData)[2],
+			(*bgColorData)[3],
+			1.0f,
+			0.0f,
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+			(*bgColorData)[0],
+			(*bgColorData)[1],
+			(*bgColorData)[2],
+			(*bgColorData)[3],
+			0.0f,
+			0.0f
+		);
 		guiRenderer->render();
 	}
 	if (border.top > 0 || border.left > 0 || border.right > 0 || border.bottom > 0) {

@@ -63,6 +63,7 @@ class tdme::gui::nodes::GUINode
 	friend class GUINode_RequestedConstraints;
 	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
 
+
 protected:
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
@@ -312,11 +313,11 @@ public:
 	virtual void dispose();
 
 	/** 
-	 * Set conditions met for the whole tree
+	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
 
-	/** 
+	/**
 	 * Render
 	 * @param gui renderer
 	 * @param floating nodes
