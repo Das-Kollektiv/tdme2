@@ -153,9 +153,11 @@ protected:
 	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
 
 	/**
+	 * Check if conditions are met
+	 * @param element node
 	 * @return conditions met
 	 */
-	virtual bool checkConditions();
+	virtual bool checkConditions(GUIElementNode* elementNode = nullptr);
 
 	/**
 	 * @return compute parent children render offset X total

@@ -58,7 +58,7 @@ bool GUINodeConditions::removeAll()
 }
 
 void GUINodeConditions::updateNode(GUINode* node) {
-	node->conditionsMet = node->checkConditions();
+	node->conditionsMet = node->checkConditions(elementNode);
 	if (node->conditionsMet == false) return;
 
 	auto asElementNode = dynamic_cast<GUIElementNode*>(node);

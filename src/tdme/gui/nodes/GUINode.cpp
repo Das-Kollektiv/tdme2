@@ -323,7 +323,7 @@ GUINodeConditions GUINode::createConditions(const string& conditions)
 	return guiNodeConditions;
 }
 
-bool GUINode::checkConditions()
+bool GUINode::checkConditions(GUIElementNode* elementNode)
 {
 	auto& showOn = this->showOn.conditions;
 	auto& hideOn = this->hideOn.conditions;
@@ -339,15 +339,11 @@ bool GUINode::checkConditions()
 
 	}
 
-	GUINode* node = parentNode;
-	while (node != nullptr && dynamic_cast< GUIElementNode* >(node) != nullptr == false) {
-		node = node->parentNode;
-	}
-	if (node == nullptr) {
-		return true;
+	if (elementNode == nullptr) {
+		for (GUINode* node = parentNode; node != nullptr && (elementNode = dynamic_cast< GUIElementNode* >(node)) == nullptr; node = node->parentNode);
+		if (elementNode == nullptr) return true;
 	}
 
-	auto elementNode = dynamic_cast< GUIElementNode* >(node);
 	for (auto i = 0; i < hideOn.size(); i++) {
 		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
 			if (hideOn[i] == elementNode->activeConditions.conditions[j])
@@ -362,6 +358,7 @@ bool GUINode::checkConditions()
 
 		}
 	}
+
 	return showOn.size() == 0;
 }
 
