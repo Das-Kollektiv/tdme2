@@ -380,43 +380,47 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 	if (screenNode->mouseEventProcessedByFloatingNode == true)
 		return;
 
-	if (isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
-		if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
-			childrenRenderOffsetX -= event->getWheelX() * 10.0f;
-			float elementWidth = this->computedConstraints.width;
-			float contentWidth = this->getContentWidth();
-			auto scrollableWidth = contentWidth - elementWidth;
-			if (childrenRenderOffsetX < 0)
-				childrenRenderOffsetX = 0;
+	if (isEventBelongingToNode(event) == true || flow == GUINode_Flow::FLOATING) {
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
+			if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
+				childrenRenderOffsetX -= event->getWheelX() * 10.0f;
+				float elementWidth = this->computedConstraints.width;
+				float contentWidth = this->getContentWidth();
+				auto scrollableWidth = contentWidth - elementWidth;
+				if (childrenRenderOffsetX < 0)
+					childrenRenderOffsetX = 0;
 
-			if (childrenRenderOffsetX > scrollableWidth)
-				childrenRenderOffsetX = scrollableWidth;
+				if (childrenRenderOffsetX > scrollableWidth)
+					childrenRenderOffsetX = scrollableWidth;
 
-			event->setProcessed(true);
-			return;
+				event->setProcessed(true);
+				return;
+			}
+			if (event->getWheelY() != 0.0f && overflowY == GUIParentNode_Overflow::SCROLL) {
+				childrenRenderOffsetY -= event->getWheelY() * 10.0f;
+				float elementHeight = this->computedConstraints.height;
+				float contentHeight = this->getContentHeight();
+				auto scrollableHeight = contentHeight - elementHeight;
+				if (childrenRenderOffsetY < 0)
+					childrenRenderOffsetY = 0;
+
+				if (childrenRenderOffsetY > scrollableHeight)
+					childrenRenderOffsetY = scrollableHeight;
+
+				event->setProcessed(true);
+				return;
+			}
 		}
-		if (event->getWheelY() != 0.0f && overflowY == GUIParentNode_Overflow::SCROLL) {
-			childrenRenderOffsetY -= event->getWheelY() * 10.0f;
-			float elementHeight = this->computedConstraints.height;
-			float contentHeight = this->getContentHeight();
-			auto scrollableHeight = contentHeight - elementHeight;
-			if (childrenRenderOffsetY < 0)
-				childrenRenderOffsetY = 0;
 
-			if (childrenRenderOffsetY > scrollableHeight)
-				childrenRenderOffsetY = scrollableHeight;
-
-			event->setProcessed(true);
-			return;
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto subNode = subNodes[i];
+			if (subNode->flow == GUINode_Flow::FLOATING) {
+				continue;
+			}
+			subNode->determineMouseEventNodes(event, eventNodeIds);
 		}
 	}
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes[i];
-		if (subNode->flow == GUINode_Flow::FLOATING) {
-			continue;
-		}
-		subNode->determineMouseEventNodes(event, eventNodeIds);
-	}
+
 	GUINode::determineMouseEventNodes(event, eventNodeIds);
 	if (flow == GUINode_Flow::FLOATING && event->isProcessed() == true) {
 		screenNode->mouseEventProcessedByFloatingNode = true;
