@@ -467,7 +467,7 @@ float GUINode::computeParentChildrenRenderOffsetXTotal()
 	auto childrenRenderOffSetX = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
-		childrenRenderOffSetX += parentNode->childrenRenderOffsetX;
+		childrenRenderOffSetX += parentNode->getChildrenRenderOffsetX();
 		parentNode = parentNode->parentNode;
 	}
 	return childrenRenderOffSetX;
@@ -478,7 +478,7 @@ float GUINode::computeParentChildrenRenderOffsetYTotal()
 	auto childrenRenderOffSetY = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
-		childrenRenderOffSetY += parentNode->childrenRenderOffsetY;
+		childrenRenderOffSetY += parentNode->getChildrenRenderOffsetY();
 		parentNode = parentNode->parentNode;
 	}
 	return childrenRenderOffSetY;
@@ -619,11 +619,11 @@ void GUINode::scrollToNodeY(GUIParentNode* toNode)
 			return;
 
 	}
-	if (computedConstraints.top < scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints.top) {
-		scrollYParentNode->childrenRenderOffsetY = computedConstraints.top - scrollYParentNode->computedConstraints.top;
+	if (computedConstraints.top < scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top) {
+		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top - scrollYParentNode->computedConstraints.top);
 	}
-	if (computedConstraints.top + computedConstraints.height > scrollYParentNode->childrenRenderOffsetY + scrollYParentNode->computedConstraints.top + scrollYParentNode->computedConstraints.height) {
-		scrollYParentNode->childrenRenderOffsetY = computedConstraints.top + computedConstraints.height - scrollYParentNode->computedConstraints.top - scrollYParentNode->computedConstraints.height;
+	if (computedConstraints.top + computedConstraints.height > scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top + scrollYParentNode->computedConstraints.height) {
+		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top + computedConstraints.height - scrollYParentNode->computedConstraints.top - scrollYParentNode->computedConstraints.height);
 	}
 	scrollYParentNode->scrollToNodeY(toNode);
 }
@@ -645,11 +645,11 @@ void GUINode::scrollToNodeX(GUIParentNode* toNode)
 		}
 		scrollXParentNode = scrollXParentNode->parentNode;
 	}
-	if (computedConstraints.left < scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints.left) {
-		scrollXParentNode->childrenRenderOffsetX = computedConstraints.left - scrollXParentNode->computedConstraints.left;
+	if (computedConstraints.left < scrollXParentNode->getChildrenRenderOffsetX() + scrollXParentNode->computedConstraints.left) {
+		scrollXParentNode->setChildrenRenderOffsetX(computedConstraints.left - scrollXParentNode->computedConstraints.left);
 	}
-	if (computedConstraints.left + computedConstraints.width > scrollXParentNode->childrenRenderOffsetX + scrollXParentNode->computedConstraints.left + scrollXParentNode->computedConstraints.width) {
-		scrollXParentNode->childrenRenderOffsetX = computedConstraints.left + computedConstraints.width - scrollXParentNode->computedConstraints.left - scrollXParentNode->computedConstraints.width;
+	if (computedConstraints.left + computedConstraints.width > scrollXParentNode->getChildrenRenderOffsetX() + scrollXParentNode->computedConstraints.left + scrollXParentNode->computedConstraints.width) {
+		scrollXParentNode->setChildrenRenderOffsetX(computedConstraints.left + computedConstraints.width - scrollXParentNode->computedConstraints.left - scrollXParentNode->computedConstraints.width);
 	}
 	scrollXParentNode->scrollToNodeX(toNode);
 }

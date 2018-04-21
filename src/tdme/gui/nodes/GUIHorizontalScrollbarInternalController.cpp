@@ -76,7 +76,7 @@ float GUIHorizontalScrollbarInternalController::getBarLeft()
 	float elementWidth = contentNode->computedConstraints.width;
 	float contentWidth = contentNode->getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
-	auto childrenRenderOffsetX = contentNode->childrenRenderOffsetX;
+	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX();
 	auto barWidth = (node->computedConstraints.width - node->border.left - node->border.right) * (elementWidth / contentWidth);
 	if (scrollableWidth > 0.0f) {
 		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border.left+ (childrenRenderOffsetX * ((node->computedConstraints.width - barWidth) / scrollableWidth));

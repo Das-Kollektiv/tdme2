@@ -63,6 +63,7 @@ GUIParentNode::GUIParentNode(GUIScreenNode* screenNode, GUIParentNode* parentNod
 	this->overflowY = overflowY;
 	this->childrenRenderOffsetX = 0.0f;
 	this->childrenRenderOffsetY = 0.0f;
+	this->computeViewportCache = true;
 }
 
 void GUIParentNode::clearSubNodes()
@@ -75,7 +76,11 @@ void GUIParentNode::clearSubNodes()
 	}
 	subNodes.clear();
 
+	//
 	setConditionsMet();
+	computeViewportCache = true;
+	floatingNodesCache.clear();
+	vieportSubNodesCache.clear();
 }
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */
@@ -91,6 +96,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	subNodes.clear();
 	GUIParser::parse(this, xml);
 	screenNode->layout(this);
+
 	float elementWidth = computedConstraints.width;
 	float contentWidth = getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
@@ -110,6 +116,15 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 		childrenRenderOffsetY = scrollableHeight;
 
 	setConditionsMet();
+	computeViewportCache = true;
+	vieportSubNodesCache.clear();
+	floatingNodesCache.clear();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+			floatingNodesCache.push_back(guiSubNode);
+		}
+	}
 }
 
 void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
@@ -124,6 +139,9 @@ void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
 		);
 	}
 	subNodes.push_back(node);
+	if (node->flow == GUINode_Flow::FLOATING) {
+		floatingNodesCache.push_back(node);
+	}
 }
 
 GUIParentNode_Overflow* GUIParentNode::getOverflowX()
@@ -163,9 +181,11 @@ float GUIParentNode::getChildrenRenderOffsetX()
 	return childrenRenderOffsetX;
 }
 
-void GUIParentNode::setChildrenRenderOffsetX(float childrenRenderOffSetX)
+void GUIParentNode::setChildrenRenderOffsetX(float childrenRenderOffsetX)
 {
-	this->childrenRenderOffsetX = childrenRenderOffSetX;
+	this->computeViewportCache = true;
+	this->vieportSubNodesCache.clear();
+	this->childrenRenderOffsetX = childrenRenderOffsetX;
 }
 
 float GUIParentNode::getChildrenRenderOffsetY()
@@ -173,9 +193,11 @@ float GUIParentNode::getChildrenRenderOffsetY()
 	return childrenRenderOffsetY;
 }
 
-void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffSetY)
+void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 {
-	this->childrenRenderOffsetY = childrenRenderOffSetY;
+	this->computeViewportCache = true;
+	this->vieportSubNodesCache.clear();
+	this->childrenRenderOffsetY = childrenRenderOffsetY;
 }
 
 GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
@@ -196,6 +218,8 @@ void GUIParentNode::layout()
 {
 	GUINode::layout();
 	layoutSubNodes();
+	computeViewportCache = true;
+	vieportSubNodesCache.clear();
 }
 
 void GUIParentNode::layoutSubNodes()
@@ -203,6 +227,8 @@ void GUIParentNode::layoutSubNodes()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}
+	computeViewportCache = true;
+	vieportSubNodesCache.clear();
 }
 
 void GUIParentNode::computeHorizontalChildrenAlignment()
@@ -330,40 +356,69 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
 	GUINode::render(guiRenderer, floatingNodes);
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
-			floatingNodes.push_back(guiSubNode);
-			continue;
+
+	//
+	for (auto i = 0; i < floatingNodesCache.size(); i++) {
+		auto guiSubNode = floatingNodesCache[i];
+		floatingNodes.push_back(guiSubNode);
+	}
+
+	//
+	if (computeViewportCache == true) {
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+				continue;
+			}
+			guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
+			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
+			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
+			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
+			// TODO: fix me, sub render area is wrong with floating nodes within scrollable
+			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+			guiRenderer->setSubRenderAreaTop(renderAreaTop);
+			guiRenderer->setSubRenderAreaRight(renderAreaRight);
+			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
+			guiRenderer->setRenderOffsetX(renderOffsetX);
+			guiRenderer->setRenderOffsetY(renderOffsetY);
+			float left = guiSubNode->computedConstraints.left + guiSubNode->computedConstraints.alignmentLeft + guiSubNode->border.left;
+			float top = guiSubNode->computedConstraints.top + guiSubNode->computedConstraints.alignmentTop + guiSubNode->border.top;
+			float width = guiSubNode->computedConstraints.width - guiSubNode->border.left - guiSubNode->border.right;
+			float height = guiSubNode->computedConstraints.height - guiSubNode->border.top - guiSubNode->border.bottom;
+			if (guiRenderer->isQuadVisible(
+				((left) / (screenWidth / 2.0f)) - 1.0f,
+				((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+				((left + width) / (screenWidth / 2.0f)) - 1.0f,
+				((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+				((left + width) / (screenWidth / 2.0f)) - 1.0f,
+				((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+				((left) / (screenWidth / 2.0f)) - 1.0f,
+				((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
+				//
+				guiSubNode->render(guiRenderer, floatingNodes);
+				vieportSubNodesCache.push_back(guiSubNode);
+			}
 		}
-		guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
-		guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
-		guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
-		guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-		// TODO: fix me, sub render area is wrong with floating nodes within scrollable
-		guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
-		guiRenderer->setSubRenderAreaTop(renderAreaTop);
-		guiRenderer->setSubRenderAreaRight(renderAreaRight);
-		guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
-		guiRenderer->setRenderOffsetX(renderOffsetX);
-		guiRenderer->setRenderOffsetY(renderOffsetY);
-		float left = guiSubNode->computedConstraints.left + guiSubNode->computedConstraints.alignmentLeft + guiSubNode->border.left;
-		float top = guiSubNode->computedConstraints.top + guiSubNode->computedConstraints.alignmentTop + guiSubNode->border.top;
-		float width = guiSubNode->computedConstraints.width - guiSubNode->border.left - guiSubNode->border.right;
-		float height = guiSubNode->computedConstraints.height - guiSubNode->border.top - guiSubNode->border.bottom;
-		if (guiRenderer->isQuadVisible(
-			((left) / (screenWidth / 2.0f)) - 1.0f,
-			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-			((left + width) / (screenWidth / 2.0f)) - 1.0f,
-			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-			((left + width) / (screenWidth / 2.0f)) - 1.0f,
-			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-			((left) / (screenWidth / 2.0f)) - 1.0f,
-			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
-			//
+		computeViewportCache = false;
+	} else {
+		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
+			auto guiSubNode = vieportSubNodesCache[i];
+			guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
+			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
+			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
+			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
+			// TODO: fix me, sub render area is wrong with floating nodes within scrollable
+			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+			guiRenderer->setSubRenderAreaTop(renderAreaTop);
+			guiRenderer->setSubRenderAreaRight(renderAreaRight);
+			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
+			guiRenderer->setRenderOffsetX(renderOffsetX);
+			guiRenderer->setRenderOffsetY(renderOffsetY);
 			guiSubNode->render(guiRenderer, floatingNodes);
 		}
 	}
+
+	//
 	guiRenderer->setRenderOffsetX(renderOffsetXCurrent);
 	guiRenderer->setRenderOffsetY(renderOffsetYCurrent);
 	guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);

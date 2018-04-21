@@ -49,13 +49,17 @@ class tdme::gui::nodes::GUIParentNode
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;
 	friend class GUIParentNode_Overflow;
+private:
+	float childrenRenderOffsetX {  };
+	float childrenRenderOffsetY {  };
 
 protected:
 	vector<GUINode*> subNodes {  };
+	bool computeViewportCache { };
+	vector<GUINode*> vieportSubNodesCache {  };
+	vector<GUINode*> floatingNodesCache {  };
 	GUIParentNode_Overflow* overflowX {  };
 	GUIParentNode_Overflow* overflowY {  };
-	float childrenRenderOffsetX {  };
-	float childrenRenderOffsetY {  };
 
 	/**
 	 * Layout

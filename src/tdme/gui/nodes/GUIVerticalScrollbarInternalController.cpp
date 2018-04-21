@@ -76,7 +76,7 @@ float GUIVerticalScrollbarInternalController::getBarTop()
 	float elementHeight = contentNode->computedConstraints.height;
 	float contentHeight = contentNode->getContentHeight();
 	auto scrollableHeight = contentHeight - elementHeight;
-	auto childrenRenderOffsetY = contentNode->childrenRenderOffsetY;
+	auto childrenRenderOffsetY = contentNode->getChildrenRenderOffsetY();
 	auto barHeight = (node->computedConstraints.height - node->border.top - node->border.bottom) * (elementHeight / contentHeight);
 	if (scrollableHeight > 0.0f) {
 		return node->computedConstraints.top + node->computedConstraints.alignmentTop + node->border.top+ (childrenRenderOffsetY * ((node->computedConstraints.height - barHeight) / scrollableHeight));
