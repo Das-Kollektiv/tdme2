@@ -119,6 +119,7 @@ SRCS = \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
+	src/tdme/engine/LODObject3D.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/ObjectParticleSystemEntity.cpp \
@@ -325,6 +326,7 @@ SRCS = \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
 	src/tdme/tests/GUITest_init_2.cpp \
+	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
@@ -525,6 +527,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
+	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \

@@ -44,11 +44,12 @@ TDME2
                 - bounding box emitter
                 - circle on plane emitter
                 - ...
+            - objects with support for LOD
+            - object picking
             - camera control
               - set up look from, look at, up vector can be computed
               - frustum culling
                 - oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
-            - object picking
             - supports offscreen instances
                 - rendering can be captured as screenshot
                 - rendering can be used (in other engine instances) as diffuse texture
@@ -128,6 +129,7 @@ TDME2
         - documentation
 
     - What is WIP or planned
+    	- LOD
         - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
         - Logic documentation/comments need to be imported from TDME(-JAVA)

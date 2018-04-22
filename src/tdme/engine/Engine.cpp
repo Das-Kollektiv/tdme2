@@ -16,6 +16,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
@@ -65,6 +66,7 @@ using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
@@ -570,6 +572,12 @@ void Engine::computeTransformations()
 	// init rendering if not yet done
 	if (renderingInitiated == false) initRendering();
 
+	Object3D* object = nullptr;
+	LODObject3D* lodObject = nullptr;
+	ObjectParticleSystemEntity* opse = nullptr;
+	PointsParticleSystemEntity* ppse = nullptr;
+	ParticleSystemEntity* pse = nullptr;
+
 	// collect entities that do not have frustum culling enabled
 	for (auto it: noFrustumCullingEntities) {
 		auto entity = it.second;
@@ -578,21 +586,24 @@ void Engine::computeTransformations()
 		if (entity->isEnabled() == false) continue;
 
 		// do entities with frustum culling disabled and add them to related lists
-		if (dynamic_cast< Object3D* >(entity) != nullptr) {
-			auto object = dynamic_cast< Object3D* >(entity);
+		// objects
+		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
 			visibleObjects.push_back(object);
 		} else
+		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
+			auto lodObject = dynamic_cast< LODObject3D* >(entity);
+			auto object = lodObject->determineLODObject(camera);
+			if (object != nullptr) visibleObjects.push_back(object);
+		} else
 		// object particle systems
-		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
+		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
 			for (auto object3D: *opse->getEnabledObjects()) {
 				visibleObjects.push_back(object3D);
 			}
 			visibleOpses.push_back(opse);
 		} else
 		// point particle systems
-		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-			auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
+		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(entity)) != nullptr) {
 			visiblePpses.push_back(ppse);
 		}
 	}
@@ -605,8 +616,7 @@ void Engine::computeTransformations()
 		if (entity->isEnabled() == false) continue;
 
 		// do auto emit
-		if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
-			auto pse = dynamic_cast< ParticleSystemEntity* >(entity);
+		if ((pse = dynamic_cast< ParticleSystemEntity* >(entity)) != nullptr) {
 			pse->emitParticles();
 			pse->updateParticles();
 		}
@@ -615,22 +625,27 @@ void Engine::computeTransformations()
 	// add visible entities to related lists by querying frustum
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
 		// objects
-		if (dynamic_cast< Object3D* >(entity) != nullptr) {
-			auto object = dynamic_cast< Object3D* >(entity);
+		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
 			object->computeTransformations();
 			visibleObjects.push_back(object);
 		} else
+		// LOD objects
+		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
+			auto object = lodObject->determineLODObject(camera);
+			if (object != nullptr) {
+				object->computeTransformations();
+				visibleObjects.push_back(object);
+			}
+		} else
 		// object particle systems
-		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
+		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
 			for (auto object3D: *opse->getEnabledObjects()) {
 				visibleObjects.push_back(object3D);
 			}
 			visibleOpses.push_back(opse);
 		} else
 		// point particle systems
-		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-			auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
+		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(entity)) != nullptr) {
 			visiblePpses.push_back(ppse);
 		}
 	}

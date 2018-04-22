@@ -106,6 +106,8 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
 	diffuseTexture = TextureLoader::loadTexture(pathName, fileName);
+	diffuseTransparencyTexturePathName = "";
+	diffuseTransparencyTextureFileName = "";
 	// check if we have a additional transparency texture
 	if (transparencyFileName.length() != 0) {
 		diffuseTransparencyTexturePathName = transparencyPathName;

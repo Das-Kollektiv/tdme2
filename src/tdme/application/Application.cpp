@@ -87,7 +87,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 #elif defined(__HAIKU__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 #endif
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(1024, 768);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow((title).c_str());
 #if defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)

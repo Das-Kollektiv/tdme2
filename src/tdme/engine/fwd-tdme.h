@@ -14,6 +14,7 @@ namespace engine {
 		class FrameBuffer;
 		class Frustum;
 		class Light;
+		class LODObject3D;
 		class ModelUtilities;
 		class Object3D;
 		class Object3DModel;

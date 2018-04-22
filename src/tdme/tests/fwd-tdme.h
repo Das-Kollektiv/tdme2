@@ -9,6 +9,7 @@ namespace tests {
 		class GUITest;
 		class GUITest_init_1;
 		class GUITest_init_2;
+		class LODTest;
 		class PathFindingTest;
 		class PhysicsTest1;
 		class PhysicsTest2;
