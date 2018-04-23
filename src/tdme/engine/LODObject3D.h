@@ -58,6 +58,8 @@ private:
 	LODLevelType levelTypeLOD2;
 	LODLevelType levelTypeLOD3;
 	int transformationsRotationYIndex;
+	float planeRotationYLOD2;
+	float planeRotationYLOD3;
 
 	string id;
 	Object3D* objectLOD1 {  };
@@ -101,7 +103,9 @@ public:
 		Model* modelLOD2,
 		LODLevelType levelTypeLOD3,
 		float modelLOD3MinDistance,
-		Model* modelLOD3
+		Model* modelLOD3,
+		float planeRotationYLOD2 = 0.0f,
+		float planeRotationYLOD3 = 0.0f
 	);
 
 public:
@@ -116,16 +120,19 @@ public:
 			LODObject3D::LODLevelType lodLevelType = LODObject3D::LODLEVELTYPE_NONE;
 			Vector3 objectCamFromAxis;
 			float objectCamFromLengthSquared;
+			float planeRotationYLOD;
 
 			// determine LOD object and level type
 			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
 				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
 				lodLevelType = levelTypeLOD3;
+				planeRotationYLOD = planeRotationYLOD3;
 				objectLOD = objectLOD3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
 				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
 				lodLevelType = levelTypeLOD2;
+				planeRotationYLOD = planeRotationYLOD2;
 				objectLOD = objectLOD2;
 			} else {
 				objectLOD = objectLOD1;
@@ -141,7 +148,7 @@ public:
 				auto angle = Vector3::computeAngle(Rotation::Z_AXIS, objectCamFromAxis, Rotation::Y_AXIS);
 				objectLOD->setRotationAngle(
 					transformationsRotationYIndex,
-					90 + angle
+					planeRotationYLOD + 90 + angle
 				);
 				objectLOD->update();
 			}
