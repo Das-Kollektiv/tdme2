@@ -272,43 +272,62 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale, int lodLevel)
 {
-	if (entity == nullptr)
-		return;
+	if (entity == nullptr) return;
 
 	// create engine entity
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
+
+	// particle system
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 		modelEntity = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
-		if (modelEntity != nullptr) {
+		if (modelEntity != nullptr) engine->addEntity(modelEntity);
+	} else {
+		// model
+		Model* model = nullptr;
+		switch (lodLevel) {
+			case 1:
+				model = entity->getModel();
+				break;
+			case 2:
+				model = entity->getLODLevel2() != nullptr?entity->getLODLevel2()->getModel():nullptr;
+				break;
+			case 3:
+				model = entity->getLODLevel3() != nullptr?entity->getLODLevel3()->getModel():nullptr;
+				break;
+		}
+		entityBoundingBox = entity->getModel()->getBoundingBox();
+		if (model != nullptr) {
+			modelEntity = new Object3D("model", model);
+			modelEntity->setDynamicShadowingEnabled(true);
 			engine->addEntity(modelEntity);
 		}
-	} else {
-		entityBoundingBox = entity->getModel()->getBoundingBox();
-		modelEntity = new Object3D("model", entity->getModel());
-		modelEntity->setDynamicShadowingEnabled(true);
-		engine->addEntity(modelEntity);
 	}
+
+	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
 	if (modelEntity != nullptr) {
 		modelEntity->setScale(modelEntity->getScale().clone().scale(1.0f / maxAxisDimension));
 		modelEntity->update();
 	}
+
+	// generate ground
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - Math::EPSILON);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
+
+	// add bounding volumes
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto boundingVolume = entity->getBoundingVolumeAt(i);
-		if (boundingVolume->getModel() == nullptr)
-			continue;
-
+		if (boundingVolume->getModel() == nullptr) continue;
 		auto modelBoundingVolumeEntity = new Object3D(
 			"model_bv." + to_string(i),
-			boundingVolume->getModel());
+			boundingVolume->getModel()
+		);
 		modelBoundingVolumeEntity->setEnabled(false);
 		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
 		modelBoundingVolumeEntity->update();

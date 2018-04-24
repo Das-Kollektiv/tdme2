@@ -560,6 +560,7 @@ void Engine::initRendering()
 
 	// clear lists of visible objects
 	visibleObjects.clear();
+	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
 
@@ -593,7 +594,11 @@ void Engine::computeTransformations()
 		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
 			auto lodObject = dynamic_cast< LODObject3D* >(entity);
 			auto object = lodObject->determineLODObject(camera);
-			if (object != nullptr) visibleObjects.push_back(object);
+			if (object != nullptr) {
+				visibleLODObjects.push_back(lodObject);
+				visibleObjects.push_back(object);
+				object->computeTransformations();
+			}
 		} else
 		// object particle systems
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
@@ -633,8 +638,9 @@ void Engine::computeTransformations()
 		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
 			auto object = lodObject->determineLODObject(camera);
 			if (object != nullptr) {
-				object->computeTransformations();
+				visibleLODObjects.push_back(lodObject);
 				visibleObjects.push_back(object);
+				object->computeTransformations();
 			}
 		} else
 		// object particle systems
@@ -834,6 +840,33 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
+
+	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleLODObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto object = entity->getLODObject();
+			if (object != nullptr) {
+				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+					auto vertices = _i->next();
+					{
+						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+							auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
+							// check if match or better match
+							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+								selectedEntity = entity;
+								selectedEntityDistance = entityDistance;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visibleOpses) {
 		// skip if not pickable or ignored by filter

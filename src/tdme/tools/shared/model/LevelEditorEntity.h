@@ -5,23 +5,27 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 
 using std::vector;
 using std::string;
 
-using tdme::tools::shared::model::ModelProperties;
+using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::ModelProperties;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
 /** 
  * Level Editor Model
@@ -46,6 +50,8 @@ private:
 	string thumbnail {  };
 	Model* model {  };
 	Vector3 pivot {  };
+	LevelEditorEntityLODLevel* lodLevel2;
+	LevelEditorEntityLODLevel* lodLevel3;
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 	LevelEditorEntityModel* modelSettings;
@@ -145,6 +151,28 @@ public:
 	 * Set default (up to 8) bounding volumes, to be used with LevelEditor
 	 */
 	void setDefaultBoundingVolumes();
+
+	/**
+	 * @return lod level 2
+	 */
+	LevelEditorEntityLODLevel* getLODLevel2();
+
+	/**
+	 * Set LOD level 2
+	 * @param lod level settings
+	 */
+	void setLODLevel2(LevelEditorEntityLODLevel* lodLevel);
+
+	/**
+	 * @return lod level 3
+	 */
+	LevelEditorEntityLODLevel* getLODLevel3();
+
+	/**
+	 * Set LOD level 3
+	 * @param lod level settings
+	 */
+	void setLODLevel3(LevelEditorEntityLODLevel* lodLevel);
 
 	/** 
 	 * @return level editor entity particle system

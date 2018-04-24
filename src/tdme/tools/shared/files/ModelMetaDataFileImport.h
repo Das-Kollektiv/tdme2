@@ -17,6 +17,7 @@ using std::string;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::os::filesystem::FileSystemException;
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::JsonException;
@@ -75,4 +76,13 @@ private:
 	 * @return level editor entity bounding volume
 	 */
 	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)  throw (FileSystemException, JsonException, ModelFileIOException);
+
+	/**
+	 * Parse LOD level
+	 * @param path name
+	 * @param JSON LOD level
+	 * @return level editor lod level
+	 */
+	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
+
 };

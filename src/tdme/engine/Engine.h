@@ -122,6 +122,7 @@ private:
 	map<string, Entity*> noFrustumCullingEntities {  };
 
 	vector<Object3D*> visibleObjects {  };
+	vector<LODObject3D*> visibleLODObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
 	vector<PointsParticleSystemEntity*> visiblePpses {  };
 	Object3DVBORenderer* object3DVBORenderer {  };

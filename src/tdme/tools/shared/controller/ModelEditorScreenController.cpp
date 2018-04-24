@@ -27,7 +27,9 @@
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.h>
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.h>
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_onLODModelLoad.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -66,7 +68,10 @@ using tdme::tools::shared::controller::ModelEditorScreenController_ModelEditorSc
 using tdme::tools::shared::controller::ModelEditorScreenController_onMaterialLoadTexture;
 using tdme::tools::shared::controller::ModelEditorScreenController_onModelLoad_2;
 using tdme::tools::shared::controller::ModelEditorScreenController_onModelSave_3;
+using tdme::tools::shared::controller::ModelEditorScreenController_onLODModelLoad;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
@@ -133,14 +138,17 @@ void ModelEditorScreenController::initialize()
 		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_y"));
 		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_z"));
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
-		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
-		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
-		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
-		statsOpaqueFaces->getController()->setDisabled(true);
-		statsTransparentFaces->getController()->setDisabled(true);
-		statsMaterialCount->getController()->setDisabled(true);
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
+		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
+		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
+		lodType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_type"));
+		lodModelFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file"));
+		lodModelFileLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file_load"));
+		lodModelFileClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file_clear"));
+		lodMinDistance = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_min_distance"));
+		lodPlaneRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_plane_rotation_y"));
+		buttonLodApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_lod_apply"));
 		materialsDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_dropdown"));
 		materialsDropdownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_dropdown_apply"));
 		materialsMaterialName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_name"));
@@ -172,6 +180,12 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
+		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
+		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
+		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
+		statsOpaqueFaces->getController()->setDisabled(true);
+		statsTransparentFaces->getController()->setDisabled(true);
+		statsMaterialCount->getController()->setDisabled(true);
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -249,6 +263,153 @@ void ModelEditorScreenController::unsetRendering()
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
 	renderingApply->getController()->setDisabled(true);
+}
+
+LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
+	auto entity = view->getEntity();
+	switch(level) {
+		case 2:
+			{
+				auto entityLodLevel = entity->getLODLevel2();
+				if (entityLodLevel == nullptr) {
+					entityLodLevel = new LevelEditorEntityLODLevel(
+						LODObject3D::LODLEVELTYPE_NONE,
+						"",
+						nullptr,
+						0.0f,
+						0.0f
+					);
+					entity->setLODLevel2(entityLodLevel);
+				}
+				return entityLodLevel;
+			}
+		case 3:
+			{
+				auto entityLodLevel = entity->getLODLevel3();
+				if (entityLodLevel == nullptr) {
+					entityLodLevel = new LevelEditorEntityLODLevel(
+						LODObject3D::LODLEVELTYPE_NONE,
+						"",
+						nullptr,
+						0.0f,
+						0.0f
+					);
+					entity->setLODLevel3(entityLodLevel);
+				}
+				return entityLodLevel;
+			}
+		default:
+			{
+				return nullptr;
+			}
+	}
+}
+
+void ModelEditorScreenController::setLODLevel(LevelEditorEntity* entity, int level) {
+	auto entityLodLevel = getLODLevel(level);
+	if (entityLodLevel == nullptr) {
+		lodLevel->getController()->setValue(MutableString(to_string(level)));
+		lodLevel->getController()->setDisabled(false);
+		lodLevelApply->getController()->setDisabled(false);
+		lodType->getController()->setValue(MutableString("1"));
+		lodType->getController()->setDisabled(true);
+		lodModelFile->getController()->setValue(MutableString(entity->getFileName()));
+		lodModelFile->getController()->setDisabled(true);
+		lodModelFileLoad->getController()->setDisabled(true);
+		lodModelFileClear->getController()->setDisabled(true);
+		lodMinDistance->getController()->setValue(MutableString("0.0"));
+		lodMinDistance->getController()->setDisabled(true);
+		lodPlaneRotationY->getController()->setValue(MutableString("0.0"));
+		lodPlaneRotationY->getController()->setDisabled(true);
+		buttonLodApply->getController()->setDisabled(true);
+	} else {
+		lodLevel->getController()->setValue(MutableString(to_string(level)));
+		lodLevel->getController()->setDisabled(false);
+		lodLevelApply->getController()->setDisabled(false);
+		lodType->getController()->setValue(MutableString(to_string(entityLodLevel->getType())));
+		lodType->getController()->setDisabled(false);
+		lodModelFile->getController()->setValue(MutableString(entityLodLevel->getFileName()));
+		lodModelFile->getController()->setDisabled(false);
+		lodModelFileLoad->getController()->setDisabled(false);
+		lodModelFileClear->getController()->setDisabled(false);
+		lodMinDistance->getController()->setValue(MutableString(entityLodLevel->getMinDistance()));
+		lodMinDistance->getController()->setDisabled(false);
+		lodPlaneRotationY->getController()->setValue(MutableString(entityLodLevel->getPlaneRotationY()));
+		lodPlaneRotationY->getController()->setDisabled(false);
+		buttonLodApply->getController()->setDisabled(false);
+	}
+	view->setLodLevel(level);
+}
+
+void ModelEditorScreenController::unsetLODLevel() {
+	lodLevel->getController()->setValue(MutableString("1"));
+	lodLevel->getController()->setDisabled(true);
+	lodLevelApply->getController()->setDisabled(true);
+	lodType->getController()->setValue(MutableString("0"));
+	lodType->getController()->setDisabled(true);
+	lodModelFile->getController()->setValue(MutableString());
+	lodModelFile->getController()->setDisabled(true);
+	lodModelFileLoad->getController()->setDisabled(true);
+	lodModelFileClear->getController()->setDisabled(true);
+	lodMinDistance->getController()->setValue(MutableString("0.0"));
+	lodMinDistance->getController()->setDisabled(true);
+	lodPlaneRotationY->getController()->setValue(MutableString("0.0"));
+	lodPlaneRotationY->getController()->setDisabled(true);
+	buttonLodApply->getController()->setDisabled(true);
+}
+
+void ModelEditorScreenController::onLODLevelApply() {
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	setLODLevel(entity, lodLevelInt);
+}
+
+void ModelEditorScreenController::onLODLevelLoadModel() {
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	auto entityLodLevel = getLODLevel(lodLevelInt);
+	if (entityLodLevel == nullptr) return;
+	auto extensions = ModelReader::getModelExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
+		"Load from: ",
+		&extensions,
+		Tools::getFileName(entityLodLevel->getFileName()),
+		new ModelEditorScreenController_onLODModelLoad(this)
+	);
+}
+
+void ModelEditorScreenController::onLODLevelClearModel() {
+	lodModelFile->getController()->setValue(MutableString());
+}
+
+void ModelEditorScreenController::onLODLevelApplySettings() {
+	view->resetEntity();
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	LevelEditorEntityLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
+	try {
+		entityLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
+		entityLodLevel->setFileName(
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE?
+				lodModelFile->getController()->getValue().getString():
+				""
+			);
+		entityLodLevel->setMinDistance(Tools::convertToFloat(lodMinDistance->getController()->getValue().getString()));
+		entityLodLevel->setPlaneRotationY(Tools::convertToFloat(lodPlaneRotationY->getController()->getValue().getString()));
+		entityLodLevel->setModel(
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE?
+				ModelReader::read(
+					Tools::getPath(entityLodLevel->getFileName()),
+					Tools::getFileName(entityLodLevel->getFileName())
+				):
+				nullptr
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
@@ -783,6 +944,18 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_rendering_apply") == 0) {
 				onRenderingApply();
+			} else
+			if (node->getId().compare("lod_level_apply") == 0) {
+				onLODLevelApply();
+			} else
+			if (node->getId().compare("lod_model_file_load") == 0) {
+				onLODLevelLoadModel();
+			} else
+			if (node->getId().compare("lod_model_file_clear") == 0) {
+				onLODLevelClearModel();
+			} else
+			if (node->getId().compare("button_lod_apply") == 0) {
+				onLODLevelApplySettings();
 			} else
 			if (node->getId().compare("button_materials_dropdown_apply") == 0) {
 				onMaterialDropDownApply();

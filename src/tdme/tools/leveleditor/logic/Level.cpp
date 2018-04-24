@@ -7,6 +7,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
@@ -61,6 +62,7 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Light;
+using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::ObjectParticleSystemEntity;
@@ -223,7 +225,27 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 		Entity* entity = nullptr;
 		if (object->getEntity()->getModel() != nullptr) {
-			entity = new Object3D(object->getId(), object->getEntity()->getModel());
+			auto lodLevel2 = object->getEntity()->getLODLevel2();
+			auto lodLevel3 = object->getEntity()->getLODLevel3();
+			if (lodLevel2 != nullptr) {
+				entity = new LODObject3D(
+					object->getId(),
+					object->getEntity()->getModel(),
+					lodLevel2->getType(),
+					lodLevel2->getMinDistance(),
+					lodLevel2->getModel(),
+					lodLevel3 != nullptr?lodLevel3->getType():LODObject3D::LODLEVELTYPE_NONE,
+					lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
+					lodLevel3 != nullptr?lodLevel3->getModel():nullptr,
+					lodLevel2->getPlaneRotationY(),
+					lodLevel3 != nullptr?lodLevel3->getPlaneRotationY():0.0f
+				);
+			} else {
+				entity = new Object3D(
+					object->getId(),
+					object->getEntity()->getModel()
+				);
+			}
 		} else
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 			entity = createParticleSystem(object->getEntity()->getParticleSystem(), object->getId(), false);

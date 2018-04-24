@@ -9,6 +9,7 @@ namespace model {
 				class LevelEditorEntity;
 				class LevelEditorEntityBoundingVolume;
 				class LevelEditorEntityLibrary;
+				class LevelEditorEntityLODLevel;
 				class LevelEditorEntityModel;
 				class LevelEditorEntityParticleSystem;
 				class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;

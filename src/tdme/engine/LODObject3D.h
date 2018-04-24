@@ -109,6 +109,12 @@ public:
 	);
 
 public:
+	/**
+	 * @return LOD object
+	 */
+	inline Object3D* getLODObject() {
+		return objectLOD;
+	}
 
 	/**
 	 * Get current lod object

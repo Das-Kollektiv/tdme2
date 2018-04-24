@@ -371,6 +371,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_onLODModelLoad.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
@@ -384,6 +385,7 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityModel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityLODLevel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.cpp \

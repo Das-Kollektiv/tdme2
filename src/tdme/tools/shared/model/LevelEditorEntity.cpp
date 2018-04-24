@@ -32,6 +32,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
+	this->lodLevel2 = nullptr;
+	this->lodLevel3 = nullptr;
 	this->dynamicShadowing = true;
 	this->particleSystem = nullptr;
 	this->modelSettings = nullptr;
@@ -45,6 +47,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 
 LevelEditorEntity::~LevelEditorEntity() {
 	if (model != nullptr) delete model;
+	if (lodLevel2 != nullptr) delete lodLevel2;
+	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (particleSystem != nullptr) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
 }
@@ -144,6 +148,26 @@ void LevelEditorEntity::setDefaultBoundingVolumes()
 		auto bv = new LevelEditorEntityBoundingVolume(i, this);
 		addBoundingVolume(i, bv);
 	}
+}
+
+LevelEditorEntityLODLevel* LevelEditorEntity::getLODLevel2() {
+	return lodLevel2;
+}
+
+void LevelEditorEntity::setLODLevel2(LevelEditorEntityLODLevel* lodLevel) {
+	if (this->type != LevelEditorEntity_EntityType::MODEL) return;
+	if (lodLevel2 != nullptr) delete lodLevel2;
+	lodLevel2 = lodLevel;
+}
+
+LevelEditorEntityLODLevel* LevelEditorEntity::getLODLevel3() {
+	return lodLevel3;
+}
+
+void LevelEditorEntity::setLODLevel3(LevelEditorEntityLODLevel* lodLevel) {
+	if (this->type != LevelEditorEntity_EntityType::MODEL) return;
+	if (lodLevel3 != nullptr) delete lodLevel3;
+	lodLevel3 = lodLevel;
 }
 
 LevelEditorEntityParticleSystem* LevelEditorEntity::getParticleSystem()

@@ -125,7 +125,7 @@ void ShadowMap::render(Light* light)
 		} else
 		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
 			if (lodObject->isDynamicShadowingEnabled() == false) continue;
-			auto object = lodObject->determineLODObject(lightCamera);
+			auto object = lodObject->getLODObject();
 			if (object != nullptr) {
 				visibleObjects.push_back(object);
 			}
