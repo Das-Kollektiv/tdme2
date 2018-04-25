@@ -45,23 +45,16 @@ LODObject3D::LODObject3D(
 	this->dynamicShadowing = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->effectColorMulLOD2.set(1.0f, 1.0f, 1.0f, 1.0f);
+	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->effectColorMulLOD3.set(1.0f, 1.0f, 1.0f, 1.0f);
+	this->effectColorAddLOD3.set(0.0f, 0.0f, 0.0f, 0.0f);
 	transformationsRotationYIndex = -1;
 
 	if (modelLOD1 != nullptr) objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
 	if (modelLOD2 != nullptr) objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
 	if (modelLOD3 != nullptr) objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
-}
-
-Object3D* LODObject3D::getObjectLOD1() {
-	return objectLOD1;
-}
-
-Object3D* LODObject3D::getObjectLOD2() {
-	return objectLOD2;
-}
-
-Object3D* LODObject3D::getObjectLOD3() {
-	return objectLOD3;
+	levelLOD = 1;
 }
 
 void LODObject3D::setEngine(Engine* engine)

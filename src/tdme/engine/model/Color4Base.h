@@ -122,6 +122,58 @@ public:
 	}
 
 	/** 
+	 * Scale this color
+	 * @param scale
+	 * @return this color
+	 */
+	inline Color4Base& scale(float scale) {
+		data[0] *= scale;
+		data[1] *= scale;
+		data[2] *= scale;
+		data[3] *= scale;
+		return *this;
+	}
+
+	/**
+	 * Scale this color
+	 * @param scale
+	 * @return this color
+	 */
+	inline Color4Base& scale(const Color4Base& scale) {
+		data[0] *= scale.data[0];
+		data[1] *= scale.data[1];
+		data[2] *= scale.data[2];
+		data[3] *= scale.data[3];
+		return *this;
+	}
+
+	/**
+	 * Add color to this color
+	 * @param color
+	 * @return this color
+	 */
+	inline Color4Base& add(const Color4Base& color) {
+		data[0] += color.data[0];
+		data[1] += color.data[1];
+		data[2] += color.data[2];
+		data[3] += color.data[3];
+		return *this;
+	}
+
+	/**
+	 * Subtracts color from this color
+	 * @param color
+	 * @return this color
+	 */
+	inline Color4Base& sub(const Color4Base& color) {
+		data[0] -= color.data[0];
+		data[1] -= color.data[1];
+		data[2] -= color.data[2];
+		data[3] -= color.data[3];
+		return *this;
+	}
+
+	/**
 	 * @return rgba as float array 
 	 */
 	inline virtual array<float, 4>& getArray() const {

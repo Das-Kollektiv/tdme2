@@ -66,11 +66,16 @@ private:
 	Object3D* objectLOD2 {  };
 	Object3D* objectLOD3 {  };
 	Object3D* objectLOD {  };
+	int levelLOD {  };
 	bool enabled {  };
 	bool pickable {  };
 	bool dynamicShadowing {  };
 	Color4 effectColorMul {  };
 	Color4 effectColorAdd {  };
+	Color4 effectColorMulLOD2 {  };
+	Color4 effectColorAddLOD2 {  };
+	Color4 effectColorMulLOD3 {  };
+	Color4 effectColorAddLOD3 {  };
 
 public:
 	void setEngine(Engine* engine) override;
@@ -115,8 +120,22 @@ public:
 	inline Object3D* getLODObject() {
 		// set effect colors
 		if (objectLOD != nullptr) {
-			objectLOD->getEffectColorAdd().set(effectColorAdd);
-			objectLOD->getEffectColorMul().set(effectColorMul);
+			// set effect colors
+			if (objectLOD != nullptr) {
+				if (levelLOD == 3) {
+					objectLOD->getEffectColorAdd().set(effectColorAddLOD3);
+					objectLOD->getEffectColorMul().set(effectColorMulLOD3);
+				} else
+				if (levelLOD == 2) {
+					objectLOD->getEffectColorAdd().set(effectColorAddLOD2);
+					objectLOD->getEffectColorMul().set(effectColorMulLOD2);
+				} else {
+					objectLOD->getEffectColorAdd().set(0.0f, 0.0f, 0.0f, 0.0f);
+					objectLOD->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 1.0f);
+				}
+				objectLOD->getEffectColorAdd().add(effectColorAdd);
+				objectLOD->getEffectColorMul().scale(effectColorMul);
+			}
 		}
 
 		//
@@ -141,14 +160,17 @@ public:
 				lodLevelType = levelTypeLOD3;
 				planeRotationYLOD = planeRotationYLOD3;
 				objectLOD = objectLOD3;
+				levelLOD = 3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
 				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
 				lodLevelType = levelTypeLOD2;
 				planeRotationYLOD = planeRotationYLOD2;
 				objectLOD = objectLOD2;
+				levelLOD = 2;
 			} else {
 				objectLOD = objectLOD1;
+				levelLOD = 1;
 			}
 
 			// do plane rotation to viewer on Y axis
@@ -169,28 +191,24 @@ public:
 
 		// set effect colors
 		if (objectLOD != nullptr) {
-			objectLOD->getEffectColorAdd().set(effectColorAdd);
-			objectLOD->getEffectColorMul().set(effectColorMul);
+			if (levelLOD == 3) {
+				objectLOD->getEffectColorAdd().set(effectColorAddLOD3);
+				objectLOD->getEffectColorMul().set(effectColorMulLOD3);
+			} else
+			if (levelLOD == 2) {
+				objectLOD->getEffectColorAdd().set(effectColorAddLOD2);
+				objectLOD->getEffectColorMul().set(effectColorMulLOD2);
+			} else {
+				objectLOD->getEffectColorAdd().set(0.0f, 0.0f, 0.0f, 0.0f);
+				objectLOD->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			objectLOD->getEffectColorAdd().add(effectColorAdd);
+			objectLOD->getEffectColorMul().scale(effectColorMul);
 		}
 
 		// done
 		return objectLOD;
 	}
-
-	/**
-	 * @return LOD object 1
-	 */
-	Object3D* getObjectLOD1();
-
-	/**
-	 * @return LOD object 2
-	 */
-	Object3D* getObjectLOD2();
-
-	/**
-	 * @return LOD object 3
-	 */
-	Object3D* getObjectLOD3();
 
 	// overriden methods
 	virtual void dispose() override;
@@ -208,7 +226,23 @@ public:
 	}
 
 	inline virtual Color4& getEffectColorMul() override {
-		return effectColorMul;
+		return effectColorMulLOD2;
+	}
+
+	inline virtual Color4& getEffectColorAddLOD2() {
+		return effectColorAddLOD2;
+	}
+
+	inline virtual Color4& getEffectColorMulLOD2() {
+		return effectColorMulLOD2;
+	}
+
+	inline virtual Color4& getEffectColorAddLOD3() {
+		return effectColorAddLOD3;
+	}
+
+	inline virtual Color4& getEffectColorMulLOD3() {
+		return effectColorMulLOD3;
 	}
 
 	inline virtual const string& getId() override {
