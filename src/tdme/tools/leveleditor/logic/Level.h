@@ -23,6 +23,7 @@ using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::MutableString;
 
 /** 
@@ -55,6 +56,13 @@ public:
 	 * @return engine particle system entity
 	 */
 	static Entity* createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& id, bool enableDynamicShadows);
+
+	/**
+	 * Create engine entity
+	 * @param level editor object
+	 * @return entity
+	 */
+	static Entity* createEntity(LevelEditorObject* levelEditorEntity);
 
 	/** 
 	 * Add level to engine

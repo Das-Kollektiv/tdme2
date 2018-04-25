@@ -207,6 +207,49 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 }
 
+Entity* Level::createEntity(LevelEditorObject* levelEditorObject) {
+	Entity* entity = nullptr;
+
+	// objects
+	if (levelEditorObject->getEntity()->getModel() != nullptr) {
+		auto lodLevel2 = levelEditorObject->getEntity()->getLODLevel2();
+		auto lodLevel3 = levelEditorObject->getEntity()->getLODLevel3();
+		// with LOD
+		if (lodLevel2 != nullptr) {
+			entity = new LODObject3D(
+				levelEditorObject->getId(),
+				levelEditorObject->getEntity()->getModel(),
+				lodLevel2->getType(),
+				lodLevel2->getMinDistance(),
+				lodLevel2->getModel(),
+				lodLevel3 != nullptr?lodLevel3->getType():LODObject3D::LODLEVELTYPE_NONE,
+				lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
+				lodLevel3 != nullptr?lodLevel3->getModel():nullptr,
+				lodLevel2->getPlaneRotationY(),
+				lodLevel3 != nullptr?lodLevel3->getPlaneRotationY():0.0f
+			);
+		} else {
+			// single
+			entity = new Object3D(
+				levelEditorObject->getId(),
+				levelEditorObject->getEntity()->getModel()
+			);
+		}
+	} else
+	// particle system
+	if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+		entity = createParticleSystem(
+			levelEditorObject->getEntity()->getParticleSystem(),
+			levelEditorObject->getId(),
+			false
+		);
+	}
+
+	//
+	if (entity != nullptr) entity->fromTransformations(levelEditorObject->getTransformations());
+	return entity;
+}
+
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation)
 {
 	addLevel(engine, level, addEmpties, addTrigger, pickable, translation, true);
@@ -217,43 +260,10 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto properties = object->getTotalProperties();
-		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY)
-			continue;
-
-		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER)
-			continue;
-
-		Entity* entity = nullptr;
-		if (object->getEntity()->getModel() != nullptr) {
-			auto lodLevel2 = object->getEntity()->getLODLevel2();
-			auto lodLevel3 = object->getEntity()->getLODLevel3();
-			if (lodLevel2 != nullptr) {
-				entity = new LODObject3D(
-					object->getId(),
-					object->getEntity()->getModel(),
-					lodLevel2->getType(),
-					lodLevel2->getMinDistance(),
-					lodLevel2->getModel(),
-					lodLevel3 != nullptr?lodLevel3->getType():LODObject3D::LODLEVELTYPE_NONE,
-					lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
-					lodLevel3 != nullptr?lodLevel3->getModel():nullptr,
-					lodLevel2->getPlaneRotationY(),
-					lodLevel3 != nullptr?lodLevel3->getPlaneRotationY():0.0f
-				);
-			} else {
-				entity = new Object3D(
-					object->getId(),
-					object->getEntity()->getModel()
-				);
-			}
-		} else
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			entity = createParticleSystem(object->getEntity()->getParticleSystem(), object->getId(), false);
-		}
-		if (entity == nullptr)
-			continue;
-
-		entity->fromTransformations(object->getTransformations());
+		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
+		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
+		Entity* entity = createEntity(object);
+		if (entity == nullptr) continue;
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty("shadowing");
