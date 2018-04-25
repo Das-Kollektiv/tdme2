@@ -130,13 +130,13 @@ public:
 
 			// determine LOD object and level type
 			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
+				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).setY(0.0f).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
 				lodLevelType = levelTypeLOD3;
 				planeRotationYLOD = planeRotationYLOD3;
 				objectLOD = objectLOD3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
+				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).setY(0.0f).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
 				lodLevelType = levelTypeLOD2;
 				planeRotationYLOD = planeRotationYLOD2;
 				objectLOD = objectLOD2;
