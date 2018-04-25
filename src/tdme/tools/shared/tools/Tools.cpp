@@ -272,13 +272,14 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale, int lodLevel)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel)
 {
 	if (entity == nullptr) return;
 
 	// create engine entity
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
+	Vector3 objectScale(1.0f, 1.0f, 1.0f);
 
 	// particle system
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -309,8 +310,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
+	objectScale.scale(1.0f / maxAxisDimension);
 	if (modelEntity != nullptr) {
-		modelEntity->setScale(modelEntity->getScale().clone().scale(1.0f / maxAxisDimension));
+		modelEntity->setScale(objectScale);
 		modelEntity->update();
 	}
 
@@ -329,7 +331,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 			boundingVolume->getModel()
 		);
 		modelBoundingVolumeEntity->setEnabled(false);
-		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
+		modelBoundingVolumeEntity->setScale(objectScale);
 		modelBoundingVolumeEntity->update();
 		engine->addEntity(modelBoundingVolumeEntity);
 	}
@@ -358,24 +360,24 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
 	auto lookAt = cam->getLookAt();
-	auto model = engine->getEntity("model");
-	if (model != nullptr) {
-		lookAt.set(model->getBoundingBoxTransformed()->getCenter());
-	} else {
-		lookAt.set(0.0f, 0.0f, 0.0f);
-	}
+	lookAt.set(entityBoundingBox->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
 	// TODO: a.drewke
 	Transformations _lookFromRotations;
 	_lookFromRotations.fromTransformations(lookFromRotations);
-	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(camScale);
 	_lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);
 	cam->getUpVector().set(upVector);
+
+	//
+	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+		delete entityBoundingBox;
+	}
 }
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
