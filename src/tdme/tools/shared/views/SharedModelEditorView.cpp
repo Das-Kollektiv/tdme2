@@ -147,6 +147,8 @@ void SharedModelEditorView::setLodLevel(int lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
+		modelEditorScreenController->setMaterials(entity);
+		modelEditorScreenController->setAnimations(entity);
 	}
 }
 

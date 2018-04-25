@@ -413,7 +413,11 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 }
 
 void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
-	auto model = entity->getModel();
+	Model* model = view->getLodLevel() == 1?entity->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetMaterials();
+		return;
+	}
 
 	{
 		auto materialsDropDownInnerNode = dynamic_cast< GUIParentNode* >((materialsDropdown->getScreenNode()->getNodeById(materialsDropdown->getId() + "_inner")));
@@ -525,8 +529,10 @@ void ModelEditorScreenController::unsetMaterials() {
 }
 
 void ModelEditorScreenController::onMaterialDropDownApply() {
-	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
 	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(material->getAmbientColor())));
 	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(material->getDiffuseColor())));
@@ -549,8 +555,10 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 }
 
 void ModelEditorScreenController::onMaterialApply() {
-	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	try {
 		view->resetEntity();
 		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
@@ -579,9 +587,11 @@ void ModelEditorScreenController::onMaterialApply() {
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
-	auto entity = view->getEntity();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -592,9 +602,11 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
-	auto entity = view->getEntity();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -605,9 +617,11 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadNormalTexture() {
-	auto entity = view->getEntity();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -618,9 +632,11 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
-	auto entity = view->getEntity();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -635,8 +651,11 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 }
 
 void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
-
-	auto model = entity->getModel();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetAnimations();
+		return;
+	}
 
 	{
 		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner")));
@@ -717,20 +736,24 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 }
 
 void ModelEditorScreenController::onAnimationDropDownValueChanged() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == nullptr);
 }
 
 void ModelEditorScreenController::onAnimationDropDownApply() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	AnimationSetup newAnimationSetup(
-		entity->getModel(),
+		model,
 		"New animation",
-		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getStartFrame(),
-		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getEndFrame(),
+		model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getStartFrame(),
+		model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getEndFrame(),
 		true,
 		""
 	);
@@ -754,24 +777,28 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 }
 
 void ModelEditorScreenController::onAnimationDropDownDelete() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
-	auto it = entity->getModel()->getAnimationSetups()->find(animationSetup->getId());
-	it = entity->getModel()->getAnimationSetups()->erase(it);
-	setAnimations(entity);
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	auto it = model->getAnimationSetups()->find(animationSetup->getId());
+	it = model->getAnimationSetups()->erase(it);
+	setAnimations(view->getEntity());
 	animationsDropDown->getController()->setValue(MutableString(it->second->getId()));
 	onAnimationDropDownApply();
 }
 
 void ModelEditorScreenController::onAnimationApply() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	try {
 		if (animationSetup == nullptr) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			animationSetup = entity->getModel()->addAnimationSetup(
+			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
@@ -779,11 +806,11 @@ void ModelEditorScreenController::onAnimationApply() {
 			);
 		} else
 		if (animationSetup->getId() != animationsAnimationName->getController()->getValue().getString()) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			(*entity->getModel()->getAnimationSetups()).erase(animationSetup->getId());
-			animationSetup = entity->getModel()->addAnimationSetup(
+			(*model->getAnimationSetups()).erase(animationSetup->getId());
+			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
@@ -794,7 +821,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
 		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
-		setAnimations(entity);
+		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
 		view->playAnimation(animationSetup->getId());
