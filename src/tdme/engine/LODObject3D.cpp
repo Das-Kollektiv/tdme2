@@ -47,15 +47,9 @@ LODObject3D::LODObject3D(
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	transformationsRotationYIndex = -1;
 
-	if (modelLOD1 != nullptr) {
-		objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
-	}
-	if (modelLOD2 != nullptr) {
-		objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
-	}
-	if (modelLOD3 != nullptr) {
-		objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
-	}
+	if (modelLOD1 != nullptr) objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
+	if (modelLOD2 != nullptr) objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
+	if (modelLOD3 != nullptr) objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
 }
 
 Object3D* LODObject3D::getObjectLOD1() {

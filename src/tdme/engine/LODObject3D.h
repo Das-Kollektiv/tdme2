@@ -113,6 +113,13 @@ public:
 	 * @return LOD object
 	 */
 	inline Object3D* getLODObject() {
+		// set effect colors
+		if (objectLOD != nullptr) {
+			objectLOD->getEffectColorAdd().set(effectColorAdd);
+			objectLOD->getEffectColorMul().set(effectColorMul);
+		}
+
+		//
 		return objectLOD;
 	}
 
@@ -160,6 +167,13 @@ public:
 			}
 		}
 
+		// set effect colors
+		if (objectLOD != nullptr) {
+			objectLOD->getEffectColorAdd().set(effectColorAdd);
+			objectLOD->getEffectColorMul().set(effectColorMul);
+		}
+
+		// done
 		return objectLOD;
 	}
 
