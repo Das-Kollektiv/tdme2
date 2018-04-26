@@ -125,7 +125,7 @@ int32_t LevelEditorEntity::getBoundingVolumeCount()
 
 LevelEditorEntityBoundingVolume* LevelEditorEntity::getBoundingVolumeAt(int32_t idx)
 {
-	return boundingVolumes.at(idx);
+	return boundingVolumes[idx];
 }
 
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)

@@ -288,7 +288,7 @@ void ConstraintsSolver::checkChainSuccessor(RigidBody* rigidBodySrc, Vector3* no
 		// check if we checked this node already
 		auto haveRigidBodyCheck = false;
 		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
-			if (rigidBodiesCurrentChain.at(j) == rigidBodyCheck) {
+			if (rigidBodiesCurrentChain[j] == rigidBodyCheck) {
 				haveRigidBodyCheck = true;
 				break;
 			}
@@ -313,11 +313,11 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 	// compute speed of A
 	auto rigidBodyAIdx = -1;
 	for (auto j = idx; j < rigidBodiesCurrentChain.size(); j++) {
-		auto rigidBody = rigidBodiesCurrentChain.at(j);
+		auto rigidBody = rigidBodiesCurrentChain[j];
 		// check if rigid body had a velocity change
 		auto isVelocityChangeRigidBody = false;
 		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
-			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
+			auto rigidBodyVC = rigidBodiesVelocityChange[k];
 			if (rigidBodyVC == rigidBody) {
 				isVelocityChangeRigidBody = true;
 				break;
@@ -335,17 +335,17 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		return -1;
 
 	// get rigid body A, speed
-	auto rigidBodyA = rigidBodiesCurrentChain.at(rigidBodyAIdx);
+	auto rigidBodyA = rigidBodiesCurrentChain[rigidBodyAIdx];
 	auto rigidBodyASpeed = rigidBodyA->linearVelocity.computeLength();
 	// compute max speed of B in chain
 	auto rigidBodyBIdx = -1;
 	auto rigidBodyBSpeed = 0.0f;
 	for (auto j = idx + 1; j < rigidBodiesCurrentChain.size(); j++) {
-		auto rigidBody = rigidBodiesCurrentChain.at(j);
+		auto rigidBody = rigidBodiesCurrentChain[j];
 		// check if rigid body had a velocity change
 		auto isVelocityChangeRigidBody = false;
 		for (auto k = 0; k < rigidBodiesVelocityChange.size(); k++) {
-			auto rigidBodyVC = rigidBodiesVelocityChange.at(k);
+			auto rigidBodyVC = rigidBodiesVelocityChange[k];
 			if (rigidBodyVC == rigidBody) {
 				isVelocityChangeRigidBody = true;
 				break;
@@ -354,7 +354,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		if (isVelocityChangeRigidBody == false)
 			continue;
 		// determine a on b
-		auto ab = Vector3::computeDotProduct(rigidBodiesCurrentChain.at(rigidBodyAIdx)->linearVelocity, rigidBodiesCurrentChain.at(j)->linearVelocity);
+		auto ab = Vector3::computeDotProduct(rigidBodiesCurrentChain[rigidBodyAIdx]->linearVelocity, rigidBodiesCurrentChain[j]->linearVelocity);
 		// skip if A has same direction like B
 		if (ab > 0.0f)
 			continue;
@@ -378,7 +378,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 		rigidBodyA->linearVelocity.setY(y);
 	}
 	// set up rigid body B
-	auto rigidBodyB = rigidBodiesCurrentChain.at(rigidBodyBIdx);
+	auto rigidBodyB = rigidBodiesCurrentChain[rigidBodyBIdx];
 	if (rigidBodyB->linearVelocity.computeLength() > Math::EPSILON) {
 		auto y = rigidBodyB->linearVelocity.getY();
 		rigidBodyB->linearVelocity.normalize();
@@ -387,7 +387,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 	}
 	// set up rigid bodies between A and B
 	for (auto rigidBodyIdx = rigidBodyAIdx + 1; rigidBodyIdx < rigidBodyBIdx; rigidBodyIdx++) {
-		auto rigidBody = rigidBodiesCurrentChain.at(rigidBodyIdx);
+		auto rigidBody = rigidBodiesCurrentChain[rigidBodyIdx];
 		auto y = rigidBody->linearVelocity.getY();
 		rigidBody->linearVelocity.scale(0.0f);
 		rigidBody->linearVelocity.setY(y);
@@ -398,7 +398,7 @@ int32_t ConstraintsSolver::processRigidBodyChain(int32_t idx, const vector<Rigid
 void ConstraintsSolver::checkVelocityConstraint()
 {
 	for (auto i = 0; i < rigidBodiesDynamic->size(); i++) {
-		auto rigidBodyVelocityChange = rigidBodiesDynamic->at(i);
+		auto rigidBodyVelocityChange = (*rigidBodiesDynamic)[i];
 		if (rigidBodyVelocityChange->enabled == false)
 			continue;
 		if (rigidBodyVelocityChange->checkVelocityChange() == true) {
@@ -407,11 +407,11 @@ void ConstraintsSolver::checkVelocityConstraint()
 	}
 	// determine rigid bodies with velocity change
 	for (auto i = 0; i < rigidBodiesVelocityChange.size(); i++) {
-		auto rigidBodySrc = rigidBodiesVelocityChange.at(i);
+		auto rigidBodySrc = rigidBodiesVelocityChange[i];
 		// skip on rigid bodies that have been processed
 		auto rigidBodyProcessed = false;
 		for (auto j = 0; j < rigidBodiesChainsResult.size(); j++) {
-			if (rigidBodiesChainsResult.at(j) == rigidBodySrc) {
+			if (rigidBodiesChainsResult[j] == rigidBodySrc) {
 				rigidBodyProcessed = true;
 				break;
 			}
@@ -423,7 +423,7 @@ void ConstraintsSolver::checkVelocityConstraint()
 		checkChainSuccessor(rigidBodySrc, nullptr, rigidBodiesCurrentChain);
 		// mark as processed
 		for (auto j = 0; j < rigidBodiesCurrentChain.size(); j++) {
-			auto rigidBody = rigidBodiesCurrentChain.at(j);
+			auto rigidBody = rigidBodiesCurrentChain[j];
 			rigidBodiesChainsResult.push_back(rigidBody);
 		}
 		// skip if we have no chain

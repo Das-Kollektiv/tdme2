@@ -287,9 +287,9 @@ Model* EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::createModel
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
-				vertices.at(triangles[i * 3 + 0]),
-				vertices.at(triangles[i * 3 + 1]),
-				vertices.at(triangles[i * 3 + 2])
+				vertices[triangles[i * 3 + 0]],
+				vertices[triangles[i * 3 + 1]],
+				vertices[triangles[i * 3 + 2]]
 			};
 			array<Vector3, 3> faceNormals;
 			ModelHelper::computeNormals(&faceVertices, &faceNormals);

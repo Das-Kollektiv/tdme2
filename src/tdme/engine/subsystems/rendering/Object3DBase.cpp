@@ -290,13 +290,13 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 			for (auto i = 0; i < skinningGroups.size(); i++) {
 				auto skinningJoint = skinningGroups[i]->getSkinning()->getJointByName(group->getId());
 				if (skinningJoint == nullptr) {
-					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
-					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {
+					auto skinningGroupMatrixIt = skinningGroupsMatrices[i].find(group->getId());
+					if (skinningGroupMatrixIt != skinningGroupsMatrices[i].end()) {
 						skinningGroupMatrixIt->second->set(transformationsMatrix);
 					}
 				} else {
-					auto skinningGroupMatrixIt = skinningGroupsMatrices.at(i).find(group->getId());
-					if (skinningGroupMatrixIt != skinningGroupsMatrices.at(i).end()) {
+					auto skinningGroupMatrixIt = skinningGroupsMatrices[i].find(group->getId());
+					if (skinningGroupMatrixIt != skinningGroupsMatrices[i].end()) {
 						skinningGroupMatrixIt->second->set(skinningJoint->getBindMatrix()).multiply(transformationsMatrix);
 					}
 				}
@@ -443,8 +443,8 @@ map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 		return nullptr;
 
 	for (auto i = 0; i < skinningGroups.size(); i++) {
-		if (skinningGroups.at(i) == group) {
-			return &skinningGroupsMatrices.at(i);
+		if (skinningGroups[i] == group) {
+			return &skinningGroupsMatrices[i];
 		}
 	}
 	return nullptr;

@@ -175,7 +175,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 
 	// sort objects by model
 	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-		auto object = objects.at(objectIdx);
+		auto object = objects[objectIdx];
 		auto modelId = object->getModel()->getId();
 		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
 		visibleObjectsByModel.push_back(object);
@@ -213,7 +213,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 			// do we have more than face already?
 			if (groupTransparentRenderFaces.size() > 0) {
 				// check if we have more of first type
-				if (groupTransparentRenderFaces.at(0)->object3DGroup == transparentRenderFace->object3DGroup) {
+				if (groupTransparentRenderFaces[0]->object3DGroup == transparentRenderFace->object3DGroup) {
 					// yep, we can add this one
 					groupTransparentRenderFaces.push_back(transparentRenderFace);
 				} else {
@@ -244,7 +244,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
 {
 	// all those faces should share the object and object 3d group, ...
-	auto object3DGroup = transparentRenderFaces.at(0)->object3DGroup;
+	auto object3DGroup = transparentRenderFaces[0]->object3DGroup;
 	auto object3D = dynamic_cast<Object3D*>(object3DGroup->object);
 	// model view matrix to be used with given transparent render faces
 	Matrix4x4 modelViewMatrix;
@@ -271,7 +271,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	Vector3 transformedNormal;
 	// render transparent faces
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
-		auto transparentRenderFace = transparentRenderFaces.at(i);
+		auto transparentRenderFace = transparentRenderFaces[i];
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
 		// determine if faces entity and so material did switch between last face and current face
 		if (facesEntity != &(*facesEntities)[facesEntityIdx]) {
@@ -348,7 +348,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	cameraMatrix.set(renderer->getModelViewMatrix());
 	// render faces entities
 	auto currentFrontFace = -1;
-	auto firstObject = objects.at(0);
+	auto firstObject = objects[0];
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
@@ -378,7 +378,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				// add to transparent render faces, if requested
 				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objects.at(objectIdx);
+					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
@@ -405,7 +405,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			bool materialUpdateOnly = false;
 			auto objectCount = objects.size();
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-				auto object = objects.at(objectIdx);
+				auto object = objects[objectIdx];
 				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 				// set up material on first object
@@ -539,7 +539,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	auto shadowMapping = engine->getShadowMapping();
 
 	// render faces entities
-	auto firstObject = objects.at(0);
+	auto firstObject = objects[0];
 
 	// all objects share the same object 3d group structure, so we just take the first one
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
@@ -568,7 +568,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// add to transparent render faces, if requested
 				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objects.at(objectIdx);
+					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
@@ -606,7 +606,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objectsToRender.at(objectIdx);
+					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 					//	check transparency via effect
@@ -902,7 +902,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	// find all keys which differentiate with effect colors and depth buffer
 	set<string> pseKeys;
 	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemEntityInternal* ppse = visiblePses.at(i);
+		PointsParticleSystemEntityInternal* ppse = visiblePses[i];
 		string pseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 		pseKeys.insert(pseKey);
 	}
@@ -913,12 +913,12 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		// iterate all pses
 		for (auto j = 0; j < visiblePses.size(); j++) {
 			// check if ppse belongs to current key, otherwise skip this pse
-			PointsParticleSystemEntityInternal* ppse = visiblePses.at(j);
+			PointsParticleSystemEntityInternal* ppse = visiblePses[j];
 			string innerPseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 			if (pseKey != innerPseKey) {
 				continue;
 			} else {
-				currentPse = visiblePses.at(j);
+				currentPse = visiblePses[j];
 				pseSort = ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false;
 			}
 			// merge ppse pool

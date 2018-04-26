@@ -245,7 +245,7 @@ LevelEditorObject* LevelEditorView::getSelectedObject()
 	if (selectedEntityIds.size() != 1)
 		return nullptr;
 
-	auto selectedObject = level->getObjectById(selectedEntityIds.at(0));
+	auto selectedObject = level->getObjectById(selectedEntityIds[0]);
 	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
@@ -625,7 +625,7 @@ void LevelEditorView::updateGUIElements()
 	levelEditorScreenController->setScreenCaption("Level Editor - " + Tools::getFileName(level->getFileName()));
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
@@ -929,7 +929,7 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 	if (selectedEntityIds.size() != 1)
 		return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 
 	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "leveleditor."))
 		return false;
@@ -1083,7 +1083,7 @@ void LevelEditorView::colorObject()
 	}
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
@@ -1117,7 +1117,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1150,7 +1150,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1182,7 +1182,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1247,7 +1247,7 @@ bool LevelEditorView::objectPropertyRemove(const string& name)
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
@@ -1268,7 +1268,7 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 {
 	if (selectedEntityIds.size() != 1) return;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return;
@@ -1292,7 +1292,7 @@ bool LevelEditorView::objectPropertySave(const string& oldName, const string& na
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
@@ -1308,7 +1308,7 @@ bool LevelEditorView::objectPropertyAdd()
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;

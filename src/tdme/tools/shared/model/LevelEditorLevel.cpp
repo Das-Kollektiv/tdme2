@@ -51,7 +51,7 @@ LevelEditorLevel::LevelEditorLevel()
 	lights.push_back(new LevelEditorLight(1));
 	lights.push_back(new LevelEditorLight(2));
 	lights.push_back(new LevelEditorLight(3));
-	auto light = lights.at(0);
+	auto light = lights[0];
 	light->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -125,7 +125,7 @@ int32_t LevelEditorLevel::getLightCount()
 
 LevelEditorLight* LevelEditorLevel::getLightAt(int32_t i)
 {
-	return lights.at(i);
+	return lights[i];
 }
 
 LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
@@ -326,7 +326,7 @@ int32_t LevelEditorLevel::getObjectCount()
 
 LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
 {
-	return objects.at(idx);
+	return objects[idx];
 }
 
 void LevelEditorLevel::update() {

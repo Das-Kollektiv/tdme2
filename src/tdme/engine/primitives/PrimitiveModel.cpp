@@ -236,9 +236,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				array<Vector3, 3> faceNormals;
 				ModelHelper::computeNormals(&faceVertices, &faceNormals);
@@ -253,9 +253,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				array<Vector3, 3> faceNormals;
 				ModelHelper::computeNormals(&faceVertices, &faceNormals);
@@ -368,9 +368,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				array<Vector3, 3> faceNormals;
 				ModelHelper::computeNormals(&faceVertices, &faceNormals);
@@ -384,9 +384,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				array<Vector3, 3> faceNormals;
 				ModelHelper::computeNormals(&faceVertices, &faceNormals);
@@ -445,9 +445,9 @@ Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id)
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
-				vertices.at(vertexIndex + 0),
-				vertices.at(vertexIndex + 1),
-				vertices.at(vertexIndex + 2)
+				vertices[vertexIndex + 0],
+				vertices[vertexIndex + 1],
+				vertices[vertexIndex + 2]
 			};
 			array<Vector3, 3> faceNormals;
 			ModelHelper::computeNormals(&faceVertices, &faceNormals);

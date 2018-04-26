@@ -61,7 +61,7 @@ public:
 	bool hasNext() {
 		if (vectorList.size() == 0) return false;
 		while (true == true) {
-			if (vectorList.at(vectorIdx)->size() == 0 || elementIdx == vectorList.at(vectorIdx)->size()) {
+			if (vectorList[vectorIdx]->size() == 0 || elementIdx == vectorList[vectorIdx]->size()) {
 				vectorIdx++;
 				elementIdx = 0;
 				if (vectorIdx == vectorList.size()) return false;
@@ -75,7 +75,7 @@ public:
 	 * Retrieves next element, hasNext must have been called before
 	 */
 	T next() {
-		return vectorList.at(vectorIdx)->at(elementIdx++);
+		return vectorList[vectorIdx]->at(elementIdx++);
 	}
 
 	/**

@@ -377,7 +377,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*
 		auto object = level->getObjectAt(i);
 		for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 			for (auto k = 0; k < rigidBodies.size(); k++) {
-				auto rigidBody = rigidBodies.at(k);
+				auto rigidBody = rigidBodies[k];
 				compareMutableString.set(object->getId());
 				compareMutableString.append(".bv.");
 				compareMutableString.append(j);

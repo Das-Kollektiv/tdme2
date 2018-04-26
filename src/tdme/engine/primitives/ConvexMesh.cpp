@@ -103,7 +103,7 @@ void ConvexMesh::createVertices()
 			// check if we already have this vertex
 			auto haveVertex = false;
 			for (auto k = 0; k < vertices.size(); k++) {
-				if (vertices.at(k).equals((*triangleVertices)[j]) == true) {
+				if (vertices[k].equals((*triangleVertices)[j]) == true) {
 					haveVertex = true;
 					break;
 				}

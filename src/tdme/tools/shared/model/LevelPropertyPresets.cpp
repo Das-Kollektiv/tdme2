@@ -93,17 +93,17 @@ LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string&
 			{
 				auto typeId = ((xmlType->Attribute("id")));
 				auto light = new LevelEditorLight(lightId++);
-				light->getAmbient().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "ambient").at(0)->GetText())));
-				light->getDiffuse().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "diffuse").at(0)->GetText())));
-				light->getSpecular().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "specular").at(0)->GetText())));
-				light->getPosition().set(Tools::convertToVector4((getChildrenByTagName(xmlType, "position").at(0)->GetText())));
-				light->setConstantAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "constant_attenuation").at(0)->GetText())));
-				light->setLinearAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "linear_attenuation").at(0)->GetText())));
-				light->setQuadraticAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "quadratic_attenuation").at(0)->GetText())));
-				light->getSpotTo().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_to").at(0)->GetText())));
-				light->getSpotDirection().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_direction").at(0)->GetText())));
-				light->setSpotExponent(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_exponent").at(0)->GetText())));
-				light->setSpotCutOff(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_cutoff").at(0)->GetText())));
+				light->getAmbient().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "ambient")[0]->GetText())));
+				light->getDiffuse().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "diffuse")[0]->GetText())));
+				light->getSpecular().set(Tools::convertToColor4((getChildrenByTagName(xmlType, "specular")[0]->GetText())));
+				light->getPosition().set(Tools::convertToVector4((getChildrenByTagName(xmlType, "position")[0]->GetText())));
+				light->setConstantAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "constant_attenuation")[0]->GetText())));
+				light->setLinearAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "linear_attenuation")[0]->GetText())));
+				light->setQuadraticAttenuation(Tools::convertToFloat((getChildrenByTagName(xmlType, "quadratic_attenuation")[0]->GetText())));
+				light->getSpotTo().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_to")[0]->GetText())));
+				light->getSpotDirection().set(Tools::convertToVector3((getChildrenByTagName(xmlType, "spot_direction")[0]->GetText())));
+				light->setSpotExponent(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_exponent")[0]->GetText())));
+				light->setSpotCutOff(Tools::convertToFloat((getChildrenByTagName(xmlType, "spot_cutoff")[0]->GetText())));
 				light->setEnabled(true);
 				lightPresets[typeId] = light;
 			}

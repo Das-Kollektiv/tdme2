@@ -44,7 +44,7 @@ public:
 			return;
 		}
 		// create point in pool
-		auto& transparentRenderPoint = transparentRenderPoints.at(poolIdx++);
+		auto& transparentRenderPoint = transparentRenderPoints[poolIdx++];
 		transparentRenderPoint.acquired = true;
 		transparentRenderPoint.point.set(point);
 		transparentRenderPoint.color.set(color);

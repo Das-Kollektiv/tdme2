@@ -99,7 +99,7 @@ private:
 			batchVBORenderers.push_back(batchVBORendererTriangles);
 		}
 		// try to add vertex
-		auto batchVBORendererTriangles = batchVBORenderers.at(batchVBORenderers.size() - 1);
+		auto batchVBORendererTriangles = batchVBORenderers[batchVBORenderers.size() - 1];
 		if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 			return;
 		// failed, acquire additionally one

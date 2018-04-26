@@ -172,7 +172,7 @@ void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /
 
 LevelEditorEntity* LevelEditorEntityLibrary::getEntityAt(int32_t idx)
 {
-	return entities.at(idx);
+	return entities[idx];
 }
 
 LevelEditorEntity* LevelEditorEntityLibrary::getEntity(int32_t id)

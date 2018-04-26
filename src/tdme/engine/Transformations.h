@@ -90,7 +90,7 @@ public:
 	 * @return rotation
 	 */
 	inline virtual Rotation& getRotation(const int idx) {
-		return rotations.at(idx);
+		return rotations[idx];
 	}
 
 	/**
