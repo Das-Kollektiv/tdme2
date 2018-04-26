@@ -5,17 +5,18 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
-#include <tdme/engine/Entity.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Quaternion.h>
 
 using std::string;
 
-using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
@@ -23,8 +24,10 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::math::Quaternion;
 
 /** 
  * Object 3D
