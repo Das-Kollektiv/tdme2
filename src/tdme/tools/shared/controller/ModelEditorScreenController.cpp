@@ -857,6 +857,13 @@ void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_
 	this->statsMaterialCount->getController()->setValue(MutableString(statsMaterialCount));
 }
 
+void ModelEditorScreenController::unsetStatistics()
+{
+	this->statsOpaqueFaces->getController()->setValue(MutableString());
+	this->statsTransparentFaces->getController()->setValue(MutableString());
+	this->statsMaterialCount->getController()->setValue(MutableString());
+}
+
 void ModelEditorScreenController::onQuit()
 {
 	TDMEModelEditor::getInstance()->quit();

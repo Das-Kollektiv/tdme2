@@ -127,9 +127,14 @@ void SharedModelEditorView::initModel()
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	ModelStatistics modelStatistics;
-	ModelUtilities::computeModelStatistics(entity->getModel(), &modelStatistics);
-	modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (currentModelObject != nullptr) {
+		ModelStatistics modelStatistics;
+		ModelUtilities::computeModelStatistics(currentModelObject->getModel(), &modelStatistics);
+		modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	} else {
+		modelEditorScreenController->unsetStatistics();
+	}
 	if (initModelRequestedReset == false) updateGUIElements();
 }
 

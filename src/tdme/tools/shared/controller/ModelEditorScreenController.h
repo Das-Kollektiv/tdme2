@@ -311,6 +311,11 @@ public:
 	 */
 	void setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount);
 
+	/**
+	 * Unset statistics
+	 */
+	void unsetStatistics();
+
 	/** 
 	 * On quit
 	 */
