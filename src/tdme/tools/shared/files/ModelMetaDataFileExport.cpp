@@ -114,7 +114,14 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEd
 	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) {
 		jLodLevelRoot["ry"] = lodLevel->getPlaneRotationY();
 	}
-
+	jLodLevelRoot["cmr"] = lodLevel->getColorMul().getRed();
+	jLodLevelRoot["cmg"] = lodLevel->getColorMul().getGreen();
+	jLodLevelRoot["cmb"] = lodLevel->getColorMul().getBlue();
+	jLodLevelRoot["cma"] = lodLevel->getColorMul().getAlpha();
+	jLodLevelRoot["car"] = lodLevel->getColorAdd().getRed();
+	jLodLevelRoot["cag"] = lodLevel->getColorAdd().getGreen();
+	jLodLevelRoot["cab"] = lodLevel->getColorAdd().getBlue();
+	jLodLevelRoot["caa"] = lodLevel->getColorAdd().getAlpha();
 	return jLodLevelRoot;
 }
 

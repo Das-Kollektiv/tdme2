@@ -280,6 +280,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
 	Vector3 objectScale(1.0f, 1.0f, 1.0f);
+	Color4 colorMul(1.0f, 1.0f, 1.0f, 1.0f);
+	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// particle system
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -294,16 +296,32 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 				model = entity->getModel();
 				break;
 			case 2:
-				model = entity->getLODLevel2() != nullptr?entity->getLODLevel2()->getModel():nullptr;
-				break;
+				{
+					auto lodLevelEntity = entity->getLODLevel2();
+					if (lodLevelEntity != nullptr) {
+						model = lodLevelEntity->getModel();
+						colorMul.set(lodLevelEntity->getColorMul());
+						colorAdd.set(lodLevelEntity->getColorAdd());
+					}
+					break;
+				}
 			case 3:
-				model = entity->getLODLevel3() != nullptr?entity->getLODLevel3()->getModel():nullptr;
-				break;
+				{
+					auto lodLevelEntity = entity->getLODLevel3();
+					if (lodLevelEntity != nullptr) {
+						model = lodLevelEntity->getModel();
+						colorMul.set(lodLevelEntity->getColorMul());
+						colorAdd.set(lodLevelEntity->getColorAdd());
+					}
+					break;
+				}
 		}
 		entityBoundingBox = entity->getModel()->getBoundingBox();
 		if (model != nullptr) {
 			modelEntity = new Object3D("model", model);
 			modelEntity->setDynamicShadowingEnabled(true);
+			modelEntity->getEffectColorMul().set(colorMul);
+			modelEntity->getEffectColorAdd().set(colorAdd);
 			engine->addEntity(modelEntity);
 		}
 	}

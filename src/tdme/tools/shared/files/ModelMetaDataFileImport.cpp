@@ -493,5 +493,21 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 			)
 		);
 	}
+	lodLevel->setColorAdd(
+		Color4(
+			static_cast<float>(jLodLevel["car"].getDouble()),
+			static_cast<float>(jLodLevel["cag"].getDouble()),
+			static_cast<float>(jLodLevel["cab"].getDouble()),
+			static_cast<float>(jLodLevel["caa"].getDouble())
+		)
+	);
+	lodLevel->setColorMul(
+		Color4(
+			static_cast<float>(jLodLevel["cmr"].getDouble()),
+			static_cast<float>(jLodLevel["cmg"].getDouble()),
+			static_cast<float>(jLodLevel["cmb"].getDouble()),
+			static_cast<float>(jLodLevel["cma"].getDouble())
+		)
+	);
 	return lodLevel;
 }

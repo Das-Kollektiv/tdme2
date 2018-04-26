@@ -4,6 +4,7 @@
 
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Color4.h>
 
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
@@ -11,6 +12,7 @@ using std::string;
 
 using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
+using tdme::engine::model::Color4;
 
 LevelEditorEntityLODLevel::LevelEditorEntityLODLevel(
 	LODObject3D::LODLevelType type,
@@ -24,7 +26,8 @@ LevelEditorEntityLODLevel::LevelEditorEntityLODLevel(
 	model(model),
 	minDistance(minDistance),
 	planeRotationY(planeRotationY) {
-
+	colorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
+	colorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 LevelEditorEntityLODLevel::~LevelEditorEntityLODLevel() {
@@ -70,4 +73,20 @@ LODObject3D::LODLevelType LevelEditorEntityLODLevel::getType() const {
 
 void LevelEditorEntityLODLevel::setType(LODObject3D::LODLevelType type) {
 	this->type = type;
+}
+
+const Color4& LevelEditorEntityLODLevel::getColorAdd() const {
+	return colorAdd;
+}
+
+void LevelEditorEntityLODLevel::setColorAdd(const Color4& colorAdd) {
+	this->colorAdd = colorAdd;
+}
+
+const Color4& LevelEditorEntityLODLevel::getColorMul() const {
+	return colorMul;
+}
+
+void LevelEditorEntityLODLevel::setColorMul(const Color4& colorMul) {
+	this->colorMul = colorMul;
 }

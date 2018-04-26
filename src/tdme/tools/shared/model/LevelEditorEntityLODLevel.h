@@ -3,13 +3,16 @@
 #include <string>
 
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 
 using std::string;
 
 using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
+using tdme::engine::model::Color4;
 
 /** 
  * Level Editor Entity LOD Level
@@ -24,7 +27,8 @@ private:
 	Model* model {  };
 	float minDistance { 0.0f };
 	float planeRotationY { 0.0f };
-
+	Color4 colorMul {  };
+	Color4 colorAdd {  };
 public:
 	/**
 	 * Public constructor
@@ -101,5 +105,27 @@ public:
 	 * @param plane rotation y
 	 */
 	void setPlaneRotationY(float planeRotationY);
+
+	/**
+	 * @return color add
+	 */
+	const Color4& getColorAdd() const;
+
+	/**
+	 * Set color add
+	 * @param color add
+	 */
+	void setColorAdd(const Color4& colorAdd);
+
+	/**
+	 * @return color mul
+	 */
+	const Color4& getColorMul() const;
+
+	/**
+	 * Set color mul
+	 * @param color mul
+	 */
+	void setColorMul(const Color4& colorMul);
 
 };

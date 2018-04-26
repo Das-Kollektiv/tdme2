@@ -1199,6 +1199,18 @@
 										<space width="5" />
 										<input id="lod_plane_rotation_y" name="lod_plane_rotation_y" width="150" height="auto" text="0.0" />
 									</layout>
+									<space height="5" />
+									<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="LOD color add" width="140" height="auto"/>
+										<space width="5" />
+										<input id="lod_color_add" name="lod_color_add" width="455" height="auto" text="0.0, 0.0, 0.0, 0.0" />
+									</layout>
+									<space height="5" />
+									<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="LOD color mul" width="140" height="auto"/>
+										<space width="5" />
+										<input id="lod_color_mul" name="lod_color_mul" width="455" height="auto" text="1.0, 1.0, 1.0, 1.0" />
+									</layout>
 									<space height="20" />
 									<layout width="100%" height="auto" alignment="none" horizontal-align="center">
 										<button id="button_lod_apply" name="button_lod_apply" text="Apply" width="auto" height="auto" />
