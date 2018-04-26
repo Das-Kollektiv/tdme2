@@ -635,7 +635,7 @@ bool CollisionDetection::doCollide(Triangle* triangle, OrientedBoundingBox* obb,
 	triangle1Edge1.set((*triangleVertices)[1]).sub((*triangleVertices)[0]).normalize();
 	triangle1Edge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
 	triangle1Edge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
-	Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal).normalize();
+	triangle1Normal.set(triangle->getNormal());
 	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxis.set(triangle1Normal), satPenetration) == false) return false;
 	SAT_DETERMINE_BESTFIT();
 	if (SeparatingAxisTheorem::doSpanIntersect(triangleVertices, obbVertices, satAxis.set((*obbAxes)[0]), satPenetration) == false) return false;
@@ -744,7 +744,7 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh, OrientedBoundingBox* obb, c
 		triangle1Edge1.set((*triangleVertices)[1]).sub((*triangleVertices)[0]).normalize();
 		triangle1Edge2.set((*triangleVertices)[2]).sub((*triangleVertices)[1]).normalize();
 		triangle1Edge3.set((*triangleVertices)[0]).sub((*triangleVertices)[2]).normalize();
-		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal).normalize();
+		triangle1Normal.set(triangle.getNormal());
 
 		if (SeparatingAxisTheorem::doSpanIntersect(meshVertices, obbVertices, satAxis.set(triangle1Normal), satPenetration) == false) return false;
 		SAT_DETERMINE_BESTFIT();
@@ -820,7 +820,7 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, con
 	triangle1Edge1.set((*triangle1Vertices)[1]).sub((*triangle1Vertices)[0]).normalize();
 	triangle1Edge2.set((*triangle1Vertices)[2]).sub((*triangle1Vertices)[1]).normalize();
 	triangle1Edge3.set((*triangle1Vertices)[0]).sub((*triangle1Vertices)[2]).normalize();
-	Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal).normalize();
+	triangle1Normal.set(triangle1->getNormal());
 
 	Vector3 triangle2Edge1;
 	Vector3 triangle2Edge2;
@@ -831,7 +831,7 @@ bool CollisionDetection::doCollide(Triangle* triangle1, Triangle* triangle2, con
 	triangle2Edge1.set((*triangle2Vertices)[1]).sub((*triangle2Vertices)[0]).normalize();
 	triangle2Edge2.set((*triangle2Vertices)[2]).sub((*triangle2Vertices)[1]).normalize();
 	triangle2Edge3.set((*triangle2Vertices)[0]).sub((*triangle2Vertices)[2]).normalize();
-	Vector3::computeCrossProduct(triangle2Edge1, triangle2Edge2, triangle2Normal).normalize();
+	triangle2Normal.set(triangle2->getNormal());
 
 	// SAT best fit
 	bool satHaveBestFit = false;
@@ -908,13 +908,23 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 	float satPenetrationBestFit = 0.0f;
 	float satPenetrationBestFitTerrain = 0.0f;
 	Vector3 satAxis;
+	float satAxisOnNormalLength;
+	float satAxisOnNormalLengthBestFit = 0.0f;
 	float satPenetration;
 	bool terrain = mesh1->isTerrain() == true || mesh2->isTerrain() == true;
 
 	#define SAT_DETERMINE_BESTFIT() \
 		if (Float::isNaN(satPenetration) == false) { \
-			if (terrain == true && Math::abs(satAxis.getY()) > 0.2f && \
-				(satHaveBestFitTerrain == false || -satPenetration > satPenetrationBestFitTerrain)) { \
+			if (mesh1->isTerrain() == true && \
+				(satAxisOnNormalLength = Vector3::computeDotProduct(satAxis, mesh1->getTerrainNormal())) < satAxisOnNormalLengthBestFit) { \
+				satAxisOnNormalLengthBestFit = satAxisOnNormalLength; \
+				satHaveBestFitTerrain = true; \
+				satAxisBestFitTerrain.set(satAxis); \
+				satPenetrationBestFitTerrain = -satPenetration; \
+			} else \
+			if (mesh2->isTerrain() == true && \
+				(satAxisOnNormalLength = Vector3::computeDotProduct(satAxis, mesh2->getTerrainNormal())) < satAxisOnNormalLengthBestFit) { \
+				satAxisOnNormalLengthBestFit = satAxisOnNormalLength; \
 				satHaveBestFitTerrain = true; \
 				satAxisBestFitTerrain.set(satAxis); \
 				satPenetrationBestFitTerrain = -satPenetration; \
@@ -939,12 +949,12 @@ bool CollisionDetection::doCollide(ConvexMesh* mesh1, ConvexMesh* mesh2, const V
 			triangle1Edge1.set((*triangle1Vertices)[1]).sub((*triangle1Vertices)[0]).normalize();
 			triangle1Edge2.set((*triangle1Vertices)[2]).sub((*triangle1Vertices)[1]).normalize();
 			triangle1Edge3.set((*triangle1Vertices)[0]).sub((*triangle1Vertices)[2]).normalize();
-			Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, triangle1Normal).normalize();
+			triangle1Normal.set(triangle1.getNormal());
 			auto triangle2Vertices = triangle2.getVertices();
 			triangle2Edge1.set((*triangle2Vertices)[1]).sub((*triangle2Vertices)[0]).normalize();
 			triangle2Edge2.set((*triangle2Vertices)[2]).sub((*triangle2Vertices)[1]).normalize();
 			triangle2Edge3.set((*triangle2Vertices)[0]).sub((*triangle2Vertices)[2]).normalize();
-			Vector3::computeCrossProduct(triangle2Edge1, triangle2Edge2, triangle2Normal).normalize();
+			triangle2Normal.set(triangle2.getNormal());
 
 			if (SeparatingAxisTheorem::doSpanIntersect(mesh1Vertices, mesh2Vertices, satAxis.set(triangle1Normal), satPenetration) == false) return false;
 			SAT_DETERMINE_BESTFIT();

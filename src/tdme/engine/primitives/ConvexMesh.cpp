@@ -116,15 +116,6 @@ void ConvexMesh::createVertices()
 	}
 }
 
-bool ConvexMesh::isTerrain() {
-	return terrain;
-}
-
-vector<Triangle>* ConvexMesh::getTriangles()
-{
-	return &triangles;
-}
-
 void ConvexMesh::fromBoundingVolume(BoundingVolume* original)
 {
 	// check for same type of original

@@ -196,6 +196,15 @@ void Triangle::update()
 			if (vertex[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = vertex[i];
 		}
 	}
+
+	// compute normal
+	Vector3 triangle1Edge1;
+	Vector3 triangle1Edge2;
+	triangle1Edge1.set(vertices[1]).sub(vertices[0]).normalize();
+	triangle1Edge2.set(vertices[2]).sub(vertices[1]).normalize();
+	Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, normal).normalize();
+
+	//
 	boundingBox.update();
 }
 

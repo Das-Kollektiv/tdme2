@@ -55,19 +55,23 @@ public:
 	 * Create terrain convex meshes
 	 * @param model
 	 * @param convex meshes
-	 * @param height
+	 * @param terrain height
 	 */
 	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight = 0.75f);
 
 	/**
 	 * @return is terrain
 	 */
-	bool isTerrain();
+	inline bool isTerrain() {
+		return terrain;
+	}
 
 	/** 
 	 * @return triangles
 	 */
-	vector<Triangle>* getTriangles();
+	inline vector<Triangle>* getTriangles() {
+		return &triangles;
+	}
 
 	/** 
 	 * @return mesh vertices
@@ -94,6 +98,10 @@ public:
 	void update() override;
 	BoundingVolume* clone() const override;
 
+	inline const Vector3& getTerrainNormal() {
+		return triangles[0].getNormal();
+	}
+
 	/**
 	 * Public constructor
 	 */
@@ -103,6 +111,7 @@ public:
 	 * Public constructor
 	 * @param triangles
 	 * @param is terrain
+	 * @param terrain height
 	 */
 	ConvexMesh(const vector<Triangle>* triangles, bool terrain = false, float terrainHeight = 0.0f);
 
@@ -110,6 +119,7 @@ public:
 	 * Public constructor
 	 * @param model
 	 * @param is terrain
+	 * @param terrain height
 	 */
 	ConvexMesh(Object3DModel* model, bool terrain = false, float terrainHeight = 0.0f);
 };
