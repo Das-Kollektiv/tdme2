@@ -51,7 +51,7 @@ TDMEModelEditor::~TDMEModelEditor() {
 void TDMEModelEditor::main(int argc, char** argv)
 {
 	Console::println(string("TDMEModelEditor "+ VERSION));
-	Console::println(string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 
 	TDMEModelEditor tdmeLevelEditor;

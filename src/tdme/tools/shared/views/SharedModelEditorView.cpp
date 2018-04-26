@@ -203,7 +203,7 @@ void SharedModelEditorView::display()
 void SharedModelEditorView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelEditorScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
+		modelEditorScreenController->setScreenCaption("Model Editor - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
 		auto preset = entity->getProperty("preset");
 		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -216,7 +216,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
 	} else {
-		modelEditorScreenController->setScreenCaption("Model Viewer - no entity loaded");
+		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
 		modelEditorScreenController->unsetEntityProperties();
 		modelEditorScreenController->unsetEntityData();
 		modelEditorScreenController->unsetPivot();

@@ -18,7 +18,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * TDME Model Viewer View
+ * Trigger view
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -158,7 +158,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param pop ups
-	 * @param model viewer screen controller
+	 * @param model editor screen controller
 	 */
 	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelEditorScreenController, PopUps* popUps);
 };
