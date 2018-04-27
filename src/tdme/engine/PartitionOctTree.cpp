@@ -102,6 +102,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		return;
 	}
 	// remove object from assigned partitions
+	// TODO: remove tree root sub nodes as well not only empty root nodes
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
 		auto partitionTreeNode = (*objectPartitionsVector)[lastIdx];
