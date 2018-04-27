@@ -75,7 +75,7 @@ public:
 	 * Retrieves next element, hasNext must have been called before
 	 */
 	T next() {
-		return vectorList[vectorIdx]->at(elementIdx++);
+		return (*vectorList[vectorIdx])[elementIdx++];
 	}
 
 	/**
