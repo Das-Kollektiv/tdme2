@@ -41,7 +41,7 @@ private:
 public:
 	const vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
 	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) override;
+	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) override;
 
 	/**
 	 * Public constructor

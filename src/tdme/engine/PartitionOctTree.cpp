@@ -44,9 +44,6 @@ constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
 
 PartitionOctTree::PartitionOctTree() 
 {
-	this->sideVector.set(1.0f, 0.0f, 0.0f);
-	this->upVector.set(0.0f, 1.0f, 0.0f);
-	this->forwardVector.set(0.0f, 0.0f, 1.0f);
 	reset();
 }
 
@@ -61,72 +58,6 @@ void PartitionOctTree::reset()
 	this->treeRoot.parent = nullptr;
 }
 
-void PartitionOctTree::updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity)
-{
-	// key
-	string key = to_string(x) + "," + to_string(y) + "," + to_string(z);
-	auto storedNodeIt = parent->subNodesByCoordinate.find(key);
-	auto storedNode = storedNodeIt != parent->subNodesByCoordinate.end()?storedNodeIt->second:nullptr;
-
-	// check if exists
-	if (storedNode == nullptr) {
-		// if not add
-		PartitionOctTree_PartitionTreeNode node;
-		node.partitionSize = partitionSize;
-		node.x = x;
-		node.y = y;
-		node.z = z;
-		node.parent = parent;
-		node.bv.getMin().set(
-			x * partitionSize,
-			y * partitionSize,
-			z * partitionSize
-		);
-		node.bv.getMax().set(
-			x * partitionSize + partitionSize,
-			y * partitionSize + partitionSize,
-			z * partitionSize + partitionSize
-		);
-		node.bv.update();
-		// register in parent sub nodes
-		parent->subNodes.push_back(node);
-		storedNode = &parent->subNodes.back();
-		// register in parent sub nodes by coordinate, if root node
-		parent->subNodesByCoordinate[key] = storedNode;
-	}
-
-	// create sub nodes
-	if (partitionSize > PARTITION_SIZE_MIN) {
-		// frustum bounding box
-		auto boundingBox = entity->getBoundingBoxTransformed();
-		// create partitions if not yet done
-		auto minXPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getX() - x * partitionSize) / (partitionSize / 2.0f)));
-		auto minYPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getY() - y * partitionSize) / (partitionSize / 2.0f)));
-		auto minZPartition = static_cast< int32_t >((Math::floor(boundingBox->getMin().getZ() - z * partitionSize) / (partitionSize / 2.0f)));
-		auto maxXPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getX() - x * partitionSize) / (partitionSize / 2.0f)));
-		auto maxYPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getY() - y * partitionSize) / (partitionSize / 2.0f)));
-		auto maxZPartition = static_cast< int32_t >((Math::floor(boundingBox->getMax().getZ() - z * partitionSize) / (partitionSize / 2.0f)));
-		minXPartition = Math::clamp(minXPartition, 0, 1);
-		minYPartition = Math::clamp(minYPartition, 0, 1);
-		minZPartition = Math::clamp(minZPartition, 0, 1);
-		maxXPartition = Math::clamp(maxXPartition, 0, 1);
-		maxYPartition = Math::clamp(maxYPartition, 0, 1);
-		maxZPartition = Math::clamp(maxZPartition, 0, 1);
-		for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++)
-		for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
-		for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
-			updatePartitionTree(
-				storedNode,
-				static_cast< int32_t >((x * partitionSize) / (partitionSize / 2.0f) + xPartition),
-				static_cast< int32_t >((y * partitionSize) / (partitionSize / 2.0f) + yPartition),
-				static_cast< int32_t >((z * partitionSize) / (partitionSize / 2.0f) + zPartition),
-				partitionSize / 2.0f,
-				entity
-			);
-		}
-	}
-}
-
 void PartitionOctTree::addEntity(Entity* entity)
 {
 	// update if already exists
@@ -138,7 +69,7 @@ void PartitionOctTree::addEntity(Entity* entity)
 	if (thisEntityPartitions != nullptr && thisEntityPartitions->empty() == false) {
 		removeEntity(entity);
 	}
-	// frustum bounding box
+    // frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
 	// find, create root nodes if not exists
 	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getX() / PARTITION_SIZE_MAX));
@@ -152,13 +83,6 @@ void PartitionOctTree::addEntity(Entity* entity)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
 		updatePartitionTree(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX, entity);
 	}
-	// add entity to tree
-	addToPartitionTree(entity, boundingBox);
-}
-
-void PartitionOctTree::updateEntity(Entity* entity)
-{
-	addEntity(entity);
 }
 
 void PartitionOctTree::removeEntity(Entity* entity)
@@ -204,37 +128,6 @@ void PartitionOctTree::removeEntity(Entity* entity)
 	entityPartitionNodes.erase(objectPartitionsVectorIt);
 }
 
-bool PartitionOctTree::isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* node)
-{
-	// lowest level node has objects attached?
-	if (node->partitionEntities.size() > 0) {
-		return false;
-	} else {
-		for (auto& subNode: node->subNodes) {
-			if (isPartitionNodeEmpty(&subNode) == false)
-				return false;
-
-		}
-		return true;
-	}
-}
-
-void PartitionOctTree::removePartitionNode(PartitionOctTree_PartitionTreeNode* node)
-{
-	// lowest level node has objects attached?
-	if (node->partitionEntities.size() > 0) {
-		Console::println("PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
-		node->partitionEntities.clear();
-	} else {
-		// otherwise check top level node sub nodes
-		for (auto& subNode: node->subNodes) {
-			removePartitionNode(&subNode);
-		}
-		node->subNodesByCoordinate.clear();
-		node->subNodes.clear();
-	}
-}
-
 vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
@@ -246,73 +139,19 @@ vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
 	return &visibleEntities;
 }
 
-void PartitionOctTree::addToPartitionTree(PartitionOctTree_PartitionTreeNode* node, Entity* entity, BoundingBox* cbv)
-{
-	if (CollisionDetection::doCollideAABBvsAABBFast(&node->bv, cbv) == false) {
-		return;
-	}
-	// if this node already has the partition cbvs add it to the iterator
-	if (node->partitionSize == PARTITION_SIZE_MIN) {
-		node->partitionEntities.push_back(entity);
-		entityPartitionNodes[entity->getId()].push_back(node);
-	} else
-		// otherwise check sub nodes
-	if (node->subNodes.size() > 0) {
-		for (auto& subNode: node->subNodes) {
-			addToPartitionTree(&subNode, entity, cbv);
-		}
-	}
-}
-
-void PartitionOctTree::addToPartitionTree(Entity* entity, BoundingBox* cbv)
-{
-	for (auto& subNode: treeRoot.subNodes) {
-		addToPartitionTree(&subNode, entity, cbv);
-	}
-}
-
-int32_t PartitionOctTree::doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv, VectorIteratorMultiple<Entity*>& entityIterator)
-{
-	// check if given cbv collides with partition node bv
-	if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
-		return 1;
-	}
-	// if this node already has the partition cbvs add it to the iterator
-	if (node->partitionEntities.size() > 0) {
-		entityIterator.addVector(&node->partitionEntities);
-		return 1;
-	} else
-	// otherwise check sub nodes
-	if (node->subNodes.size() > 0) {
-		auto lookUps = 1;
-		for (auto& subNode: node->subNodes) {
-			lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv, entityIterator);
-		}
-		return lookUps;
-	}
-	return 0;
-}
-
 VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
 {
-	auto& center = cbv->getCenter();
-	halfExtension.set(cbv->computeDimensionOnAxis(sideVector), cbv->computeDimensionOnAxis(upVector), cbv->computeDimensionOnAxis(forwardVector)).scale(0.5f);
-	boundingBox.getMin().set(center);
-	boundingBox.getMin().sub(halfExtension);
-	boundingBox.getMax().set(center);
-	boundingBox.getMax().add(halfExtension);
-	boundingBox.update();
 	entityIterator.clear();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox, entityIterator);
+		lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv->getBoundingBox());
 	}
 	return &entityIterator;
 }
 
-VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center, const Vector3& halfExtension)
 {
-	halfExtension.set(0.2f, 0.2f, 0.2f).scale(0.5f);
+	BoundingBox boundingBox;
 	boundingBox.getMin().set(center);
 	boundingBox.getMin().sub(halfExtension);
 	boundingBox.getMax().set(center);
@@ -321,7 +160,7 @@ VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector
 	entityIterator.clear();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox, entityIterator);
+		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox);
 	}
 	return &entityIterator;
 }
