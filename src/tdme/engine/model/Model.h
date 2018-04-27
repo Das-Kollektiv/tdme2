@@ -31,10 +31,13 @@ class tdme::engine::model::Model final
 	friend class Group;
 
 public:
+	enum AuthoringTool {AUTHORINGTOOL_UNKNOWN, AUTHORINGTOOL_BLENDER};
+
 	static string ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
 
 private:
+	AuthoringTool authoringTool;
 	string id {  };
 	string name {  };
 	UpVector* upVector {  };
@@ -71,6 +74,11 @@ private:
 	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 public:
+
+	/**
+	 * @return authoring tool
+	 */
+	AuthoringTool getAuthoringTool();
 
 	/** 
 	 * @return model id
@@ -195,8 +203,9 @@ public:
 	 * @param up vector
 	 * @param rotation order
 	 * @param bounding box
+	 * @param authoring tool
 	 */
-	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool = AUTHORINGTOOL_UNKNOWN);
 
 	/**
 	 * Deconstructor

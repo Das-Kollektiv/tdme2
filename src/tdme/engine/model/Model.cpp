@@ -35,7 +35,7 @@ string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";
 
 constexpr float Model::FPS_DEFAULT;
 
-Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
+Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool)
 {
 	this->id = id;
 	this->name = name;
@@ -45,6 +45,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
+	this->authoringTool = authoringTool;
 }
 
 Model::~Model() {
@@ -63,6 +64,10 @@ void Model::deleteSubGroups(map<string, Group*>* subGroups) {
 		deleteSubGroups(it->second->getSubGroups());
 		delete it->second;
 	}
+}
+
+Model::AuthoringTool Model::getAuthoringTool() {
+	return authoringTool;
 }
 
 const string& Model::getName()

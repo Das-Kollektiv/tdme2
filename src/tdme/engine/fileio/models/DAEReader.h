@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -21,7 +22,6 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
@@ -40,7 +40,6 @@ using tdme::ext::tinyxml::TiXmlElement;
  */
 class tdme::engine::fileio::models::DAEReader final
 {
-	friend class DAEReader_AuthoringTool;
 	friend class DAEReader_determineDisplacementFilename_1;
 
 private:
@@ -67,7 +66,7 @@ private:
 	 * @param xml root
 	 * @return authoring tool
 	 */
-	static DAEReader_AuthoringTool* getAuthoringTool(TiXmlElement* xmlRoot);
+	static Model::AuthoringTool getAuthoringTool(TiXmlElement* xmlRoot);
 
 	/** 
 	 * Get Up vector
@@ -93,7 +92,6 @@ private:
 
 	/** 
 	 * Read a DAE visual scene node
-	 * @param authoring tool
 	 * @param path name
 	 * @param model
 	 * @param parent group
@@ -102,11 +100,10 @@ private:
 	 * @param frames per second
 	 * @return group
 	 */
-	static Group* readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Group* readVisualSceneNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a DAE visual scene group node
-	 * @param authoring tool
 	 * @param path name
 	 * @param model
 	 * @param parent group
@@ -116,11 +113,10 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static Group* readNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
+	static Group* readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a instance controller
-	 * @param authoring tool
 	 * @param path name
 	 * @param model
 	 * @param parent group
@@ -130,11 +126,10 @@ private:
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
+	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a geometry
-	 * @param authoring tools
 	 * @param path name
 	 * @param model
 	 * @param group
@@ -143,18 +138,17 @@ private:
 	 * @param material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
-	 * @param authoring tool
 	 * @param path name
 	 * @param model
 	 * @param xml root
 	 * @param xml node id
 	 * @return material
 	 */
-	static Material* readMaterial(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId);
+	static Material* readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 

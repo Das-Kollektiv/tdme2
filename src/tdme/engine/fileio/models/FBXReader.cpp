@@ -87,8 +87,9 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName + " into scene");
 	}
 
-	Console::println("FBXReader::read(): triangulating FBX");
+	Console::println("FBXReader::read(): Authoring program: " + string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()));
 
+	Console::println("FBXReader::read(): triangulating FBX");
 	// triangulate
 	FbxGeometryConverter fbxGeometryConverter(fbxManager);
 	fbxGeometryConverter.Triangulate(fbxScene, true);
@@ -101,7 +102,10 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		fileName,
 		getSceneUpVector(fbxScene),
 		getSceneRotationOrder(fbxScene),
-		nullptr
+		nullptr,
+		string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()).find("Blender") != -1?
+			Model::AUTHORINGTOOL_BLENDER:
+			Model::AUTHORINGTOOL_UNKNOWN
 	);
 
 	// set up model import matrix

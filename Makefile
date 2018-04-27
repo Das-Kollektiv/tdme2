@@ -130,7 +130,6 @@ SRCS = \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
-	src/tdme/engine/fileio/models/DAEReader_AuthoringTool.cpp \
 	src/tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.cpp \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
 	src/tdme/engine/fileio/models/TMReader.cpp \
