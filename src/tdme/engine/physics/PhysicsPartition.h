@@ -64,7 +64,7 @@ struct tdme::engine::physics::PhysicsPartition
 	 * @param cbv
 	 * @return objects near to cbv
 	 */
-	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center) = 0;
+	virtual VectorIteratorMultiple<RigidBody*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.01f)) = 0;
 
 	/**
 	 * Destructor
