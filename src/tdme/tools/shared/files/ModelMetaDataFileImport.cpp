@@ -492,6 +492,7 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 				FileSystem::getInstance()->getFileName(modelFileName)
 			)
 		);
+		lodLevel->setFileName(modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName));
 	}
 	lodLevel->setColorAdd(
 		Color4(
