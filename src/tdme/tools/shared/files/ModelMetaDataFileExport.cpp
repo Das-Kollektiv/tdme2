@@ -161,7 +161,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
 				lodLevel->getModel() != nullptr))) {
 				//
-				jEntityRoot["ll" + to_string(lodLevelIdx)] = exportLODLevelToJSON(lodLevel++);
+				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
 			}
 		}
 		{
@@ -172,7 +172,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
 				lodLevel->getModel() != nullptr))) {
 				//
-				jEntityRoot["ll" + to_string(lodLevelIdx)] = exportLODLevelToJSON(lodLevel++);
+				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
 			}
 		}
 	}
