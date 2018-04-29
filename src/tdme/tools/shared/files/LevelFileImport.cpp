@@ -317,6 +317,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		modelImportRotationMatrix.multiply(scale, scale);
 		modelImportRotationMatrix.multiply(rotation, rotation);
 		model->getImportTransformationsMatrix().multiply(translation, translation);
+
 		ModelHelper::cloneGroup(group, model);
 		if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
 			model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
@@ -328,6 +329,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		ModelUtilities::computeModelStatistics(model, &modelStatistics);
 		if (modelStatistics.opaqueFaceCount == 0 && modelStatistics.transparentFaceCount == 0) {
 			entityType = LevelEditorEntity_EntityType::EMPTY;
+			delete model;
 		}
 		LevelEditorEntity* levelEditorEntity = nullptr;
 		if (entityType == LevelEditorEntity_EntityType::MODEL) {
@@ -349,6 +351,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 					modelPathName,
 					modelFileName
 				  );
+				delete model;
 				levelEditorEntity = entityLibrary->addModel(
 					groupIdx++,
 					modelName,
@@ -366,6 +369,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			levelEditorEntity = emptyEntity;
 		} else {
 			Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
+			delete model;
 			continue;
 		}
 		Transformations levelEditorObjectTransformations;
@@ -383,9 +387,14 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		);
 		level->addObject(object);
 	}
+
+	// export to tl
 	LevelFileExport::export_(
 		pathName,
 		fileName + ".tl",
 		level
 	);
+
+	//
+	delete levelModel;
 }

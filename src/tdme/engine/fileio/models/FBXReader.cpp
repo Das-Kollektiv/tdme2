@@ -405,7 +405,13 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						static_cast<float>(fbxDouble3.Get()[0]),
 						static_cast<float>(fbxDouble3.Get()[1]),
 						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f - static_cast<float>(fbxDouble)
+						model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							):
+							1.0f - static_cast<float>(fbxDouble)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
 					material->getSpecularColor().set(

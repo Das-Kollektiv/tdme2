@@ -148,9 +148,9 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 					);
 				}
 				delete diffuseTexture;
-				delete transparencyTexture;
 				diffuseTexture = diffuseTextureWithTransparency;
 			}
+			delete transparencyTexture;
 		}
 	}
 	checkDiffuseTextureTransparency();
