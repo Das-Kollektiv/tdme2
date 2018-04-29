@@ -54,10 +54,6 @@ public:
 	void update() override;
 	BoundingVolume* clone() const override;
 
-	inline const Vector3& getNormal() {
-		return normal;
-	}
-
 	/**
 	 * Public constructor
 	 */
@@ -74,6 +70,5 @@ public:
 private:
 	vector<Vector3> vertices {  };
 	Vector3 center {  };
-	Vector3 normal {  };
 	BoundingBox boundingBox;
 };

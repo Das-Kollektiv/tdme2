@@ -98,10 +98,6 @@ public:
 	void update() override;
 	BoundingVolume* clone() const override;
 
-	inline const Vector3& getTerrainNormal() {
-		return triangles[0].getNormal();
-	}
-
 	/**
 	 * Public constructor
 	 */

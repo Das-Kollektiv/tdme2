@@ -55,7 +55,6 @@ void Triangle::fromBoundingVolume(BoundingVolume* original)
 		vertices[i].set(triangle->vertices[i]);
 	center = triangle->center;
 	boundingBox = triangle->boundingBox;
-	normal = triangle->normal;
 
 }
 
@@ -201,13 +200,6 @@ void Triangle::update()
 
 	//
 	boundingBox.update();
-
-	// compute normal
-	Vector3 triangle1Edge1;
-	Vector3 triangle1Edge2;
-	triangle1Edge1.set(vertices[1]).sub(vertices[0]).normalize();
-	triangle1Edge2.set(vertices[2]).sub(vertices[1]).normalize();
-	Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, normal).normalize();
 }
 
 BoundingVolume* Triangle::clone() const
