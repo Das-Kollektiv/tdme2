@@ -23,6 +23,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
 using std::map;
@@ -49,6 +50,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
 {
@@ -449,26 +451,57 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 	TextureCoordinate textureCoordinate0;
 	TextureCoordinate textureCoordinate1;
 	TextureCoordinate textureCoordinate2;
+	Vector3 tangent0;
+	Vector3 tangent1;
+	Vector3 tangent2;
+	Vector3 bitangent0;
+	Vector3 bitangent1;
+	Vector3 bitangent2;
 
 	Vector3 vertex0Transformed;
 	Vector3 vertex1Transformed;
 	Vector3 vertex2Transformed;
 
+	auto sourceGroupId = sourceGroup->getModel()->getId();
+	auto sourceGroupName = sourceGroup->getModel()->getName();
+
+	// TODO: maybe check if id and group do have real file endings like .tm, .dae, .fbx or something
+	if (StringUtils::lastIndexOf(sourceGroupId, '.') != -1) {
+		sourceGroupId = StringUtils::substring(sourceGroupId, 0, StringUtils::lastIndexOf(sourceGroupId, '.') - 1);
+	}
+	if (StringUtils::lastIndexOf(sourceGroupName, '.') != -1) {
+		sourceGroupName = StringUtils::substring(sourceGroupName, 0, StringUtils::lastIndexOf(sourceGroupName, '.') - 1);
+	}
+
 	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
+		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
+		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 		for (auto& face: *facesEntity.getFaces()) {
 			// get face vertices and such
 			auto& vertexIndices = *face.getVertexIndices();
 			auto& normalIndices = *face.getNormalIndices();
 			auto& textureCoordinatesIndices = *face.getTextureCoordinateIndices();
+			auto& tangentIndices = *face.getTangentIndices();
+			auto& bitangentIndices = *face.getBitangentIndices();
 			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
 			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
 			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
 			normal0.set((*sourceGroup->getNormals())[normalIndices[0]]);
 			normal1.set((*sourceGroup->getNormals())[normalIndices[1]]);
 			normal2.set((*sourceGroup->getNormals())[normalIndices[2]]);
-			textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
-			textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
-			textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
+			if (haveTextureCoordinates == true) {
+				textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
+				textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
+				textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
+			}
+			if (haveTangentsBitangents == true) {
+				tangent0.set((*sourceGroup->getTangents())[tangentIndices[0]]);
+				tangent1.set((*sourceGroup->getTangents())[tangentIndices[1]]);
+				tangent2.set((*sourceGroup->getTangents())[tangentIndices[2]]);
+				bitangent0.set((*sourceGroup->getBitangents())[bitangentIndices[0]]);
+				bitangent1.set((*sourceGroup->getBitangents())[bitangentIndices[1]]);
+				bitangent2.set((*sourceGroup->getBitangents())[bitangentIndices[2]]);
+			}
 
 			// find out partition by transforming vertices into world coordinates
 			transformationsMatrix.multiply(vertex0, vertex0Transformed);
@@ -492,8 +525,8 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 			auto partitionModel = modelsByPartition[partitionModelKey];
 			if (partitionModel == nullptr) {
 				partitionModel = new Model(
-					sourceGroup->getModel()->getId() + "." + partitionModelKey,
-					sourceGroup->getModel()->getName() + "." + partitionModelKey,
+					sourceGroupId + "." + partitionModelKey,
+					sourceGroupName + "." + partitionModelKey,
 					sourceGroup->getModel()->getUpVector(),
 					sourceGroup->getModel()->getRotationOrder(),
 					nullptr
@@ -551,9 +584,19 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 			partitionModelGroup->getNormals()->push_back(normal0);
 			partitionModelGroup->getNormals()->push_back(normal1);
 			partitionModelGroup->getNormals()->push_back(normal2);
-			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
-			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
-			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
+			if (haveTextureCoordinates == true) {
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
+			}
+			if (haveTangentsBitangents == true) {
+				partitionModelGroup->getTangents()->push_back(tangent0);
+				partitionModelGroup->getTangents()->push_back(tangent1);
+				partitionModelGroup->getTangents()->push_back(tangent2);
+				partitionModelGroup->getBitangents()->push_back(bitangent0);
+				partitionModelGroup->getBitangents()->push_back(bitangent1);
+				partitionModelGroup->getBitangents()->push_back(bitangent2);
+			}
 			partitionModelGroupFacesEntity->getFaces()->push_back(
 				Face(
 					partitionModelGroup,
@@ -562,12 +605,28 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 					verticesIdx + 2,
 					verticesIdx + 0,
 					verticesIdx + 1,
-					verticesIdx + 2,
-					verticesIdx + 0,
-					verticesIdx + 1,
 					verticesIdx + 2
 				)
 			);
+			if (haveTextureCoordinates == true) {
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTextureCoordinateIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+			}
+			if (haveTangentsBitangents == true) {
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTangentIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setBitangentIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+			}
 		}
 	}
 
