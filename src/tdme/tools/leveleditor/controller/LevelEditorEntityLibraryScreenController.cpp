@@ -26,6 +26,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -64,6 +65,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::tools::Tools;
@@ -284,12 +286,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			auto key = modelsByPartitionIt.first;
 			auto model = modelsByPartitionIt.second;
 			auto fileNamePartition = StringUtils::substring(fileName, 0, StringUtils::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
+
+			// create entity
 			TMWriter::write(
 				model,
 				pathName,
 				fileNamePartition
 			);
-			auto levelEditorEntity = levelEntityLibrary->addModel(
+			auto levelEditorEntityPartition = levelEntityLibrary->addModel(
 				LevelEditorEntityLibrary::ID_ALLOCATE,
 				model->getName(),
 				model->getName(),
@@ -297,20 +301,24 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				fileNamePartition,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
+
 			// avoid name collision
 			auto objectName = model->getName();
 			while (level->getObjectById(objectName) != nullptr) {
 				objectName+= ".p";
 			}
-			// add to objects
-			level->addObject(
-				new LevelEditorObject(
-					objectName,
-					"",
-					levelEditorObject->getTransformations(),
-					levelEditorEntity
-				)
+
+			// add to level
+			auto levelEditorObjectPartition = new LevelEditorObject(
+				objectName,
+				"",
+				levelEditorObject->getTransformations(),
+				levelEditorEntityPartition
 			);
+			levelEditorEntityPartition->getModelSettings()->setTerrainMesh(levelEditorObject->getEntity()->getModelSettings()->isTerrainMesh());
+
+			// add to objects
+			level->addObject(levelEditorObjectPartition);
 		}
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
