@@ -248,12 +248,18 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr || entity->getType() != LevelEditorEntity_EntityType::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
-	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) return;
+	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
+		popUps->getInfoDialogScreenController()->show("Warning", "This model has animations or skinning");
+		return;
+	}
 
 	// check if entity exists only once
 	vector<string> objectsByEntityId;
 	TDMELevelEditor::getInstance()->getLevel()->getObjectsByEntityId(entity->getId(), objectsByEntityId);
-	if (objectsByEntityId.size() != 1) return;
+	if (objectsByEntityId.size() != 1) {
+		popUps->getInfoDialogScreenController()->show("Warning", "This model has several object instances");
+		return;
+	}
 
 	//
 	auto level = TDMELevelEditor::getInstance()->getLevel();
@@ -270,45 +276,51 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 		modelsPosition
 	);
 
-	// add partitions to level
-	auto pathName = Tools::getPath(entity->getFileName());
-	auto fileName = Tools::getFileName(entity->getFileName());
-	for (auto modelsByPartitionIt: modelsByPartition) {
-		auto key = modelsByPartitionIt.first;
-		auto model = modelsByPartitionIt.second;
-		auto fileNamePartition = StringUtils::substring(fileName, 0, StringUtils::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
-		TMWriter::write(
-			model,
-			pathName,
-			fileNamePartition
-		);
-		auto levelEditorEntity = levelEntityLibrary->addModel(
-			LevelEditorEntityLibrary::ID_ALLOCATE,
-			model->getName(),
-			model->getName(),
-			pathName,
-			fileNamePartition,
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-		// avoid name collision
-		auto objectName = model->getName();
-		while (level->getObjectById(objectName) != nullptr) {
-			objectName+= ".p";
+	try {
+		// add partitions to level
+		auto pathName = Tools::getPath(entity->getFileName());
+		auto fileName = Tools::getFileName(entity->getFileName());
+		for (auto modelsByPartitionIt: modelsByPartition) {
+			auto key = modelsByPartitionIt.first;
+			auto model = modelsByPartitionIt.second;
+			auto fileNamePartition = StringUtils::substring(fileName, 0, StringUtils::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
+			TMWriter::write(
+				model,
+				pathName,
+				fileNamePartition
+			);
+			auto levelEditorEntity = levelEntityLibrary->addModel(
+				LevelEditorEntityLibrary::ID_ALLOCATE,
+				model->getName(),
+				model->getName(),
+				pathName,
+				fileNamePartition,
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+			// avoid name collision
+			auto objectName = model->getName();
+			while (level->getObjectById(objectName) != nullptr) {
+				objectName+= ".p";
+			}
+			// add to objects
+			level->addObject(
+				new LevelEditorObject(
+					objectName,
+					"",
+					levelEditorObject->getTransformations(),
+					levelEditorEntity
+				)
+			);
 		}
-		// add to objects
-		level->addObject(
-			new LevelEditorObject(
-				objectName,
-				"",
-				levelEditorObject->getTransformations(),
-				levelEditorEntity
-			)
-		);
+	} catch (Exception& exception) {
+		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
 	}
 
 	// remove original object
 	level->removeObjectsByEntityId(entity->getId());
-	FileSystem::getInstance()->removeFile(pathName, fileName);
+	// TODO: check if to delete original model
+	//	as long as .tl has not been saved it is still required to have this file
+	// FileSystem::getInstance()->removeFile(pathName, fileName);
 
 	// (re-)load level editor view
 	auto view = TDMELevelEditor::getInstance()->getView();
