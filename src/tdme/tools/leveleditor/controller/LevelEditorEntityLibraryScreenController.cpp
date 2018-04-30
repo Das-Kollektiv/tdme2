@@ -12,6 +12,8 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
@@ -48,6 +50,8 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using tdme::tools::leveleditor::views::EmptyView;
@@ -286,9 +290,15 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			fileNamePartition,
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
+		// avoid name collision
+		auto objectName = model->getName();
+		while (level->getObjectById(objectName) != nullptr) {
+			objectName+= ".p";
+		}
+		// add to objects
 		level->addObject(
 			new LevelEditorObject(
-				model->getName(),
+				objectName,
 				"",
 				levelEditorObject->getTransformations(),
 				levelEditorEntity
@@ -298,6 +308,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// remove original object
 	level->removeObjectsByEntityId(entity->getId());
+	FileSystem::getInstance()->removeFile(pathName, fileName);
 
 	// (re-)load level editor view
 	auto view = TDMELevelEditor::getInstance()->getView();
