@@ -78,71 +78,6 @@ LevelEditorLevel::~LevelEditorLevel() {
 	delete entityLibrary;
 }
 
-const string& LevelEditorLevel::getGameRoot()
-{
-	return gameRoot;
-}
-
-void LevelEditorLevel::setGameRoot(const string& gameRoot)
-{
-	this->gameRoot = gameRoot;
-}
-
-const string& LevelEditorLevel::getPathName()
-{
-	return pathName;
-}
-
-void LevelEditorLevel::setPathName(const string& pathName)
-{
-	this->pathName = pathName;
-}
-
-const string& LevelEditorLevel::getFileName()
-{
-	return fileName;
-}
-
-void LevelEditorLevel::setFileName(const string& fileName)
-{
-	this->fileName = fileName;
-}
-
-RotationOrder* LevelEditorLevel::getRotationOrder()
-{
-	return rotationOrder;
-}
-
-void LevelEditorLevel::setRotationOrder(RotationOrder* rotationOrder)
-{
-	this->rotationOrder = rotationOrder;
-}
-
-int32_t LevelEditorLevel::getLightCount()
-{
-	return lights.size();
-}
-
-LevelEditorLight* LevelEditorLevel::getLightAt(int32_t i)
-{
-	return lights[i];
-}
-
-LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
-{
-	return entityLibrary;
-}
-
-const Vector3& LevelEditorLevel::getDimension()
-{
-	return dimension;
-}
-
-BoundingBox* LevelEditorLevel::getBoundingBox()
-{
-	return &boundingBox;
-}
-
 void LevelEditorLevel::computeBoundingBox()
 {
 	dimension.set(0.0f, 0.0f, 0.0f);
@@ -217,25 +152,6 @@ void LevelEditorLevel::computeCenter()
 	}
 	if (objectCount != 0)
 		center.scale(1.0f / objectCount);
-}
-
-const Vector3& LevelEditorLevel::getCenter() {
-	return center;
-}
-
-int32_t LevelEditorLevel::allocateObjectId()
-{
-	return objectIdx++;
-}
-
-int32_t LevelEditorLevel::getObjectIdx()
-{
-	return objectIdx;
-}
-
-void LevelEditorLevel::setObjectIdx(int32_t entityIdx)
-{
-	this->objectIdx = entityIdx;
 }
 
 void LevelEditorLevel::clearObjects()
@@ -317,16 +233,6 @@ LevelEditorObject* LevelEditorLevel::getObjectById(const string& id)
 		return objectByIdIt->second;
 	}
 	return nullptr;
-}
-
-int32_t LevelEditorLevel::getObjectCount()
-{
-	return objects.size();
-}
-
-LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
-{
-	return objects[idx];
 }
 
 void LevelEditorLevel::update() {

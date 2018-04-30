@@ -61,83 +61,114 @@ public:
 	/** 
 	 * @return id
 	 */
-	int32_t getId();
+	inline int32_t getId() {
+		return id;
+	}
 
 	/** 
 	 * @return entity type
 	 */
-	LevelEditorEntity_EntityType* getType();
+	inline LevelEditorEntity_EntityType* getType() {
+		return type;
+	}
 
 	/** 
 	 * @return name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/** 
 	 * Set up model name
 	 * @param name
 	 */
-	void setName(const string& name);
+	inline void setName(const string& name) {
+		this->name = name;
+	}
 
 	/** 
 	 * @return description
 	 */
-	const string& getDescription();
+	inline const string& getDescription() {
+		return description;
+	}
 
 	/** 
 	 * Set up model description
 	 * @param description
 	 */
-	void setDescription(const string& description);
+	inline void setDescription(const string& description) {
+		this->description = description;
+	}
 
 	/** 
 	 * @return entity file name
 	 */
-	const string& getEntityFileName();
+	inline const string& getEntityFileName() {
+		return entityFileName;
+	}
 
 	/** 
 	 * Set entity file name
 	 * @param entity file name
 	 */
-	void setEntityFileName(const string& entityFileName);
+	inline void setEntityFileName(const string& entityFileName) {
+		this->entityFileName = entityFileName;
+	}
 
 	/** 
 	 * @return file name
 	 */
-	const string& getFileName();
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/** 
 	 * @return thumbnail
 	 */
-	const string& getThumbnail();
+	inline const string& getThumbnail() {
+		return thumbnail;
+	}
 
 	/** 
 	 * @return model
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * Set model
 	 * @param model
 	 */
-	void setModel(Model* model);
+	inline void setModel(Model* model) {
+		if (this->model != nullptr) delete this->model;
+		this->model = model;
+	}
 
 	/**
 	 * @return pivot
 	 */
-	Vector3& getPivot();
+	inline Vector3& getPivot() {
+		return pivot;
+	}
 
 	/** 
 	 * @return bounding volume count
 	 */
-	int32_t getBoundingVolumeCount();
+	inline int32_t getBoundingVolumeCount() {
+		return boundingVolumes.size();
+	}
 
 	/** 
 	 * Get bounding volume at
 	 * @param idx
 	 * @return level editor object bounding volume
 	 */
-	LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx);
+	LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
+		return boundingVolumes[idx];
+	}
 
 	/** 
 	 * Add bounding volume
@@ -155,7 +186,9 @@ public:
 	/**
 	 * @return lod level 2
 	 */
-	LevelEditorEntityLODLevel* getLODLevel2();
+	inline LevelEditorEntityLODLevel* getLODLevel2() {
+		return lodLevel2;
+	}
 
 	/**
 	 * Set LOD level 2
@@ -166,7 +199,9 @@ public:
 	/**
 	 * @return lod level 3
 	 */
-	LevelEditorEntityLODLevel* getLODLevel3();
+	inline LevelEditorEntityLODLevel* getLODLevel3() {
+		return lodLevel3;
+	}
 
 	/**
 	 * Set LOD level 3
@@ -177,24 +212,32 @@ public:
 	/** 
 	 * @return level editor entity particle system
 	 */
-	LevelEditorEntityParticleSystem* getParticleSystem();
+	inline LevelEditorEntityParticleSystem* getParticleSystem() {
+		return particleSystem;
+	}
 
 	/**
 	 * @return model settings
 	 */
-	LevelEditorEntityModel* getModelSettings();
+	inline LevelEditorEntityModel* getModelSettings() {
+		return modelSettings;
+	}
 
 	/**
 	 * Is dynamic shadowing
 	 * @return dynamic shadowing enabled
 	 */
-	bool isDynamicShadowing();
+	bool isDynamicShadowing() {
+		return dynamicShadowing;
+	}
 
 	/**
 	 * Set dynamic shadowing
 	 * @param dynamic shadowing enabled
 	 */
-	void setDynamicShadowing(bool dynamicShadowing);
+	void setDynamicShadowing(bool dynamicShadowing) {
+		this->dynamicShadowing = dynamicShadowing;
+	}
 
 	/**
 	 * Creates a level editor model
