@@ -538,6 +538,7 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 			// get group
 			auto partitionModelGroup = partitionModel->getGroupById(sourceGroup->getId());
 			if (partitionModelGroup == nullptr) {
+				// TODO: create sub groups if they do not yet exist
 				partitionModelGroup = new Group(
 					partitionModel,
 					sourceGroup->getParentGroup() == nullptr?nullptr:partitionModel->getGroupById(sourceGroup->getParentGroup()->getId()),
