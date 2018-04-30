@@ -166,7 +166,7 @@ public:
 	 * @param idx
 	 * @return level editor object bounding volume
 	 */
-	LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
+	inline LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
 		return boundingVolumes[idx];
 	}
 
@@ -227,7 +227,7 @@ public:
 	 * Is dynamic shadowing
 	 * @return dynamic shadowing enabled
 	 */
-	bool isDynamicShadowing() {
+	inline bool isDynamicShadowing() {
 		return dynamicShadowing;
 	}
 
@@ -235,7 +235,7 @@ public:
 	 * Set dynamic shadowing
 	 * @param dynamic shadowing enabled
 	 */
-	void setDynamicShadowing(bool dynamicShadowing) {
+	inline void setDynamicShadowing(bool dynamicShadowing) {
 		this->dynamicShadowing = dynamicShadowing;
 	}
 
