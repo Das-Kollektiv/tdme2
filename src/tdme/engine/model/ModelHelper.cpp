@@ -1,8 +1,12 @@
 #include <tdme/engine/model/ModelHelper.h>
 
 #include <array>
+#include <map>
+#include <string>
 #include <vector>
 
+#include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
@@ -18,11 +22,17 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utils/Console.h>
 
 using std::array;
+using std::map;
+using std::string;
+using std::to_string;
 using std::vector;
 
+using tdme::engine::Transformations;
+using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -39,6 +49,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::Console;
 
 ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
@@ -424,3 +435,167 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 	}
 }
 
+void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, const Matrix4x4& parentTransformationsMatrix) {
+	Vector3 faceCenter;
+
+	Matrix4x4 transformationsMatrix;
+	transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
+	transformationsMatrix.multiply(parentTransformationsMatrix);
+
+	Vector3 vertex0;
+	Vector3 vertex1;
+	Vector3 vertex2;
+	Vector3 normal0;
+	Vector3 normal1;
+	Vector3 normal2;
+	TextureCoordinate textureCoordinate0;
+	TextureCoordinate textureCoordinate1;
+	TextureCoordinate textureCoordinate2;
+
+	Vector3 vertex0Transformed;
+	Vector3 vertex1Transformed;
+	Vector3 vertex2Transformed;
+
+	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
+		for (auto& face: *facesEntity.getFaces()) {
+			// get face vertices and such
+			auto& vertexIndices = *face.getVertexIndices();
+			auto& normalIndices = *face.getNormalIndices();
+			auto& textureCoordinatesIndices = *face.getTextureCoordinateIndices();
+			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
+			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
+			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
+			normal0.set((*sourceGroup->getNormals())[normalIndices[0]]);
+			normal1.set((*sourceGroup->getNormals())[normalIndices[1]]);
+			normal2.set((*sourceGroup->getNormals())[normalIndices[2]]);
+			textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
+			textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
+			textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
+
+			// find out partition by transforming vertices into world coordinates
+			transformationsMatrix.multiply(vertex0, vertex0Transformed);
+			transformationsMatrix.multiply(vertex1, vertex1Transformed);
+			transformationsMatrix.multiply(vertex2, vertex2Transformed);
+			faceCenter.set(vertex0Transformed);
+			faceCenter.add(vertex1Transformed);
+			faceCenter.add(vertex2Transformed);
+			faceCenter.scale(1.0f / 3.0f);
+			int partitionX = (int)(faceCenter.getX() / 64.0f);
+			int partitionY = (int)(faceCenter.getY() / 64.0f);
+			int partitionZ = (int)(faceCenter.getZ() / 64.0f);
+
+			// key
+			string partitionModelKey =
+				to_string(partitionX) + "," +
+				to_string(partitionY) + "," +
+				to_string(partitionZ);
+
+			// get model
+			auto partitionModel = modelsByPartition[partitionModelKey];
+			if (partitionModel == nullptr) {
+				partitionModel = new Model(
+					sourceGroup->getModel()->getId() + "." + partitionModelKey,
+					sourceGroup->getModel()->getName() + "." + partitionModelKey,
+					sourceGroup->getModel()->getUpVector(),
+					sourceGroup->getModel()->getRotationOrder(),
+					nullptr
+				);
+				modelsByPartition[partitionModelKey] = partitionModel;
+			}
+
+			// get group
+			auto partitionModelGroup = partitionModel->getGroupById(sourceGroup->getId());
+			if (partitionModelGroup == nullptr) {
+				partitionModelGroup = new Group(
+					partitionModel,
+					sourceGroup->getParentGroup() == nullptr?nullptr:partitionModel->getGroupById(sourceGroup->getParentGroup()->getId()),
+					sourceGroup->getId(),
+					sourceGroup->getName()
+				);
+				if (sourceGroup->getParentGroup() == nullptr) {
+					(*partitionModel->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+				} else {
+					(*partitionModelGroup->getParentGroup()->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+				}
+				(*partitionModel->getGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+			}
+
+			// get faces entity
+			FacesEntity* partitionModelGroupFacesEntity = nullptr;
+			for (auto& partitionModelGroupFacesEntityExisting: *partitionModelGroup->getFacesEntities()) {
+				if (partitionModelGroupFacesEntityExisting.getId() == facesEntity.getId()) {
+					partitionModelGroupFacesEntity = &partitionModelGroupFacesEntityExisting;
+				}
+			}
+			if (partitionModelGroupFacesEntity == nullptr) {
+				partitionModelGroup->getFacesEntities()->push_back(
+					FacesEntity(
+						partitionModelGroup,
+						facesEntity.getId()
+					)
+				);
+				partitionModelGroupFacesEntity = &(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1];
+				auto partitionModelGroupFacesEntityMaterial = (*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()];
+				if (partitionModelGroupFacesEntityMaterial == nullptr) {
+					partitionModelGroupFacesEntityMaterial = cloneMaterial(facesEntity.getMaterial());
+					(*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()] = partitionModelGroupFacesEntityMaterial;
+				}
+				(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1].setMaterial(partitionModelGroupFacesEntityMaterial);
+			}
+
+			// add vertices and such
+			auto verticesIdx = partitionModelGroup->getVertices()->size();
+			partitionModelGroup->getVertices()->push_back(vertex0);
+			partitionModelGroup->getVertices()->push_back(vertex1);
+			partitionModelGroup->getVertices()->push_back(vertex2);
+			partitionModelGroup->getNormals()->push_back(normal0);
+			partitionModelGroup->getNormals()->push_back(normal1);
+			partitionModelGroup->getNormals()->push_back(normal2);
+			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
+			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
+			partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
+			partitionModelGroupFacesEntity->getFaces()->push_back(
+				Face(
+					partitionModelGroup,
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2,
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2,
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				)
+			);
+		}
+	}
+
+	for (auto modelByPartitionIt: modelsByPartition) {
+		auto modelByPartitionGroup = modelByPartitionIt.second->getGroupById(sourceGroup->getId());
+		if (modelByPartitionGroup != nullptr) modelByPartitionGroup->determineFeatures();
+	}
+
+	for (auto groupIt: *sourceGroup->getSubGroups()) {
+		partitionGroup(groupIt.second, modelsByPartition, transformationsMatrix);
+	}
+}
+
+void ModelHelper::partition(Model* model, const Transformations& transformations) {
+	map<string, Model*> modelsByPartition;
+	Matrix4x4 transformationsMatrix;
+	transformationsMatrix.set(model->getImportTransformationsMatrix());
+	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
+	for (auto groupIt: *model->getSubGroups()) {
+		partitionGroup(groupIt.second, modelsByPartition, transformationsMatrix);
+	}
+	for (auto modelsByPartitionIt: modelsByPartition) {
+		auto partitionKey = modelsByPartitionIt.first;
+		auto partitionModel = modelsByPartitionIt.second;
+		ModelHelper::createDefaultAnimation(partitionModel, 0);
+		ModelHelper::setupJoints(partitionModel);
+		ModelHelper::fixAnimationLength(partitionModel);
+		ModelHelper::prepareForIndexedRendering(partitionModel);
+		TMWriter::write(partitionModel, ".", partitionKey + ".tm");
+	}
+}

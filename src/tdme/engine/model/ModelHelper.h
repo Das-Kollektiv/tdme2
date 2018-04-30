@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -7,6 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -16,6 +16,7 @@ using std::map;
 using std::vector;
 using std::string;
 
+using tdme::engine::Transformations;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
@@ -151,4 +152,21 @@ public:
 	 * @param target parent group
 	 */
 	static void cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup = nullptr);
+
+private:
+
+	/**
+	 * Partition sub groups
+	 * @param source group to partition
+	 * @param models by partition
+	 * @param parent transformations matrix
+	 */
+	static void partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, const Matrix4x4& parentTransformationsMatrix);
+
+public:
+	/**
+	 * Partition model
+	 * @param model
+	 */
+	static void partition(Model* model, const Transformations& transformations);
 };

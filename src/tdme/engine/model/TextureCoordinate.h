@@ -18,7 +18,6 @@ class tdme::engine::model::TextureCoordinate final
 private:
 	array<float, 2> data {  };
 public:
-
 	/** 
 	 * @return U
 	 */
@@ -28,6 +27,25 @@ public:
 	 * @return V
 	 */
 	float getV() const;
+
+	/**
+	 * Set texture coordinate
+	 * @param texture coordinate
+	 */
+	TextureCoordinate& set(const TextureCoordinate& textureCoordinate);
+
+	/**
+	 * Set texture coordinate
+	 * @param texture coordinate
+	 */
+	TextureCoordinate& set(const array<float, 2>& uv);
+
+	/**
+	 * Set texture coordinate
+	 * @param u
+	 * @param v
+	 */
+	TextureCoordinate& set(float u, float v);
 
 	/** 
 	 * @return texture data as array
