@@ -38,6 +38,8 @@ TDMELevelEditor
             - see and select entities(models, particle systems, empties and trigger) from entity library to place them on map
             - rotate, zoom and pan map, selecting objects
             - copy and paste
+        - other
+            - large objects like terrain meshes can be partitioned in 64mx64mx64m objects
 
     - What is WIP
         - set up arbitrary lights as entities
