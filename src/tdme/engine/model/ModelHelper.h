@@ -161,12 +161,14 @@ private:
 	 * @param models by partition
 	 * @param parent transformations matrix
 	 */
-	static void partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, const Matrix4x4& parentTransformationsMatrix);
+	static void partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix);
 
 public:
 	/**
 	 * Partition model
 	 * @param model
+	 * @param models by partition
+	 * @param models position
 	 */
-	static void partition(Model* model, const Transformations& transformations);
+	static void partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
 };

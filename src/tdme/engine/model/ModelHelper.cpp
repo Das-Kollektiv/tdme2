@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
@@ -32,7 +31,6 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -435,7 +433,7 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 	}
 }
 
-void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, const Matrix4x4& parentTransformationsMatrix) {
+void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix) {
 	Vector3 faceCenter;
 
 	Matrix4x4 transformationsMatrix;
@@ -501,6 +499,7 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 					nullptr
 				);
 				modelsByPartition[partitionModelKey] = partitionModel;
+				modelsPosition[partitionModelKey].set(partitionX * 64.0f, partitionY * 64.0f, partitionZ * 64.0f);
 			}
 
 			// get group
@@ -512,6 +511,7 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 					sourceGroup->getId(),
 					sourceGroup->getName()
 				);
+				partitionModelGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
 				if (sourceGroup->getParentGroup() == nullptr) {
 					(*partitionModel->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
 				} else {
@@ -577,25 +577,24 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 	}
 
 	for (auto groupIt: *sourceGroup->getSubGroups()) {
-		partitionGroup(groupIt.second, modelsByPartition, transformationsMatrix);
+		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
 	}
 }
 
-void ModelHelper::partition(Model* model, const Transformations& transformations) {
-	map<string, Model*> modelsByPartition;
+void ModelHelper::partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition) {
 	Matrix4x4 transformationsMatrix;
 	transformationsMatrix.set(model->getImportTransformationsMatrix());
 	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
 	for (auto groupIt: *model->getSubGroups()) {
-		partitionGroup(groupIt.second, modelsByPartition, transformationsMatrix);
+		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
 	}
 	for (auto modelsByPartitionIt: modelsByPartition) {
 		auto partitionKey = modelsByPartitionIt.first;
 		auto partitionModel = modelsByPartitionIt.second;
+		partitionModel->getImportTransformationsMatrix().set(model->getImportTransformationsMatrix());
 		ModelHelper::createDefaultAnimation(partitionModel, 0);
 		ModelHelper::setupJoints(partitionModel);
 		ModelHelper::fixAnimationLength(partitionModel);
 		ModelHelper::prepareForIndexedRendering(partitionModel);
-		TMWriter::write(partitionModel, ".", partitionKey + ".tm");
 	}
 }
