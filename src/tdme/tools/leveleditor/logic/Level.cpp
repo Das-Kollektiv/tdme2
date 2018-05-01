@@ -309,7 +309,7 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 			auto modelTerrainConvexMeshesCacheIt = modelTerrainConvexMeshesCache.find(object->getEntity()->getId());
 			if (modelTerrainConvexMeshesCacheIt == modelTerrainConvexMeshesCache.end()) {
 				Object3DModel object3DModel(object->getEntity()->getModel());
-				ConvexMesh::createTerrainConvexMeshes(&object3DModel, &modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
+				ConvexMesh::createTerrainConvexMeshes(&object3DModel, modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
 			}
 			{
 				Transformations transformations;

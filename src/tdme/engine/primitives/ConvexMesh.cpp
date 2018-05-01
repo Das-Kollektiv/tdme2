@@ -20,6 +20,7 @@
 using std::array;
 using std::vector;
 
+using tdme::engine::Transformations;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
@@ -61,7 +62,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, bool terrain, float terrainHeight)
 	update();
 }
 
-void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight)
+void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>& convexMeshes, float terrainHeight, const Transformations& transformations)
 {
 	// please note: no optimizations yet
 	vector<Triangle> faceTriangles;
@@ -87,7 +88,7 @@ void ConvexMesh::createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMe
 		convexMeshTriangles.push_back(faceTriangles[i]);
 
 		// add to convex meshes
-		convexMeshes->push_back(ConvexMesh(&convexMeshTriangles, true, terrainHeight));
+		convexMeshes.push_back(ConvexMesh(&convexMeshTriangles, true, terrainHeight));
 	}
 }
 

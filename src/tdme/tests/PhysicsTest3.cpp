@@ -251,7 +251,7 @@ void PhysicsTest3::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		vector<ConvexMesh> groundConvexMeshes;
-		ConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), &groundConvexMeshes);
+		ConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), groundConvexMeshes);
 		{
 			int i = 0;
 			for (auto& convexMesh: groundConvexMeshes) {

@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -17,6 +18,7 @@
 using std::array;
 using std::vector;
 
+using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Object3DModel;
@@ -57,7 +59,7 @@ public:
 	 * @param convex meshes
 	 * @param terrain height
 	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>* convexMeshes, float terrainHeight = 0.75f);
+	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>& convexMeshes, float terrainHeight = 0.75f, const Transformations& transformations = Transformations());
 
 	/**
 	 * @return is terrain
