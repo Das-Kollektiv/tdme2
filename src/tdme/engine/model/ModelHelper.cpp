@@ -511,9 +511,12 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 			faceCenter.add(vertex1Transformed);
 			faceCenter.add(vertex2Transformed);
 			faceCenter.scale(1.0f / 3.0f);
-			int partitionX = (int)(faceCenter.getX() / 64.0f);
-			int partitionY = (int)(faceCenter.getY() / 64.0f);
-			int partitionZ = (int)(faceCenter.getZ() / 64.0f);
+			auto minX = Math::min(Math::min(vertex0Transformed.getX(), vertex1Transformed.getX()), vertex2Transformed.getX());
+			auto minY = Math::min(Math::min(vertex0Transformed.getY(), vertex1Transformed.getY()), vertex2Transformed.getY());
+			auto minZ = Math::min(Math::min(vertex0Transformed.getZ(), vertex1Transformed.getZ()), vertex2Transformed.getZ());
+			int partitionX = (int)(minX / 64.0f);
+			int partitionY = (int)(minY / 64.0f);
+			int partitionZ = (int)(minZ / 64.0f);
 
 			// key
 			string partitionModelKey =
