@@ -43,7 +43,9 @@ using tdme::math::Vector3;
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
 {
 	Object3DModelInternal object3dModel(model);
-	return ModelUtilitiesInternal::createBoundingBox(&object3dModel);
+	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
+	object3dModel.dispose();
+	return boundingBox;
 }
 
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* object3DModelInternal)
@@ -120,6 +122,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistic
 {
 	Object3DModelInternal object3DModelInternal(model);
 	computeModelStatistics(&object3DModelInternal, modelStatistics);
+	object3DModelInternal.dispose();
 }
 
 void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
@@ -168,7 +171,10 @@ bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 {
 	Object3DModelInternal object3DModel1(model1);
 	Object3DModelInternal object3DModel2(model2);
-	return ModelUtilitiesInternal::equals(&object3DModel1, &object3DModel2);
+	auto isEqual = ModelUtilitiesInternal::equals(&object3DModel1, &object3DModel2);
+	object3DModel1.dispose();
+	object3DModel2.dispose();
+	return isEqual;
 }
 
 bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)

@@ -172,8 +172,8 @@ void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector
 void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new ConvexMesh();
 	if (model != nullptr) delete model;
+	boundingVolume = nullptr;
 	model = nullptr;
 	modelMeshFile = pathName + "/" + fileName;
 	try {
@@ -196,6 +196,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	if (boundingVolume == nullptr) boundingVolume = new ConvexMesh();
 	updateLevelEditorEntity();
 }
 

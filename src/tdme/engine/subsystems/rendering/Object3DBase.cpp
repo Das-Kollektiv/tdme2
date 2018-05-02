@@ -477,7 +477,11 @@ void Object3DBase::dispose()
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
 		// dispose mesh
-		meshManager->removeMesh(object3DGroup->id);
+		if (usesMeshManager == true) {
+			meshManager->removeMesh(object3DGroup->id);
+		} else {
+			delete object3DGroup->mesh;
+		}
 		object3DGroup->mesh = nullptr;
 	}
 }

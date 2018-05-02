@@ -35,19 +35,18 @@ public:
 	static BoundingBox* createBoundingBox(Model* model);
 
 	/** 
-	 * Creates a bounding box from given object3d model
-	 * @param model
-	 * @return axis aligned bounding box
-	 */
-	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
-
-	/** 
 	 * Invert normals of a model
 	 * @param model
 	 */
 	static void invertNormals(Model* model);
 
 private:
+	/**
+	 * Creates a bounding box from given object3d model
+	 * @param model
+	 * @return axis aligned bounding box
+	 */
+	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
 
 	/** 
 	 * Invert normals recursive
