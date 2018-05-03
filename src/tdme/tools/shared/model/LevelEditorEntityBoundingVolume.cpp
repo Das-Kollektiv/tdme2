@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+	#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
 #include <string>
 
@@ -181,7 +181,10 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 			pathName,
 			fileName
 		);
-		boundingVolume = new ConvexMesh(new Object3DModel(convexMeshModel));
+		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
+		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
+		delete convexMeshObject3DModel;
+		delete convexMeshModel;
 		model = PrimitiveModel::createModel(
 			boundingVolume,
 			string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +

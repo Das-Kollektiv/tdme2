@@ -23,4 +23,9 @@ public:
 	 * @param model
 	 */
 	Object3DModelInternal(Model* model);
+
+	/**
+	 * Destructor
+	 */
+	~Object3DModelInternal();
 };

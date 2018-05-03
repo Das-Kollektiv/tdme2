@@ -6,4 +6,3 @@ Object3DModel::Object3DModel(Model* model) :
 	Object3DModelInternal(model)
 {
 }
-

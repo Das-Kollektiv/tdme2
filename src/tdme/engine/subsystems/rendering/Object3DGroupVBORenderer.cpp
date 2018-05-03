@@ -89,8 +89,8 @@ void Object3DGroupVBORenderer::dispose()
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id);
 		vboBaseIds = nullptr;
 	}
-	if (vboSkinningIds != nullptr) {
+	if (vboTangentBitangentIds != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".tangentbitangent");
-		vboSkinningIds = nullptr;
+		vboTangentBitangentIds = nullptr;
 	}
 }

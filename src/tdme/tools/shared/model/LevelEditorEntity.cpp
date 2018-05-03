@@ -51,6 +51,9 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (particleSystem != nullptr) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
+	for (auto i = 0; i < boundingVolumes.size(); i++) {
+		delete boundingVolumes[i];
+	}
 }
 
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)

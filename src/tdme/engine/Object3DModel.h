@@ -7,9 +7,6 @@
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::engine::model::Model;
 
-
-struct default_init_tag;
-
 /** 
  * Object 3D model
  * @author Andreas Drewke

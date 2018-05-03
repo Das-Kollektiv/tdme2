@@ -12,7 +12,6 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
@@ -28,7 +27,6 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::math::Vector3;
 
 Object3DInternal::Object3DInternal(const string& id, Model* model) :
@@ -51,9 +49,6 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 Object3DInternal::~Object3DInternal() {
 	delete boundingBox;
 	delete boundingBoxTransformed;
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		delete object3dGroups[i];
-	}
 }
 
 void Object3DInternal::setEnabled(bool enabled)
@@ -128,15 +123,6 @@ void Object3DInternal::initialize()
 
 void Object3DInternal::dispose()
 {
-	// delete object 3d groups
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		auto object3DGroup = object3dGroups[i];
-		// dispose renderer
-		object3DGroup->renderer->dispose();
-		// dispose object3d group
-		object3DGroup->dispose();
-	}
-	// dispose object 3d base
 	Object3DBase::dispose();
 }
 

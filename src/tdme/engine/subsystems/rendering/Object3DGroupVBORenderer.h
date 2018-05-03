@@ -26,7 +26,6 @@ private:
 	Object3DGroup* object3DGroup {  };
 	vector<int32_t>* vboBaseIds {  };
 	vector<int32_t>* vboTangentBitangentIds {  };
-	vector<int32_t>* vboSkinningIds {  };
 	bool haveVBOs { false };
 public:
 

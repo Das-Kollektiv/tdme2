@@ -44,7 +44,6 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
 {
 	Object3DModelInternal object3dModel(model);
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
-	object3dModel.dispose();
 	return boundingBox;
 }
 
@@ -122,7 +121,6 @@ void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistic
 {
 	Object3DModelInternal object3DModelInternal(model);
 	computeModelStatistics(&object3DModelInternal, modelStatistics);
-	object3DModelInternal.dispose();
 }
 
 void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
@@ -171,10 +169,7 @@ bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 {
 	Object3DModelInternal object3DModel1(model1);
 	Object3DModelInternal object3DModel2(model2);
-	auto isEqual = ModelUtilitiesInternal::equals(&object3DModel1, &object3DModel2);
-	object3DModel1.dispose();
-	object3DModel2.dispose();
-	return isEqual;
+	return ModelUtilitiesInternal::equals(&object3DModel1, &object3DModel2);
 }
 
 bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)

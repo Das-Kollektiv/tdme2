@@ -22,6 +22,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -50,6 +51,7 @@ using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -86,6 +88,9 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 }
 
 Object3DBase::~Object3DBase() {
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		delete object3dGroups[i];
+	}
 	for (auto it = transformationsMatrices.begin(); it != transformationsMatrices.end(); ++it) {
 		delete it->second;
 	}
@@ -476,6 +481,10 @@ void Object3DBase::dispose()
 	// dispose mesh
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
+		// dispose renderer
+		object3DGroup->renderer->dispose();
+		// dispose object3d group
+		object3DGroup->dispose();
 		// dispose mesh
 		if (usesMeshManager == true) {
 			meshManager->removeMesh(object3DGroup->id);
