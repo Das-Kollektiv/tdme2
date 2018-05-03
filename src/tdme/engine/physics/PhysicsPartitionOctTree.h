@@ -50,6 +50,7 @@ private:
 	VectorIteratorMultiple<RigidBody*> rigidBodyIterator {  };
 	map<string, vector<PhysicsPartitionOctTree_PartitionTreeNode*>> rigidBodyPartitionNodes {  };
 	PhysicsPartitionOctTree_PartitionTreeNode treeRoot {  };
+	map<string, PhysicsPartitionOctTree_PartitionTreeNode*> treeRootSubNodesByCoordinate {  };
 
 	/** 
 	 * Reset
@@ -180,28 +181,34 @@ public:
 	 * @param partition size
 	 * @return partition tree node
 	 */
-	void createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize) {
+	PhysicsPartitionOctTree_PartitionTreeNode* createPartition(PhysicsPartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize) {
 		PhysicsPartitionOctTree_PartitionTreeNode node;
 		node.partitionSize = partitionSize;
 		node.x = x;
 		node.y = y;
 		node.z = z;
-		node.parent = parent;
-		node.bv.getMin().set(x * partitionSize, y * partitionSize, z * partitionSize);
-		node.bv.getMax().set(x * partitionSize + partitionSize, y * partitionSize + partitionSize, z * partitionSize + partitionSize);
+		node.bv.getMin().set(
+			node.x * node.partitionSize,
+			node.y * node.partitionSize,
+			node.z * node.partitionSize
+		);
+		node.bv.getMax().set(
+			node.x * node.partitionSize + node.partitionSize,
+			node.y * node.partitionSize + node.partitionSize,
+			node.z * node.partitionSize + node.partitionSize
+		);
 		node.bv.update();
+		node.parent = parent;
 		// register in parent sub nodes
 		parent->subNodes.push_back(node);
-		PhysicsPartitionOctTree_PartitionTreeNode* storedNode = &parent->subNodes.back();
-		// register in parent sub nodes by coordinate, if root node
-		parent->subNodesByCoordinate[to_string(node.x) + "," + to_string(node.y) + "," + to_string(node.z)] = storedNode;
+		auto storedNode = &parent->subNodes.back();
 		// create sub nodes
 		if (partitionSize > PARTITION_SIZE_MIN) {
 			for (auto _y = 0; _y < 2; _y++)
 			for (auto _x = 0; _x < 2; _x++)
 			for (auto _z = 0; _z < 2; _z++) {
-				createPartition(
-					storedNode,
+				auto subNode = createPartition(
+						storedNode,
 					static_cast< int32_t >(((x * partitionSize) / (partitionSize / 2.0f))) + _x,
 					static_cast< int32_t >(((y * partitionSize) / (partitionSize / 2.0f))) + _y,
 					static_cast< int32_t >(((z * partitionSize) / (partitionSize / 2.0f))) + _z,
@@ -209,6 +216,7 @@ public:
 				);
 			}
 		}
+		return storedNode;
 	}
 
 	/**

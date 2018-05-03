@@ -46,6 +46,8 @@ PhysicsPartitionOctTree::PhysicsPartitionOctTree()
 
 void PhysicsPartitionOctTree::reset()
 {
+	rigidBodyPartitionNodes.clear();
+	treeRootSubNodesByCoordinate.clear();
 	this->treeRoot.partitionSize = -1;
 	this->treeRoot.x = -1;
 	this->treeRoot.y = -1;
@@ -76,9 +78,11 @@ void PhysicsPartitionOctTree::addRigidBody(RigidBody* rigidBody)
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
 		// check if first level node has been created already
-		auto nodeIt = treeRoot.subNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
-		if (nodeIt == treeRoot.subNodesByCoordinate.end()) {
-			createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+		auto nodeIt = treeRootSubNodesByCoordinate.find(to_string(xPartition) + "," + to_string(yPartition) + "," + to_string(zPartition));
+		if (nodeIt == treeRootSubNodesByCoordinate.end()) {
+			auto treeRootNodeSubNode = createPartition(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX);
+			// sub node of oct tree root sub nodes by partition coordinate
+			treeRootSubNodesByCoordinate[to_string(treeRootNodeSubNode->x) + "," + to_string(treeRootNodeSubNode->y) + "," + to_string(treeRootNodeSubNode->z)] = treeRootNodeSubNode;
 		}
 	}
 	// add rigid body to tree
@@ -118,7 +122,7 @@ void PhysicsPartitionOctTree::removeRigidBody(RigidBody* rigidBody)
 						break;
 					}
 				}
-				treeRoot.subNodesByCoordinate.erase(
+				treeRootSubNodesByCoordinate.erase(
 					to_string(rootPartitionTreeNode->x) + "," + to_string(rootPartitionTreeNode->y) + "," + to_string(rootPartitionTreeNode->z)
 				);
 			}

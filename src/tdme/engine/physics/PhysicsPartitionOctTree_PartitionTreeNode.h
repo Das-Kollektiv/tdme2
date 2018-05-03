@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -14,7 +13,6 @@
 #include <tdme/engine/physics/RigidBody.h>
 
 using std::list;
-using std::map;
 using std::string;
 using std::vector;
 
@@ -35,14 +33,12 @@ struct tdme::engine::physics::PhysicsPartitionOctTree_PartitionTreeNode final
 	int32_t x {  };
 	int32_t y {  };
 	int32_t z {  };
-	// parent node
-	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
 	// node bounding volume
 	BoundingBox bv {  };
+	// parent node
+	PhysicsPartitionOctTree_PartitionTreeNode* parent {  };
 	// sub nodes of oct tree node
 	list<PhysicsPartitionOctTree_PartitionTreeNode> subNodes {  };
-	// sub node of oct tree nodes by partition coordinate, only used in root node
-	map<string, PhysicsPartitionOctTree_PartitionTreeNode*> subNodesByCoordinate {  };
 	// partition rigid bodies
 	vector<RigidBody*> partitionRidigBodies {  };
 };
