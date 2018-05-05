@@ -55,6 +55,7 @@ private:
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 	LevelEditorEntityModel* modelSettings;
+	bool renderGroups;
 	bool dynamicShadowing;
 public:
 
@@ -237,6 +238,22 @@ public:
 	 */
 	inline void setDynamicShadowing(bool dynamicShadowing) {
 		this->dynamicShadowing = dynamicShadowing;
+	}
+
+	/**
+	 * Is using render groups
+	 * @return render groups enabled
+	 */
+	inline bool isRenderGroups() {
+		return renderGroups;
+	}
+
+	/**
+	 * Set using render groups
+	 * @param use render groups
+	 */
+	inline void setRenderGroups(bool renderGroups) {
+		this->renderGroups = renderGroups;
 	}
 
 	/**

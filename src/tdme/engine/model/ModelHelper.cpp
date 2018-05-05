@@ -375,8 +375,8 @@ Material* ModelHelper::cloneMaterial(Material* material) {
 		clonedMaterial->setDiffuseTexture(
 			material->getDiffuseTexturePathName(),
 			material->getDiffuseTextureFileName(),
-			material->getDiffuseTransparencyTextureFileName(),
-			material->getDiffuseTransparencyTexturePathName()
+			material->getDiffuseTransparencyTexturePathName(),
+			material->getDiffuseTransparencyTextureFileName()
 		);
 	}
 	if (material->getNormalTextureFileName().length() != 0) {

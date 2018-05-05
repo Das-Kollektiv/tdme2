@@ -6,6 +6,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
@@ -61,6 +62,7 @@ using std::to_string;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
@@ -264,13 +266,17 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation, bool enable)
 {
+	map<string, map<string, vector<Object3D*>>> renderGroupEntitiesByModelAndPartition;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto properties = object->getTotalProperties();
+
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
 		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
+
 		Entity* entity = createEntity(object);
 		if (entity == nullptr) continue;
+
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		entity->setPickable(pickable);
 		auto shadowingProperty = properties->getProperty("shadowing");
@@ -281,7 +287,30 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		}
 		entity->update();
 		entity->setEnabled(enable);
-		engine->addEntity(entity);
+
+		if (dynamic_cast<Object3D*>(entity) != nullptr &&
+			object->getEntity()->isRenderGroups() == true) {
+			auto minX = entity->getBoundingBoxTransformed()->getMin().getX();
+			auto minY = entity->getBoundingBoxTransformed()->getMin().getY();
+			auto minZ = entity->getBoundingBoxTransformed()->getMin().getZ();
+			int partitionX = (int)(minX / 32.0f);
+			int partitionY = (int)(minY / 32.0f);
+			int partitionZ = (int)(minZ / 32.0f);
+			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(dynamic_cast<Object3D*>(entity));
+		} else {
+			engine->addEntity(entity);
+		}
+	}
+
+	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
+		for (auto itPartition: itModel.second) {
+			auto object3DRenderGroup = new Object3DRenderGroup("tdme.rendergroup" + itModel.first + "." + itPartition.first);
+			for (auto object: itPartition.second) {
+				object3DRenderGroup->addObject(object);
+			}
+			object3DRenderGroup->update();
+			engine->addEntity(object3DRenderGroup);
+		}
 	}
 }
 

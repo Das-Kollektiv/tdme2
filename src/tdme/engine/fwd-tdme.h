@@ -18,6 +18,7 @@ namespace engine {
 		class ModelUtilities;
 		class Object3D;
 		class Object3DModel;
+		class Object3DRenderGroup;
 		class ObjectParticleSystemEntity;
 		class Partition;
 		class PartitionNone;

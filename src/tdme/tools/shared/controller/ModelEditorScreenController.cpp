@@ -139,6 +139,7 @@ void ModelEditorScreenController::initialize()
 		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_z"));
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
+		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
 		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
@@ -257,6 +258,8 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingDynamicShadowing->getController()->setDisabled(false);
 	renderingDynamicShadowing->getController()->setValue(MutableString(entity->isDynamicShadowing() == true?"1":""));
+	renderingRenderGroups->getController()->setDisabled(false);
+	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
@@ -264,6 +267,8 @@ void ModelEditorScreenController::unsetRendering()
 {
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
+	renderingRenderGroups->getController()->setDisabled(true);
+	renderingRenderGroups->getController()->setValue(MutableString("0"));
 	renderingApply->getController()->setDisabled(true);
 }
 
@@ -948,6 +953,7 @@ void ModelEditorScreenController::onRenderingApply()
 {
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
+	view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */

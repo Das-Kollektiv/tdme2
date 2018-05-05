@@ -8,6 +8,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
@@ -26,6 +27,7 @@ using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Partition;
@@ -117,8 +119,12 @@ void ShadowMap::render(Light* light)
 	// determine visible objects and objects that should generate a shadow
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
+	Object3DRenderGroup* org = nullptr;
 	ObjectParticleSystemEntity* opse = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			for (auto orgObject: org->getObjects()) visibleObjects.push_back(orgObject);
+		} else
 		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
 			if (object->isDynamicShadowingEnabled() == false) continue;
 			visibleObjects.push_back(object);

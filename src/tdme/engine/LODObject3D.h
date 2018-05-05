@@ -226,7 +226,7 @@ public:
 	}
 
 	inline virtual Color4& getEffectColorMul() override {
-		return effectColorMulLOD2;
+		return effectColorMul;
 	}
 
 	inline virtual Color4& getEffectColorAddLOD2() {

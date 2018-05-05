@@ -122,6 +122,7 @@ SRCS = \
 	src/tdme/engine/LODObject3D.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
+	src/tdme/engine/Object3DRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystemEntity.cpp \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \

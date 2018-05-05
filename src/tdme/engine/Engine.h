@@ -67,6 +67,7 @@ class tdme::engine::Engine final
 	friend class EngineGLES2Renderer;
 	friend class FrameBuffer;
 	friend class Object3D;
+	friend class Object3DRenderGroup;
 	friend class LODObject3D;
 	friend class ObjectParticleSystemEntity;
 	friend class PointsParticleSystemEntity;

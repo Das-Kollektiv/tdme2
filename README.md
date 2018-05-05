@@ -45,6 +45,7 @@ TDME2
                 - circle on plane emitter
                 - ...
             - objects with support for LOD
+            - objects with support for render groups for foliage and such
             - object picking
             - camera control
               - set up look from, look at, up vector can be computed

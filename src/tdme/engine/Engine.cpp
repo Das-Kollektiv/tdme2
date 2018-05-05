@@ -16,6 +16,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
@@ -63,6 +64,7 @@ using tdme::engine::EngineGL2Renderer;
 using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
@@ -578,6 +580,33 @@ void Engine::computeTransformations()
 	ObjectParticleSystemEntity* opse = nullptr;
 	PointsParticleSystemEntity* ppse = nullptr;
 	ParticleSystemEntity* pse = nullptr;
+	Object3DRenderGroup* org = nullptr;
+
+	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
+	{ \
+		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
+			object->computeTransformations(); \
+			visibleObjects.push_back(object); \
+		} else \
+		if ((lodObject = dynamic_cast< LODObject3D* >(_entity)) != nullptr) { \
+			auto object = lodObject->determineLODObject(camera); \
+			if (object != nullptr) { \
+				visibleLODObjects.push_back(lodObject); \
+				visibleObjects.push_back(object); \
+				object->computeTransformations(); \
+			} \
+		} else \
+		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
+			for (auto object: *opse->getEnabledObjects()) { \
+				object->computeTransformations(); \
+				visibleObjects.push_back(object); \
+			} \
+			visibleOpses.push_back(opse); \
+		} else \
+		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(_entity)) != nullptr) { \
+			visiblePpses.push_back(ppse); \
+		} \
+	}
 
 	// collect entities that do not have frustum culling enabled
 	for (auto it: noFrustumCullingEntities) {
@@ -586,30 +615,11 @@ void Engine::computeTransformations()
 		// skip on disabled entities
 		if (entity->isEnabled() == false) continue;
 
-		// do entities with frustum culling disabled and add them to related lists
-		// objects
-		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
-			visibleObjects.push_back(object);
-		} else
-		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
-			auto lodObject = dynamic_cast< LODObject3D* >(entity);
-			auto object = lodObject->determineLODObject(camera);
-			if (object != nullptr) {
-				visibleLODObjects.push_back(lodObject);
-				visibleObjects.push_back(object);
-				object->computeTransformations();
-			}
-		} else
-		// object particle systems
-		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
-			for (auto object3D: *opse->getEnabledObjects()) {
-				visibleObjects.push_back(object3D);
-			}
-			visibleOpses.push_back(opse);
-		} else
-		// point particle systems
-		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(entity)) != nullptr) {
-			visiblePpses.push_back(ppse);
+		// compute transformations and add to lists
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+		} else {
+			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
 	}
 
@@ -629,30 +639,11 @@ void Engine::computeTransformations()
 
 	// add visible entities to related lists by querying frustum
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
-		// objects
-		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
-			object->computeTransformations();
-			visibleObjects.push_back(object);
-		} else
-		// LOD objects
-		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
-			auto object = lodObject->determineLODObject(camera);
-			if (object != nullptr) {
-				visibleLODObjects.push_back(lodObject);
-				visibleObjects.push_back(object);
-				object->computeTransformations();
-			}
-		} else
-		// object particle systems
-		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
-			for (auto object3D: *opse->getEnabledObjects()) {
-				visibleObjects.push_back(object3D);
-			}
-			visibleOpses.push_back(opse);
-		} else
-		// point particle systems
-		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(entity)) != nullptr) {
-			visiblePpses.push_back(ppse);
+		// compute transformations and add to lists
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+		} else {
+			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
 	}
 
