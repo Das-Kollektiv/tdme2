@@ -126,6 +126,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 		(*combinedModel->getGroups())[combinedModelGroup->getId()] = combinedModelGroup;
 	}
 
+	//
 	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
@@ -246,7 +247,15 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 				);
 			}
 		}
+		combinedModelGroupFacesEntity->getFaces()->shrink_to_fit();
 	}
+
+	combinedModelGroup->getFacesEntities()->shrink_to_fit();
+	combinedModelGroup->getVertices()->shrink_to_fit();
+	combinedModelGroup->getNormals()->shrink_to_fit();
+	combinedModelGroup->getTextureCoordinates()->shrink_to_fit();
+	combinedModelGroup->getTangents()->shrink_to_fit();
+	combinedModelGroup->getBitangents()->shrink_to_fit();
 
 	combinedModelGroup->determineFeatures();
 
