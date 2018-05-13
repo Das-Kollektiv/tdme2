@@ -268,6 +268,12 @@ public:
 	 */
 	int32_t getTypeId();
 
+	/**
+	 * Set collision type
+	 * @param type id
+	 */
+	void setTypeId(int typeId);
+
 	/** 
 	 * @return collision type ids bitmask
 	 */

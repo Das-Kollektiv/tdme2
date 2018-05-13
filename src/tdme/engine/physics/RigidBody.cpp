@@ -143,6 +143,11 @@ int32_t RigidBody::getTypeId()
 	return typeId;
 }
 
+void RigidBody::setTypeId(int typeId)
+{
+	this->typeId = typeId;
+}
+
 int32_t RigidBody::getCollisionTypeIds()
 {
 	return collisionTypeIds;
