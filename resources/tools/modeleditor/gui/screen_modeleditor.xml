@@ -1152,6 +1152,12 @@
 								<space width="5" />
 								<text font="resources/gui/fonts/Foo_20.fnt" text="Use render groups" width="200" height="auto"/>
 							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<checkbox id="rendering_apply_animations" name="rendering_apply_animations" value="1" />
+								<space width="5" />
+								<text font="resources/gui/fonts/Foo_20.fnt" text="Apply animations" width="200" height="auto"/>
+							</layout>
 							<space height="20" />
 							<layout width="auto" height="auto" alignment="none" horizontal-align="center">
 								<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />

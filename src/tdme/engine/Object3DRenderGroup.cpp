@@ -264,7 +264,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 	}
 }
 
-void Object3DRenderGroup::combine(Model* model, const Transformations& transformations, Model* combinedModel) {
+void Object3DRenderGroup::combineObject(Model* model, const Transformations& transformations, Model* combinedModel) {
 	Matrix4x4 transformationsMatrix;
 	transformationsMatrix.set(model->getImportTransformationsMatrix());
 	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
@@ -295,7 +295,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 			nullptr
 		);
 		for (auto object: objects) {
-			combine(model, object->getTransformations(), combinedModel);
+			combineObject(model, object->getTransformations(), combinedModel);
 		}
 		ModelHelper::createDefaultAnimation(combinedModel, 0);
 		ModelHelper::setupJoints(combinedModel);
@@ -402,77 +402,3 @@ void Object3DRenderGroup::initialize()
 {
 }
 
-void Object3DRenderGroup::setDynamicShadowingEnabled(bool dynamicShadowing)
-{
-	this->dynamicShadowing = dynamicShadowing;
-}
-
-void Object3DRenderGroup::setPickable(bool pickable)
-{
-	this->pickable = pickable;
-}
-
-Matrix4x4* Object3DRenderGroup::getTransformationsMatrix(const string& id)
-{
-	return &identityMatrix;
-}
-
-const Vector3& Object3DRenderGroup::getTranslation() const {
-	return Transformations::getTranslation();
-}
-
-void Object3DRenderGroup::setTranslation(const Vector3& translation) {
-	Transformations::setTranslation(translation);
-}
-
-const Vector3& Object3DRenderGroup::getScale() const {
-	return Transformations::getScale();
-}
-
-void Object3DRenderGroup::setScale(const Vector3& scale) {
-	Transformations::setScale(scale);
-}
-
-const Vector3& Object3DRenderGroup::getPivot() const {
-	return Transformations::getPivot();
-}
-
-void Object3DRenderGroup::setPivot(const Vector3& pivot) {
-	Transformations::setPivot(pivot);
-}
-
-const int Object3DRenderGroup::getRotationCount() const {
-	return Transformations::getRotationCount();
-}
-
-Rotation& Object3DRenderGroup::getRotation(int idx) {
-	return Transformations::getRotation(idx);
-}
-
-void Object3DRenderGroup::addRotation(const Vector3& axis, const float angle) {
-	Transformations::addRotation(axis, angle);
-}
-
-void Object3DRenderGroup::removeRotation(const int idx) {
-	Transformations::removeRotation(idx);
-}
-
-const Vector3& Object3DRenderGroup::getRotationAxis(const int idx) const {
-	return Transformations::getRotationAxis(idx);
-}
-
-void Object3DRenderGroup::setRotationAxis(const int idx, const Vector3& axis) {
-	Transformations::setRotationAxis(idx, axis);
-}
-
-const float Object3DRenderGroup::getRotationAngle(const int idx) const {
-	return Transformations::getRotationAngle(idx);
-}
-
-void Object3DRenderGroup::setRotationAngle(const int idx, const float angle) {
-	Transformations::setRotationAngle(idx, angle);
-}
-
-const Quaternion& Object3DRenderGroup::getRotationsQuaternion() const {
-	return Transformations::getRotationsQuaternion();
-}

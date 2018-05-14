@@ -263,26 +263,81 @@ public:
 		return pickable;
 	}
 
-	virtual Matrix4x4* getTransformationsMatrix(const string& id);
+	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+		this->dynamicShadowing = dynamicShadowing;
+		// delegate to LOD objects
+		if (objectLOD1 != nullptr) objectLOD1->setDynamicShadowingEnabled(dynamicShadowing);
+		if (objectLOD2 != nullptr) objectLOD2->setDynamicShadowingEnabled(dynamicShadowing);
+		if (objectLOD3 != nullptr) objectLOD3->setDynamicShadowingEnabled(dynamicShadowing);
+	}
 
-	// override methods
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
-	virtual void setPickable(bool pickable) override;
-	virtual const Vector3& getTranslation() const override;
-	virtual void setTranslation(const Vector3& translation) override;
-	virtual const Vector3& getScale() const override;
-	virtual void setScale(const Vector3& scale) override;
-	virtual const Vector3& getPivot() const override;
-	virtual void setPivot(const Vector3& pivot) override;
-	virtual const int getRotationCount() const override;
-	virtual Rotation& getRotation(const int idx) override;
-	virtual void addRotation(const Vector3& axis, const float angle) override;
-	virtual void removeRotation(const int idx) override;
-	virtual const Vector3& getRotationAxis(const int idx) const override;
-	virtual void setRotationAxis(const int idx, const Vector3& axis) override;
-	virtual const float getRotationAngle(const int idx) const override;
-	virtual void setRotationAngle(const int idx, const float angle) override;
-	virtual const Quaternion& getRotationsQuaternion() const override;
+	inline virtual void setPickable(bool pickable) override {
+		this->pickable = pickable;
+	}
+
+	inline virtual Matrix4x4* getTransformationsMatrix(const string& id) {
+		return objectLOD1->getTransformationsMatrix(id);
+	}
+
+	inline virtual const Vector3& getTranslation() const override {
+		return Transformations::getTranslation();
+	}
+
+	inline virtual void setTranslation(const Vector3& translation) override {
+		Transformations::setTranslation(translation);
+	}
+
+	inline virtual const Vector3& getScale() const override {
+		return Transformations::getScale();
+	}
+
+	inline virtual void setScale(const Vector3& scale) override {
+		Transformations::setScale(scale);
+	}
+
+	inline virtual const Vector3& getPivot() const override {
+		return Transformations::getPivot();
+	}
+
+	inline virtual void setPivot(const Vector3& pivot) override {
+		Transformations::setPivot(pivot);
+	}
+
+	inline virtual const int getRotationCount() const override {
+		return Transformations::getRotationCount();
+	}
+
+	inline virtual Rotation& getRotation(const int idx) override {
+		return Transformations::getRotation(idx);
+	}
+
+	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+		Transformations::addRotation(axis, angle);
+	}
+
+	inline virtual void removeRotation(const int idx) override {
+		Transformations::removeRotation(idx);
+	}
+
+	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+		return Transformations::getRotationAxis(idx);
+	}
+
+	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+		Transformations::setRotationAxis(idx, axis);
+	}
+
+	inline virtual const float getRotationAngle(const int idx) const override {
+		return Transformations::getRotationAngle(idx);
+	}
+
+	inline virtual void setRotationAngle(const int idx, const float angle) override {
+		Transformations::setRotationAngle(idx, angle);
+	}
+
+	inline virtual const Quaternion& getRotationsQuaternion() const override {
+		return Transformations::getRotationsQuaternion();
+	}
 
 	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
 		return Transformations::getTransformationsMatrix();
@@ -291,4 +346,5 @@ public:
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
 	}
+
 };

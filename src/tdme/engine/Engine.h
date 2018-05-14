@@ -126,6 +126,7 @@ private:
 	vector<LODObject3D*> visibleLODObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
 	vector<PointsParticleSystemEntity*> visiblePpses {  };
+	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 
 	bool shadowMappingEnabled {  };
@@ -406,6 +407,11 @@ public:
 	 * @return success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName);
+
+	/**
+	 * @return visible object render groups
+	 */
+	vector<Object3DRenderGroup*>& getVisibleObjectRenderGroups();
 
 	/**
 	 * Destructor

@@ -63,32 +63,108 @@ public:
 	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 public:
 	// overridden methods
-	virtual void dispose() override;
-	virtual Color4& getEffectColorAdd() override;
-	virtual Color4& getEffectColorMul() override;
-	virtual const string& getId() override;
-	virtual bool isDynamicShadowingEnabled() override;
-	virtual bool isEnabled() override;
-	virtual bool isPickable() override;
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
 	virtual void setEngine(Engine* engine) override;
-	virtual void setPickable(bool pickable) override;
 	virtual void setRenderer(GLRenderer* renderer) override;
-	virtual const Vector3& getTranslation() const override;
-	virtual void setTranslation(const Vector3& translation) override;
-	virtual const Vector3& getScale() const override;
-	virtual void setScale(const Vector3& scale) override;
-	virtual const Vector3& getPivot() const override;
-	virtual void setPivot(const Vector3& pivot) override;
-	virtual const int getRotationCount() const override;
-	virtual Rotation& getRotation(const int idx) override;
-	virtual void addRotation(const Vector3& axis, const float angle) override;
-	virtual void removeRotation(const int idx) override;
-	virtual const Vector3& getRotationAxis(const int idx) const override;
-	virtual void setRotationAxis(const int idx, const Vector3& axis) override;
-	virtual const float getRotationAngle(const int idx) const override;
-	virtual void setRotationAngle(const int idx, const float angle) override;
-	virtual const Quaternion& getRotationsQuaternion() const override;
-	virtual const Matrix4x4& getTransformationsMatrix() const override;
-	virtual const Transformations& getTransformations() const override;
+	virtual void dispose() override;
+
+	inline virtual Color4& getEffectColorAdd() override {
+		return PointsParticleSystemEntityInternal::getEffectColorAdd();
+	}
+
+	inline virtual Color4& getEffectColorMul() override {
+		return PointsParticleSystemEntityInternal::getEffectColorMul();
+	}
+
+	inline virtual const string& getId() override {
+		return PointsParticleSystemEntityInternal::getId();
+	}
+
+	inline virtual bool isDynamicShadowingEnabled() override {
+		return PointsParticleSystemEntityInternal::isDynamicShadowingEnabled();
+	}
+
+	inline virtual bool isEnabled() override {
+		return PointsParticleSystemEntityInternal::isEnabled();
+	}
+
+	inline virtual bool isPickable() override {
+		return PointsParticleSystemEntityInternal::isPickable();
+	}
+
+	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+		PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(dynamicShadowing);
+	}
+
+	inline virtual void setPickable(bool pickable) override {
+		PointsParticleSystemEntityInternal::setPickable(pickable);
+	}
+
+	inline virtual const Vector3& getTranslation() const override {
+		return Transformations::getTranslation();
+	}
+
+	inline virtual void setTranslation(const Vector3& translation) override {
+		Transformations::setTranslation(translation);
+	}
+
+	inline virtual const Vector3& getScale() const override {
+		return Transformations::getScale();
+	}
+
+	inline virtual void setScale(const Vector3& scale) override {
+		Transformations::setScale(scale);
+	}
+
+	inline virtual const Vector3& getPivot() const override {
+		return Transformations::getPivot();
+	}
+
+	inline virtual void setPivot(const Vector3& pivot) override {
+		Transformations::setPivot(pivot);
+	}
+
+	inline virtual const int getRotationCount() const override {
+		return Transformations::getRotationCount();
+	}
+
+	inline virtual Rotation& getRotation(const int idx) override {
+		return Transformations::getRotation(idx);
+	}
+
+	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+		Transformations::addRotation(axis, angle);
+	}
+
+	inline virtual void removeRotation(const int idx) override {
+		Transformations::removeRotation(idx);
+	}
+
+	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+		return Transformations::getRotationAxis(idx);
+	}
+
+	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+		Transformations::setRotationAxis(idx, axis);
+	}
+
+	inline virtual const float getRotationAngle(const int idx) const override {
+		return Transformations::getRotationAngle(idx);
+	}
+
+	inline virtual void setRotationAngle(const int idx, const float angle) override {
+		Transformations::setRotationAngle(idx, angle);
+	}
+
+	inline virtual const Quaternion& getRotationsQuaternion() const override {
+		return Transformations::getRotationsQuaternion();
+	}
+
+	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+		return Transformations::getTransformationsMatrix();
+	}
+
+	inline virtual const Transformations& getTransformations() const override {
+		return *this;
+	}
+
 };

@@ -48,6 +48,7 @@ class tdme::engine::Object3DRenderGroup final:
 private:
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
+	bool groupRendering { true };
 
 	string id;
 	bool enabled {  };
@@ -82,7 +83,7 @@ private:
 	 * @param combined model
 	 * @return model
 	 */
-	static void combine(Model* model, const Transformations& transformations, Model* combinedModel);
+	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
 
 	/**
 	 * Update render group model and bounding box
@@ -90,6 +91,7 @@ private:
 	void updateRenderGroup();
 
 public:
+	// overriden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(GLRenderer* renderer) override;
 	void fromTransformations(const Transformations& transformations) override;
@@ -97,6 +99,21 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
+
+	/**
+	 * @return if is using group rendering
+	 */
+	inline bool isGroupRendering() {
+		return groupRendering;
+	}
+
+	/**
+	 * Set if to use group rendering
+	 * @param group rendering
+	 */
+	inline void setGroupRendering(bool groupRendering) {
+		this->groupRendering = groupRendering;
+	}
 
 	/**
 	 * Public constructor
@@ -111,10 +128,24 @@ public:
 
 public:
 	/**
+	 * @return associated model
+	 */
+	inline Model* getModel() {
+		return objects[0]->getModel();
+	}
+
+	/**
 	 * @return objects
 	 */
 	inline vector<Object3D*>& getObjects() {
-		return objectsCombined.size() > 0?objectsCombined:objects;
+		return groupRendering == true?objectsCombined:objects;
+	}
+
+	/**
+	 * @return all objects aka group objects used to be combined
+	 */
+	inline vector<Object3D*>& getGroupObjects() {
+		return objects;
 	}
 
 	/**
@@ -160,26 +191,74 @@ public:
 		return pickable;
 	}
 
-	virtual Matrix4x4* getTransformationsMatrix(const string& id);
-
 	// override methods
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
-	virtual void setPickable(bool pickable) override;
-	virtual const Vector3& getTranslation() const override;
-	virtual void setTranslation(const Vector3& translation) override;
-	virtual const Vector3& getScale() const override;
-	virtual void setScale(const Vector3& scale) override;
-	virtual const Vector3& getPivot() const override;
-	virtual void setPivot(const Vector3& pivot) override;
-	virtual const int getRotationCount() const override;
-	virtual Rotation& getRotation(const int idx) override;
-	virtual void addRotation(const Vector3& axis, const float angle) override;
-	virtual void removeRotation(const int idx) override;
-	virtual const Vector3& getRotationAxis(const int idx) const override;
-	virtual void setRotationAxis(const int idx, const Vector3& axis) override;
-	virtual const float getRotationAngle(const int idx) const override;
-	virtual void setRotationAngle(const int idx, const float angle) override;
-	virtual const Quaternion& getRotationsQuaternion() const override;
+	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+		this->dynamicShadowing = dynamicShadowing;
+	}
+
+	inline virtual void setPickable(bool pickable) override {
+		this->pickable = pickable;
+	}
+
+	inline virtual const Vector3& getTranslation() const override {
+		return Transformations::getTranslation();
+	}
+
+	inline virtual void setTranslation(const Vector3& translation) override {
+		Transformations::setTranslation(translation);
+	}
+
+	inline virtual const Vector3& getScale() const override {
+		return Transformations::getScale();
+	}
+
+	inline virtual void setScale(const Vector3& scale) override {
+		Transformations::setScale(scale);
+	}
+
+	inline virtual const Vector3& getPivot() const override {
+		return Transformations::getPivot();
+	}
+
+	inline virtual void setPivot(const Vector3& pivot) override {
+		Transformations::setPivot(pivot);
+	}
+
+	inline virtual const int getRotationCount() const override {
+		return Transformations::getRotationCount();
+	}
+
+	inline virtual Rotation& getRotation(const int idx) override {
+		return Transformations::getRotation(idx);
+	}
+
+	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+		Transformations::addRotation(axis, angle);
+	}
+
+	inline virtual void removeRotation(const int idx) override {
+		Transformations::removeRotation(idx);
+	}
+
+	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+		return Transformations::getRotationAxis(idx);
+	}
+
+	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+		Transformations::setRotationAxis(idx, axis);
+	}
+
+	inline virtual const float getRotationAngle(const int idx) const override {
+		return Transformations::getRotationAngle(idx);
+	}
+
+	inline virtual void setRotationAngle(const int idx, const float angle) override {
+		Transformations::setRotationAngle(idx, angle);
+	}
+
+	inline virtual const Quaternion& getRotationsQuaternion() const override {
+		return Transformations::getRotationsQuaternion();
+	}
 
 	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
 		return Transformations::getTransformationsMatrix();
@@ -188,4 +267,5 @@ public:
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
 	}
+
 };

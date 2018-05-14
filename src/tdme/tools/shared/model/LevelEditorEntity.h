@@ -56,6 +56,7 @@ private:
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups;
+	bool applyAnimations;
 	bool dynamicShadowing;
 public:
 
@@ -254,6 +255,22 @@ public:
 	 */
 	inline void setRenderGroups(bool renderGroups) {
 		this->renderGroups = renderGroups;
+	}
+
+	/**
+	 * Is applying animations
+	 * @return apply animation flag
+	 */
+	inline bool isApplyAnimations() {
+		return applyAnimations;
+	}
+
+	/**
+	 * Set apply animations
+	 * @param apply animations
+	 */
+	inline void setApplyAnimations(bool applyAnimations) {
+		this->applyAnimations = applyAnimations;
 	}
 
 	/**

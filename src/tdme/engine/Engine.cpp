@@ -565,6 +565,7 @@ void Engine::initRendering()
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
+	visibleObjectRenderGroups.clear();
 
 	//
 	renderingInitiated = true;
@@ -641,6 +642,7 @@ void Engine::computeTransformations()
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			visibleObjectRenderGroups.push_back(org);
 			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
@@ -982,4 +984,8 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 	//
 	return true;
+}
+
+vector<Object3DRenderGroup*>& Engine::getVisibleObjectRenderGroups() {
+	return visibleObjectRenderGroups;
 }
