@@ -62,6 +62,8 @@ public:
 	 * @return text
 	 */
 	MutableString& getText();
+
+	// override methods
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 };

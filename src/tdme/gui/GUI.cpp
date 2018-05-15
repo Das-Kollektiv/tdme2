@@ -4,6 +4,7 @@
 	#include <Carbon/Carbon.h>
 #endif
 
+#include <algorithm>
 #include <map>
 #include <set>
 #include <string>
@@ -37,10 +38,11 @@
 #include <tdme/utils/Exception.h>
 
 using std::map;
-using std::vector;
+using std::remove;
 using std::set;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::gui::GUI;
 using tdme::engine::Engine;
@@ -261,6 +263,15 @@ void GUI::addRenderScreen(const string& screenId)
 	screenIt->second->setGUI(this);
 	screenIt->second->setConditionsMet();
 	renderScreens.push_back(screenIt->second);
+}
+
+void GUI::removeRenderScreen(const string& screenId)
+{
+	auto screenIt = screens.find(screenId);
+	if (screenIt == screens.end())
+		return;
+
+	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
 }
 
 GUIColor& GUI::getFoccussedBorderColor()

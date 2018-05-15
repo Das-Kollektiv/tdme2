@@ -175,6 +175,12 @@ public:
 	void addRenderScreen(const string& screenId);
 
 	/** 
+	 * Remove render screen
+	 * @param screenId
+	 */
+	void removeRenderScreen(const string& screenId);
+
+	/**
 	 * @return focussed border color
 	 */
 	GUIColor& getFoccussedBorderColor();
