@@ -6,16 +6,16 @@
 using tdme::gui::nodes::GUIElementNode;
 
 /** 
- * GUI change listener
+ * GUI mouse over listener
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::gui::events::GUIChangeListener
+struct tdme::gui::events::GUIMouseOverListener
 {
 
 	/** 
-	 * On value changed
+	 * On mouse over
 	 * @param node
 	 */
-	virtual void onValueChanged(GUIElementNode* node) = 0;
+	virtual void onMouseOver(GUIElementNode* node) = 0;
 };

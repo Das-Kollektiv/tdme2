@@ -10,6 +10,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
@@ -32,6 +33,7 @@ using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
@@ -365,6 +367,23 @@ void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 {
 	for (auto i = 0; i < changeListener.size(); i++) {
 		changeListener[i]->onValueChanged(node);
+	}
+}
+
+void GUIScreenNode::addMouseOverListener(GUIMouseOverListener* listener)
+{
+	mouseOverListener.push_back(listener);
+}
+
+void GUIScreenNode::removeMouseOverListener(GUIMouseOverListener* listener)
+{
+	mouseOverListener.erase(std::remove(mouseOverListener.begin(), mouseOverListener.end(), listener), mouseOverListener.end());
+}
+
+void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
+{
+	for (auto i = 0; i < mouseOverListener.size(); i++) {
+		mouseOverListener[i]->onMouseOver(node);
 	}
 }
 

@@ -28,6 +28,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -65,6 +66,7 @@ private:
 	vector<GUINode*> floatingNodes {  };
 	vector<GUIActionListener*> actionListener {  };
 	vector<GUIChangeListener*> changeListener {  };
+	vector<GUIMouseOverListener*> mouseOverListener {  };
 	GUIInputEventHandler* inputEventHandler {  };
 	vector<GUINode*> childControllerNodes {  };
 
@@ -298,6 +300,24 @@ public:
 	 * @param node
 	 */
 	void delegateValueChanged(GUIElementNode* node);
+
+	/**
+	 * Add mouse over listener
+	 * @param listener
+	 */
+	void addMouseOverListener(GUIMouseOverListener* listener);
+
+	/**
+	 * Remove mouse over listener
+	 * @param listener
+	 */
+	void removeMouseOverListener(GUIMouseOverListener* listener);
+
+	/**
+	 * Delegate mouse over event
+	 * @param node
+	 */
+	void delegateMouseOver(GUIElementNode* node);
 
 	/**
 	 * Add tick node, registered node controllers will have a tick once per frame

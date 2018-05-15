@@ -492,6 +492,21 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mou
 		controllerNode->getController()->handleMouseEvent(eventNode, event);
 	}
 
+	// fire mouse over events to element nodes
+	//	TODO: check if this makes sense this way
+	//		Think of:
+	//			mouse out too
+	//			giving mouse event as well or mouse coordinates
+	//			think of firing only once while mouse gets into element and moves over element until it gets out
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
+		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		for (auto eventNodeId: mouseEventNodeIds) {
+			auto elementEventNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(eventNodeId));
+			if (elementEventNode == nullptr) continue;
+			node->getScreenNode()->delegateMouseOver(elementEventNode);
+		}
+	}
+
 	// compile list of gui node ids that received mouse PRESSED events
 	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 		for (auto eventNodeId: mouseEventNodeIds) {
