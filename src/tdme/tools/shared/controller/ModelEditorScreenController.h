@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -17,6 +18,7 @@
 
 using std::string;
 
+using tdme::engine::model::Material;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
@@ -114,6 +116,15 @@ private:
 
 	FileDialogPath* modelPath {  };
 
+	/**
+	 * @return level editor entity lod level or nullptr
+	 */
+	LevelEditorEntityLODLevel* getLODLevel(int level);
+
+	/**
+	 * @return current selected material
+	 */
+	Material* getSelectedMaterial();
 public:
 
 	/**
@@ -195,11 +206,6 @@ public:
 	void unsetRendering();
 
 	/**
-	 * @return level editor entity lod level or nullptr
-	 */
-	LevelEditorEntityLODLevel* getLODLevel(int level);
-
-	/**
 	 * Set lod level
 	 * @param entity
 	 * @param lod level
@@ -246,6 +252,8 @@ public:
 	 * On material drop down apply
 	 */
 	void onMaterialDropDownApply();
+
+	Material* getCurrentMaterial();
 
 	/**
 	 * On material apply

@@ -71,7 +71,7 @@ private:
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
+	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 public:
 
@@ -195,6 +195,14 @@ public:
 	 * @return bounding box
 	 */
 	BoundingBox* getBoundingBox();
+
+	/**
+	 * Computes a transformations matrix at a given frame for a given group id recursivly
+	 * @param group id
+	 * @param group transformations matrix
+	 * @param frame
+	 */
+	bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0);
 
 	/**
 	 * Public constructor

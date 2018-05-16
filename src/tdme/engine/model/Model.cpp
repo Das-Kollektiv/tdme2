@@ -185,7 +185,7 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
 	// iterate through groups
 	for (auto it: *groups) {
@@ -216,4 +216,8 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4&
 
 	//
 	return false;
+}
+
+bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
+	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 }

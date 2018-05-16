@@ -52,12 +52,12 @@ private:
 	Vector3 pivot {  };
 	LevelEditorEntityLODLevel* lodLevel2;
 	LevelEditorEntityLODLevel* lodLevel3;
-	LevelEditorEntityParticleSystem* particleSystem {  };
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
+	LevelEditorEntityParticleSystem* particleSystem {  };
 	LevelEditorEntityModel* modelSettings;
-	bool renderGroups;
-	bool applyAnimations;
-	bool dynamicShadowing;
+	bool renderGroups {  };
+	bool applyAnimations {  };
+	bool dynamicShadowing {  };
 public:
 
 	/** 

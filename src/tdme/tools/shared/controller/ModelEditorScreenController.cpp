@@ -557,8 +557,7 @@ void ModelEditorScreenController::unsetMaterials() {
 }
 
 void ModelEditorScreenController::onMaterialDropDownApply() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
@@ -582,9 +581,15 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
 }
 
-void ModelEditorScreenController::onMaterialApply() {
+Material* ModelEditorScreenController::getSelectedMaterial() {
 	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	if (model == nullptr) return nullptr;
+	auto materialIt = model->getMaterials()->find(materialsDropdown->getController()->getValue().getString());
+	return materialIt != model->getMaterials()->end()?materialIt->second:nullptr;
+}
+
+void ModelEditorScreenController::onMaterialApply() {
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	try {
@@ -615,8 +620,7 @@ void ModelEditorScreenController::onMaterialApply() {
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto extensions = TextureLoader::getTextureExtensions();
@@ -630,8 +634,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto extensions = TextureLoader::getTextureExtensions();
@@ -645,8 +648,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadNormalTexture() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto extensions = TextureLoader::getTextureExtensions();
@@ -660,8 +662,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	auto material = model != nullptr?(*model->getMaterials())[materialsDropdown->getController()->getValue().getString()]:nullptr;
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto extensions = TextureLoader::getTextureExtensions();

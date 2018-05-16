@@ -18,7 +18,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include "ModelStatistics.h"
 
 using std::map;
 using std::string;
@@ -44,6 +43,9 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
 {
 	Object3DModelInternal object3dModel(model);
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
+	if (boundingBox == nullptr) {
+		boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
+	}
 	return boundingBox;
 }
 
@@ -92,9 +94,58 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
 		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
 	}
-	// skip on models without meshes to be rendered
-	if (firstVertex == true)
-		return nullptr;
+	// skip on models without mesh
+	if (firstVertex == true) return nullptr;
+	// otherwise go with bounding box
+	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
+}
+
+BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal)
+{
+	auto model = object3DModelInternal->getModel();
+	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
+	float minX = 0.0f, minY = 0.0f, minZ = 0.0f;
+	float maxX = 0.0f, maxY = 0.0f, maxZ = 0.0f;
+	auto firstVertex = true;
+	// create bounding box for whole animation at 60fps
+	AnimationState animationState;
+	animationState.setup = defaultAnimation;
+	animationState.lastAtTime = Timing::UNDEFINED;
+	animationState.currentAtTime = 0LL;
+	animationState.time = 0.0f;
+	animationState.finished = false;
+	Vector3 vertex;
+	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
+		// calculate transformations matrices without world transformations
+		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
+		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, 0);
+		for (auto groupIt: *model->getGroups()) {
+			auto transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
+			if (transformedGroupMatrix == nullptr) continue;
+			transformedGroupMatrix->multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
+			if (firstVertex == true) {
+				minX = vertex[0];
+				minY = vertex[1];
+				minZ = vertex[2];
+				maxX = vertex[0];
+				maxY = vertex[1];
+				maxZ = vertex[2];
+				firstVertex = false;
+			} else {
+				if (vertex[0] < minX) minX = vertex[0];
+				if (vertex[1] < minY) minY = vertex[1];
+				if (vertex[2] < minZ) minZ = vertex[2];
+				if (vertex[0] > maxX) maxX = vertex[0];
+				if (vertex[1] > maxY) maxY = vertex[1];
+				if (vertex[2] > maxZ) maxZ = vertex[2];
+			}
+		}
+		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
+		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
+	}
+	// skip on models without groups
+	if (firstVertex == true) return nullptr;
 	// otherwise go with bounding box
 	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
 }

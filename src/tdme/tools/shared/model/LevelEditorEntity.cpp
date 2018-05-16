@@ -34,7 +34,6 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->pivot.set(pivot);
 	this->lodLevel2 = nullptr;
 	this->lodLevel3 = nullptr;
-	this->dynamicShadowing = true;
 	this->particleSystem = nullptr;
 	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -43,6 +42,9 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
 		this->modelSettings = new LevelEditorEntityModel(this);
 	}
+	renderGroups = false;
+	applyAnimations = false;
+	dynamicShadowing = true;
 }
 
 LevelEditorEntity::~LevelEditorEntity() {
