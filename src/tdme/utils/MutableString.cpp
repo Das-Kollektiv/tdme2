@@ -196,3 +196,7 @@ const string& MutableString::getString() const
 {
 	return data;
 }
+
+MutableString MutableString::clone() {
+	return MutableString(data);
+}

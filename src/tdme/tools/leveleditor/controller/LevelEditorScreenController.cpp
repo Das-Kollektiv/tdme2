@@ -179,7 +179,7 @@ void LevelEditorScreenController::dispose()
 
 void LevelEditorScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText().set(text);
+	screenCaption->setText(text);
 	screenNode->layout(screenCaption);
 }
 

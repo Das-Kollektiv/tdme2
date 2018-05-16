@@ -55,8 +55,8 @@ void InfoDialogScreenController::dispose()
 void InfoDialogScreenController::show(const string& caption, const string& message)
 {
 	screenNode->setVisible(true);
-	captionNode->getText().set(MutableString(caption));
-	messageNode->getText().set(MutableString(message));
+	captionNode->setText(caption);
+	messageNode->setText(message);
 	screenNode->layout();
 }
 

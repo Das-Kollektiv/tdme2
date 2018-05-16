@@ -54,11 +54,6 @@ int32_t GUITextNode::getContentHeight()
 	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
-MutableString& GUITextNode::getText()
-{
-	return text;
-}
-
 void GUITextNode::dispose()
 {
 	this->font->dispose();

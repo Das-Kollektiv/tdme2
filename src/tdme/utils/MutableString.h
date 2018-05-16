@@ -188,6 +188,11 @@ public:
 	const string& getString() const;
 
 	/**
+	 * Clone
+	 */
+	MutableString clone();
+
+	/**
 	 * Public default constructor
 	 */
 	MutableString();
