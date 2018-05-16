@@ -30,50 +30,72 @@ public:
 	/** 
 	 * @return position X start
 	 */
-	virtual float getPositionXStart();
+	inline virtual float getPositionXStart() const {
+		return positionXStart;
+	}
 
 	/** 
 	 * Set position X start
 	 * @param position X start
 	 */
-	virtual void setPositionXStart(float positionXStart);
+	inline virtual void setPositionXStart(float positionXStart) {
+		this->positionXStart = positionXStart;
+	}
 
 	/** 
 	 * @return position X end
 	 */
-	virtual float getPositionXEnd();
+	inline virtual float getPositionXEnd() const {
+		return positionXEnd;
+	}
 
 	/** 
 	 * Set position X end
 	 * @param position X end
 	 */
-	virtual void setPositionXEnd(float positionXEnd);
+	inline virtual void setPositionXEnd(float positionXEnd) {
+		this->positionXEnd = positionXEnd;
+	}
 
 	/** 
 	 * @return position Y start
 	 */
-	virtual float getPositionYStart();
+	inline virtual float getPositionYStart() const {
+		return positionYStart;
+	}
 
 	/** 
 	 * Set position Y start
 	 * @param position Y start
 	 */
-	virtual void setPositionYStart(float positionYStart);
+	inline virtual void setPositionYStart(float positionYStart) {
+		this->positionYStart = positionYStart;
+	}
 
 	/** 
 	 * @return get position Y end
 	 */
-	virtual float getPositionYEnd();
+	inline virtual float getPositionYEnd() const {
+		return positionYEnd;
+	}
 
 	/** 
 	 * Set position Y end
 	 * @param position Y end
 	 */
-	virtual void setPositionYEnd(float positionYEnd);
+	inline virtual void setPositionYEnd(float positionYEnd) {
+		this->positionYEnd = positionYEnd;
+	}
+
+	// override methods
 	void apply(GUIRenderer* guiRenderer) override;
 
+	// Public constructor
 	GUIPositionEffect();
 
 private:
+	/**
+	 * Init
+	 */
 	void init();
 };
