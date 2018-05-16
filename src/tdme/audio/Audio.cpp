@@ -58,26 +58,6 @@ Audio* Audio::getInstance()
 	return Audio::instance;
 }
 
-Vector3& Audio::getListenerPosition()
-{
-	return listenerPosition;
-}
-
-Vector3& Audio::getListenerVelocity()
-{
-	return listenerVelocity;
-}
-
-Vector3& Audio::getListenerOrientationAt()
-{
-	return listenerOrientationAt;
-}
-
-Vector3& Audio::getListenerOrientationUp()
-{
-	return listenerOrientationUp;
-}
-
 AudioEntity* Audio::getEntity(const string& id)
 {
 	auto audioEntityIt = audioEntities.find(id);

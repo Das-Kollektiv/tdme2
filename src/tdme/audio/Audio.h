@@ -62,22 +62,62 @@ public:
 	/** 
 	 * @return listener position
 	 */
-	Vector3& getListenerPosition();
+	inline const Vector3& getListenerPosition() const {
+		return listenerPosition;
+	}
 
 	/** 
+	 * Set listener position
+	 * @param listener position
+	 */
+	inline void setListenerPosition(const Vector3& listenerPosition) {
+		this->listenerPosition = listenerPosition;
+	}
+
+	/**
 	 * @return listener velocity
 	 */
-	Vector3& getListenerVelocity();
+	inline const Vector3& getListenerVelocity() const {
+		return listenerVelocity;
+	}
+
+	/**
+	 * Set listener velocity
+	 * @param listener velocity
+	 */
+	inline void setListenerVelocity(const Vector3& listenerVelocity) {
+		this->listenerVelocity = listenerVelocity;
+	}
 
 	/** 
 	 * @return listener orientation at
 	 */
-	Vector3& getListenerOrientationAt();
+	inline const Vector3& getListenerOrientationAt() const {
+		return listenerOrientationAt;
+	}
 
 	/** 
+	 * Set listener orientation at
+	 * @param listener orientation at
+	 */
+	inline void setListenerOrientationAt(const Vector3& listenerOrientationAt) {
+		this->listenerOrientationAt = listenerOrientationAt;
+	}
+
+	/**
 	 * @return listener orientation up
 	 */
-	Vector3& getListenerOrientationUp();
+	inline const Vector3& getListenerOrientationUp() const {
+		return listenerOrientationUp;
+	}
+
+	/**
+	 * Set listener orientation up
+	 * @return listener orientation up
+	 */
+	inline void setListenerOrientationUp(const Vector3& listenerOrientationUp) {
+		this->listenerOrientationUp = listenerOrientationUp;
+	}
 
 	/** 
 	 * Returns an audio entity identified by given id
