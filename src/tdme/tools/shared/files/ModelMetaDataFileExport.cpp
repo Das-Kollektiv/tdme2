@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -44,6 +45,7 @@
 using std::ostringstream;
 using std::string;
 
+using tdme::engine::LODObject3D;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
@@ -91,9 +93,41 @@ void ModelMetaDataFileExport::export_(const string& pathName, const string& file
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, (json.str()));
 }
 
+tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel) {
+	ext::jsonbox::Object jLodLevelRoot;
+	jLodLevelRoot["t"] = static_cast<int>(lodLevel->getType());
+	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+		lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) {
+		//
+		auto modelPathName = Tools::getPath(lodLevel->getFileName());
+		auto modelFileName =
+			 Tools::getFileName(lodLevel->getFileName()) +
+			 (StringUtils::endsWith(lodLevel->getFileName(), ".tm") == false ? ".tm" : "");
+		TMWriter::write(
+			lodLevel->getModel(),
+			modelPathName,
+			modelFileName
+		);
+		jLodLevelRoot["f"] = (modelPathName + "/" + modelFileName);
+	}
+	jLodLevelRoot["d"] = lodLevel->getMinDistance();
+	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) {
+		jLodLevelRoot["ry"] = lodLevel->getPlaneRotationY();
+	}
+	jLodLevelRoot["cmr"] = lodLevel->getColorMul().getRed();
+	jLodLevelRoot["cmg"] = lodLevel->getColorMul().getGreen();
+	jLodLevelRoot["cmb"] = lodLevel->getColorMul().getBlue();
+	jLodLevelRoot["cma"] = lodLevel->getColorMul().getAlpha();
+	jLodLevelRoot["car"] = lodLevel->getColorAdd().getRed();
+	jLodLevelRoot["cag"] = lodLevel->getColorAdd().getGreen();
+	jLodLevelRoot["cab"] = lodLevel->getColorAdd().getBlue();
+	jLodLevelRoot["caa"] = lodLevel->getColorAdd().getAlpha();
+	return jLodLevelRoot;
+}
+
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	ext::jsonbox::Object jEntityRoot;;
+	ext::jsonbox::Object jEntityRoot;
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName =
@@ -118,6 +152,29 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 		*/
 		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
+		int lodLevelIdx = 2;
+		{
+			auto lodLevel = entity->getLODLevel2();
+			if (lodLevel != nullptr &&
+				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
+				lodLevel->getModel() != nullptr))) {
+				//
+				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
+			}
+		}
+		{
+			auto lodLevel = entity->getLODLevel3();
+			if (lodLevel != nullptr &&
+				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
+				lodLevel->getModel() != nullptr))) {
+				//
+				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
+			}
+		}
 	}
 	jEntityRoot["version"] = "1.99";
 	jEntityRoot["type"] = (entity->getType()->getName());
@@ -435,5 +492,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	}
 	jEntityRoot["properties"] = jModelProperties;
 	jEntityRoot["ds"] = entity->isDynamicShadowing();
+	jEntityRoot["rg"] = entity->isRenderGroups();
+	jEntityRoot["aa"] = entity->isApplyAnimations();
 	return jEntityRoot;
 }

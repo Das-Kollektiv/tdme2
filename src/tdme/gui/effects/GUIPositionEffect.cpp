@@ -22,46 +22,6 @@ void GUIPositionEffect::init()
 	positionY = 0.0f;
 }
 
-float GUIPositionEffect::getPositionXStart()
-{
-	return positionXStart;
-}
-
-void GUIPositionEffect::setPositionXStart(float positionXStart)
-{
-	this->positionXStart = positionXStart;
-}
-
-float GUIPositionEffect::getPositionXEnd()
-{
-	return positionXEnd;
-}
-
-void GUIPositionEffect::setPositionXEnd(float positionXEnd)
-{
-	this->positionXEnd = positionXEnd;
-}
-
-float GUIPositionEffect::getPositionYStart()
-{
-	return positionYStart;
-}
-
-void GUIPositionEffect::setPositionYStart(float positionYStart)
-{
-	this->positionYStart = positionYStart;
-}
-
-float GUIPositionEffect::getPositionYEnd()
-{
-	return positionYEnd;
-}
-
-void GUIPositionEffect::setPositionYEnd(float positionYEnd)
-{
-	this->positionYEnd = positionYEnd;
-}
-
 void GUIPositionEffect::apply(GUIRenderer* guiRenderer)
 {
 	if (active == false)

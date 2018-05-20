@@ -164,6 +164,6 @@ const Vector3& BoundingVolume::getCenterTransformed() const {
 	return centerTransformed;
 }
 
-const BoundingBox& BoundingVolume::getBoundingBoxTransformed() const {
+BoundingBox& BoundingVolume::getBoundingBoxTransformed() {
 	return boundingBoxTransformed;
 }

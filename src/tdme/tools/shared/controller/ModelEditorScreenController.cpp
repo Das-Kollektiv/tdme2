@@ -27,7 +27,9 @@
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.h>
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.h>
 #include <tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.h>
+#include <tdme/tools/shared/controller/ModelEditorScreenController_onLODModelLoad.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -66,7 +68,10 @@ using tdme::tools::shared::controller::ModelEditorScreenController_ModelEditorSc
 using tdme::tools::shared::controller::ModelEditorScreenController_onMaterialLoadTexture;
 using tdme::tools::shared::controller::ModelEditorScreenController_onModelLoad_2;
 using tdme::tools::shared::controller::ModelEditorScreenController_onModelSave_3;
+using tdme::tools::shared::controller::ModelEditorScreenController_onLODModelLoad;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
@@ -133,14 +138,21 @@ void ModelEditorScreenController::initialize()
 		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_y"));
 		pivotZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_z"));
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
-		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
-		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
-		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
-		statsOpaqueFaces->getController()->setDisabled(true);
-		statsTransparentFaces->getController()->setDisabled(true);
-		statsMaterialCount->getController()->setDisabled(true);
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
+		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
+		renderingApplyAnimations = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_apply_animations"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
+		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
+		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
+		lodType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_type"));
+		lodModelFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file"));
+		lodModelFileLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file_load"));
+		lodModelFileClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_model_file_clear"));
+		lodMinDistance = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_min_distance"));
+		lodPlaneRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_plane_rotation_y"));
+		lodColorMul = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_color_mul"));
+		lodColorAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_color_add"));
+		buttonLodApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_lod_apply"));
 		materialsDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_dropdown"));
 		materialsDropdownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_dropdown_apply"));
 		materialsMaterialName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_name"));
@@ -162,6 +174,7 @@ void ModelEditorScreenController::initialize()
 		materialsMaterialNormalTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_normal_texture_clear"));;
 		materialsMaterialSpecularTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_specular_texture_clear"));;
 		materialsMaterialUseMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_use_masked_transparency"));;
+		materialsMaterialMaskedTransparencyThreshold = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_masked_transparency_threshold"));;
 		materialsMaterialApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_apply"));
 		animationsDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown"));
 		animationsDropDownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_apply"));
@@ -172,6 +185,12 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
+		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
+		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
+		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
+		statsOpaqueFaces->getController()->setDisabled(true);
+		statsTransparentFaces->getController()->setDisabled(true);
+		statsMaterialCount->getController()->setDisabled(true);
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -187,7 +206,7 @@ void ModelEditorScreenController::dispose()
 
 void ModelEditorScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText().set(text);
+	screenCaption->setText(text);
 	screenNode->layout(screenCaption);
 }
 
@@ -241,6 +260,10 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingDynamicShadowing->getController()->setDisabled(false);
 	renderingDynamicShadowing->getController()->setValue(MutableString(entity->isDynamicShadowing() == true?"1":""));
+	renderingRenderGroups->getController()->setDisabled(false);
+	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
+	renderingApplyAnimations->getController()->setDisabled(false);
+	renderingApplyAnimations->getController()->setValue(MutableString(entity->isApplyAnimations() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
@@ -248,11 +271,182 @@ void ModelEditorScreenController::unsetRendering()
 {
 	renderingDynamicShadowing->getController()->setDisabled(true);
 	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
+	renderingRenderGroups->getController()->setDisabled(true);
+	renderingRenderGroups->getController()->setValue(MutableString("0"));
+	renderingApplyAnimations->getController()->setDisabled(true);
+	renderingApplyAnimations->getController()->setValue(MutableString("0"));
 	renderingApply->getController()->setDisabled(true);
 }
 
+LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
+	auto entity = view->getEntity();
+	switch(level) {
+		case 2:
+			{
+				auto entityLodLevel = entity->getLODLevel2();
+				if (entityLodLevel == nullptr) {
+					entityLodLevel = new LevelEditorEntityLODLevel(
+						LODObject3D::LODLEVELTYPE_NONE,
+						"",
+						nullptr,
+						0.0f,
+						0.0f
+					);
+					entity->setLODLevel2(entityLodLevel);
+				}
+				return entityLodLevel;
+			}
+		case 3:
+			{
+				auto entityLodLevel = entity->getLODLevel3();
+				if (entityLodLevel == nullptr) {
+					entityLodLevel = new LevelEditorEntityLODLevel(
+						LODObject3D::LODLEVELTYPE_NONE,
+						"",
+						nullptr,
+						0.0f,
+						0.0f
+					);
+					entity->setLODLevel3(entityLodLevel);
+				}
+				return entityLodLevel;
+			}
+		default:
+			{
+				return nullptr;
+			}
+	}
+}
+
+void ModelEditorScreenController::setLODLevel(LevelEditorEntity* entity, int level) {
+	auto entityLodLevel = getLODLevel(level);
+	if (entityLodLevel == nullptr) {
+		lodLevel->getController()->setValue(MutableString(to_string(level)));
+		lodLevel->getController()->setDisabled(false);
+		lodLevelApply->getController()->setDisabled(false);
+		lodType->getController()->setValue(MutableString("1"));
+		lodType->getController()->setDisabled(true);
+		lodModelFile->getController()->setValue(MutableString(entity->getFileName()));
+		lodModelFile->getController()->setDisabled(true);
+		lodModelFileLoad->getController()->setDisabled(true);
+		lodModelFileClear->getController()->setDisabled(true);
+		lodMinDistance->getController()->setValue(MutableString("0.0"));
+		lodMinDistance->getController()->setDisabled(true);
+		lodPlaneRotationY->getController()->setValue(MutableString("0.0"));
+		lodPlaneRotationY->getController()->setDisabled(true);
+		lodColorMul->getController()->setValue(MutableString("1.0, 1.0, 1.0, 1.0"));
+		lodColorMul->getController()->setDisabled(true);
+		lodColorAdd->getController()->setValue(MutableString("0.0, 0.0, 0.0, 0.0"));
+		lodColorAdd->getController()->setDisabled(true);
+		lodPlaneRotationY->getController()->setValue(MutableString("0.0"));
+		lodPlaneRotationY->getController()->setDisabled(true);
+		buttonLodApply->getController()->setDisabled(true);
+	} else {
+		lodLevel->getController()->setValue(MutableString(to_string(level)));
+		lodLevel->getController()->setDisabled(false);
+		lodLevelApply->getController()->setDisabled(false);
+		lodType->getController()->setValue(MutableString(to_string(entityLodLevel->getType())));
+		lodType->getController()->setDisabled(false);
+		lodModelFile->getController()->setValue(MutableString(entityLodLevel->getFileName()));
+		lodModelFile->getController()->setDisabled(false);
+		lodModelFileLoad->getController()->setDisabled(false);
+		lodModelFileClear->getController()->setDisabled(false);
+		lodMinDistance->getController()->setValue(MutableString(entityLodLevel->getMinDistance()));
+		lodMinDistance->getController()->setDisabled(false);
+		lodPlaneRotationY->getController()->setValue(MutableString(entityLodLevel->getPlaneRotationY()));
+		lodPlaneRotationY->getController()->setDisabled(false);
+		lodColorMul->getController()->setValue(MutableString(Tools::formatColor4(entityLodLevel->getColorMul())));
+		lodColorMul->getController()->setDisabled(false);
+		lodColorAdd->getController()->setValue(MutableString(Tools::formatColor4(entityLodLevel->getColorAdd())));
+		lodColorAdd->getController()->setDisabled(false);
+		buttonLodApply->getController()->setDisabled(false);
+	}
+	view->setLodLevel(level);
+}
+
+void ModelEditorScreenController::unsetLODLevel() {
+	lodLevel->getController()->setValue(MutableString("1"));
+	lodLevel->getController()->setDisabled(true);
+	lodLevelApply->getController()->setDisabled(true);
+	lodType->getController()->setValue(MutableString("0"));
+	lodType->getController()->setDisabled(true);
+	lodModelFile->getController()->setValue(MutableString());
+	lodModelFile->getController()->setDisabled(true);
+	lodModelFileLoad->getController()->setDisabled(true);
+	lodModelFileClear->getController()->setDisabled(true);
+	lodMinDistance->getController()->setValue(MutableString("0.0"));
+	lodMinDistance->getController()->setDisabled(true);
+	lodPlaneRotationY->getController()->setValue(MutableString("0.0"));
+	lodPlaneRotationY->getController()->setDisabled(true);
+	lodColorMul->getController()->setValue(MutableString("1.0, 1.0, 1.0, 1.0"));
+	lodColorMul->getController()->setDisabled(true);
+	lodColorAdd->getController()->setValue(MutableString("0.0, 0.0, 0.0, 0.0"));
+	lodColorAdd->getController()->setDisabled(true);
+	buttonLodApply->getController()->setDisabled(true);
+}
+
+void ModelEditorScreenController::onLODLevelApply() {
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	setLODLevel(entity, lodLevelInt);
+}
+
+void ModelEditorScreenController::onLODLevelLoadModel() {
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	auto entityLodLevel = getLODLevel(lodLevelInt);
+	if (entityLodLevel == nullptr) return;
+	auto extensions = ModelReader::getModelExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
+		"Load from: ",
+		&extensions,
+		Tools::getFileName(entityLodLevel->getFileName()),
+		new ModelEditorScreenController_onLODModelLoad(this)
+	);
+}
+
+void ModelEditorScreenController::onLODLevelClearModel() {
+	lodModelFile->getController()->setValue(MutableString());
+}
+
+void ModelEditorScreenController::onLODLevelApplySettings() {
+	view->resetEntity();
+	auto entity = view->getEntity();
+	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
+	LevelEditorEntityLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
+	try {
+		entityLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
+		entityLodLevel->setFileName(
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE?
+				lodModelFile->getController()->getValue().getString():
+				""
+			);
+		entityLodLevel->setMinDistance(Tools::convertToFloat(lodMinDistance->getController()->getValue().getString()));
+		entityLodLevel->setPlaneRotationY(Tools::convertToFloat(lodPlaneRotationY->getController()->getValue().getString()));
+		entityLodLevel->setColorMul(Tools::convertToColor4(lodColorMul->getController()->getValue().getString()));
+		entityLodLevel->setColorAdd(Tools::convertToColor4(lodColorAdd->getController()->getValue().getString()));
+		entityLodLevel->setModel(
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
+			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE?
+				ModelReader::read(
+					Tools::getPath(entityLodLevel->getFileName()),
+					Tools::getFileName(entityLodLevel->getFileName())
+				):
+				nullptr
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
-	auto model = entity->getModel();
+	Model* model = view->getLodLevel() == 1?entity->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetMaterials();
+		return;
+	}
 
 	{
 		auto materialsDropDownInnerNode = dynamic_cast< GUIParentNode* >((materialsDropdown->getScreenNode()->getNodeById(materialsDropdown->getId() + "_inner")));
@@ -306,6 +500,7 @@ void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
 	materialsMaterialSpecularTextureLoad->getController()->setDisabled(false);
 	materialsMaterialSpecularTextureClear->getController()->setDisabled(false);
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(false);
+	materialsMaterialMaskedTransparencyThreshold->getController()->setDisabled(false);
 	materialsMaterialApply->getController()->setDisabled(false);
 	onMaterialDropDownApply();
 }
@@ -360,12 +555,14 @@ void ModelEditorScreenController::unsetMaterials() {
 	materialsMaterialShininess->getController()->setValue(MutableString());
 	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString());
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(true);
-
+	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString());
+	materialsMaterialMaskedTransparencyThreshold->getController()->setDisabled(true);
 }
 
 void ModelEditorScreenController::onMaterialDropDownApply() {
-	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
 	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(material->getAmbientColor())));
 	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(material->getDiffuseColor())));
@@ -385,11 +582,20 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 		MutableString(material->getSpecularTexturePathName()).append(material->getSpecularTexturePathName() == ""?"":"/").append(material->getSpecularTextureFileName())
 	);
 	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString(Tools::formatFloat(material->getDiffuseTextureMaskedTransparencyThreshold())));
+}
+
+Material* ModelEditorScreenController::getSelectedMaterial() {
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return nullptr;
+	auto materialIt = model->getMaterials()->find(materialsDropdown->getController()->getValue().getString());
+	return materialIt != model->getMaterials()->end()?materialIt->second:nullptr;
 }
 
 void ModelEditorScreenController::onMaterialApply() {
-	auto entity = view->getEntity();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	try {
 		view->resetEntity();
 		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
@@ -412,15 +618,17 @@ void ModelEditorScreenController::onMaterialApply() {
 			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue().getString())
 		);
 		material->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
+		material->setDiffuseTextureMaskedTransparencyThreshold(Tools::convertToFloat(materialsMaterialMaskedTransparencyThreshold->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
-	auto entity = view->getEntity();
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -431,9 +639,10 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
-	auto entity = view->getEntity();
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -444,9 +653,10 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadNormalTexture() {
-	auto entity = view->getEntity();
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -457,9 +667,10 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 }
 
 void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
-	auto entity = view->getEntity();
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+
 	auto extensions = TextureLoader::getTextureExtensions();
-	auto material = (*entity->getModel()->getMaterials())[materialsDropdown->getController()->getValue().getString()];
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -474,8 +685,11 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 }
 
 void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
-
-	auto model = entity->getModel();
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetAnimations();
+		return;
+	}
 
 	{
 		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsDropDown->getScreenNode()->getNodeById(animationsDropDown->getId() + "_inner")));
@@ -556,20 +770,24 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 }
 
 void ModelEditorScreenController::onAnimationDropDownValueChanged() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 	animationsDropDownDelete->getController()->setDisabled(defaultAnimation || animationSetup == nullptr);
 }
 
 void ModelEditorScreenController::onAnimationDropDownApply() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	AnimationSetup newAnimationSetup(
-		entity->getModel(),
+		model,
 		"New animation",
-		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getStartFrame(),
-		entity->getModel()->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getEndFrame(),
+		model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getStartFrame(),
+		model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getEndFrame(),
 		true,
 		""
 	);
@@ -593,24 +811,28 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 }
 
 void ModelEditorScreenController::onAnimationDropDownDelete() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
-	auto it = entity->getModel()->getAnimationSetups()->find(animationSetup->getId());
-	it = entity->getModel()->getAnimationSetups()->erase(it);
-	setAnimations(entity);
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	auto it = model->getAnimationSetups()->find(animationSetup->getId());
+	it = model->getAnimationSetups()->erase(it);
+	setAnimations(view->getEntity());
 	animationsDropDown->getController()->setValue(MutableString(it->second->getId()));
 	onAnimationDropDownApply();
 }
 
 void ModelEditorScreenController::onAnimationApply() {
-	auto entity = view->getEntity();
-	auto animationSetup = entity->getModel()->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
 	try {
 		if (animationSetup == nullptr) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			animationSetup = entity->getModel()->addAnimationSetup(
+			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
@@ -618,11 +840,11 @@ void ModelEditorScreenController::onAnimationApply() {
 			);
 		} else
 		if (animationSetup->getId() != animationsAnimationName->getController()->getValue().getString()) {
-			if (entity->getModel()->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
+			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			(*entity->getModel()->getAnimationSetups()).erase(animationSetup->getId());
-			animationSetup = entity->getModel()->addAnimationSetup(
+			(*model->getAnimationSetups()).erase(animationSetup->getId());
+			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
 				0,
 				0,
@@ -633,7 +855,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
 		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
-		setAnimations(entity);
+		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
 		view->playAnimation(animationSetup->getId());
@@ -667,6 +889,13 @@ void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_
 	this->statsOpaqueFaces->getController()->setValue(MutableString(statsOpaqueFaces));
 	this->statsTransparentFaces->getController()->setValue(MutableString(statsTransparentFaces));
 	this->statsMaterialCount->getController()->setValue(MutableString(statsMaterialCount));
+}
+
+void ModelEditorScreenController::unsetStatistics()
+{
+	this->statsOpaqueFaces->getController()->setValue(MutableString());
+	this->statsTransparentFaces->getController()->setValue(MutableString());
+	this->statsMaterialCount->getController()->setValue(MutableString());
 }
 
 void ModelEditorScreenController::onQuit()
@@ -735,6 +964,8 @@ void ModelEditorScreenController::onRenderingApply()
 {
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
+	view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
+	view->getEntity()->setApplyAnimations(renderingApplyAnimations->getController()->getValue().equals("1"));
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
@@ -783,6 +1014,18 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_rendering_apply") == 0) {
 				onRenderingApply();
+			} else
+			if (node->getId().compare("lod_level_apply") == 0) {
+				onLODLevelApply();
+			} else
+			if (node->getId().compare("lod_model_file_load") == 0) {
+				onLODLevelLoadModel();
+			} else
+			if (node->getId().compare("lod_model_file_clear") == 0) {
+				onLODLevelClearModel();
+			} else
+			if (node->getId().compare("button_lod_apply") == 0) {
+				onLODLevelApplySettings();
 			} else
 			if (node->getId().compare("button_materials_dropdown_apply") == 0) {
 				onMaterialDropDownApply();

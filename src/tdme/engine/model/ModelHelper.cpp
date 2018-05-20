@@ -1,8 +1,11 @@
 #include <tdme/engine/model/ModelHelper.h>
 
 #include <array>
+#include <map>
+#include <string>
 #include <vector>
 
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
@@ -18,11 +21,17 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
+using std::string;
+using std::to_string;
 using std::vector;
 
+using tdme::engine::Transformations;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -39,7 +48,9 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(const vector<Vector3>& vertices)
 {
@@ -360,12 +371,13 @@ Material* ModelHelper::cloneMaterial(Material* material) {
 	clonedMaterial->getSpecularColor().set(material->getSpecularColor());
 	clonedMaterial->setShininess(material->getShininess());
 	clonedMaterial->setDiffuseTextureMaskedTransparency(material->hasDiffuseTextureTransparency());
+	clonedMaterial->setDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
 	if (material->getDiffuseTextureFileName().length() != 0) {
 		clonedMaterial->setDiffuseTexture(
 			material->getDiffuseTexturePathName(),
 			material->getDiffuseTextureFileName(),
-			material->getDiffuseTransparencyTextureFileName(),
-			material->getDiffuseTransparencyTexturePathName()
+			material->getDiffuseTransparencyTexturePathName(),
+			material->getDiffuseTransparencyTextureFileName()
 		);
 	}
 	if (material->getNormalTextureFileName().length() != 0) {
@@ -424,3 +436,229 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 	}
 }
 
+void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix) {
+	Vector3 faceCenter;
+
+	Matrix4x4 transformationsMatrix;
+	transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
+	transformationsMatrix.multiply(parentTransformationsMatrix);
+
+	Vector3 vertex0;
+	Vector3 vertex1;
+	Vector3 vertex2;
+	Vector3 normal0;
+	Vector3 normal1;
+	Vector3 normal2;
+	TextureCoordinate textureCoordinate0;
+	TextureCoordinate textureCoordinate1;
+	TextureCoordinate textureCoordinate2;
+	Vector3 tangent0;
+	Vector3 tangent1;
+	Vector3 tangent2;
+	Vector3 bitangent0;
+	Vector3 bitangent1;
+	Vector3 bitangent2;
+
+	Vector3 vertex0Transformed;
+	Vector3 vertex1Transformed;
+	Vector3 vertex2Transformed;
+
+	auto sourceGroupId = sourceGroup->getModel()->getId();
+	auto sourceGroupName = sourceGroup->getModel()->getName();
+
+	// TODO: maybe check if id and group do have real file endings like .tm, .dae, .fbx or something
+	if (StringUtils::lastIndexOf(sourceGroupId, '.') != -1) {
+		sourceGroupId = StringUtils::substring(sourceGroupId, 0, StringUtils::lastIndexOf(sourceGroupId, '.') - 1);
+	}
+	if (StringUtils::lastIndexOf(sourceGroupName, '.') != -1) {
+		sourceGroupName = StringUtils::substring(sourceGroupName, 0, StringUtils::lastIndexOf(sourceGroupName, '.') - 1);
+	}
+
+	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
+		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
+		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
+		for (auto& face: *facesEntity.getFaces()) {
+			// get face vertices and such
+			auto& vertexIndices = *face.getVertexIndices();
+			auto& normalIndices = *face.getNormalIndices();
+			auto& textureCoordinatesIndices = *face.getTextureCoordinateIndices();
+			auto& tangentIndices = *face.getTangentIndices();
+			auto& bitangentIndices = *face.getBitangentIndices();
+			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
+			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
+			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
+			normal0.set((*sourceGroup->getNormals())[normalIndices[0]]);
+			normal1.set((*sourceGroup->getNormals())[normalIndices[1]]);
+			normal2.set((*sourceGroup->getNormals())[normalIndices[2]]);
+			if (haveTextureCoordinates == true) {
+				textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
+				textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
+				textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
+			}
+			if (haveTangentsBitangents == true) {
+				tangent0.set((*sourceGroup->getTangents())[tangentIndices[0]]);
+				tangent1.set((*sourceGroup->getTangents())[tangentIndices[1]]);
+				tangent2.set((*sourceGroup->getTangents())[tangentIndices[2]]);
+				bitangent0.set((*sourceGroup->getBitangents())[bitangentIndices[0]]);
+				bitangent1.set((*sourceGroup->getBitangents())[bitangentIndices[1]]);
+				bitangent2.set((*sourceGroup->getBitangents())[bitangentIndices[2]]);
+			}
+
+			// find out partition by transforming vertices into world coordinates
+			transformationsMatrix.multiply(vertex0, vertex0Transformed);
+			transformationsMatrix.multiply(vertex1, vertex1Transformed);
+			transformationsMatrix.multiply(vertex2, vertex2Transformed);
+			faceCenter.set(vertex0Transformed);
+			faceCenter.add(vertex1Transformed);
+			faceCenter.add(vertex2Transformed);
+			faceCenter.scale(1.0f / 3.0f);
+			auto minX = Math::min(Math::min(vertex0Transformed.getX(), vertex1Transformed.getX()), vertex2Transformed.getX());
+			auto minY = Math::min(Math::min(vertex0Transformed.getY(), vertex1Transformed.getY()), vertex2Transformed.getY());
+			auto minZ = Math::min(Math::min(vertex0Transformed.getZ(), vertex1Transformed.getZ()), vertex2Transformed.getZ());
+			int partitionX = (int)(minX / 64.0f);
+			int partitionY = (int)(minY / 64.0f);
+			int partitionZ = (int)(minZ / 64.0f);
+
+			// key
+			string partitionModelKey =
+				to_string(partitionX) + "," +
+				to_string(partitionY) + "," +
+				to_string(partitionZ);
+
+			// get model
+			auto partitionModel = modelsByPartition[partitionModelKey];
+			if (partitionModel == nullptr) {
+				partitionModel = new Model(
+					sourceGroupId + "." + partitionModelKey,
+					sourceGroupName + "." + partitionModelKey,
+					sourceGroup->getModel()->getUpVector(),
+					sourceGroup->getModel()->getRotationOrder(),
+					nullptr
+				);
+				modelsByPartition[partitionModelKey] = partitionModel;
+				modelsPosition[partitionModelKey].set(partitionX * 64.0f, partitionY * 64.0f, partitionZ * 64.0f);
+			}
+
+			// get group
+			auto partitionModelGroup = partitionModel->getGroupById(sourceGroup->getId());
+			if (partitionModelGroup == nullptr) {
+				// TODO: create sub groups if they do not yet exist
+				partitionModelGroup = new Group(
+					partitionModel,
+					sourceGroup->getParentGroup() == nullptr?nullptr:partitionModel->getGroupById(sourceGroup->getParentGroup()->getId()),
+					sourceGroup->getId(),
+					sourceGroup->getName()
+				);
+				partitionModelGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
+				if (sourceGroup->getParentGroup() == nullptr) {
+					(*partitionModel->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+				} else {
+					(*partitionModelGroup->getParentGroup()->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+				}
+				(*partitionModel->getGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+			}
+
+			// get faces entity
+			FacesEntity* partitionModelGroupFacesEntity = nullptr;
+			for (auto& partitionModelGroupFacesEntityExisting: *partitionModelGroup->getFacesEntities()) {
+				if (partitionModelGroupFacesEntityExisting.getId() == facesEntity.getId()) {
+					partitionModelGroupFacesEntity = &partitionModelGroupFacesEntityExisting;
+				}
+			}
+			if (partitionModelGroupFacesEntity == nullptr) {
+				partitionModelGroup->getFacesEntities()->push_back(
+					FacesEntity(
+						partitionModelGroup,
+						facesEntity.getId()
+					)
+				);
+				partitionModelGroupFacesEntity = &(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1];
+				auto partitionModelGroupFacesEntityMaterial = (*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()];
+				if (partitionModelGroupFacesEntityMaterial == nullptr) {
+					partitionModelGroupFacesEntityMaterial = cloneMaterial(facesEntity.getMaterial());
+					(*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()] = partitionModelGroupFacesEntityMaterial;
+				}
+				(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1].setMaterial(partitionModelGroupFacesEntityMaterial);
+			}
+
+			// add vertices and such
+			auto verticesIdx = partitionModelGroup->getVertices()->size();
+			partitionModelGroup->getVertices()->push_back(vertex0);
+			partitionModelGroup->getVertices()->push_back(vertex1);
+			partitionModelGroup->getVertices()->push_back(vertex2);
+			partitionModelGroup->getNormals()->push_back(normal0);
+			partitionModelGroup->getNormals()->push_back(normal1);
+			partitionModelGroup->getNormals()->push_back(normal2);
+			if (haveTextureCoordinates == true) {
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
+				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
+			}
+			if (haveTangentsBitangents == true) {
+				partitionModelGroup->getTangents()->push_back(tangent0);
+				partitionModelGroup->getTangents()->push_back(tangent1);
+				partitionModelGroup->getTangents()->push_back(tangent2);
+				partitionModelGroup->getBitangents()->push_back(bitangent0);
+				partitionModelGroup->getBitangents()->push_back(bitangent1);
+				partitionModelGroup->getBitangents()->push_back(bitangent2);
+			}
+			partitionModelGroupFacesEntity->getFaces()->push_back(
+				Face(
+					partitionModelGroup,
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2,
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				)
+			);
+			if (haveTextureCoordinates == true) {
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTextureCoordinateIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+			}
+			if (haveTangentsBitangents == true) {
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTangentIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setBitangentIndices(
+					verticesIdx + 0,
+					verticesIdx + 1,
+					verticesIdx + 2
+				);
+			}
+		}
+	}
+
+	for (auto modelByPartitionIt: modelsByPartition) {
+		auto modelByPartitionGroup = modelByPartitionIt.second->getGroupById(sourceGroup->getId());
+		if (modelByPartitionGroup != nullptr) modelByPartitionGroup->determineFeatures();
+	}
+
+	for (auto groupIt: *sourceGroup->getSubGroups()) {
+		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
+	}
+}
+
+void ModelHelper::partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition) {
+	Matrix4x4 transformationsMatrix;
+	transformationsMatrix.set(model->getImportTransformationsMatrix());
+	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
+	for (auto groupIt: *model->getSubGroups()) {
+		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
+	}
+	for (auto modelsByPartitionIt: modelsByPartition) {
+		auto partitionKey = modelsByPartitionIt.first;
+		auto partitionModel = modelsByPartitionIt.second;
+		partitionModel->getImportTransformationsMatrix().set(model->getImportTransformationsMatrix());
+		ModelHelper::createDefaultAnimation(partitionModel, 0);
+		ModelHelper::setupJoints(partitionModel);
+		ModelHelper::fixAnimationLength(partitionModel);
+		ModelHelper::prepareForIndexedRendering(partitionModel);
+	}
+}

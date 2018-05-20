@@ -40,7 +40,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 private:
 	Group* group {  };
 	int32_t faceCount {  };
-	vector<int16_t> indices {  };
+	vector<uint32_t> indices {  };
 	vector<TextureCoordinate>* textureCoordinates;
 	vector<Vector3>* vertices {  };
 	vector<Vector3>* normals {  };
@@ -87,10 +87,17 @@ private:
 	 */
 	void recreateBuffers();
 
+	/**
+	 * @return has recreated buffers
+	 */
+	bool hasRecreatedBuffers() {
+		return recreatedBuffers == true;
+	}
+
 	/** 
 	 * @return if buffers has been recreated and unsets state
 	 */
-	bool hasRecreatedBuffers();
+	bool getRecreatedBuffers();
 
 	/** 
 	 * Set up vertex indices buffer

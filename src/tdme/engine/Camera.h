@@ -36,6 +36,12 @@ private:
 	Matrix4x4 projectionMatrix {  };
 	Matrix4x4 modelViewMatrix {  };
 	Frustum* frustum {  };
+	float lastZNear {  };
+	float lastZFar {  };
+	Vector3 lastUpVector {  };
+	Vector3 lastLookFrom {  };
+	Vector3 lastLookAt {  };
+	bool frustumChanged {  };
 public:
 
 	/** 
@@ -152,4 +158,12 @@ public:
 	 * Destructor
 	 */
 	~Camera();
+
+	/**
+	 * @return if frustum has changed
+	 */
+	inline bool hasFrustumChanged() {
+		return frustumChanged;
+	}
+
 };

@@ -31,7 +31,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
 /** 
- * Model viewer screen controller
+ * Particle system screen controller
  * @author Andreas Drewke
  * @version $Id$
  */

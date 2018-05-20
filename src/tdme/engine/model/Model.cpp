@@ -35,7 +35,7 @@ string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";
 
 constexpr float Model::FPS_DEFAULT;
 
-Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox)
+Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool)
 {
 	this->id = id;
 	this->name = name;
@@ -45,6 +45,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
+	this->authoringTool = authoringTool;
 }
 
 Model::~Model() {
@@ -65,9 +66,8 @@ void Model::deleteSubGroups(map<string, Group*>* subGroups) {
 	}
 }
 
-const string& Model::getId()
-{
-	return id;
+Model::AuthoringTool Model::getAuthoringTool() {
+	return authoringTool;
 }
 
 const string& Model::getName()
@@ -181,13 +181,12 @@ BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb
 	if (boundingBox == nullptr) {
-		Object3DModel object3DModel(this);
-		boundingBox = ModelUtilities::createBoundingBox(&object3DModel);
+		boundingBox = ModelUtilities::createBoundingBox(this);
 	}
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
 	// iterate through groups
 	for (auto it: *groups) {
@@ -218,4 +217,8 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4&
 
 	//
 	return false;
+}
+
+bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
+	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 }

@@ -51,7 +51,7 @@ int32_t ModelProperties::getPropertyCount()
 int32_t ModelProperties::getPropertyIndex(const string& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
-		if (properties.at(i)->getName() == name) {
+		if (properties[i]->getName() == name) {
 			return i;
 		}
 	}
@@ -60,7 +60,7 @@ int32_t ModelProperties::getPropertyIndex(const string& name)
 
 PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
 {
-	return idx >= 0 && idx < properties.size() ? properties.at(idx) : nullptr;
+	return idx >= 0 && idx < properties.size() ? properties[idx] : nullptr;
 }
 
 bool ModelProperties::addProperty(const string& name, const string& value)

@@ -162,7 +162,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 
 	// process path components
 	for (int i = 0; i < pathComponents.size(); i++) {
-		auto pathComponent = pathComponents.at(i);
+		auto pathComponent = pathComponents[i];
 		if (pathComponent == ".") {
 			pathComponents[i] = "";
 		} else
@@ -170,7 +170,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 			pathComponents[i]= "";
 			int j = i - 1;
 			for (int pathComponentReplaced = 0; pathComponentReplaced < 1 && j >= 0; ) {
-				if (pathComponents.at(j) != "") {
+				if (pathComponents[j] != "") {
 					pathComponents[j] = "";
 					pathComponentReplaced++;
 				}
@@ -183,7 +183,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	string canonicalPath = "";
 	bool slash = StringUtils::startsWith(pathString, "/");
 	for (int i = 0; i < pathComponents.size(); i++) {
-		auto pathComponent = pathComponents.at(i);
+		auto pathComponent = pathComponents[i];
 		if (pathComponent == "") {
 			// no op
 		} else {
@@ -243,7 +243,7 @@ void StandardFileSystem::removePath(const string& pathName) throw (FileSystemExc
 	vector<string> files;
 	list(pathName, &files, nullptr);
 	for (int i = 0; i < files.size(); i++) {
-		auto file = files.at(i);
+		auto file = files[i];
 		if (file == "." || file == "..") {
 			continue;
 		}

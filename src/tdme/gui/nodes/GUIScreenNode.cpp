@@ -10,6 +10,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
@@ -32,6 +33,7 @@ using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
@@ -61,7 +63,7 @@ GUIScreenNode::GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode
 GUIScreenNode::~GUIScreenNode() {
 	// remove sub nodes
 	for (auto i = 0; i < subNodes.size(); i++) {
-		removeNode(subNodes.at(i));
+		removeNode(subNodes[i]);
 	}
 	subNodes.clear();
 
@@ -167,11 +169,11 @@ int32_t GUIScreenNode::getContentHeight()
 void GUIScreenNode::layout()
 {
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes.at(i)->layout();
+		subNodes[i]->layout();
 	}
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto node = childControllerNodes.at(i);
+		auto node = childControllerNodes[i];
 		auto controller = node->getController();
 		if (controller != nullptr) {
 			controller->postLayout();
@@ -186,7 +188,7 @@ void GUIScreenNode::layout(GUINode* node)
 		parentNode->layoutSubNodes();
 		parentNode->getChildControllerNodes(&childControllerNodes);
 		for (auto i = 0; i < childControllerNodes.size(); i++) {
-			auto childNode = childControllerNodes.at(i);
+			auto childNode = childControllerNodes[i];
 			auto controller = childNode->getController();
 			if (controller != nullptr) {
 				controller->postLayout();
@@ -251,11 +253,12 @@ bool GUIScreenNode::removeNode(GUINode* node)
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
-			removeNode(parentNode->subNodes.at(i));
+			removeNode(parentNode->subNodes[i]);
 		}
 		parentNode->subNodes.clear();
 	}
 	nodesById.erase(node->id);
+	tickNodesById.erase(node->getId());
 	node->dispose();
 	delete node;
 	return true;
@@ -285,7 +288,7 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 		effect->apply(guiRenderer);
 	}
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		floatingNodes.at(i)->render(guiRenderer, subFloatingNodes);
+		floatingNodes[i]->render(guiRenderer, subFloatingNodes);
 	}
 	guiRenderer->doneScreen();
 }
@@ -302,7 +305,7 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 		}
 	}
 	for (auto i = 0; i < parentNode->subNodes.size(); i++) {
-		auto subNode = parentNode->subNodes.at(i);
+		auto subNode = parentNode->subNodes[i];
 		if (dynamic_cast< GUIParentNode* >(subNode) != nullptr) {
 			determineFocussedNodes(dynamic_cast< GUIParentNode* >(subNode), focusableNodes);
 		}
@@ -313,7 +316,7 @@ void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 {
 	mouseEventProcessedByFloatingNode = false;
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		auto floatingNode = floatingNodes.at(i);
+		auto floatingNode = floatingNodes[i];
 		floatingNode->determineMouseEventNodes(event, eventNodeIds);
 	}
 	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
@@ -346,7 +349,7 @@ void GUIScreenNode::setInputEventHandler(GUIInputEventHandler* inputEventHandler
 void GUIScreenNode::delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	for (auto i = 0; i < actionListener.size(); i++) {
-		actionListener.at(i)->onActionPerformed(type, node);
+		actionListener[i]->onActionPerformed(type, node);
 	}
 }
 
@@ -363,7 +366,39 @@ void GUIScreenNode::removeChangeListener(GUIChangeListener* listener)
 void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
 {
 	for (auto i = 0; i < changeListener.size(); i++) {
-		changeListener.at(i)->onValueChanged(node);
+		changeListener[i]->onValueChanged(node);
+	}
+}
+
+void GUIScreenNode::addMouseOverListener(GUIMouseOverListener* listener)
+{
+	mouseOverListener.push_back(listener);
+}
+
+void GUIScreenNode::removeMouseOverListener(GUIMouseOverListener* listener)
+{
+	mouseOverListener.erase(std::remove(mouseOverListener.begin(), mouseOverListener.end(), listener), mouseOverListener.end());
+}
+
+void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
+{
+	for (auto i = 0; i < mouseOverListener.size(); i++) {
+		mouseOverListener[i]->onMouseOver(node);
+	}
+}
+
+void GUIScreenNode::addTickNode(GUINode* node) {
+	tickNodesById[node->getId()] = node;
+}
+
+void GUIScreenNode::removeTickNode(GUINode* node) {
+	tickNodesById.erase(node->getId());
+}
+
+void GUIScreenNode::tick() {
+	for (auto tickNodesByIdIt: tickNodesById) {
+		auto node = tickNodesByIdIt.second;
+		if (node->controller != nullptr) node->controller->tick();
 	}
 }
 
@@ -372,7 +407,7 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 	values.clear();
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
 			continue;
 
@@ -393,7 +428,7 @@ void GUIScreenNode::setValues(const map<string, MutableString>& values)
 {
 	getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
 			continue;
 

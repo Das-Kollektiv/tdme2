@@ -3,11 +3,16 @@
 #include <algorithm>
 #include <vector>
 
+#include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/utils/Console.h>
+
 using std::vector;
 
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
+using tdme::utils::Console;
 
-GUINodeConditions::GUINodeConditions() 
+GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(elementNode)
 {
 }
 
@@ -16,26 +21,62 @@ vector<string>& GUINodeConditions::getConditions()
 	return conditions;
 }
 
-void GUINodeConditions::add(const string& condition)
+bool GUINodeConditions::add(const string& condition)
 {
-	remove(condition);
-	conditions.push_back(condition);
+	auto conditionsChanged = true;
+	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
+		if (condition == *it) {
+			conditionsChanged = false;
+			break;
+		}
+	}
+	if (conditionsChanged == true) conditions.push_back(condition);
+	if (conditionsChanged == true) updateElementNode();
+	return conditionsChanged;
 }
 
-void GUINodeConditions::remove(const string& condition)
+bool GUINodeConditions::remove(const string& condition)
 {
-	// TODO: use STL to remove conditions
-	for (vector<string>::iterator i = conditions.begin(); i != conditions.end(); ++i) {
-		if (condition == *i) {
-			conditions.erase(i);
-			return;
+	auto conditionsChanged = false;
+	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
+		if (condition == *it) {
+			conditions.erase(it);
+			conditionsChanged = true;
+			break;
 		}
+	}
+	if (conditionsChanged == true) updateElementNode();
+	return conditionsChanged;
+}
 
+bool GUINodeConditions::removeAll()
+{
+	auto conditionsChanged = conditions.empty() == false;
+	conditions.clear();
+	if (conditionsChanged == true) updateElementNode();
+	return conditionsChanged;
+}
+
+void GUINodeConditions::updateNode(GUINode* node) {
+	node->conditionsMet = node->checkConditions(elementNode);
+	if (node->conditionsMet == false) return;
+
+	auto asElementNode = dynamic_cast<GUIElementNode*>(node);
+	if (asElementNode != nullptr) return;
+
+	auto parentNode = dynamic_cast<GUIParentNode*>(node);
+	if (parentNode != nullptr) {
+		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
+			auto guiSubNode = parentNode->subNodes[i];
+			updateNode(guiSubNode);
+		}
 	}
 }
 
-void GUINodeConditions::removeAll()
-{
-	conditions.clear();
+void GUINodeConditions::updateElementNode() {
+	if (elementNode == nullptr) return;
+	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
+		auto guiSubNode = elementNode->subNodes[i];
+		updateNode(guiSubNode);
+	}
 }
-

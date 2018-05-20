@@ -104,7 +104,7 @@ void GUIDropDownController::unselect()
 {
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
 			(dynamic_cast< GUIDropDownOptionController* >(childController))->unselect();
@@ -126,7 +126,7 @@ void GUIDropDownController::determineDropDownOptionControllers()
 	dropDownOptionControllers.clear();
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
 			dropDownOptionControllers.push_back(dynamic_cast< GUIDropDownOptionController* >(childController));
@@ -138,7 +138,7 @@ int32_t GUIDropDownController::getSelectedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto selectBoxOptionController = dropDownOptionControllers.at(i);
+		auto selectBoxOptionController = dropDownOptionControllers[i];
 		if (selectBoxOptionController->isSelected() == true) {
 			selectBoxOptionControllerIdx = i;
 			break;
@@ -159,9 +159,9 @@ void GUIDropDownController::selectNext()
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->select();
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeX(dropDownNode);
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->select();
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::selectPrevious()
@@ -176,9 +176,9 @@ void GUIDropDownController::selectPrevious()
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += dropDownOptionControllers.size();
 
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->select();
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeX(dropDownNode);
-	dropDownOptionControllers.at(selectBoxOptionControllerIdx)->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->select();
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -255,7 +255,7 @@ const MutableString& GUIDropDownController::getValue()
 	value.reset();
 	determineDropDownOptionControllers();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers.at(i);
+		auto dropDownOptionController = dropDownOptionControllers[i];
 		if (dropDownOptionController->isSelected() == true) {
 			value.append((dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
 		}
@@ -268,7 +268,7 @@ void GUIDropDownController::setValue(const MutableString& value)
 	determineDropDownOptionControllers();
 	unselect();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers.at(i);
+		auto dropDownOptionController = dropDownOptionControllers[i];
 		auto dropDownOptionNode = (dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()));
 		if (value.equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();

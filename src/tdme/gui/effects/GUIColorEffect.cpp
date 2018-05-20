@@ -16,31 +16,6 @@ void GUIColorEffect::init()
 {
 }
 
-GUIColor& GUIColorEffect::getColorAddStart()
-{
-	return colorAddStart;
-}
-
-GUIColor& GUIColorEffect::getColorAddEnd()
-{
-	return colorAddEnd;
-}
-
-GUIColor& GUIColorEffect::getColorMulStart()
-{
-	return colorMulStart;
-}
-
-GUIColor& GUIColorEffect::getColorMulEnd()
-{
-	return colorMulEnd;
-}
-
-void GUIColorEffect::update(GUIRenderer* guiRenderer)
-{
-	GUIEffect::update(guiRenderer);
-}
-
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 {
 	if (active == false)

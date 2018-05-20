@@ -152,8 +152,8 @@ Model* EngineTest::createWallModel()
 void EngineTest::display()
 {
 	auto circleTranslation = circleTransformations.getTranslation();
-	circleTranslation.setX(players.at(0)->getTranslation().getX());
-	circleTranslation.setZ(players.at(0)->getTranslation().getZ());
+	circleTranslation.setX(players[0]->getTranslation().getX());
+	circleTranslation.setZ(players[0]->getTranslation().getZ());
 	circleTranslation.addY(0.1f);
 	if (circleTranslation.getY() > 1.5f) {
 		circleTranslation.setY(0.0f);
@@ -164,7 +164,7 @@ void EngineTest::display()
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	for (auto i = 0; i < players.size(); i++) {
-		playersBoundingVolumeModel.at(i)->fromTransformations(players.at(i)->getTransformations());
+		playersBoundingVolumeModel[i]->fromTransformations(players[i]->getTransformations());
 	}
 	osEngine->display();
 	engine->display();
@@ -188,8 +188,8 @@ void EngineTest::display()
 void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp)
 {
 	auto fps = engine->getTiming()->getCurrentFPS();
-	auto player = players.at(idx);
-	auto playerBoundingVolumeTransformed = playerBoundingVolumesTransformed.at(idx);
+	auto player = players[idx];
+	auto playerBoundingVolumeTransformed = playerBoundingVolumesTransformed[idx];
 	auto& r = player->getRotation(0);
 	player->update();
 	Vector3 movement;
@@ -231,7 +231,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		if (idx == i)
 			continue;
 
-		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed.at(i), collision) == true && collision->hasPenetration()) {
+		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed[i], collision) == true && collision->hasPenetration()) {
 			player->setTranslation(player->getTranslation().clone().sub(collision->getNormal()->clone().scale(collision->getPenetration())));
 			player->update();
 			playerBoundingVolumeTransformed->fromTransformations(player->getTransformations());

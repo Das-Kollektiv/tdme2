@@ -16,30 +16,10 @@ AnimationSetup::AnimationSetup(Model* model, const string& id, int32_t startFram
 	this->overlayFromGroupId = overlayFromGroupId;
 }
 
-Model* AnimationSetup::getModel()
-{
-	return model;
-}
-
-const string& AnimationSetup::getId()
-{
-	return id;
-}
-
-int32_t AnimationSetup::getStartFrame()
-{
-	return startFrame;
-}
-
 void AnimationSetup::setStartFrame(int32_t startFrame) {
 	this->startFrame = startFrame;
 	this->frames = (endFrame - startFrame) + 1;
 	if (this->frames < 0) this->frames = 0;
-}
-
-int32_t AnimationSetup::getEndFrame()
-{
-	return endFrame;
 }
 
 void AnimationSetup::setEndFrame(int32_t endFrame) {
@@ -48,23 +28,8 @@ void AnimationSetup::setEndFrame(int32_t endFrame) {
 	if (this->frames < 0) this->frames = 0;
 }
 
-int32_t AnimationSetup::getFrames()
-{
-	return frames;
-}
-
-bool AnimationSetup::isLoop()
-{
-	return loop;
-}
-
 void AnimationSetup::setLoop(bool loop) {
 	this->loop = loop;
-}
-
-const string& AnimationSetup::getOverlayFromGroupId()
-{
-	return overlayFromGroupId;
 }
 
 void AnimationSetup::setOverlayFromGroupId(const string& overlayFromGroupId) {
@@ -78,5 +43,7 @@ int64_t AnimationSetup::computeDuration()
 
 int64_t AnimationSetup::computeDuration(int32_t startFrame, int32_t endFrame)
 {
-	return static_cast< int64_t >((static_cast< float >((endFrame - startFrame + 1)) / static_cast< float >(model->getFPS()) * 1000.0f));
+	return static_cast< int64_t >(
+		static_cast< float >((endFrame - startFrame + 1) / model->getFPS()) * 1000.0f
+	);
 }

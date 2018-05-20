@@ -1,5 +1,9 @@
 #version 120
 
+// layouts
+attribute vec3 inVertex;
+attribute vec4 inColor;
+
 // uniforms
 uniform sampler2D diffuseTextureUnit;
 uniform mat4 mvpMatrix;
@@ -11,11 +15,11 @@ varying vec4 fragColor;
   
 void main(void) {
 	// pass color to fragment shader
-	fragColor = gl_Color;
+	fragColor = inColor;
 
 	// compute gl position
-	gl_Position = mvpMatrix * gl_Vertex;
+	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 
 	// point size
-	gl_PointSize = pointSize * (1.0 / length((mvMatrix * gl_Vertex).xyz));
+	gl_PointSize = pointSize * (1.0 / length((mvMatrix * vec4(inVertex, 1.0)).xyz));
 }

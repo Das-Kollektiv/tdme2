@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -33,40 +32,54 @@ public:
 	/** 
 	 * @return id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * Set id
 	 * @param id
 	 */
-	void setId(const string& id);
+	inline void setId(const string& id) {
+		this->id = id;
+	}
 
 	/** 
 	 * @return description
 	 */
-	const string& getDescription();
+	inline const string& getDescription() {
+		return description;
+	}
 
 	/** 
 	 * Set description
 	 * @param description
 	 */
-	void setDescription(const string& description);
+	inline void setDescription(const string& description) {
+		this->description = description;
+	}
 
 	/** 
 	 * @return transformations
 	 */
-	Transformations& getTransformations();
+	inline Transformations& getTransformations() {
+		return transformations;
+	}
 
 	/** 
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntity();
+	inline LevelEditorEntity* getEntity() {
+		return entity;
+	}
 
 	/** 
 	 * Set up entity
 	 * @param entity
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	inline void setEntity(LevelEditorEntity* entity) {
+		this->entity = entity;
+	}
 
 	/** 
 	 * @return merged properties from entity and object

@@ -35,67 +35,116 @@ public:
 	/** 
 	 * @return id
 	 */
-	virtual const string& getId();
+	inline virtual const string& getId() const {
+		return id;
+	}
 
 	/** 
 	 * @return if sound will be looped
 	 */
-	virtual bool isLooping();
+	inline virtual const bool isLooping() const {
+		return looping;
+	}
 
 	/** 
-	 * @return if sound will be looped
+	 * Set looping
+	 * @param if sound will be looped
 	 */
-	virtual void setLooping(bool looping);
+	inline virtual void setLooping(bool looping) {
+		this->looping = looping;
+	}
 
 	/** 
 	 * @return fixed, means the sound will always played no matter where the position and listener is located
 	 */
-	virtual bool isFixed();
+	inline virtual const bool isFixed() const {
+		return fixed;
+	}
 
 	/** 
 	 * Set this entity fixed, means the sound will always played no matter where the position and listener is located
 	 * @param fixed
 	 */
-	virtual void setFixed(bool fixed);
+	inline virtual void setFixed(bool fixed) {
+		this->fixed = fixed;
+	}
 
 	/** 
 	 * @return pitch
 	 */
-	virtual float getPitch();
+	inline virtual const float getPitch() const {
+		return pitch;
+	}
 
 	/** 
 	 * Set up pitch
 	 * @param pitch
 	 */
-	virtual void setPitch(float pitch);
+	inline virtual void setPitch(float pitch) {
+		this->pitch = pitch;
+	}
 
 	/** 
 	 * @return gain
 	 */
-	virtual float getGain();
+	inline virtual const float getGain() const {
+		return gain;
+	}
 
 	/** 
 	 * Set up gain
 	 * @param gain
 	 */
-	virtual void setGain(float gain);
+	inline virtual void setGain(float gain) {
+		this->gain = gain;
+	}
 
 	/** 
 	 * @return source position
 	 */
-	virtual Vector3& getSourcePosition();
+	inline virtual const Vector3& getSourcePosition() const {
+		return sourcePosition;
+	}
 
 	/** 
+	 * Set source position
+	 * @return source position
+	 */
+	inline virtual void setSourcePosition(const Vector3& sourcePosition) {
+		this->sourcePosition = sourcePosition;
+	}
+
+	/**
 	 * @return source direction
 	 */
-	virtual Vector3& getSourceDirection();
+	inline virtual const Vector3& getSourceDirection() const {
+		return sourceDirection;
+	}
+
+	/**
+	 * Set source direction
+	 * @param source direction
+	 */
+	inline virtual void setSourceDirection(const Vector3& sourceDirection) {
+		this->sourceDirection = sourceDirection;
+	}
 
 	/** 
 	 * @return source velocity
 	 */
-	virtual Vector3& getSourceVelocity();
+	inline virtual const Vector3& getSourceVelocity() const {
+		return sourceVelocity;
+	}
 
 	/** 
+	 * Set source velocity
+	 * @param source velocity
+	 */
+	inline virtual void getSourceVelocity(const Vector3& sourceVelocity) {
+		this->sourceVelocity = sourceVelocity;
+	}
+
+	/**
 	 * @return if stream is playing
 	 */
 	virtual bool isPlaying() = 0;

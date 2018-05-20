@@ -32,7 +32,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
-	this->dynamicShadowing = true;
+	this->lodLevel2 = nullptr;
+	this->lodLevel3 = nullptr;
 	this->particleSystem = nullptr;
 	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -41,87 +42,20 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
 		this->modelSettings = new LevelEditorEntityModel(this);
 	}
+	renderGroups = false;
+	applyAnimations = false;
+	dynamicShadowing = true;
 }
 
 LevelEditorEntity::~LevelEditorEntity() {
 	if (model != nullptr) delete model;
+	if (lodLevel2 != nullptr) delete lodLevel2;
+	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (particleSystem != nullptr) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
-}
-
-int32_t LevelEditorEntity::getId()
-{
-	return id;
-}
-
-LevelEditorEntity_EntityType* LevelEditorEntity::getType()
-{
-	return type;
-}
-
-const string& LevelEditorEntity::getName()
-{
-	return name;
-}
-
-void LevelEditorEntity::setName(const string& name)
-{
-	this->name = name;
-}
-
-const string& LevelEditorEntity::getDescription()
-{
-	return description;
-}
-
-void LevelEditorEntity::setDescription(const string& description)
-{
-	this->description = description;
-}
-
-const string& LevelEditorEntity::getEntityFileName()
-{
-	return entityFileName;
-}
-
-void LevelEditorEntity::setEntityFileName(const string& entityFileName)
-{
-	this->entityFileName = entityFileName;
-}
-
-const string& LevelEditorEntity::getFileName()
-{
-	return fileName;
-}
-
-const string& LevelEditorEntity::getThumbnail()
-{
-	return thumbnail;
-}
-
-Model* LevelEditorEntity::getModel()
-{
-	return model;
-}
-
-void LevelEditorEntity::setModel(Model* model) {
-	if (this->model != nullptr) delete this->model;
-	this->model = model;
-}
-
-Vector3& LevelEditorEntity::getPivot()
-{
-	return pivot;
-}
-
-int32_t LevelEditorEntity::getBoundingVolumeCount()
-{
-	return boundingVolumes.size();
-}
-
-LevelEditorEntityBoundingVolume* LevelEditorEntity::getBoundingVolumeAt(int32_t idx)
-{
-	return boundingVolumes.at(idx);
+	for (auto i = 0; i < boundingVolumes.size(); i++) {
+		delete boundingVolumes[i];
+	}
 }
 
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
@@ -146,19 +80,14 @@ void LevelEditorEntity::setDefaultBoundingVolumes()
 	}
 }
 
-LevelEditorEntityParticleSystem* LevelEditorEntity::getParticleSystem()
-{
-	return particleSystem;
+void LevelEditorEntity::setLODLevel2(LevelEditorEntityLODLevel* lodLevel) {
+	if (this->type != LevelEditorEntity_EntityType::MODEL) return;
+	if (lodLevel2 != nullptr) delete lodLevel2;
+	lodLevel2 = lodLevel;
 }
 
-LevelEditorEntityModel* LevelEditorEntity::getModelSettings() {
-	return modelSettings;
-}
-
-bool LevelEditorEntity::isDynamicShadowing() {
-	return dynamicShadowing;
-}
-
-void LevelEditorEntity::setDynamicShadowing(bool dynamicShadowing) {
-	this->dynamicShadowing = dynamicShadowing;
+void LevelEditorEntity::setLODLevel3(LevelEditorEntityLODLevel* lodLevel) {
+	if (this->type != LevelEditorEntity_EntityType::MODEL) return;
+	if (lodLevel3 != nullptr) delete lodLevel3;
+	lodLevel3 = lodLevel;
 }

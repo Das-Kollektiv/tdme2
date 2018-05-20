@@ -50,8 +50,7 @@ TDMELevelEditor* TDMELevelEditor::instance = nullptr;
 
 void TDMELevelEditor::main(int argc, char** argv) {
 	Console::println(string("TDMELevelEditor " + VERSION));
-	Console::println(
-			string("Programmed 2014,...,2017 by Andreas Drewke, drewke.net."));
+	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 	TDMELevelEditor tdmeLevelEditor;
 	tdmeLevelEditor.run(argc, argv, "TDMELevelEditor");

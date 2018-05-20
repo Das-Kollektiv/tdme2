@@ -245,7 +245,7 @@ LevelEditorObject* LevelEditorView::getSelectedObject()
 	if (selectedEntityIds.size() != 1)
 		return nullptr;
 
-	auto selectedObject = level->getObjectById(selectedEntityIds.at(0));
+	auto selectedObject = level->getObjectById(selectedEntityIds[0]);
 	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
@@ -585,8 +585,8 @@ void LevelEditorView::display()
 	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
 	gridCenter.set(cam->getLookAt());
 	updateGrid();
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void LevelEditorView::selectObjects(vector<string>* entityIds)
@@ -625,7 +625,7 @@ void LevelEditorView::updateGUIElements()
 	levelEditorScreenController->setScreenCaption("Level Editor - " + Tools::getFileName(level->getFileName()));
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
@@ -929,7 +929,7 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 	if (selectedEntityIds.size() != 1)
 		return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 
 	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "leveleditor."))
 		return false;
@@ -950,15 +950,15 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 		selectedEntityIdsById.clear();
 		levelEditorObject->setId(name);
 		level->addObject(levelEditorObject);
-		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
-		object->fromTransformations(levelEditorObject->getTransformations());
-		object->setPickable(true);
-		setStandardObjectColorEffect(object);
-		setHighlightObjectColorEffect(object);
-		engine->addEntity(object);
-		selectedEntityIds.push_back(object->getId());
-		selectedEntityIdsById.insert(object->getId());
-		levelEditorScreenController->setObjectListbox(level);
+		auto entity = Level::createEntity(levelEditorObject);
+		if (entity != nullptr) {
+			setHighlightObjectColorEffect(entity);
+			selectedEntityIds.push_back(entity->getId());
+			selectedEntityIdsById.insert(entity->getId());
+			levelEditorScreenController->setObjectListbox(level);
+			entity->setPickable(true);
+			engine->addEntity(entity);
+		}
 	}
 	levelEditorObject->setDescription(description);
 	return true;
@@ -1019,19 +1019,11 @@ void LevelEditorView::placeObject(Entity* selectedObject)
 			selectedEntity
 		);
 		level->addObject(levelEditorObject);
-		if (levelEditorObject->getEntity()->getModel() != nullptr) {
-			auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
-			object->fromTransformations(levelEditorObjectTransformations);
-			object->setPickable(true);
-			engine->addEntity(object);
-		}
-		if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			auto object = Level::createParticleSystem(levelEditorObject->getEntity()->getParticleSystem(), levelEditorObject->getId(), false);
-			if (object != nullptr) {
-				object->fromTransformations(levelEditorObjectTransformations);
-				object->setPickable(true);
-				engine->addEntity(object);
-			}
+		auto entity = Level::createEntity(levelEditorObject);
+		if (entity != nullptr) {
+			setStandardObjectColorEffect(entity);
+			entity->setPickable(true);
+			engine->addEntity(entity);
 		}
 		levelEditorScreenController->setObjectListbox(level);
 	}
@@ -1092,7 +1084,7 @@ void LevelEditorView::colorObject()
 	}
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
@@ -1126,7 +1118,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1159,7 +1151,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1191,7 +1183,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		return;
 
 	if (selectedEntityIds.size() == 1) {
-		auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
 		auto levelEntity = level->getObjectById(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
@@ -1256,7 +1248,7 @@ bool LevelEditorView::objectPropertyRemove(const string& name)
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
@@ -1277,7 +1269,7 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 {
 	if (selectedEntityIds.size() != 1) return;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return;
@@ -1301,7 +1293,7 @@ bool LevelEditorView::objectPropertySave(const string& oldName, const string& na
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
@@ -1317,7 +1309,7 @@ bool LevelEditorView::objectPropertyAdd()
 {
 	if (selectedEntityIds.size() != 1) return false;
 
-	auto selectedEntity = engine->getEntity(selectedEntityIds.at(0));
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
 	auto levelEntity = level->getObjectById(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
@@ -1461,10 +1453,12 @@ void LevelEditorView::pasteObjects()
 			levelEditorObject->addProperty(property->getName(), property->getValue());
 		}
 		level->addObject(levelEditorObject);
-		auto object = new Object3D(levelEditorObject->getId(), levelEditorObject->getEntity()->getModel());
-		object->fromTransformations(levelEditorObjectTransformations);
-		object->setPickable(true);
-		engine->addEntity(object);
+		auto entity = Level::createEntity(levelEditorObject);
+		if (entity != nullptr) {
+			setStandardObjectColorEffect(entity);
+			entity->setPickable(true);
+			engine->addEntity(entity);
+		}
 	}
 	levelEditorScreenController->setObjectListbox(level);
 }

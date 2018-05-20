@@ -16,9 +16,9 @@ using tdme::utils::ByteBuffer;
  * @version $Id$
  * @author Andreas Drewke
  */
-struct tdme::engine::fileio::textures::Texture
+class tdme::engine::fileio::textures::Texture
 {
-
+public:
 	/**
 	 * Public constructor
 	 * @param id

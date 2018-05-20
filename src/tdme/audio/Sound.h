@@ -29,17 +29,6 @@ private:
 	uint32_t alSourceId {  };
 
 public:
-	bool isPlaying() override;
-	void rewind() override;
-	void play() override;
-	void pause() override;
-	void stop() override;
-
-protected:
-	bool initialize() override;
-	void update() override;
-	void dispose() override;
-
 	/**
 	 * Protected constructor
 	 * @param id
@@ -47,4 +36,17 @@ protected:
 	 * @param file name
 	 */
 	Sound(const string& id, const string& pathName, const string& fileName);
+
+	// override methods
+	bool isPlaying() override;
+	void rewind() override;
+	void play() override;
+	void pause() override;
+	void stop() override;
+
+protected:
+	// overriden methods
+	bool initialize() override;
+	void update() override;
+	void dispose() override;
 };

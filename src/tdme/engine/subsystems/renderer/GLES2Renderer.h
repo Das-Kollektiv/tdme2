@@ -41,6 +41,7 @@ public:
 	bool isNormalMappingAvailable() override;
 	bool isDisplacementMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
+	bool isUsingShortIndices() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
 	void useProgram(int32_t programId) override;
@@ -83,6 +84,7 @@ public:
 	vector<int32_t> createBufferObjects(int32_t buffers) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
+	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void bindIndicesBufferObject(int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int32_t bufferObjectId) override;
@@ -103,8 +105,6 @@ public:
 	void disposeBufferObjects(vector<int32_t>* bufferObjectIds) override;
 	int32_t getTextureUnit() override;
 	void setTextureUnit(int32_t textureUnit) override;
-	void enableClientState(int32_t clientState) override;
-	void disableClientState(int32_t clientState) override;
 	float readPixelDepth(int32_t x, int32_t y) override;
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void initGuiMode() override;

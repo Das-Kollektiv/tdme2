@@ -179,17 +179,19 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 			meshPathName,
 			meshFileName
 		);
-		Object3DModel meshObject3DModel(meshModel);
-		vector<Triangle> meshFaceTriangles;
-		meshObject3DModel.getFaceTriangles(&meshFaceTriangles);
-		for (auto& triangle: meshFaceTriangles) {
-			meshTriangles.push_back(meshPoints.size() / 3 + 0);
-			meshTriangles.push_back(meshPoints.size() / 3 + 1);
-			meshTriangles.push_back(meshPoints.size() / 3 + 2);
-			for (auto i = 0; i < triangle.getVertices().size(); i++) {
-				meshPoints.push_back(triangle.getVertices()[i].getX());
-				meshPoints.push_back(triangle.getVertices()[i].getY());
-				meshPoints.push_back(triangle.getVertices()[i].getZ());
+		{
+			Object3DModel meshObject3DModel(meshModel);
+			vector<Triangle> meshFaceTriangles;
+			meshObject3DModel.getFaceTriangles(&meshFaceTriangles);
+			for (auto& triangle: meshFaceTriangles) {
+				meshTriangles.push_back(meshPoints.size() / 3 + 0);
+				meshTriangles.push_back(meshPoints.size() / 3 + 1);
+				meshTriangles.push_back(meshPoints.size() / 3 + 2);
+				for (auto i = 0; i < triangle.getVertices().size(); i++) {
+					meshPoints.push_back(triangle.getVertices()[i].getX());
+					meshPoints.push_back(triangle.getVertices()[i].getY());
+					meshPoints.push_back(triangle.getVertices()[i].getZ());
+				}
 			}
 		}
 		delete meshModel;
@@ -287,9 +289,9 @@ Model* EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::createModel
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
-				vertices.at(triangles[i * 3 + 0]),
-				vertices.at(triangles[i * 3 + 1]),
-				vertices.at(triangles[i * 3 + 2])
+				vertices[triangles[i * 3 + 0]],
+				vertices[triangles[i * 3 + 1]],
+				vertices[triangles[i * 3 + 2]]
 			};
 			array<Vector3, 3> faceNormals;
 			ModelHelper::computeNormals(&faceVertices, &faceNormals);

@@ -45,6 +45,7 @@ private:
 	bool initModelRequested {  };
 	bool initModelRequestedReset {  };
 	string modelFile {  };
+	int lodLevel {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 
 	/**
@@ -105,6 +106,17 @@ public:
 	 * @return current model file name
 	 */
 	virtual const string& getFileName();
+
+	/**
+	 * @return LOD level
+	 */
+	int getLodLevel() const;
+
+	/**
+	 * Set lod level to display
+	 * @param lod level
+	 */
+	void setLodLevel(int lodLevel);
 
 	/** 
 	 * Issue file loading

@@ -10,7 +10,6 @@
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.h>
-#include <tdme/engine/fileio/models/DAEReader_AuthoringTool.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Animation.h>
@@ -58,7 +57,6 @@ using tdme::math::Math;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::DAEReader_determineDisplacementFilename_1;
-using tdme::engine::fileio::models::DAEReader_AuthoringTool;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
@@ -134,7 +132,8 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 		fileName,
 		upVector,
 		rotationOrder,
-		nullptr
+		nullptr,
+		authoringTool
 	);
 
 	// import matrix
@@ -171,7 +170,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 			model->setFPS(fps);
 			// visual scene root nodes
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto group = readVisualSceneNode(authoringTool, pathName, model, nullptr, xmlRoot, xmlNode, fps);
+				auto group = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
 					(*model->getSubGroups())[group->getId()] = group;
 					(*model->getGroups())[group->getId()] = group;
@@ -190,18 +189,18 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 	return model;
 }
 
-DAEReader_AuthoringTool* DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
+Model::AuthoringTool DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 {
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlContributer: getChildrenByTagName(xmlAsset, "contributor")) {
 			for (auto xmlAuthoringTool: getChildrenByTagName(xmlContributer, "authoring_tool")) {
 				if (string(AVOID_NULLPTR_STRING(xmlAuthoringTool->GetText())).find("Blender") != -1) {
-					return DAEReader_AuthoringTool::BLENDER;
+					return Model::AUTHORINGTOOL_BLENDER;
 				}
 			}
 		}
 	}
-	return DAEReader_AuthoringTool::UNKNOWN;
+	return Model::AUTHORINGTOOL_UNKNOWN;
 }
 
 UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
@@ -260,17 +259,17 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	}
 }
 
-Group* DAEReader::readVisualSceneNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Group* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	if (xmlInstanceControllers.empty() == false) {
-		return readVisualSceneInstanceController(authoringTool, pathName, model, parentGroup, xmlRoot, xmlNode);
+		return readVisualSceneInstanceController(pathName, model, parentGroup, xmlRoot, xmlNode);
 	} else {
-		return readNode(authoringTool, pathName, model, parentGroup, xmlRoot, xmlNode, fps);
+		return readNode(pathName, model, parentGroup, xmlRoot, xmlNode, fps);
 	}
 }
 
-Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
+Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -412,7 +411,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const string&
 
 	// parse sub groups
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
-		auto _group = readVisualSceneNode(authoringTool, pathName, model, group, xmlRoot, _xmlNode, fps);
+		auto _group = readVisualSceneNode(pathName, model, group, xmlRoot, _xmlNode, fps);
 		if (_group != nullptr) {
 			(*group->getSubGroups())[_group->getId()] = _group;
 			(*model->getGroups())[_group->getId()] = _group;
@@ -435,7 +434,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const string&
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlInstanceGeometryId, &materialSymbols);
+		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, &materialSymbols);
 		return group;
 	}
 
@@ -451,7 +450,7 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const string&
 		if (string(AVOID_NULLPTR_STRING(xmlLibraryNode->Attribute("id"))) == xmlInstanceNodeId) {
 			// parse sub groups
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
-				auto _group = readVisualSceneNode(authoringTool, pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
+				auto _group = readVisualSceneNode(pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
 				if (_group != nullptr) {
 					(*group->getSubGroups())[_group->getId()] = _group;
 					(*model->getGroups())[_group->getId()] = _group;
@@ -469,14 +468,14 @@ Group* DAEReader::readNode(DAEReader_AuthoringTool* authoringTool, const string&
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
 			}
 		}
 	}
 	return group;
 }
 
-Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
+Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -539,7 +538,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	auto skinning = group->createSkinning();
 
 	// parse geometry
-	readGeometry(authoringTool, pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
 
 	// parse joints
 	string xmlJointsSource;
@@ -690,7 +689,7 @@ Group* DAEReader::readVisualSceneInstanceController(DAEReader_AuthoringTool* aut
 	return group;
 }
 
-void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException)
+void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException)
 {
 	vector<FacesEntity> facesEntities = *group->getFacesEntities();
 	auto verticesOffset = group->getVertices()->size();
@@ -757,7 +756,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, const strin
 						material = materialIt->second;
 					} else {
 						// parse material as we do not have it yet
-						material = readMaterial(authoringTool, pathName, model, xmlRoot, xmlMaterialId);
+						material = readMaterial(pathName, model, xmlRoot, xmlMaterialId);
 					}
 					// set it up
 					facesEntity.setMaterial(material);
@@ -956,7 +955,7 @@ void DAEReader::readGeometry(DAEReader_AuthoringTool* authoringTool, const strin
 	group->determineFeatures();
 }
 
-Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId)
+Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId)
 {
 	// determine effect id
 	string xmlEffectId;
@@ -1221,7 +1220,7 @@ Material* DAEReader::readMaterial(DAEReader_AuthoringTool* authoringTool, const 
 	}
 
 	// adjust ambient light with blender
-	if (authoringTool == DAEReader_AuthoringTool::BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
+	if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
 		material->getAmbientColor().set(
 			material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
 			material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,

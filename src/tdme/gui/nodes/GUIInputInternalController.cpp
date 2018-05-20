@@ -47,6 +47,7 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->offset = 0;
 	this->isDragging = false;
 	this->dragPosition = {{ 0, 0 }};
+	this->node->getScreenNode()->addTickNode(this->node);
 }
 
 void GUIInputInternalController::init()
@@ -117,12 +118,26 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	if (disabled == true) {
 		return;
 	}
-	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
+	if (node == this->node &&
+		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
 		isDragging = false;
+		event->setProcessed(true);
 	} else
-	if (node == this->node && node->isEventBelongingToNode(event) == true && (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true || event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) && event->getButton() == 1) {
+	if (node == this->node && node->isEventBelongingToNode(event) == true &&
+		(event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true ||
+		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) &&
+		event->getButton() == 1) {
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
-		index = textInputNode->getFont()->getTextIndexByX(textInputNode->getText(), offset, 0, event->getX() - (textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft + textInputNode->border.left+ textInputNode->padding.left));
+		index = textInputNode->getFont()->getTextIndexByX(
+			textInputNode->getText(),
+			offset,
+			0,
+			event->getX() -
+				(
+					textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft +
+					textInputNode->border.left+ textInputNode->padding.left
+				)
+		);
 		resetCursorMode();
 		event->setProcessed(true);
 		isDragging = true;

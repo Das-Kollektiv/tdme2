@@ -173,21 +173,34 @@ void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector
 void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new ConvexMesh();
 	if (model != nullptr) delete model;
+	boundingVolume = nullptr;
 	model = nullptr;
 	modelMeshFile = pathName + "/" + fileName;
 	try {
-		model = ModelReader::read(
+		Model* convexMeshModel = ModelReader::read(
 			pathName,
 			fileName
 		);
-		boundingVolume = new ConvexMesh(new Object3DModel(model));
-		PrimitiveModel::setupConvexMeshModel(model);
+		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
+		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
+		delete convexMeshObject3DModel;
+		delete convexMeshModel;
+		model = PrimitiveModel::createModel(
+			boundingVolume,
+			string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+				string(",") +
+				to_string(levelEditorEntity->getId()) +
+				string("_model_bv.") +
+				to_string(id) +
+				string(".") +
+				to_string(staticIdx++)
+		);
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	if (boundingVolume == nullptr) boundingVolume = new ConvexMesh();
 	updateLevelEditorEntity();
 }
 

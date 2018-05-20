@@ -41,7 +41,7 @@ void Properties::load(const string& pathName, const string& fileName) throw (Fil
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
 	for (int i = 0; i < lines.size(); i++) {
-		string line = StringUtils::trim(lines.at(i));
+		string line = StringUtils::trim(lines[i]);
 		if (line.length() == 0 || StringUtils::startsWith(line, "#")) continue;
 		int separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;

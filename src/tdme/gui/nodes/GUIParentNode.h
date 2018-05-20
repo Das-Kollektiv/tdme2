@@ -44,17 +44,22 @@ class tdme::gui::nodes::GUIParentNode
 	friend class GUIElementNode;
 	friend class GUILayoutNode;
 	friend class GUINode;
+	friend class GUINodeConditions;
 	friend class GUIScreenNode;
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;
 	friend class GUIParentNode_Overflow;
+private:
+	float childrenRenderOffsetX {  };
+	float childrenRenderOffsetY {  };
 
 protected:
 	vector<GUINode*> subNodes {  };
+	bool computeViewportCache { };
+	vector<GUINode*> vieportSubNodesCache {  };
+	vector<GUINode*> floatingNodesCache {  };
 	GUIParentNode_Overflow* overflowX {  };
 	GUIParentNode_Overflow* overflowY {  };
-	float childrenRenderOffsetX {  };
-	float childrenRenderOffsetY {  };
 
 	/**
 	 * Layout
@@ -158,7 +163,6 @@ public:
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
-	void tick() override;
 
 private:
 	/**
@@ -166,4 +170,9 @@ private:
 	 * @param child controller nodes
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
+
+	/**
+	 * Invalidate render caches
+	 */
+	void invalidateRenderCaches();
 };

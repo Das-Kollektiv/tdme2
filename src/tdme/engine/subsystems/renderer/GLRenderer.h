@@ -19,6 +19,7 @@ using std::string;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
@@ -38,10 +39,6 @@ public:
 	int32_t CLEAR_COLOR_BUFFER_BIT {  };
 	int32_t CULLFACE_FRONT {  };
 	int32_t CULLFACE_BACK {  };
-	int32_t CLIENTSTATE_TEXTURECOORD_ARRAY {  };
-	int32_t CLIENTSTATE_VERTEX_ARRAY {  };
-	int32_t CLIENTSTATE_NORMAL_ARRAY {  };
-	int32_t CLIENTSTATE_COLOR_ARRAY {  };
 	int32_t TEXTUREUNITS_MAX {  };
 	int32_t SHADER_FRAGMENT_SHADER {  };
 	int32_t SHADER_VERTEX_SHADER {  };
@@ -67,7 +64,6 @@ protected:
 	Matrix4x4 viewportMatrix {  };
 
 public:
-	bool renderingTexturingClientState {  };
 	float pointSize {  };
 
 	/** 
@@ -122,6 +118,11 @@ public:
 	 * @return instance rendering availability
 	 */
 	virtual bool isInstancedRenderingAvailable() = 0;
+
+	/**
+	 * @return Returns if renderer is using short indices, otherwise it uses int indices
+	 */
+	virtual bool isUsingShortIndices() = 0;
 
 	/**
 	 * @return number of texture units
@@ -460,6 +461,14 @@ public:
 	 * @param size
 	 * @param data
 	 */
+	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+
+	/**
+	 * Uploads buffer data to buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
 	virtual void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/** 
@@ -579,18 +588,6 @@ public:
 	 * @param texture unit
 	 */
 	virtual void setTextureUnit(int32_t textureUnit) = 0;
-
-	/** 
-	 * Enable a client state / capability
-	 * @param client state
-	 */
-	virtual void enableClientState(int32_t clientState) = 0;
-
-	/** 
-	 * Disable a client state / capability
-	 * @param client state
-	 */
-	virtual void disableClientState(int32_t clientState) = 0;
 
 	/** 
 	 * Enable light
@@ -734,6 +731,11 @@ public:
 	 * Set material diffuse texture masked transparency
 	 */
 	virtual void setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency);
+
+	/**
+	 * Set material diffuse texture masked transparency threshold
+	 */
+	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold);
 
 	/** 
 	 * Update material

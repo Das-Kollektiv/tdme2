@@ -64,7 +64,7 @@ void GUITabsHeaderController::unselect()
 {
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto guiTabController = dynamic_cast< GUITabController* >(childController);
@@ -81,7 +81,7 @@ void GUITabsHeaderController::determineTabControllers()
 	tabControllers.clear();
 	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes.at(i);
+		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
 			auto guiTabController = dynamic_cast< GUITabController* >(childController);
@@ -100,7 +100,7 @@ int32_t GUITabsHeaderController::getSelectedTabIdx()
 {
 	auto tabControllerIdx = -1;
 	for (auto i = 0; i < tabControllers.size(); i++) {
-		auto tabController = tabControllers.at(i);
+		auto tabController = tabControllers[i];
 		if (tabController->isSelected() == true) {
 			tabControllerIdx = i;
 			break;
@@ -118,9 +118,9 @@ void GUITabsHeaderController::selectNext()
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 
-	tabControllers.at(tabControllerIdx)->setSelected(true);
+	tabControllers[tabControllerIdx]->setSelected(true);
 	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
+	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectPrevious()
@@ -132,9 +132,9 @@ void GUITabsHeaderController::selectPrevious()
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 
-	tabControllers.at(tabControllerIdx)->setSelected(true);
+	tabControllers[tabControllerIdx]->setSelected(true);
 	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
+	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
 void GUITabsHeaderController::selectCurrent()
@@ -142,9 +142,9 @@ void GUITabsHeaderController::selectCurrent()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	tabControllers.at(tabControllerIdx)->setSelected(true);
+	tabControllers[tabControllerIdx]->setSelected(true);
 	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
-	guiTabsController->setTabContentSelected(tabControllers.at(tabControllerIdx)->getNode()->getId());
+	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
 void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

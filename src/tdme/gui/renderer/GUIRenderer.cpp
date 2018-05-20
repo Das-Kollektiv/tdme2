@@ -4,6 +4,7 @@
 #include <tdme/utils/Time.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -20,6 +21,7 @@ using tdme::math::Math;
 using tdme::utils::Time;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -33,8 +35,8 @@ using tdme::utils::Console;
 
 GUIRenderer::GUIRenderer(GLRenderer* renderer) 
 {
-	init();
 	this->renderer = renderer;
+	init();
 }
 
 GUIRenderer::~GUIRenderer() {
@@ -47,7 +49,7 @@ GUIRenderer::~GUIRenderer() {
 
 void GUIRenderer::init()
 {
-	sbIndices = (sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * sizeof(int16_t)))->asShortBuffer();
+	sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t)));
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
 	fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 2 * sizeof(float)))->asFloatBuffer();
@@ -86,16 +88,31 @@ void GUIRenderer::initialize()
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4);
 		vboIds = vboManaged->getVBOGlIds();
-		for (auto i = 0; i < QUAD_COUNT; i++) {
-			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 1)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 2)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 3)));
-			sbIndices.put(static_cast< int16_t >((i * 4 + 0)));
+		if (renderer->isUsingShortIndices() == true) {
+			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
+			for (auto i = 0; i < QUAD_COUNT; i++) {
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 1)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
+				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
+			}
+			// sbIndices->flip();
+			renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		} else {
+			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
+			for (auto i = 0; i < QUAD_COUNT; i++) {
+				ibIndices.put(i * 4 + 0);
+				ibIndices.put(i * 4 + 1);
+				ibIndices.put(i * 4 + 2);
+				ibIndices.put(i * 4 + 2);
+				ibIndices.put(i * 4 + 3);
+				ibIndices.put(i * 4 + 0);
+			}
+			// sbIndices->flip();
+			renderer->uploadIndicesBufferObject((*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
-		// sbIndices->flip();
-		renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(int16_t), &sbIndices);
 	}
 }
 
@@ -114,9 +131,6 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->enableClientState(renderer->CLIENTSTATE_VERTEX_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	renderer->bindIndicesBufferObject((*vboIds)[0]);
 	renderer->bindVerticesBufferObject((*vboIds)[1]);
 	renderer->bindColorsBufferObject((*vboIds)[2]);
@@ -126,9 +140,6 @@ void GUIRenderer::initRendering()
 void GUIRenderer::doneRendering()
 {
 	renderer->unbindBufferObjects();
-	renderer->disableClientState(renderer->CLIENTSTATE_VERTEX_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	Engine::getGUIShader()->unUseProgram();
 }
 
@@ -193,86 +204,6 @@ void GUIRenderer::setGUIEffectOffsetY(float guiEffectOffsetY)
 {
 	this->guiEffectOffsetY = guiEffectOffsetY;
 	screenNode->setGUIEffectOffsetY(static_cast< int32_t >((guiEffectOffsetY * screenNode->getScreenHeight() / 2.0f)));
-}
-
-float GUIRenderer::getRenderAreaLeft()
-{
-	return renderAreaLeft;
-}
-
-void GUIRenderer::setRenderAreaLeft(float renderAreaLeft)
-{
-	this->renderAreaLeft = renderAreaLeft;
-}
-
-void GUIRenderer::setSubRenderAreaLeft(float renderAreaLeft)
-{
-	this->renderAreaLeft = renderAreaLeft > this->renderAreaLeft ? renderAreaLeft : this->renderAreaLeft;
-}
-
-float GUIRenderer::getRenderAreaTop()
-{
-	return renderAreaTop;
-}
-
-void GUIRenderer::setRenderAreaTop(float renderAreaTop)
-{
-	this->renderAreaTop = renderAreaTop;
-}
-
-void GUIRenderer::setSubRenderAreaTop(float renderAreaTop)
-{
-	this->renderAreaTop = renderAreaTop < this->renderAreaTop ? renderAreaTop : this->renderAreaTop;
-}
-
-float GUIRenderer::getRenderAreaRight()
-{
-	return renderAreaRight;
-}
-
-void GUIRenderer::setRenderAreaRight(float renderAreaRight)
-{
-	this->renderAreaRight = renderAreaRight;
-}
-
-void GUIRenderer::setSubRenderAreaRight(float renderAreaRight)
-{
-	this->renderAreaRight = renderAreaRight < this->renderAreaRight ? renderAreaRight : this->renderAreaRight;
-}
-
-float GUIRenderer::getRenderAreaBottom()
-{
-	return renderAreaBottom;
-}
-
-void GUIRenderer::setRenderAreaBottom(float renderAreaBottom)
-{
-	this->renderAreaBottom = renderAreaBottom;
-}
-
-void GUIRenderer::setSubRenderAreaBottom(float renderAreaBottom)
-{
-	this->renderAreaBottom = renderAreaBottom > this->renderAreaBottom ? renderAreaBottom : this->renderAreaBottom;
-}
-
-float GUIRenderer::getRenderOffsetX()
-{
-	return renderOffsetX;
-}
-
-void GUIRenderer::setRenderOffsetX(float renderOffsetX)
-{
-	this->renderOffsetX = renderOffsetX;
-}
-
-float GUIRenderer::getRenderOffsetY()
-{
-	return renderOffsetY;
-}
-
-void GUIRenderer::setRenderOffsetY(float renderOffsetY)
-{
-	this->renderOffsetY = renderOffsetY;
 }
 
 void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4)

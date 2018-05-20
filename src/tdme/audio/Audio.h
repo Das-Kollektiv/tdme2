@@ -1,12 +1,17 @@
 #pragma once
 
+#if defined(__APPLE__)
+	#include <OpenAL/alc.h>
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
+	#include <AL/alc.h>
+#endif
+
 #include <map>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;
@@ -32,6 +37,9 @@ private:
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
 	static Audio* instance;
 
+	ALCdevice* device;
+	ALCcontext* context;
+
 	map<string, AudioEntity*> audioEntities;
 
 	AudioBufferManager audioBufferManager {  };
@@ -54,22 +62,62 @@ public:
 	/** 
 	 * @return listener position
 	 */
-	Vector3& getListenerPosition();
+	inline const Vector3& getListenerPosition() const {
+		return listenerPosition;
+	}
 
 	/** 
+	 * Set listener position
+	 * @param listener position
+	 */
+	inline void setListenerPosition(const Vector3& listenerPosition) {
+		this->listenerPosition = listenerPosition;
+	}
+
+	/**
 	 * @return listener velocity
 	 */
-	Vector3& getListenerVelocity();
+	inline const Vector3& getListenerVelocity() const {
+		return listenerVelocity;
+	}
+
+	/**
+	 * Set listener velocity
+	 * @param listener velocity
+	 */
+	inline void setListenerVelocity(const Vector3& listenerVelocity) {
+		this->listenerVelocity = listenerVelocity;
+	}
 
 	/** 
 	 * @return listener orientation at
 	 */
-	Vector3& getListenerOrientationAt();
+	inline const Vector3& getListenerOrientationAt() const {
+		return listenerOrientationAt;
+	}
 
 	/** 
+	 * Set listener orientation at
+	 * @param listener orientation at
+	 */
+	inline void setListenerOrientationAt(const Vector3& listenerOrientationAt) {
+		this->listenerOrientationAt = listenerOrientationAt;
+	}
+
+	/**
 	 * @return listener orientation up
 	 */
-	Vector3& getListenerOrientationUp();
+	inline const Vector3& getListenerOrientationUp() const {
+		return listenerOrientationUp;
+	}
+
+	/**
+	 * Set listener orientation up
+	 * @return listener orientation up
+	 */
+	inline void setListenerOrientationUp(const Vector3& listenerOrientationUp) {
+		this->listenerOrientationUp = listenerOrientationUp;
+	}
 
 	/** 
 	 * Returns an audio entity identified by given id
@@ -79,24 +127,10 @@ public:
 	AudioEntity* getEntity(const string& id);
 
 	/** 
-	 * Adds an stream
-	 * the only format supported by now is ogg vorbis
-	 * @param id
-	 * @param path name
-	 * @param file name
-	 * @return audio entity
+	 * Adds a audio entity
+	 * @param audio entity
 	 */
-	AudioEntity* addStream(const string& id, const string& pathName, const string& fileName);
-
-	/** 
-	 * Adds an sound
-	 * the only format supported by now is ogg vorbis
-	 * @param id
-	 * @param path name
-	 * @param file name
-	 * @return audio entity
-	 */
-	AudioEntity* addSound(const string& id, const string& pathName, const string& fileName);
+	void addEntity(AudioEntity* entity);
 
 	/** 
 	 * Removes an audio entity

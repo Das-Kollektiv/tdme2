@@ -28,7 +28,7 @@ using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::utils::MutableString;
 
 /** 
- * Model viewer screen controller
+ * Trigger screen controller
  * @author Andreas Drewke
  * @version $Id$
  */

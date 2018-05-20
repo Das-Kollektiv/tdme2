@@ -47,10 +47,6 @@ void GLRenderer::init()
 	CLEAR_COLOR_BUFFER_BIT = -1;
 	CULLFACE_FRONT = -1;
 	CULLFACE_BACK = -1;
-	CLIENTSTATE_TEXTURECOORD_ARRAY = -1;
-	CLIENTSTATE_VERTEX_ARRAY = -1;
-	CLIENTSTATE_NORMAL_ARRAY = -1;
-	CLIENTSTATE_COLOR_ARRAY = -1;
 	TEXTUREUNITS_MAX = -1;
 	SHADER_FRAGMENT_SHADER = -1;
 	SHADER_VERTEX_SHADER = -1;
@@ -182,4 +178,9 @@ void GLRenderer::setMaterialShininess(float shininess)
 void GLRenderer::setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency)
 {
 	material.diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparency == true?1:0;
+}
+
+void GLRenderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold)
+{
+	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
 }

@@ -21,31 +21,6 @@ GUIEffect::~GUIEffect() {
 	if (action != nullptr) delete action;
 }
 
-bool GUIEffect::isActive()
-{
-	return active;
-}
-
-float GUIEffect::getTimeTotal()
-{
-	return timeTotal;
-}
-
-void GUIEffect::setTimeTotal(float timeTotal)
-{
-	this->timeTotal = timeTotal;
-}
-
-Action* GUIEffect::getAction()
-{
-	return action;
-}
-
-void GUIEffect::setAction(Action* action)
-{
-	this->action = action;
-}
-
 void GUIEffect::start()
 {
 	active = true;

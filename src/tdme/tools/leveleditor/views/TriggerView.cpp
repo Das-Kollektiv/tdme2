@@ -110,8 +110,8 @@ void TriggerView::display()
 		cameraRotationInputHandler->reset();
 		initModelRequested = false;
 	}
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void TriggerView::updateGUIElements()

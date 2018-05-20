@@ -16,7 +16,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * Model viewer view
+ * Model editor view
  * @author Andreas Drewke
  * @version $Id$ 
  */

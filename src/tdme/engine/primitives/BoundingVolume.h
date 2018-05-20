@@ -87,7 +87,7 @@ public:
 	 * Get bounding box transformed
 	 * @return bounding box
 	 */
-	const BoundingBox& getBoundingBoxTransformed() const;
+	BoundingBox& getBoundingBoxTransformed();
 
 	/** 
 	 * Clones this bounding volume

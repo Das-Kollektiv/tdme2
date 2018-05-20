@@ -8,6 +8,8 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
@@ -25,6 +27,8 @@ using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
@@ -113,19 +117,27 @@ void ShadowMap::render(Light* light)
 	// clear depth buffer
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
 	// determine visible objects and objects that should generate a shadow
+	Object3D* object = nullptr;
+	LODObject3D* lodObject = nullptr;
+	Object3DRenderGroup* org = nullptr;
+	ObjectParticleSystemEntity* opse = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
-		if (dynamic_cast< Object3D* >(entity) != nullptr) {
-			auto object = dynamic_cast< Object3D* >(entity);
-			if (object->isDynamicShadowingEnabled() == false)
-				continue;
-
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			for (auto orgObject: org->getObjects()) visibleObjects.push_back(orgObject);
+		} else
+		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
+			if (object->isDynamicShadowingEnabled() == false) continue;
 			visibleObjects.push_back(object);
 		} else
-		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
-			if (opse->isDynamicShadowingEnabled() == false)
-				continue;
-
+		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
+			if (lodObject->isDynamicShadowingEnabled() == false) continue;
+			auto object = lodObject->getLODObject();
+			if (object != nullptr) {
+				visibleObjects.push_back(object);
+			}
+		} else
+		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
+			if (opse->isDynamicShadowingEnabled() == false) continue;
 			for (auto object3D: *opse->getEnabledObjects()) {
 				visibleObjects.push_back(object3D);
 			}

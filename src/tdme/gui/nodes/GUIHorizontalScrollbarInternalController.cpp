@@ -53,6 +53,7 @@ void GUIHorizontalScrollbarInternalController::dispose()
 
 void GUIHorizontalScrollbarInternalController::postLayout()
 {
+	contentWidth = contentNode->getContentWidth();
 }
 
 GUIHorizontalScrollbarInternalController_State* GUIHorizontalScrollbarInternalController::getState()
@@ -63,23 +64,20 @@ GUIHorizontalScrollbarInternalController_State* GUIHorizontalScrollbarInternalCo
 float GUIHorizontalScrollbarInternalController::getBarWidth()
 {
 	float elementWidth = contentNode->computedConstraints.width;
-	float contentWidth = contentNode->getContentWidth();
 	auto barWidthRelative = (elementWidth / contentWidth);
-	if (barWidthRelative > 1.0f)
-		barWidthRelative = 1.0f;
-
-	return (node->computedConstraints.width - node->border.left - node->border.right) * barWidthRelative;
+	if (barWidthRelative > 1.0f) barWidthRelative = 1.0f;
+	float barWidth = (node->computedConstraints.width - node->border.left - node->border.right) * barWidthRelative;
+	if (barWidth < 5.0f) barWidth = 5.0f;
+	return barWidth;
 }
 
 float GUIHorizontalScrollbarInternalController::getBarLeft()
 {
 	float elementWidth = contentNode->computedConstraints.width;
-	float contentWidth = contentNode->getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
-	auto childrenRenderOffsetX = contentNode->childrenRenderOffsetX;
-	auto barWidth = (node->computedConstraints.width - node->border.left - node->border.right) * (elementWidth / contentWidth);
+	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX();
 	if (scrollableWidth > 0.0f) {
-		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border.left+ (childrenRenderOffsetX * ((node->computedConstraints.width - barWidth) / scrollableWidth));
+		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border.left+ (childrenRenderOffsetX * ((node->computedConstraints.width - getBarWidth()) / scrollableWidth));
 	} else {
 		return node->computedConstraints.left + node->computedConstraints.alignmentLeft + node->border.left;
 	}
@@ -88,18 +86,12 @@ float GUIHorizontalScrollbarInternalController::getBarLeft()
 void GUIHorizontalScrollbarInternalController::setDraggedX(float draggedX)
 {
 	float elementWidth = contentNode->computedConstraints.width;
-	float contentWidth = contentNode->getContentWidth();
 	auto scrollableWidth = contentWidth - elementWidth;
-	if (scrollableWidth <= 0.0f)
-		return;
+	if (scrollableWidth <= 0.0f) return;
 
-	auto barWidth = getBarWidth();
-	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX() + (draggedX * (scrollableWidth / (node->computedConstraints.width - barWidth)));
-	if (childrenRenderOffsetX < 0)
-		childrenRenderOffsetX = 0;
-
-	if (childrenRenderOffsetX > scrollableWidth)
-		childrenRenderOffsetX = scrollableWidth;
+	auto childrenRenderOffsetX = contentNode->getChildrenRenderOffsetX() + (draggedX * (scrollableWidth / (node->computedConstraints.width - getBarWidth())));
+	if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
+	if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
 
 	contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
 }
@@ -118,12 +110,10 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 			auto barWidth = getBarWidth();
 			if (event->getX() < barLeft) {
 				float elementWidth = contentNode->computedConstraints.width;
-				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
 				setDraggedX(-elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else if (event->getX() > barLeft + barWidth) {
 				float elementWidth = contentNode->computedConstraints.width;
-				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
 				setDraggedX(+elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else if (event->getX() >= barLeft && event->getX() < barLeft + barWidth) {

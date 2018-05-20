@@ -63,7 +63,7 @@ struct tdme::engine::Partition
 	 * @param center
 	 * @return objects near to given world position
 	 */
-	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center) = 0;
+	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) = 0;
 
 	/**
 	 * Destructor

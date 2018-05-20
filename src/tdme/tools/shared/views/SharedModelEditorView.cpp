@@ -84,6 +84,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	initModelRequestedReset = false;
 	entity = nullptr;
 	modelFile = "";
+	lodLevel = 1;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
@@ -106,6 +107,7 @@ void SharedModelEditorView::setEntity(LevelEditorEntity* entity)
 {
 	engine->reset();
 	this->entity = entity;
+	lodLevel = 1;
 	initModelRequested = true;
 	initModelRequestedReset = false;
 }
@@ -119,22 +121,40 @@ void SharedModelEditorView::resetEntity()
 
 void SharedModelEditorView::initModel()
 {
-	if (entity == nullptr)
-		return;
+	if (entity == nullptr) return;
 
 	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
+	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	ModelStatistics modelStatistics;
-	ModelUtilities::computeModelStatistics(entity->getModel(), &modelStatistics);
-	modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (currentModelObject != nullptr) {
+		ModelStatistics modelStatistics;
+		ModelUtilities::computeModelStatistics(currentModelObject->getModel(), &modelStatistics);
+		modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	} else {
+		modelEditorScreenController->unsetStatistics();
+	}
 	if (initModelRequestedReset == false) updateGUIElements();
 }
 
 const string& SharedModelEditorView::getFileName()
 {
 	return modelFile;
+}
+
+int SharedModelEditorView::getLodLevel() const {
+	return lodLevel;
+}
+
+void SharedModelEditorView::setLodLevel(int lodLevel) {
+	if (this->lodLevel != lodLevel) {
+		this->lodLevel = lodLevel;
+		engine->reset();
+		initModelRequested = true;
+		modelEditorScreenController->setMaterials(entity);
+		modelEditorScreenController->setAnimations(entity);
+	}
 }
 
 void SharedModelEditorView::loadFile(const string& pathName, const string& fileName)
@@ -181,14 +201,14 @@ void SharedModelEditorView::display()
 		initModelRequestedReset = false;
 	}
 	entityDisplayView->display(entity);
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void SharedModelEditorView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelEditorScreenController->setScreenCaption("Model Viewer - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
+		modelEditorScreenController->setScreenCaption("Model Editor - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
 		auto preset = entity->getProperty("preset");
 		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -197,10 +217,11 @@ void SharedModelEditorView::updateGUIElements()
 		entityBoundingVolumeView->setTerrainMesh(entity);
 		entityBoundingVolumeView->setConvexMeshes(entity);
 		modelEditorScreenController->setRendering(entity);
+		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
 	} else {
-		modelEditorScreenController->setScreenCaption("Model Viewer - no entity loaded");
+		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
 		modelEditorScreenController->unsetEntityProperties();
 		modelEditorScreenController->unsetEntityData();
 		modelEditorScreenController->unsetPivot();
@@ -208,6 +229,7 @@ void SharedModelEditorView::updateGUIElements()
 		entityBoundingVolumeView->unsetTerrainMesh();
 		entityBoundingVolumeView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
+		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();
 	}
@@ -346,7 +368,10 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 }
 
 void SharedModelEditorView::playAnimation(const string& animationId) {
-	dynamic_cast<Object3D*>(engine->getEntity("model"))->setAnimation(animationId);
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (object != nullptr) {
+		object->setAnimation(animationId);
+	}
 }
 
 void SharedModelEditorView::onSetEntityData()

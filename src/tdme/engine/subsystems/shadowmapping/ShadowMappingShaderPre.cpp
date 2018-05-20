@@ -71,6 +71,8 @@ void ShadowMappingShaderPre::initialize()
 	if (uniformDiffuseTextureAvailable == -1) return;
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1) return;
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparencyThreshold");
+	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	//
 	initialized = true;
@@ -98,6 +100,7 @@ void ShadowMappingShaderPre::updateMatrices(const Matrix4x4& mvpMatrix)
 void ShadowMappingShaderPre::updateMaterial(GLRenderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
 void ShadowMappingShaderPre::bindTexture(GLRenderer* renderer, int32_t textureId)

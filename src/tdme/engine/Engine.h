@@ -43,6 +43,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -66,6 +67,8 @@ class tdme::engine::Engine final
 	friend class EngineGLES2Renderer;
 	friend class FrameBuffer;
 	friend class Object3D;
+	friend class Object3DRenderGroup;
+	friend class LODObject3D;
 	friend class ObjectParticleSystemEntity;
 	friend class PointsParticleSystemEntity;
 	friend class tdme::engine::subsystems::rendering::BatchVBORendererPoints;
@@ -114,11 +117,16 @@ private:
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	ShadowMapping* shadowMapping {  };
+
 	map<string, Entity*> entitiesById {  };
+	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities {  };
+	map<string, Entity*> noFrustumCullingEntities {  };
 
 	vector<Object3D*> visibleObjects {  };
+	vector<LODObject3D*> visibleLODObjects {  };
 	vector<ObjectParticleSystemEntity*> visibleOpses {  };
 	vector<PointsParticleSystemEntity*> visiblePpses {  };
+	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 
 	bool shadowMappingEnabled {  };
@@ -401,8 +409,21 @@ public:
 	bool makeScreenshot(const string& pathName, const string& fileName);
 
 	/**
+	 * @return visible object render groups
+	 */
+	vector<Object3DRenderGroup*>& getVisibleObjectRenderGroups();
+
+	/**
 	 * Destructor
 	 */
 	~Engine();
+
+private:
+
+	/**
+	 * Updates an entity regarding internal lists
+	 * @param entity
+	 */
+	void updateEntity(Entity* entity);
 
 };

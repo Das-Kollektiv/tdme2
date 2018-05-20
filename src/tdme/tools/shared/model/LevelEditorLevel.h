@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -65,94 +64,128 @@ public:
 	/** 
 	 * @return game root
 	 */
-	const string& getGameRoot();
+	inline const string& getGameRoot() {
+		return gameRoot;
+	}
 
 	/** 
 	 * Set game root
 	 * @param gameRoot
 	 */
-	void setGameRoot(const string& gameRoot);
+	inline void setGameRoot(const string& gameRoot) {
+		this->gameRoot = gameRoot;
+	}
 
 	/** 
 	 * @return path name
 	 */
-	const string& getPathName();
+	inline const string& getPathName() {
+		return pathName;
+	}
 
 	/** 
 	 * Set up path name
 	 * @param pathName
 	 */
-	void setPathName(const string& pathName);
+	inline void setPathName(const string& pathName) {
+		this->pathName = pathName;
+	}
 
 	/** 
 	 * @return file name
 	 */
-	const string& getFileName();
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/** 
 	 * Set up level file name
 	 * @param file name
 	 */
-	void setFileName(const string& fileName);
+	inline void setFileName(const string& fileName) {
+		this->fileName = fileName;
+	}
 
 	/** 
 	 * @return rotation order
 	 */
-	RotationOrder* getRotationOrder();
+	inline RotationOrder* getRotationOrder() {
+		return rotationOrder;
+	}
 
 	/** 
 	 * Set rotation order
 	 * @param rotation order
 	 */
-	void setRotationOrder(RotationOrder* rotationOrder);
+	inline void setRotationOrder(RotationOrder* rotationOrder) {
+		this->rotationOrder = rotationOrder;
+	}
 
 	/** 
 	 * @return number of lights
 	 */
-	int32_t getLightCount();
+	inline int32_t getLightCount() {
+		return lights.size();
+	}
 
 	/** 
 	 * Get light at index i
 	 * @param i
 	 * @return
 	 */
-	LevelEditorLight* getLightAt(int32_t i);
+	inline LevelEditorLight* getLightAt(int32_t i) {
+		return lights[i];
+	}
 
 	/** 
 	 * @return entity library
 	 */
-	LevelEditorEntityLibrary* getEntityLibrary();
+	inline LevelEditorEntityLibrary* getEntityLibrary() {
+		return entityLibrary;
+	}
 
 	/** 
 	 * @return dimension
 	 */
-	const Vector3& getDimension();
+	inline const Vector3& getDimension() {
+		return dimension;
+	}
 
 	/** 
 	 * @return level bounding box
 	 */
-	BoundingBox* getBoundingBox();
+	inline BoundingBox* getBoundingBox() {
+		return &boundingBox;
+	}
 
 	/** 
 	 * @return level center
 	 */
-	const Vector3& getCenter();
+	inline const Vector3& getCenter() {
+		return center;
+	}
 
 	/**
 	 * @return new object idx
 	 */
-	int32_t allocateObjectId();
+	inline int32_t allocateObjectId() {
+		return objectIdx++;
+	}
 
 	/** 
 	 * @return object idx
 	 */
-	int32_t getObjectIdx();
+	inline int32_t getObjectIdx() {
+		return objectIdx;
+	}
 
 	/** 
 	 * Set entity idx
 	 * @param objectIdx
 	 */
-	void setObjectIdx(int32_t entityIdx);
+	inline void setObjectIdx(int32_t entityIdx) {
+		this->objectIdx = entityIdx;
+	}
 
 	/** 
 	 * Clears all level objects
@@ -160,6 +193,12 @@ public:
 	void clearObjects();
 
 	/** 
+	 * Get objects with given entity id
+	 * @param entity id
+	 */
+	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
+
+	/**
 	 * Remove objects with given entity id
 	 * @param entity id
 	 */
@@ -200,14 +239,18 @@ public:
 	/** 
 	 * @return number of objects
 	 */
-	int32_t getObjectCount();
+	inline int32_t getObjectCount() {
+		return objects.size();
+	}
 
 	/** 
 	 * Returns object at idx  
 	 * @param idx
 	 * @return level object
 	 */
-	LevelEditorObject* getObjectAt(int32_t idx);
+	inline LevelEditorObject* getObjectAt(int32_t idx) {
+		return objects[idx];
+	}
 
 	/**
 	 * Update level dimension, bounding box, center

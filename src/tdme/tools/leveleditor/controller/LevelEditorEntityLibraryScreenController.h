@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -93,6 +92,13 @@ public:
 	 * place model entity clicked
 	 */
 	virtual void onDeleteEntity();
+
+	/**
+	 * partition entity
+	 */
+	virtual void onPartitionEntity();
+
+	// overriden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 

@@ -24,7 +24,7 @@ void PartitionNone::reset()
 void PartitionNone::addEntity(Entity* entity)
 {
 	for (int i = 0; i < entities.size(); i++) {
-		if (entities.at(i) == entity) return;
+		if (entities[i] == entity) return;
 	}
 
 	entities.push_back(entity);
@@ -37,7 +37,7 @@ void PartitionNone::updateEntity(Entity* entity)
 void PartitionNone::removeEntity(Entity* entity)
 {
 	for (int i = 0; i < entities.size(); i++) {
-		if (entities.at(i) == entity) {
+		if (entities[i] == entity) {
 			entities.erase(entities.begin() + i);
 			return;
 		}
@@ -54,7 +54,7 @@ VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume*
 	return &arrayListIteratorMultiple;
 }
 
-VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center)
+VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center, const Vector3& halfExtension)
 {
 	return &arrayListIteratorMultiple;
 }

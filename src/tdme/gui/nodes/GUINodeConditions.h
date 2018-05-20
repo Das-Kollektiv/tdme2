@@ -9,6 +9,8 @@
 using std::vector;
 using std::string;
 
+using tdme::gui::nodes::GUIElementNode;
+
 /** 
  * GUI node conditions
  * @author Andreas Drewke
@@ -19,7 +21,19 @@ class tdme::gui::nodes::GUINodeConditions final
 	friend class GUINode;
 
 private:
+	GUIElementNode* elementNode {  };
 	vector<string> conditions {  };
+
+	/**
+	 * Update node
+	 * @param node
+	 */
+	void updateNode(GUINode* node);
+
+	/**
+	 * Update element node
+	 */
+	void updateElementNode();
 
 public:
 
@@ -31,22 +45,26 @@ public:
 	/** 
 	 * Add a condition
 	 * @param condition
+	 * @return condition changed
 	 */
-	void add(const string& condition);
+	bool add(const string& condition);
 
 	/** 
 	 * Remove a condition
 	 * @param condition
+	 * @return condition changed
 	 */
-	void remove(const string& condition);
+	bool remove(const string& condition);
 
 	/** 
 	 * Remove all
+	 * @return condition changed
 	 */
-	void removeAll();
+	bool removeAll();
 
 	/**
 	 * Public constructor
+	 * @param node
 	 */
-	GUINodeConditions();
+	GUINodeConditions(GUIElementNode* node = nullptr);
 };

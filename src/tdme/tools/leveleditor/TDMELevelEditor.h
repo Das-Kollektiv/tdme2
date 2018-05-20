@@ -124,7 +124,7 @@ public:
 	void switchToLevelEditor();
 
 	/** 
-	 * Switch to model viewer
+	 * Switch to model editor
 	 */
 	void switchToModelEditor();
 

@@ -1,6 +1,6 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
+#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
 	#include <GL/glew.h>
 #endif
 
@@ -16,6 +16,8 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
@@ -62,9 +64,11 @@ using tdme::engine::EngineGL2Renderer;
 using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
@@ -320,19 +324,36 @@ Entity* Engine::getEntity(const string& id)
 void Engine::addEntity(Entity* entity)
 {
 	// dispose old entity if any did exist in engine with same id
-	auto oldEntity = getEntity(entity->getId());
-	if (oldEntity != nullptr) {
-		oldEntity->dispose();
-		if (oldEntity->isFrustumCulling() == true && oldEntity->isEnabled() == true) partition->removeEntity(oldEntity);
-		// TODO: what exactly to do with old entity
-	}
+	removeEntity(entity->getId());
+
 	// init entity
 	entity->setEngine(this);
 	entity->setRenderer(renderer);
 	entity->initialize();
 	entitiesById[entity->getId()] = entity;
+
 	// add to partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->addEntity(entity);
+
+	// update
+	updateEntity(entity);
+}
+
+void Engine::updateEntity(Entity* entity) {
+	noFrustumCullingEntities.erase(entity->getId());
+	autoEmitParticleSystemEntities.erase(entity->getId());
+
+	// add to no frustum culling
+	if (entity->isFrustumCulling() == false) {
+		// otherwise add to no frustum culling entities
+		noFrustumCullingEntities[entity->getId()] = entity;
+	}
+
+	// add to auto emit particle system entities
+	auto particleSystemEntity = dynamic_cast<ParticleSystemEntity*>(entity);
+	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == true) {
+		autoEmitParticleSystemEntities[particleSystemEntity->getId()] = particleSystemEntity;
+	}
 }
 
 void Engine::removeEntity(const string& id)
@@ -343,6 +364,8 @@ void Engine::removeEntity(const string& id)
 	if (entityByIdIt != entitiesById.end()) {
 		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
+		autoEmitParticleSystemEntities.erase(entity->getId());
+		noFrustumCullingEntities.erase(entity->getId());
 	}
 	if (entity != nullptr) {
 		// remove from partition if enabled and frustum culling requested
@@ -391,7 +414,7 @@ void Engine::initialize(bool debug)
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	// Linux/FreeBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__))
+	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
 	{
 		int glMajorVersion;
 		int glMinorVersion;
@@ -432,7 +455,6 @@ void Engine::initialize(bool debug)
 	// init
 	initialized = true;
 	renderer->initialize();
-	renderer->renderingTexturingClientState = false;
 
 	// create manager
 	textureManager = new TextureManager(renderer);
@@ -540,8 +562,10 @@ void Engine::initRendering()
 
 	// clear lists of visible objects
 	visibleObjects.clear();
+	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
+	visibleObjectRenderGroups.clear();
 
 	//
 	renderingInitiated = true;
@@ -552,62 +576,76 @@ void Engine::computeTransformations()
 	// init rendering if not yet done
 	if (renderingInitiated == false) initRendering();
 
-	// collect entities that do not have frustum culling enabled, do particle systems auto emit
-	for (auto it: entitiesById) {
-		Entity* entity = it.second;
+	Object3D* object = nullptr;
+	LODObject3D* lodObject = nullptr;
+	ObjectParticleSystemEntity* opse = nullptr;
+	PointsParticleSystemEntity* ppse = nullptr;
+	ParticleSystemEntity* pse = nullptr;
+	Object3DRenderGroup* org = nullptr;
+
+	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
+	{ \
+		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
+			object->computeTransformations(); \
+			visibleObjects.push_back(object); \
+		} else \
+		if ((lodObject = dynamic_cast< LODObject3D* >(_entity)) != nullptr) { \
+			auto object = lodObject->determineLODObject(camera); \
+			if (object != nullptr) { \
+				visibleLODObjects.push_back(lodObject); \
+				visibleObjects.push_back(object); \
+				object->computeTransformations(); \
+			} \
+		} else \
+		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
+			for (auto object: *opse->getEnabledObjects()) { \
+				object->computeTransformations(); \
+				visibleObjects.push_back(object); \
+			} \
+			visibleOpses.push_back(opse); \
+		} else \
+		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(_entity)) != nullptr) { \
+			visiblePpses.push_back(ppse); \
+		} \
+	}
+
+	// collect entities that do not have frustum culling enabled
+	for (auto it: noFrustumCullingEntities) {
+		auto entity = it.second;
+
 		// skip on disabled entities
 		if (entity->isEnabled() == false) continue;
-		// check entities with frustum culling disabled and add them to related lists
-		if (entity->isFrustumCulling() == false) {
-			// objects
-			if (dynamic_cast< Object3D* >(entity) != nullptr) {
-				auto object = dynamic_cast< Object3D* >(entity);
-				visibleObjects.push_back(object);
-			} else
-			// object particle systems
-			if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-				auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
-				for (auto object3D: *opse->getEnabledObjects()) {
-					visibleObjects.push_back(object3D);
-				}
-				visibleOpses.push_back(opse);
-			} else
-			// point particle systems
-			if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-				auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
-				visiblePpses.push_back(ppse);
-			}
+
+		// compute transformations and add to lists
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+		} else {
+			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
+	}
+
+	// do particle systems auto emit
+	for (auto it: autoEmitParticleSystemEntities) {
+		auto entity = it.second;
+
+		// skip on disabled entities
+		if (entity->isEnabled() == false) continue;
+
 		// do auto emit
-		if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr) {
-			auto pse = dynamic_cast< ParticleSystemEntity* >(entity);
-			if (pse->isAutoEmit() == true) {
-				pse->emitParticles();
-				pse->updateParticles();
-			}
+		if ((pse = dynamic_cast< ParticleSystemEntity* >(entity)) != nullptr) {
+			pse->emitParticles();
+			pse->updateParticles();
 		}
 	}
 
 	// add visible entities to related lists by querying frustum
 	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
-		// objects
-		if (dynamic_cast< Object3D* >(entity) != nullptr) {
-			auto object = dynamic_cast< Object3D* >(entity);
-			object->computeTransformations();
-			visibleObjects.push_back(object);
-		} else
-		// object particle systems
-		if (dynamic_cast< ObjectParticleSystemEntity* >(entity) != nullptr) {
-			auto opse = dynamic_cast< ObjectParticleSystemEntity* >(entity);
-			for (auto object3D: *opse->getEnabledObjects()) {
-				visibleObjects.push_back(object3D);
-			}
-			visibleOpses.push_back(opse);
-		} else
-		// point particle systems
-		if (dynamic_cast< PointsParticleSystemEntity* >(entity) != nullptr) {
-			auto ppse = dynamic_cast< PointsParticleSystemEntity* >(entity);
-			visiblePpses.push_back(ppse);
+		// compute transformations and add to lists
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+			visibleObjectRenderGroups.push_back(org);
+			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+		} else {
+			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
 	}
 
@@ -623,10 +661,6 @@ void Engine::display()
 
 	// init frame
 	Engine::renderer->initializeFrame();
-
-	// enable vertex and normal arrays, we always have them
-	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_VERTEX_ARRAY);
-	Engine::renderer->enableClientState(Engine::renderer->CLIENTSTATE_NORMAL_ARRAY);
 
 	// update camera
 	camera->update(width, height);
@@ -704,15 +738,9 @@ void Engine::display()
 		particlesShader->unUseProgram();
 	}
 
-	// disable vertex, normal, texturecoord arrays
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_VERTEX_ARRAY);
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_NORMAL_ARRAY);
-	Engine::renderer->disableClientState(Engine::renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-
 	// clear pre render states
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
-	renderer->renderingTexturingClientState = false;
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -805,6 +833,33 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
+
+	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleLODObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto object = entity->getLODObject();
+			if (object != nullptr) {
+				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+					auto vertices = _i->next();
+					{
+						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+							auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
+							// check if match or better match
+							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+								selectedEntity = entity;
+								selectedEntityDistance = entityDistance;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visibleOpses) {
 		// skip if not pickable or ignored by filter
@@ -929,4 +984,8 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 	//
 	return true;
+}
+
+vector<Object3DRenderGroup*>& Engine::getVisibleObjectRenderGroups() {
+	return visibleObjectRenderGroups;
 }

@@ -16,6 +16,7 @@ using std::string;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
 using tdme::ext::jsonbox::JsonException;
 
@@ -36,6 +37,12 @@ private:
 	 */
 	static void copyFile(const string& source, const string& dest) throw (FileSystemException);
 
+	/**
+	 * Export LOD level to JSON
+	 * @param lod level
+	 * @return json root
+	 */
+	static tdme::ext::jsonbox::Object exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel);
 public:
 
 	/** 

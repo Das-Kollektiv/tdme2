@@ -73,9 +73,10 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	version[0] = is.readByte();
 	version[1] = is.readByte();
 	version[2] = is.readByte();
-	if (version[0] != 1 || version[1] != 0 || version[2] != 0) {
+	if ((version[0] != 1 || version[1] != 0 || version[2] != 0) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 9)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, but is " +
+			"Version mismatch, should be 1.0.0 or 1.9.9, but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -104,7 +105,7 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	model->getImportTransformationsMatrix().set(importTransformationsMatrixArray);
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(pathName, &is);
+		auto material = readMaterial(pathName, &is, version);
 		(*model->getMaterials())[material->getId()] = material;
 	}
 	readSubGroups(&is, model, nullptr, model->getSubGroups());
@@ -132,7 +133,7 @@ const string TMReader::getTexturePath(const string& modelPathName, const string&
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is) throw (ModelFileIOException)
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version) throw (ModelFileIOException)
 {
 	auto id = is->readString();
 	auto m = new Material(id);
@@ -183,6 +184,9 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		);
 	}
 	m->setDiffuseTextureMaskedTransparency(is->readBoolean());
+	if (version[0] == 1 && version[1] == 9 && version[2] == 9) {
+		m->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
+	}
 	return m;
 }
 

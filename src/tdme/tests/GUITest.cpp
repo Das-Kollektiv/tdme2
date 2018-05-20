@@ -44,8 +44,8 @@ void GUITest::initialize()
 		engine->getGUI()->getScreen("test")->addActionListener(new GUITest_init_1(this));
 		engine->getGUI()->getScreen("test")->addChangeListener(new GUITest_init_2(this));
 		auto effectFadeIn = new GUIColorEffect();
-		effectFadeIn->getColorMulStart().set(0.0f, 0.0f, 0.0f, 1.0f);
-		effectFadeIn->getColorMulEnd().set(1.0f, 1.0f, 1.0f, 1.0f);
+		effectFadeIn->setColorMulStart(GUIColor(0.0f, 0.0f, 0.0f, 1.0f));
+		effectFadeIn->setColorMulEnd(GUIColor(1.0f, 1.0f, 1.0f, 1.0f));
 		effectFadeIn->setTimeTotal(1.0f);
 		effectFadeIn->start();
 		engine->getGUI()->getScreen("test")->addEffect("fadein", effectFadeIn);
@@ -76,8 +76,8 @@ void GUITest::reshape(int32_t width, int32_t height)
 void GUITest::display()
 {
 	engine->display();
-	engine->getGUI()->render();
 	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 }
 
 void GUITest::main(int argc, char** argv)

@@ -5,23 +5,27 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 
 using std::vector;
 using std::string;
 
-using tdme::tools::shared::model::ModelProperties;
+using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::ModelProperties;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
 /** 
  * Level Editor Model
@@ -46,92 +50,127 @@ private:
 	string thumbnail {  };
 	Model* model {  };
 	Vector3 pivot {  };
-	LevelEditorEntityParticleSystem* particleSystem {  };
+	LevelEditorEntityLODLevel* lodLevel2;
+	LevelEditorEntityLODLevel* lodLevel3;
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
+	LevelEditorEntityParticleSystem* particleSystem {  };
 	LevelEditorEntityModel* modelSettings;
-	bool dynamicShadowing;
+	bool renderGroups {  };
+	bool applyAnimations {  };
+	bool dynamicShadowing {  };
 public:
 
 	/** 
 	 * @return id
 	 */
-	int32_t getId();
+	inline int32_t getId() {
+		return id;
+	}
 
 	/** 
 	 * @return entity type
 	 */
-	LevelEditorEntity_EntityType* getType();
+	inline LevelEditorEntity_EntityType* getType() {
+		return type;
+	}
 
 	/** 
 	 * @return name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/** 
 	 * Set up model name
 	 * @param name
 	 */
-	void setName(const string& name);
+	inline void setName(const string& name) {
+		this->name = name;
+	}
 
 	/** 
 	 * @return description
 	 */
-	const string& getDescription();
+	inline const string& getDescription() {
+		return description;
+	}
 
 	/** 
 	 * Set up model description
 	 * @param description
 	 */
-	void setDescription(const string& description);
+	inline void setDescription(const string& description) {
+		this->description = description;
+	}
 
 	/** 
 	 * @return entity file name
 	 */
-	const string& getEntityFileName();
+	inline const string& getEntityFileName() {
+		return entityFileName;
+	}
 
 	/** 
 	 * Set entity file name
 	 * @param entity file name
 	 */
-	void setEntityFileName(const string& entityFileName);
+	inline void setEntityFileName(const string& entityFileName) {
+		this->entityFileName = entityFileName;
+	}
 
 	/** 
 	 * @return file name
 	 */
-	const string& getFileName();
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/** 
 	 * @return thumbnail
 	 */
-	const string& getThumbnail();
+	inline const string& getThumbnail() {
+		return thumbnail;
+	}
 
 	/** 
 	 * @return model
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * Set model
 	 * @param model
 	 */
-	void setModel(Model* model);
+	inline void setModel(Model* model) {
+		if (this->model != nullptr) delete this->model;
+		this->model = model;
+	}
 
 	/**
 	 * @return pivot
 	 */
-	Vector3& getPivot();
+	inline Vector3& getPivot() {
+		return pivot;
+	}
 
 	/** 
 	 * @return bounding volume count
 	 */
-	int32_t getBoundingVolumeCount();
+	inline int32_t getBoundingVolumeCount() {
+		return boundingVolumes.size();
+	}
 
 	/** 
 	 * Get bounding volume at
 	 * @param idx
 	 * @return level editor object bounding volume
 	 */
-	LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx);
+	inline LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
+		return boundingVolumes[idx];
+	}
 
 	/** 
 	 * Add bounding volume
@@ -146,27 +185,93 @@ public:
 	 */
 	void setDefaultBoundingVolumes();
 
+	/**
+	 * @return lod level 2
+	 */
+	inline LevelEditorEntityLODLevel* getLODLevel2() {
+		return lodLevel2;
+	}
+
+	/**
+	 * Set LOD level 2
+	 * @param lod level settings
+	 */
+	void setLODLevel2(LevelEditorEntityLODLevel* lodLevel);
+
+	/**
+	 * @return lod level 3
+	 */
+	inline LevelEditorEntityLODLevel* getLODLevel3() {
+		return lodLevel3;
+	}
+
+	/**
+	 * Set LOD level 3
+	 * @param lod level settings
+	 */
+	void setLODLevel3(LevelEditorEntityLODLevel* lodLevel);
+
 	/** 
 	 * @return level editor entity particle system
 	 */
-	LevelEditorEntityParticleSystem* getParticleSystem();
+	inline LevelEditorEntityParticleSystem* getParticleSystem() {
+		return particleSystem;
+	}
 
 	/**
 	 * @return model settings
 	 */
-	LevelEditorEntityModel* getModelSettings();
+	inline LevelEditorEntityModel* getModelSettings() {
+		return modelSettings;
+	}
 
 	/**
 	 * Is dynamic shadowing
 	 * @return dynamic shadowing enabled
 	 */
-	bool isDynamicShadowing();
+	inline bool isDynamicShadowing() {
+		return dynamicShadowing;
+	}
 
 	/**
 	 * Set dynamic shadowing
 	 * @param dynamic shadowing enabled
 	 */
-	void setDynamicShadowing(bool dynamicShadowing);
+	inline void setDynamicShadowing(bool dynamicShadowing) {
+		this->dynamicShadowing = dynamicShadowing;
+	}
+
+	/**
+	 * Is using render groups
+	 * @return render groups enabled
+	 */
+	inline bool isRenderGroups() {
+		return renderGroups;
+	}
+
+	/**
+	 * Set using render groups
+	 * @param use render groups
+	 */
+	inline void setRenderGroups(bool renderGroups) {
+		this->renderGroups = renderGroups;
+	}
+
+	/**
+	 * Is applying animations
+	 * @return apply animation flag
+	 */
+	inline bool isApplyAnimations() {
+		return applyAnimations;
+	}
+
+	/**
+	 * Set apply animations
+	 * @param apply animations
+	 */
+	inline void setApplyAnimations(bool applyAnimations) {
+		this->applyAnimations = applyAnimations;
+	}
 
 	/**
 	 * Creates a level editor model

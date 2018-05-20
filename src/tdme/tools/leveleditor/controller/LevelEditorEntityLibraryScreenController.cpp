@@ -3,6 +3,8 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/models/TMWriter.h>
+#include <tdme/engine/model/ModelHelper.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,6 +12,8 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
@@ -22,19 +26,24 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
+#include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::models::TMWriter;
+using tdme::engine::model::ModelHelper;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -42,6 +51,8 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using tdme::tools::leveleditor::views::EmptyView;
@@ -54,13 +65,16 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
+using tdme::tools::shared::model::LevelEditorEntityModel;
+using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::StringUtils;
+using tdme::utils::MutableString;
 
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
 {
@@ -230,6 +244,108 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 	setEntityLibrary();
 }
 
+void LevelEditorEntityLibraryScreenController::onPartitionEntity()
+{
+	// check if we have a entity
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (entity == nullptr || entity->getType() != LevelEditorEntity_EntityType::MODEL) return;
+	// TODO: there can always be the tdme default animation, do not do skinned objects
+	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
+		popUps->getInfoDialogScreenController()->show("Warning", "This model has animations or skinning");
+		return;
+	}
+
+	// check if entity exists only once
+	vector<string> objectsByEntityId;
+	TDMELevelEditor::getInstance()->getLevel()->getObjectsByEntityId(entity->getId(), objectsByEntityId);
+	if (objectsByEntityId.size() != 1) {
+		popUps->getInfoDialogScreenController()->show("Warning", "This model has several object instances");
+		return;
+	}
+
+	//
+	auto level = TDMELevelEditor::getInstance()->getLevel();
+	auto levelEntityLibrary = level->getEntityLibrary();
+	auto levelEditorObject = level->getObjectById(objectsByEntityId[0]);
+
+	// partition object
+	map<string, Model*> modelsByPartition;
+	map<string, Vector3> modelsPosition;
+	ModelHelper::partition(
+		levelEditorObject->getEntity()->getModel(),
+		levelEditorObject->getTransformations(),
+		modelsByPartition,
+		modelsPosition
+	);
+
+	try {
+		// add partitions to level
+		auto pathName = Tools::getPath(entity->getFileName());
+		auto fileName = Tools::getFileName(entity->getFileName());
+		for (auto modelsByPartitionIt: modelsByPartition) {
+			auto key = modelsByPartitionIt.first;
+			auto model = modelsByPartitionIt.second;
+			auto fileNamePartition = StringUtils::substring(fileName, 0, StringUtils::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
+
+			// create entity
+			TMWriter::write(
+				model,
+				pathName,
+				fileNamePartition
+			);
+			auto levelEditorEntityPartition = levelEntityLibrary->addModel(
+				LevelEditorEntityLibrary::ID_ALLOCATE,
+				model->getName(),
+				model->getName(),
+				pathName,
+				fileNamePartition,
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+
+			// avoid name collision
+			auto objectName = model->getName();
+			while (level->getObjectById(objectName) != nullptr) {
+				objectName+= ".p";
+			}
+
+			// add to level
+			auto levelEditorObjectPartition = new LevelEditorObject(
+				objectName,
+				"",
+				levelEditorObject->getTransformations(),
+				levelEditorEntityPartition
+			);
+			levelEditorEntityPartition->getModelSettings()->setTerrainMesh(levelEditorObject->getEntity()->getModelSettings()->isTerrainMesh());
+
+			// add to objects
+			level->addObject(levelEditorObjectPartition);
+		}
+	} catch (Exception& exception) {
+		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
+	}
+
+	// remove original object
+	level->removeObjectsByEntityId(entity->getId());
+	// TODO: check if to delete original model
+	//	as long as .tl has not been saved it is still required to have this file
+	// FileSystem::getInstance()->removeFile(pathName, fileName);
+
+	// (re-)load level editor view
+	auto view = TDMELevelEditor::getInstance()->getView();
+	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
+		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
+	} else {
+		TDMELevelEditor::getInstance()->switchToLevelEditor();
+	}
+
+	// remove original entity from entity library
+	// TODO: delete file
+	level->getEntityLibrary()->removeEntity(entity->getId());
+
+	//
+	setEntityLibrary();
+}
+
 void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("entity_library_listbox") == 0) {
@@ -241,6 +357,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "delete") {
 			onDeleteEntity();
+		} else
+		if (node->getController()->getValue().getString() == "partition") {
+			onPartitionEntity();
 		} else
 		if (node->getController()->getValue().getString() == "create_model") {
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();

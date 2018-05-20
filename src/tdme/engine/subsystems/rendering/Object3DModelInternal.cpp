@@ -7,3 +7,7 @@ Object3DModelInternal::Object3DModelInternal(Model* model) :
 {
 }
 
+Object3DModelInternal::~Object3DModelInternal() {
+	dispose();
+}
+

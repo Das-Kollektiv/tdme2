@@ -43,7 +43,7 @@ public:
 	 */
 	T allocate() {
 		if (freeElements.empty() == false) {
-			T element = freeElements.at(freeElements.size() - 1);
+			T element = freeElements[freeElements.size() - 1];
 			freeElements.erase(freeElements.begin() + freeElements.size() - 1);
 			usedElements.push_back(element);
 			return element;
@@ -59,7 +59,7 @@ public:
 	 */
 	void release(T element) {
 		for (auto i = 0; i < usedElements.size(); i++) {
-			if (usedElements.at(i) == element) {
+			if (usedElements[i] == element) {
 				usedElements.erase(usedElements.begin() + i);
 				freeElements.push_back(element);
 				return;
@@ -86,7 +86,7 @@ public:
 	 */
 	void reset() {
 		for (auto i = 0; i < usedElements.size(); i++) {
-			freeElements.push_back(usedElements.at(i));
+			freeElements.push_back(usedElements[i]);
 		}
 		usedElements.clear();
 	}

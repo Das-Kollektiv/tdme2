@@ -272,45 +272,84 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float scale)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel)
 {
-	if (entity == nullptr)
-		return;
+	if (entity == nullptr) return;
 
 	// create engine entity
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
+	Vector3 objectScale(1.0f, 1.0f, 1.0f);
+	Color4 colorMul(1.0f, 1.0f, 1.0f, 1.0f);
+	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// particle system
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 		modelEntity = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
-		if (modelEntity != nullptr) {
+		if (modelEntity != nullptr) engine->addEntity(modelEntity);
+	} else {
+		// model
+		Model* model = nullptr;
+		switch (lodLevel) {
+			case 1:
+				model = entity->getModel();
+				break;
+			case 2:
+				{
+					auto lodLevelEntity = entity->getLODLevel2();
+					if (lodLevelEntity != nullptr) {
+						model = lodLevelEntity->getModel();
+						colorMul.set(lodLevelEntity->getColorMul());
+						colorAdd.set(lodLevelEntity->getColorAdd());
+					}
+					break;
+				}
+			case 3:
+				{
+					auto lodLevelEntity = entity->getLODLevel3();
+					if (lodLevelEntity != nullptr) {
+						model = lodLevelEntity->getModel();
+						colorMul.set(lodLevelEntity->getColorMul());
+						colorAdd.set(lodLevelEntity->getColorAdd());
+					}
+					break;
+				}
+		}
+		entityBoundingBox = entity->getModel()->getBoundingBox();
+		if (model != nullptr) {
+			modelEntity = new Object3D("model", model);
+			modelEntity->setDynamicShadowingEnabled(true);
+			modelEntity->getEffectColorMul().set(colorMul);
+			modelEntity->getEffectColorAdd().set(colorAdd);
 			engine->addEntity(modelEntity);
 		}
-	} else {
-		entityBoundingBox = entity->getModel()->getBoundingBox();
-		modelEntity = new Object3D("model", entity->getModel());
-		modelEntity->setDynamicShadowingEnabled(true);
-		engine->addEntity(modelEntity);
 	}
+
+	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
+	objectScale.scale(1.0f / maxAxisDimension);
 	if (modelEntity != nullptr) {
-		modelEntity->setScale(modelEntity->getScale().clone().scale(1.0f / maxAxisDimension));
+		modelEntity->setScale(objectScale);
 		modelEntity->update();
 	}
+
+	// generate ground
 	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - Math::EPSILON);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
+
+	// add bounding volumes
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto boundingVolume = entity->getBoundingVolumeAt(i);
-		if (boundingVolume->getModel() == nullptr)
-			continue;
-
+		if (boundingVolume->getModel() == nullptr) continue;
 		auto modelBoundingVolumeEntity = new Object3D(
 			"model_bv." + to_string(i),
-			boundingVolume->getModel());
+			boundingVolume->getModel()
+		);
 		modelBoundingVolumeEntity->setEnabled(false);
-		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
+		modelBoundingVolumeEntity->setScale(objectScale);
 		modelBoundingVolumeEntity->update();
 		engine->addEntity(modelBoundingVolumeEntity);
 	}
@@ -339,24 +378,24 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
 	auto lookAt = cam->getLookAt();
-	auto model = engine->getEntity("model");
-	if (model != nullptr) {
-		lookAt.set(model->getBoundingBoxTransformed()->getCenter());
-	} else {
-		lookAt.set(0.0f, 0.0f, 0.0f);
-	}
+	lookAt.set(entityBoundingBox->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
 	// TODO: a.drewke
 	Transformations _lookFromRotations;
 	_lookFromRotations.fromTransformations(lookFromRotations);
-	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
+	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(camScale);
 	_lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->getLookFrom().set(lookFrom);
 	cam->getLookAt().set(lookAt);
 	cam->getUpVector().set(upVector);
+
+	//
+	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+		delete entityBoundingBox;
+	}
 }
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)

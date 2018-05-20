@@ -26,41 +26,6 @@ LevelEditorObject::LevelEditorObject(const string& id, const string& description
 LevelEditorObject::~LevelEditorObject() {
 }
 
-const string& LevelEditorObject::getId()
-{
-	return id;
-}
-
-void LevelEditorObject::setId(const string& id)
-{
-	this->id = id;
-}
-
-const string& LevelEditorObject::getDescription()
-{
-	return description;
-}
-
-void LevelEditorObject::setDescription(const string& description)
-{
-	this->description = description;
-}
-
-Transformations& LevelEditorObject::getTransformations()
-{
-	return transformations;
-}
-
-LevelEditorEntity* LevelEditorObject::getEntity()
-{
-	return entity;
-}
-
-void LevelEditorObject::setEntity(LevelEditorEntity* entity)
-{
-	this->entity = entity;
-}
-
 ModelProperties* LevelEditorObject::getTotalProperties()
 {
 	auto properties = new ModelProperties();

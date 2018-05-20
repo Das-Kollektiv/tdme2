@@ -95,7 +95,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 		directory = "..." + StringUtils::substring(directory, directory.length() - 50 + 3);
 	}
 
-	caption->getText().set(captionText).append(directory);
+	caption->setText(MutableString(captionText).append(directory));
 
 	vector<string> fileList;
 	try {

@@ -31,10 +31,13 @@ class tdme::engine::model::Model final
 	friend class Group;
 
 public:
+	enum AuthoringTool {AUTHORINGTOOL_UNKNOWN, AUTHORINGTOOL_BLENDER};
+
 	static string ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
 
 private:
+	AuthoringTool authoringTool;
 	string id {  };
 	string name {  };
 	UpVector* upVector {  };
@@ -68,14 +71,21 @@ private:
 	 * @param group id
 	 * @return group transformations matrix or null
 	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
+	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 public:
+
+	/**
+	 * @return authoring tool
+	 */
+	AuthoringTool getAuthoringTool();
 
 	/** 
 	 * @return model id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return model name
@@ -187,14 +197,23 @@ public:
 	BoundingBox* getBoundingBox();
 
 	/**
+	 * Computes a transformations matrix at a given frame for a given group id recursivly
+	 * @param group id
+	 * @param group transformations matrix
+	 * @param frame
+	 */
+	bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0);
+
+	/**
 	 * Public constructor
 	 * @param id
 	 * @param name
 	 * @param up vector
 	 * @param rotation order
 	 * @param bounding box
+	 * @param authoring tool
 	 */
-	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox);
+	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool = AUTHORINGTOOL_UNKNOWN);
 
 	/**
 	 * Deconstructor

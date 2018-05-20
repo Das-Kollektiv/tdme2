@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -17,6 +18,7 @@
 
 using std::string;
 
+using tdme::engine::model::Material;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
@@ -30,6 +32,7 @@ using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utils::MutableString;
 
@@ -46,6 +49,7 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 	friend class ModelEditorScreenController_ModelEditorScreenController_1;
 	friend class ModelEditorScreenController_onModelLoad_2;
 	friend class ModelEditorScreenController_onModelSave_3;
+	friend class ModelEditorScreenController_onLODModelLoad;
 
 private:
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
@@ -60,11 +64,21 @@ private:
 	GUIElementNode* pivotY {  };
 	GUIElementNode* pivotZ {  };
 	GUIElementNode* pivotApply {  };
-	GUIElementNode* statsOpaqueFaces {  };
-	GUIElementNode* statsTransparentFaces {  };
-	GUIElementNode* statsMaterialCount {  };
 	GUIElementNode* renderingDynamicShadowing {  };
+	GUIElementNode* renderingRenderGroups {  };
+	GUIElementNode* renderingApplyAnimations{  };
 	GUIElementNode* renderingApply {  };
+	GUIElementNode* lodLevel {  };
+	GUIElementNode* lodLevelApply {  };
+	GUIElementNode* lodType {  };
+	GUIElementNode* lodModelFile {  };
+	GUIElementNode* lodModelFileLoad {  };
+	GUIElementNode* lodModelFileClear {  };
+	GUIElementNode* lodMinDistance {  };
+	GUIElementNode* lodPlaneRotationY {  };
+	GUIElementNode* lodColorMul {  };
+	GUIElementNode* lodColorAdd {  };
+	GUIElementNode* buttonLodApply {  };
 	GUIElementNode* materialsDropdown {  };
 	GUIElementNode* materialsDropdownApply {  };
 	GUIElementNode* materialsMaterialName {  };
@@ -86,6 +100,7 @@ private:
 	GUIElementNode* materialsMaterialNormalTextureClear {  };
 	GUIElementNode* materialsMaterialSpecularTextureClear {  };
 	GUIElementNode* materialsMaterialUseMaskedTransparency {  };
+	GUIElementNode* materialsMaterialMaskedTransparencyThreshold {  };
 	GUIElementNode* materialsMaterialApply {  };
 	GUIElementNode* animationsDropDown {  };
 	GUIElementNode* animationsDropDownApply {  };
@@ -96,9 +111,21 @@ private:
 	GUIElementNode* animationsAnimationLoop {  };
 	GUIElementNode* animationsAnimationName {  };
 	GUIElementNode* animationsAnimationApply {  };
+	GUIElementNode* statsOpaqueFaces {  };
+	GUIElementNode* statsTransparentFaces {  };
+	GUIElementNode* statsMaterialCount {  };
 
 	FileDialogPath* modelPath {  };
 
+	/**
+	 * @return level editor entity lod level or nullptr
+	 */
+	LevelEditorEntityLODLevel* getLODLevel(int level);
+
+	/**
+	 * @return current selected material
+	 */
+	Material* getSelectedMaterial();
 public:
 
 	/**
@@ -121,6 +148,8 @@ public:
 	 * @return model path
 	 */
 	FileDialogPath* getModelPath();
+
+	// overridden methods
 	void initialize() override;
 	void dispose() override;
 
@@ -178,6 +207,38 @@ public:
 	void unsetRendering();
 
 	/**
+	 * Set lod level
+	 * @param entity
+	 * @param lod level
+	 */
+	void setLODLevel(LevelEditorEntity* entity, int level);
+
+	/**
+	 * Unset LOD level
+	 */
+	void unsetLODLevel();
+
+	/**
+	 * On LOD level apply
+	 */
+	void onLODLevelApply();
+
+	/**
+	 * On LOD level load model
+	 */
+	void onLODLevelLoadModel();
+
+	/**
+	 * On LOD level clear model
+	 */
+	void onLODLevelClearModel();
+
+	/**
+	 * On LOD level apply settings
+	 */
+	void onLODLevelApplySettings();
+
+	/**
 	 * Set materials
 	 * @param entity
 	 */
@@ -192,6 +253,8 @@ public:
 	 * On material drop down apply
 	 */
 	void onMaterialDropDownApply();
+
+	Material* getCurrentMaterial();
 
 	/**
 	 * On material apply
@@ -260,6 +323,11 @@ public:
 	 * @param stats material count
 	 */
 	void setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount);
+
+	/**
+	 * Unset statistics
+	 */
+	void unsetStatistics();
 
 	/** 
 	 * On quit

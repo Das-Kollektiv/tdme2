@@ -74,11 +74,10 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 {
 	if (entity != nullptr) {
 		auto model = engine->getEntity("model");
-		if (model == nullptr)
-			return;
-
+		if (model != nullptr) {
+			model->setDynamicShadowingEnabled(displayShadowing);
+		}
 		auto ground = engine->getEntity("ground");
-		model->setDynamicShadowingEnabled(displayShadowing);
 		ground->setEnabled(displayGroundPlate);
 		for (auto i = 0; i < MODEL_BOUNDINGVOLUME_IDS.size(); i++) {
 			auto modelBoundingVolume = engine->getEntity(MODEL_BOUNDINGVOLUME_IDS[i]);

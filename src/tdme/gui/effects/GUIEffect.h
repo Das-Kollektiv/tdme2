@@ -28,29 +28,39 @@ public:
 	/** 
 	 * @return active
 	 */
-	virtual bool isActive();
+	inline virtual bool isActive() const {
+		return active;
+	}
 
 	/** 
 	 * @return time total
 	 */
-	virtual float getTimeTotal();
+	inline virtual float getTimeTotal() const {
+		return timeTotal;
+	}
 
 	/** 
 	 * Set time total
 	 * @param time total
 	 */
-	virtual void setTimeTotal(float timeTotal);
+	inline virtual void setTimeTotal(float timeTotal) {
+		this->timeTotal = timeTotal;
+	}
 
 	/** 
 	 * @return action to be performed on effect end
 	 */
-	virtual Action* getAction();
+	inline virtual Action* getAction() const {
+		return action;
+	}
 
 	/** 
 	 * Set action to be performed on effect end
 	 * @param action
 	 */
-	virtual void setAction(Action* action);
+	inline virtual void setAction(Action* action) {
+		this->action = action;
+	}
 
 	/** 
 	 * Start this effect

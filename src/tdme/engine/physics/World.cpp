@@ -224,7 +224,7 @@ void World::update(float deltaTime)
 
 	// update transformations for rigid body
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-		auto rigidBody = rigidBodiesDynamic.at(i);
+		auto rigidBody = rigidBodiesDynamic[i];
 		// skip if enabled
 		if (rigidBody->enabled == false) {
 			continue;
@@ -249,22 +249,6 @@ void World::update(float deltaTime)
 		auto& orientation = transform.getOrientation();
 		//	set up transformations
 		physicsTransformations.setTranslation(Vector3(position.x, position.y, position.z));
-		/*
-		Console::println(
-			"position: " + rigidBody->getId() + ": " +
-			to_string(position.x) + ", " +
-			to_string(position.y) + ", " +
-			to_string(position.z)
-		);
-		physicsTransformations.getTranslation().sub(
-			Vector3(
-				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().x,
-				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().y,
-				rigidBody->boundingVolume->collisionShapeLocalTransform.getPosition().z
-			)
-		);
-		*/
-		physicsTransformations.setPivot(rigidBody->boundingVolume->getCenter());
 		physicsTransformations.getRotation(0).fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.update();
 		// velocities
@@ -279,7 +263,7 @@ void World::synch(Engine* engine)
 {
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		// update rigid body
-		auto rigidBody = rigidBodiesDynamic.at(i);
+		auto rigidBody = rigidBodiesDynamic[i];
 
 		// skip on sleeping objects
 		if (rigidBody->isSleeping() == true) continue;
@@ -504,16 +488,17 @@ World* World::clone()
 {
 	auto clonedWorld = new World();
 	for (auto i = 0; i < rigidBodies.size(); i++) {
-		auto rigidBody = rigidBodies.at(i);
+		auto rigidBody = rigidBodies[i];
 		// clone obv
 		RigidBody* clonedRigidBody = nullptr;
 		if (rigidBody->isStatic() == true) {
 			// clone static rigid body
-			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
+			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
 		} else {
 			// update dynamic rigid body
-			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->typeId, rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
+			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
 		}
+
 		// synch additional properties
 		synch(clonedRigidBody, clonedRigidBody);
 	}

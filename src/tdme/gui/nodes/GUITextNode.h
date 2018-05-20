@@ -61,7 +61,18 @@ public:
 	/** 
 	 * @return text
 	 */
-	MutableString& getText();
+	inline const MutableString& getText() const {
+		return text;
+	}
+
+	/**
+	 * @return text
+	 */
+	inline void setText(const MutableString& text) {
+		this->text = text;
+	}
+
+	// override methods
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 };

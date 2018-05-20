@@ -5,8 +5,6 @@
 
 using tdme::gui::nodes::GUIElementNode;
 
-
-
 /** 
  * GUI change listener
  * @author Andreas Drewke

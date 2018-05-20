@@ -5,6 +5,11 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Quaternion.h>
 
 using std::string;
 
@@ -12,6 +17,9 @@ using tdme::engine::Object3D;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
+using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
+using tdme::math::Quaternion;
 
 Object3D::Object3D(const string& id, Model* model) :
 	Object3DInternal(id, model)
@@ -73,6 +81,8 @@ void Object3D::setFrustumCulling(bool frustumCulling) {
 		}
 	}
 	this->frustumCulling = frustumCulling;
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntity(this);
 }
 
 void Object3D::dispose()
@@ -80,130 +90,8 @@ void Object3D::dispose()
 	Object3DInternal::dispose();
 }
 
-BoundingBox* Object3D::getBoundingBox()
-{
-	return Object3DInternal::getBoundingBox();
-}
-
-BoundingBox* Object3D::getBoundingBoxTransformed()
-{
-	return Object3DInternal::getBoundingBoxTransformed();
-}
-
-Color4& Object3D::getEffectColorAdd()
-{
-	return Object3DInternal::getEffectColorAdd();
-}
-
-Color4& Object3D::getEffectColorMul()
-{
-	return Object3DInternal::getEffectColorMul();
-}
-
-const string& Object3D::getId()
-{
-	return Object3DInternal::getId();
-}
-
 void Object3D::initialize()
 {
 	Object3DInternal::initialize();
 }
 
-bool Object3D::isDynamicShadowingEnabled()
-{
-	return Object3DInternal::isDynamicShadowingEnabled();
-}
-
-bool Object3D::isEnabled()
-{
-	return Object3DInternal::isEnabled();
-}
-
-bool Object3D::isPickable()
-{
-	return Object3DInternal::isPickable();
-}
-
-void Object3D::setDynamicShadowingEnabled(bool dynamicShadowing)
-{
-	Object3DInternal::setDynamicShadowingEnabled(dynamicShadowing);
-}
-
-void Object3D::setPickable(bool pickable)
-{
-	Object3DInternal::setPickable(pickable);
-}
-
-Matrix4x4* Object3D::getTransformationsMatrix(const string& id)
-{
-	return Object3DInternal::getTransformationsMatrix(id);
-}
-
-const Vector3& Object3D::getTranslation() const {
-	return Transformations::getTranslation();
-}
-
-void Object3D::setTranslation(const Vector3& translation) {
-	Transformations::setTranslation(translation);
-}
-
-const Vector3& Object3D::getScale() const {
-	return Transformations::getScale();
-}
-
-void Object3D::setScale(const Vector3& scale) {
-	Transformations::setScale(scale);
-}
-
-const Vector3& Object3D::getPivot() const {
-	return Transformations::getPivot();
-}
-
-void Object3D::setPivot(const Vector3& pivot) {
-	Transformations::setPivot(pivot);
-}
-
-const int Object3D::getRotationCount() const {
-	return Transformations::getRotationCount();
-}
-
-Rotation& Object3D::getRotation(int idx) {
-	return Transformations::getRotation(idx);
-}
-
-void Object3D::addRotation(const Vector3& axis, const float angle) {
-	Transformations::addRotation(axis, angle);
-}
-
-void Object3D::removeRotation(const int idx) {
-	Transformations::removeRotation(idx);
-}
-
-const Vector3& Object3D::getRotationAxis(const int idx) const {
-	Transformations::getRotationAxis(idx);
-}
-
-void Object3D::setRotationAxis(const int idx, const Vector3& axis) {
-	Transformations::setRotationAxis(idx, axis);
-}
-
-const float Object3D::getRotationAngle(const int idx) const {
-	return Transformations::getRotationAngle(idx);
-}
-
-void Object3D::setRotationAngle(const int idx, const float angle) {
-	Transformations::setRotationAngle(idx, angle);
-}
-
-const Quaternion& Object3D::getRotationsQuaternion() const {
-	return Transformations::getRotationsQuaternion();
-}
-
-const Matrix4x4& Object3D::getTransformationsMatrix() const {
-	return Transformations::getTransformationsMatrix();
-}
-
-const Transformations& Object3D::getTransformations() const {
-	return *this;
-}

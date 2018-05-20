@@ -37,8 +37,9 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException)
-	: GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUIElementNode::GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException) :
+	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn),
+	activeConditions(this)
 {
 	init();
 	this->name = name;
@@ -74,7 +75,7 @@ int32_t GUIElementNode::getContentWidth()
 {
 	auto width = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes.at(i);
+		auto guiSubNode = subNodes[i];
 		auto contentWidth = guiSubNode->getAutoWidth();
 		if (contentWidth > width) {
 			width = contentWidth;
@@ -89,7 +90,7 @@ int32_t GUIElementNode::getContentHeight()
 {
 	auto height = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes.at(i);
+		auto guiSubNode = subNodes[i];
 		auto contentHeight = guiSubNode->getAutoHeight();
 		if (contentHeight > height) {
 			height = contentHeight;
@@ -110,7 +111,7 @@ void GUIElementNode::setTop(int32_t top)
 	GUIParentNode::setTop(top);
 	top += computedConstraints.alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes.at(i)->setTop(top);
+		subNodes[i]->setTop(top);
 	}
 }
 
@@ -119,7 +120,7 @@ void GUIElementNode::setLeft(int32_t left)
 	GUIParentNode::setLeft(left);
 	left += computedConstraints.alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes.at(i)->setLeft(left);
+		subNodes[i]->setLeft(left);
 	}
 }
 
@@ -129,7 +130,7 @@ void GUIElementNode::layoutSubNodes()
 	auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 	auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes.at(i);
+		auto guiSubNode = subNodes[i];
 		auto doLayoutSubNodes = false;
 		if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.height = height;
@@ -149,7 +150,7 @@ void GUIElementNode::layout()
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto subNode = subNodes.at(i);
+			auto subNode = subNodes[i];
 			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.height > subNodesHeight) {
 				subNode->requestedConstraints.height = subNodesHeight;
 			}
@@ -158,7 +159,7 @@ void GUIElementNode::layout()
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesWidth = requestedConstraints.width - border.left - border.right- padding.left - padding.right;
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto subNode = subNodes.at(i);
+			auto subNode = subNodes[i];
 			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.width > subNodesWidth) {
 				subNode->requestedConstraints.width = subNodesWidth;
 			}
@@ -232,7 +233,7 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 		return;
 
 	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes.at(i);
+		auto subNode = subNodes[i];
 		subNode->handleKeyboardEvent(event);
 	}
 	GUIParentNode::handleKeyboardEvent(event);

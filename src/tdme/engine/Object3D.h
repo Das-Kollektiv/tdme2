@@ -5,17 +5,18 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
-#include <tdme/engine/Entity.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Quaternion.h>
 
 using std::string;
 
-using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
@@ -23,8 +24,10 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::math::Quaternion;
 
 /** 
  * Object 3D
@@ -58,33 +61,118 @@ public:
 public:
 	// overriden methods
 	virtual void dispose() override;
-	virtual BoundingBox* getBoundingBox() override;
-	virtual BoundingBox* getBoundingBoxTransformed() override;
-	virtual Color4& getEffectColorAdd() override;
-	virtual Color4& getEffectColorMul() override;
-	virtual const string& getId() override;
+
+	inline virtual BoundingBox* getBoundingBox() override {
+		return Object3DInternal::getBoundingBox();
+	}
+
+	inline virtual BoundingBox* getBoundingBoxTransformed() override {
+		return Object3DInternal::getBoundingBoxTransformed();
+	}
+
+	inline virtual Color4& getEffectColorAdd() override {
+		return Object3DInternal::getEffectColorAdd();
+	}
+
+	inline virtual Color4& getEffectColorMul() override {
+		return Object3DInternal::getEffectColorMul();
+	}
+
+	inline virtual const string& getId() override {
+		return Object3DInternal::getId();
+	}
+
 	virtual void initialize() override;
-	virtual bool isDynamicShadowingEnabled() override;
-	virtual bool isEnabled() override;
-	virtual bool isPickable() override;
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override;
-	virtual void setPickable(bool pickable) override;
-	virtual Matrix4x4* getTransformationsMatrix(const string& id) override;
-	virtual const Vector3& getTranslation() const override;
-	virtual void setTranslation(const Vector3& translation) override;
-	virtual const Vector3& getScale() const override;
-	virtual void setScale(const Vector3& scale) override;
-	virtual const Vector3& getPivot() const override;
-	virtual void setPivot(const Vector3& pivot) override;
-	virtual const int getRotationCount() const override;
-	virtual Rotation& getRotation(const int idx) override;
-	virtual void addRotation(const Vector3& axis, const float angle) override;
-	virtual void removeRotation(const int idx) override;
-	virtual const Vector3& getRotationAxis(const int idx) const override;
-	virtual void setRotationAxis(const int idx, const Vector3& axis) override;
-	virtual const float getRotationAngle(const int idx) const override;
-	virtual void setRotationAngle(const int idx, const float angle) override;
-	virtual const Quaternion& getRotationsQuaternion() const override;
-	virtual const Matrix4x4& getTransformationsMatrix() const override;
-	virtual const Transformations& getTransformations() const override;
+
+	inline virtual bool isDynamicShadowingEnabled() override {
+		return Object3DInternal::isDynamicShadowingEnabled();
+	}
+
+	inline virtual bool isEnabled() override {
+		return Object3DInternal::isEnabled();
+	}
+
+	inline virtual bool isPickable() override {
+		return Object3DInternal::isPickable();
+	}
+
+	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+		Object3DInternal::setDynamicShadowingEnabled(dynamicShadowing);
+	}
+
+	inline virtual void setPickable(bool pickable) override {
+		Object3DInternal::setPickable(pickable);
+	}
+
+	inline virtual Matrix4x4* getTransformationsMatrix(const string& id) override {
+		return Object3DInternal::getTransformationsMatrix(id);
+	}
+
+	inline virtual const Vector3& getTranslation() const override {
+		return Transformations::getTranslation();
+	}
+
+	inline virtual void setTranslation(const Vector3& translation) override {
+		Transformations::setTranslation(translation);
+	}
+
+	inline virtual const Vector3& getScale() const override {
+		return Transformations::getScale();
+	}
+
+	inline virtual void setScale(const Vector3& scale) override {
+		Transformations::setScale(scale);
+	}
+
+	inline virtual const Vector3& getPivot() const override {
+		return Transformations::getPivot();
+	}
+
+	inline virtual void setPivot(const Vector3& pivot) override {
+		Transformations::setPivot(pivot);
+	}
+
+	inline virtual const int getRotationCount() const override {
+		return Transformations::getRotationCount();
+	}
+
+	inline virtual Rotation& getRotation(const int idx) override {
+		return Transformations::getRotation(idx);
+	}
+
+	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+		Transformations::addRotation(axis, angle);
+	}
+
+	inline virtual void removeRotation(const int idx) override {
+		Transformations::removeRotation(idx);
+	}
+
+	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+		return Transformations::getRotationAxis(idx);
+	}
+
+	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+		Transformations::setRotationAxis(idx, axis);
+	}
+
+	inline virtual const float getRotationAngle(const int idx) const override {
+		return Transformations::getRotationAngle(idx);
+	}
+
+	inline virtual void setRotationAngle(const int idx, const float angle) override {
+		Transformations::setRotationAngle(idx, angle);
+	}
+
+	inline virtual const Quaternion& getRotationsQuaternion() const override {
+		return Transformations::getRotationsQuaternion();
+	}
+
+	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+		return Transformations::getTransformationsMatrix();
+	}
+
+	inline virtual const Transformations& getTransformations() const override {
+		return *this;
+	}
 };

@@ -2,7 +2,7 @@
 
 #if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
+#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
 	#include <GL/glew.h>
 #endif
 
@@ -52,10 +52,6 @@ GL2Renderer::GL2Renderer()
 	CULLFACE_BACK = GL_BACK;
 	FRONTFACE_CW = GL_CW;
 	FRONTFACE_CCW = GL_CCW;
-	CLIENTSTATE_TEXTURECOORD_ARRAY = GL_TEXTURE_COORD_ARRAY;
-	CLIENTSTATE_VERTEX_ARRAY = GL_VERTEX_ARRAY;
-	CLIENTSTATE_NORMAL_ARRAY = GL_NORMAL_ARRAY;
-	CLIENTSTATE_COLOR_ARRAY = GL_COLOR_ARRAY;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
@@ -117,7 +113,7 @@ bool GL2Renderer::isBufferObjectsAvailable()
 
 bool GL2Renderer::isUsingProgramAttributeLocation()
 {
-	return false;
+	return true;
 }
 
 bool GL2Renderer::isSpecularMappingAvailable()
@@ -136,6 +132,10 @@ bool GL2Renderer::isDisplacementMappingAvailable()
 }
 
 bool GL2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
+bool GL2Renderer::isUsingShortIndices() {
 	return false;
 }
 
@@ -491,6 +491,11 @@ void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, Float
 
 void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
+	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
+}
+
+void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
@@ -511,25 +516,29 @@ void GL2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
 void GL2Renderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glTexCoordPointer(2, GL_FLOAT, 0, 0LL);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glVertexPointer(3, GL_FLOAT, 0, 0LL);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glNormalPointer(GL_FLOAT, 0, 0LL);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glColorPointer(4, GL_FLOAT, 0, 0LL);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
@@ -562,7 +571,7 @@ void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangl
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
-	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
 }
 
 void GL2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
@@ -581,7 +590,12 @@ void GL2Renderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffs
 
 void GL2Renderer::unbindBufferObjects()
 {
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GL2Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
@@ -598,16 +612,6 @@ void GL2Renderer::setTextureUnit(int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
-}
-
-void GL2Renderer::enableClientState(int32_t clientState)
-{
-	glEnableClientState(clientState);
-}
-
-void GL2Renderer::disableClientState(int32_t clientState)
-{
-	glDisableClientState(clientState);
 }
 
 float GL2Renderer::readPixelDepth(int32_t x, int32_t y)

@@ -191,8 +191,23 @@ void Camera::update(int32_t width, int32_t height)
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
 	renderer->onUpdateCameraMatrix();
 
-	// update frustum
-	frustum->updateFrustum();
+	frustumChanged =
+		lastZNear != zNear ||
+		lastZFar != zFar ||
+		lastUpVector.equals(upVector) == false ||
+		lastLookFrom.equals(lookFrom) == false ||
+		lastLookAt.equals(lookAt) == false;
+
+	if (frustumChanged == true) {
+		// update frustum
+		frustum->updateFrustum();
+	}
+
+	lastZNear = zNear;
+	lastZFar = zFar;
+	lastUpVector.set(upVector);
+	lastLookFrom.set(lookFrom);
+	lastLookAt.set(lookAt);
 }
 
 

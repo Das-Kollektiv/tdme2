@@ -288,7 +288,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param pop ups
-	 * @param model viewer screen controller
+	 * @param model editor screen controller
 	 * @param is model bounding volumes
 	 */
 	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);

@@ -32,25 +32,64 @@ public:
 	/** 
 	 * @return color add start
 	 */
-	virtual GUIColor& getColorAddStart();
+	inline virtual const GUIColor& getColorAddStart() const {
+		return colorAddStart;
+	}
 
 	/** 
+	 * Set color add start
+	 * @param color add start
+	 */
+	inline virtual void setColorAddStart(const GUIColor& colorAddStart) {
+		this->colorAddStart = colorAddStart;
+	}
+
+	/**
 	 * @return color add end
 	 */
-	virtual GUIColor& getColorAddEnd();
+	inline virtual const GUIColor& getColorAddEnd() const {
+		return colorAddEnd;
+	}
+
+	/**
+	 * Set color add end
+	 * @param color add end
+	 */
+	inline virtual void setColorAddEnd(const GUIColor& colorAddEnd) {
+		this->colorAddEnd = colorAddEnd;
+	}
 
 	/** 
 	 * @return color mul start
 	 */
-	virtual GUIColor& getColorMulStart();
+	inline virtual const GUIColor& getColorMulStart() const {
+		return colorMulStart;
+	}
 
 	/** 
+	 * Set color mul start
+	 * @param color mul start
+	 */
+	inline virtual void setColorMulStart(const GUIColor& colorMulStart) {
+		this->colorMulStart = colorMulStart;
+	}
+
+	/**
 	 * @return color mul end
 	 */
-	virtual GUIColor& getColorMulEnd();
+	inline virtual const GUIColor& getColorMulEnd() const {
+		return colorMulEnd;
+	}
+
+	/**
+	 * Set color mul end
+	 * @param color mul end
+	 */
+	inline virtual void setColorMulEnd(const GUIColor& colorMulEnd) {
+		this->colorMulEnd = colorMulEnd;
+	}
 
 	// overriden methods
-	void update(GUIRenderer* guiRenderer) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
 	/**

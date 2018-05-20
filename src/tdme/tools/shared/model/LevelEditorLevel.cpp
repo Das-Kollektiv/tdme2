@@ -51,7 +51,7 @@ LevelEditorLevel::LevelEditorLevel()
 	lights.push_back(new LevelEditorLight(1));
 	lights.push_back(new LevelEditorLight(2));
 	lights.push_back(new LevelEditorLight(3));
-	auto light = lights.at(0);
+	auto light = lights[0];
 	light->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
 	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -78,71 +78,6 @@ LevelEditorLevel::~LevelEditorLevel() {
 	delete entityLibrary;
 }
 
-const string& LevelEditorLevel::getGameRoot()
-{
-	return gameRoot;
-}
-
-void LevelEditorLevel::setGameRoot(const string& gameRoot)
-{
-	this->gameRoot = gameRoot;
-}
-
-const string& LevelEditorLevel::getPathName()
-{
-	return pathName;
-}
-
-void LevelEditorLevel::setPathName(const string& pathName)
-{
-	this->pathName = pathName;
-}
-
-const string& LevelEditorLevel::getFileName()
-{
-	return fileName;
-}
-
-void LevelEditorLevel::setFileName(const string& fileName)
-{
-	this->fileName = fileName;
-}
-
-RotationOrder* LevelEditorLevel::getRotationOrder()
-{
-	return rotationOrder;
-}
-
-void LevelEditorLevel::setRotationOrder(RotationOrder* rotationOrder)
-{
-	this->rotationOrder = rotationOrder;
-}
-
-int32_t LevelEditorLevel::getLightCount()
-{
-	return lights.size();
-}
-
-LevelEditorLight* LevelEditorLevel::getLightAt(int32_t i)
-{
-	return lights.at(i);
-}
-
-LevelEditorEntityLibrary* LevelEditorLevel::getEntityLibrary()
-{
-	return entityLibrary;
-}
-
-const Vector3& LevelEditorLevel::getDimension()
-{
-	return dimension;
-}
-
-BoundingBox* LevelEditorLevel::getBoundingBox()
-{
-	return &boundingBox;
-}
-
 void LevelEditorLevel::computeBoundingBox()
 {
 	dimension.set(0.0f, 0.0f, 0.0f);
@@ -160,9 +95,7 @@ void LevelEditorLevel::computeBoundingBox()
 	Vector3 bbMin;
 	Vector3 bbMax;
 	for (auto levelEditorObject: objects) {
-		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL)
-			continue;
-
+		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL) continue;
 		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
 		auto cbv = bv->clone();
 		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
@@ -198,8 +131,8 @@ void LevelEditorLevel::computeBoundingBox()
 			if (objectTop > top) top = objectTop;
 			if (objectBottom < bottom) bottom = objectBottom;
 		}
+		delete cbv;
 	}
-
 	boundingBox.getMin().set(left, bottom, near);
 	boundingBox.getMax().set(right, top, far);
 	boundingBox.update();
@@ -223,25 +156,6 @@ void LevelEditorLevel::computeCenter()
 		center.scale(1.0f / objectCount);
 }
 
-const Vector3& LevelEditorLevel::getCenter() {
-	return center;
-}
-
-int32_t LevelEditorLevel::allocateObjectId()
-{
-	return objectIdx++;
-}
-
-int32_t LevelEditorLevel::getObjectIdx()
-{
-	return objectIdx;
-}
-
-void LevelEditorLevel::setObjectIdx(int32_t entityIdx)
-{
-	this->objectIdx = entityIdx;
-}
-
 void LevelEditorLevel::clearObjects()
 {
 	objectsById.clear();
@@ -249,14 +163,18 @@ void LevelEditorLevel::clearObjects()
 	objectIdx = 0;
 }
 
+void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId) {
+	for (auto object: objects) {
+		if (object->getEntity()->getId() == entityId) {
+			objectsByEntityId.push_back(object->getId());
+		}
+	}
+}
+
 void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 {
 	vector<string> objectsToRemove;
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == entityId) {
-			objectsToRemove.push_back(object->getId());
-		}
-	}
+	getObjectsByEntityId(entityId, objectsToRemove);
 	for (auto objectId: objectsToRemove) {
 		removeObject(objectId);
 	}
@@ -317,16 +235,6 @@ LevelEditorObject* LevelEditorLevel::getObjectById(const string& id)
 		return objectByIdIt->second;
 	}
 	return nullptr;
-}
-
-int32_t LevelEditorLevel::getObjectCount()
-{
-	return objects.size();
-}
-
-LevelEditorObject* LevelEditorLevel::getObjectAt(int32_t idx)
-{
-	return objects.at(idx);
 }
 
 void LevelEditorLevel::update() {

@@ -14,7 +14,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-	EXTRA_LIBS ?= -Lext/fbx/lib/ -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+	EXTRA_LIBS ?= -Lext/fbx/lib/macosx/ -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
@@ -27,6 +27,17 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+else ifeq ($(OS), Haiku)
+	# Haiku
+	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
 else ifeq ($(OS), Linux)
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
@@ -97,6 +108,7 @@ SRCS = \
 	src/tdme/audio/AudioBufferManager_AudioBufferManaged.cpp \
 	src/tdme/audio/AudioEntity.cpp \
 	src/tdme/audio/AudioStream.cpp \
+	src/tdme/audio/VorbisAudioStream.cpp \
 	src/tdme/audio/Sound.cpp \
 	src/tdme/audio/decoder/AudioDecoder.cpp \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
@@ -108,8 +120,10 @@ SRCS = \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
+	src/tdme/engine/LODObject3D.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
+	src/tdme/engine/Object3DRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystemEntity.cpp \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
@@ -118,7 +132,6 @@ SRCS = \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
-	src/tdme/engine/fileio/models/DAEReader_AuthoringTool.cpp \
 	src/tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.cpp \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
 	src/tdme/engine/fileio/models/TMReader.cpp \
@@ -128,8 +141,6 @@ SRCS = \
 	src/tdme/engine/fileio/textures/TextureLoader.cpp \
 	src/tdme/engine/model/Animation.cpp \
 	src/tdme/engine/model/AnimationSetup.cpp \
-	src/tdme/engine/model/Color4.cpp \
-	src/tdme/engine/model/Color4Base.cpp \
 	src/tdme/engine/model/Face.cpp \
 	src/tdme/engine/model/FacesEntity.cpp \
 	src/tdme/engine/model/Group.cpp \
@@ -311,6 +322,7 @@ SRCS = \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
 	src/tdme/tests/GUITest_init_2.cpp \
+	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -356,6 +368,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.cpp \
+	src/tdme/tools/shared/controller/ModelEditorScreenController_onLODModelLoad.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
@@ -369,6 +382,7 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityModel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityLODLevel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.cpp \
@@ -580,6 +594,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
+	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
@@ -591,7 +606,7 @@ MAIN_SRCS = \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
-
+	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)

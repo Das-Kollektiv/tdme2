@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
@@ -36,6 +37,7 @@
 
 using std::string;
 
+using tdme::engine::LODObject3D;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
@@ -150,6 +152,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
+		if (jEntityRoot["ll2"].isNull() == false) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
+		if (jEntityRoot["ll3"].isNull() == false) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();
@@ -362,6 +366,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		}
 	}
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
+	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
+	levelEditorEntity->setApplyAnimations(jEntityRoot["aa"].isNull() == false?jEntityRoot["aa"].getBoolean():false);
 	return levelEditorEntity;
 }
 
@@ -468,4 +474,43 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 		}
 	}
 	return entityBoundingVolume;
+}
+
+LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
+	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].getInt());
+	LevelEditorEntityLODLevel* lodLevel = new LevelEditorEntityLODLevel(
+		lodType,
+		lodType == LODObject3D::LODLEVELTYPE_MODEL || lodType == LODObject3D::LODLEVELTYPE_PLANE?jLodLevel["f"].getString():"",
+		nullptr,
+		static_cast<float>(jLodLevel["d"].getDouble()),
+		lodType == LODObject3D::LODLEVELTYPE_PLANE?static_cast<float>(jLodLevel["ry"].getDouble()):0.0f
+	);
+	if (lodType == LODObject3D::LODLEVELTYPE_MODEL || lodType == LODObject3D::LODLEVELTYPE_PLANE) {
+		auto modelFileName = lodLevel->getFileName();
+		auto modelPathName = getModelPathName(pathName, modelFileName);
+		lodLevel->setModel(
+			ModelReader::read(
+				modelPathName,
+				FileSystem::getInstance()->getFileName(modelFileName)
+			)
+		);
+		lodLevel->setFileName(modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName));
+	}
+	lodLevel->setColorAdd(
+		Color4(
+			static_cast<float>(jLodLevel["car"].getDouble()),
+			static_cast<float>(jLodLevel["cag"].getDouble()),
+			static_cast<float>(jLodLevel["cab"].getDouble()),
+			static_cast<float>(jLodLevel["caa"].getDouble())
+		)
+	);
+	lodLevel->setColorMul(
+		Color4(
+			static_cast<float>(jLodLevel["cmr"].getDouble()),
+			static_cast<float>(jLodLevel["cmg"].getDouble()),
+			static_cast<float>(jLodLevel["cmb"].getDouble()),
+			static_cast<float>(jLodLevel["cma"].getDouble())
+		)
+	);
+	return lodLevel;
 }

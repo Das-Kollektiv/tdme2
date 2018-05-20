@@ -28,6 +28,7 @@ Material::Material(const string& id)
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
 	diffuseTextureMaskedTransparency = false;
+	diffuseTextureMaskedTransparencyThreshold = 0.1f;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
 	displacementTexture = nullptr;
@@ -106,6 +107,8 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
 	diffuseTexture = TextureLoader::loadTexture(pathName, fileName);
+	diffuseTransparencyTexturePathName = "";
+	diffuseTransparencyTextureFileName = "";
 	// check if we have a additional transparency texture
 	if (transparencyFileName.length() != 0) {
 		diffuseTransparencyTexturePathName = transparencyPathName;
@@ -146,9 +149,9 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 					);
 				}
 				delete diffuseTexture;
-				delete transparencyTexture;
 				diffuseTexture = diffuseTextureWithTransparency;
 			}
+			delete transparencyTexture;
 		}
 	}
 	checkDiffuseTextureTransparency();
@@ -175,6 +178,14 @@ bool Material::hasDiffuseTextureMaskedTransparency() {
 
 void Material::setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
 	diffuseTextureMaskedTransparency = maskedTransparency;
+}
+
+float Material::getDiffuseTextureMaskedTransparencyThreshold() {
+	return diffuseTextureMaskedTransparencyThreshold;
+}
+
+void Material::setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
+	diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
 }
 
 void Material::checkDiffuseTextureTransparency()

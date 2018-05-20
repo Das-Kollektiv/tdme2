@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -18,8 +19,9 @@
 #include <tdme/utils/Pool.h>
 
 using std::map;
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::application::ApplicationInputEventsHandler;
@@ -68,6 +70,10 @@ private:
 	int32_t width {  };
 	int32_t height {  };
 	int32_t mouseButtonLast { };
+	map<string, set<string>> mouseMovedEventNodeIdsLast;
+	map<string, set<string>> mousePressedEventNodeIds;
+	map<string, set<string>> mouseDraggingEventNodeIds;
+	map<string, bool> mouseIsDragging;
 
 public:
 
@@ -169,6 +175,12 @@ public:
 	void addRenderScreen(const string& screenId);
 
 	/** 
+	 * Remove render screen
+	 * @param screenId
+	 */
+	void removeRenderScreen(const string& screenId);
+
+	/**
 	 * @return focussed border color
 	 */
 	GUIColor& getFoccussedBorderColor();
@@ -226,10 +238,19 @@ public:
 private:
 
 	/** 
-	 * Handle events for given node
+	 * Handle mouse event for given node
 	 * @param node
+	 * @param event
+	 * @param mouse moved event nodes ids
+	 * @param mouse pressed event node ids
 	 */
-	void handleEvents(GUINode* node);
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mouseMovedEventNodeIds, set<string>& mousePressedEventNodeIds);
+
+	/**
+	 * Handle mouse event for given node
+	 * @param event
+	 */
+	void handleKeyboardEvent(GUIKeyboardEvent* event);
 
 public:
 	/**

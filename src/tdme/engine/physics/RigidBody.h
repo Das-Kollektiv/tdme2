@@ -59,7 +59,6 @@ private:
 	string id {  };
 	string rootId {  };
 	bool enabled {  };
-	int32_t typeId {  };
 	Matrix4x4 inverseInertiaMatrix;
 	Vector3 linearVelocity;
 	Vector3 angularVelocity;
@@ -145,6 +144,12 @@ public:
 	 * @return type id
 	 */
 	uint16_t getTypeId();
+
+	/**
+	 * Set collision type id
+	 * @param type id
+	 */
+	void setTypeId(uint16_t typeId);
 
 	/** 
 	 * @return collision type ids bitmask

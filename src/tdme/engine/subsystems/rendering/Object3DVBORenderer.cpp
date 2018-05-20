@@ -97,6 +97,7 @@ using tdme::utils::Pool;
 using tdme::utils::Console;
 
 constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
+constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
 Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
 {
@@ -106,6 +107,11 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
+	if (this->renderer->isInstancedRenderingAvailable() == true) {
+		bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+		bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+		bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+	}
 }
 
 Object3DVBORenderer::~Object3DVBORenderer() {
@@ -166,13 +172,15 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
+
 	// sort objects by model
 	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-		auto object = objects.at(objectIdx);
+		auto object = objects[objectIdx];
 		auto modelId = object->getModel()->getId();
 		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
 		visibleObjectsByModel.push_back(object);
 	}
+
 	// render objects
 	for (auto& objectsByModelIt: visibleObjectsByModels) {
 		auto& objectsByModel = objectsByModelIt.second;
@@ -205,7 +213,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 			// do we have more than face already?
 			if (groupTransparentRenderFaces.size() > 0) {
 				// check if we have more of first type
-				if (groupTransparentRenderFaces.at(0)->object3DGroup == transparentRenderFace->object3DGroup) {
+				if (groupTransparentRenderFaces[0]->object3DGroup == transparentRenderFace->object3DGroup) {
 					// yep, we can add this one
 					groupTransparentRenderFaces.push_back(transparentRenderFace);
 				} else {
@@ -236,7 +244,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
 {
 	// all those faces should share the object and object 3d group, ...
-	auto object3DGroup = transparentRenderFaces.at(0)->object3DGroup;
+	auto object3DGroup = transparentRenderFaces[0]->object3DGroup;
 	auto object3D = dynamic_cast<Object3D*>(object3DGroup->object);
 	// model view matrix to be used with given transparent render faces
 	Matrix4x4 modelViewMatrix;
@@ -263,7 +271,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	Vector3 transformedNormal;
 	// render transparent faces
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
-		auto transparentRenderFace = transparentRenderFaces.at(i);
+		auto transparentRenderFace = transparentRenderFaces[i];
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
 		// determine if faces entity and so material did switch between last face and current face
 		if (facesEntity != &(*facesEntities)[facesEntityIdx]) {
@@ -327,9 +335,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	for (auto object: objects) {
 		for (auto j = 0; j < object->object3dGroups.size(); j++) {
 			auto object3DGroup = object->object3dGroups[j];
-			object3DGroup->renderer->preRender(this);
+			if (object3DGroup->renderer->needsPreRender() == true) {
+				object3DGroup->renderer->preRender(this);
+			}
 		}
 	}
+
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
@@ -337,7 +348,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	cameraMatrix.set(renderer->getModelViewMatrix());
 	// render faces entities
 	auto currentFrontFace = -1;
-	auto firstObject = objects.at(0);
+	auto firstObject = objects[0];
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
@@ -367,7 +378,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				// add to transparent render faces, if requested
 				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objects.at(objectIdx);
+					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
@@ -390,32 +401,20 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				// skip to next entity
 				continue;
 			}
-			// optional texture coordinates
-			if (isTextureCoordinatesAvailable == true) {
-				// enable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == false) {
-					renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = true;
-				}
-			} else {
-				// disable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == true) {
-					renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = false;
-				}
-			}
 			// draw this faces entity for each object
 			bool materialUpdateOnly = false;
 			auto objectCount = objects.size();
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-				auto object = objects.at(objectIdx);
+				auto object = objects[objectIdx];
 				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 				// set up material on first object
 				string materialKey;
-				setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
-				// only update materials for next calls
-				materialUpdateOnly = true;
+				if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
+					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
+					// only update materials for next calls
+					materialUpdateOnly = true;
+				}
 
 				//	check transparency via effect
 				if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON ||
@@ -509,6 +508,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			}
 		}
 	}
+
 	// unbind buffers
 	renderer->unbindBufferObjects();
 	// restore model view matrix / view matrix
@@ -522,21 +522,15 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	// store layouts
-	vector<Matrix4x4> modelMatrixArray;
-	vector<Color4> effectColorMulArray;
-	vector<Color4> effectColorAddArray;
-
 	//	objects
-	vector<Object3D*> objectsToRender;
-	vector<Object3D*> objectsNotRendered;
-
 	{
 		// do pre render steps
 		for (auto object: objects) {
 			for (auto j = 0; j < object->object3dGroups.size(); j++) {
 				auto object3DGroup = object->object3dGroups[j];
-				object3DGroup->renderer->preRender(this);
+				if (object3DGroup->renderer->needsPreRender() == true) {
+					object3DGroup->renderer->preRender(this);
+				}
 			}
 		}
 	}
@@ -545,7 +539,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	auto shadowMapping = engine->getShadowMapping();
 
 	// render faces entities
-	auto firstObject = objects.at(0);
+	auto firstObject = objects[0];
 
 	// all objects share the same object 3d group structure, so we just take the first one
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
@@ -574,7 +568,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// add to transparent render faces, if requested
 				auto objectCount = objects.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objects.at(objectIdx);
+					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
 					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
@@ -597,24 +591,14 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// skip to next entity
 				continue;
 			}
-			// optional texture coordinates
-			if (isTextureCoordinatesAvailable == true) {
-				// enable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == false) {
-					renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = true;
-				}
-			} else {
-				// disable texturing client state if not yet done
-				if (renderer->renderingTexturingClientState == true) {
-					renderer->disableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-					renderer->renderingTexturingClientState = false;
-				}
-			}
 
 			// draw this faces entity for each object
 			objectsToRender = objects;
 			do {
+				FloatBuffer fbEffectColorMuls = bbEffectColorMuls->asFloatBuffer();
+				FloatBuffer fbEffectColorAdds = bbEffectColorAdds->asFloatBuffer();
+				FloatBuffer fbMvMatrices = bbMvMatrices->asFloatBuffer();
+
 				auto currentFrontFace = -1;
 				string materialKey;
 				bool materialUpdateOnly = false;
@@ -622,7 +606,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objectsToRender.at(objectIdx);
+					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 					//	check transparency via effect
@@ -644,17 +628,24 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// set up material on first object
-					string materialKeyCurrent;
-					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
-					// only update material for next material calls
-					materialUpdateOnly = true;
+					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
+					if (objectsToRender.size() == INSTANCEDRENDERING_OBJECTS_MAX) {
+						objectsNotRendered.push_back(object);
+						continue;
+					}
+
+					// set up material on first object and update on succeeding
+					string materialKeyCurrent = materialKey;
+					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
+						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+						// only update material for next material calls
+						if (materialUpdateOnly == false) {
+							materialKey = materialKeyCurrent;
+							materialUpdateOnly = true;
+						}
+					}
 
 					// check if material key has not been set yet
-					if (materialKey.size() == 0) {
-						materialKey = materialKeyCurrent;
-					} else
-					// otherwise check if it did change
 					if (materialKey != materialKeyCurrent) {
 						objectsNotRendered.push_back(object);
 						continue;
@@ -728,18 +719,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 					// set up effect color
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-						effectColorMulArray.push_back(object->effectColorMul);
-						effectColorAddArray.push_back(object->effectColorAdd);
+						fbEffectColorMuls.put(object->effectColorMul.getArray());
+						fbEffectColorAdds.put(object->effectColorAdd.getArray());
 					}
 
 					// push mv, mvp to layouts
-					modelMatrixArray.push_back(modelViewMatrix);
+					fbMvMatrices.put(modelViewMatrix.getArray());
 				}
 
 				// upload model view matrices
 				{
-					FloatBuffer fbMvMatrices = ObjectBuffer::getByteBuffer(modelMatrixArray.size() * 16 * sizeof(float))->asFloatBuffer();
-					for (auto& mvMatrix: modelMatrixArray) fbMvMatrices.put(mvMatrix.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
 					renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
 				}
@@ -747,24 +736,14 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// upload effects
 				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 					// upload effect color mul
-					FloatBuffer fbEffectColorMuls = ObjectBuffer::getByteBuffer(effectColorMulArray.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorMul: effectColorMulArray) fbEffectColorMuls.put(effectColorMul.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
-					// upload effect color add
-					FloatBuffer fbEffectColorAdds = ObjectBuffer::getByteBuffer(effectColorAddArray.size() * 4 * sizeof(float))->asFloatBuffer();
-					for (auto& effectColorAdd: effectColorAddArray) fbEffectColorAdds.put(effectColorAdd.getArray());
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 					renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
 				}
 
 				// draw
-				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, modelMatrixArray.size());
-
-				// reset layouts
-				modelMatrixArray.clear();
-				effectColorMulArray.clear();
-				effectColorAddArray.clear();
+				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, fbMvMatrices.getPosition() / 16);
 
 				// set up next objects to render
 				objectsToRender = objectsNotRendered;
@@ -781,6 +760,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			}
 		}
 	}
+
+	// reset objects to render
+	objectsToRender.clear();
+	objectsNotRendered.clear();
 
 	// unbind buffers
 	renderer->unbindBufferObjects();
@@ -811,6 +794,7 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 			renderer->setMaterialEmission(material->getEmissionColor().getArray());
 			renderer->setMaterialShininess(material->getShininess());
 			renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
+			renderer->setMaterialDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
 			renderer->onUpdateMaterial();
 		}
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
@@ -913,20 +897,13 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	// set up GL state
 	renderer->enableBlending();
 	renderer->disableDepthBuffer();
-	renderer->disableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
-	renderer->enableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
-	// 	disable texturing client state if not yet done
-	if (renderer->renderingTexturingClientState == false) {
-		renderer->enableClientState(renderer->CLIENTSTATE_TEXTURECOORD_ARRAY);
-		renderer->renderingTexturingClientState = true;
-	}
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
 	// find all keys which differentiate with effect colors and depth buffer
 	set<string> pseKeys;
 	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemEntityInternal* ppse = visiblePses.at(i);
+		PointsParticleSystemEntityInternal* ppse = visiblePses[i];
 		string pseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 		pseKeys.insert(pseKey);
 	}
@@ -937,12 +914,12 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		// iterate all pses
 		for (auto j = 0; j < visiblePses.size(); j++) {
 			// check if ppse belongs to current key, otherwise skip this pse
-			PointsParticleSystemEntityInternal* ppse = visiblePses.at(j);
+			PointsParticleSystemEntityInternal* ppse = visiblePses[j];
 			string innerPseKey = createPseKey(ppse->getEffectColorAdd(), ppse->getEffectColorMul(), ppse->isPickable(), ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false);
 			if (pseKey != innerPseKey) {
 				continue;
 			} else {
-				currentPse = visiblePses.at(j);
+				currentPse = visiblePses[j];
 				pseSort = ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false;
 			}
 			// merge ppse pool
@@ -976,7 +953,5 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	if (depthBuffer == false) renderer->enableDepthBuffer();
 	// restore gl state
 	renderer->unbindBufferObjects();
-	renderer->enableClientState(renderer->CLIENTSTATE_NORMAL_ARRAY);
-	renderer->disableClientState(renderer->CLIENTSTATE_COLOR_ARRAY);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }

@@ -24,9 +24,11 @@ TDMEModelEditor
             - convex mesh
               - multiple convex meshes can be automatically generated from any mesh using V-HACD
             - concave terrain mesh
+        - LOD level editor
+            - type, distance, model, adjustment add/mul color, ... 
         - material editor
             - adjust colors, textures, masked transparency
-        - set up animations
+        - animations editor
             - create, edit and delete animations
         - set up rendering options
             - use dynamic shadowing

@@ -28,6 +28,7 @@ class tdme::gui::nodes::GUIHorizontalScrollbarInternalController
 
 private:
 	GUILayoutNode* contentNode {  };
+	float contentWidth { };
 	GUIHorizontalScrollbarInternalController_State* state {  };
 	int32_t mouseXOffset {  };
 	MutableString value;

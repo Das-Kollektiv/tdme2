@@ -13,6 +13,7 @@ uniform float texturePixelHeight;
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
 uniform int diffuseTextureMaskedTransparency;
+uniform float diffuseTextureMaskedTransparencyThreshold;
 
 uniform vec3 lightDirection;
 
@@ -29,7 +30,7 @@ void main() {
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent
-			if (diffuseTextureColor.a < 0.1) discard;
+			if (diffuseTextureColor.a < diffuseTextureMaskedTransparencyThreshold) discard;
 		}
 	}
 

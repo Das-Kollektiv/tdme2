@@ -81,7 +81,7 @@ void TriggerScreenController::dispose()
 
 void TriggerScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->getText().set(text);
+	screenCaption->setText(text);
 	screenNode->layout(screenCaption);
 }
 

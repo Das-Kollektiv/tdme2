@@ -74,6 +74,7 @@ uniform vec4 sceneColor;
 uniform sampler2D diffuseTextureUnit;
 uniform int diffuseTextureAvailable;
 uniform int diffuseTextureMaskedTransparency;
+uniform float diffuseTextureMaskedTransparencyThreshold;
 
 uniform sampler2D specularTextureUnit;
 uniform int specularTextureAvailable;
@@ -151,7 +152,7 @@ void main (void) {
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent
-			if (diffuseTextureColor.a < 0.1) discard;
+			if (diffuseTextureColor.a < diffuseTextureMaskedTransparencyThreshold) discard;
 			// set to opqaue
 			diffuseTextureColor.a = 1.0;
 		}

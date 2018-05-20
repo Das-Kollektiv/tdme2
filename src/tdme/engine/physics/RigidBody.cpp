@@ -60,7 +60,6 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->world = world;
 	this->id = id;
 	this->rootId = id;
-	this->typeId = typeId;
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
 	// terrain convex mesh
 	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
@@ -160,7 +159,12 @@ void RigidBody::setRootId(const string& rootId) {
 
 uint16_t RigidBody::getTypeId()
 {
-	return typeId;
+	return this->proxyShape->getCollisionCategoryBits();
+}
+
+void RigidBody::setTypeId(uint16_t typeId)
+{
+	this->proxyShape->setCollisionCategoryBits(typeId);
 }
 
 uint16_t RigidBody::getCollisionTypeIds()

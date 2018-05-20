@@ -57,11 +57,13 @@ class tdme::gui::nodes::GUINode
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;
 	friend class GUIInputInternalController;
+	friend class GUINodeConditions;
 	friend class GUINode_Flow;
 	friend class GUINode_AlignmentHorizontal;
 	friend class GUINode_AlignmentVertical;
 	friend class GUINode_RequestedConstraints;
 	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
+
 
 protected:
 	GUIScreenNode* screenNode {  };
@@ -151,9 +153,11 @@ protected:
 	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
 
 	/**
+	 * Check if conditions are met
+	 * @param element node
 	 * @return conditions met
 	 */
-	virtual bool checkConditions();
+	virtual bool checkConditions(GUIElementNode* elementNode = nullptr);
 
 	/**
 	 * @return compute parent children render offset X total
@@ -312,11 +316,11 @@ public:
 	virtual void dispose();
 
 	/** 
-	 * Set conditions met for the whole tree
+	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
 
-	/** 
+	/**
 	 * Render
 	 * @param gui renderer
 	 * @param floating nodes
@@ -364,11 +368,6 @@ public:
 	 * @param event
 	 */
 	virtual void handleKeyboardEvent(GUIKeyboardEvent* event);
-
-	/** 
-	 * Tick method will be executed once per frame
-	 */
-	virtual void tick();
 
 	/** 
 	 * @return controller

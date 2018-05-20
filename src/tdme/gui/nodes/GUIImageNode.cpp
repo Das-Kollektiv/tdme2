@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 
+
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -7,6 +8,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 
@@ -18,6 +20,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIRenderer;
 
@@ -48,12 +51,20 @@ bool GUIImageNode::isContentNode()
 
 int32_t GUIImageNode::getContentWidth()
 {
-	return (texture != nullptr ? texture->getWidth() : 0) + border.left + border.right + padding.left + padding.right;
+	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+		return (texture != nullptr ? texture->getWidth() : 0) + border.left + border.right + padding.left + padding.right;
+	} else {
+		return computedConstraints.width;
+	}
 }
 
 int32_t GUIImageNode::getContentHeight()
 {
-	return (texture != nullptr ? texture->getHeight() : 0) + border.top + border.bottom + padding.top + padding.bottom;
+	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+		return (texture != nullptr ? texture->getHeight() : 0) + border.top + border.bottom + padding.top + padding.bottom;
+	} else {
+		return computedConstraints.height;
+	}
 }
 
 void GUIImageNode::dispose()

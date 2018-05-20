@@ -63,6 +63,9 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	} else {
 		Console::println(string("FBXReader::read(): Autodesk FBX SDK version ") + string(fbxManager->GetVersion()));
 	}
+
+	Console::println("FBXReader::read(): reading FBX scene");
+
 	FbxIOSettings* ios = FbxIOSettings::Create(fbxManager, IOSROOT);
 	fbxManager->SetIOSettings(ios);
 	FbxString lPath = FbxGetApplicationDirectory();
@@ -84,9 +87,14 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName + " into scene");
 	}
 
+	Console::println("FBXReader::read(): Authoring program: " + string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()));
+
+	Console::println("FBXReader::read(): triangulating FBX");
 	// triangulate
 	FbxGeometryConverter fbxGeometryConverter(fbxManager);
 	fbxGeometryConverter.Triangulate(fbxScene, true);
+
+	Console::println("FBXReader::read(): importing FBX");
 
 	// create model
 	auto model = new Model(
@@ -94,7 +102,10 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		fileName,
 		getSceneUpVector(fbxScene),
 		getSceneRotationOrder(fbxScene),
-		nullptr
+		nullptr,
+		string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()).find("Blender") != -1?
+			Model::AUTHORINGTOOL_BLENDER:
+			Model::AUTHORINGTOOL_UNKNOWN
 	);
 
 	// set up model import matrix
@@ -103,6 +114,8 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 
 	// process nodes
 	processScene(fbxScene, model, pathName);
+
+	Console::println("FBXReader::read(): setting up animations");
 
 	// parse animations stacks
 	FbxTime::SetGlobalTimeMode(FbxTime::eCustom, 30.0);
@@ -170,10 +183,14 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	// destroy fbx manager
 	if (fbxManager != nullptr) fbxManager->Destroy();
 
+	Console::println("FBXReader::read(): prepare for indexed rendering");
+
 	//
 	ModelHelper::setupJoints(model);
 	ModelHelper::fixAnimationLength(model);
 	ModelHelper::prepareForIndexedRendering(model);
+
+	Console::println("FBXReader::read(): done");
 
 	//
 	return model;
@@ -388,7 +405,13 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						static_cast<float>(fbxDouble3.Get()[0]),
 						static_cast<float>(fbxDouble3.Get()[1]),
 						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f - static_cast<float>(fbxDouble)
+						model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							):
+							1.0f - static_cast<float>(fbxDouble)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
 					material->getSpecularColor().set(

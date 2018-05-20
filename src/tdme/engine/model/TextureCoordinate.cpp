@@ -40,6 +40,22 @@ float TextureCoordinate::getV() const
 	return data[1];
 }
 
+TextureCoordinate& TextureCoordinate::set(const TextureCoordinate& textureCoordinate) {
+	data = textureCoordinate.data;
+	return *this;
+}
+
+TextureCoordinate& TextureCoordinate::set(const array<float, 2>& uv) {
+	data = uv;
+	return *this;
+}
+
+TextureCoordinate& TextureCoordinate::set(float u, float v) {
+	data[0] = u;
+	data[1] = 1.0f - v;
+	return *this;
+}
+
 array<float, 2>& TextureCoordinate::getArray() const
 {
 	return (array<float, 2>&)data;

@@ -40,7 +40,7 @@ private:
 	 */
 	inline void invertNormals() {
 		for (auto i = 0; i < entities.size(); i++) {
-			entities.at(i).getNormal().scale(-1.0f);
+			entities[i].getNormal().scale(-1.0f);
 		}
 	}
 
@@ -61,7 +61,7 @@ public:
 	 */
 	inline CollisionResponse_Entity* addResponse(float distance) {
 		entities.push_back(CollisionResponse_Entity());
-		auto& entity = entities.at(entities.size() - 1);
+		auto& entity = entities[entities.size() - 1];
 		entity.distance = distance;
 		// select entity with smallest penetration by default
 		if (selectedEntity == nullptr || distance > selectedEntity->distance) {
@@ -91,7 +91,7 @@ public:
 	 */
 	inline CollisionResponse_Entity* getEntityAt(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return nullptr;
-		return &entities.at(idx);
+		return &entities[idx];
 	}
 
 	/** 
@@ -101,7 +101,7 @@ public:
 	 */
 	inline CollisionResponse* selectEntityAt(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return this;
-		selectedEntity = &entities.at(idx);
+		selectedEntity = &entities[idx];
 		return this;
 	}
 
@@ -152,7 +152,7 @@ public:
 	 */
 	inline Vector3* getHitPointAt(int32_t i) {
 		if (selectedEntity == nullptr) return nullptr;
-		return &selectedEntity->hitPoints.at(i);
+		return &selectedEntity->hitPoints[i];
 	}
 
 	/** 
@@ -166,8 +166,8 @@ public:
 		// determine selected entity
 		if (response->selectedEntity != nullptr)
 		for (auto i = 0; i < response->entities.size(); i++) {
-			if (&response->entities.at(i) == response->selectedEntity) {
-				selectedEntity = &entities.at(i);
+			if (&response->entities[i] == response->selectedEntity) {
+				selectedEntity = &entities[i];
 				return this;
 			}
 		}
@@ -182,20 +182,20 @@ public:
 	inline CollisionResponse* mergeResponse(CollisionResponse* response) {
 		// TODO: This does not seem to be used, remove it then!
 		for (auto i = 0; i < response->entities.size(); i++) {
-			auto& srcEntity = response->entities.at(i);
+			auto& srcEntity = response->entities[i];
 			CollisionResponse_Entity* dstEntity = nullptr;
-			if (entities.size() > 0) dstEntity = &entities.at(0);
+			if (entities.size() > 0) dstEntity = &entities[0];
 			if (dstEntity == nullptr || srcEntity.distance > dstEntity->distance) {
 				if (dstEntity == nullptr) {
 					entities.push_back(CollisionResponse_Entity());
-					dstEntity = &entities.at(entities.size() - 1);
+					dstEntity = &entities[entities.size() - 1];
 				}
 				dstEntity->distance = srcEntity.distance;
 				dstEntity->normal.set(srcEntity.normal);
 			}
-			selectedEntity = &entities.at(0);
+			selectedEntity = &entities[0];
 			for (auto j = 0; j < srcEntity.hitPoints.size(); j++) {
-				dstEntity->addHitPoint(srcEntity.hitPoints.at(j));
+				dstEntity->addHitPoint(srcEntity.hitPoints[j]);
 			}
 		}
 		return this;

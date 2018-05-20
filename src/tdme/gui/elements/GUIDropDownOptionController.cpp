@@ -60,11 +60,9 @@ void GUIDropDownOptionController::select()
 	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
 	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_enabled"));
-	dropDownTextNodeEnabled->getText().reset();
-	dropDownTextNodeEnabled->getText().append(dropDownOptionTextNode->getText());
+	dropDownTextNodeEnabled->setText(dropDownOptionTextNode->getText());
 	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_disabled"));
-	dropDownTextNodeDisabled->getText().reset();
-	dropDownTextNodeDisabled->getText().append(dropDownOptionTextNode->getText());
+	dropDownTextNodeDisabled->setText(dropDownOptionTextNode->getText());
 }
 
 void GUIDropDownOptionController::unselect()

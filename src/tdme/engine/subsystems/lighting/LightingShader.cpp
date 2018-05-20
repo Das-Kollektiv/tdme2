@@ -87,6 +87,9 @@ void LightingShader::initialize()
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1) return;
 
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparencyThreshold");
+	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
+
 	if (renderer->isDisplacementMappingAvailable() == true) {
 		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureUnit");
 		if (uniformDisplacementTextureUnit == -1) return;
@@ -262,6 +265,8 @@ void LightingShader::updateMaterial(GLRenderer* renderer)
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
 	// diffuse texture masked transparency
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+	// diffuse texture masked transparency threshold
+	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
 void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)

@@ -4,6 +4,7 @@
 	#include <Carbon/Carbon.h>
 #endif
 
+#include <algorithm>
 #include <map>
 #include <set>
 #include <string>
@@ -37,11 +38,11 @@
 #include <tdme/utils/Exception.h>
 
 using std::map;
-using std::vector;
+using std::remove;
 using std::set;
 using std::string;
 using std::to_string;
-using std::to_string;
+using std::vector;
 
 using tdme::gui::GUI;
 using tdme::engine::Engine;
@@ -223,6 +224,10 @@ void GUI::removeScreen(const string& id)
 	auto screensIt = screens.find(id);
 	if (screensIt != screens.end()) {
 		screens.erase(id);
+		mouseMovedEventNodeIdsLast.erase(id);
+		mousePressedEventNodeIds.erase(id);
+		mouseDraggingEventNodeIds.erase(id);
+		mouseIsDragging.erase(id);
 		screensIt->second->dispose();
 		delete screensIt->second;
 	}
@@ -235,7 +240,7 @@ void GUI::reset()
 		entitiesToRemove.push_back(screenKeysIt.first);
 	}
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
-		removeScreen(entitiesToRemove.at(i));
+		removeScreen(entitiesToRemove[i]);
 	}
 	fontCache.clear();
 	imageCache.clear();
@@ -244,7 +249,7 @@ void GUI::reset()
 void GUI::resetRenderScreens()
 {
 	for (auto i = 0; i < renderScreens.size(); i++) {
-		renderScreens.at(i)->setGUI(nullptr);
+		renderScreens[i]->setGUI(nullptr);
 	}
 	renderScreens.clear();
 }
@@ -256,7 +261,17 @@ void GUI::addRenderScreen(const string& screenId)
 		return;
 
 	screenIt->second->setGUI(this);
+	screenIt->second->setConditionsMet();
 	renderScreens.push_back(screenIt->second);
+}
+
+void GUI::removeRenderScreen(const string& screenId)
+{
+	auto screenIt = screens.find(screenId);
+	if (screenIt == screens.end())
+		return;
+
+	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
 }
 
 GUIColor& GUI::getFoccussedBorderColor()
@@ -275,7 +290,7 @@ void GUI::determineFocussedNodes()
 	focusableNodes.clear();
 	focusableScreenNodes.clear();
 	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
-		auto screen = renderScreens.at(i);
+		auto screen = renderScreens[i];
 		if (screen->isVisible() == false)
 			continue;
 
@@ -285,7 +300,7 @@ void GUI::determineFocussedNodes()
 
 	}
 	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
-		auto screen = focusableScreenNodes.at(i);
+		auto screen = focusableScreenNodes[i];
 		screen->determineFocussedNodes(screen, focusableNodes);
 	}
 }
@@ -345,12 +360,12 @@ void GUI::focusNextNode()
 	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
 		for (auto i = 0; i < focusableNodes.size(); i++) {
-			if (focussedNode == focusableNodes.at(i)) {
+			if (focussedNode == focusableNodes[i]) {
 				focussedNodeIdx = i;
 			}
 		}
 		auto focussedNextNodeIdx = (focussedNodeIdx + 1) % focusableNodes.size();
-		focussedNode = focusableNodes.at(focussedNextNodeIdx);
+		focussedNode = focusableNodes[focussedNextNodeIdx];
 		focusNode();
 		focussedNode->scrollToNodeX();
 		focussedNode->scrollToNodeY();
@@ -364,7 +379,7 @@ void GUI::focusPreviousNode()
 	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
 		for (auto i = 0; i < focusableNodes.size(); i++) {
-			if (focussedNode == focusableNodes.at(i)) {
+			if (focussedNode == focusableNodes[i]) {
 				focussedNodeIdx = i;
 			}
 		}
@@ -372,7 +387,7 @@ void GUI::focusPreviousNode()
 		if (focussedPreviousNodeIdx < 0)
 			focussedPreviousNodeIdx += focusableNodes.size();
 
-		focussedNode = focusableNodes.at(focussedPreviousNodeIdx);
+		focussedNode = focusableNodes[focussedPreviousNodeIdx];
 		focusNode();
 		focussedNode->scrollToNodeX();
 		focussedNode->scrollToNodeY();
@@ -391,7 +406,7 @@ void GUI::render()
 	engine->initGUIMode();
 	guiRenderer->initRendering();
 	for (auto i = 0; i < renderScreens.size(); i++) {
-		auto screen = renderScreens.at(i);
+		auto screen = renderScreens[i];
 		if (screen->isVisible() == false)
 			continue;
 
@@ -399,12 +414,11 @@ void GUI::render()
 			screen->setScreenSize(width, height);
 			screen->layout();
 		}
-		screen->setConditionsMet();
 		screen->tick();
 		screen->render(guiRenderer);
 	}
 	for (auto i = 0; i < renderScreens.size(); i++) {
-		auto screen = renderScreens.at(i);
+		auto screen = renderScreens[i];
 		if (screen->isVisible() == false)
 			continue;
 
@@ -414,22 +428,37 @@ void GUI::render()
 	engine->doneGUIMode();
 }
 
-void GUI::handleEvents(GUINode* node)
+void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mouseMovedEventNodeIds, set<string>& mousePressedEventNodeIds)
 {
-	set<string> eventNodeIds;
-	for (auto i = 0; i < mouseEvents.size(); i++) {
-		auto event = mouseEvents.at(i);
-		if (event->isProcessed() == true)
-			continue;
+	// handle each event
+	set<string> mouseEventNodeIds;
 
-		event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
-		event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
+	// skip if already processed
+	if (event->isProcessed() == true) return;
 
-		// determine nodes that receive this event
-		node->determineMouseEventNodes(event, eventNodeIds);
+	//
+	event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
+	event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
 
-		// handle mouse event for each node we collected
-		for (auto eventNodeId: eventNodeIds) {
+	// if dragging only send events to dragging origin nodes
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		mouseEventNodeIds = mouseDraggingEventNodeIds[node->getScreenNode()->getId()];
+	} else
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED &&
+		mouseIsDragging[node->getScreenNode()->getId()] == true) {
+		mouseEventNodeIds = mouseDraggingEventNodeIds[node->getScreenNode()->getId()];
+	} else {
+		// otherwise continue with determining nodes that receive this event
+		node->determineMouseEventNodes(event, mouseEventNodeIds);
+	}
+
+	// send mouse MOVED event to nodes that received last frame mouse move events
+	// 	think of a MOUSE OUT event that other gui systems fire
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+		for (auto eventNodeId: mouseMovedEventNodeIdsLast[node->getScreenNode()->getId()]) {
+			// will this node receive a MOVED event in this frame, if yes skip on it
+			if (mouseEventNodeIds.find(eventNodeId) != mouseEventNodeIds.end()) continue;
+
 			// node event occurred on
 			auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
 			if (eventNode == nullptr) continue;
@@ -444,77 +473,178 @@ void GUI::handleEvents(GUINode* node)
 			//
 			controllerNode->getController()->handleMouseEvent(eventNode, event);
 		}
-
-		// clear event node id list
-		eventNodeIds.clear();
 	}
-	for (auto i = 0; i < keyboardEvents.size(); i++) {
-		auto event = keyboardEvents.at(i);
-		if (event->isProcessed() == true)
-			continue;
 
-		switch (event->getKeyCode()) {
-			case (GUIKeyboardEvent::KEYCODE_TAB):
-				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
-						focusNextNode();
-					}
-					event->setProcessed(true);
-					break;
-				}
-			case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
-				{
-					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
-						focusPreviousNode();
-					}
-					event->setProcessed(true);
-					break;
-				}
-			default:
-				{
-					break;
-				}
-		}
+	// handle mouse event for each node we collected
+	for (auto eventNodeId: mouseEventNodeIds) {
+		// node event occurred on
+		auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+		if (eventNode == nullptr) continue;
 
-		if (event->isProcessed() == true) {
-			continue;
+		// controller node
+		auto controllerNode = eventNode;
+		if (controllerNode->getController() == nullptr) {
+			controllerNode = controllerNode->getParentControllerNode();
 		}
-		if (focussedNode != nullptr) {
-			focussedNode->handleKeyboardEvent(event);
+		if (controllerNode == nullptr) continue;
+
+		// handle event with determined controller
+		controllerNode->getController()->handleMouseEvent(eventNode, event);
+	}
+
+	// fire mouse over events to element nodes
+	//	TODO: check if this makes sense this way
+	//		Think of:
+	//			mouse out too
+	//			giving mouse event as well or mouse coordinates
+	//			think of firing only once while mouse gets into element and moves over element until it gets out
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
+		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		for (auto eventNodeId: mouseEventNodeIds) {
+			auto elementEventNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(eventNodeId));
+			if (elementEventNode == nullptr) continue;
+			node->getScreenNode()->delegateMouseOver(elementEventNode);
 		}
+	}
+
+	// compile list of gui node ids that received mouse PRESSED events
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		for (auto eventNodeId: mouseEventNodeIds) {
+			mousePressedEventNodeIds.insert(eventNodeId);
+		}
+	} else
+	// compile list of gui node ids that received mouse MOVED events
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+		for (auto eventNodeId: mouseEventNodeIds) {
+			mouseMovedEventNodeIds.insert(eventNodeId);
+		}
+	}
+
+	// clear event node id list
+	mouseEventNodeIds.clear();
+}
+
+void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
+	// skip if already processed
+	if (event->isProcessed() == true) return;
+
+	//
+	switch (event->getKeyCode()) {
+		case (GUIKeyboardEvent::KEYCODE_TAB):
+			{
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+					focusNextNode();
+				}
+				event->setProcessed(true);
+				break;
+			}
+		case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
+			{
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+					focusPreviousNode();
+				}
+				event->setProcessed(true);
+				break;
+			}
+		default:
+			{
+				break;
+			}
+	}
+
+	// skip if processed
+	if (event->isProcessed() == true) return;
+
+	// otherwise dispatch event to focussed node
+	if (focussedNode != nullptr) {
+		focussedNode->handleKeyboardEvent(event);
 	}
 }
 
 void GUI::handleEvents()
 {
 	lockEvents();
-	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
-		auto screen = renderScreens.at(i);
-		if (screen->isVisible() == false)
-			continue;
 
-		vector<GUINode*>* floatingNodes = screen->getFloatingNodes();
-		for (auto j = 0; j < floatingNodes->size(); j++) {
-			auto floatingNode = floatingNodes->at(j);
-			handleEvents(floatingNode);
+	// handle mouse events
+	for (auto event: mouseEvents) {
+		// current mouse moved/pressed event node ids
+		map<string, set<string>> mouseMovedEventNodeIds;
+
+		// handle mouse dragged event
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+				auto screen = renderScreens[i];
+				if (mouseIsDragging[screen->getId()] == false) {
+					mouseIsDragging[screen->getId()] = true;
+					mouseDraggingEventNodeIds[screen->getId()] = mousePressedEventNodeIds[screen->getId()];
+				}
+			}
 		}
-		if (screen->isPopUp() == true)
-			break;
 
+		// handle floating nodes first
+		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+			auto screen = renderScreens[i];
+
+			if (screen->isVisible() == false) continue;
+
+			vector<GUINode*>* floatingNodes = screen->getFloatingNodes();
+			for (auto j = 0; j < floatingNodes->size(); j++) {
+				auto floatingNode = floatingNodes->at(j);
+				handleMouseEvent(floatingNode, event, mouseMovedEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()]);
+			}
+
+			if (screen->isPopUp() == true) break;
+		}
+
+		// handle normal screen nodes
+		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+			auto screen = renderScreens[i];
+
+			if (screen->isVisible() == false) continue;
+
+			handleMouseEvent(screen, event, mouseMovedEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()]);
+
+			if (screen->isPopUp() == true) break;
+		}
+
+		// handle mouse released event
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+				auto screen = renderScreens[i];
+				mouseIsDragging[screen->getId()] = false;
+				mouseDraggingEventNodeIds.erase(screen->getId());
+				mousePressedEventNodeIds.erase(screen->getId());
+			}
+		}
+
+		// determine mouse event types that need special handling
+		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+				auto screen = renderScreens[i];
+				mouseMovedEventNodeIdsLast[screen->getId()] = mouseMovedEventNodeIds[screen->getId()];
+			}
+		}
 	}
-	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
-		auto screen = renderScreens.at(i);
-		if (screen->isVisible() == false)
-			continue;
 
-		handleEvents(screen);
+	// handle keyboard events
+	for (auto event: keyboardEvents) {
+		handleKeyboardEvent(event);
+	}
+
+	// call input event handler at very last
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = renderScreens[i];
+
+		if (screen->isVisible() == false) continue;
+
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();
 		}
-		if (screen->isPopUp() == true)
-			break;
 
+		if (screen->isPopUp() == true) break;
 	}
+
+	//
 	mouseEvents.clear();
 	mouseEventsPool->reset();
 	keyboardEvents.clear();
