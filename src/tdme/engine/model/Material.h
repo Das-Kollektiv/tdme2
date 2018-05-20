@@ -43,6 +43,7 @@ private:
 	string diffuseTransparencyTextureFileName {  };
 	Texture* diffuseTexture {  };
 	bool diffuseTextureMaskedTransparency { };
+	float diffuseTextureMaskedTransparencyThreshold { };
 	bool diffuseTextureTransparency {  };
 	string specularTexturePathName {  };
 	string specularTextureFileName {  };
@@ -146,6 +147,17 @@ public:
 	 * @param masked transparency
 	 */
 	void setDiffuseTextureMaskedTransparency(bool maskedTransparency);
+
+	/**
+	 * @return diffuse masked transparency threshold
+	 */
+	float getDiffuseTextureMaskedTransparencyThreshold();
+
+	/**
+	 * Set diffuse texture masked transparency threshold
+	 * @param diffuse texture masked transparency threshold
+	 */
+	void setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold);
 
 private:
 

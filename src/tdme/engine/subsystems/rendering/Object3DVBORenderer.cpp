@@ -794,6 +794,7 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 			renderer->setMaterialEmission(material->getEmissionColor().getArray());
 			renderer->setMaterialShininess(material->getShininess());
 			renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
+			renderer->setMaterialDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
 			renderer->onUpdateMaterial();
 		}
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {

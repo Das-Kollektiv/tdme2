@@ -237,10 +237,11 @@ private:
 	 * Read material
 	 * @param path name
 	 * @param input stream
+	 * @param version
 	 * @throws model file IO exception
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is) throw (ModelFileIOException);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version) throw (ModelFileIOException);
 
 	/**
 	 * Read animation setup

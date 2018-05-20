@@ -371,6 +371,7 @@ Material* ModelHelper::cloneMaterial(Material* material) {
 	clonedMaterial->getSpecularColor().set(material->getSpecularColor());
 	clonedMaterial->setShininess(material->getShininess());
 	clonedMaterial->setDiffuseTextureMaskedTransparency(material->hasDiffuseTextureTransparency());
+	clonedMaterial->setDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
 	if (material->getDiffuseTextureFileName().length() != 0) {
 		clonedMaterial->setDiffuseTexture(
 			material->getDiffuseTexturePathName(),

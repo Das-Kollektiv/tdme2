@@ -83,6 +83,8 @@ void ShadowMappingShaderRender::initialize()
 	if (uniformDiffuseTextureAvailable == -1) return;
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1) return;
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparencyThreshold");
+	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, "lightDirection");
 	if (renderUniformLightDirection == -1) return;
 	if (rendererVersion != "gles2") {
@@ -156,6 +158,7 @@ void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMa
 void ShadowMappingShaderRender::updateMaterial(GLRenderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
 void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textureId)

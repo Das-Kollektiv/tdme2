@@ -100,6 +100,7 @@ private:
 	GUIElementNode* materialsMaterialNormalTextureClear {  };
 	GUIElementNode* materialsMaterialSpecularTextureClear {  };
 	GUIElementNode* materialsMaterialUseMaskedTransparency {  };
+	GUIElementNode* materialsMaterialMaskedTransparencyThreshold {  };
 	GUIElementNode* materialsMaterialApply {  };
 	GUIElementNode* animationsDropDown {  };
 	GUIElementNode* animationsDropDownApply {  };

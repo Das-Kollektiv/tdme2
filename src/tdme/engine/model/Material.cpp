@@ -28,6 +28,7 @@ Material::Material(const string& id)
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
 	diffuseTextureMaskedTransparency = false;
+	diffuseTextureMaskedTransparencyThreshold = 0.1f;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
 	displacementTexture = nullptr;
@@ -177,6 +178,14 @@ bool Material::hasDiffuseTextureMaskedTransparency() {
 
 void Material::setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
 	diffuseTextureMaskedTransparency = maskedTransparency;
+}
+
+float Material::getDiffuseTextureMaskedTransparencyThreshold() {
+	return diffuseTextureMaskedTransparencyThreshold;
+}
+
+void Material::setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
+	diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
 }
 
 void Material::checkDiffuseTextureTransparency()

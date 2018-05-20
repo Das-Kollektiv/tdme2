@@ -27,6 +27,7 @@ private:
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
+	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
 	bool initialized {  };
 
 public:

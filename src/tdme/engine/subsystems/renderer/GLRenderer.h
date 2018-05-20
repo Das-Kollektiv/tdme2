@@ -732,6 +732,11 @@ public:
 	 */
 	virtual void setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency);
 
+	/**
+	 * Set material diffuse texture masked transparency threshold
+	 */
+	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold);
+
 	/** 
 	 * Update material
 	 */

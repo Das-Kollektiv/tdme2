@@ -179,3 +179,8 @@ void GLRenderer::setMaterialDiffuseTextureMaskedTransparency(bool diffuseTexture
 {
 	material.diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparency == true?1:0;
 }
+
+void GLRenderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold)
+{
+	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
+}
