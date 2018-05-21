@@ -25,7 +25,7 @@
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/primitives/TerrainConvexMesh.h>
+#include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -44,7 +44,7 @@ using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::TerrainConvexMesh;
+using tdme::engine::primitives::TerrainMesh;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -62,7 +62,8 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->rootId = id;
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
 	// terrain convex mesh
-	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
+	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
+		/*
 		// transform terrain convex mesh with transformations
 		this->boundingVolume = boundingVolume->clone();
 		dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->applyTransformations(transformations);
@@ -78,6 +79,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		Transformations terrainTransformations;
 		terrainTransformations.setTranslation(positionTransformed);
 		fromTransformations(terrainTransformations);
+		*/
 	} else
 	// everything other
 	{
@@ -284,11 +286,13 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
 	// terrain convex mesh
-	if (dynamic_cast<TerrainConvexMesh*>(boundingVolume) != nullptr) {
+	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
+		/*
 		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 		reactphysics3d::Transform transform;
 		transform.setFromOpenGL(transformationsMatrix.getArray().data());
 		rigidBody->setTransform(transform);
+		*/
 	} else {
 		// everything else
 		// "scale vector transformed" which takes transformations scale and orientation into account
@@ -315,6 +319,8 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		reactphysics3d::Transform transform;
 		// take from transformations matrix
 		transform.setFromOpenGL(transformationsMatrix.getArray().data());
+		/*
+		// TODO: center of mass ~ pivot
 		// set center of mass which is basically center of bv for now
 		rigidBody->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
 		// find final position, not sure yet if its working 100%, but still works with some tests
@@ -331,6 +337,7 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 				) * scaleVectorTransformed
 			)
 		);
+		*/
 		// set transform
 		rigidBody->setTransform(transform);
 	}

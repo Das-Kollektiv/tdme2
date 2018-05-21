@@ -23,7 +23,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
-#include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
@@ -80,7 +79,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
-using tdme::engine::primitives::TerrainConvexMesh;
+using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
@@ -323,7 +322,6 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation, bool enable)
 {
-	map<int32_t, vector<TerrainConvexMesh>> modelTerrainConvexMeshesCache;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY)
@@ -337,22 +335,21 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
 			object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
-			auto modelTerrainConvexMeshesCacheIt = modelTerrainConvexMeshesCache.find(object->getEntity()->getId());
-			if (modelTerrainConvexMeshesCacheIt == modelTerrainConvexMeshesCache.end()) {
-				Object3DModel object3DModel(object->getEntity()->getModel());
-				TerrainConvexMesh::createTerrainConvexMeshes(&object3DModel, &modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
-			}
+			// Object3DModel object3DModel(object->getEntity()->getModel());
+			// TerrainConvexMesh::createTerrainConvexMeshes(&object3DModel, &modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
 			{
 				Transformations transformations;
 				transformations.fromTransformations(object->getTransformations());
 				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 				transformations.update();
+				/*
 				int i = 0;
 				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
 					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, transformations, &convexMesh, 1.0f);
 					rigidBody->setRootId(object->getId());
 					i++;
 				}
+				*/
 			}
 		} else {
 			for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {

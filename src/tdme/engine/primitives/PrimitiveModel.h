@@ -125,14 +125,6 @@ public:
 	 */
 	static void setupConvexMeshModel(Model* model);
 
-	/**
-	 * Creates a model from terrain convex mesh
-	 * @param terrain convex mesh
-	 * @param id
-	 * @return model
-	 */
-	static Model* createTerrainConvexMeshModel(TerrainConvexMesh* mesh, const string& id);
-
 public:
 	/** 
 	 * Creates a model from bounding volume

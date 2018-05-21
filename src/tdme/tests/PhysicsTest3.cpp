@@ -19,7 +19,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
-#include <tdme/engine/primitives/TerrainConvexMesh.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -49,7 +48,6 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
-using tdme::engine::primitives::TerrainConvexMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -252,21 +250,21 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(0.0f, -4.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
+		/*
 		vector<TerrainConvexMesh> groundConvexMeshes;
 		TerrainConvexMesh::createTerrainConvexMeshes(new Object3DModel(_terrainModel), &groundConvexMeshes);
 		{
 			int i = 0;
 			for (auto& convexMesh: groundConvexMeshes) {
-				/*
-				auto convexMeshModel = PrimitiveModel::createConvexMeshModel(&convexMesh, "ground" + to_string(i));
-				auto groundEntity = new Object3D("ground" + to_string(i), convexMeshModel);
-				groundEntity->fromTransformations(entity);
-				engine->addEntity(groundEntity);
-				*/
+				// auto convexMeshModel = PrimitiveModel::createConvexMeshModel(&convexMesh, "ground" + to_string(i));
+				// auto groundEntity = new Object3D("ground" + to_string(i), convexMeshModel);
+				// groundEntity->fromTransformations(entity);
+				// engine->addEntity(groundEntity);
 				world->addStaticRigidBody("ground" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), &convexMesh, 0.5f);
 				i++;
 			}
 		}
+		*/
 		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		entity = new Object3D("barrel1", _barrel);

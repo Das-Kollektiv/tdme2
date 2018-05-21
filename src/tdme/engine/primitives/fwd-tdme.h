@@ -14,7 +14,7 @@ namespace primitives {
 			class Plane;
 			class PrimitiveModel;
 			class Sphere;
-			class TerrainConvexMesh;
+			class TerrainMesh;
 			class Triangle;
 }  // namespace primitives
 }  // namespace engine
