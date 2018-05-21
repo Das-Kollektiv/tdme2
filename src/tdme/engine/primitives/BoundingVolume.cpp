@@ -17,7 +17,6 @@
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
 
 using std::to_string;
 
@@ -25,7 +24,6 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 
 BoundingVolume::~BoundingVolume() {
 }
@@ -41,7 +39,7 @@ void BoundingVolume::computeBoundingBox() {
 
 void BoundingVolume::fromTransformations(const Transformations& transformations) {
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
-	reactphysics3d::Vector3 scaleVector = reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
+	//reactphysics3d::Vector3 scaleVector = reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
 	// TODO: a.drewke
 	// collisionShape->setLocalScaling(scaleVector);
 	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
@@ -50,7 +48,7 @@ void BoundingVolume::fromTransformations(const Transformations& transformations)
 			collisionShapeLocalTranslation.getX(),
 			collisionShapeLocalTranslation.getY(),
 			collisionShapeLocalTranslation.getZ()
-		) * scaleVector
+		)
 	);
 	computeBoundingBox();
 }
