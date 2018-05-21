@@ -24,7 +24,6 @@ using tdme::math::Vector3;
 
 Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 {
-	// TODO: order seem to matter, investigate!
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
@@ -54,14 +53,8 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 		)
 	);
 
-	// rotate a,b that a and b live on y axis
-	Vector3 aTransformed;
-	Vector3 bTransformed;
-	rotationQuaternion.multiply(this->a, aTransformed);
-	rotationQuaternion.multiply(this->b, bTransformed);
-
 	// determine local translation
-	collisionShapeLocalTranslation.set(aTransformed).add(bTransformed).scale(0.5f);
+	collisionShapeLocalTranslation.set(center);
 	collisionShapeLocalTransform.setPosition(
 		reactphysics3d::Vector3(
 			collisionShapeLocalTranslation.getX(),
@@ -73,7 +66,7 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 	// create capsule
 	collisionShape = new reactphysics3d::CapsuleShape(
 		Math::max(Math::EPSILON, radius),
-		Math::max(Math::EPSILON, bTransformed.clone().sub(aTransformed).computeLength())
+		Math::max(Math::EPSILON, this->b.clone().sub(this->a).computeLength())
 	);
 
 	// compute bounding box
