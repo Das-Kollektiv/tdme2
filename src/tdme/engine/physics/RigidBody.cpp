@@ -61,64 +61,41 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->id = id;
 	this->rootId = id;
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
-	// terrain convex mesh
-	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
-		/*
-		// transform terrain convex mesh with transformations
-		this->boundingVolume = boundingVolume->clone();
-		dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->applyTransformations(transformations);
-		// determine position
-		auto positionTransformed = dynamic_cast<TerrainConvexMesh*>(this->boundingVolume)->getPositionTransformed();
-		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
-		rigidBody->setType(reactphysics3d::BodyType::STATIC);
-		rigidBody->getMaterial().setFrictionCoefficient(friction);
-		rigidBody->getMaterial().setBounciness(restitution);
-		rigidBody->setMass(mass);
-		this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
-		this->proxyShape->setCollideWithMaskBits(~typeId);
-		Transformations terrainTransformations;
-		terrainTransformations.setTranslation(positionTransformed);
-		fromTransformations(terrainTransformations);
-		*/
-	} else
-	// everything other
-	{
-		this->boundingVolume = boundingVolume->clone();
-		this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
-		switch (type) {
-			case TYPE_STATIC:
-				rigidBody->setType(reactphysics3d::BodyType::STATIC);
-				break;
-			case TYPE_DYNAMIC:
-				rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
-				break;
-			case TYPE_KINEMATIC:
-				rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
-				break;
-		}
-		auto& inverseInertiaMatrixArray = inverseInertiaMatrix.getArray();
-		rigidBody->setInverseInertiaTensorLocal(
-			reactphysics3d::Matrix3x3(
-				inverseInertiaMatrixArray[0],
-				inverseInertiaMatrixArray[1],
-				inverseInertiaMatrixArray[2],
-				inverseInertiaMatrixArray[4],
-				inverseInertiaMatrixArray[5],
-				inverseInertiaMatrixArray[6],
-				inverseInertiaMatrixArray[8],
-				inverseInertiaMatrixArray[9],
-				inverseInertiaMatrixArray[10]
-			)
-		);
-		rigidBody->getMaterial().setFrictionCoefficient(friction);
-		rigidBody->getMaterial().setBounciness(restitution);
-		rigidBody->setMass(mass);
-		this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
-		this->proxyShape->setCollideWithMaskBits(~0);
-		fromTransformations(transformations);
+	this->boundingVolume = dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone();
+	this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+	switch (type) {
+		case TYPE_STATIC:
+			rigidBody->setType(reactphysics3d::BodyType::STATIC);
+			break;
+		case TYPE_DYNAMIC:
+			rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
+			break;
+		case TYPE_KINEMATIC:
+			rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
+			break;
 	}
-	this->rigidBody->setUserData(this);
+	auto& inverseInertiaMatrixArray = inverseInertiaMatrix.getArray();
+	rigidBody->setInverseInertiaTensorLocal(
+		reactphysics3d::Matrix3x3(
+			inverseInertiaMatrixArray[0],
+			inverseInertiaMatrixArray[1],
+			inverseInertiaMatrixArray[2],
+			inverseInertiaMatrixArray[4],
+			inverseInertiaMatrixArray[5],
+			inverseInertiaMatrixArray[6],
+			inverseInertiaMatrixArray[8],
+			inverseInertiaMatrixArray[9],
+			inverseInertiaMatrixArray[10]
+		)
+	);
+	rigidBody->getMaterial().setFrictionCoefficient(friction);
+	rigidBody->getMaterial().setBounciness(restitution);
+	rigidBody->setMass(mass);
+	this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
+	this->proxyShape->setCollideWithMaskBits(~0);
 	this->proxyShape->setCollisionCategoryBits(typeId);
+	this->rigidBody->setUserData(this);
+	fromTransformations(transformations);
 	setEnabled(enabled);
 }
 
@@ -285,62 +262,51 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 {
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
-	// terrain convex mesh
-	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
-		/*
-		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
-		reactphysics3d::Transform transform;
-		transform.setFromOpenGL(transformationsMatrix.getArray().data());
-		rigidBody->setTransform(transform);
-		*/
-	} else {
-		// everything else
-		// "scale vector transformed" which takes transformations scale and orientation into account
-		auto scaleVectorTransformed =
-			boundingVolume->collisionShapeLocalTransform.getOrientation() *
-			reactphysics3d::Vector3(
-				transformations.getScale().getX(),
-				transformations.getScale().getY(),
-				transformations.getScale().getZ()
-			);
-		// set bv local translation
-		boundingVolume->collisionShapeLocalTransform.setPosition(
+	// "scale vector transformed" which takes transformations scale and orientation into account
+	auto scaleVectorTransformed =
+		boundingVolume->collisionShapeLocalTransform.getOrientation() *
+		reactphysics3d::Vector3(
+			transformations.getScale().getX(),
+			transformations.getScale().getY(),
+			transformations.getScale().getZ()
+		);
+	// set bv local translation
+	boundingVolume->collisionShapeLocalTransform.setPosition(
+		reactphysics3d::Vector3(
+			boundingVolume->collisionShapeLocalTranslation.getX(),
+			boundingVolume->collisionShapeLocalTranslation.getY(),
+			boundingVolume->collisionShapeLocalTranslation.getZ()
+		) * scaleVectorTransformed
+	);
+	// set local to body transform, proxy shape scaling
+	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
+	proxyShape->setLocalScaling(scaleVectorTransformed);
+	// rigig body transform
+	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
+	reactphysics3d::Transform transform;
+	// take from transformations matrix
+	transform.setFromOpenGL(transformationsMatrix.getArray().data());
+	/*
+	// TODO: center of mass ~ pivot
+	// set center of mass which is basically center of bv for now
+	rigidBody->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
+	// find final position, not sure yet if its working 100%, but still works with some tests
+	auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
+	transform.setPosition(
+		transform.getPosition() +
+		transform.getPosition() -
+		centerOfMassWorld +
+		(
 			reactphysics3d::Vector3(
 				boundingVolume->collisionShapeLocalTranslation.getX(),
 				boundingVolume->collisionShapeLocalTranslation.getY(),
 				boundingVolume->collisionShapeLocalTranslation.getZ()
 			) * scaleVectorTransformed
-		);
-		// set local to body transform, proxy shape scaling
-		proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
-		proxyShape->setLocalScaling(scaleVectorTransformed);
-		// rigig body transform
-		auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
-		reactphysics3d::Transform transform;
-		// take from transformations matrix
-		transform.setFromOpenGL(transformationsMatrix.getArray().data());
-		/*
-		// TODO: center of mass ~ pivot
-		// set center of mass which is basically center of bv for now
-		rigidBody->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
-		// find final position, not sure yet if its working 100%, but still works with some tests
-		auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
-		transform.setPosition(
-			transform.getPosition() +
-			transform.getPosition() -
-			centerOfMassWorld +
-			(
-				reactphysics3d::Vector3(
-					boundingVolume->collisionShapeLocalTranslation.getX(),
-					boundingVolume->collisionShapeLocalTranslation.getY(),
-					boundingVolume->collisionShapeLocalTranslation.getZ()
-				) * scaleVectorTransformed
-			)
-		);
-		*/
-		// set transform
-		rigidBody->setTransform(transform);
-	}
+		)
+	);
+	*/
+	// set transform
+	rigidBody->setTransform(transform);
 }
 
 void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)

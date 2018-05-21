@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#include <ext/reactphysics3d/src/collision/TriangleMesh.h>
+#include <ext/reactphysics3d/src/collision/TriangleVertexArray.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -22,8 +25,10 @@ class tdme::engine::primitives::TerrainMesh final
 	: public BoundingVolume
 {
 private:
-	vector<Vector3> vertices;
+	vector<float> vertices;
 	vector<int32_t> indices;
+	reactphysics3d::TriangleVertexArray* triangleVertexArray { nullptr };
+	reactphysics3d::TriangleMesh triangleMesh;
 public:
 	/**
 	 * Public constructor
@@ -36,4 +41,11 @@ public:
 	 */
 	TerrainMesh(Object3DModel* model);
 
+	/**
+	 * Destructor
+	 */
+	~TerrainMesh();
+
+	// overrides
+	BoundingVolume* clone() const override;
 };

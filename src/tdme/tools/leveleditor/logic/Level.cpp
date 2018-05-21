@@ -23,6 +23,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
+#include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
@@ -335,22 +336,14 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
 			object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
-			// Object3DModel object3DModel(object->getEntity()->getModel());
-			// TerrainConvexMesh::createTerrainConvexMeshes(&object3DModel, &modelTerrainConvexMeshesCache[object->getEntity()->getId()]);
-			{
-				Transformations transformations;
-				transformations.fromTransformations(object->getTransformations());
-				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-				transformations.update();
-				/*
-				int i = 0;
-				for (auto& convexMesh: modelTerrainConvexMeshesCache[object->getEntity()->getId()]) {
-					auto rigidBody = world->addStaticRigidBody(object->getId() + ".tdme.convexmesh." + to_string(i), true, RIGIDBODY_TYPEID_STATIC, transformations, &convexMesh, 1.0f);
-					rigidBody->setRootId(object->getId());
-					i++;
-				}
-				*/
-			}
+			Object3DModel terrainModel(object->getEntity()->getModel());
+			auto terrainMesh = new TerrainMesh(&terrainModel);
+			Transformations transformations;
+			transformations.fromTransformations(object->getTransformations());
+			transformations.setTranslation(transformations.getTranslation().clone().add(translation));
+			transformations.update();
+			auto rigidBody = world->addStaticRigidBody(object->getId(), true, RIGIDBODY_TYPEID_STATIC, transformations, terrainMesh, 1.0f);
+			rigidBodies.push_back(rigidBody);
 		} else {
 			for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
 				auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
