@@ -24,6 +24,7 @@ using tdme::math::Vector3;
 
 Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
 {
+	// TODO: order seem to matter, investigate!
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
